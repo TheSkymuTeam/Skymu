@@ -9,15 +9,16 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using MiddleMan;
 using System;
-using System.Windows;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Windows.Controls;
 using System.Windows.Shell;
-using MiddleMan;
 
 namespace Skymu
 {
@@ -25,7 +26,6 @@ namespace Skymu
     {
         public static MainWindow Instance;
         private bool deactivatedWindow;
-            
         public MainWindow()
         {
             InitializeComponent();
@@ -33,7 +33,6 @@ namespace Skymu
             this.MinHeight = 450;
             this.MinWidth = 800;
 
-            SetWindowTitle("Skype™ - thegamingkart");
             UI.themeSetterMain();
 
             SetClickable(close, minimize, maximize, split, tbli);
@@ -61,8 +60,21 @@ namespace Skymu
 
             this.MouseLeftButtonUp += MouseRelease;
 
-            Tray.PushIcon("online", "Skype (Online)");            
-        }        
+            Tray.PushIcon("online", "Skype (Online)");
+            PopulateSidebar();
+        }
+
+        public static readonly DependencyProperty WindowTitleProperty =
+DependencyProperty.Register(
+"WindowTitle",
+typeof(string),
+typeof(MainWindow));
+
+        public string WindowTitle
+        {
+            get { return (string)GetValue(WindowTitleProperty); }
+            set { SetValue(WindowTitleProperty, value); }
+        }
 
         private void SetClickable(params Image[] buttons)
         {
@@ -70,15 +82,6 @@ namespace Skymu
             {
                 WindowChrome.SetIsHitTestVisibleInChrome(button, true);
             }
-        }
-
-        private void SetWindowTitle(string newtitle)
-        {
-            TitleMain.Text = newtitle;
-            TitleShadow.Text = newtitle;
-            TitleShadow2.Text = newtitle;
-            TitleShadow3.Text = newtitle;
-            this.Title = newtitle;
         }
 
         private readonly DropShadowEffect glowEffectCyan = new DropShadowEffect
@@ -108,26 +111,26 @@ namespace Skymu
             split.Margin = new Thickness(split.Margin.Left, bigmarge, split.Margin.Right, split.Margin.Bottom);
             close.Margin = new Thickness(close.Margin.Left, smallmarge, close.Margin.Right, close.Margin.Bottom);
         }
-       
-        private void Window_Deactivated(object sender, EventArgs e) 
+
+        private void Window_Deactivated(object sender, EventArgs e)
         {
             close.Effect = null;
             Image[] buttons = { close, minimize, maximize, split };
-            foreach (Image img in buttons) 
+            foreach (Image img in buttons)
             {
                 img.Effect = null;
             }
             WindowActivationToggle(17, 2, 1, 19, 18);
-            deactivatedWindow = true;           
+            deactivatedWindow = true;
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
             WindowActivationToggle(18, 1, 0, 0, 0);
-            deactivatedWindow = false;           
+            deactivatedWindow = false;
         }
 
-       private void Window_StateChanged(object sender, EventArgs e)
+        private void Window_StateChanged(object sender, EventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
             {
@@ -144,7 +147,7 @@ namespace Skymu
 
                 WindowChrome.SetWindowChrome(this, chrome);
             }*/
-        } 
+        }
 
 
         private void TitleButton_MouseEnter(object sender, RoutedEventArgs e)
@@ -165,7 +168,7 @@ namespace Skymu
                 height = 37;
                 span = 17;
             }
-            
+
             if (img != null)
             {
                 img.Effect = glowEffectCyan;
@@ -181,7 +184,7 @@ namespace Skymu
             }
         }
 
-        private void TitleButton_MouseLeave(object sender, RoutedEventArgs e) 
+        private void TitleButton_MouseLeave(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
             int width = 0;
@@ -208,7 +211,7 @@ namespace Skymu
                 img.Effect = null;
                 WindowActivationToggle(17, 2, 1, 19, 18);
             }
-            
+
         }
 
         private void TitleButton_Pressed(object sender, RoutedEventArgs e)
@@ -290,9 +293,13 @@ namespace Skymu
             isDragging = false;
         }
 
-        private async void PopulateStatusBar()
+        private async void PopulateSidebar()
         {
-            await Universal.Plugin.FetchSidebarData();
+            SidebarData data = await Universal.Plugin.FetchSidebarData();
+            WindowTitle = "Skype™ - " + data.Username;
+            StatusBox.Text = data.Username;
+            SkypeCreditBox.Text = data.SkypeCreditText;
+            GlobalUserCount.Text = data.SkypeGlobalUserCountText;
         }
     }
 }

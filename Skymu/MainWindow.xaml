@@ -47,7 +47,7 @@
             </StackPanel>
             <Grid Grid.Column="0" x:Name="IconText">
                 <TextBlock
-                    x:Name="TitleShadow" Text="Skype"
+                    x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                     FontSize="12"
                     Foreground="White"
@@ -61,7 +61,7 @@
                     </TextBlock.Effect>
                 </TextBlock>
                 <TextBlock
-                    x:Name="TitleShadow2" Text="Skype"
+                    x:Name="TitleShadow2" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                     FontSize="12"
                     Foreground="White"
@@ -75,7 +75,7 @@
                     </TextBlock.Effect>
                 </TextBlock>
                 <TextBlock
-                    x:Name="TitleShadow3" Text="Skype"
+                    x:Name="TitleShadow3" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                     FontSize="12"
                     Foreground="White"
@@ -89,7 +89,7 @@
                     </TextBlock.Effect>
                 </TextBlock>
 
-                <TextBlock x:Name="TitleMain" Text="Skype"
+                <TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                            FontFamily="Segoe UI"
                            FontSize="12"
                            Foreground="Black"
@@ -182,6 +182,7 @@
                             </Grid.RowDefinitions>
                             <local:ThreeSliceControl
                                 Grid.Row="0"
+                                x:Name="StatusBox"
                                 Source="/ResourcesLight/MainSidebar/ms_Status_Top.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
@@ -213,6 +214,7 @@
                                    HorizontalAlignment="Left"
                                    Margin="25,0,0,0"/>
                             <local:ThreeSliceControl
+                                x:Name="SkypeCreditBox"
                                 Grid.Row="1"
                                 Source="/ResourcesLight/MainSidebar/ms_Status_Bottom.png"
                                 ElementCount="5"
@@ -327,6 +329,7 @@
                             BorderThickness="1,0,1,1"
                             CornerRadius="0,0,4,4">
                             <TextBlock Text="Skymu Beta. All rights reserved."
+                                       x:Name="GlobalUserCount"
                                        Margin="6,0,0,0"
                                        FontFamily="Tahoma"
                                        FontSize="11"

@@ -34,21 +34,25 @@ namespace Skymu
             int pluginCount = 0;
             foreach (string dll in Directory.GetFiles(path, "*.dll"))
             {
-                Assembly asm = Assembly.LoadFrom(dll);
-
-                foreach (Type t in asm.GetTypes())
+                try
                 {
-                    if (typeof(ICore).IsAssignableFrom(t) &&
-                        !t.IsInterface &&
-                        !t.IsAbstract)
+                    Assembly asm = Assembly.LoadFrom(dll);
+
+                    foreach (Type t in asm.GetTypes())
                     {
-                        ICore instance = (ICore)Activator.CreateInstance(t);
-                        instance.OnError += Universal.PluginErrorHandler;
-                        instance.OnWarning += Universal.PluginWarningHandler;
-                        plugins.Add(instance);
-                        pluginCount++;
+                        if (typeof(ICore).IsAssignableFrom(t) &&
+                            !t.IsInterface &&
+                            !t.IsAbstract)
+                        {
+                            ICore instance = (ICore)Activator.CreateInstance(t);
+                            instance.OnError += Universal.PluginErrorHandler;
+                            instance.OnWarning += Universal.PluginWarningHandler;
+                            plugins.Add(instance);
+                            pluginCount++;
+                        }
                     }
                 }
+                catch { }
             }
 
             if (pluginCount < 1)
