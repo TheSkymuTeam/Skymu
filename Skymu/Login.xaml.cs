@@ -59,7 +59,7 @@ namespace Skymu
             if (comboProtocolBox.SelectedIndex != -1)
             {
                 var plugin = Universal.Plugins[comboProtocolBox.SelectedIndex];
-                var result = await plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password);
+                var result = await plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
                     SwitchToMain();
