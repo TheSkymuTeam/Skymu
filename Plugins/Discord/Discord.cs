@@ -28,6 +28,7 @@ namespace Discord
 
         // Initialize API classes and strings
         public string MFATicket;
+        public string InstanceID;
         API api;
 
         // Discord API strings
@@ -55,6 +56,7 @@ namespace Discord
             else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
             {               
                 MFATicket = loginResponse["ticket"]?.ToString();
+                InstanceID = loginResponse["login_instance_id"]?.ToString();
                 return LoginResult.OptStepRequired;
             } 
             else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
@@ -77,7 +79,8 @@ namespace Discord
             var mfaPayload = new
             {
                 ticket = MFATicket,
-                code = int.Parse(code)
+                login_instance_id = InstanceID,
+                code
             };
             var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, mfaPayload));
             Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
