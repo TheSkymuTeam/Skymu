@@ -102,15 +102,18 @@
     <Compile Include="About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="C# Class Files\PluginLoader.cs" />
-    <Compile Include="C# Class Files\UserInterface.cs" />
+    <Compile Include="Classes &amp; XAML\PluginLoader.cs" />
+    <Compile Include="Classes &amp; XAML\UserInterface.cs" />
     <Compile Include="Dialog.xaml.cs">
       <DependentUpon>Dialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="C# Class Files\Tray.cs" />
+    <Compile Include="Classes &amp; XAML\Tray.cs" />
+    <Compile Include="ThreeSliceControl.xaml.cs">
+      <DependentUpon>ThreeSliceControl.xaml</DependentUpon>
+    </Compile>
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,12 +130,16 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="C# Class Files\SystemControls.cs" />
+    <Compile Include="Classes &amp; XAML\SystemControls.cs" />
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ThreeSliceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,6 +257,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UniversalResources\Branding\SkypeLogoBig.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_Status_Bottom.png" />
+    <Resource Include="ResourcesLight\MainSidebar\ms_Status_Top.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

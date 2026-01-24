@@ -46,20 +46,20 @@
         <PasswordBox Name="passwordTokenBox" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Height="20" HorizontalAlignment="Left" Margin="135,198,0,0" VerticalAlignment="Top" Width="240" FontFamily="Tahoma" FontSize="11"/>
         <Canvas>
             <Grid Name="BBuilderGrid" Margin="126,259,128,87" SnapsToDevicePixels="True" Canvas.Left="9" Canvas.Top="-4" Height="25" Width="240">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <!-- Left: native size -->
-                <ColumnDefinition Width="*"/>
-                <!-- Middle: stretch to fill -->
-                <ColumnDefinition Width="Auto"/>
-                <!-- Right: native size -->
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Left: native size -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Middle: stretch to fill -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Right: native size -->
+                </Grid.ColumnDefinitions>
                 <TextBlock x:Name="signInText" Grid.Column="1" Height="13" HorizontalAlignment="Center" Margin="-1,6,0,0" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Text="Sign in" VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11" Foreground="#FF393A48" />
-            <Image Opacity = "0.4" Name="lBI" Grid.Column="0"/>
-            <Image Opacity = "0.4" Name="mBI" Grid.Column="1" Stretch="Fill" VerticalAlignment="Top"/>
-            <Image Opacity = "0.4" Name="rBI" Grid.Column="2"/>                
+                <Image Opacity = "0.4" Name="lBI" Grid.Column="0"/>
+                <Image Opacity = "0.4" Name="mBI" Grid.Column="1" Stretch="Fill" VerticalAlignment="Top"/>
+                <Image Opacity = "0.4" Name="rBI" Grid.Column="2"/>
             </Grid>
-     </Canvas>
+        </Canvas>
         <Canvas>
             <Rectangle x:Name="footerPanel" Canvas.Left="121" Canvas.Bottom="16" Height="55" Stroke="{x:Null}" Width="269" Fill="#FFE5F7FD" RadiusX="5" RadiusY="5" UseLayoutRounding="False" />
             <CheckBox x:Name="autoSignInCheck" Canvas.Left="135" Canvas.Top="310" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Content="Sign me in when Skype starts" Height="16" IsChecked="True" FontFamily="Tahoma" FontSize="11" />

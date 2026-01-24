@@ -28,7 +28,6 @@ namespace Skymu
         {
             InitializeComponent();
             Instance = this;
-
             this.MinHeight = 450;
             this.MinWidth = 800;
 
@@ -36,6 +35,8 @@ namespace Skymu
             UI.themeSetterMain();
 
             SetClickable(close, minimize, maximize, split, tbli);
+
+            btnContacts.SetState(ButtonVisualState.Pressed);
 
             if (!UI.nativeBorder)
             {
@@ -55,7 +56,9 @@ namespace Skymu
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0, 0, 0, 0);
             }
-            
+
+            this.MouseLeftButtonUp += MouseRelease;
+
             Tray.PushIcon("online", "Skype (Online)");            
         }        
 
@@ -252,7 +255,37 @@ namespace Skymu
         private void mn_Accessibility(object sender, RoutedEventArgs e) { }
         private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
-        private void mn_Options(object sender, RoutedEventArgs e) { }     
-      
+        private void mn_Options(object sender, RoutedEventArgs e) { }
+
+        private bool isDragging = false;
+        private Point dragStart;
+
+        private void SkypeSplitter_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                Point current = e.GetPosition(this);
+                Vector delta = current - dragStart;
+                ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
+
+                int newWidth = (int)(sidebarCol.Width.Value + delta.X);
+                if (newWidth < 0) newWidth = 0; // optional minimum width
+
+                sidebarCol.Width = new GridLength(newWidth); // apply new width
+
+                dragStart = current; // update drag start
+            }
+        }
+
+        private void SkypeSplitter_Press(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            isDragging = true;
+            dragStart = e.GetPosition(this);
+        }
+
+        private void MouseRelease(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            isDragging = false;
+        }
     }
 }

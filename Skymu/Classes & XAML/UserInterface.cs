@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
 
 namespace Skymu
 {  
@@ -47,7 +48,7 @@ namespace Skymu
 
             var imgPaths = new[]{
                 //Tuple.Create("File Name", "Subpath", "Use theme resource root", "XML x.Name in array", crop width, crop height, crop type)
-                Tuple.Create("plain", "Buttons", true, new[] { Login.Instance.lBI, Login.Instance.mBI, Login.Instance.rBI }, 130, 25, CropType.VerticalTriSplit),
+                Tuple.Create("plain", "Buttons", true, new[] { Login.Instance.lBI, Login.Instance.mBI, Login.Instance.rBI, }, 130, 25, CropType.VerticalTriSplit),
                 Tuple.Create("loginBackground", "Backgrounds", true, new[] { Login.Instance.BackgroundImg }, 0, 0, CropType.None)
                 };
 
@@ -75,8 +76,6 @@ namespace Skymu
                 Tuple.Create("longIcon", "WindowBorder", false, new[] { MainWindow.Instance.tbli }, 36, 16, CropType.None),
                 Tuple.Create("split", "WindowBorder", false, new[] { MainWindow.Instance.split }, 26, 18, CropType.VerticalStack),
                // Tuple.Create("mainGradient", "Backgrounds", true, new[] { MainWindow.Instance.backgroundImg }, 1400, 883, CropType.None),
-                Tuple.Create("ms_Contacts", "MainSidebar", true, new[] { MainWindow.Instance.contacts }, 128, 32, CropType.VerticalStack),
-                Tuple.Create("ms_Recents", "MainSidebar", true, new[] { MainWindow.Instance.recents }, 128, 32, CropType.VerticalStack) 
                 //Tuple.Create("unmaximize", "WindowBorder", false, MainWindow.Instance.close, 42, 18) ADD LATER!!
                 };
 
