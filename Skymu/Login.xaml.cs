@@ -75,9 +75,23 @@ namespace Skymu
                         var optResult = await plugin.LoginOptStep(totp);
 
                         if (optResult == LoginResult.Success) SwitchToMain();
+                        else
+                        {
+                            SetHeaderToFail();
+                        }
                     }
                 }
+                else
+                {
+                    SetHeaderToFail();
+                }
             }
+        }
+
+        private void SetHeaderToFail()
+        {
+            header.Text = "Authentication failed";
+            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C20000"));
         }
 
         private void ResetLoginButton()
