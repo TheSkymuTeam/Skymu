@@ -140,9 +140,97 @@ namespace Skymu
 
         public string Text
         {
-            get { return OverlayText.Text; }
-            set { OverlayText.Text = value; }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(
+                nameof(Text),
+                typeof(string),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(string.Empty, OnTextChanged));
+
+        public FontFamily TextFont
+        {
+            get { return (FontFamily)GetValue(TextFontProperty); }
+            set { SetValue(TextFontProperty, value); }
+
+
+        }
+
+
+        public static readonly DependencyProperty TextFontProperty =
+            DependencyProperty.Register(
+                nameof(TextFont),
+                typeof(FontFamily),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(SystemFonts.MessageFontFamily, OnTextChanged));
+
+        public FontWeight TextWeight
+        {
+            get { return (FontWeight)GetValue(TextWeightProperty); }
+            set { SetValue(TextWeightProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextWeightProperty =
+            DependencyProperty.Register(
+                nameof(TextWeight),
+                typeof(FontWeight),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(FontWeights.Normal, OnTextChanged));
+
+        public FontStyle TextStyle
+        {
+            get { return (FontStyle)GetValue(TextStyleProperty); }
+            set { SetValue(TextStyleProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextStyleProperty =
+            DependencyProperty.Register(
+                nameof(TextStyle),
+                typeof(FontStyle),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(FontStyles.Normal, OnTextChanged));
+
+        public double TextSize
+        {
+            get { return (double)GetValue(TextSizeProperty); }
+            set { SetValue(TextSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextSizeProperty =
+            DependencyProperty.Register(
+                nameof(TextSize),
+                typeof(double),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(12.0, OnTextChanged));
+
+        public Brush TextColor
+        {
+            get { return (Brush)GetValue(TextColorProperty); }
+            set { SetValue(TextColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextColorProperty =
+            DependencyProperty.Register(
+                nameof(TextColor),
+                typeof(Brush),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(Brushes.Black, OnTextChanged));
+
+        public double TextStartPositionX
+        {
+            get { return (double)GetValue(TextStartPositionXProperty); }
+            set { SetValue(TextStartPositionXProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextStartPositionXProperty =
+            DependencyProperty.Register(
+                nameof(TextStartPositionX),
+                typeof(double),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(0.0, OnTextChanged));
 
         public bool Slice
         {
@@ -274,11 +362,33 @@ namespace Skymu
             RightSlice.Visibility = Visibility.Collapsed;
 
             MiddleSlice.Visibility = Visibility.Visible;
-            MiddleSlice.Width = ActualWidth;
+            MiddleSlice.Width = Width;
             MiddleSlice.Height = elementHeight;
 
             Rect stateBox = GetStateViewbox();
             MiddleSlice.Fill = CreateBrush(stateBox, new Rect(0, 0, 1, 1));
+        }
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThreeSliceControl)d).UpdateText();
+        }
+
+        private void UpdateText()
+        {
+            if (OverlayText == null)
+                return;
+
+            OverlayText.Text = Text;
+            OverlayText.FontFamily = TextFont;
+            OverlayText.FontSize = TextSize;
+            OverlayText.Foreground = TextColor;
+            OverlayText.FontWeight = TextWeight;
+            OverlayText.FontStyle = TextStyle;
+
+            OverlayText.VerticalAlignment = VerticalAlignment.Center;
+            OverlayText.HorizontalAlignment = HorizontalAlignment.Left;
+            OverlayText.Margin = new Thickness(TextStartPositionX, 0, 0, 0);
         }
 
         private void UpdateSlices()

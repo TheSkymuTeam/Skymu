@@ -188,7 +188,30 @@
                                 DefaultIndex="0"
                                 HoverIndex="1"
                                 PressedIndex="2"
-                                HorizontalAlignment="Stretch" />
+                                HorizontalAlignment="Stretch" 
+                                Text="thegamingkart"
+                                TextStartPositionX="43"
+                                TextFont="Arial"
+                                TextWeight="Bold"
+                                TextSize="13"
+                                TextColor="#333333"/>
+                            <local:ThreeSliceControl
+                                Grid.Row="0"
+                                Source="/ResourcesLight/MainSidebar/ms_SkypeStatus.png"
+                                ElementCount="21"
+                                StackDirection="Horizontal"
+                                DefaultIndex="2"
+                                HorizontalAlignment="Left"
+                                Margin="9,0,0,0"
+                                HoverIndex="1"
+                                PressedIndex="2"
+                                Slice="false"
+                                Width="16"/>
+                            <Image Grid.Row="0" Source="ResourcesLight/MainSidebar/ms_Status_DropArrow.png"
+                                   Width="12"
+                                   Height="16"
+                                   HorizontalAlignment="Left"
+                                   Margin="25,0,0,0"/>
                             <local:ThreeSliceControl
                                 Grid.Row="1"
                                 Source="/ResourcesLight/MainSidebar/ms_Status_Bottom.png"
@@ -197,7 +220,17 @@
                                 DefaultIndex="0"
                                 HoverIndex="1"
                                 PressedIndex="2"
+                                Text="$ 0.00 - No subscription"
+                                TextStartPositionX="34"
+                                TextFont="Tahoma"
+                                TextSize="11"
+                                TextColor="#333333"
                                 HorizontalAlignment="Stretch" />
+                            <Image Grid.Row="1" Source="ResourcesLight/MainSidebar/ms_Credit.png"
+                                   Width="16"
+                                   Height="16"
+                                   HorizontalAlignment="Left"
+                                   Margin="9,0,0,0"/>
                         </Grid>
                         <Grid x:Name="SidebarTabs" Grid.Row="2">
                             <Grid.ColumnDefinitions>
@@ -213,6 +246,13 @@
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
+                                Text="Contacts"
+                                TextStartPositionX="30"
+                                TextFont="Arial"
+                                TextWeight="Bold"
+                                TextSize="13"
+                                TextColor="#333333"
+
                                 HorizontalAlignment="Stretch" />
                             <local:ThreeSliceControl
                                 x:Name="btnRecents"
@@ -223,6 +263,12 @@
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
+                                Text="Recent"
+                                TextStartPositionX="30"
+                                TextFont="Arial"
+                                TextWeight="Bold"
+                                TextSize="13"
+                                TextColor="#333333"
                                 HorizontalAlignment="Stretch" />
 
                         </Grid>
@@ -246,6 +292,11 @@
                                     DefaultIndex="1"
                                     HoverIndex="1"
                                     PressedIndex="0"
+                                    Text="Search"
+                                    TextStartPositionX="33"
+                                    TextFont="Tahoma"
+                                    TextSize="11"
+                                    TextColor="#999999"
                                     HorizontalAlignment="Stretch" />
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
                                 <Grid Grid.Row="2" x:Name="ContactsListArea" />
@@ -258,6 +309,12 @@
                                     DefaultIndex="0"
                                     HoverIndex="1"
                                     PressedIndex="2"
+                                    Text="Call phones"
+                                    TextStartPositionX="32"
+                                    TextFont="Arial"
+                                    TextWeight="Bold"
+                                    TextSize="13"
+                                    TextColor="#333333"
                                     HorizontalAlignment="Stretch" />
                                 <Rectangle Grid.Row="6" Height="1" Fill="#b4c0ce" />
                             </Grid>
@@ -267,7 +324,17 @@
                             Background="#ebeef1"
                             BorderBrush="#B4C0CE"
                             BorderThickness="1,0,1,1"
-                            CornerRadius="0,0,4,4" />
+                            CornerRadius="0,0,4,4">
+                            <TextBlock Text="Skymu Beta. All rights reserved."
+                                       Margin="6,0,0,0"
+                                       FontFamily="Tahoma"
+                                       FontSize="11"
+                                       Foreground="#999999"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                        </Border>
+                            
                     </Grid>
                     <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press"
                                MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE" />

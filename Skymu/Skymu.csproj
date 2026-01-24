@@ -262,6 +262,13 @@
     <Resource Include="ResourcesLight\MainSidebar\ms_Status_Bottom.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_Status_Top.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_Status_DropArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_Credit.png" />
+    <Resource Include="ResourcesLight\MainSidebar\ms_Facebook.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
