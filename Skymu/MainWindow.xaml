@@ -7,7 +7,7 @@
         ResizeMode="CanResize"
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
-        Title="Skype" Closing="MainWindow_Closing" Height="767" Width="1440" Deactivated="Window_Deactivated"
+        Title="Skype" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
         StateChanged="Window_StateChanged" Activated="Window_Activated"
         Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
     <Window.Resources>

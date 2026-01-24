@@ -85,6 +85,7 @@ namespace Discord
             };
             var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, mfaPayload));
             Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
+            OnError?.Invoke(this, new PluginMessageEventArgs(mfaResponse.ToString()));
             return LoginResult.Failure;
         }
 

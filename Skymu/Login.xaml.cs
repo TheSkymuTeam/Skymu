@@ -105,7 +105,6 @@ namespace Skymu
             SetButtonMode(Position.Default);
             new MainWindow().Show();
             Close();
-            Universal.ShowMsg("You are now logged in to Skymu. We hope you enjoy our client.", "Login successful");
         }
 
 

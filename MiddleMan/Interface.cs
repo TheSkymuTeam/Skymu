@@ -11,6 +11,7 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -30,6 +31,45 @@ namespace MiddleMan
         Success,
         OptStepRequired,
         Failure
+    }
+
+    public enum UserConnectionStatus
+    {
+        Online,
+        DoNotDisturb,
+        Away,
+        Invisible,
+        Offline
+    }
+
+    public class SidebarData
+    {   
+        public string Username { get; set; }
+        public string SkypeGlobalUserText { get; set; }
+        public string SkypeCreditText { get; set; }
+        public ContactData[] ContactList { get; set; }
+        public SidebarData(string username, string skypeGlobalUserText, string skypeCreditText, ContactData[] contactList)
+        {
+            Username = username;
+            SkypeGlobalUserText = skypeGlobalUserText;
+            SkypeCreditText = skypeCreditText;
+            ContactList = contactList;
+        }
+    }
+
+    public class ContactData
+    {
+        public string Username { get; set; }
+        public string Status { get; set; }
+        public UserConnectionStatus ConnectionStatus { get; set; }
+        public BitmapImage ProfilePicture { get; set; }
+        public ContactData(string username, string status, UserConnectionStatus connectionStatus, BitmapImage profilePicture)
+        {
+            Username = username;
+            Status = status;
+            ConnectionStatus = connectionStatus;
+            ProfilePicture = profilePicture;
+        }
     }
 
     public enum DialogType
