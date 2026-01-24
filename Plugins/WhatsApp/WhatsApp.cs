@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Media.Imaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,14 @@ namespace WhatsApp
         public async Task<bool> SendMessage(string user, string text)
         {
             return true;
+        }
+
+        public async Task<SidebarData> FetchSidebarData()
+        {
+            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
+            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, new BitmapImage()));
+            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, new BitmapImage()));
+            return new SidebarData("Whatsapp User", "1,434,251,616 online users", "$ 69420.67 Meta Bucks", contacts);
         }
     }
 }

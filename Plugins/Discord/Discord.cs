@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using MiddleMan;
 using Discord.Classes;
 using System.Collections.ObjectModel;
+using System.Windows.Media.Imaging;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
@@ -114,6 +115,14 @@ namespace Discord
         public async Task<bool> SendMessage(string user, string text)
         {
             return true;
+        }
+
+        public async Task<SidebarData> FetchSidebarData() // THIS IS A STUB. REPLACE WHAT IS INSIDE WITH REAL API CALLS AND LOGIC.
+        {
+            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
+            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, new BitmapImage()));
+            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, new BitmapImage()));
+            return new SidebarData("Whatsapp User", "1,434,251,616 online users", "$ 69420.67 Meta Bucks", contacts);
         }
     }
 

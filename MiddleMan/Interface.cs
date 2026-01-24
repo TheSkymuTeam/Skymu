@@ -46,13 +46,13 @@ namespace MiddleMan
     public class SidebarData
     {   
         public string Username { get; set; }
-        public string SkypeGlobalUserText { get; set; }
+        public string SkypeGlobalUserCountText { get; set; }
         public string SkypeCreditText { get; set; }
         public ObservableCollection<ContactData> ContactList { get; set; }
-        public SidebarData(string username, string skypeGlobalUserText, string skypeCreditText, ObservableCollection<ContactData> contactList)
+        public SidebarData(string username, string skypeGlobalUserCountText, string skypeCreditText, ObservableCollection<ContactData> contactList)
         {
             Username = username;
-            SkypeGlobalUserText = skypeGlobalUserText;
+            SkypeGlobalUserCountText = skypeGlobalUserCountText;
             SkypeCreditText = skypeCreditText;
             ContactList = contactList;
         }
@@ -100,6 +100,7 @@ namespace MiddleMan
             bool tryLoginWithSavedCredentials); // login step 1
         Task<LoginResult> LoginOptStep(string code); // optional login step 2
         Task<bool> SendMessage(string user, string text); // returns true if success
+        Task<SidebarData> FetchSidebarData(); // fetches sidebar data (contacts list, username, text placeholders, etc.)
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
