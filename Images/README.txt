@@ -1,0 +1,1 @@
+These are images used as promotional content in README.md in the root directory of the Git repository.
