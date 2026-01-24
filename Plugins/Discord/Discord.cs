@@ -35,6 +35,8 @@ namespace Discord
         public string MFATicket;
         public string InstanceID;
         public string DscFingerprint;
+        public string UserCountSkymu;
+        public string DscToken = Discord.Settings.Default.dscToken;
         public CookieCollection DiscordCookies;
         API api;
 
@@ -135,8 +137,6 @@ namespace Discord
                     return LoginResult.Failure;
                 }
             }
-
-            return LoginResult.Failure;
         }
 
         public async Task<bool> SendMessage(string user, string text)
@@ -144,12 +144,37 @@ namespace Discord
             return true;
         }
 
-        public async Task<SidebarData> FetchSidebarData() // THIS IS A STUB. REPLACE WHAT IS INSIDE WITH REAL API CALLS AND LOGIC.
+        public async Task<SidebarData> FetchSidebarData()
         {
+            string globalName = "N/A";
+            string username = "N/A";
+
+            try
+            {
+                string userDetails = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
+                JObject parsedJson = JObject.Parse(userDetails);
+
+                globalName = parsedJson["global_name"]?.ToString() ?? "N/A";
+                username = parsedJson["username"]?.ToString() ?? "N/A";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    string skymuServerUri = "http://127.0.0.1:3000";
+                    HttpResponseMessage generateResponse = await client.GetAsync($"{skymuServerUri}/usr_count");
+                    string genResBody = await generateResponse.Content.ReadAsStringAsync();
+                    JObject parsedGenJson = JObject.Parse(genResBody);
+                    UserCountSkymu = parsedGenJson["online_users"]?.ToString() ?? "N/A";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Parse error: {ex.Message}");
+            }
+
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
             contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, new BitmapImage()));
             contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, new BitmapImage()));
-            return new SidebarData("Whatsapp User", "1,434,251,616 online users", "$ 69420.67 Meta Bucks", contacts);
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
         }
     }
 
