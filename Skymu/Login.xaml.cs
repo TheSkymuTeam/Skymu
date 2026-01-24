@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team at contact@skymu.app.
+/*==========================================================*/
+// Further use of this code confirms your implicit agreement
+// to be bound by the terms of our License. If you do not wish
+// to abide by those terms, you may not use, modify, or 
+// distribute any code that originated from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using System;
 using System.Windows;
 using System.ComponentModel;
 using System.Windows.Media;
@@ -34,17 +45,22 @@ namespace Skymu
             Tray.PushIcon("offline", "Skype (Not signed in)");
         }
 
-        private void SetImagePosition(Position position) 
+        private void SetButtonMode(Position position) 
         { 
             UI.ImageCropper(new[] { lBI, mBI, rBI }, "plain", 130, 25, (int)position, UI.CropType.VerticalTriSplit);
+            byte marginup = 6;
+            if (position == Position.Depressed)
+            {
+                marginup = 7;
+            }
+            signInText.Margin = new Thickness(-1, marginup, 0, 0);
         }
 
         private void buttonPressed(object state, RoutedEventArgs e)
         {
             if (mBI.Opacity == 1)
             {
-                SetImagePosition(Position.Depressed);
-                signInText.Margin = new Thickness(-1, 7, 0, 0);
+                SetButtonMode(Position.Depressed);
             }
         }
       
@@ -52,6 +68,7 @@ namespace Skymu
         {
             if (mBI.Opacity == 1)
             {
+                SetButtonMode(Position.Hover);
                 if (comboProtocolBox.SelectedIndex != -1)
                 {
                     var plugin = Universal.Plugins[comboProtocolBox.SelectedIndex];
@@ -74,15 +91,7 @@ namespace Skymu
                             {
                                 SwitchToMain();
                             }
-                            else
-                            {
-                                ResetLoginButton();
-                            }
                         }
-                    }
-                    else
-                    {
-                        ResetLoginButton();
                     }
                 }                           
             }
@@ -90,14 +99,13 @@ namespace Skymu
 
         private void ResetLoginButton()
         {
-            SetImagePosition(Position.Default);
-            signInText.Margin = new Thickness(-1, 6, 0, 0);
+            SetButtonMode(Position.Default);
         }
 
         private void SwitchToMain()
         {
             noCloseEvent = true;
-            SetImagePosition(Position.Default);
+            SetButtonMode(Position.Default);
             new MainWindow().Show();
             this.Close();
             Universal.ShowMsg("You are now logged in to Skymu. We hope you enjoy our client.", "Login successful");
@@ -107,7 +115,7 @@ namespace Skymu
         {
             if (mBI.Opacity == 1)
             {
-                SetImagePosition(Position.Hover);
+                SetButtonMode(Position.Hover);
             }
         }
 

@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team at contact@skymu.app.
+/*==========================================================*/
+// Further use of this code confirms your implicit agreement
+// to be bound by the terms of our License. If you do not wish
+// to abide by those terms, you may not use, modify, or 
+// distribute any code that originated from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using System;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Windows;

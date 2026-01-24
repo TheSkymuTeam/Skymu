@@ -1,4 +1,15 @@
-﻿using MiddleMan;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team at contact@skymu.app.
+/*==========================================================*/
+// Further use of this code confirms your implicit agreement
+// to be bound by the terms of our License. If you do not wish
+// to abide by those terms, you may not use, modify, or 
+// distribute any code that originated from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,7 +43,8 @@ namespace Skymu
                         !t.IsAbstract)
                     {
                         ICore instance = (ICore)Activator.CreateInstance(t);
-                        instance.OnError += Universal.PluginErrHandler;
+                        instance.OnError += Universal.PluginErrorHandler;
+                        instance.OnWarning += Universal.PluginWarningHandler;
                         plugins.Add(instance);
                         pluginCount++;
                     }

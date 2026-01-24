@@ -1,4 +1,15 @@
-﻿using MiddleMan;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team at contact@skymu.app.
+/*==========================================================*/
+// Further use of this code confirms your implicit agreement
+// to be bound by the terms of our License. If you do not wish
+// to abide by those terms, you may not use, modify, or 
+// distribute any code that originated from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using MiddleMan;
 using System;
 using System.Windows;
 
@@ -9,9 +20,13 @@ namespace Skymu
     public partial class Universal : Application
     {
         public static ICore[] Plugins;
-        public static void PluginErrHandler(object sender, PluginErrorEventArgs e)
+        public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
-            new Dialog(1, e.Message, e.Title);
+            new Dialog(1, e.Message, "Error in plugin " + ((ICore)sender).Name); 
+        }
+        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
+        {
+            new Dialog(1, e.Message, "Warning from plugin " + ((ICore)sender).Name);
         }
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs ev)
         {
