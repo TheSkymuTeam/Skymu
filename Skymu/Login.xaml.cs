@@ -91,7 +91,7 @@ namespace Skymu
         private void SetHeaderToFail()
         {
             header.Text = "Authentication failed";
-            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C20000"));
+            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A30000"));
         }
 
         private void ResetLoginButton()
