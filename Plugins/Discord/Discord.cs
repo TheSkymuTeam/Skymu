@@ -159,7 +159,7 @@ namespace Discord
 
                 using (HttpClient client = new HttpClient())
                 {
-                    string skymuServerUri = "http://127.0.0.1:3000";
+                    string skymuServerUri = "http://127.0.0.1:5000";
                     HttpResponseMessage generateResponse = await client.GetAsync($"{skymuServerUri}/usr_count");
                     string genResBody = await generateResponse.Content.ReadAsStringAsync();
                     JObject parsedGenJson = JObject.Parse(genResBody);
@@ -175,6 +175,11 @@ namespace Discord
             contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, new BitmapImage()));
             contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, new BitmapImage()));
             return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
+        }
+
+        public async Task<LoginResult> TryAutoLogin()
+        {
+            return LoginResult.Failure;
         }
     }
 

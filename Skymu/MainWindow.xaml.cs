@@ -300,6 +300,8 @@ typeof(MainWindow));
             StatusBox.Text = data.Username;
             SkypeCreditBox.Text = data.SkypeCreditText;
             GlobalUserCount.Text = data.SkypeGlobalUserCountText;
+
+            ContactsList.ItemsSource = data.ContactList;
         }
     }
 }

@@ -149,6 +149,16 @@ namespace Skymu
 
             comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
             Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
+            AutoLogin();
+        }
+
+        private async void AutoLogin()
+        {
+            LoginResult lr = await Universal.Plugin.TryAutoLogin();
+            if (lr == LoginResult.Success)
+            {
+                SwitchToMain();
+            }
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)

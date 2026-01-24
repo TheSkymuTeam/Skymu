@@ -23,6 +23,48 @@
             <Setter Property="Height" Value="16" />
             <Setter Property="Width" Value="36" />
         </Style>
+        <DataTemplate x:Key="ContactItemTemplate">
+            <Grid Margin="8,4" Height="60">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Profile Picture -->
+                <Grid Grid.Column="0" Width="48" Height="48">
+                    <Rectangle Fill="LightGray"/>
+                    
+                </Grid>
+
+                <!-- Contact Info -->
+                <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Username}" 
+                           FontWeight="SemiBold" 
+                           FontSize="14"
+                           TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding Status}" 
+                           FontSize="12" 
+                           Foreground="Gray"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Status Icon -->
+                <local:ThreeSliceControl
+    Grid.Row="0"
+    Source="/ResourcesLight/MainSidebar/ms_SkypeStatus.png"
+    ElementCount="21"
+    StackDirection="Horizontal"
+    DefaultIndex="{Binding ConnectionStatus}"
+    HorizontalAlignment="Left"
+    Margin="8,0"
+    HoverIndex="1"
+    PressedIndex="2"
+    Slice="false"
+    Width="16"/>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -301,7 +343,17 @@
                                     TextColor="#999999"
                                     HorizontalAlignment="Stretch" />
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
-                                <ListBox x:Name="ContactsList"  Grid.Row="2"        BorderThickness="0"        >
+                                <ListBox x:Name="ContactsList"  
+         Grid.Row="2"        
+         BorderThickness="0"
+         ItemTemplate="{StaticResource ContactItemTemplate}"
+         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
                                 </ListBox>
                                 <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
                                 <local:ThreeSliceControl

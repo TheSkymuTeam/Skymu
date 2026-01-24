@@ -101,6 +101,7 @@ namespace MiddleMan
         Task<LoginResult> LoginOptStep(string code); // optional login step 2
         Task<bool> SendMessage(string user, string text); // returns true if success
         Task<SidebarData> FetchSidebarData(); // fetches sidebar data (contacts list, username, text placeholders, etc.)
+        Task<LoginResult> TryAutoLogin(); // tries to log in with saved tokens/credentials
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
