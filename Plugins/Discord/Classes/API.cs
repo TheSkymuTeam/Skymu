@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,8 +24,16 @@ namespace Discord.Classes
 {
     internal class API
     {
+        private static readonly CookieContainer cookieContainer = new CookieContainer();
+
         // Re-used client (Less memory usage)
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient(
+            new HttpClientHandler
+            {
+                CookieContainer = cookieContainer,
+                UseCookies = true
+            }
+        );
 
         // Configuration (Firefox 115 ESR on Windows 10)
         private static readonly string XSuperProperties = "eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiRmlyZWZveCIsImRldmljZSI6IiIsInN5c3RlbV9sb2NhbGUiOiJlbi1VUyIsImhhc19jbGllbnRfbW9kcyI6ZmFsc2UsImJyb3dzZXJfdXNlcl9hZ2VudCI6Ik1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQ7IHJ2OjEwOS4wKSBHZWNrby8yMDEwMDEwMSBGaXJlZm94LzExNS4wIiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTE1LjAiLCJvc192ZXJzaW9uIjoiMTAiLCJyZWZlcnJlciI6IiIsInJlZmVycmluZ19kb21haW4iOiIiLCJyZWZlcnJlcl9jdXJyZW50IjoiaHR0cHM6Ly9kaXNjb3JkLmNvbS8iLCJyZWZlcnJpbmdfZG9tYWluX2N1cnJlbnQiOiJkaXNjb3JkLmNvbSIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjQ4ODU3OSwiY2xpZW50X2V2ZW50X3NvdXJjZSI6bnVsbCwiY2xpZW50X2xhdW5jaF9pZCI6Ijc5MzI5Yjg2LThmODctNGVjYi1iZTRmLTY1ZGMzYTJiM2ZiYiIsImxhdW5jaF9zaWduYXR1cmUiOiIzOTIzYzRlYi1iNmE2LTQxNjgtODkzMi0yZThiNTQ2NmU1MmIiLCJjbGllbnRfYXBwX3N0YXRlIjoidW5mb2N1c2VkIn0=";
@@ -36,7 +45,7 @@ namespace Discord.Classes
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
         }
 
-        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null)
+        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, string fingerprint = null, object data = null, byte[] fileData = null, string fileName = null)
         {
             string url = $"https://discord.com/api/v9/{endpoint}";
             var request = new HttpRequestMessage(httpMethod, url);
@@ -44,6 +53,11 @@ namespace Discord.Classes
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token);
+            }
+
+            if (!string.IsNullOrEmpty(fingerprint))
+            {
+                request.Headers.Add("X-Fingerprint", fingerprint);
             }
 
             if (fileData != null && !string.IsNullOrEmpty(fileName))
@@ -89,6 +103,28 @@ namespace Discord.Classes
             }
 
             return string.Empty;
+        }
+
+        public static void AddCookies(Uri uri, CookieCollection cookies)
+        {
+            Debug.WriteLine($"[Cookies] Adding cookies for {uri}");
+
+            foreach (Cookie cookie in cookies)
+            {
+                Debug.WriteLine(
+                    $"[Cookies] -> {cookie.Name}={cookie.Value}; " +
+                    $"Domain={cookie.Domain}; Path={cookie.Path}; " +
+                    $"Secure={cookie.Secure}; HttpOnly={cookie.HttpOnly}"
+                );
+
+                cookieContainer.Add(uri, cookie);
+            }
+
+            var stored = cookieContainer.GetCookies(uri);
+            Debug.WriteLine($"[Cookies] Total stored cookies: {stored.Count}");
+
+            foreach (Cookie c in stored)
+                Debug.WriteLine($"[Cookies Stored] {c.Name}={c.Value}");
         }
     }
 }
