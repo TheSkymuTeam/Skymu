@@ -106,6 +106,7 @@ namespace Discord
             // We use the fingerprint here incase we need it for the future
             var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, DscFingerprint, mfaPayload));
             Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
+            OnError?.Invoke(this, new PluginMessageEventArgs(mfaResponse.ToString()));
             return LoginResult.Failure;
         }
 
