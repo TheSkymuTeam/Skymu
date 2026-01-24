@@ -1,0 +1,178 @@
+﻿<Window x:Class="Skymu.MainWindow"
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   WindowStyle="None"
+   AllowsTransparency="False"
+   ResizeMode="CanResize"
+   Background="Transparent"
+   WindowStartupLocation="CenterScreen"
+   Title="Skype" Closing="MainWindow_Closing" Height="767" Width="1440" Deactivated="Window_Deactivated" StateChanged="Window_StateChanged" Activated="Window_Activated" Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
+    <Window.Resources>
+        <Style x:Key="WindowButtonStyle" TargetType="Image">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Height" Value="18"></Setter>
+             <Setter Property="Margin" Value="-1,0,0,0"/>
+        </Style>
+        <Style x:Key="LongIconStyle" TargetType="Image">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="Width" Value="36"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid x:Name="TitleBar"  Height="30" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="121"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
+            <Image Style="{StaticResource WindowButtonStyle}" x:Name="split" Margin="0" Width="26" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
+            <Image Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
+            <Image Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
+            <Image Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
+            </StackPanel>
+            <Grid Grid.Column="0" x:Name="IconText">
+            <TextBlock
+  x:Name="TitleShadow" Text="Skype"
+         FontFamily="Segoe UI"
+         FontSize="12"
+         Foreground="White"
+         VerticalAlignment="Top"
+         Margin="50,7,0,0"
+         Panel.ZIndex="2">
+                <TextBlock.Effect>
+                    <BlurEffect
+      Radius="15.0"
+      KernelType="Gaussian"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <TextBlock
+x:Name="TitleShadow2" Text="Skype"
+       FontFamily="Segoe UI"
+       FontSize="12"
+       Foreground="White"
+       VerticalAlignment="Top"
+       Margin="50,7,0,0"
+       Panel.ZIndex="2">
+                <TextBlock.Effect>
+                    <BlurEffect
+    Radius="20.0"
+    KernelType="Gaussian"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <TextBlock
+x:Name="TitleShadow3" Text="Skype"
+       FontFamily="Segoe UI"
+       FontSize="12"
+       Foreground="White"
+       VerticalAlignment="Top"
+      Margin="50,7,0,0"
+       Panel.ZIndex="2">
+                <TextBlock.Effect>
+                    <BlurEffect
+    Radius="17.0"
+    KernelType="Gaussian"/>
+                </TextBlock.Effect>
+            </TextBlock>
+
+            <TextBlock x:Name="TitleMain" Text="Skype"
+         FontFamily="Segoe UI"
+         FontSize="12"
+         Foreground="Black"
+         VerticalAlignment="Top"
+         Margin="50,7,0,0"
+         Panel.ZIndex="2">
+                <TextBlock.Effect>
+                    <DropShadowEffect
+      ShadowDepth="0"
+      Direction="330"
+      Color="White"
+      Opacity="1"
+     BlurRadius="20"/>
+                </TextBlock.Effect>
+            </TextBlock>
+            <Image Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click" Margin="8,0,0,0"/>
+            </Grid>
+        </Grid>
+        <Grid x:Name="WindowArea" Background="#d4e2f2" Margin="8,30,8,8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="21" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Menu Grid.Row="0" Height="20" Background="Transparent" FontFamily="Tahoma" Name="menu1" VerticalAlignment="Top" FontSize="11">
+                <MenuItem Header="_Skype">
+                    <MenuItem Header="Online Status"/>
+                    <Separator />
+                    <MenuItem Header="Privacy..."/>
+                    <MenuItem Header="Account..."/>
+                    <MenuItem Header="Buy Skype Credit..."/>
+                    <Separator />
+                    <MenuItem Header="Change Password..."/>
+                    <MenuItem Header="Sign Out"/>
+                    <MenuItem Header="Switch User"/>
+                    <MenuItem Header="Close"/>
+                </MenuItem>
+                <MenuItem Header="C_ontacts">
+                    <MenuItem Header="Add a Contact..."/>
+                    <MenuItem Header="New Contact..."/>
+                    <MenuItem Header="Search for Skype Users..."/>
+                    <MenuItem Header="Import Contacts..."/>
+                    <MenuItem Header="Create New Group..."/>
+                    <Separator />
+                    <MenuItem Header="Contact Categories"/>
+                    <MenuItem Header="Show Outlook Contacts"/>
+                    <Separator />
+                    <MenuItem Header="Remove from Contacts"/>
+                </MenuItem>
+                <MenuItem Header="Co_nversation">
+                </MenuItem>
+                <MenuItem Header="_Call">
+                </MenuItem>
+                <MenuItem Header="_View">
+                </MenuItem>
+                <MenuItem Header="_Tools">
+                    <MenuItem Header="Apps" Click="mn_Apps"/>
+                    <Separator />
+                    <MenuItem Header="Change Language" Click="mn_Language"/>
+                    <Separator />
+                    <MenuItem Header="Accessibility" Click="mn_Accessibility"/>
+                    <MenuItem Header="Share Skype with a Friend..." Click="mn_ShareWithFriend" />
+                    <Separator/>
+                    <MenuItem Header="Skype Wi-Fi Access..." Click="mn_SkypeWifi" />
+                    <Separator/>
+                    <MenuItem Header="Options..." Click="mn_Options" />
+                </MenuItem>
+                <MenuItem Header="_Help">
+                </MenuItem>
+            </Menu>
+            <Rectangle Grid.Row="0" Height="1" VerticalAlignment="Bottom" Fill="#adc3dc"/>
+            <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4">
+                <Grid x:Name="ContentArea">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="256" />
+                        <ColumnDefinition Width="4" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" x:Name="Sidebar">
+                        <Grid x:Name="SidebarTabs" Height="32">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" Stretch="Fill" x:Name="contacts" />
+                            <Image Grid.Column="1" Stretch="Fill" x:Name="recents" />
+                        </Grid>
+                    </Grid>
+                    <Rectangle Grid.Column="1" Fill="Transparent" Cursor="SizeWE" x:Name="SkypeSplitter"/>
+                    <Grid Grid.Column="2" x:Name="MessageArea" Background="#ebf3fc">
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+
+</Window>
