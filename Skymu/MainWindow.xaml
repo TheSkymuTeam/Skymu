@@ -299,8 +299,7 @@
                                     TextColor="#999999"
                                     HorizontalAlignment="Stretch" />
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
-                                <ListBox Grid.Row="2" x:Name="ContactsListArea">
-                                   
+                                <ListBox x:Name="ContactsListArea"  Grid.Row="2"        BorderThickness="0"        >
                                 </ListBox>
                                 <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
                                 <local:ThreeSliceControl

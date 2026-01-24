@@ -19,7 +19,8 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
-        public static ICore[] Plugins;
+        public static ICore Plugin;
+        public static ICore[] PluginList;
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
             new Dialog(1, e.Message, "Error in plugin " + ((ICore)sender).Name); 

@@ -289,13 +289,10 @@ namespace Skymu
         {
             isDragging = false;
         }
-    }
 
-    public class ContactItem
-    {
-        public string Title { get; set; }
-        public UserConnectionStatus Status { get; set; }
-        public string Subtitle { get; set; }
-        public BitmapImage Image { get; set; }
+        private async void PopulateStatusBar()
+        {
+            await Universal.Plugin.FetchSidebarData();
+        }
     }
 }

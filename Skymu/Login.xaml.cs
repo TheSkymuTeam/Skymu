@@ -58,21 +58,20 @@ namespace Skymu
             SetButtonMode(Position.Hover);
             if (comboProtocolBox.SelectedIndex != -1)
             {
-                var plugin = Universal.Plugins[comboProtocolBox.SelectedIndex];
-                var result = await plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password, false);
+                var result = await Universal.Plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
                     SwitchToMain();
                 }
                 else if (result == LoginResult.OptStepRequired)
                 {
-                    var dlg = new Dialog(7, plugin.Name, null, false);
+                    var dlg = new Dialog(7, Universal.Plugin.Name, null, false);
                     var dlgResult = dlg.ShowDialog();
 
                     if (dlgResult == true)
                     {
                         var totp = dlg.TextBoxText;
-                        var optResult = await plugin.LoginOptStep(totp);
+                        var optResult = await Universal.Plugin.LoginOptStep(totp);
 
                         if (optResult == LoginResult.Success) SwitchToMain();
                         else
@@ -143,20 +142,21 @@ namespace Skymu
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
 
-            Universal.Plugins = PluginLoader.LoadPlugins("plugins");
-            foreach (var plugin in Universal.Plugins)
+            Universal.PluginList = PluginLoader.LoadPlugins("plugins");
+            foreach (var plugin in Universal.PluginList)
                 comboProtocolBox.Items.Add(new ProtocolItem(plugin.Name, plugin.InternalName, plugin.TextUsername,
                     plugin.AuthenticationType));
 
             comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
+            Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var protocol = (ProtocolItem)comboProtocolBox.SelectedItem;
-            skypenameText.Text = protocol.UsernameText;
+            Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
+            skypenameText.Text = Universal.Plugin.TextUsername;
 
-            if (protocol.AuthenticationType != AuthenticationMethod.Standard)
+            if (Universal.Plugin.AuthenticationType != AuthenticationMethod.Standard)
             {
                 signInText.Text = "Send code";
                 passwordTokenBox.IsEnabled = false;
