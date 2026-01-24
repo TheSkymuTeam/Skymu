@@ -59,14 +59,5 @@ namespace Discord.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string dscToken {
-            get {
-                return ResourceManager.GetString("dscToken", resourceCulture);
-            }
-        }
     }
 }

@@ -16,8 +16,10 @@ using Discord.Classes;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using System.Net.Http;
+using Newtonsoft.Json;
 using System.Net;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Discord
 {
@@ -56,7 +58,7 @@ namespace Discord
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
-                // TODO: Implement logic
+                Discord.Settings.Default.dscToken = loginResponse["token"]?.ToString();
                 return LoginResult.Success;
             }
             else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
@@ -86,29 +88,54 @@ namespace Discord
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
-            var ootb = new pluginOOTBStuff();
-            DiscordCookies = await ootb.GetCookiesFromPage("https://discord.com/login");
-
-            api = new API();
-
-            // Adds the cookies we collected from the login page
-            API.AddCookies(
-                new Uri("https://discord.com"),
-                DiscordCookies
-            );
-
             Console.WriteLine($"MFA code provided to the plugin is: {code}");
             Console.WriteLine($"Stored MFATicket found in variable: {MFATicket}");
-            var mfaPayload = new
+
+            string jsonData = JsonConvert.SerializeObject(new { ticket = MFATicket, login_instance_id = InstanceID, code });
+            string headers = string.Join(" ",
+                "-H \"Content-Type: application/json\"",
+                $"-H \"User-Agent: {API.UserAgent}\"",
+                $"-H \"X-Super-Properties: {API.XSuperProperties}\"",
+                $"-H \"X-Super-Properties: {DscFingerprint}\""
+            );
+
+            string arguments = string.Format(
+                "{0} -X POST {1} --data-raw \"{2}\"",
+                "https://discord.com/api/v9/auth/mfa/totp",
+                headers,
+                jsonData.Replace("\"", "\\\"")
+            );
+
+            ProcessStartInfo psi = new ProcessStartInfo
             {
-                ticket = MFATicket,
-                login_instance_id = InstanceID,
-                code
+                FileName = "curl",
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
-            // We use the fingerprint here incase we need it for the future
-            var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, DscFingerprint, mfaPayload));
-            Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
-            OnError?.Invoke(this, new PluginMessageEventArgs(mfaResponse.ToString()));
+
+            using (Process process = new Process { StartInfo = psi })
+            {
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                dynamic jsonResponse = JsonConvert.DeserializeObject(output);
+                if (jsonResponse != null && jsonResponse.token != null)
+                {
+                    Discord.Settings.Default.dscToken = jsonResponse.token;
+                    return LoginResult.Success;
+                }
+                else
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Your MFA code is invalid, please double check that it is correct before retrying."));
+                    return LoginResult.Failure;
+                }
+            }
+
             return LoginResult.Failure;
         }
 
@@ -128,21 +155,6 @@ namespace Discord
 
     // This is used for any custom stuff needed by the Discord plugin.
     public class pluginOOTBStuff {
-        public async Task<CookieCollection> GetCookiesFromPage(string uri)
-        {
-            var cookies = new CookieContainer();
-            var handler = new HttpClientHandler
-            {
-                CookieContainer = cookies,
-                UseCookies = true
-            };
-
-            using (var client = new HttpClient(handler))
-            {
-                await client.GetAsync(uri);
-            }
-
-            return cookies.GetCookies(new Uri(uri));
-        }
+    
     }
 }
