@@ -15,6 +15,7 @@ using MiddleMan;
 using Discord.Classes;
 using System.Collections.ObjectModel;
 using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Discord
@@ -30,6 +31,8 @@ namespace Discord
         // Initialize API classes and strings
         public string MFATicket;
         public string InstanceID;
+        public string DscFingerprint;
+        public CookieCollection DiscordCookies;
         API api;
 
         // Discord API strings
@@ -47,7 +50,7 @@ namespace Discord
                 login = username,
                 password = password
             };
-            var loginResponse = JObject.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody));
+            var loginResponse = JObject.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, null, loginBody));
             Console.WriteLine($"The response from the API is: {loginResponse}");
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
@@ -59,6 +62,13 @@ namespace Discord
             {               
                 MFATicket = loginResponse["ticket"]?.ToString();
                 InstanceID = loginResponse["login_instance_id"]?.ToString();
+
+                var fingerprintResponse = JObject.Parse(await api.SendAPI("experiments?with_guild_experiments=true", HttpMethod.Get, null, null));
+                if (fingerprintResponse.ContainsKey("fingerprint"))
+                {
+                    DscFingerprint = fingerprintResponse["fingerprint"]?.ToString();
+                    Console.WriteLine($"The fingerprint Discord has provided is: {DscFingerprint}");
+                }
                 return LoginResult.OptStepRequired;
             } 
             else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
@@ -75,7 +85,17 @@ namespace Discord
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
+            var ootb = new pluginOOTBStuff();
+            DiscordCookies = await ootb.GetCookiesFromPage("https://discord.com/login");
+
             api = new API();
+
+            // Adds the cookies we collected from the login page
+            API.AddCookies(
+                new Uri("https://discord.com"),
+                DiscordCookies
+            );
+
             Console.WriteLine($"MFA code provided to the plugin is: {code}");
             Console.WriteLine($"Stored MFATicket found in variable: {MFATicket}");
             var mfaPayload = new
@@ -84,7 +104,8 @@ namespace Discord
                 login_instance_id = InstanceID,
                 code
             };
-            var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, mfaPayload));
+            // We use the fingerprint here incase we need it for the future
+            var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, DscFingerprint, mfaPayload));
             Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
             OnError?.Invoke(this, new PluginMessageEventArgs(mfaResponse.ToString()));
             return LoginResult.Failure;
@@ -98,6 +119,21 @@ namespace Discord
 
     // This is used for any custom stuff needed by the Discord plugin.
     public class pluginOOTBStuff {
+        public async Task<CookieCollection> GetCookiesFromPage(string uri)
+        {
+            var cookies = new CookieContainer();
+            var handler = new HttpClientHandler
+            {
+                CookieContainer = cookies,
+                UseCookies = true
+            };
 
+            using (var client = new HttpClient(handler))
+            {
+                await client.GetAsync(uri);
+            }
+
+            return cookies.GetCookies(new Uri(uri));
+        }
     }
 }
