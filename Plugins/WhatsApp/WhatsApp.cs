@@ -27,7 +27,7 @@ namespace WhatsApp
         public string TextUsername { get { return "Phone number"; } }
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
-        public async Task<LoginResult> LoginMainStep(string username, string password)
+        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             return LoginResult.Success;
         }

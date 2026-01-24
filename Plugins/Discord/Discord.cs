@@ -35,7 +35,7 @@ namespace Discord
         // Skymu authentication method
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Standard; } }
 
-        public async Task<LoginResult> LoginMainStep(string username, string password)
+        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             api =  new API();
             Console.WriteLine($"The e-mail provided to the plugin is: {username}");

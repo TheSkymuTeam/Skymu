@@ -4,6 +4,7 @@
         xmlns:local="clr-namespace:Skymu"
         Title="Skype" Closing="Login_Closing" Height="429" Width="526" ResizeMode="NoResize"
         WindowStyle="SingleBorderWindow" Loaded="Login_Loaded"
+        WindowStartupLocation="CenterScreen"
         Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
     <Window.Resources>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="Hyperlink">
