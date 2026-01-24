@@ -65,6 +65,7 @@ namespace Discord.Classes
             {
                 string jsonData = JsonConvert.SerializeObject(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                Debug.WriteLine($"[API] Serialized JSON data is {jsonData}");
             }
 
             request.Headers.Add("Accept", "*/*");
@@ -73,7 +74,7 @@ namespace Discord.Classes
 
             foreach (var header in request.Headers)
             {
-                Debug.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
+                Debug.WriteLine($"[API Header] {header.Key}: {string.Join(", ", header.Value)}");
             }
 
             try
