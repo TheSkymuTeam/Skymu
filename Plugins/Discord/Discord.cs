@@ -59,23 +59,28 @@ namespace Discord
             } 
             else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Discord has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
-                return LoginResult.Failure;
-            }
-            else if (loginResponse.ContainsKey("message")) // Generic error message
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Could not log in. The server responded with: " + loginResponse["message"]));
+                OnWarning?.Invoke(this, new PluginMessageEventArgs("Discord has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
                 return LoginResult.Failure;
             }
             else
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs(loginResponse.ToString()));
+                OnError?.Invoke(this, new PluginMessageEventArgs("Could not log in. Please try your details again, or check the logs in the plugins directory of Skymu."));
                 return LoginResult.Failure;
             }
         }
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
+            api = new API();
+            Console.WriteLine($"MFA code provided to the plugin is: {code}");
+            Console.WriteLine($"Stored MFATicket found in variable: {MFATicket}");
+            var mfaPayload = new
+            {
+                ticket = MFATicket,
+                code
+            };
+            var mfaResponse = JObject.Parse(await api.SendAPI("auth/mfa/totp", HttpMethod.Post, null, mfaPayload));
+            Console.WriteLine($"The response sent back by the Discord API is: {mfaResponse}");
             return LoginResult.Failure;
         }
 
