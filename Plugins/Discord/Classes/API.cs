@@ -67,8 +67,14 @@ namespace Discord.Classes
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             }
 
+            request.Headers.Add("Accept", "*/*");
             request.Headers.Add("User-Agent", UserAgent);
             request.Headers.Add("X-Super-Properties", XSuperProperties);
+
+            foreach (var header in request.Headers)
+            {
+                Debug.WriteLine($"  {header.Key}: {string.Join(", ", header.Value)}");
+            }
 
             try
             {
