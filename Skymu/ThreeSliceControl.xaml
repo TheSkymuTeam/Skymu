@@ -6,30 +6,30 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- Left -->
         <Rectangle x:Name="LeftSlice"
                    Grid.Column="0"
-                   Width="20"/>
+                   Width="20" />
 
         <!-- Middle -->
         <Rectangle x:Name="MiddleSlice"
-                   Grid.Column="1"/>
+                   Grid.Column="1" />
 
         <!-- Right -->
         <Rectangle x:Name="RightSlice"
                    Grid.Column="2"
-                   Width="20"/>
+                   Width="20" />
 
         <!-- Optional text overlay -->
         <TextBlock x:Name="OverlayText"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Foreground="White"
-                   IsHitTestVisible="False"/>
+                   IsHitTestVisible="False" />
     </Grid>
 </UserControl>

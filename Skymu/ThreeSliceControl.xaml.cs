@@ -2,10 +2,10 @@
 // Skymu is copyrighted by The Skymu Team.
 // You may contact The Skymu Team at contact@skymu.app.
 /*==========================================================*/
-// Further use of this code confirms your implicit agreement
-// to be bound by the terms of our License. If you do not wish
-// to abide by those terms, you may not use, modify, or 
-// distribute any code that originated from the Skymu project.
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
@@ -27,7 +27,8 @@ namespace Skymu
     {
         Default,
         Hover,
-        Pressed
+        Pressed,
+        Disabled
     }
 
     public partial class ThreeSliceControl : UserControl
@@ -43,6 +44,7 @@ namespace Skymu
             MouseLeave += OnMouseLeave;
             MouseLeftButtonDown += OnMouseDown;
             MouseLeftButtonUp += OnMouseUp;
+            IsEnabledChanged += OnEnabledChanged;
         }
 
         public ImageSource Source
@@ -97,6 +99,19 @@ namespace Skymu
                 typeof(ThreeSliceControl),
                 new PropertyMetadata(0, OnAnyPropertyChanged));
 
+        public int DisabledIndex
+        {
+            get { return (int)GetValue(DisabledIndexProperty); }
+            set { SetValue(DisabledIndexProperty, value); }
+        }
+
+        public static readonly DependencyProperty DisabledIndexProperty =
+            DependencyProperty.Register(
+                "DisabledIndex",
+                typeof(int),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(0, OnAnyPropertyChanged));
+
         public int HoverIndex
         {
             get { return (int)GetValue(HoverIndexProperty); }
@@ -129,7 +144,20 @@ namespace Skymu
             set { OverlayText.Text = value; }
         }
 
-        private void OnMouseEnter(object sender, MouseEventArgs e)
+        public bool Slice
+        {
+            get { return (bool)GetValue(SliceProperty); }
+            set { SetValue(SliceProperty, value); }
+        }
+
+        public static readonly DependencyProperty SliceProperty =
+            DependencyProperty.Register(
+                nameof(Slice),
+                typeof(bool),
+                typeof(ThreeSliceControl),
+                new PropertyMetadata(true, OnAnyPropertyChanged));
+
+        private void OnMouseEnter(object sender, MouseEventArgs e) // set hover index to -1 if you don't want hover effect
         {
             if (HoverIndex != -1)
             {
@@ -137,7 +165,7 @@ namespace Skymu
             }
         }
 
-        private void OnMouseLeave(object sender, MouseEventArgs e)
+        private void OnMouseLeave(object sender, MouseEventArgs e) 
         {
             if (HoverIndex != -1)
             {
@@ -154,6 +182,14 @@ namespace Skymu
         {
             if (IsMouseOver)
                 SetState(ButtonVisualState.Hover);
+            else
+                SetState(ButtonVisualState.Default);
+        }
+
+        private void OnEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!IsEnabled)
+                SetState(ButtonVisualState.Disabled);
             else
                 SetState(ButtonVisualState.Default);
         }
@@ -180,10 +216,13 @@ namespace Skymu
             if (_visualState == ButtonVisualState.Pressed)
                 return PressedIndex;
 
+            if (_visualState == ButtonVisualState.Disabled)
+                return DisabledIndex;
+
             return DefaultIndex;
         }
 
-        private Rect GetStateViewbox()
+        private Rect GetStateViewbox() // code works by changing the viewbox, not cropping the image
         {
             if (Source == null || ElementCount <= 0)
                 return new Rect(0, 0, 1, 1);
@@ -227,6 +266,21 @@ namespace Skymu
                 return bmp.PixelHeight;
         }
 
+        private void UpdateUnsliced(BitmapSource bmp)
+        {
+            double elementHeight = GetElementHeight();
+
+            LeftSlice.Visibility = Visibility.Collapsed;
+            RightSlice.Visibility = Visibility.Collapsed;
+
+            MiddleSlice.Visibility = Visibility.Visible;
+            MiddleSlice.Width = ActualWidth;
+            MiddleSlice.Height = elementHeight;
+
+            Rect stateBox = GetStateViewbox();
+            MiddleSlice.Fill = CreateBrush(stateBox, new Rect(0, 0, 1, 1));
+        }
+
         private void UpdateSlices()
         {
             if (Source == null)
@@ -235,6 +289,12 @@ namespace Skymu
             BitmapSource bmp = Source as BitmapSource;
             if (bmp == null)
                 return;
+
+            if (!Slice)
+            {
+                UpdateUnsliced(bmp);
+                return;
+            }
 
             double elementHeight = GetElementHeight();
             double totalWidth = this.Width;
@@ -261,9 +321,6 @@ namespace Skymu
             MiddleSlice.Fill = CreateBrush(stateBox, new Rect(leftWidth / bmp.PixelWidth, 0, 1.0 - (leftWidth + rightWidth) / bmp.PixelWidth, 1));
             RightSlice.Fill = CreateBrush(stateBox, new Rect(1.0 - rightWidth / bmp.PixelWidth, 0, rightWidth / bmp.PixelWidth, 1));
         }
-
-
-
 
         private ImageBrush CreateBrush(Rect stateBox, Rect sliceBox)
         {

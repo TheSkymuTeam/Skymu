@@ -2,10 +2,10 @@
 // Skymu is copyrighted by The Skymu Team.
 // You may contact The Skymu Team at contact@skymu.app.
 /*==========================================================*/
-// Further use of this code confirms your implicit agreement
-// to be bound by the terms of our License. If you do not wish
-// to abide by those terms, you may not use, modify, or 
-// distribute any code that originated from the Skymu project.
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
@@ -45,19 +45,6 @@ namespace Skymu
             }
 
             loadedImages.Clear();
-
-            var imgPaths = new[]{
-                //Tuple.Create("File Name", "Subpath", "Use theme resource root", "XML x.Name in array", crop width, crop height, crop type)
-                Tuple.Create("plain", "Buttons", true, new[] { Login.Instance.lBI, Login.Instance.mBI, Login.Instance.rBI, }, 130, 25, CropType.VerticalTriSplit),
-                Tuple.Create("loginBackground", "Backgrounds", true, new[] { Login.Instance.BackgroundImg }, 0, 0, CropType.None)
-                };
-
-
-            foreach (var item in imgPaths)
-            {
-                themeSetterLogic(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7);
-            }
-
         }
 
         public static void themeSetterMain()

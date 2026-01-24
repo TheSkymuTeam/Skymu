@@ -2,10 +2,10 @@
 // Skymu is copyrighted by The Skymu Team.
 // You may contact The Skymu Team at contact@skymu.app.
 /*==========================================================*/
-// Further use of this code confirms your implicit agreement
-// to be bound by the terms of our License. If you do not wish
-// to abide by those terms, you may not use, modify, or 
-// distribute any code that originated from the Skymu project.
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
@@ -55,7 +55,8 @@ namespace MiddleMan
         string InternalName {  get; }
         string TextUsername { get; } // the text to display above the Username field (e.g. "Username", "Email", "Phone number")
         AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard
-        Task<LoginResult> LoginMainStep(string username, string password = null); // login step 1
+        Task<LoginResult> LoginMainStep(string username, string password = null,
+            bool tryLoginWithSavedCredentials = false); // login step 1
         Task<LoginResult> LoginOptStep(string code); // optional login step 2
         Task<bool> SendMessage(string user, string text); // returns true if success
     }

@@ -2,98 +2,81 @@
 // Skymu is copyrighted by The Skymu Team.
 // You may contact The Skymu Team at contact@skymu.app.
 /*==========================================================*/
-// Further use of this code confirms your implicit agreement
-// to be bound by the terms of our License. If you do not wish
-// to abide by those terms, you may not use, modify, or 
-// distribute any code that originated from the Skymu project.
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
 using System;
-using System.Windows;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
-using System.Collections.Generic;
+using System.Windows.Navigation;
 using MiddleMan;
-using System.Runtime.CompilerServices;
 
 namespace Skymu
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    ///     Interaction logic for Login.xaml
     /// </summary>
     public partial class Login : Window
     {
         public static Login Instance;
-        public static bool noCloseEvent = false;
-        
-        private enum Position { Default = 0, Hover = 25, HeavyDepressed = 50, GlossDefault = 75, Depressed = 100 }
-   
+        public static bool noCloseEvent;
+
         public Login()
-        {                     
+        {
             InitializeComponent();
             Instance = this;
 
-            usernameBox.KeyUp += ChangeOpacity;
-            passwordTokenBox.KeyUp += ChangeOpacity;
-            BBuilderGrid.MouseLeftButtonDown += buttonPressed;
-            BBuilderGrid.MouseEnter += buttonHover;
+            usernameBox.KeyUp += BoxKeyUp;
+            passwordTokenBox.KeyUp += BoxKeyUp;
             BBuilderGrid.MouseLeftButtonUp += buttonLaunch;
-            BBuilderGrid.MouseLeave += ButtonExit;
 
             UI.themeSetterLogin();
             Tray.PushIcon("offline", "Skype (Not signed in)");
         }
 
-        private void SetButtonMode(Position position) 
-        { 
-            UI.ImageCropper(new[] { lBI, mBI, rBI }, "plain", 130, 25, (int)position, UI.CropType.VerticalTriSplit);
+        private void SetButtonMode(Position position)
+        {
             byte marginup = 6;
-            if (position == Position.Depressed)
-            {
-                marginup = 7;
-            }
+            if (position == Position.Depressed) marginup = 7;
             signInText.Margin = new Thickness(-1, marginup, 0, 0);
         }
 
         private void buttonPressed(object state, RoutedEventArgs e)
         {
-            if (mBI.Opacity == 1)
-            {
-                SetButtonMode(Position.Depressed);
-            }
+            SetButtonMode(Position.Depressed);
         }
-      
+
         private async void buttonLaunch(object state, RoutedEventArgs e)
         {
-            if (mBI.Opacity == 1)
+            SetButtonMode(Position.Hover);
+            if (comboProtocolBox.SelectedIndex != -1)
             {
-                SetButtonMode(Position.Hover);
-                if (comboProtocolBox.SelectedIndex != -1)
+                var plugin = Universal.Plugins[comboProtocolBox.SelectedIndex];
+                var result = await plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password);
+                if (result == LoginResult.Success)
                 {
-                    var plugin = Universal.Plugins[comboProtocolBox.SelectedIndex];
-                    LoginResult result = await plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password);
-                    if (result == LoginResult.Success)
-                    {
-                        SwitchToMain();
-                    }
-                    else if (result == LoginResult.OptStepRequired)
-                    {
-                        var dlg = new Dialog(7, plugin.Name, null, false);
-                        bool? dlgResult = dlg.ShowDialog();
+                    SwitchToMain();
+                }
+                else if (result == LoginResult.OptStepRequired)
+                {
+                    var dlg = new Dialog(7, plugin.Name, null, false);
+                    var dlgResult = dlg.ShowDialog();
 
-                        if (dlgResult == true)
-                        {
-                            string totp = dlg.TextBoxText;       
-                            LoginResult optResult = await plugin.LoginOptStep(totp);
+                    if (dlgResult == true)
+                    {
+                        var totp = dlg.TextBoxText;
+                        var optResult = await plugin.LoginOptStep(totp);
 
-                            if (optResult == LoginResult.Success)
-                            {
-                                SwitchToMain();
-                            }
-                        }
+                        if (optResult == LoginResult.Success) SwitchToMain();
                     }
-                }                           
+                }
             }
         }
 
@@ -107,58 +90,32 @@ namespace Skymu
             noCloseEvent = true;
             SetButtonMode(Position.Default);
             new MainWindow().Show();
-            this.Close();
+            Close();
             Universal.ShowMsg("You are now logged in to Skymu. We hope you enjoy our client.", "Login successful");
         }
 
-        private void buttonHover(object state, RoutedEventArgs e)
-        {
-            if (mBI.Opacity == 1)
-            {
-                SetButtonMode(Position.Hover);
-            }
-        }
 
         private void ButtonExit(object state, RoutedEventArgs e)
         {
-            if (mBI.Opacity == 1 && noCloseEvent == false)
-            {
-                ResetLoginButton();
-            }
+            if (!noCloseEvent) ResetLoginButton();
         }
 
-        private void Opacifier(double opacity)
+
+        private void BoxKeyUp(object sender, RoutedEventArgs e)
         {
-            lBI.Opacity = opacity;
-            mBI.Opacity = opacity;
-            rBI.Opacity = opacity;
+            CheckEnableLoginButton();
         }
 
-        private void ChangeOpacity(object sender, RoutedEventArgs e)
+        private void CheckEnableLoginButton()
         {
-            if (usernameBox.Text.Trim() != String.Empty && (passwordTokenBox.Password.Trim() != String.Empty || passwordTokenBox.IsEnabled == false))
+            if (usernameBox.Text.Trim() != string.Empty &&
+                (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled))
             {
-                Opacifier(1); // full opacity
+                LoginButton.IsEnabled = true;
             }
-
             else
             {
-                Opacifier(0.38); // reduced opacity
-            }
-        }
-
-        public class ProtocolItem
-        {
-            public string DisplayName { get; private set; }
-            public string InternalName { get; private set; }
-            public string UsernameText { get; private set; }
-            public AuthenticationMethod AuthenticationType { get; private set; }
-            public ProtocolItem(string name, string intName, string usertext, AuthenticationMethod authType)
-            {
-                DisplayName = name;
-                InternalName = intName;
-                UsernameText = usertext;
-                AuthenticationType = authType;
+                LoginButton.IsEnabled = false;
             }
         }
 
@@ -167,25 +124,25 @@ namespace Skymu
             MenuBar.MenuInit(this);
             MenuBar.MenuCreator("&Skype", "Close");
             MenuBar.MenuCreator("&Tools", "Change language", "$", "Connection options...", "$", "Accessibility");
-            MenuBar.MenuCreator("&Help", "Get Help: Answers and Support", "$", "Check for Updates", "$", "Privacy Policy", "About Skype");
+            MenuBar.MenuCreator("&Help", "Get Help: Answers and Support", "$", "Check for Updates", "$",
+                "Privacy Policy", "About Skype");
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
 
             Universal.Plugins = PluginLoader.LoadPlugins("plugins");
             foreach (var plugin in Universal.Plugins)
-            {
-                comboProtocolBox.Items.Add(new ProtocolItem(plugin.Name, plugin.InternalName, plugin.TextUsername, plugin.AuthenticationType));
-            }
+                comboProtocolBox.Items.Add(new ProtocolItem(plugin.Name, plugin.InternalName, plugin.TextUsername,
+                    plugin.AuthenticationType));
 
             comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
         }
 
-        private void ProtocolSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ProtocolItem protocol = (ProtocolItem)comboProtocolBox.SelectedItem;
+            var protocol = (ProtocolItem)comboProtocolBox.SelectedItem;
             skypenameText.Text = protocol.UsernameText;
-            
+
             if (protocol.AuthenticationType != AuthenticationMethod.Standard)
             {
                 signInText.Text = "Send code";
@@ -202,26 +159,49 @@ namespace Skymu
                 passwordText.Text = "Password";
                 passwordText.FontStyle = FontStyles.Normal;
             }
+            CheckEnableLoginButton();
         }
 
-        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://skymu.app/");
+            Process.Start("https://skymu.app/");
             e.Handled = true;
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Instance = null;            
+            Instance = null;
         }
 
-        private void Login_Closing(object sender, System.ComponentModel.CancelEventArgs ev)
+        private void Login_Closing(object sender, CancelEventArgs ev)
         {
-            if (!noCloseEvent)
+            if (!noCloseEvent) Universal.Shutdown(ev);
+        }
+
+        private enum Position
+        {
+            Default = 0,
+            Hover = 25,
+            HeavyDepressed = 50,
+            GlossDefault = 75,
+            Depressed = 100
+        }
+
+        public class ProtocolItem
+        {
+            public ProtocolItem(string name, string intName, string usertext, AuthenticationMethod authType)
             {
-                Universal.Shutdown(ev);
+                DisplayName = name;
+                InternalName = intName;
+                UsernameText = usertext;
+                AuthenticationType = authType;
             }
+
+            public string DisplayName { get; private set; }
+            public string InternalName { get; private set; }
+            public string UsernameText { get; }
+            public AuthenticationMethod AuthenticationType { get; }
         }
     }
 }
