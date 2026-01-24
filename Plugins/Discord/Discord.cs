@@ -47,6 +47,7 @@ namespace Discord
                 password = password
             };
             var loginResponse = JObject.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody));
+            Console.WriteLine($"The response from the API is: {loginResponse}");
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
