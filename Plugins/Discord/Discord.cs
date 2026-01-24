@@ -13,6 +13,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using MiddleMan;
 using Discord.Classes;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Threading.Tasks;
 

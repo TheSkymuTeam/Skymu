@@ -14,8 +14,10 @@ using System.Windows;
 using System.Diagnostics;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Shell;
+using MiddleMan;
 
 namespace Skymu
 {
@@ -23,7 +25,7 @@ namespace Skymu
     {
         public static MainWindow Instance;
         private bool deactivatedWindow;
-
+            
         public MainWindow()
         {
             InitializeComponent();
@@ -287,5 +289,13 @@ namespace Skymu
         {
             isDragging = false;
         }
+    }
+
+    public class ContactItem
+    {
+        public string Title { get; set; }
+        public UserConnectionStatus Status { get; set; }
+        public string Subtitle { get; set; }
+        public BitmapImage Image { get; set; }
     }
 }

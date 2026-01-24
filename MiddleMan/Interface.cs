@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace MiddleMan
@@ -47,8 +48,8 @@ namespace MiddleMan
         public string Username { get; set; }
         public string SkypeGlobalUserText { get; set; }
         public string SkypeCreditText { get; set; }
-        public ContactData[] ContactList { get; set; }
-        public SidebarData(string username, string skypeGlobalUserText, string skypeCreditText, ContactData[] contactList)
+        public ObservableCollection<ContactData> ContactList { get; set; }
+        public SidebarData(string username, string skypeGlobalUserText, string skypeCreditText, ObservableCollection<ContactData> contactList)
         {
             Username = username;
             SkypeGlobalUserText = skypeGlobalUserText;

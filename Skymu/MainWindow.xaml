@@ -279,7 +279,7 @@
                                     <RowDefinition Height="31" />
                                     <RowDefinition Height="1" />
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="32" />
+                                    <RowDefinition Height="0" />
                                     <RowDefinition Height="1" />
                                     <RowDefinition Height="32" />
                                     <RowDefinition Height="1" />
@@ -299,7 +299,9 @@
                                     TextColor="#999999"
                                     HorizontalAlignment="Stretch" />
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
-                                <Grid Grid.Row="2" x:Name="ContactsListArea" />
+                                <ListBox Grid.Row="2" x:Name="ContactsListArea">
+                                   
+                                </ListBox>
                                 <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
                                 <local:ThreeSliceControl
                                     Grid.Row="5"
