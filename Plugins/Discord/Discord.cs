@@ -36,7 +36,7 @@ namespace Discord
         public string InstanceID;
         public string DscFingerprint;
         public string UserCountSkymu;
-        public string DscToken = Discord.Settings.Default.dscToken;
+        public string DscToken;
         public CookieCollection DiscordCookies;
         API api;
 
@@ -47,9 +47,6 @@ namespace Discord
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
-            api =  new API();
-            Console.WriteLine($"The e-mail provided to the plugin is: {username}");
-            Console.WriteLine($"The password provided to the plugin is: {password}");
             var loginBody = new
             {
                 login = username,
@@ -61,10 +58,12 @@ namespace Discord
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
                 Discord.Settings.Default.dscToken = loginResponse["token"]?.ToString();
+                Discord.Settings.Default.Save();
+
                 return LoginResult.Success;
             }
             else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
-            {               
+            {
                 MFATicket = loginResponse["ticket"]?.ToString();
                 InstanceID = loginResponse["login_instance_id"]?.ToString();
 
@@ -72,10 +71,9 @@ namespace Discord
                 if (fingerprintResponse.ContainsKey("fingerprint"))
                 {
                     DscFingerprint = fingerprintResponse["fingerprint"]?.ToString();
-                    Console.WriteLine($"The fingerprint Discord has provided is: {DscFingerprint}");
                 }
                 return LoginResult.OptStepRequired;
-            } 
+            }
             else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
             {
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Discord has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
@@ -90,9 +88,6 @@ namespace Discord
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
-            Console.WriteLine($"MFA code provided to the plugin is: {code}");
-            Console.WriteLine($"Stored MFATicket found in variable: {MFATicket}");
-
             string jsonData = JsonConvert.SerializeObject(new { ticket = MFATicket, login_instance_id = InstanceID, code });
             string headers = string.Join(" ",
                 "-H \"Content-Type: application/json\"",
@@ -129,6 +124,8 @@ namespace Discord
                 if (jsonResponse != null && jsonResponse.token != null)
                 {
                     Discord.Settings.Default.dscToken = jsonResponse.token;
+                    Discord.Settings.Default.Save();
+
                     return LoginResult.Success;
                 }
                 else
@@ -160,10 +157,12 @@ namespace Discord
                 using (HttpClient client = new HttpClient())
                 {
                     string skymuServerUri = "http://127.0.0.1:5000";
+
                     HttpResponseMessage generateResponse = await client.GetAsync($"{skymuServerUri}/usr_count");
                     string genResBody = await generateResponse.Content.ReadAsStringAsync();
+
                     JObject parsedGenJson = JObject.Parse(genResBody);
-                    UserCountSkymu = parsedGenJson["online_users"]?.ToString() ?? "N/A";
+                    UserCountSkymu = parsedGenJson["online_count"]?.ToString() ?? "N/A";
                 }
             }
             catch (Exception ex)
@@ -172,19 +171,29 @@ namespace Discord
             }
 
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
-            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
-            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, null));
+            // contacts.Add(new ContactData(friendName, friendStatus, UserConnectionStatus.Online, showUserImageUsingBitmapImage));
             return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()
         {
-            return LoginResult.Failure;
+            api = new API();
+            DscToken = Discord.Settings.Default.dscToken;
+
+            if (!string.IsNullOrWhiteSpace(DscToken))
+            {
+                return LoginResult.Success;
+            }
+            else
+            {
+                return LoginResult.Failure;
+            }
         }
     }
 
     // This is used for any custom stuff needed by the Discord plugin.
-    public class pluginOOTBStuff {
-    
+    public class pluginOOTBStuff
+    {
+
     }
 }

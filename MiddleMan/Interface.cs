@@ -36,11 +36,11 @@ namespace MiddleMan
 
     public enum UserConnectionStatus
     {
-        Online,
-        DoNotDisturb,
-        Away,
-        Invisible,
-        Offline
+        Online = 2,
+        DoNotDisturb = 5,
+        Away = 3,
+        Invisible = 19,
+        Offline = 19
     }
 
     public class SidebarData
