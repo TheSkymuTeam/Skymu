@@ -115,7 +115,7 @@ Width="14" Grid.Row="1"/>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" 
                      Value="True">
                     <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="LightGray"/>
+                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
