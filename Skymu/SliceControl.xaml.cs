@@ -498,7 +498,11 @@ namespace Skymu
 
             Rect stateBox = GetStateViewbox();
             LeftSlice.Fill = CreateBrush(stateBox, new Rect(0.0, 0, leftWidth / bmp.PixelWidth, 1));
-            MiddleSlice.Fill = CreateBrush(stateBox, new Rect(leftWidth / bmp.PixelWidth, 0, 1.0 - (leftWidth + rightWidth) / bmp.PixelWidth, 1));
+            double middleRatio = 1.0 - (leftWidth + rightWidth) / bmp.PixelWidth;
+            if (middleRatio < 0) middleRatio = 0;
+
+            MiddleSlice.Fill = CreateBrush(stateBox, new Rect(leftWidth / bmp.PixelWidth, 0, middleRatio, 1));
+
             RightSlice.Fill = CreateBrush(stateBox, new Rect(1.0 - rightWidth / bmp.PixelWidth, 0, rightWidth / bmp.PixelWidth, 1));
         }
 

@@ -716,7 +716,9 @@ StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-Width="46"
+Width="44"
+                                        Height="24"
+Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>
                             </Grid>
