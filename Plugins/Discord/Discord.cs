@@ -39,6 +39,8 @@ namespace Discord
         public string UserCountSkymu;
         public string DscToken;
         public CookieCollection DiscordCookies;
+        private static WebSocket _webSocket;
+        internal static WebSocket WebSocket => _webSocket;
         API api;
 
         public string TextUsername { get { return "E-mail address"; } }
@@ -179,7 +181,6 @@ namespace Discord
             {
                 string friendList = await api.SendAPI("users/@me/relationships", HttpMethod.Get, DscToken, null, null, null);
                 JArray parsedJson = JArray.Parse(friendList);
-                Debug.WriteLine(parsedJson);
 
                 foreach (var friend in parsedJson)
                 {
@@ -220,6 +221,7 @@ namespace Discord
 
             if (!string.IsNullOrWhiteSpace(DscToken))
             {
+                _webSocket ??= new WebSocket();
                 return LoginResult.Success;
             }
             else
@@ -259,8 +261,6 @@ namespace Discord
 
             return MMUtils.LoadBitmap(cachedFile);
         }
-
-
 
         public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
         {
