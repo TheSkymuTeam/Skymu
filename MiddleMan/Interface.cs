@@ -17,6 +17,8 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Net;
+using System.IO;
 
 namespace MiddleMan
 {
@@ -115,5 +117,22 @@ namespace MiddleMan
     public interface IBoard // For methods/variables specific to messageboard services, like Bluesky, Reddit, etc. Yes, Instagram is technically a messageboard.
     {
 
+    }
+
+    public static class MMUtils
+    {
+        public static BitmapImage LoadBitmap(string path)
+        {
+            using (var fs = File.OpenRead(path))
+            {
+                BitmapImage bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.StreamSource = fs;
+                bmp.EndInit();
+                bmp.Freeze();
+                return bmp;
+            }
+        }
     }
 }
