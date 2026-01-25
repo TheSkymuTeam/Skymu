@@ -215,7 +215,7 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", contacts);
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", UserConnectionStatus.Unknown, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()

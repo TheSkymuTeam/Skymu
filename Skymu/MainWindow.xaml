@@ -266,14 +266,15 @@ Width="14" Grid.Row="1"/>
                                 TextColor="#333333"/>
                             <local:ThreeSliceControl
                                 Grid.Row="0"
+                                x:Name="StatusIcon"
                                 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus.png"
                                 ElementCount="21"
                                 StackDirection="Horizontal"
-                                DefaultIndex="2"
+                                DefaultIndex="0"
                                 HorizontalAlignment="Left"
                                 Margin="9,0,0,0"
-                                HoverIndex="1"
-                                PressedIndex="2"
+                                HoverIndex="-1"
+                                PressedIndex="-1"
                                 Slice="false"
                                 Width="16"/>
                             <Image Grid.Row="0" Source="ResourcesLight/MainSidebar/ms_Status_DropArrow.png"
