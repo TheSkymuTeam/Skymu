@@ -285,24 +285,33 @@
     <Resource Include="ResourcesLight\ChatWindow\blank-left-button.png" />
     <Resource Include="ResourcesLight\ChatWindow\blank-right-button.png" />
     <Resource Include="ResourcesLight\ChatWindow\blank-square-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\button-call.png" />
     <Resource Include="ResourcesLight\ChatWindow\canvas.png" />
     <Resource Include="ResourcesLight\ChatWindow\check-wifi-button.png" />
     <Resource Include="ResourcesLight\ChatWindow\icon-facebook.png" />
     <Resource Include="ResourcesLight\ChatWindow\icon-skype-feedback.png" />
     <Resource Include="ResourcesLight\ChatWindow\msg-send-button.png" />
     <Resource Include="ResourcesLight\ChatWindow\orange-right-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\wifi-1bar-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\wifi-2bar-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\wifi-3bar-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\wifi-4bar-button.png" />
-    <Resource Include="ResourcesLight\ChatWindow\wifi-5bar-button.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\ProfilePictures\default.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\MainSidebar\ms_SkypeStatus_Small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\btn_call_arrow.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_bad.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_best.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_good.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_med.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_med2.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_unavailable.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_send_message.png" />
+    <Resource Include="ResourcesLight\ChatWindow\btn_wide_send_message.png" />
+    <Resource Include="ResourcesLight\ChatWindow\icon-bag.png" />
+    <Resource Include="ResourcesLight\ChatWindow\icon-phone.png" />
+    <Resource Include="ResourcesLight\ChatWindow\icon-search.png" />
+    <Resource Include="ResourcesLight\ChatWindow\settings_skype.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

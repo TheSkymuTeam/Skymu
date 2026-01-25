@@ -163,7 +163,7 @@ namespace Discord
 
                 using (HttpClient client = new HttpClient())
                 {
-                    string skymuServerUri = "http://127.0.0.1:5000";
+                    string skymuServerUri = "http://skymu.app/api/getOnlineUsers";
 
                     HttpResponseMessage generateResponse = await client.GetAsync($"{skymuServerUri}/usr_count");
                     string genResBody = await generateResponse.Content.ReadAsStringAsync();
@@ -219,7 +219,7 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", UserConnectionStatus.Unknown, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()

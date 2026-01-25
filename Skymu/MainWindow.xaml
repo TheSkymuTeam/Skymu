@@ -231,7 +231,7 @@ Width="14" Grid.Row="1"/>
             <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4">
                 <Grid x:Name="ContentArea">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition MinWidth="190" MaxWidth="700" Width="300" />
                         <ColumnDefinition Width="4" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
@@ -424,7 +424,54 @@ Width="14" Grid.Row="1"/>
                     </Grid>
                     <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press"
                                MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE" />
-                    <Grid Grid.Column="2" x:Name="MessageArea" Background="#ebf3fc" />
+                    <Grid Grid.Column="2" x:Name="chatWindowArea">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32" /> 
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="125" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <local:ThreeSliceControl
+                            Grid.Column="0"
+Source="/ResourcesLight/ChatWindow/blank-left-button.png"
+ElementCount="5"
+ x:Name="MainPageButton"                               
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+TextStartPositionX="30"
+Text="Skype Home"                                
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="#333333"
+HorizontalAlignment="Stretch" />
+                            <Image Grid.Column="0" Source="/ResourcesLight/ChatWindow/settings_skype.png"
+       Width="16"
+       Height="16"
+       HorizontalAlignment="Left"
+       Margin="8,0,0,0"/>
+                            <local:ThreeSliceControl
+                                Grid.Column="1"
+    Source="/ResourcesLight/ChatWindow/blank-right-button.png"
+    ElementCount="5"
+    StackDirection="Vertical"
+    DefaultIndex="0"
+    HoverIndex="-1"
+    PressedIndex="-1"
+    HorizontalAlignment="Stretch" />
+                        </Grid>
+                        <Border Grid.Row="1"
+    Background="#FFF"
+    BorderBrush="#B4C0CE"
+    BorderThickness="1,0,1,1"
+    CornerRadius="0,0,4,4">
+                        </Border>
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

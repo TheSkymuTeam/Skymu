@@ -43,6 +43,8 @@ namespace Discord.Classes
             public static void Clear() => _statuses.Clear();
         }
 
+        byte wscl = 0;
+
         public void InitWS()
         {
             WSClient = new WebSocketSharp.WebSocket(gatewayUrl);
@@ -52,9 +54,10 @@ namespace Discord.Classes
             WSClient.OnClose += (sender, e) =>
             {
                 Debug.WriteLine($"Disconnected from the gateway. Reason: {e.Reason}, Code: {e.Code}");
-                if (e.Code != 1000 && e.Code != 4004)
+                if (e.Code != 1000 && e.Code != 4004 && wscl <= 5)
                 {
                     InitWS();
+                    wscl++; // Stack overflow protection
                 }
             };
             WSClient.OnError += (sender, e) => Debug.WriteLine($"Error! {e.Message}");

@@ -41,6 +41,7 @@ namespace Skymu
             SetClickable(close, minimize, maximize, split, tbli);
 
             btnContacts.SetState(ButtonVisualState.Pressed);
+            MainPageButton.SetState(ButtonVisualState.Pressed);
 
             if (!UI.nativeBorder)
             {
@@ -303,7 +304,7 @@ typeof(MainWindow));
             StatusBox.Text = data.Username;
             SkypeCreditBox.Text = data.SkypeCreditText;
             GlobalUserCount.Text = data.SkypeGlobalUserCountText;
-            
+            StatusIcon.DefaultIndex = data.ConnectionStatus;
             ContactsList.ItemsSource = data.ContactList;
         }
 
