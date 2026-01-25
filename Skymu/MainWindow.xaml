@@ -25,7 +25,7 @@
             <Setter Property="Width" Value="36" />
         </Style>
         <DataTemplate x:Key="ContactItemTemplate">
-            <Grid Margin="1,1,0,5" Height="32">
+            <Grid Margin="2,2,0,5" Height="32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
                     <RowDefinition Height="14"/>
@@ -40,12 +40,25 @@
 
                 <!-- Profile Picture -->
 
-                <Border Grid.Column="0" Grid.RowSpan="3" BorderBrush="LightGray" 
-        BorderThickness="1" 
-        CornerRadius="0">
-                    <Image Source="{Binding ProfilePicture, FallbackValue=/ResourcesLight/ProfilePictures/profile_man.png, TargetNullValue=/ResourcesLight/ProfilePictures/profile_man.png}" 
-           Stretch="UniformToFill"/>
-                </Border>
+                <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32">
+                    <!-- Image -->
+                    <Image Stretch="UniformToFill">
+                        <Image.Source>
+                            <Binding Path="ProfilePicture">
+                                <Binding.FallbackValue>
+                                    <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_man.png"/>
+                                </Binding.FallbackValue>
+                                <Binding.TargetNullValue>
+                                    <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_man.png"/>
+                                </Binding.TargetNullValue>
+                            </Binding>
+                        </Image.Source>
+                    </Image>
+                    <!-- Inner border overlay -->
+                    <Border BorderBrush="LightGray" 
+            BorderThickness="1" 
+            CornerRadius="0"/>
+                </Grid>
 
                 <!-- Status Icon -->
                 <local:ThreeSliceControl

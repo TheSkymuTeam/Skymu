@@ -172,8 +172,8 @@ namespace Discord
             }
 
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
-            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, new BitmapImage()));
-            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, new BitmapImage()));
+            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
+            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, null));
             return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
         }
 
