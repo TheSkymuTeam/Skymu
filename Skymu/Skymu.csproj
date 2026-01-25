@@ -269,6 +269,41 @@
     <Resource Include="ResourcesLight\MainSidebar\ms_Credit.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_Facebook.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ProfilePictures\cutout_anonymous.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\cutout_man.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\cutout_woman.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_anonymous.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_caller.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_group.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_man.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_support.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_unknown.png" />
+    <Resource Include="ResourcesLight\ProfilePictures\profile_woman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\blank-left-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\blank-right-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\blank-square-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\button-call.png" />
+    <Resource Include="ResourcesLight\ChatWindow\canvas.png" />
+    <Resource Include="ResourcesLight\ChatWindow\check-wifi-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\icon-facebook.png" />
+    <Resource Include="ResourcesLight\ChatWindow\icon-skype-feedback.png" />
+    <Resource Include="ResourcesLight\ChatWindow\msg-send-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\orange-right-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\wifi-1bar-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\wifi-2bar-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\wifi-3bar-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\wifi-4bar-button.png" />
+    <Resource Include="ResourcesLight\ChatWindow\wifi-5bar-button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ProfilePictures\default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_SkypeStatus_Small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

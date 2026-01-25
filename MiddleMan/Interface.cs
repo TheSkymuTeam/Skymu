@@ -64,6 +64,9 @@ namespace MiddleMan
         public string Status { get; set; }
         public UserConnectionStatus ConnectionStatus { get; set; }
         public BitmapImage ProfilePicture { get; set; }
+        public ContactData()
+        {
+        }
         public ContactData(string username, string status, UserConnectionStatus connectionStatus, BitmapImage profilePicture)
         {
             Username = username;
