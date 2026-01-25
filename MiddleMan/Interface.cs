@@ -9,16 +9,21 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Net;
-using System.IO;
+using System.Xml.Linq;
 
 namespace MiddleMan
 {
@@ -121,6 +126,8 @@ namespace MiddleMan
 
     public static class MMUtils
     {
+        private static string SkymuToken;
+
         public static BitmapImage LoadBitmap(string path)
         {
             using (var fs = File.OpenRead(path))
@@ -132,6 +139,50 @@ namespace MiddleMan
                 bmp.EndInit();
                 bmp.Freeze();
                 return bmp;
+            }
+        }
+
+        public static async Task GenerateUIDOnSkymuAPI()
+        {
+            string skymuGenerateUri = "https://skymu.kier.ovh/generate";
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage generateResponse = await client.GetAsync(skymuGenerateUri);
+                string genResBody = await generateResponse.Content.ReadAsStringAsync();
+                JObject parsedGenJson = JObject.Parse(genResBody);
+                SkymuToken = parsedGenJson["token"].ToString();
+            }
+        }
+
+        public static async Task SetStatusOnSkymuAPI(bool onlineState)
+        {
+            string skymuAPIUri = "https://skymu.kier.ovh";
+            string endpoint = onlineState ? "/online" : "/offline";
+
+            if (SkymuToken != null)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuToken);
+                    HttpResponseMessage response = await client.PostAsync($"{skymuAPIUri}{endpoint}", new StringContent(string.Empty));
+                    string resBody = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Status set response ({endpoint}): {resBody}");
+                }
+            }
+        }
+
+        public static async Task<int> GrabUserCountOnSkymuAPI()
+        {
+            string skymuCountUri = "https://skymu.kier.ovh/usr_count";
+
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(skymuCountUri);
+                string resBody = await response.Content.ReadAsStringAsync();
+                JObject parsedJson = JObject.Parse(resBody);
+                int onlineCount = parsedJson["online_count"].ToObject<int>();
+                return onlineCount;
             }
         }
     }

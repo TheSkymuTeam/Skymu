@@ -150,6 +150,7 @@ namespace Discord
             // User details
             string globalName = "N/A";
             string username = "N/A";
+            int mainUsrStatusSkymu = 0;
 
             // Define the contacts list for later
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
@@ -163,16 +164,24 @@ namespace Discord
                 globalName = parsedJson["global_name"]?.ToString() ?? "N/A";
                 username = parsedJson["username"]?.ToString() ?? "N/A";
 
-                /* using (HttpClient client = new HttpClient())
+                while (!WebSocket.CanCheckData)
+                    await Task.Delay(100);
+
+                string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
+                mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
+
+                bool CanSetStatusOnSkymuAPI;
+                if (mainUsrStatus.Contains("online") || mainUsrStatus.Contains("idle") || mainUsrStatus.Contains("dnd"))
                 {
-                    string skymuServerUri = "http://skymu.app/api/getOnlineUsers";
+                    CanSetStatusOnSkymuAPI = true;
+                }
+                else
+                {
+                    CanSetStatusOnSkymuAPI = false;
+                }
 
-                    HttpResponseMessage generateResponse = await client.GetAsync($"{skymuServerUri}/usr_count");
-                    string genResBody = await generateResponse.Content.ReadAsStringAsync();
-
-                    JObject parsedGenJson = JObject.Parse(genResBody);
-                    UserCountSkymu = parsedGenJson["online_count"]?.ToString() ?? "N/A";
-                } */
+                await MMUtils.GenerateUIDOnSkymuAPI();
+                await MMUtils.SetStatusOnSkymuAPI(CanSetStatusOnSkymuAPI);
             }
             catch (Exception ex)
             {
@@ -181,9 +190,6 @@ namespace Discord
 
             try
             {
-                while (!WebSocket.CanCheckData)
-                    await Task.Delay(100);
-
                 string friendList = WebSocket.recipientsData;
                 JArray parsedJson = JArray.Parse(friendList);
 
@@ -213,10 +219,8 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
-            int mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
-
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
+            int onlineCount = await MMUtils.GrabUserCountOnSkymuAPI();
+            return new SidebarData(globalName, $"{onlineCount.ToString()} online users", "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()
