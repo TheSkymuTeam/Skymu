@@ -65,6 +65,7 @@ namespace Discord
             {
                 Discord.Settings.Default.dscToken = loginResponse["token"]?.ToString();
                 Discord.Settings.Default.Save();
+                _webSocket ??= new WebSocket();
 
                 return LoginResult.Success;
             }
@@ -131,6 +132,7 @@ namespace Discord
                 {
                     Discord.Settings.Default.dscToken = jsonResponse.token;
                     Discord.Settings.Default.Save();
+                    _webSocket ??= new WebSocket();
 
                     return LoginResult.Success;
                 }
@@ -238,6 +240,16 @@ namespace Discord
 
             if (!string.IsNullOrWhiteSpace(DscToken))
             {
+                string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
+                if (userCheckTkn.Contains("401: Unauthorized"))
+                {
+                    return LoginResult.Failure;
+                }
+                else if (userCheckTkn.Contains("username"))
+                {
+                    // Do nothing and let the client continue as normal.
+                }
+
                 _webSocket ??= new WebSocket();
                 return LoginResult.Success;
             }

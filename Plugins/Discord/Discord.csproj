@@ -15,7 +15,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
-	<LangVersion>latest</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\API.cs" />
+    <Compile Include="Classes\ConfigMgr.cs" />
     <Compile Include="Classes\WebSocket.cs" />
     <Compile Include="Discord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
