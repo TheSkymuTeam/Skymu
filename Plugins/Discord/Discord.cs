@@ -20,6 +20,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.IO;
 
 namespace Discord
 {
@@ -40,8 +41,7 @@ namespace Discord
         public CookieCollection DiscordCookies;
         API api;
 
-        // Discord API strings
-        public string TextUsername { get { return "Username"; } }
+        public string TextUsername { get { return "E-mail address"; } }
         // Skymu authentication method
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Standard; } }
 
@@ -143,9 +143,14 @@ namespace Discord
 
         public async Task<SidebarData> FetchSidebarData()
         {
+            // User details
             string globalName = "N/A";
             string username = "N/A";
 
+            // Define the contacts list for later
+            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
+
+            // Personal user details like the username and also Skymu online server count
             try
             {
                 string userDetails = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
@@ -170,8 +175,41 @@ namespace Discord
                 Debug.WriteLine($"Parse error: {ex.Message}");
             }
 
-            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
-            // contacts.Add(new ContactData(friendName, friendStatus, UserConnectionStatus.Online, showUserImageUsingBitmapImage));
+            try
+            {
+                string friendList = await api.SendAPI("users/@me/relationships", HttpMethod.Get, DscToken, null, null, null);
+                JArray parsedJson = JArray.Parse(friendList);
+                Debug.WriteLine(parsedJson);
+
+                foreach (var friend in parsedJson)
+                {
+                    BitmapImage avatarImage = null;
+                    string friendId = friend["id"]?.ToString() ?? "N/A";
+                    string friendGlobalName = friend["user"]["global_name"]?.ToString() ?? "N/A";
+                    string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
+                    string friendAvatarHash = friend["user"]["avatar"]?.ToString();
+                    string friendClanTag = "N/A";
+                    if (friend["user"]["clan"] is JObject clanObject)
+                    {
+                        friendClanTag = clanObject["tag"]?.ToString() ?? "N/A";
+                    }
+
+                    pluginOOTBStuff ootb = new pluginOOTBStuff();
+                    string friendAvatarUri = ootb.GetAvatarUrl(friendId, friendAvatarHash, false, false);
+
+                    if (!string.IsNullOrEmpty(friendAvatarHash))
+                    {
+                        avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
+                    }
+
+                    contacts.Add(new ContactData(friendGlobalName, string.Empty, UserConnectionStatus.Online, avatarImage));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading friend list: {ex.Message}");
+            }
+
             return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
         }
 
@@ -194,6 +232,50 @@ namespace Discord
     // This is used for any custom stuff needed by the Discord plugin.
     public class pluginOOTBStuff
     {
+        private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
+        public pluginOOTBStuff()
+        {
+            // Make sure the cache directory exists
+            Directory.CreateDirectory(cacheDir);
+        }
 
+        // So we don't have to fetch the data everytime
+        public async Task<BitmapImage> GetCachedAvatarAsync(string userId, string hash)
+        {
+            string pattern = $"*-{userId}.png";
+            string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
+
+            if (File.Exists(cachedFile))
+                return MMUtils.LoadBitmap(cachedFile);
+
+            foreach (var file in Directory.GetFiles(cacheDir, pattern))
+                File.Delete(file);
+
+            string url = $"https://cdn.discordapp.com/avatars/{userId}/{hash}.png?size=64";
+            using (var wc = new WebClient())
+            {
+                await wc.DownloadFileTaskAsync(url, cachedFile);
+            }
+
+            return MMUtils.LoadBitmap(cachedFile);
+        }
+
+
+
+        public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
+        {
+            if (isServer)
+            {
+                return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size=64";
+            }
+            else if (isGC)
+            {
+                return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size=64";
+            }
+            else
+            {
+                return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=64";
+            }
+        }
     }
 }
