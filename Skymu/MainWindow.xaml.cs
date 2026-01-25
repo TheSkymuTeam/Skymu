@@ -289,7 +289,7 @@ typeof(MainWindow));
             Chat
         }
 
-        private WindowType currentWindow;
+        private WindowType currentWindow = WindowType.Chat;
         private void SetWindow(WindowType type)
         {
             if (type == WindowType.Home && currentWindow != WindowType.Home)
@@ -297,7 +297,10 @@ typeof(MainWindow));
                 HomeTopbar.Visibility = Visibility.Visible;
                 ChatTopbar.Visibility = Visibility.Collapsed;
                 TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                MessageWindowRow.Height = new GridLength(0);
+                MessageWindow.Visibility = Visibility.Collapsed;
                 MainPageButton.SetState(ButtonVisualState.Pressed);
+                ContactsList.SelectedItem = null;
                 currentWindow = WindowType.Home;
             }
             else if (type == WindowType.Chat && currentWindow != WindowType.Chat)
@@ -305,6 +308,8 @@ typeof(MainWindow));
                 HomeTopbar.Visibility = Visibility.Collapsed;
                 ChatTopbar.Visibility = Visibility.Visible;
                 TopbarWindowRow.Height = new GridLength(180);
+                MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                MessageWindow.Visibility = Visibility.Visible;            
                 currentWindow = WindowType.Chat;
             }
         }

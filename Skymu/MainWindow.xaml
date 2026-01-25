@@ -92,11 +92,11 @@ HoverIndex="-1"
 PressedIndex="-1"
 Slice="false"
 Width="14" Grid.Row="1"/>
-               
+
 
                 <!-- Contact Info -->
-                
-                    <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding Username}" 
+
+                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding Username}" 
                            FontSize="11"
                                FontFamily="Tahoma"
                            TextTrimming="CharacterEllipsis"/>
@@ -106,7 +106,7 @@ Width="14" Grid.Row="1"/>
     FontFamily="Tahoma"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
-                
+
 
 
             </Grid>
@@ -520,8 +520,9 @@ Cursor="Hand"
                                MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE" />
                     <Grid Grid.Column="2" x:Name="chatWindowArea">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="32" /> 
+                            <RowDefinition Height="32" />
                             <RowDefinition x:Name="TopbarWindowRow" Height="180" />
+                            <RowDefinition x:Name="MessageWindowRow" Height="*" />
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
                             <Grid.ColumnDefinitions>
@@ -660,6 +661,65 @@ HorizontalAlignment="Stretch" />
     BorderBrush="#B4C0CE"
     BorderThickness="1,0,1,1"
     CornerRadius="0,0,4,4">
+                        </Border>
+                        <Border x:Name="MessageWindow" Grid.Row="2"
+Background="#FFF"
+BorderBrush="#B4C0CE"
+                                Margin="0,4,0,0"
+BorderThickness="1,1,1,1"
+CornerRadius="4,4,4,4">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                    <RowDefinition Height="64"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0"
+            Orientation="Horizontal"
+            HorizontalAlignment="Left"
+            Margin="10,0,0,0">
+
+                                    <local:SliceControl
+        Source="/ResourcesLight/ChatWindow/btn_video_call.png"
+        ElementCount="5"
+        StackDirection="Vertical"
+        DefaultIndex="0"
+        HoverIndex="1"
+        PressedIndex="2"
+        Text="Video call"
+        TextStartPositionX="35"
+        TextFont="Arial"
+        TextWeight="Bold"
+        TextSize="13"
+        TextColor="White"
+        Width="110" />
+
+                                    <local:SliceControl
+        Source="/ResourcesLight/ChatWindow/btn_call_arrow.png"
+        ElementCount="5"
+        StackDirection="Vertical"
+        DefaultIndex="0"
+        HoverIndex="1"
+        PressedIndex="2"
+        Text="Call"
+        TextStartPositionX="37"
+        TextFont="Arial"
+        TextWeight="Bold"
+        TextSize="13"
+        TextColor="White"
+        Width="100"
+        Margin="10,0,0,0" />
+                                    <local:SliceControl
+Source="/ResourcesLight/ChatWindow/btn_pill_small_add.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+Width="46"
+Margin="10,0,0,0" />
+                                </StackPanel>
+                            </Grid>
                         </Border>
                     </Grid>
                 </Grid>
