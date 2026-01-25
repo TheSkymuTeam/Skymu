@@ -231,7 +231,7 @@ Width="14" Grid.Row="1"/>
             <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4">
                 <Grid x:Name="ContentArea">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="190" MaxWidth="700" Width="300" />
+                        <ColumnDefinition x:Name="SidebarColumn" MinWidth="190" Width="300" />
                         <ColumnDefinition Width="4" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>

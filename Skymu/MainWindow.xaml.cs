@@ -62,6 +62,7 @@ namespace Skymu
             }
 
             this.MouseLeftButtonUp += MouseRelease;
+            this.SizeChanged += MainWindow_SizeChanged;
 
             Tray.PushIcon("online", "Skype (Online)");
             PopulateSidebar();
@@ -278,9 +279,15 @@ typeof(MainWindow));
                 Point current = e.GetPosition(this);
                 Vector delta = current - dragStart;
                 ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
-                int newWidth = (int)(sidebarCol.Width.Value + delta.X);
-                if (newWidth < 0) newWidth = 0; // optional minimum width
-                sidebarCol.Width = new GridLength(newWidth); // apply new width
+                double max = sidebarCol.MaxWidth;
+                double min = sidebarCol.MinWidth;
+
+                double newWidth = sidebarCol.Width.Value + delta.X;
+
+                if (newWidth < min) newWidth = min;
+                if (newWidth > max) newWidth = max;
+
+                sidebarCol.Width = new GridLength(newWidth);
                 dragStart = current; // update drag start
             }
         }
@@ -312,6 +319,11 @@ typeof(MainWindow));
                 capturedElement = null; // Clean up the reference
                 e.Handled = true;
             }
+        }
+
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SidebarColumn.MaxWidth = this.ActualWidth / 2;
         }
 
         private async void PopulateSidebar()
