@@ -63,7 +63,7 @@ namespace Discord
                 return LoginResult.Success;
             }
             else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
-            {               
+            {
                 MFATicket = loginResponse["ticket"]?.ToString();
                 InstanceID = loginResponse["login_instance_id"]?.ToString();
 
@@ -73,7 +73,7 @@ namespace Discord
                     DscFingerprint = fingerprintResponse["fingerprint"]?.ToString();
                 }
                 return LoginResult.OptStepRequired;
-            } 
+            }
             else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
             {
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Discord has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
@@ -192,7 +192,8 @@ namespace Discord
     }
 
     // This is used for any custom stuff needed by the Discord plugin.
-    public class pluginOOTBStuff {
-    
+    public class pluginOOTBStuff
+    {
+
     }
 }

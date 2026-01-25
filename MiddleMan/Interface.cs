@@ -36,11 +36,11 @@ namespace MiddleMan
 
     public enum UserConnectionStatus
     {
-        Online,
-        DoNotDisturb,
-        Away,
-        Invisible,
-        Offline
+        Online = 2,
+        DoNotDisturb = 5,
+        Away = 3,
+        Invisible = 19,
+        Offline = 19
     }
 
     public class SidebarData
@@ -64,6 +64,9 @@ namespace MiddleMan
         public string Status { get; set; }
         public UserConnectionStatus ConnectionStatus { get; set; }
         public BitmapImage ProfilePicture { get; set; }
+        public ContactData()
+        {
+        }
         public ContactData(string username, string status, UserConnectionStatus connectionStatus, BitmapImage profilePicture)
         {
             Username = username;
