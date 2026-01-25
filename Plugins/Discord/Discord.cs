@@ -182,6 +182,8 @@ namespace Discord
                 string friendList = await api.SendAPI("users/@me/relationships", HttpMethod.Get, DscToken, null, null, null);
                 JArray parsedJson = JArray.Parse(friendList);
 
+                pluginOOTBStuff ootb = new pluginOOTBStuff();
+
                 foreach (var friend in parsedJson)
                 {
                     BitmapImage avatarImage = null;
@@ -190,20 +192,26 @@ namespace Discord
                     string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
                     string friendAvatarHash = friend["user"]["avatar"]?.ToString();
                     string friendClanTag = "N/A";
+
+                    while (!WebSocket.CanCheckStatus)
+                        await Task.Delay(100);
+
+                    string statusStr = WebSocket.UserStatusStore.GetStatus(friendId);
+                    int friendStatus = ootb.MapStatus(statusStr);
+
+                    Console.WriteLine($"The status for friend {friendGlobalName} is {statusStr}");
+
                     if (friend["user"]["clan"] is JObject clanObject)
                     {
                         friendClanTag = clanObject["tag"]?.ToString() ?? "N/A";
                     }
-
-                    pluginOOTBStuff ootb = new pluginOOTBStuff();
-                    string friendAvatarUri = ootb.GetAvatarUrl(friendId, friendAvatarHash, false, false);
 
                     if (!string.IsNullOrEmpty(friendAvatarHash))
                     {
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(friendGlobalName, string.Empty, UserConnectionStatus.Online, avatarImage));
+                    contacts.Add(new ContactData(friendGlobalName, string.Empty, friendStatus, avatarImage));
                 }
             }
             catch (Exception ex)
@@ -260,6 +268,18 @@ namespace Discord
             }
 
             return MMUtils.LoadBitmap(cachedFile);
+        }
+
+        public int MapStatus(string statusStr)
+        {
+            return statusStr switch
+            {
+                "Online" => UserConnectionStatus.Online,
+                "Idle" => UserConnectionStatus.Away,
+                "Do Not Disturb" => UserConnectionStatus.DoNotDisturb,
+                "Offline" => UserConnectionStatus.Invisible,
+                _ => UserConnectionStatus.Invisible
+            };
         }
 
         public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
