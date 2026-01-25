@@ -145,6 +145,8 @@ namespace Discord
 
         public async Task<SidebarData> FetchSidebarData()
         {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+
             // User details
             string globalName = "N/A";
             string username = "N/A";
@@ -185,8 +187,6 @@ namespace Discord
                 string friendList = WebSocket.readyEvent;
                 JArray parsedJson = JArray.Parse(JObject.Parse(friendList)["relationships"].ToString());
 
-                pluginOOTBStuff ootb = new pluginOOTBStuff();
-
                 foreach (var friend in parsedJson)
                 {
                     BitmapImage avatarImage = null;
@@ -213,7 +213,10 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", UserConnectionStatus.Unknown, contacts);
+            string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
+            int mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
+
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()
