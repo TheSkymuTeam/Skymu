@@ -26,7 +26,7 @@
         <TextBlock x:Name="header" Text="Welcome to Skype." Foreground="{StaticResource SkBlue}"
                    Height="32" HorizontalAlignment="Center" Margin="0,44,0,0"
                    VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20" />
-
+        <Grid x:Name="signInControls">
         <TextBlock x:Name="skypenameText" Text="Username" Height="28" HorizontalAlignment="Left"
                    Margin="136,140,0,0" VerticalAlignment="Top"
                    FontFamily="Tahoma" FontSize="11" FontWeight="Normal" />
@@ -126,6 +126,6 @@
                           TextOptions.TextHintingMode="Fixed"/>
             </StackPanel>
         </Grid>
-
+        </Grid>
     </Grid>
 </Window>

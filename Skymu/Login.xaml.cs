@@ -26,6 +26,7 @@ namespace Skymu
     public partial class Login : Window
     {
         public static Login Instance;
+        private MainWindow _mainWindow;
         public static bool noCloseEvent;
 
         public Login()
@@ -36,6 +37,8 @@ namespace Skymu
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
             BBuilderGrid.MouseLeftButtonUp += buttonLaunch;
+
+            this.ContentRendered += Login_ContentRendered;
 
             UI.themeSetterLogin();
             Tray.PushIcon("offline", "Skype (Not signed in)");
@@ -61,7 +64,7 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    SwitchToMain();
+                    InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
                 {
@@ -73,7 +76,7 @@ namespace Skymu
                         var totp = dlg.TextBoxText;
                         var optResult = await Universal.Plugin.LoginOptStep(totp);
 
-                        if (optResult == LoginResult.Success) SwitchToMain();
+                        if (optResult == LoginResult.Success) InitiateMainWindow();
                         else
                         {
                             SetHeaderToFail();
@@ -98,11 +101,11 @@ namespace Skymu
             SetButtonMode(Position.Default);
         }
 
-        private void SwitchToMain()
+        private void MainWindow_Ready(object sender, EventArgs e)
         {
+            _mainWindow.Ready -= MainWindow_Ready;
+            _mainWindow.Show();  
             noCloseEvent = true;
-            SetButtonMode(Position.Default);
-            new MainWindow().Show();
             Close();
         }
 
@@ -131,7 +134,7 @@ namespace Skymu
             }
         }
 
-        private void Login_Loaded(object sender, EventArgs e)
+        private async void Login_Loaded(object sender, EventArgs e)
         {
             MenuBar.MenuInit(this);
             MenuBar.MenuCreator("&Skype", "Close");
@@ -149,16 +152,40 @@ namespace Skymu
 
             comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
             Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
-            AutoLogin();
+            LoginToggleAnimation(true);
         }
 
-        private async void AutoLogin()
-        {
+        private async void Login_ContentRendered(object sender, EventArgs e)
+        {           
             LoginResult lr = await Universal.Plugin.TryAutoLogin();
             if (lr == LoginResult.Success)
             {
-                SwitchToMain();
+                InitiateMainWindow();
             }
+            else
+            {
+                LoginToggleAnimation(false);
+            }
+        }
+
+        private void InitiateMainWindow()
+        {
+            _mainWindow = new MainWindow();
+            _mainWindow.Ready += MainWindow_Ready;
+        }
+
+        private void LoginToggleAnimation(bool anim)
+        {
+            if (anim)
+            {
+                signInControls.Visibility = Visibility.Collapsed;
+                header.Text = "Signing in";
+            }
+            else
+            {
+                signInControls.Visibility = Visibility.Visible;
+                header.Text = "Authentication failed";
+            }                           
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)

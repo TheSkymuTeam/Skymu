@@ -431,7 +431,9 @@ Width="14" Grid.Row="1"/>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="125" />
+                                <ColumnDefinition Width="128" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="140" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <local:ThreeSliceControl
@@ -443,7 +445,7 @@ StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-TextStartPositionX="30"
+TextStartPositionX="31"
 Text="Skype Home"                                
 TextFont="Arial"
 TextWeight="Bold"
@@ -456,7 +458,49 @@ HorizontalAlignment="Stretch" />
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
                             <local:ThreeSliceControl
-                                Grid.Column="1"
+                            Grid.Column="1"
+Source="/ResourcesLight/ChatWindow/blank-square-button.png"
+ElementCount="5"
+ x:Name="ProfileButton"                               
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+TextStartPositionX="31"
+Text="Profile"                                
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="#333333"
+HorizontalAlignment="Stretch" />
+                            <Image Grid.Column="1" Source="/ResourcesLight/ChatWindow/info_pressed.png"
+       Width="16"
+       Height="16"
+       HorizontalAlignment="Left"
+       Margin="8,0,0,0"/>
+                            <local:ThreeSliceControl
+                            Grid.Column="2"
+Source="/ResourcesLight/ChatWindow/blank-square-button.png"
+ElementCount="5"
+ x:Name="FeedbackButton"                               
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+TextStartPositionX="31"
+Text="Give feedback"                                
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="#333333"
+HorizontalAlignment="Stretch" />
+                            <Image Grid.Column="2" Source="/ResourcesLight/ChatWindow/icon-skype-feedback.png"
+       Width="16"
+       Height="16"
+       HorizontalAlignment="Left"
+       Margin="8,0,0,0"/>
+                            <local:ThreeSliceControl
+                                Grid.Column="3"
     Source="/ResourcesLight/ChatWindow/blank-right-button.png"
     ElementCount="5"
     StackDirection="Vertical"

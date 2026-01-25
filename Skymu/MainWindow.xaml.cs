@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -29,6 +30,7 @@ namespace Skymu
     {
         public static MainWindow Instance;
         private bool deactivatedWindow;
+        public event EventHandler Ready;
         public MainWindow()
         {
             InitializeComponent();
@@ -306,6 +308,7 @@ typeof(MainWindow));
             GlobalUserCount.Text = data.SkypeGlobalUserCountText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
             ContactsList.ItemsSource = data.ContactList;
+            Ready?.Invoke(this, EventArgs.Empty);
         }
 
     }

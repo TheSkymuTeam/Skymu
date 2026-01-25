@@ -313,6 +313,9 @@
     <Resource Include="ResourcesLight\ChatWindow\icon-search.png" />
     <Resource Include="ResourcesLight\ChatWindow\settings_skype.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\info_pressed.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
