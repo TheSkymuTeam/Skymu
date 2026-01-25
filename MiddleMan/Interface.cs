@@ -34,13 +34,13 @@ namespace MiddleMan
         Failure
     }
 
-    public enum UserConnectionStatus
+    public static class UserConnectionStatus
     {
-        Online = 2,
-        DoNotDisturb = 5,
-        Away = 3,
-        Invisible = 19,
-        Offline = 19
+        public const int Invisible = 19;
+        public const int DoNotDisturb = 5;
+        public const int Online = 2;
+        public const int Away = 3;
+        public const int Offline = 19;
     }
 
     public class SidebarData
@@ -62,12 +62,12 @@ namespace MiddleMan
     {
         public string Username { get; set; }
         public string Status { get; set; }
-        public UserConnectionStatus ConnectionStatus { get; set; }
+        public int ConnectionStatus { get; set; }
         public BitmapImage ProfilePicture { get; set; }
         public ContactData()
         {
         }
-        public ContactData(string username, string status, UserConnectionStatus connectionStatus, BitmapImage profilePicture)
+        public ContactData(string username, string status, int connectionStatus, BitmapImage profilePicture)
         {
             Username = username;
             Status = status;

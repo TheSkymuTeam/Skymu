@@ -69,10 +69,11 @@ StackDirection="Horizontal"
 DefaultIndex="{Binding ConnectionStatus}"
 Margin="10,0,0,0"
 HorizontalAlignment="Left"
-HoverIndex="1"
-PressedIndex="2"
+HoverIndex="-1"
+PressedIndex="-1"
 Slice="false"
 Width="14" Grid.Row="1"/>
+               
 
                 <!-- Contact Info -->
                 

@@ -52,7 +52,7 @@ namespace Skymu
 
                 try
                 {
-                    try
+                    /*try
                     {
                         this.Owner = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
                     }
@@ -60,9 +60,9 @@ namespace Skymu
                     catch
                     {
                         this.Owner = Application.Current.MainWindow;
-                    }
+                    }*/
 
-                    this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                     if (autoShow) { 
                     this.ShowDialog();
                     }
