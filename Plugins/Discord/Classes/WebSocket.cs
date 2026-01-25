@@ -10,21 +10,38 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Security.Authentication;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Discord.Classes
 {
     class WebSocket
     {
         private const SslProtocols Tls12 = SslProtocols.Tls12;
+
+        // Discord's WebSocket / Gateway URL
         private string gatewayUrl;
+
+        // Discord token, quite obvious
         private string token;
+
+        // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not.
         public bool CanCheckData = false;
+
+        // Used in functions outside and inside WebSocket.cs to parse data
+        public string recipientsData;
+
+        // Used for sending the first payload required
+        private string identifyPayloadJson;
+
+        // Used for the heartbeat payloads
+        private readonly string heartbeatPayloadJson = JsonConvert.SerializeObject(new { op = 1, d = (object)null });
+        private Timer heartbeatTimer;
+        // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
-        public string readyEvent;
+
         public WebSocketSharp.WebSocket WSClient { get; private set; }
 
         public WebSocket()
@@ -32,6 +49,22 @@ namespace Discord.Classes
             token = Discord.Settings.Default.dscToken;
             gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            identifyPayloadJson = JsonConvert.SerializeObject(new
+            {
+                op = 2,
+                d = new
+                {
+                    token = token,
+                    properties = new
+                    {
+                        os = "Windows",
+                        browser = "Firefox",
+                        device = string.Empty
+                    }
+                }
+            });
+
             InitWS();
         }
 
@@ -61,18 +94,13 @@ namespace Discord.Classes
         {
             WSClient = new WebSocketSharp.WebSocket(gatewayUrl);
             WSClient.SslConfiguration.EnabledSslProtocols = Tls12;
-            WSClient.OnOpen += (sender, e) => Debug.WriteLine("Connected to the gateway.");
             WSClient.OnMessage += (sender, e) => HandleMessage(e.Data);
             WSClient.OnClose += (sender, e) =>
             {
-                Debug.WriteLine($"Disconnected from the gateway. Reason: {e.Reason}, Code: {e.Code}");
-                if (e.Code != 1000 && e.Code != 4004)
-                {
-                    InitWS();
-                }
+                StopHeartbeat();
+                if (e.Code != 1000 && e.Code != 4004) ReconnectWithDelay();
             };
             WSClient.OnError += (sender, e) => Debug.WriteLine($"Error! {e.Message}");
-
             WSClient.Connect();
             SendPayload();
         }
@@ -86,16 +114,20 @@ namespace Discord.Classes
 
                 switch (opCode)
                 {
-                    case 0: // Dispatch Event
+                    case 0:
                         string eventType = json["t"]?.Value<string>() ?? "";
 
                         switch (eventType)
                         {
                             case "READY":
-                                readyEvent = json["d"].ToString();
                                 HandleUserStatus(json["d"]);
+
+                                var readyData = json["d"];
+                                recipientsData = readyData["relationships"]?.ToString() ?? "";
+
                                 CanCheckData = true;
                                 break;
+
                             case "MESSAGE_CREATE":
                                 // TODO: Implement
                                 break;
@@ -107,10 +139,9 @@ namespace Discord.Classes
 
                     case 10: // Hello from the gateway (Op 10)
                         heartbeatInterval = json["d"]?["heartbeat_interval"]?.Value<int>() ?? 0;
-                        SendHeartbeat();
+                        StartHeartbeat();
                         break;
                     default:
-                        Debug.WriteLine($"Unhandled opcode: {opCode}");
                         break;
                 }
             }
@@ -126,7 +157,6 @@ namespace Discord.Classes
             {
                 foreach (var setting in userSettings)
                 {
-                    string mainId = "0";
                     string rawMainStatus = userSettings["status"]?.Value<string>() ?? "Unknown";
                     string rawCustomStatus = string.Empty;
 
@@ -134,54 +164,32 @@ namespace Discord.Classes
                     {
                         rawCustomStatus = customStatusObj["text"]?.Value<string>() ?? string.Empty;
                     }
-                    UserStatusStore.UpdateStatus(mainId, rawMainStatus, rawCustomStatus);
+                    UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
                 }
             }
 
-            if (messageData["presences"] is JArray presencesArray)
+            foreach (var presence in messageData["presences"] ?? new JArray())
             {
-                foreach (var presence in presencesArray)
+                string userId = presence["user"]?["id"]?.Value<string>();
+                if (userId == null) continue;
+
+                string status = presence["status"]?.Value<string>() ?? "offline";
+                string customStatus = string.Empty;
+
+                var activities = presence["activities"] as JArray;
+                if (activities != null)
                 {
-                    string userId = presence?["user"]?["id"]?.Value<string>() ?? "Unknown";
-                    string rawUsrStatus = presence?["status"]?.Value<string>() ?? "offline";
-                    string rawCustomStatus = string.Empty;
-
-                    if (presence["activities"] is JArray activitiesArray)
+                    foreach (var activity in activities)
                     {
-                        foreach (var activity in activitiesArray)
-                        {
-                            // Playing a game is type 0, check for that before adding it.
-                            if (activity?["type"]?.Value<int>() == 0)
-                            {
-                                rawCustomStatus = $"Playing {activity["name"]?.Value<string>()}";
-                                break;
-                            }
-                            // Streaming something is type 1, check for that before adding it.
-                            if (activity?["type"]?.Value<int>() == 1)
-                            {
-                                rawCustomStatus = $"Playing {activity["details"]?.Value<string>()}";
-                                break;
-                            }
-                            // Listening to music is type 2, check for that before adding it.
-                            if (activity?["type"]?.Value<int>() == 2)
-                            {
-                                rawCustomStatus = $"Listening to {activity["name"]?.Value<string>()}";
-                                break;
-                            }
-                            // Custom status is type 4, check for that before adding it.
-                            if (activity?["type"]?.Value<int>() == 4)
-                            {
-                                rawCustomStatus = activity["state"]?.Value<string>() ?? string.Empty;
-                                break;
-                            }
-                        }
+                        int type = activity["type"]?.Value<int>() ?? -1;
+                        if (type == 0) { customStatus = $"Playing {activity["name"]}"; break; }
+                        if (type == 1) { customStatus = $"Streaming {activity["details"]}"; break; }
+                        if (type == 2) { customStatus = $"Listening to {activity["name"]}"; break; }
+                        if (type == 4) { customStatus = activity["state"]?.Value<string>() ?? string.Empty; break; }
                     }
-                    UserStatusStore.UpdateStatus(userId, rawUsrStatus, rawCustomStatus);
                 }
-            }
-            else
-            {
-                Debug.WriteLine("No presences found in the message data.");
+
+                UserStatusStore.UpdateStatus(userId, status, customStatus);
             }
         }
 
@@ -189,25 +197,9 @@ namespace Discord.Classes
         {
             if (WSClient.ReadyState == WebSocketSharp.WebSocketState.Open)
             {
-                var identifyPayload = new
-                {
-                    op = 2,
-                    d = new
-                    {
-                        token = token,
-                        properties = new
-                        {
-                            os = "Windows",
-                            browser = "Firefox",
-                            device = string.Empty
-                        }
-                    }
-                };
-
                 try
                 {
-                    string payloadJson = JsonConvert.SerializeObject(identifyPayload);
-                    WSClient.Send(payloadJson);
+                    WSClient.Send(identifyPayloadJson);
                 }
                 catch (Exception ex)
                 {
@@ -220,23 +212,20 @@ namespace Discord.Classes
             }
         }
 
-        private async void SendHeartbeat()
+        private async void ReconnectWithDelay(int delayMs = 500)
         {
-            while (WSClient.ReadyState == WebSocketSharp.WebSocketState.Open)
-            {
-                var heartbeatPayload = new { op = 1, d = (object)null };
-
-                try
-                {
-                    string payloadJson = JsonConvert.SerializeObject(heartbeatPayload);
-                    WSClient.Send(payloadJson);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error sending heartbeat: {ex.Message}");
-                }
-                await Task.Delay(heartbeatInterval);
-            }
+            await Task.Delay(delayMs);
+            InitWS();
         }
+
+        private void StartHeartbeat()
+        {
+            // Making sure the old timer has been disposed.
+            StopHeartbeat();
+            if (heartbeatTimer == null)
+                heartbeatTimer = new Timer(_ => WSClient.Send(heartbeatPayloadJson), null, heartbeatInterval, heartbeatInterval);
+        }
+
+        private void StopHeartbeat() => heartbeatTimer?.Dispose();
     }
 }

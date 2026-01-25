@@ -163,7 +163,7 @@ namespace Discord
                 globalName = parsedJson["global_name"]?.ToString() ?? "N/A";
                 username = parsedJson["username"]?.ToString() ?? "N/A";
 
-                using (HttpClient client = new HttpClient())
+                /* using (HttpClient client = new HttpClient())
                 {
                     string skymuServerUri = "http://skymu.app/api/getOnlineUsers";
 
@@ -172,7 +172,7 @@ namespace Discord
 
                     JObject parsedGenJson = JObject.Parse(genResBody);
                     UserCountSkymu = parsedGenJson["online_count"]?.ToString() ?? "N/A";
-                }
+                } */
             }
             catch (Exception ex)
             {
@@ -184,8 +184,8 @@ namespace Discord
                 while (!WebSocket.CanCheckData)
                     await Task.Delay(100);
 
-                string friendList = WebSocket.readyEvent;
-                JArray parsedJson = JArray.Parse(JObject.Parse(friendList)["relationships"].ToString());
+                string friendList = WebSocket.recipientsData;
+                JArray parsedJson = JArray.Parse(friendList);
 
                 foreach (var friend in parsedJson)
                 {

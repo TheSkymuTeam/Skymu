@@ -65,17 +65,11 @@ namespace Discord.Classes
             {
                 string jsonData = JsonConvert.SerializeObject(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                Debug.WriteLine($"[API] Serialized JSON data is {jsonData}");
             }
 
             request.Headers.Add("Accept", "*/*");
             request.Headers.Add("User-Agent", UserAgent);
             request.Headers.Add("X-Super-Properties", XSuperProperties);
-
-            foreach (var header in request.Headers)
-            {
-                Debug.WriteLine($"[API Header] {header.Key}: {string.Join(", ", header.Value)}");
-            }
 
             try
             {
