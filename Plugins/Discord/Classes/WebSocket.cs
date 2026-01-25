@@ -22,6 +22,7 @@ namespace Discord.Classes
         private string gatewayUrl;
         private string token;
         private bool EligibleForNotifs;
+        public bool CanCheckStatus = false;
         private int heartbeatInterval;
         public WebSocketSharp.WebSocket WSClient { get; private set; }
 
@@ -125,6 +126,7 @@ namespace Discord.Classes
                     string userStatus = MapStatus(rawStatus);
                     UserStatusStore.UpdateStatus(userId, userStatus);
                 }
+                CanCheckStatus = true;
             }
             else
             {
@@ -153,7 +155,7 @@ namespace Discord.Classes
                 "dnd" => "Do Not Disturb",
                 "idle" => "Idle",
                 "offline" => "Offline",
-                _ => "No status"
+                _ => "Offline"
             };
         }
 

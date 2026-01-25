@@ -169,11 +169,7 @@ namespace Discord
                     string genResBody = await generateResponse.Content.ReadAsStringAsync();
 
                     JObject parsedGenJson = JObject.Parse(genResBody);
-                    UserCountSkymu = parsedGenJson["online_count"]?.ToString();
-                    if (String.IsNullOrEmpty(UserCountSkymu))
-                    {
-                        UserCountSkymu = "N/A";
-                    }
+                    UserCountSkymu = parsedGenJson["online_count"]?.ToString() ?? "N/A";
                 }
             }
             catch (Exception ex)
@@ -186,6 +182,8 @@ namespace Discord
                 string friendList = await api.SendAPI("users/@me/relationships", HttpMethod.Get, DscToken, null, null, null);
                 JArray parsedJson = JArray.Parse(friendList);
 
+                pluginOOTBStuff ootb = new pluginOOTBStuff();
+
                 foreach (var friend in parsedJson)
                 {
                     BitmapImage avatarImage = null;
@@ -194,20 +192,26 @@ namespace Discord
                     string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
                     string friendAvatarHash = friend["user"]["avatar"]?.ToString();
                     string friendClanTag = "N/A";
+
+                    while (!WebSocket.CanCheckStatus)
+                        await Task.Delay(100);
+
+                    string statusStr = WebSocket.UserStatusStore.GetStatus(friendId);
+                    int friendStatus = ootb.MapStatus(statusStr);
+
+                    Console.WriteLine($"The status for friend {friendGlobalName} is {statusStr}");
+
                     if (friend["user"]["clan"] is JObject clanObject)
                     {
                         friendClanTag = clanObject["tag"]?.ToString() ?? "N/A";
                     }
-
-                    pluginOOTBStuff ootb = new pluginOOTBStuff();
-                    string friendAvatarUri = ootb.GetAvatarUrl(friendId, friendAvatarHash, false, false);
 
                     if (!string.IsNullOrEmpty(friendAvatarHash))
                     {
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(friendGlobalName, string.Empty, UserConnectionStatus.Unknown, avatarImage));
+                    contacts.Add(new ContactData(friendGlobalName, string.Empty, friendStatus, avatarImage));
                 }
             }
             catch (Exception ex)
@@ -215,7 +219,7 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", UserConnectionStatus.Unknown, contacts);
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()
@@ -264,6 +268,18 @@ namespace Discord
             }
 
             return MMUtils.LoadBitmap(cachedFile);
+        }
+
+        public int MapStatus(string statusStr)
+        {
+            return statusStr switch
+            {
+                "Online" => UserConnectionStatus.Online,
+                "Idle" => UserConnectionStatus.Away,
+                "Do Not Disturb" => UserConnectionStatus.DoNotDisturb,
+                "Offline" => UserConnectionStatus.Invisible,
+                _ => UserConnectionStatus.Invisible
+            };
         }
 
         public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
