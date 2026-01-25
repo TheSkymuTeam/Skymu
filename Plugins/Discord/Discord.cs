@@ -179,8 +179,11 @@ namespace Discord
 
             try
             {
-                string friendList = await api.SendAPI("users/@me/relationships", HttpMethod.Get, DscToken, null, null, null);
-                JArray parsedJson = JArray.Parse(friendList);
+                while (!WebSocket.CanCheckData)
+                    await Task.Delay(100);
+
+                string friendList = WebSocket.readyEvent;
+                JArray parsedJson = JArray.Parse(JObject.Parse(friendList)["relationships"].ToString());
 
                 pluginOOTBStuff ootb = new pluginOOTBStuff();
 
@@ -191,27 +194,18 @@ namespace Discord
                     string friendGlobalName = friend["user"]["global_name"]?.ToString() ?? "N/A";
                     string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
                     string friendAvatarHash = friend["user"]["avatar"]?.ToString();
-                    string friendClanTag = "N/A";
-
-                    while (!WebSocket.CanCheckStatus)
-                        await Task.Delay(100);
 
                     string statusStr = WebSocket.UserStatusStore.GetStatus(friendId);
                     int friendStatus = ootb.MapStatus(statusStr);
 
-                    Console.WriteLine($"The status for friend {friendGlobalName} is {statusStr}");
-
-                    if (friend["user"]["clan"] is JObject clanObject)
-                    {
-                        friendClanTag = clanObject["tag"]?.ToString() ?? "N/A";
-                    }
+                    string custStatusStr = WebSocket.UserStatusStore.GetCustomStatus(friendId);
 
                     if (!string.IsNullOrEmpty(friendAvatarHash))
                     {
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(friendGlobalName, string.Empty, friendStatus, avatarImage));
+                    contacts.Add(new ContactData(string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName, custStatusStr, friendStatus, avatarImage));
                 }
             }
             catch (Exception ex)
@@ -274,10 +268,10 @@ namespace Discord
         {
             return statusStr switch
             {
-                "Online" => UserConnectionStatus.Online,
-                "Idle" => UserConnectionStatus.Away,
-                "Do Not Disturb" => UserConnectionStatus.DoNotDisturb,
-                "Offline" => UserConnectionStatus.Invisible,
+                "online" => UserConnectionStatus.Online,
+                "idle" => UserConnectionStatus.Away,
+                "dnd" => UserConnectionStatus.DoNotDisturb,
+                "offline" => UserConnectionStatus.Invisible,
                 _ => UserConnectionStatus.Invisible
             };
         }

@@ -13,6 +13,7 @@ using System.Security.Authentication;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace Discord.Classes
 {
@@ -21,9 +22,9 @@ namespace Discord.Classes
         private const SslProtocols Tls12 = SslProtocols.Tls12;
         private string gatewayUrl;
         private string token;
-        private bool EligibleForNotifs;
-        public bool CanCheckStatus = false;
+        public bool CanCheckData = false;
         private int heartbeatInterval;
+        public string readyEvent;
         public WebSocketSharp.WebSocket WSClient { get; private set; }
 
         public WebSocket()
@@ -34,14 +35,27 @@ namespace Discord.Classes
             InitWS();
         }
 
+        public class StatusData
+        {
+            public string Status { get; set; }
+            public string CustomStatus { get; set; }
+        }
+
         public static class UserStatusStore
         {
-            private static readonly ConcurrentDictionary<string, string> _statuses = new();
-            public static void UpdateStatus(string userId, string status) => _statuses[userId] = status;
-            public static string GetStatus(string userId) => _statuses.TryGetValue(userId, out var status) ? status : "Offline";
+            private static readonly ConcurrentDictionary<string, StatusData> _statuses = new();
+            public static void UpdateStatus(string userId, string status, string customStatus = null)
+            {
+                _statuses[userId] = new StatusData { Status = status, CustomStatus = customStatus };
+            }
+            public static string GetStatus(string userId) =>
+                _statuses.TryGetValue(userId, out var data) ? data.Status : "Offline";
+            public static string GetCustomStatus(string userId) =>
+                _statuses.TryGetValue(userId, out var data) ? data.CustomStatus : null;
             public static bool ContainsUser(string userId) => _statuses.ContainsKey(userId);
             public static void Clear() => _statuses.Clear();
         }
+
 
         public void InitWS()
         {
@@ -78,7 +92,9 @@ namespace Discord.Classes
                         switch (eventType)
                         {
                             case "READY":
+                                readyEvent = json["d"].ToString();
                                 HandleUserStatus(json["d"]);
+                                CanCheckData = true;
                                 break;
                             case "MESSAGE_CREATE":
                                 // TODO: Implement
@@ -111,52 +127,62 @@ namespace Discord.Classes
                 foreach (var setting in userSettings)
                 {
                     string mainId = "0";
-                    string rawStatusMain = userSettings["status"]?.Value<string>() ?? "Unknown";
-                    string userStatusMain = MapStatus(rawStatusMain);
-                    UserStatusStore.UpdateStatus(mainId, userStatusMain);
-                    NotifHandler();
+                    string rawMainStatus = userSettings["status"]?.Value<string>() ?? "Unknown";
+                    string rawCustomStatus = string.Empty;
+
+                    if (userSettings["custom_status"] is JObject customStatusObj)
+                    {
+                        rawCustomStatus = customStatusObj["text"]?.Value<string>() ?? string.Empty;
+                    }
+                    UserStatusStore.UpdateStatus(mainId, rawMainStatus, rawCustomStatus);
                 }
             }
+
             if (messageData["presences"] is JArray presencesArray)
             {
                 foreach (var presence in presencesArray)
                 {
                     string userId = presence?["user"]?["id"]?.Value<string>() ?? "Unknown";
-                    string rawStatus = presence?["status"]?.Value<string>() ?? "offline";
-                    string userStatus = MapStatus(rawStatus);
-                    UserStatusStore.UpdateStatus(userId, userStatus);
+                    string rawUsrStatus = presence?["status"]?.Value<string>() ?? "offline";
+                    string rawCustomStatus = string.Empty;
+
+                    if (presence["activities"] is JArray activitiesArray)
+                    {
+                        foreach (var activity in activitiesArray)
+                        {
+                            // Playing a game is type 0, check for that before adding it.
+                            if (activity?["type"]?.Value<int>() == 0)
+                            {
+                                rawCustomStatus = $"Playing {activity["name"]?.Value<string>()}";
+                                break;
+                            }
+                            // Streaming something is type 1, check for that before adding it.
+                            if (activity?["type"]?.Value<int>() == 1)
+                            {
+                                rawCustomStatus = $"Playing {activity["details"]?.Value<string>()}";
+                                break;
+                            }
+                            // Listening to music is type 2, check for that before adding it.
+                            if (activity?["type"]?.Value<int>() == 2)
+                            {
+                                rawCustomStatus = $"Listening to {activity["name"]?.Value<string>()}";
+                                break;
+                            }
+                            // Custom status is type 4, check for that before adding it.
+                            if (activity?["type"]?.Value<int>() == 4)
+                            {
+                                rawCustomStatus = activity["state"]?.Value<string>() ?? string.Empty;
+                                break;
+                            }
+                        }
+                    }
+                    UserStatusStore.UpdateStatus(userId, rawUsrStatus, rawCustomStatus);
                 }
-                CanCheckStatus = true;
             }
             else
             {
                 Debug.WriteLine("No presences found in the message data.");
             }
-        }
-
-        private void NotifHandler()
-        {
-            string statusCheck = UserStatusStore.GetStatus("0");
-            if (statusCheck == "Online")
-            {
-                EligibleForNotifs = true;
-            }
-            else
-            {
-                EligibleForNotifs = false;
-            }
-        }
-
-        private string MapStatus(string rawStatus)
-        {
-            return rawStatus.ToLower() switch
-            {
-                "online" => "Online",
-                "dnd" => "Do Not Disturb",
-                "idle" => "Idle",
-                "offline" => "Offline",
-                _ => "Offline"
-            };
         }
 
         private void SendPayload()
