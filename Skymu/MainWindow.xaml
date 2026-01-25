@@ -259,7 +259,6 @@ Width="14" Grid.Row="1"/>
                                 HoverIndex="1"
                                 PressedIndex="2"
                                 HorizontalAlignment="Stretch" 
-                                Text="thegamingkart"
                                 TextStartPositionX="43"
                                 TextFont="Arial"
                                 TextWeight="Bold"

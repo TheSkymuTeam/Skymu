@@ -167,7 +167,11 @@ namespace Discord
                     string genResBody = await generateResponse.Content.ReadAsStringAsync();
 
                     JObject parsedGenJson = JObject.Parse(genResBody);
-                    UserCountSkymu = parsedGenJson["online_count"]?.ToString() ?? "N/A";
+                    UserCountSkymu = parsedGenJson["online_count"]?.ToString();
+                    if (String.IsNullOrEmpty(UserCountSkymu))
+                    {
+                        UserCountSkymu = "N/A";
+                    }
                 }
             }
             catch (Exception ex)
@@ -202,7 +206,7 @@ namespace Discord
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(friendGlobalName, string.Empty, UserConnectionStatus.Online, avatarImage));
+                    contacts.Add(new ContactData(friendGlobalName, string.Empty, UserConnectionStatus.Unknown, avatarImage));
                 }
             }
             catch (Exception ex)
@@ -210,7 +214,7 @@ namespace Discord
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
 
-            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0,00 - No subscription", contacts);
+            return new SidebarData(globalName, $"{UserCountSkymu} online users", "$0.00 - No subscription", contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()

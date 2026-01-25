@@ -43,6 +43,7 @@ namespace MiddleMan
         public const int Online = 2;
         public const int Away = 3;
         public const int Offline = 19;
+        public const int Unknown = 0;
     }
 
     public class SidebarData
@@ -50,13 +51,15 @@ namespace MiddleMan
         public string Username { get; set; }
         public string SkypeGlobalUserCountText { get; set; }
         public string SkypeCreditText { get; set; }
+        public int ConnectionStatus { get; set; }
         public ObservableCollection<ContactData> ContactList { get; set; }
-        public SidebarData(string username, string skypeGlobalUserCountText, string skypeCreditText, ObservableCollection<ContactData> contactList)
+        public SidebarData(string username, string skypeGlobalUserCountText, string skypeCreditText, int connectionStatus, ObservableCollection<ContactData> contactList)
         {
             Username = username;
             SkypeGlobalUserCountText = skypeGlobalUserCountText;
             SkypeCreditText = skypeCreditText;
             ContactList = contactList;
+            ConnectionStatus = connectionStatus;
         }
     }
 
@@ -66,9 +69,6 @@ namespace MiddleMan
         public string Status { get; set; }
         public int ConnectionStatus { get; set; }
         public BitmapImage ProfilePicture { get; set; }
-        public ContactData()
-        {
-        }
         public ContactData(string username, string status, int connectionStatus, BitmapImage profilePicture)
         {
             Username = username;
