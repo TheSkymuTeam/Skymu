@@ -25,14 +25,14 @@
             <Setter Property="Width" Value="36" />
         </Style>
         <DataTemplate x:Key="ContactItemTemplate">
-            <Grid Margin="2,4,0,4" Height="33">
+            <Grid Margin="2,4,0,4" Height="32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
                     <RowDefinition Height="14"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="33"/>
+                    <ColumnDefinition Width="34"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -40,7 +40,7 @@
 
                 <!-- Profile Picture -->
 
-                <Grid Grid.Column="0" Grid.RowSpan="3" Width="33" Height="33">
+                <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
                     <!-- Shadow container -->
                     <Border
         Background="Transparent"
@@ -101,9 +101,10 @@ Width="14" Grid.Row="1"/>
                                FontFamily="Tahoma"
                            TextTrimming="CharacterEllipsis"/>
                 <TextBlock x:Name="statusText" Text="{Binding Status}" 
-                               Grid.Column="2" Grid.Row="2" Margin="10,0,0,0"
+                               Grid.Column="2" Grid.Row="2" Margin="10,1,0,0"
                            FontSize="11"
     FontFamily="Tahoma"
+                           Background="Transparent"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
 
@@ -118,6 +119,22 @@ Width="14" Grid.Row="1"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <Style x:Key="NoInsetListBox" TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <ScrollViewer x:Name="ScrollViewer"
+                              Focusable="false"
+                              Padding="0"
+                              Margin="0">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -448,6 +465,7 @@ Cursor="Hand"
                                 <ListBox x:Name="ContactsList"  
     Grid.Row="2"        
     BorderThickness="0"
+    Style="{StaticResource NoInsetListBox}"
     ItemTemplate="{StaticResource ContactItemTemplate}"
     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
     SelectionChanged="ContactList_SelectionChanged"
