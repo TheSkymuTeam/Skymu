@@ -102,16 +102,16 @@ namespace MiddleMan
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
-        string Name { get; } // Name of the protocol.
-        string InternalName {  get; }
-        string TextUsername { get; } // the text to display above the Username field (e.g. "Username", "Email", "Phone number")
-        AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard
+        string Name { get; } // Name of the protocol. (e.g. Discord)
+        string InternalName {  get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
+        string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
+        AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard (Standard is most commonly used)
         Task<LoginResult> LoginMainStep(string username, string password,
-            bool tryLoginWithSavedCredentials); // login step 1
-        Task<LoginResult> LoginOptStep(string code); // optional login step 2
-        Task<bool> SendMessage(string user, string text); // returns true if success
-        Task<SidebarData> FetchSidebarData(); // fetches sidebar data (contacts list, username, text placeholders, etc.)
-        Task<LoginResult> TryAutoLogin(); // tries to log in with saved tokens/credentials
+            bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
+        Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
+        Task<bool> SendMessage(string user, string text); // Sends a message, returns true if it was successful.
+        Task<SidebarData> FetchSidebarData(); // Fetches sidebar data (contacts list, username, text placeholders, etc.)
+        Task<LoginResult> TryAutoLogin(); // Tries to log in with saved tokens/credentials
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
