@@ -61,7 +61,7 @@
                 </Grid>
 
                 <!-- Status Icon -->
-                <local:ThreeSliceControl
+                <local:SliceControl
 Grid.Column="1"
 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus_Small.png"
 ElementCount="21"
@@ -249,14 +249,14 @@ Width="14" Grid.Row="1"/>
                                 <RowDefinition Height="32" />
 
                             </Grid.RowDefinitions>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 Grid.Row="0"
                                 x:Name="StatusBox"
                                 Source="/ResourcesLight/MainSidebar/ms_Status_Top.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
-                                HoverIndex="1"
+                                HoverIndex="-1"
                                 PressedIndex="2"
                                 HorizontalAlignment="Stretch" 
                                 TextStartPositionX="43"
@@ -264,7 +264,7 @@ Width="14" Grid.Row="1"/>
                                 TextWeight="Bold"
                                 TextSize="13"
                                 TextColor="#333333"/>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 Grid.Row="0"
                                 x:Name="StatusIcon"
                                 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus.png"
@@ -277,19 +277,54 @@ Width="14" Grid.Row="1"/>
                                 PressedIndex="-1"
                                 Slice="false"
                                 Width="16"/>
+                            <Image Grid.Row="0"
+       Width="16"
+       Height="16"
+       Cursor="Hand"
+       HorizontalAlignment="Right"
+       Margin="0,0,11,0"
+       IsHitTestVisible="True">
+
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <!-- Default -->
+                                        <Setter Property="Source"
+                    Value="ResourcesLight/MainSidebar/ms_HomeButton.png"/>
+
+                                        <Style.Triggers>
+
+                                            <!-- Hover -->
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Source"
+                            Value="ResourcesLight/MainSidebar/ms_HomeButtonActive.png"/>
+                                            </Trigger>
+
+                                            <!-- Pressed -->
+                                            <Trigger Property="IsMouseCaptured" Value="True">
+                                                <Setter Property="Source"
+                            Value="ResourcesLight/MainSidebar/ms_HomeButtonActive.png"/>
+                                            </Trigger>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+
                             <Image Grid.Row="0" Source="ResourcesLight/MainSidebar/ms_Status_DropArrow.png"
                                    Width="12"
                                    Height="16"
+                                   IsHitTestVisible="True"
+Cursor="Hand"
                                    HorizontalAlignment="Left"
                                    Margin="25,0,0,0"/>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 x:Name="SkypeCreditBox"
                                 Grid.Row="1"
                                 Source="/ResourcesLight/MainSidebar/ms_Status_Bottom.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
-                                HoverIndex="1"
+                                HoverIndex="-1"
                                 PressedIndex="2"
                                 Text="$ 0.00 - No subscription"
                                 TextStartPositionX="34"
@@ -308,7 +343,7 @@ Width="14" Grid.Row="1"/>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 x:Name="btnContacts"
                                 Grid.Column="0"
                                 Source="/ResourcesLight/MainSidebar/ms_Contacts.png"
@@ -325,7 +360,7 @@ Width="14" Grid.Row="1"/>
                                 TextColor="#333333"
 
                                 HorizontalAlignment="Stretch" />
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 x:Name="btnRecents"
                                 Grid.Column="1"
                                 Source="/ResourcesLight/MainSidebar/ms_Recents.png"
@@ -355,7 +390,7 @@ Width="14" Grid.Row="1"/>
                                     <RowDefinition Height="32" />
                                     <RowDefinition Height="1" />
                                 </Grid.RowDefinitions>
-                                <local:ThreeSliceControl
+                                <local:SliceControl
                                     Grid.Row="0"
                                     Source="/ResourcesLight/MainSidebar/ms_SearchBox.png"
                                     ElementCount="2"
@@ -377,16 +412,34 @@ Width="14" Grid.Row="1"/>
          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-         mc:Ignorable="d">
+         mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                             <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="ItemBorder" Background="Transparent">
+                                                            <ContentPresenter/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="ItemBorder" Property="Background">
+                                                                    <Setter.Value>
+                                                                        <ImageBrush ImageSource="/ResourcesLight/MainSidebar/ms_ContactListBgSelected.png" Stretch="Fill"/>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
                                 <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
-                                <local:ThreeSliceControl
+                                <local:SliceControl
                                     Grid.Row="5"
                                     Source="/ResourcesLight/MainSidebar/ms_CallPhones.png"
                                     ElementCount="5"
@@ -436,14 +489,14 @@ Width="14" Grid.Row="1"/>
                                 <ColumnDefinition Width="140" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                             Grid.Column="0"
 Source="/ResourcesLight/ChatWindow/blank-left-button.png"
 ElementCount="5"
  x:Name="MainPageButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
-HoverIndex="1"
+HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
 Text="Skype Home"                                
@@ -457,14 +510,14 @@ HorizontalAlignment="Stretch" />
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                             Grid.Column="1"
 Source="/ResourcesLight/ChatWindow/blank-square-button.png"
 ElementCount="5"
  x:Name="ProfileButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
-HoverIndex="1"
+HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
 Text="Profile"                                
@@ -478,14 +531,14 @@ HorizontalAlignment="Stretch" />
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                             Grid.Column="2"
 Source="/ResourcesLight/ChatWindow/blank-square-button.png"
 ElementCount="5"
  x:Name="FeedbackButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
-HoverIndex="1"
+HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
 Text="Give feedback"                                
@@ -499,7 +552,7 @@ HorizontalAlignment="Stretch" />
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
-                            <local:ThreeSliceControl
+                            <local:SliceControl
                                 Grid.Column="3"
     Source="/ResourcesLight/ChatWindow/blank-right-button.png"
     ElementCount="5"
