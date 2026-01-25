@@ -25,7 +25,7 @@
             <Setter Property="Width" Value="36" />
         </Style>
         <DataTemplate x:Key="ContactItemTemplate">
-            <Grid Margin="2,2,0,5" Height="32">
+            <Grid Cursor="Hand" Margin="2,2,0,5" Height="32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
                     <RowDefinition Height="14"/>
@@ -346,6 +346,7 @@ Cursor="Hand"
                             <local:SliceControl
                                 x:Name="btnContacts"
                                 Grid.Column="0"
+                                Cursor="Hand"
                                 Source="/ResourcesLight/MainSidebar/ms_Contacts.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
@@ -363,6 +364,7 @@ Cursor="Hand"
                             <local:SliceControl
                                 x:Name="btnRecents"
                                 Grid.Column="1"
+                                Cursor="Hand"
                                 Source="/ResourcesLight/MainSidebar/ms_Recents.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
@@ -445,6 +447,7 @@ Cursor="Hand"
                                     ElementCount="5"
                                     StackDirection="Vertical"
                                     DefaultIndex="0"
+                                    Cursor="Hand"
                                     HoverIndex="1"
                                     PressedIndex="2"
                                     Text="Call phones"
@@ -496,6 +499,7 @@ ElementCount="5"
  x:Name="MainPageButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
+                                Cursor="Hand"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
@@ -517,6 +521,7 @@ ElementCount="5"
  x:Name="ProfileButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
+                                Cursor="Hand"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
@@ -539,6 +544,7 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="-1"
+                                Cursor="Hand"
 PressedIndex="2"
 TextStartPositionX="31"
 Text="Give feedback"                                

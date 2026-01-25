@@ -111,8 +111,8 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Classes &amp; XAML\Tray.cs" />
-    <Compile Include="ThreeSliceControl.xaml.cs">
-      <DependentUpon>ThreeSliceControl.xaml</DependentUpon>
+    <Compile Include="SliceControl.xaml.cs">
+      <DependentUpon>SliceControl.xaml</DependentUpon>
     </Compile>
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
@@ -139,7 +139,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ThreeSliceControl.xaml">
+    <Page Include="SliceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -315,6 +315,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\ChatWindow\info_pressed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="UniversalResources\Animations\LoginCircler.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_ContactListBgSelected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_HomeButton.png" />
+    <Resource Include="ResourcesLight\MainSidebar\ms_HomeButtonActive.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

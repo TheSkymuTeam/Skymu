@@ -9,14 +9,15 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using MiddleMan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using MiddleMan;
 
 namespace Skymu
 {
@@ -156,8 +157,10 @@ namespace Skymu
         }
 
         private async void Login_ContentRendered(object sender, EventArgs e)
-        {           
-            LoginResult lr = await Universal.Plugin.TryAutoLogin();
+        {
+            LoginResult lr = await Task.Run(async () =>
+        await Universal.Plugin.TryAutoLogin()
+    );
             if (lr == LoginResult.Success)
             {
                 InitiateMainWindow();
@@ -179,11 +182,13 @@ namespace Skymu
             if (anim)
             {
                 signInControls.Visibility = Visibility.Collapsed;
+                throbber.Visibility = Visibility.Visible;
                 header.Text = "Signing in";
             }
             else
             {
                 signInControls.Visibility = Visibility.Visible;
+                throbber.Visibility = Visibility.Collapsed;
                 header.Text = "Authentication failed";
             }                           
         }

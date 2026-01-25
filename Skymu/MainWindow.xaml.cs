@@ -42,9 +42,6 @@ namespace Skymu
 
             SetClickable(close, minimize, maximize, split, tbli);
 
-            btnContacts.SetState(ButtonVisualState.Pressed);
-            MainPageButton.SetState(ButtonVisualState.Pressed);
-
             if (!UI.nativeBorder)
             {
                 this.WindowStyle = WindowStyle.None;
@@ -68,6 +65,8 @@ namespace Skymu
 
             Tray.PushIcon("online", "Skype (Online)");
             PopulateSidebar();
+            btnContacts.SetState(ButtonVisualState.Pressed);
+            MainPageButton.SetState(ButtonVisualState.Pressed);
         }
 
         public static readonly DependencyProperty WindowTitleProperty =
@@ -270,6 +269,7 @@ typeof(MainWindow));
 
         private bool isDragging = false;
         private Point dragStart;
+        private UIElement capturedElement = null; // Store reference to the captured element
 
         private void SkypeSplitter_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -278,12 +278,9 @@ typeof(MainWindow));
                 Point current = e.GetPosition(this);
                 Vector delta = current - dragStart;
                 ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
-
                 int newWidth = (int)(sidebarCol.Width.Value + delta.X);
                 if (newWidth < 0) newWidth = 0; // optional minimum width
-
                 sidebarCol.Width = new GridLength(newWidth); // apply new width
-
                 dragStart = current; // update drag start
             }
         }
@@ -292,11 +289,29 @@ typeof(MainWindow));
         {
             isDragging = true;
             dragStart = e.GetPosition(this);
+            capturedElement = sender as UIElement; // Store the element reference
+
+            if (capturedElement != null)
+            {
+                capturedElement.CaptureMouse();
+                e.Handled = true;
+            }
         }
 
         private void MouseRelease(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            isDragging = false;
+            if (isDragging)
+            {
+                isDragging = false;
+
+                // Use the stored reference instead of sender
+                if (capturedElement != null && capturedElement.IsMouseCaptured)
+                {
+                    capturedElement.ReleaseMouseCapture();
+                }
+                capturedElement = null; // Clean up the reference
+                e.Handled = true;
+            }
         }
 
         private async void PopulateSidebar()

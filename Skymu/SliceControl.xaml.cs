@@ -9,11 +9,13 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Skymu
 {
@@ -31,11 +33,13 @@ namespace Skymu
         Disabled
     }
 
-    public partial class ThreeSliceControl : UserControl
+    public partial class SliceControl : UserControl
     {
         private ButtonVisualState _visualState = ButtonVisualState.Default;
+        private DispatcherTimer _animationTimer;
+        private int _currentAnimationFrame = 0;
 
-        public ThreeSliceControl()
+        public SliceControl()
         {
             InitializeComponent();
 
@@ -45,6 +49,10 @@ namespace Skymu
             MouseLeftButtonDown += OnMouseDown;
             MouseLeftButtonUp += OnMouseUp;
             IsEnabledChanged += OnEnabledChanged;
+
+            // Animation timer setup
+            _animationTimer = new DispatcherTimer();
+            _animationTimer.Tick += OnAnimationTick;
         }
 
         public ImageSource Source
@@ -57,7 +65,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "Source",
                 typeof(ImageSource),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(null, OnAnyPropertyChanged));
 
         public int ElementCount
@@ -70,7 +78,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "ElementCount",
                 typeof(int),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(1, OnAnyPropertyChanged));
 
         public SpriteStackDirection StackDirection
@@ -83,7 +91,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "StackDirection",
                 typeof(SpriteStackDirection),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(SpriteStackDirection.Vertical, OnAnyPropertyChanged));
 
         public int DefaultIndex
@@ -96,7 +104,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "DefaultIndex",
                 typeof(int),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(0, OnAnyPropertyChanged));
 
         public int DisabledIndex
@@ -109,7 +117,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "DisabledIndex",
                 typeof(int),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(0, OnAnyPropertyChanged));
 
         public int HoverIndex
@@ -122,7 +130,7 @@ namespace Skymu
             DependencyProperty.Register(
                 "HoverIndex",
                 typeof(int),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(0, OnAnyPropertyChanged));
 
         public int PressedIndex
@@ -135,8 +143,34 @@ namespace Skymu
             DependencyProperty.Register(
                 "PressedIndex",
                 typeof(int),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(0, OnAnyPropertyChanged));
+
+        public bool IsAnimation
+        {
+            get { return (bool)GetValue(IsAnimationProperty); }
+            set { SetValue(IsAnimationProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAnimationProperty =
+            DependencyProperty.Register(
+                nameof(IsAnimation),
+                typeof(bool),
+                typeof(SliceControl),
+                new PropertyMetadata(false, OnAnimationPropertyChanged));
+
+        public double AnimationFps
+        {
+            get { return (double)GetValue(AnimationFpsProperty); }
+            set { SetValue(AnimationFpsProperty, value); }
+        }
+
+        public static readonly DependencyProperty AnimationFpsProperty =
+            DependencyProperty.Register(
+                nameof(AnimationFps),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(10.0, OnAnimationPropertyChanged));
 
         public string Text
         {
@@ -148,23 +182,20 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(Text),
                 typeof(string),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(string.Empty, OnTextChanged));
 
         public FontFamily TextFont
         {
             get { return (FontFamily)GetValue(TextFontProperty); }
             set { SetValue(TextFontProperty, value); }
-
-
         }
-
 
         public static readonly DependencyProperty TextFontProperty =
             DependencyProperty.Register(
                 nameof(TextFont),
                 typeof(FontFamily),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(SystemFonts.MessageFontFamily, OnTextChanged));
 
         public FontWeight TextWeight
@@ -177,7 +208,7 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(TextWeight),
                 typeof(FontWeight),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(FontWeights.Normal, OnTextChanged));
 
         public FontStyle TextStyle
@@ -190,7 +221,7 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(TextStyle),
                 typeof(FontStyle),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(FontStyles.Normal, OnTextChanged));
 
         public double TextSize
@@ -203,7 +234,7 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(TextSize),
                 typeof(double),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(12.0, OnTextChanged));
 
         public Brush TextColor
@@ -216,7 +247,7 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(TextColor),
                 typeof(Brush),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(Brushes.Black, OnTextChanged));
 
         public double TextStartPositionX
@@ -229,7 +260,7 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(TextStartPositionX),
                 typeof(double),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(0.0, OnTextChanged));
 
         public bool Slice
@@ -242,10 +273,10 @@ namespace Skymu
             DependencyProperty.Register(
                 nameof(Slice),
                 typeof(bool),
-                typeof(ThreeSliceControl),
+                typeof(SliceControl),
                 new PropertyMetadata(true, OnAnyPropertyChanged));
 
-        private void OnMouseEnter(object sender, MouseEventArgs e) // set hover index to -1 if you don't want hover effect
+        private void OnMouseEnter(object sender, MouseEventArgs e)
         {
             if (HoverIndex != -1)
             {
@@ -253,7 +284,7 @@ namespace Skymu
             }
         }
 
-        private void OnMouseLeave(object sender, MouseEventArgs e) 
+        private void OnMouseLeave(object sender, MouseEventArgs e)
         {
             if (HoverIndex != -1)
             {
@@ -263,15 +294,21 @@ namespace Skymu
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            SetState(ButtonVisualState.Pressed);
+            if (PressedIndex != -1)
+            {
+                SetState(ButtonVisualState.Pressed);
+            }
         }
 
         private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (IsMouseOver)
-                SetState(ButtonVisualState.Hover);
-            else
-                SetState(ButtonVisualState.Default);
+            if (PressedIndex != -1)
+            {
+                if (IsMouseOver && HoverIndex != -1)
+                    SetState(ButtonVisualState.Hover);
+                else
+                    SetState(ButtonVisualState.Default);
+            }
         }
 
         private void OnEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -291,17 +328,53 @@ namespace Skymu
             UpdateSlices();
         }
 
+        private static void OnAnimationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SliceControl)d).UpdateAnimation();
+        }
+
+        private void UpdateAnimation()
+        {
+            if (IsAnimation)
+            {
+                if (AnimationFps > 0)
+                {
+                    _animationTimer.Interval = TimeSpan.FromSeconds(1.0 / AnimationFps);
+                    _currentAnimationFrame = 0;
+                    _animationTimer.Start();
+                }
+            }
+            else
+            {
+                _animationTimer.Stop();
+                UpdateSlices();
+            }
+        }
+
+        private void OnAnimationTick(object sender, EventArgs e)
+        {
+            _currentAnimationFrame++;
+            if (_currentAnimationFrame >= ElementCount)
+            {
+                _currentAnimationFrame = 0;
+            }
+            UpdateSlices();
+        }
+
         private static void OnAnyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ThreeSliceControl)d).UpdateSlices();
+            ((SliceControl)d).UpdateSlices();
         }
 
         private int GetCurrentIndex()
         {
-            if (_visualState == ButtonVisualState.Hover)
+            if (IsAnimation)
+                return _currentAnimationFrame;
+
+            if (_visualState == ButtonVisualState.Hover && HoverIndex != -1)
                 return HoverIndex;
 
-            if (_visualState == ButtonVisualState.Pressed)
+            if (_visualState == ButtonVisualState.Pressed && PressedIndex != -1)
                 return PressedIndex;
 
             if (_visualState == ButtonVisualState.Disabled)
@@ -310,7 +383,7 @@ namespace Skymu
             return DefaultIndex;
         }
 
-        private Rect GetStateViewbox() // code works by changing the viewbox, not cropping the image
+        private Rect GetStateViewbox()
         {
             if (Source == null || ElementCount <= 0)
                 return new Rect(0, 0, 1, 1);
@@ -371,7 +444,7 @@ namespace Skymu
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ThreeSliceControl)d).UpdateText();
+            ((SliceControl)d).UpdateText();
         }
 
         private void UpdateText()
@@ -409,13 +482,11 @@ namespace Skymu
             double elementHeight = GetElementHeight();
             double totalWidth = this.Width;
 
-            // fixed widths for left/right slices (pixels)
-            double leftWidth = 32;   // or whatever your slice should always be
+            double leftWidth = 32;
             double rightWidth = 32;
 
-            // middle fills remaining space
             double middleWidth = totalWidth - leftWidth - rightWidth;
-            if (middleWidth < 0) middleWidth = 0; // safeguard for very small control
+            if (middleWidth < 0) middleWidth = 0;
 
             LeftSlice.Width = leftWidth;
             MiddleSlice.Width = middleWidth;
@@ -425,7 +496,6 @@ namespace Skymu
             MiddleSlice.Height = elementHeight;
             RightSlice.Height = elementHeight;
 
-            // The brush viewboxes remain relative to the original image
             Rect stateBox = GetStateViewbox();
             LeftSlice.Fill = CreateBrush(stateBox, new Rect(0.0, 0, leftWidth / bmp.PixelWidth, 1));
             MiddleSlice.Fill = CreateBrush(stateBox, new Rect(leftWidth / bmp.PixelWidth, 0, 1.0 - (leftWidth + rightWidth) / bmp.PixelWidth, 1));

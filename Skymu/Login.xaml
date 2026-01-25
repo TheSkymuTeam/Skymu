@@ -26,6 +26,23 @@
         <TextBlock x:Name="header" Text="Welcome to Skype." Foreground="{StaticResource SkBlue}"
                    Height="32" HorizontalAlignment="Center" Margin="0,44,0,0"
                    VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20" />
+        <local:SliceControl
+    x:Name="throbber"
+            Visibility="Collapsed"
+    Grid.Column="1"
+    Source="/UniversalResources/Animations/LoginCircler.png"
+    ElementCount="36"
+    StackDirection="Vertical"
+    DefaultIndex="0"
+    HoverIndex="-1"
+    PressedIndex="-1"
+    TextWeight="Bold"
+    Slice="False"
+            IsAnimation="True"
+            AnimationFps="60"
+    HorizontalAlignment="Center" 
+            Margin="0,0,0,48"
+            Width="128"/>
         <Grid x:Name="signInControls">
         <TextBlock x:Name="skypenameText" Text="Username" Height="28" HorizontalAlignment="Left"
                    Margin="136,140,0,0" VerticalAlignment="Top"
@@ -67,9 +84,10 @@
                            TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Text="Sign in"
                            VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
                            Foreground="#FF393A48" />
-                <local:ThreeSliceControl
+                <local:SliceControl
                     x:Name="LoginButton"
                     Grid.Row="0"
+                    Cursor="Hand"
                     Source="/ResourcesLight/Buttons/plain.png"
                     ElementCount="5"
                     StackDirection="Vertical"
