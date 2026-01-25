@@ -471,7 +471,6 @@ Cursor="Hand"
                                                                         <ImageBrush ImageSource="/ResourcesLight/MainSidebar/ms_ContactListBgSelected.png" Stretch="Fill"/>
                                                                     </Setter.Value>
                                                                 </Setter>
-                                                             
                                                             </Trigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
@@ -522,9 +521,58 @@ Cursor="Hand"
                     <Grid Grid.Column="2" x:Name="chatWindowArea">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="32" /> 
-                            <RowDefinition Height="*" />
+                            <RowDefinition x:Name="TopbarWindowRow" Height="180" />
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
+                        <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="80"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <local:SliceControl
+                            Grid.Column="0"
+Source="/ResourcesLight/ChatWindow/blank-left-button.png"
+ElementCount="5"
+ x:Name="chatHeader"                               
+StackDirection="Vertical"
+DefaultIndex="0"
+                          
+HoverIndex="-1"
+PressedIndex="-1"
+TextStartPositionX="13"
+Text="thegamingkart"                                
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="#333333"
+HorizontalAlignment="Stretch" />
+                            <local:SliceControl
+                            Grid.Column="1"
+Source="/ResourcesLight/ChatWindow/blank-right-button.png"
+ElementCount="5"
+ x:Name="ChatCloseButton"
+MouseLeftButtonUp="ChatWindow_Close"
+StackDirection="Vertical"
+DefaultIndex="0"
+                          
+HoverIndex="-1"
+PressedIndex="2"
+TextStartPositionX="30"                          
+Text="Close"                                
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="#333333"
+HorizontalAlignment="Stretch" />
+
+                            <Image Grid.Column="1" Source="/ResourcesLight/ChatWindow/icon-close.png"
+Width="16"
+Height="16"
+IsHitTestVisible="False"
+HorizontalAlignment="Left"
+Margin="8,0,0,0"/>
+
+                        </Grid>
+                        <Grid Grid.Row="0" x:Name="HomeTopbar" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="128" />
                                 <ColumnDefinition Width="90" />

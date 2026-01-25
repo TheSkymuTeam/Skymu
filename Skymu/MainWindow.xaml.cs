@@ -15,9 +15,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -67,7 +69,7 @@ namespace Skymu
             Tray.PushIcon("online", "Skype (Online)");
             PopulateSidebar();
             btnContacts.SetState(ButtonVisualState.Pressed);
-            MainPageButton.SetState(ButtonVisualState.Pressed);
+            SetWindow(WindowType.Home);
         }
 
         public static readonly DependencyProperty WindowTitleProperty =
@@ -270,12 +272,40 @@ typeof(MainWindow));
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListBox listBox = sender as ListBox;
-
-            if (listBox.SelectedItem != null)
+            if (((ListBox)sender).SelectedItem != null)
             {
-                var selectedContact = listBox.SelectedItem; // This is your data object
+                SetWindow(WindowType.Chat);
+            }
+        }
 
+        private void ChatWindow_Close(object sender, MouseButtonEventArgs e)
+        {
+            SetWindow(WindowType.Home);
+        }
+
+        private enum WindowType
+        {
+            Home,
+            Chat
+        }
+
+        private WindowType currentWindow;
+        private void SetWindow(WindowType type)
+        {
+            if (type == WindowType.Home && currentWindow != WindowType.Home)
+            {
+                HomeTopbar.Visibility = Visibility.Visible;
+                ChatTopbar.Visibility = Visibility.Collapsed;
+                TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                MainPageButton.SetState(ButtonVisualState.Pressed);
+                currentWindow = WindowType.Home;
+            }
+            else if (type == WindowType.Chat && currentWindow != WindowType.Chat)
+            {
+                HomeTopbar.Visibility = Visibility.Collapsed;
+                ChatTopbar.Visibility = Visibility.Visible;
+                TopbarWindowRow.Height = new GridLength(180);
+                currentWindow = WindowType.Chat;
             }
         }
 
