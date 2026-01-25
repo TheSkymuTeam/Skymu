@@ -172,6 +172,22 @@ namespace MiddleMan
             }
         }
 
+        public static async Task StatusPingOnSkymuAPI(bool onlineState)
+        {
+            string skymuPingUri = "https://skymu.kier.ovh/ping";
+
+            if (SkymuToken != null)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuToken);
+                    HttpResponseMessage response = await client.PostAsync(skymuPingUri, new StringContent(string.Empty));
+                    string resBody = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"Ping response ({skymuPingUri}): {resBody}");
+                }
+            }
+        }
+
         public static async Task<int> GrabUserCountOnSkymuAPI()
         {
             string skymuCountUri = "https://skymu.kier.ovh/usr_count";

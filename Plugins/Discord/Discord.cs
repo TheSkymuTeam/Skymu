@@ -9,18 +9,20 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
-using System;
-using Newtonsoft.Json.Linq;
-using MiddleMan;
 using Discord.Classes;
-using System.Collections.ObjectModel;
-using System.Windows.Media.Imaging;
-using System.Net.Http;
+using MiddleMan;
 using Newtonsoft.Json;
-using System.Net;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows.Media.Imaging;
 
 namespace Discord
 {
@@ -41,6 +43,8 @@ namespace Discord
         public CookieCollection DiscordCookies;
         private static WebSocket _webSocket;
         internal static WebSocket WebSocket => _webSocket;
+        private static System.Timers.Timer pingTimer;
+        public bool CanSetStatusOnSkymuAPI;
         API api;
 
         public string TextUsername { get { return "E-mail address"; } }
@@ -170,7 +174,6 @@ namespace Discord
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
                 mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
 
-                bool CanSetStatusOnSkymuAPI;
                 if (mainUsrStatus.Contains("online") || mainUsrStatus.Contains("idle") || mainUsrStatus.Contains("dnd"))
                 {
                     CanSetStatusOnSkymuAPI = true;
@@ -218,6 +221,11 @@ namespace Discord
             {
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
+
+            pingTimer = new System.Timers.Timer(30 * 60 * 1000);
+            pingTimer.Elapsed += async (sender, e) => await MMUtils.StatusPingOnSkymuAPI(CanSetStatusOnSkymuAPI);
+            pingTimer.AutoReset = true;
+            pingTimer.Enabled = true;
 
             int onlineCount = await MMUtils.GrabUserCountOnSkymuAPI();
             return new SidebarData(globalName, $"{onlineCount.ToString()} online users", "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
