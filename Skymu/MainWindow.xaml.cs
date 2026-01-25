@@ -268,6 +268,17 @@ typeof(MainWindow));
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
         private void mn_Options(object sender, RoutedEventArgs e) { }
 
+        private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListBox listBox = sender as ListBox;
+
+            if (listBox.SelectedItem != null)
+            {
+                var selectedContact = listBox.SelectedItem; // This is your data object
+
+            }
+        }
+
         private bool isDragging = false;
         private Point dragStart;
         private UIElement capturedElement = null; // Store reference to the captured element
