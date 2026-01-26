@@ -54,14 +54,12 @@ namespace MiddleMan
     public class SidebarData
     {   
         public string Username { get; set; }
-        public string SkypeGlobalUserCountText { get; set; }
         public string SkypeCreditText { get; set; }
         public int ConnectionStatus { get; set; }
         public ObservableCollection<ContactData> ContactList { get; set; }
-        public SidebarData(string username, string skypeGlobalUserCountText, string skypeCreditText, int connectionStatus, ObservableCollection<ContactData> contactList)
+        public SidebarData(string username, string skypeCreditText, int connectionStatus, ObservableCollection<ContactData> contactList)
         {
             Username = username;
-            SkypeGlobalUserCountText = skypeGlobalUserCountText;
             SkypeCreditText = skypeCreditText;
             ContactList = contactList;
             ConnectionStatus = connectionStatus;
@@ -124,10 +122,8 @@ namespace MiddleMan
 
     }
 
-    public static class MMUtils
+    public static class PluginUtilities
     {
-        private static string SkymuToken;
-
         public static BitmapImage LoadBitmap(string path)
         {
             using (var fs = File.OpenRead(path))
@@ -140,66 +136,6 @@ namespace MiddleMan
                 bmp.Freeze();
                 return bmp;
             }
-        }
-
-        public static async Task GenerateUIDOnSkymuAPI()
-        {
-            string skymuGenerateUri = "https://skymu.kier.ovh/generate";
-
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage generateResponse = await client.GetAsync(skymuGenerateUri);
-                string genResBody = await generateResponse.Content.ReadAsStringAsync();
-                JObject parsedGenJson = JObject.Parse(genResBody);
-                SkymuToken = parsedGenJson["token"].ToString();
-            }
-        }
-
-        public static async Task SetStatusOnSkymuAPI(bool onlineState)
-        {
-            string skymuAPIUri = "https://skymu.kier.ovh";
-            string endpoint = onlineState ? "/online" : "/offline";
-
-            if (SkymuToken != null)
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuToken);
-                    HttpResponseMessage response = await client.PostAsync($"{skymuAPIUri}{endpoint}", new StringContent(string.Empty));
-                    string resBody = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Status set response ({endpoint}): {resBody}");
-                }
-            }
-        }
-
-        public static async Task StatusPingOnSkymuAPI(bool onlineState)
-        {
-            string skymuPingUri = "https://skymu.kier.ovh/ping";
-
-            if (SkymuToken != null)
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuToken);
-                    HttpResponseMessage response = await client.PostAsync(skymuPingUri, new StringContent(string.Empty));
-                    string resBody = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Ping response ({skymuPingUri}): {resBody}");
-                }
-            }
-        }
-
-        public static async Task<int> GrabUserCountOnSkymuAPI()
-        {
-            string skymuCountUri = "https://skymu.kier.ovh/usr_count";
-
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage response = await client.GetAsync(skymuCountUri);
-                string resBody = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(resBody);
-                int onlineCount = parsedJson["online_count"].ToObject<int>();
-                return onlineCount;
-            }
-        }
+        }     
     }
 }

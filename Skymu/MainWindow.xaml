@@ -564,6 +564,7 @@ TextWeight="Bold"
 TextSize="13"
 TextColor="#333333"
 HorizontalAlignment="Stretch" />
+                            
                             <local:SliceControl
                             Grid.Column="1"
 Source="/ResourcesLight/ChatWindow/blank-right-button.png"

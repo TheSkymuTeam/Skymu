@@ -175,18 +175,6 @@ namespace Discord
 
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
                 mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
-
-                if (mainUsrStatus.Contains("online") || mainUsrStatus.Contains("idle") || mainUsrStatus.Contains("dnd"))
-                {
-                    CanSetStatusOnSkymuAPI = true;
-                }
-                else
-                {
-                    CanSetStatusOnSkymuAPI = false;
-                }
-
-                await MMUtils.GenerateUIDOnSkymuAPI();
-                await MMUtils.SetStatusOnSkymuAPI(CanSetStatusOnSkymuAPI);
             }
             catch (Exception ex)
             {
@@ -223,14 +211,7 @@ namespace Discord
             {
                 Debug.WriteLine($"Error loading friend list: {ex.Message}");
             }
-
-            pingTimer = new System.Timers.Timer(30 * 60 * 1000);
-            pingTimer.Elapsed += async (sender, e) => await MMUtils.StatusPingOnSkymuAPI(CanSetStatusOnSkymuAPI);
-            pingTimer.AutoReset = true;
-            pingTimer.Enabled = true;
-
-            int onlineCount = await MMUtils.GrabUserCountOnSkymuAPI();
-            return new SidebarData(globalName, $"{onlineCount.ToString()} online users", "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
+            return new SidebarData(globalName, "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()
@@ -277,7 +258,7 @@ namespace Discord
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
             if (File.Exists(cachedFile))
-                return MMUtils.LoadBitmap(cachedFile);
+                return PluginUtilities.LoadBitmap(cachedFile);
 
             foreach (var file in Directory.GetFiles(cacheDir, pattern))
                 File.Delete(file);
@@ -288,7 +269,7 @@ namespace Discord
                 await wc.DownloadFileTaskAsync(url, cachedFile);
             }
 
-            return MMUtils.LoadBitmap(cachedFile);
+            return PluginUtilities.LoadBitmap(cachedFile);
         }
 
         public int MapStatus(string statusStr)

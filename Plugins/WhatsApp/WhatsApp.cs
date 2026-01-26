@@ -49,7 +49,7 @@ namespace WhatsApp
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
             contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
             contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, null));
-            return new SidebarData("Whatsapp User", "1,434,251,616 online users", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown, contacts);
+            return new SidebarData("Whatsapp User", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown, contacts);
         }
 
         public async Task<LoginResult> TryAutoLogin()

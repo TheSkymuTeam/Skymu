@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -272,9 +274,12 @@ typeof(MainWindow));
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             if (((ListBox)sender).SelectedItem != null)
             {
+                var contact = (ContactData)((ListBox)sender).SelectedItem;
                 SetWindow(WindowType.Chat);
+                chatHeader.Text = contact.Username;
             }
         }
 
@@ -371,14 +376,56 @@ typeof(MainWindow));
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
         }
+        private async Task SkymuApiStatusHandler()
+        {
+            string SkymuClientToken = await SkymuApi.GenerateUID();
+            await SkymuApi.SetStatus(CanSetStatus(), SkymuClientToken);
 
-        private async void PopulateSidebar()
+            System.Timers.Timer pingTimer = new System.Timers.Timer(29.5 * 60 * 1000);
+            pingTimer.Elapsed += async (sender, e) => await SkymuApi.StatusPing(CanSetStatus(), SkymuClientToken);
+            pingTimer.AutoReset = true;
+            pingTimer.Enabled = true;
+
+            System.Timers.Timer usersOnlineTimer = new System.Timers.Timer(2 * 60 * 1000);
+            usersOnlineTimer.Elapsed += async (sender, e) =>
+                await CheckSetUsersOnline();
+            usersOnlineTimer.AutoReset = true;
+            usersOnlineTimer.Enabled = true;
+        }
+
+        private bool CanSetStatus()
+        {
+            int index = StatusIcon.DefaultIndex;
+            if (index == 5 || index == 2 || index == 3 || index == 19)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private async Task CheckSetUsersOnline()
+        {
+            int count = await SkymuApi.FetchUserCount();
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                string label = count == 1 ? "user" : "users";
+                GlobalUserCount.Text = count + " " + label + " online";
+            });
+        }
+
+        private async Task PopulateSidebar()
         {
             SidebarData data = await Universal.Plugin.FetchSidebarData();
+            GlobalUserCount.Text = "Loading online user count...";
+            SkymuApiStatusHandler();
+            CheckSetUsersOnline();
             WindowTitle = "Skype™ - " + data.Username;
             StatusBox.Text = data.Username;
             SkypeCreditBox.Text = data.SkypeCreditText;
-            GlobalUserCount.Text = data.SkypeGlobalUserCountText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
             ContactsList.ItemsSource = data.ContactList;
             Ready?.Invoke(this, EventArgs.Empty);

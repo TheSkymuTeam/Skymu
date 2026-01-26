@@ -38,7 +38,6 @@
                     <ScaleTransform/>
                     <SkewTransform/>
 
-                    <!-- NAME THIS -->
                     <RotateTransform x:Name="SpinnerRotate" Angle="0"/>
 
                     <TranslateTransform/>

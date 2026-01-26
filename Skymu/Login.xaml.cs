@@ -45,21 +45,9 @@ namespace Skymu
             Tray.PushIcon("offline", "Skype (Not signed in)");
         }
 
-        private void SetButtonMode(Position position)
-        {
-            byte marginup = 6;
-            if (position == Position.Depressed) marginup = 7;
-            signInText.Margin = new Thickness(-1, marginup, 0, 0);
-        }
-
-        private void buttonPressed(object state, RoutedEventArgs e)
-        {
-            SetButtonMode(Position.Depressed);
-        }
-
         private async void buttonLaunch(object state, RoutedEventArgs e)
         {
-            SetButtonMode(Position.Hover);
+            LoginToggleAnimation(true);
             if (comboProtocolBox.SelectedIndex != -1)
             {
                 var result = await Universal.Plugin.LoginMainStep(usernameBox.Text, passwordTokenBox.Password, false);
@@ -81,12 +69,14 @@ namespace Skymu
                         else
                         {
                             SetHeaderToFail();
+                            LoginToggleAnimation(false);
                         }
                     }
                 }
                 else
                 {
                     SetHeaderToFail();
+                    LoginToggleAnimation(false);
                 }
             }
         }
@@ -97,11 +87,6 @@ namespace Skymu
             header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A30000"));
         }
 
-        private void ResetLoginButton()
-        {
-            SetButtonMode(Position.Default);
-        }
-
         private void MainWindow_Ready(object sender, EventArgs e)
         {
             _mainWindow.Ready -= MainWindow_Ready;
@@ -109,13 +94,6 @@ namespace Skymu
             noCloseEvent = true;
             Close();
         }
-
-
-        private void ButtonExit(object state, RoutedEventArgs e)
-        {
-            if (!noCloseEvent) ResetLoginButton();
-        }
-
 
         private void BoxKeyUp(object sender, RoutedEventArgs e)
         {
@@ -189,7 +167,7 @@ namespace Skymu
             {
                 signInControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
-                header.Text = "Authentication failed";
+                header.Text = "Please sign in again";
             }                           
         }
 
@@ -232,15 +210,6 @@ namespace Skymu
         private void Login_Closing(object sender, CancelEventArgs ev)
         {
             if (!noCloseEvent) Universal.Shutdown(ev);
-        }
-
-        private enum Position
-        {
-            Default = 0,
-            Hover = 25,
-            HeavyDepressed = 50,
-            GlossDefault = 75,
-            Depressed = 100
         }
 
         public class ProtocolItem
