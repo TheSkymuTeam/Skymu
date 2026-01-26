@@ -719,7 +719,7 @@ CornerRadius="4,4,4,4">
                                 <StackPanel Grid.Row="0"
             Orientation="Horizontal"
             HorizontalAlignment="Left"
-            Margin="7,0,0,0">
+            Margin="7,1,0,0">
 
                                     <local:SliceControl
 Source="/ResourcesLight/ChatWindow/btn_video_call.png"
@@ -728,7 +728,9 @@ StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-SpriteSpacing="1"
+
+
+
 Text="Video call"
 TextStartPositionX="26"
 TextFont="Arial"
@@ -746,7 +748,8 @@ Width="100"/>
         HoverIndex="1"
         PressedIndex="2"
         Text="Call"
-        SpriteSpacing="1"
+
+
         TextStartPositionX="26"
         TextFont="Arial"
         TextWeight="Bold"
@@ -761,7 +764,8 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-SpriteSpacing="1"
+
+
 PressedIndex="2"
 Width="44"
 Slice="false"
@@ -772,7 +776,8 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-SpriteSpacing="1"
+
+
 PressedIndex="2"
 Width="44"
 Slice="false"

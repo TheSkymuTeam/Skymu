@@ -37,7 +37,7 @@ namespace Skymu
             {
                 resroot = "ResourcesDark";
                 Login.Instance.footerPanel.Fill = darkBlue;
-                Login.Instance.signInText.Foreground = white;
+                Login.Instance.LoginButton.TextColor = white;
                 Login.Instance.skypenameText.Foreground = white;
                 Login.Instance.passwordText.Foreground = white;
                 Login.Instance.autoSignInCheck.Foreground = white;

@@ -112,10 +112,11 @@
                 <Grid x:Name="BBuilderGrid" Margin="126,259,128,87" SnapsToDevicePixels="True" Canvas.Left="9"
                   Canvas.Top="-4" Width="240">
                     <TextBlock x:Name="signInText" Grid.Column="1" IsHitTestVisible="False" Height="13" HorizontalAlignment="Center"
-                           Margin="-1,6,0,0" TextOptions.TextRenderingMode="ClearType"
-                           TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Text="Sign in"
-                           VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
-                           Foreground="#FF393A48" />
+Margin="-1,6,0,0" TextOptions.TextRenderingMode="ClearType"
+TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Fixed" Text="Sign in"
+VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
+Foreground="#FF393A48" />
+                    
                     <local:SliceControl
                     x:Name="LoginButton"
                     Grid.Row="0"
@@ -127,9 +128,9 @@
                     DisabledIndex="2"
                     IsEnabled="False"
                     HoverIndex="1"
-                    Margin="0,0,0,0"
                     PressedIndex="4"
                     Width="240" />
+                    
                 </Grid>
             </Canvas>
 

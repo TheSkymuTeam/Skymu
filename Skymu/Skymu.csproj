@@ -303,7 +303,6 @@
     <Resource Include="ResourcesLight\MainSidebar\ms_SkypeStatus_Small.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ResourcesLight\ChatWindow\btn_call_arrow.png" />
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_bad.png" />
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_best.png" />
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_good.png" />
@@ -343,6 +342,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\ChatWindow\btn_video_call.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\btn_call_arrow.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

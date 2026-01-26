@@ -36,6 +36,7 @@ namespace Skymu
     public partial class SliceControl : UserControl
     {
         private ButtonVisualState _visualState = ButtonVisualState.Default;
+        private const double PressedTextOffsetY = 1.0;
         private DispatcherTimer _animationTimer;
         private int _currentAnimationFrame = 0;
 
@@ -277,6 +278,32 @@ namespace Skymu
                 typeof(SliceControl),
                 new PropertyMetadata(Brushes.Black, OnTextChanged));
 
+        public HorizontalAlignment TextHorizontalAlignment
+        {
+            get { return (HorizontalAlignment)GetValue(TextHorizontalAlignmentProperty); }
+            set { SetValue(TextHorizontalAlignmentProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextHorizontalAlignmentProperty =
+            DependencyProperty.Register(
+                nameof(TextHorizontalAlignment),
+                typeof(HorizontalAlignment),
+                typeof(SliceControl),
+                new PropertyMetadata(HorizontalAlignment.Left, OnTextChanged));
+
+        public VerticalAlignment TextVerticalAlignment
+            {
+            get { return (VerticalAlignment)GetValue(TextVerticalAlignmentProperty); }
+            set { SetValue(TextVerticalAlignmentProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextVerticalAlignmentProperty =
+            DependencyProperty.Register(
+                nameof(TextVerticalAlignment),
+                typeof(VerticalAlignment),
+                typeof(SliceControl),
+                new PropertyMetadata(VerticalAlignment.Center, OnTextChanged));
+
         public double TextStartPositionX
         {
             get { return (double)GetValue(TextStartPositionXProperty); }
@@ -353,6 +380,21 @@ namespace Skymu
 
             _visualState = state;
             UpdateSlices();
+            UpdateTextOffset();
+        }
+
+        private void UpdateTextOffset()
+        {
+            if (OverlayText == null)
+                return;
+
+            double yOffset = (_visualState == ButtonVisualState.Pressed) ? PressedTextOffsetY : 0.0;
+
+            OverlayText.Margin = new Thickness(
+                TextStartPositionX,
+                yOffset,
+                0,
+                0);
         }
 
         private static void OnAnimationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -502,11 +544,11 @@ namespace Skymu
             OverlayText.FontFamily = TextFont;
             OverlayText.FontSize = TextSize;
             OverlayText.Foreground = TextColor;
+            OverlayText.HorizontalAlignment = TextHorizontalAlignment;
+            OverlayText.VerticalAlignment = TextVerticalAlignment;
             OverlayText.FontWeight = TextWeight;
             OverlayText.FontStyle = TextStyle;
 
-            OverlayText.VerticalAlignment = VerticalAlignment.Center;
-            OverlayText.HorizontalAlignment = HorizontalAlignment.Left;
             OverlayText.Margin = new Thickness(TextStartPositionX, 0, 0, 0);
         }
 
