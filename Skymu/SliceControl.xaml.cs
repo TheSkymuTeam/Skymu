@@ -482,8 +482,8 @@ namespace Skymu
             double elementHeight = GetElementHeight();
             double totalWidth = this.Width;
 
-            double leftWidth = 32;
-            double rightWidth = 32;
+            double leftWidth = 22;
+            double rightWidth = 22;
 
             double middleWidth = totalWidth - leftWidth - rightWidth;
             if (middleWidth < 0) middleWidth = 0;

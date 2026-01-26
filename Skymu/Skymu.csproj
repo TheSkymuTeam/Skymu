@@ -197,7 +197,6 @@
     <Resource Include="ResourcesLight\MainSidebar\ms_AddGroup.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_CallPhones.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_Contacts.png" />
-    <Resource Include="ResourcesLight\MainSidebar\ms_HomeIcon.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_Recents.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_RecentsOrange.png" />
     <Resource Include="ResourcesLight\MainSidebar\ms_SearchBox.png" />
@@ -328,20 +327,22 @@
     <Resource Include="ResourcesLight\MainSidebar\ms_ContactListBgSelected.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ResourcesLight\MainSidebar\ms_HomeButton.png" />
-    <Resource Include="ResourcesLight\MainSidebar\ms_HomeButtonActive.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="ResourcesLight\ChatWindow\icon-close.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="ResourcesLight\ChatWindow\btn_video_call.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_add.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UniversalResources\Animations\LoginCircler_Remake.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\MainSidebar\ms_HomeButton_Sprite.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\btn_video_call.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

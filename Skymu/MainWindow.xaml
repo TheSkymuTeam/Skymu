@@ -38,10 +38,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Profile Picture -->
 
                 <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
-                    <!-- Shadow container -->
+
                     <Border
         Background="Transparent"
         CornerRadius="0">
@@ -54,17 +53,16 @@
                 Opacity="0.50"/>
                         </Border.Effect>
 
-                        <!-- Actual content -->
                         <Grid>
-                            <!-- Image -->
+
                             <Image Stretch="UniformToFill">
                                 <Image.Source>
                                     <Binding Path="ProfilePicture">
                                         <Binding.FallbackValue>
-                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_man.png"/>
+                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_anonymous.png"/>
                                         </Binding.FallbackValue>
                                         <Binding.TargetNullValue>
-                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_man.png"/>
+                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_anonymous.png"/>
                                         </Binding.TargetNullValue>
                                     </Binding>
                                 </Image.Source>
@@ -115,7 +113,7 @@ Width="14" Grid.Row="1"/>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" 
                      Value="True">
                     <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
+                    <Setter TargetName="statusText" Property="Foreground" Value="LightGray"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -320,6 +318,7 @@ Width="14" Grid.Row="1"/>
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
+                                IsHitTestVisible="False"
                                 HorizontalAlignment="Stretch" 
                                 TextStartPositionX="43"
                                 TextFont="Arial"
@@ -339,31 +338,20 @@ Width="14" Grid.Row="1"/>
                                 PressedIndex="-1"
                                 Slice="false"
                                 Width="16"/>
-                            <Image Grid.Row="0"
-       Width="16"
-       Height="16"
-       Cursor="Hand"
-       HorizontalAlignment="Right"
-       Margin="0,0,11,0"
-       IsHitTestVisible="True">
-
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <!-- Default -->
-                                        <Setter Property="Source"
-                    Value="ResourcesLight/MainSidebar/ms_HomeButton.png"/>
-
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseCaptured" Value="True">
-                                                <Setter Property="Source"
-                            Value="ResourcesLight/MainSidebar/ms_HomeButtonActive.png"/>
-                                            </Trigger>
-
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-
+                            <local:SliceControl
+    Grid.Row="0"
+    x:Name="SBHomeButton"
+    Source="/ResourcesLight/MainSidebar/ms_HomeButton_Sprite.png"
+    ElementCount="3"
+    StackDirection="Horizontal"
+    DefaultIndex="0"
+    HorizontalAlignment="Right"
+    Margin="0,0,11,0"
+                                IsHitTestVisible="False"
+    HoverIndex="1"
+    PressedIndex="2"
+    Slice="false"
+    Width="16"/>
                             <Image Grid.Row="0" Source="ResourcesLight/MainSidebar/ms_Status_DropArrow.png"
                                    Width="12"
                                    Height="16"
@@ -379,7 +367,7 @@ Cursor="Hand"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
-                                PressedIndex="2"
+                                PressedIndex="-1"
                                 Text="$ 0.00 - No subscription"
                                 TextStartPositionX="34"
                                 TextFont="Tahoma"
@@ -539,7 +527,7 @@ Cursor="Hand"
                     <Grid Grid.Column="2" x:Name="chatWindowArea">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="32" />
-                            <RowDefinition x:Name="TopbarWindowRow" Height="180" />
+                            <RowDefinition x:Name="TopbarWindowRow" Height="120" />
                             <RowDefinition x:Name="MessageWindowRow" Height="*" />
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
@@ -680,6 +668,40 @@ HorizontalAlignment="Stretch" />
     BorderBrush="#B4C0CE"
     BorderThickness="1,0,1,1"
     CornerRadius="0,0,4,4">
+                            
+                            <Grid x:Name="ChatProfileArea">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="18"></RowDefinition>
+                                    <RowDefinition Height="14"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="/ResourcesLight/ProfilePictures/profile_anonymous.png">
+                                    <Image.Effect>
+                                        <DropShadowEffect
+                       Color="#FFA0A0A0"
+            BlurRadius="4"
+            ShadowDepth="1"
+Direction="270"
+            Opacity="0.5"/>
+                                    </Image.Effect>
+                                </Image>
+                                <StackPanel HorizontalAlignment="Left" Margin="125,0,0,0" Grid.Row="1" Orientation="Horizontal">
+                                <local:SliceControl Grid.Row="1"
+x:Name="CPAStatusIcon"
+Source="/ResourcesLight/MainSidebar/ms_SkypeStatus_Small.png"
+ElementCount="21"
+StackDirection="Horizontal"
+DefaultIndex="{Binding ConnectionStatus}"
+HoverIndex="-1"
+PressedIndex="-1"
+Slice="false"
+Width="14"/>
+                                <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="Unknown" 
+           FontSize="11"
+               FontFamily="Tahoma"
+           TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </Grid>
                         </Border>
                         <Border x:Name="MessageWindow" Grid.Row="2"
 Background="#FFF"
@@ -699,19 +721,20 @@ CornerRadius="4,4,4,4">
             Margin="10,0,0,0">
 
                                     <local:SliceControl
-        Source="/ResourcesLight/ChatWindow/btn_video_call.png"
-        ElementCount="5"
-        StackDirection="Vertical"
-        DefaultIndex="0"
-        HoverIndex="1"
-        PressedIndex="2"
-        Text="Video call"
-        TextStartPositionX="35"
-        TextFont="Arial"
-        TextWeight="Bold"
-        TextSize="13"
-        TextColor="White"
-        Width="110" />
+Source="/ResourcesLight/ChatWindow/btn_video_call.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+Text="Video call"
+TextStartPositionX="26"
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="White"
+Width="100"
+                                        Height="24"/>
 
                                     <local:SliceControl
         Source="/ResourcesLight/ChatWindow/btn_call_arrow.png"
@@ -721,13 +744,14 @@ CornerRadius="4,4,4,4">
         HoverIndex="1"
         PressedIndex="2"
         Text="Call"
-        TextStartPositionX="37"
+        TextStartPositionX="26"
         TextFont="Arial"
         TextWeight="Bold"
         TextSize="13"
         TextColor="White"
-        Width="100"
-        Margin="10,0,0,0" />
+        Width="80"
+        Margin="10,0,0,0" 
+                                        Height="24"/>
                                     <local:SliceControl
 Source="/ResourcesLight/ChatWindow/btn_pill_small_add.png"
 ElementCount="5"
@@ -736,7 +760,7 @@ DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
 Width="44"
-                                        Height="24"
+Height="24"
 Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>

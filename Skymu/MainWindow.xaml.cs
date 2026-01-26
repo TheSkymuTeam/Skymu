@@ -9,6 +9,8 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+#pragma warning disable 4014
+
 using MiddleMan;
 using System;
 using System.Collections.ObjectModel;
@@ -280,6 +282,31 @@ typeof(MainWindow));
                 var contact = (ContactData)((ListBox)sender).SelectedItem;
                 SetWindow(WindowType.Chat);
                 chatHeader.Text = contact.Username;
+                if (contact.ProfilePicture != null)
+                {
+                    CPAProfilePic.Source = contact.ProfilePicture;
+                }
+                else
+                {
+                    CPAProfilePic.Source = new BitmapImage(new Uri("pack://application:,,,/ResourcesLight/ProfilePictures/profile_anonymous.png"));
+                }
+                CPAStatusIcon.DefaultIndex = contact.ConnectionStatus;
+                switch (contact.ConnectionStatus)
+                {
+                    case 2:
+                        CPAStatusText.Text = "Online";
+                        break;
+                    case 3:
+                        CPAStatusText.Text = "Away";
+                        break;
+                    case 19:
+                        CPAStatusText.Text = "Offline";
+                        break;
+                    case 5:
+                        CPAStatusText.Text = "Do not disturb";
+                        break;
+                }
+                
             }
         }
 
@@ -299,8 +326,10 @@ typeof(MainWindow));
         {
             if (type == WindowType.Home && currentWindow != WindowType.Home)
             {
+                ToggleStBSelection(true);
                 HomeTopbar.Visibility = Visibility.Visible;
                 ChatTopbar.Visibility = Visibility.Collapsed;
+                ChatProfileArea.Visibility = Visibility.Collapsed;
                 TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                 MessageWindowRow.Height = new GridLength(0);
                 MessageWindow.Visibility = Visibility.Collapsed;
@@ -310,12 +339,31 @@ typeof(MainWindow));
             }
             else if (type == WindowType.Chat && currentWindow != WindowType.Chat)
             {
+                ToggleStBSelection(false);
+                StatusBox.SetState(ButtonVisualState.Default);
                 HomeTopbar.Visibility = Visibility.Collapsed;
                 ChatTopbar.Visibility = Visibility.Visible;
-                TopbarWindowRow.Height = new GridLength(180);
+                ChatProfileArea.Visibility = Visibility.Visible;
+                TopbarWindowRow.Height = new GridLength(120);               
                 MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                 MessageWindow.Visibility = Visibility.Visible;            
                 currentWindow = WindowType.Chat;
+            }
+        }
+
+        private void ToggleStBSelection(bool selected)
+        {
+            if (selected)
+            {
+                StatusBox.SetState(ButtonVisualState.Pressed);
+                StatusBox.TextColor = Brushes.White;
+                SBHomeButton.SetState(ButtonVisualState.Pressed);
+            }
+            else
+            {
+                StatusBox.SetState(ButtonVisualState.Default);
+                StatusBox.TextColor = (Brush)new BrushConverter().ConvertFromString("#333333");
+                SBHomeButton.SetState(ButtonVisualState.Default);
             }
         }
 
