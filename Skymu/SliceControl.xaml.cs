@@ -81,6 +81,19 @@ namespace Skymu
                 typeof(SliceControl),
                 new PropertyMetadata(1, OnAnyPropertyChanged));
 
+        public double SpriteSpacing
+        {
+            get { return (double)GetValue(SpriteSpacingProperty); }
+            set { SetValue(SpriteSpacingProperty, value); }
+        }
+
+        public static readonly DependencyProperty SpriteSpacingProperty =
+            DependencyProperty.Register(
+                nameof(SpriteSpacing),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(0.0, OnAnyPropertyChanged));
+
         public SpriteStackDirection StackDirection
         {
             get { return (SpriteStackDirection)GetValue(StackDirectionProperty); }
@@ -210,6 +223,20 @@ namespace Skymu
                 typeof(FontWeight),
                 typeof(SliceControl),
                 new PropertyMetadata(FontWeights.Normal, OnTextChanged));
+
+        public double LeftRightWidth
+        {
+            get { return (double)GetValue(LeftRightWidthProperty); }
+            set { SetValue(LeftRightWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty LeftRightWidthProperty =
+            DependencyProperty.Register(
+                nameof(LeftRightWidth),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+
 
         public FontStyle TextStyle
         {
@@ -400,31 +427,50 @@ namespace Skymu
 
             if (StackDirection == SpriteStackDirection.Vertical)
             {
-                double sliceHeight = 1.0 / ElementCount;
-                double y = sliceHeight * index;
-                return new Rect(0, y, 1, sliceHeight);
+                double spriteHeightPx = GetElementHeight();
+                double totalHeightPx =
+                    ElementCount * spriteHeightPx +
+                    (ElementCount - 1) * SpriteSpacing;
+
+                double yPx = index * (spriteHeightPx + SpriteSpacing);
+
+                return new Rect(
+                    0,
+                    yPx / bmp.PixelHeight,
+                    1,
+                    spriteHeightPx / bmp.PixelHeight);
             }
             else
             {
-                double sliceWidth = 1.0 / ElementCount;
-                double x = sliceWidth * index;
-                return new Rect(x, 0, sliceWidth, 1);
+                double spriteWidthPx =
+                    (bmp.PixelWidth - (ElementCount - 1) * SpriteSpacing)
+                    / ElementCount;
+
+                double xPx = index * (spriteWidthPx + SpriteSpacing);
+
+                return new Rect(
+                    xPx / bmp.PixelWidth,
+                    0,
+                    spriteWidthPx / bmp.PixelWidth,
+                    1);
             }
         }
 
         private double GetElementHeight()
         {
-            if (Source == null || ElementCount <= 0)
-                return ActualHeight;
-
             BitmapSource bmp = Source as BitmapSource;
-            if (bmp == null)
+            if (bmp == null || ElementCount <= 0)
                 return ActualHeight;
 
             if (StackDirection == SpriteStackDirection.Vertical)
-                return bmp.PixelHeight / ElementCount;
+            {
+                double totalSpacing = (ElementCount - 1) * SpriteSpacing;
+                return (bmp.PixelHeight - totalSpacing) / ElementCount;
+            }
             else
+            {
                 return bmp.PixelHeight;
+            }
         }
 
         private void UpdateUnsliced(BitmapSource bmp)
@@ -482,8 +528,8 @@ namespace Skymu
             double elementHeight = GetElementHeight();
             double totalWidth = this.Width;
 
-            double leftWidth = 22;
-            double rightWidth = 22;
+            double leftWidth = LeftRightWidth;
+            double rightWidth = LeftRightWidth;
 
             double middleWidth = totalWidth - leftWidth - rightWidth;
             if (middleWidth < 0) middleWidth = 0;

@@ -552,7 +552,7 @@ TextWeight="Bold"
 TextSize="13"
 TextColor="#333333"
 HorizontalAlignment="Stretch" />
-                            
+
                             <local:SliceControl
                             Grid.Column="1"
 Source="/ResourcesLight/ChatWindow/blank-right-button.png"
@@ -668,7 +668,7 @@ HorizontalAlignment="Stretch" />
     BorderBrush="#B4C0CE"
     BorderThickness="1,0,1,1"
     CornerRadius="0,0,4,4">
-                            
+
                             <Grid x:Name="ChatProfileArea">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="18"></RowDefinition>
@@ -686,7 +686,7 @@ Direction="270"
                                     </Image.Effect>
                                 </Image>
                                 <StackPanel HorizontalAlignment="Left" Margin="125,0,0,0" Grid.Row="1" Orientation="Horizontal">
-                                <local:SliceControl Grid.Row="1"
+                                    <local:SliceControl Grid.Row="1"
 x:Name="CPAStatusIcon"
 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus_Small.png"
 ElementCount="21"
@@ -696,7 +696,7 @@ HoverIndex="-1"
 PressedIndex="-1"
 Slice="false"
 Width="14"/>
-                                <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="Unknown" 
+                                    <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="Unknown" 
            FontSize="11"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
@@ -711,14 +711,15 @@ BorderThickness="1,1,1,1"
 CornerRadius="4,4,4,4">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="40"></RowDefinition>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                    <RowDefinition Height="64"></RowDefinition>
+                                    <RowDefinition Height="34"></RowDefinition>
+                                    <RowDefinition Height="1"></RowDefinition>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="70"></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0"
             Orientation="Horizontal"
             HorizontalAlignment="Left"
-            Margin="10,0,0,0">
+            Margin="7,0,0,0">
 
                                     <local:SliceControl
 Source="/ResourcesLight/ChatWindow/btn_video_call.png"
@@ -727,14 +728,15 @@ StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
+SpriteSpacing="1"
 Text="Video call"
 TextStartPositionX="26"
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
+LeftRightWidth="22"
 TextColor="White"
-Width="100"
-                                        Height="24"/>
+Width="100"/>
 
                                     <local:SliceControl
         Source="/ResourcesLight/ChatWindow/btn_call_arrow.png"
@@ -744,26 +746,39 @@ Width="100"
         HoverIndex="1"
         PressedIndex="2"
         Text="Call"
+        SpriteSpacing="1"
         TextStartPositionX="26"
         TextFont="Arial"
         TextWeight="Bold"
         TextSize="13"
         TextColor="White"
         Width="80"
-        Margin="10,0,0,0" 
-                                        Height="24"/>
+        LeftRightWidth="22"
+        Margin="10,0,0,0" />
                                     <local:SliceControl
 Source="/ResourcesLight/ChatWindow/btn_pill_small_add.png"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
+SpriteSpacing="1"
 PressedIndex="2"
 Width="44"
-Height="24"
+Slice="false"
+Margin="10,0,0,0" />
+                                    <local:SliceControl
+Source="/ResourcesLight/ChatWindow/btn_pill_small_network_good.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+SpriteSpacing="1"
+PressedIndex="2"
+Width="44"
 Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>
+                                <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8" />
                             </Grid>
                         </Border>
                     </Grid>
