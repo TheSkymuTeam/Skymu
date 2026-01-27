@@ -46,7 +46,8 @@ namespace Discord
         public bool CanSetStatusOnSkymuAPI;
         API api;
 
-        public string TextUsername { get { return "E-mail address"; } }
+        public string TextUsername { get { return "Email address"; } }
+        public string CustomLoginButtonText { get { return null; } }
         // Skymu authentication method
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Standard; } }
 

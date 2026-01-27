@@ -68,15 +68,17 @@ namespace Skymu
                         if (optResult == LoginResult.Success) InitiateMainWindow();
                         else
                         {
-                            SetHeaderToFail();
                             LoginToggleAnimation(false);
+                            SetHeaderToFail();
+                           
                         }
                     }
                 }
                 else
                 {
-                    SetHeaderToFail();
                     LoginToggleAnimation(false);
+                    SetHeaderToFail();
+                    
                 }
             }
         }
@@ -153,6 +155,7 @@ namespace Skymu
         {
             _mainWindow = new MainWindow();
             _mainWindow.Ready += MainWindow_Ready;
+            _ = _mainWindow.InitializeAsync();
         }
 
         private void LoginToggleAnimation(bool anim)

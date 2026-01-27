@@ -26,6 +26,7 @@ namespace WhatsApp
         public string Name { get { return "WhatsApp"; } }
         public string InternalName { get { return "skymu-whatsapp-plugin"; } }
         public string TextUsername { get { return "Phone number"; } }
+        public string CustomLoginButtonText { get { return "Scan QR code"; } }
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)

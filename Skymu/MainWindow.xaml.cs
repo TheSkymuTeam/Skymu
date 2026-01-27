@@ -72,9 +72,13 @@ namespace Skymu
             this.SizeChanged += MainWindow_SizeChanged;
 
             Tray.PushIcon("online", "Skype (Online)");
-            PopulateSidebar();
             btnContacts.SetState(ButtonVisualState.Pressed);
             SetWindow(WindowType.Home);
+        }
+
+        public async Task InitializeAsync()
+        {
+            await PopulateSidebar(); 
         }
 
         public static readonly DependencyProperty WindowTitleProperty =

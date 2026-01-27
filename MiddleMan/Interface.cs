@@ -145,6 +145,7 @@ namespace MiddleMan
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName {  get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
+        string CustomLoginButtonText { get; } // Return null unless you absolutely need to change the login button text
         AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard (Standard is most commonly used)
         Task<LoginResult> LoginMainStep(string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
