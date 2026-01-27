@@ -68,15 +68,17 @@ namespace MiddleMan
 
     public class ContactData
     {
-        public string Username { get; set; }
-        public string Status { get; set; }
-        public int ConnectionStatus { get; set; }
+        public string DisplayName { get; set; } // publicly displayed name.
+        public string Identifier { get; set;} // this is what will be used to make requests such as SendMessage. 
+        public string Status { get; set; } // textual status, e.g. "I'm good!"
+        public int PresenceStatus { get; set; } // away, online, offline, etc
         public BitmapImage ProfilePicture { get; set; }
-        public ContactData(string username, string status, int connectionStatus, BitmapImage profilePicture)
+        public ContactData(string displayName, string identifier, string status, int presenceStatus, BitmapImage profilePicture)
         {
-            Username = username;
+            DisplayName = displayName;
+            Identifier = identifier;
             Status = status;
-            ConnectionStatus = connectionStatus;
+            PresenceStatus = presenceStatus;
             ProfilePicture = profilePicture;
         }
     }

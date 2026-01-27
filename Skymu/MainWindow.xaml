@@ -83,7 +83,7 @@ Grid.Column="1"
 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus_Small.png"
 ElementCount="21"
 StackDirection="Horizontal"
-DefaultIndex="{Binding ConnectionStatus}"
+DefaultIndex="{Binding PresenceStatus}"
 Margin="10,0,0,0"
 HorizontalAlignment="Left"
 HoverIndex="-1"
@@ -94,7 +94,7 @@ Width="14" Grid.Row="1"/>
 
                 <!-- Contact Info -->
 
-                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding Username}" 
+                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" 
                            FontSize="11"
                                FontFamily="Tahoma"
                            TextTrimming="CharacterEllipsis"/>
@@ -422,7 +422,7 @@ Cursor="Hand"
                                 HorizontalAlignment="Stretch" />
 
                         </Grid>
-                        <Border Grid.Row="3" Background="White" BorderBrush="#b4c0ce"
+                        <Border Grid.Row="3" Background="White" BorderBrush="#26000000"
                                 BorderThickness="1,0,1,0">
                             <Grid x:Name="ContactsArea">
                                 <Grid.RowDefinitions>
@@ -507,7 +507,7 @@ Cursor="Hand"
                         <Border
                             Grid.Row="4"
                             Background="#dce6f4"
-                            BorderBrush="#B4C0CE"
+                            BorderBrush="#26000000"
                             BorderThickness="1,0,1,1"
                             CornerRadius="0,0,4,4">
                             <TextBlock Text="Skymu Beta. All rights reserved."
@@ -665,7 +665,7 @@ HorizontalAlignment="Stretch" />
                         </Grid>
                         <Border Grid.Row="1"
     Background="#FFF"
-    BorderBrush="#B4C0CE"
+    BorderBrush="#26000000"
     BorderThickness="1,0,1,1"
     CornerRadius="0,0,4,4">
 
@@ -705,7 +705,7 @@ Width="14"/>
                         </Border>
                         <Border x:Name="MessageWindow" Grid.Row="2"
 Background="#FFF"
-BorderBrush="#B4C0CE"
+BorderBrush="#26000000"
                                 Margin="0,4,0,0"
 BorderThickness="1,1,1,1"
 CornerRadius="4,4,4,4">
@@ -732,13 +732,13 @@ PressedIndex="2"
 
 
 Text="Video call"
-TextStartPositionX="26"
+TextStartPositionX="25"
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
 TextColor="White"
-Width="100"/>
+Width="98"/>
 
                                     <local:SliceControl
         Source="/ResourcesLight/ChatWindow/btn_call_arrow.png"
@@ -755,7 +755,7 @@ Width="100"/>
         TextWeight="Bold"
         TextSize="13"
         TextColor="White"
-        Width="80"
+        Width="81"
         LeftRightWidth="22"
         Margin="10,0,0,0" />
                                     <local:SliceControl
@@ -800,6 +800,7 @@ Margin="10,0,0,0" />
                                                 <TextBox BorderThickness="0"
                          Background="Transparent"
                          Padding="4"
+                                                         x:Name="MessageBox"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
                          MaxLines="10"
@@ -819,10 +820,10 @@ StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-
+x:Name="SendMsgButton"
 VerticalAlignment="Top"
 HorizontalAlignment="Center"
-                                                                               
+ MouseLeftButtonUp="SendMessage"                                                                     
 Margin="578,0,0,0"
 Text="Send message"
 TextStartPositionX="26"
@@ -831,7 +832,7 @@ TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
 TextColor="White"
-Width="140"/>
+Width="127"/>
                                     </Grid>
                                 </Grid>
 

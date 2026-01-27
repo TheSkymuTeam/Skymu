@@ -204,7 +204,7 @@ namespace Discord
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName, custStatusStr, friendStatus, avatarImage));
+                    contacts.Add(new ContactData(string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName, friendUsername, custStatusStr, friendStatus, avatarImage));
                 }
             }
             catch (Exception ex)

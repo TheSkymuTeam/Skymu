@@ -274,24 +274,26 @@ typeof(MainWindow));
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
         private void mn_Options(object sender, RoutedEventArgs e) { }
 
+        private ContactData selectedContact;
+
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
             if (((ListBox)sender).SelectedItem != null)
             {
-                var contact = (ContactData)((ListBox)sender).SelectedItem;
+                selectedContact = (ContactData)((ListBox)sender).SelectedItem;
                 SetWindow(WindowType.Chat);
-                chatHeader.Text = contact.Username;
-                if (contact.ProfilePicture != null)
+                chatHeader.Text = selectedContact.DisplayName;
+                if (selectedContact.ProfilePicture != null)
                 {
-                    CPAProfilePic.Source = contact.ProfilePicture;
+                    CPAProfilePic.Source = selectedContact.ProfilePicture;
                 }
                 else
                 {
                     CPAProfilePic.Source = new BitmapImage(new Uri("pack://application:,,,/ResourcesLight/ProfilePictures/profile_anonymous.png"));
                 }
-                CPAStatusIcon.DefaultIndex = contact.ConnectionStatus;
-                switch (contact.ConnectionStatus)
+                CPAStatusIcon.DefaultIndex = selectedContact.PresenceStatus;
+                switch (selectedContact.PresenceStatus)
                 {
                     case 2:
                         CPAStatusText.Text = "Online";
@@ -479,5 +481,18 @@ typeof(MainWindow));
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
+        private async void SendMessage(object sender, MouseButtonEventArgs e)
+        {
+            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageBox.Text);
+            if (didSend)
+            {
+                Universal.ShowMsg("sent");
+            }
+            else
+            {
+                Universal.ShowMsg("fail");
+            }
+
+        }
     }
 }

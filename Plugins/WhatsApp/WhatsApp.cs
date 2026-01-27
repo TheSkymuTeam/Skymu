@@ -47,8 +47,8 @@ namespace WhatsApp
         public async Task<SidebarData> FetchSidebarData()
         {
             ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
-            contacts.Add(new ContactData("Alice", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
-            contacts.Add(new ContactData("Bob", "HELLO", UserConnectionStatus.Away, null));
+            contacts.Add(new ContactData("Alice", "alice@s.whatsapp.net", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
+            contacts.Add(new ContactData("Bob", "bob@s.whatsapp.net", "HELLO", UserConnectionStatus.Away, null));
             return new SidebarData("Whatsapp User", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown, contacts);
         }
 
