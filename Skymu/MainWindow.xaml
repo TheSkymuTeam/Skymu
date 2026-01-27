@@ -118,29 +118,46 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="2,4,0,4" Height="32">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
+            <Grid Height="32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
 
 
-                <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
+                    <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
                            FontSize="11"
                                FontFamily="Tahoma"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Body}" 
+                    <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" Text="{Binding Body}" 
+                           HorizontalAlignment="Left"
            FontSize="11"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
-                <TextBlock Text="{Binding Time}" 
+                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" 
+           Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" 
+           HorizontalAlignment="Left"
+           FontSize="11"
+           FontFamily="Tahoma"
+                           Foreground="#999999"
+           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" 
+           Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" 
+           HorizontalAlignment="Left"
+           FontSize="11"
+           FontFamily="Tahoma"
+                           Foreground="#999999"
+           TextTrimming="CharacterEllipsis"/>
+
+                <TextBlock Text="{Binding Time, StringFormat=HH:mm tt}" 
                                Grid.Column="2" Margin="10,1,0,0"
                            FontSize="11"
     FontFamily="Tahoma"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
+
 
 
 
@@ -817,10 +834,11 @@ Margin="10,0,0,0" />
                                 <ListBox x:Name="ConversationItemsList"  
 Grid.Row="2"        
 BorderThickness="0"
+                                        VerticalAlignment="Bottom"
+                                        
 Style="{StaticResource NoInsetListBox}"
 ItemTemplate="{StaticResource ConversationItemTemplate}"
 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-SelectionChanged="ContactList_SelectionChanged"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">

@@ -95,7 +95,7 @@ namespace Skymu
                 HttpResponseMessage response = await client.GetAsync(skymuCountUri);
                 string resBody = await response.Content.ReadAsStringAsync();
 
-                onlineCount = JsonDocument.Parse(resBody).RootElement.GetProperty("token").GetInt32();
+                onlineCount = JsonDocument.Parse(resBody).RootElement.GetProperty("online_count").GetInt32();
             }
             catch
             {

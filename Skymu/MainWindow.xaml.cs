@@ -294,7 +294,7 @@ typeof(MainWindow));
             return image;
         }
 
-        private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
             if (((ListBox)sender).SelectedItem != null)
@@ -326,7 +326,7 @@ typeof(MainWindow));
                         CPAStatusText.Text = "Do not disturb";
                         break;
                 }
-
+                ConversationItemsList.ItemsSource = await Universal.Plugin.FetchConversationHistory(selectedContact.Identifier);
             }
         }
 

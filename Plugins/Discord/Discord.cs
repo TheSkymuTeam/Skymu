@@ -128,7 +128,7 @@ namespace Discord
                 dynamic jsonResponse = JsonConvert.DeserializeObject(output);
                 if (jsonResponse != null && jsonResponse.token != null)
                 {
-                   File.WriteAllBytes("discord.smcred", jsonResponse.token);
+                   File.WriteAllText("discord.smcred", jsonResponse.token.ToString());
 
                     _webSocket ??= new WebSocket();
 
