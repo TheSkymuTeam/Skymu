@@ -167,7 +167,7 @@ namespace Skymu
             {
                 signInControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
-                header.Text = "Please sign in again";
+                header.Text = "Welcome to Skype.";
             }                           
         }
 

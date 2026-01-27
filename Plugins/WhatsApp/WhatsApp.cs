@@ -14,7 +14,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,10 +46,10 @@ namespace WhatsApp
         public async Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier)
         {
             ObservableCollection<ConversationItem> items = new ObservableCollection<ConversationItem>();
-            items.Add(new MessageItem("80351110224678912", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
-            items.Add(new MessageItem("23585235237655234", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
-            items.Add(new MessageItem("80351110224678912", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
-            items.Add(new CallStartedItem("23585235237655234", false, new DateTime(2012, 1, 1, 0, 3, 12)));
+            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
+            items.Add(new MessageItem("23585235237655234", "Sensei Wu", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
+            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
+            items.Add(new CallStartedItem("Sensei Wu", false, new DateTime(2012, 1, 1, 0, 3, 12)));
             items.Add(new CallEndedItem(TimeSpan.FromMinutes(20), false, new DateTime(2012, 1, 1, 0, 23, 12)));
             return items;
         }

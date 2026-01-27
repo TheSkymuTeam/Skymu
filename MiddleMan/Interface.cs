@@ -9,8 +9,6 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +20,6 @@ using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 namespace MiddleMan
@@ -72,8 +69,8 @@ namespace MiddleMan
         public string Identifier { get; set;} // this is what will be used to make requests such as SendMessage. 
         public string Status { get; set; } // textual status, e.g. "I'm good!"
         public int PresenceStatus { get; set; } // away, online, offline, etc
-        public BitmapImage ProfilePicture { get; set; }
-        public ContactData(string displayName, string identifier, string status, int presenceStatus, BitmapImage profilePicture)
+        public byte[] ProfilePicture { get; set; }
+        public ContactData(string displayName, string identifier, string status, int presenceStatus, byte[] profilePicture)
         {
             DisplayName = displayName;
             Identifier = identifier;
@@ -90,11 +87,13 @@ namespace MiddleMan
 
     public class MessageItem : ConversationItem
     {
-        public string SentBy { get; set; } // Return the user's identifier, not their display name.
+        public string SentByDN { get; set; }
+        public string SentByID { get; set; }
         public string Body { get; set; } // Message body      
-        public MessageItem(string sentByIdentifier, string body, DateTime time)
+        public MessageItem(string sentByIdentifier, string sentByDisplayName, string body, DateTime time)
         {
-            SentBy = sentByIdentifier;
+            SentByID = sentByIdentifier;
+            SentByDN = sentByDisplayName;
             Body = body;
             Time = time;
         }
@@ -102,11 +101,11 @@ namespace MiddleMan
 
     public class CallStartedItem : ConversationItem
     {
-        public string StartedBy { get; set; } // Return the user's identifier, not their display name.
+        public string StartedBy { get; set; } // Return the user's display name (NOT identifier)
         public bool IsVideoCall { get; set; }
-        public CallStartedItem(string startedByIdentifier, bool isVideoCall, DateTime time)
+        public CallStartedItem(string startedByDisplayName, bool isVideoCall, DateTime time)
         {
-            StartedBy = startedByIdentifier;
+            StartedBy = startedByDisplayName;
             Time = time;
             IsVideoCall = isVideoCall;
         }
@@ -164,22 +163,5 @@ namespace MiddleMan
     public interface IBoard // For methods/variables specific to messageboard services, like Bluesky, Reddit, etc. Yes, Instagram is technically a messageboard.
     {
 
-    }
-
-    public static class PluginUtilities
-    {
-        public static BitmapImage LoadBitmap(string path)
-        {
-            using (var fs = File.OpenRead(path))
-            {
-                BitmapImage bmp = new BitmapImage();
-                bmp.BeginInit();
-                bmp.CacheOption = BitmapCacheOption.OnLoad;
-                bmp.StreamSource = fs;
-                bmp.EndInit();
-                bmp.Freeze();
-                return bmp;
-            }
-        }     
     }
 }

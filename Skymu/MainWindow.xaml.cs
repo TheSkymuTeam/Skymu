@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -276,6 +277,23 @@ typeof(MainWindow));
 
         private ContactData selectedContact;
 
+        private BitmapImage ByteArrToImg(byte[] array)
+        {
+            if (array == null || array.Length == 0)
+                return null;
+
+            var image = new BitmapImage();
+            using (var ms = new MemoryStream(array))
+            {
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad; 
+                image.StreamSource = ms;
+                image.EndInit();
+                image.Freeze();
+            }
+            return image;
+        }
+
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
@@ -286,7 +304,7 @@ typeof(MainWindow));
                 chatHeader.Text = selectedContact.DisplayName;
                 if (selectedContact.ProfilePicture != null)
                 {
-                    CPAProfilePic.Source = selectedContact.ProfilePicture;
+                    CPAProfilePic.Source = ByteArrToImg(selectedContact.ProfilePicture);
                 }
                 else
                 {
@@ -308,7 +326,7 @@ typeof(MainWindow));
                         CPAStatusText.Text = "Do not disturb";
                         break;
                 }
-                
+
             }
         }
 
@@ -346,9 +364,9 @@ typeof(MainWindow));
                 HomeTopbar.Visibility = Visibility.Collapsed;
                 ChatTopbar.Visibility = Visibility.Visible;
                 ChatProfileArea.Visibility = Visibility.Visible;
-                TopbarWindowRow.Height = new GridLength(120);               
+                TopbarWindowRow.Height = new GridLength(120);
                 MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                MessageWindow.Visibility = Visibility.Visible;            
+                MessageWindow.Visibility = Visibility.Visible;
                 currentWindow = WindowType.Chat;
             }
         }
@@ -494,5 +512,10 @@ typeof(MainWindow));
             }
 
         }
+
+        public static string GetDisplayName(string identifier)
+        {
+            return "";
+        }       
     }
 }

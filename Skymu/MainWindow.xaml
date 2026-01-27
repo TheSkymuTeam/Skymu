@@ -117,6 +117,35 @@ Width="14" Grid.Row="1"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+        <DataTemplate x:Key="ConversationItemTemplate">
+            <Grid Margin="2,4,0,4" Height="32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+
+
+                <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
+                           FontSize="11"
+                               FontFamily="Tahoma"
+                           Foreground="#999999"
+                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="{Binding Body}" 
+           FontSize="11"
+               FontFamily="Tahoma"
+           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{Binding Time}" 
+                               Grid.Column="2" Margin="10,1,0,0"
+                           FontSize="11"
+    FontFamily="Tahoma"
+                           Foreground="#999999"
+                           TextTrimming="CharacterEllipsis"/>
+
+
+
+            </Grid>
+        </DataTemplate>
         <Style x:Key="NoInsetListBox" TargetType="ListBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -714,7 +743,8 @@ CornerRadius="4,4,4,4">
                                     <RowDefinition Height="34"></RowDefinition>
                                     <RowDefinition Height="1"></RowDefinition>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition MinHeight="70" ></RowDefinition>
+                                    <RowDefinition Height="14"/>
+                                    <RowDefinition Height="Auto" ></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <StackPanel  Grid.Row="0"
             Orientation="Horizontal"
@@ -784,7 +814,33 @@ Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8" />
-                                <Grid Grid.Row="3">
+                                <ListBox x:Name="ConversationItemsList"  
+Grid.Row="2"        
+BorderThickness="0"
+Style="{StaticResource NoInsetListBox}"
+ItemTemplate="{StaticResource ConversationItemTemplate}"
+ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+SelectionChanged="ContactList_SelectionChanged"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="ItemBorder" Background="Transparent">
+                                                            <ContentPresenter/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                </ListBox>
+                                <Grid Grid.Row="4">
                                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,4">
                                 
                                         <StackPanel x:Name="MessageBoxPanel" 

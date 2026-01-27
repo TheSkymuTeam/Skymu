@@ -9,6 +9,16 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+/*==========================================================*/
+// IMPORTANT INFORMATION FOR DEVELOPERS, PROJECT MAINTAINERS
+// AND CONTRIBUTORS TO SKYMU, CONCERNING THIS PARTICULAR FILE
+/*==========================================================*/
+// The following code is considered legacy. Its functions
+// should be migrated to XAML with the newer SliceControl.
+// It is poorly structured and designed with Windows Forms
+// paradigms in mind. Do not add any functions to this code.
+/*==========================================================*/
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;

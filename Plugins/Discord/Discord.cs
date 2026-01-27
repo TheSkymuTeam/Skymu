@@ -22,7 +22,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Media.Imaging;
 
 namespace Discord
 {
@@ -63,8 +62,7 @@ namespace Discord
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
-                Discord.Settings.Default.dscToken = loginResponse["token"]?.ToString();
-                Discord.Settings.Default.Save();
+                File.WriteAllText("discord.smcred", loginResponse["token"]?.ToString());
                 _webSocket ??= new WebSocket();
 
                 return LoginResult.Success;
@@ -130,8 +128,8 @@ namespace Discord
                 dynamic jsonResponse = JsonConvert.DeserializeObject(output);
                 if (jsonResponse != null && jsonResponse.token != null)
                 {
-                    Discord.Settings.Default.dscToken = jsonResponse.token;
-                    Discord.Settings.Default.Save();
+                   File.WriteAllBytes("discord.smcred", jsonResponse.token);
+
                     _webSocket ??= new WebSocket();
 
                     return LoginResult.Success;
@@ -152,10 +150,10 @@ namespace Discord
         public async Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier)
         {
             ObservableCollection<ConversationItem> items = new ObservableCollection<ConversationItem>();
-            items.Add(new MessageItem("80351110224678912", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
-            items.Add(new MessageItem("23585235237655234", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
-            items.Add(new MessageItem("80351110224678912", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
-            items.Add(new CallStartedItem("23585235237655234", false, new DateTime(2012, 1, 1, 0, 3, 12)));
+            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
+            items.Add(new MessageItem("23585235237655234", "Sensei Wu", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
+            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
+            items.Add(new CallStartedItem("Sensei Wu", false, new DateTime(2012, 1, 1, 0, 3, 12)));
             items.Add(new CallEndedItem(TimeSpan.FromMinutes(20), false, new DateTime(2012, 1, 1, 0, 23, 12)));
             return items;
         }
@@ -199,7 +197,7 @@ namespace Discord
 
                 foreach (var friend in parsedJson)
                 {
-                    BitmapImage avatarImage = null;
+                    byte[] avatarImage = null;
                     string friendId = friend["id"]?.ToString() ?? "N/A";
                     string friendGlobalName = friend["user"]["global_name"]?.ToString() ?? "N/A";
                     string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
@@ -228,7 +226,10 @@ namespace Discord
         public async Task<LoginResult> TryAutoLogin()
         {
             api = new API();
-            DscToken = Discord.Settings.Default.dscToken;
+            if (File.Exists("discord.smcred"))
+            {
+                DscToken = File.ReadAllText("discord.smcred");
+            }
 
             if (!string.IsNullOrWhiteSpace(DscToken))
             {
@@ -263,13 +264,13 @@ namespace Discord
         }
 
         // So we don't have to fetch the data everytime
-        public async Task<BitmapImage> GetCachedAvatarAsync(string userId, string hash)
+        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash)
         {
             string pattern = $"*-{userId}.png";
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
             if (File.Exists(cachedFile))
-                return PluginUtilities.LoadBitmap(cachedFile);
+                return File.ReadAllBytes(cachedFile);
 
             foreach (var file in Directory.GetFiles(cacheDir, pattern))
                 File.Delete(file);
@@ -280,7 +281,7 @@ namespace Discord
                 await wc.DownloadFileTaskAsync(url, cachedFile);
             }
 
-            return PluginUtilities.LoadBitmap(cachedFile);
+            return File.ReadAllBytes(cachedFile);
         }
 
         public int MapStatus(string statusStr)

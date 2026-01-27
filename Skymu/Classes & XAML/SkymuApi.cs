@@ -15,8 +15,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
@@ -24,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Xml.Linq;
+using System.Windows.Forms.VisualStyles;
 
 namespace Skymu
 {
@@ -39,8 +39,9 @@ namespace Skymu
                 HttpClient client = new HttpClient();
                 HttpResponseMessage generateResponse = await client.GetAsync(skymuGenerateUri);
                 string genResBody = await generateResponse.Content.ReadAsStringAsync();
-                JObject parsedGenJson = JObject.Parse(genResBody);
-                SkymuToken = parsedGenJson["token"].ToString();
+
+
+                SkymuToken = JsonDocument.Parse(genResBody).RootElement.GetProperty("token").GetString();
             }
             catch
             {
@@ -93,8 +94,8 @@ namespace Skymu
 
                 HttpResponseMessage response = await client.GetAsync(skymuCountUri);
                 string resBody = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(resBody);
-                onlineCount = parsedJson["online_count"].ToObject<int>();
+
+                onlineCount = JsonDocument.Parse(resBody).RootElement.GetProperty("token").GetInt32();
             }
             catch
             {

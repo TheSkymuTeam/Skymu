@@ -5,13 +5,27 @@
 // Copied from an older Naticord commit that was more finished than before.
 // This is done by, and with permission from, the original creator (patricktbp).
 
+/*================================================================*/
+// IMPORTANT INFORMATION FOR DEVELOPERS, PROJECT MAINTAINERS
+// AND CONTRIBUTORS TO SKYMU, CONCERNING THIS PARTICULAR FILE
+/*================================================================*/
+// Portions of this code were modified to use System.Net.WebSockets
+// with the help of a large language model. If you find any issues
+// as a result of the conversion process, please fix them.
+/*================================================================*/
+
+#pragma warning disable 4014
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
+using System.Net.WebSockets;
 using System.Security.Authentication;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,11 +56,11 @@ namespace Discord.Classes
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
-        public WebSocketSharp.WebSocket WSClient { get; private set; }
+        public ClientWebSocket WSClient { get; private set; }
 
         public WebSocket()
         {
-            token = Discord.Settings.Default.dscToken;
+            token = File.ReadAllText("discord.smcred");
             gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
@@ -65,7 +79,12 @@ namespace Discord.Classes
                 }
             });
 
-            InitWS();
+            ConnectAsync();
+        }
+
+        public async Task ConnectAsync()
+        {
+            await InitWS();
         }
 
         public class StatusData
@@ -90,25 +109,78 @@ namespace Discord.Classes
         }
 
 
-        public void InitWS()
+        private async Task InitWS()
         {
-            WSClient = new WebSocketSharp.WebSocket(gatewayUrl);
-            WSClient.SslConfiguration.EnabledSslProtocols = Tls12;
-            WSClient.OnMessage += (sender, e) => HandleMessage(e.Data);
-            WSClient.OnClose += (sender, e) =>
+            WSClient = new ClientWebSocket();
+            WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+
+            var uri = new Uri(gatewayUrl);
+            await WSClient.ConnectAsync(uri, CancellationToken.None);
+
+            await SendPayload();
+
+            _ = Task.Run(ReceiveLoop);
+        }
+
+        private void StartHeartbeat()
+        {
+            StopHeartbeat();
+            heartbeatTimer = new Timer(async _ =>
             {
-                StopHeartbeat();
-                if (e.Code != 1000 && e.Code != 4004) ReconnectWithDelay();
-            };
-            WSClient.OnError += (sender, e) => Debug.WriteLine($"Error! {e.Message}");
-            WSClient.Connect();
-            SendPayload();
+                if (WSClient.State == WebSocketState.Open)
+                    await SendPayload(heartbeatPayloadJson);
+            }, null, heartbeatInterval, heartbeatInterval);
+        }
+
+        private async Task SendPayload(string payload = null)
+        {
+            if (payload == null) payload = identifyPayloadJson;
+
+            var bytes = Encoding.UTF8.GetBytes(payload);
+            var buffer = new ArraySegment<byte>(bytes);
+
+            if (WSClient.State == WebSocketState.Open)
+            {
+                await WSClient.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+        }
+
+        private async Task ReceiveLoop()
+        {
+            var buffer = new byte[8192];
+            var messageBuilder = new StringBuilder();
+
+            try
+            {
+                while (WSClient.State == WebSocketState.Open)
+                {
+                    WebSocketReceiveResult result;
+                    do
+                    {
+                        result = await WSClient.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                        var chunk = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                        messageBuilder.Append(chunk);
+                    }
+                    while (!result.EndOfMessage);
+
+                    var completeMessage = messageBuilder.ToString();
+                    messageBuilder.Clear();
+
+                    HandleMessage(completeMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"WebSocket error: {ex.Message}");
+                await ReconnectWithDelay();
+            }
         }
 
         private void HandleMessage(string data)
         {
             try
             {
+                //Debug.Write(data);
                 var json = JObject.Parse(data);
                 int opCode = json["op"]?.Value<int>() ?? -1;
 
@@ -193,37 +265,12 @@ namespace Discord.Classes
             }
         }
 
-        private void SendPayload()
+        private async Task ReconnectWithDelay(int delayMs = 500)
         {
-            if (WSClient.ReadyState == WebSocketSharp.WebSocketState.Open)
-            {
-                try
-                {
-                    WSClient.Send(identifyPayloadJson);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error sending identify payload: {ex.Message}");
-                }
-            }
-            else
-            {
-                Debug.WriteLine("WebSocket connection is not open. Unable to send identify payload.");
-            }
-        }
-
-        private async void ReconnectWithDelay(int delayMs = 500)
-        {
-            await Task.Delay(delayMs);
-            InitWS();
-        }
-
-        private void StartHeartbeat()
-        {
-            // Making sure the old timer has been disposed.
             StopHeartbeat();
-            if (heartbeatTimer == null)
-                heartbeatTimer = new Timer(_ => WSClient.Send(heartbeatPayloadJson), null, heartbeatInterval, heartbeatInterval);
+            WSClient?.Dispose();
+            await Task.Delay(delayMs);
+            await InitWS();
         }
 
         private void StopHeartbeat() => heartbeatTimer?.Dispose();
