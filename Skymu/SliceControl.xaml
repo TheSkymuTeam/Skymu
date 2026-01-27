@@ -13,21 +13,18 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Left -->
         <Rectangle x:Name="LeftSlice"
                    Grid.Column="0"
                    Width="20" />
 
-        <!-- Middle -->
         <Rectangle x:Name="MiddleSlice"
                    Grid.Column="1" />
 
-        <!-- Right -->
+
         <Rectangle x:Name="RightSlice"
                    Grid.Column="2"
                    Width="20" />
 
-        <!-- Text overlay (does NOT affect layout) -->
         <TextBlock x:Name="OverlayText"
                    Grid.Column="0"
                    Grid.ColumnSpan="3"

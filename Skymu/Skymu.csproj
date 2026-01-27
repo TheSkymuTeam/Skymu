@@ -309,8 +309,6 @@
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_med.png" />
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_med2.png" />
     <Resource Include="ResourcesLight\ChatWindow\btn_pill_small_network_unavailable.png" />
-    <Resource Include="ResourcesLight\ChatWindow\btn_send_message.png" />
-    <Resource Include="ResourcesLight\ChatWindow\btn_wide_send_message.png" />
     <Resource Include="ResourcesLight\ChatWindow\icon-bag.png" />
     <Resource Include="ResourcesLight\ChatWindow\icon-phone.png" />
     <Resource Include="ResourcesLight\ChatWindow\icon-search.png" />
@@ -348,6 +346,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\ChatWindow\msg-box-header.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\msg-send-button-wide.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\msg-send-button-full.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -714,9 +714,9 @@ CornerRadius="4,4,4,4">
                                     <RowDefinition Height="34"></RowDefinition>
                                     <RowDefinition Height="1"></RowDefinition>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="70"></RowDefinition>
+                                    <RowDefinition MinHeight="70" ></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0"
+                                <StackPanel  Grid.Row="0"
             Orientation="Horizontal"
             HorizontalAlignment="Left"
             Margin="7,1,0,0">
@@ -784,11 +784,56 @@ Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8" />
-                                <StackPanel Orientation="Vertical" Grid.Row="3" Width="430">
-                                <Image Height="25" Source="/ResourcesLight/ChatWindow/msg-box-header.png"/>
-                                    
-                                </StackPanel>
+                                <Grid Grid.Row="3">
+                                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,4">
+                                
+                                        <StackPanel x:Name="MessageBoxPanel" 
+                    Orientation="Vertical" 
+                    HorizontalAlignment="Center"
+                    Width="430">
+                                            <Image Height="25" Source="/ResourcesLight/ChatWindow/msg-box-header.png" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
+                                            <Border BorderBrush="#CCCCCC"
+                    BorderThickness="1 0 1 1"
+                    CornerRadius="0,0,4,4"
+                    Background="White" 
+                    MinHeight="35">
+                                                <TextBox BorderThickness="0"
+                         Background="Transparent"
+                         Padding="4"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         MaxLines="10"
+                         TextWrapping="Wrap"
+                         SnapsToDevicePixels="True"
+                         FontFamily="Tahoma"
+                         FontSize="11"
+                         UseLayoutRounding="True"/>
+                                            </Border>
+                                        </StackPanel>
 
+                                       
+                                                                            <local:SliceControl
+Source="/ResourcesLight/ChatWindow/msg-send-button-full.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+PressedIndex="2"
+
+VerticalAlignment="Top"
+HorizontalAlignment="Center"
+                                                                               
+Margin="578,0,0,0"
+Text="Send message"
+TextStartPositionX="26"
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+LeftRightWidth="22"
+TextColor="White"
+Width="140"/>
+                                    </Grid>
+                                </Grid>
 
                             </Grid>
                         </Border>
