@@ -88,11 +88,11 @@ namespace MiddleMan
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) prefer send_completed.
     }
 
-    public class MessageData : ConversationItem
+    public class MessageItem : ConversationItem
     {
         public string SentBy { get; set; } // Return the user's identifier, not their display name.
         public string Body { get; set; } // Message body      
-        public MessageData(string sentByIdentifier, string body, DateTime time)
+        public MessageItem(string sentByIdentifier, string body, DateTime time)
         {
             SentBy = sentByIdentifier;
             Body = body;
@@ -100,11 +100,11 @@ namespace MiddleMan
         }
     }
 
-    public class CallStartedData : ConversationItem
+    public class CallStartedItem : ConversationItem
     {
         public string StartedBy { get; set; } // Return the user's identifier, not their display name.
         public bool IsVideoCall { get; set; }
-        public CallStartedData(string startedByIdentifier, bool isVideoCall, DateTime time)
+        public CallStartedItem(string startedByIdentifier, bool isVideoCall, DateTime time)
         {
             StartedBy = startedByIdentifier;
             Time = time;
@@ -112,11 +112,11 @@ namespace MiddleMan
         }
     }
 
-    public class CallEndedData : ConversationItem
+    public class CallEndedItem : ConversationItem
     {
         public TimeSpan Duration { get; set; } // Length of call
         public bool IsVideoCall { get; set; }
-        public CallEndedData(TimeSpan duration, bool isVideoCall, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+        public CallEndedItem(TimeSpan duration, bool isVideoCall, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
         {
             Duration = duration;
             Time = time;
