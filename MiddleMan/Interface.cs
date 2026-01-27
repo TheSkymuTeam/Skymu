@@ -83,6 +83,47 @@ namespace MiddleMan
         }
     }
 
+    public abstract class ConversationItem
+    {
+        public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) prefer send_completed.
+    }
+
+    public class MessageData : ConversationItem
+    {
+        public string SentBy { get; set; } // Return the user's identifier, not their display name.
+        public string Body { get; set; } // Message body      
+        public MessageData(string sentByIdentifier, string body, DateTime time)
+        {
+            SentBy = sentByIdentifier;
+            Body = body;
+            Time = time;
+        }
+    }
+
+    public class CallStartedData : ConversationItem
+    {
+        public string StartedBy { get; set; } // Return the user's identifier, not their display name.
+        public bool IsVideoCall { get; set; }
+        public CallStartedData(string startedByIdentifier, bool isVideoCall, DateTime time)
+        {
+            StartedBy = startedByIdentifier;
+            Time = time;
+            IsVideoCall = isVideoCall;
+        }
+    }
+
+    public class CallEndedData : ConversationItem
+    {
+        public TimeSpan Duration { get; set; } // Length of call
+        public bool IsVideoCall { get; set; }
+        public CallEndedData(TimeSpan duration, bool isVideoCall, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+        {
+            Duration = duration;
+            Time = time;
+            IsVideoCall = isVideoCall;
+        }
+    }
+
     public enum DialogType
     {
         Error,
@@ -112,6 +153,7 @@ namespace MiddleMan
         Task<bool> SendMessage(string user, string text); // Sends a message, returns true if it was successful.
         Task<SidebarData> FetchSidebarData(); // Fetches sidebar data (contacts list, username, text placeholders, etc.)
         Task<LoginResult> TryAutoLogin(); // Tries to log in with saved tokens/credentials
+        Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier); // Fetches the conversation history between you and the specified identifier.
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
