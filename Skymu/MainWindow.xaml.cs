@@ -78,7 +78,7 @@ namespace Skymu
 
         public async Task InitializeAsync()
         {
-            await PopulateSidebar(); 
+            await PopulateSidebar();
         }
 
         public static readonly DependencyProperty WindowTitleProperty =
@@ -290,7 +290,7 @@ typeof(MainWindow));
             using (var ms = new MemoryStream(array))
             {
                 image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad; 
+                image.CacheOption = BitmapCacheOption.OnLoad;
                 image.StreamSource = ms;
                 image.EndInit();
                 image.Freeze();
@@ -520,6 +520,6 @@ typeof(MainWindow));
         public static string GetDisplayName(string identifier)
         {
             return "";
-        }       
+        }
     }
 }

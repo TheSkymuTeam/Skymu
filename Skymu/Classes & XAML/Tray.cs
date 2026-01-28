@@ -9,20 +9,6 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
-/*==========================================================*/
-// IMPORTANT INFORMATION FOR DEVELOPERS, PROJECT MAINTAINERS
-// AND CONTRIBUTORS TO SKYMU, CONCERNING THIS PARTICULAR FILE
-/*==========================================================*/
-// The following code calls GDI+ components instead of native
-// ones. This has been done out of necessity during the
-// upgrade from .NET Framework 4.6.1 to .NET Core 8, which
-// no longer supports the classic controls. If this can be
-// fixed, or the native styled controls brought back,
-// please do so.
-/*==========================================================*/
-
-#pragma warning disable CA1416
-
 using System.Drawing;
 using System;
 using System.Linq;
@@ -57,44 +43,38 @@ namespace Skymu
                 Icon = new Winforms.NotifyIcon();
                 Icon.Icon = new Icon(resourceStreamInfo.Stream);
 
-                var trayMenu = new Winforms.ContextMenuStrip();
-                var openSkypeItem = new Winforms.ToolStripMenuItem("Open Skype");
-                openSkypeItem.Enabled = false;
-                openSkypeItem.Click += (s, e) =>
+                var trayMenu = new Winforms.ContextMenu();
+                trayMenu.MenuItems.Add(new Winforms.MenuItem("Open Skype", (s, e) =>
                 {
                     if (System.Windows.Application.Current.Windows != null)
                     {
-                        // do something
+
                     }
                     else
                     {
-                        // do something else
-                    }
-                };
-                trayMenu.Items.Add(openSkypeItem);
 
-                var signInItem = new Winforms.ToolStripMenuItem("Sign in");
-                signInItem.Enabled = false;
-                signInItem.Click += (s, e) =>
+                    }
+
+                }) { Enabled = false });
+
+                trayMenu.MenuItems.Add(new Winforms.MenuItem("Sign in", (s, e) =>
                 {
                     if (System.Windows.Application.Current.Windows != null)
                     {
-                        // do something
+
                     }
                     else
                     {
-                        // do something else
+
                     }
-                };
-                trayMenu.Items.Add(signInItem);
 
-                trayMenu.Items.Add(new Winforms.ToolStripSeparator());
-                var quitItem = new Winforms.ToolStripMenuItem("Quit");
-                quitItem.Click += (s, e) => Universal.Shutdown(null);
-                trayMenu.Items.Add(quitItem);
+                }) { Enabled = false });
 
+                trayMenu.MenuItems.Add("-");
+                trayMenu.MenuItems.Add(new Winforms.MenuItem("Quit", (s, e) => Universal.Shutdown(null)));
 
-                Icon.ContextMenuStrip = trayMenu;
+                
+                Icon.ContextMenu = trayMenu;
                 Icon.Visible = true;
             }
             Icon.Text = iconText;

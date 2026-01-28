@@ -70,7 +70,7 @@ namespace Skymu
                         {
                             LoginToggleAnimation(false);
                             SetHeaderToFail();
-                           
+
                         }
                     }
                 }
@@ -78,7 +78,7 @@ namespace Skymu
                 {
                     LoginToggleAnimation(false);
                     SetHeaderToFail();
-                    
+
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace Skymu
         private void MainWindow_Ready(object sender, EventArgs e)
         {
             _mainWindow.Ready -= MainWindow_Ready;
-            _mainWindow.Show();  
+            _mainWindow.Show();
             noCloseEvent = true;
             Close();
         }
@@ -171,7 +171,7 @@ namespace Skymu
                 signInControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
                 header.Text = "Welcome to Skype.";
-            }                           
+            }
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -222,7 +222,7 @@ namespace Skymu
                 DisplayName = name;
                 InternalName = intName;
                 UsernameText = usertext;
-                AuthenticationType = authType;
+                AuthenticationType = authType;  
             }
 
             public string DisplayName { get; private set; }

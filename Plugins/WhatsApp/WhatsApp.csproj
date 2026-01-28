@@ -1,17 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>plug-whatsapp</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <AssemblyTitle>WhatsApp</AssemblyTitle>
     <Product>WhatsApp</Product>
     <Copyright>Copyright ©  2026</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <FileVersion>1.0.0.0</FileVersion>
-    <BaseOutputPath>..\..\Skymu\bin\x64\Debug\plugins\</BaseOutputPath>
+    <OutputPath>..\..\Skymu\bin\x64\Debug\plugins\</OutputPath>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,7 +23,9 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj" />
+    <ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">
+      <Private>False</Private>
+    </ProjectReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>

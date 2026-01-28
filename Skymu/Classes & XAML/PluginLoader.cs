@@ -40,7 +40,7 @@ namespace Skymu
 
                     foreach (Type t in asm.GetTypes())
                     {
-                        if (typeof(ICore).IsAssignableFrom(t) &&
+                            if (typeof(ICore).IsAssignableFrom(t) &&
                             !t.IsInterface &&
                             !t.IsAbstract)
                         {

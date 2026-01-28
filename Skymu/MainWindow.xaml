@@ -119,19 +119,19 @@ Width="14" Grid.Row="1"/>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
             <Grid Height="32">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
 
 
-                    <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
+                <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
                            FontSize="11"
                                FontFamily="Tahoma"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
-                    <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" Text="{Binding Body}" 
+                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" Text="{Binding Body}" 
                            HorizontalAlignment="Left"
            FontSize="11"
                FontFamily="Tahoma"
@@ -652,6 +652,7 @@ TextColor="#333333"
 HorizontalAlignment="Stretch" />
                             <Image Grid.Column="0" Source="/ResourcesLight/ChatWindow/settings_skype.png"
        Width="16"
+                                   IsHitTestVisible="False"
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
@@ -674,6 +675,7 @@ TextColor="#333333"
 HorizontalAlignment="Stretch" />
                             <Image Grid.Column="1" Source="/ResourcesLight/ChatWindow/info_pressed.png"
        Width="16"
+                                   IsHitTestVisible="False"
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
@@ -696,6 +698,7 @@ TextColor="#333333"
 HorizontalAlignment="Stretch" />
                             <Image Grid.Column="2" Source="/ResourcesLight/ChatWindow/icon-skype-feedback.png"
        Width="16"
+                                   IsHitTestVisible="False"
        Height="16"
        HorizontalAlignment="Left"
        Margin="8,0,0,0"/>
@@ -860,7 +863,7 @@ mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                                 </ListBox>
                                 <Grid Grid.Row="4">
                                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,4">
-                                
+
                                         <StackPanel x:Name="MessageBoxPanel" 
                     Orientation="Vertical" 
                     HorizontalAlignment="Center"
@@ -886,8 +889,8 @@ mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                                             </Border>
                                         </StackPanel>
 
-                                       
-                                                                            <local:SliceControl
+
+                                        <local:SliceControl
 Source="/ResourcesLight/ChatWindow/msg-send-button-full.png"
 ElementCount="5"
 StackDirection="Vertical"
