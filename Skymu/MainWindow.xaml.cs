@@ -15,9 +15,12 @@ using MiddleMan;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using ManagedNativeWifi;
+using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -520,6 +523,40 @@ typeof(MainWindow));
         public static string GetDisplayName(string identifier)
         {
             return "";
+        }
+
+        private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            CheckConnectionStrength();
+        }
+
+        private async Task CheckConnectionStrength()
+        {
+            var (result, cc) = NativeWifi.GetCurrentConnection(NativeWifi.EnumerateInterfaces().FirstOrDefault(i => i.State == InterfaceState.Connected).Id);
+            if (result is ActionResult.Success)
+            {
+                int signal = cc.SignalQuality;
+                if (signal >= 80)
+                {
+                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png"));
+                }
+                else if (signal >= 60)
+                {
+                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png"));
+                }
+                else if (signal >= 40)
+                {
+                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png"));
+                }
+                else if (signal >= 20)
+                {
+                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png"));
+                }
+                else
+                {
+                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png"));
+                }
+            }
         }
     }
 }

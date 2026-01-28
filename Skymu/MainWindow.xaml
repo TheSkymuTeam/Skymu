@@ -826,8 +826,8 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-
-
+x:Name="WifiButton"
+                                        MouseLeftButtonUp="WifiButton_Click"
 PressedIndex="2"
 Width="44"
 Slice="false"
@@ -883,6 +883,8 @@ mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                          MaxLines="10"
                          TextWrapping="Wrap"
                          SnapsToDevicePixels="True"
+                                                         TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display"
+                 TextOptions.TextHintingMode="Fixed"
                          FontFamily="Tahoma"
                          FontSize="11"
                          UseLayoutRounding="True"/>
