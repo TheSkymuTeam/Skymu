@@ -821,7 +821,7 @@ Width="44"
 Slice="false"
 Margin="10,0,0,0" />
                                     <local:SliceControl
-Source="/ResourcesLight/ChatWindow/btn_pill_small_network_good.png"
+Source="/ResourcesLight/ChatWindow/btn_pill_small_network_unavailable.png"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"

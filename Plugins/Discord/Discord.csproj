@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+
+  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
     <OutputType>Library</OutputType>
     <AssemblyName>plug-discord</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -17,9 +20,6 @@
     <OutputPath>..\..\Skymu\bin\x64\Debug\plugins\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />

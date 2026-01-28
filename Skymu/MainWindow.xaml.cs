@@ -11,16 +11,19 @@
 
 #pragma warning disable 4014
 
+
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using ManagedNativeWifi;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Net;
+using System.Net.Http;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -532,31 +535,44 @@ typeof(MainWindow));
 
         private async Task CheckConnectionStrength()
         {
-            var (result, cc) = NativeWifi.GetCurrentConnection(NativeWifi.EnumerateInterfaces().FirstOrDefault(i => i.State == InterfaceState.Connected).Id);
-            if (result is ActionResult.Success)
-            {
-                int signal = cc.SignalQuality;
-                if (signal >= 80)
+            string iconUri;
+            string testFile = "https://speed.cloudflare.com/__down?bytes=4348576";
+            try {
+
+
+                using (var client = new HttpClient())
                 {
-                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png"));
-                }
-                else if (signal >= 60)
-                {
-                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png"));
-                }
-                else if (signal >= 40)
-                {
-                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png"));
-                }
-                else if (signal >= 20)
-                {
-                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png"));
-                }
-                else
-                {
-                    WifiButton.Source = new BitmapImage(new Uri("pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png"));
-                }
+                    client.Timeout = TimeSpan.FromSeconds(10);
+
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+
+                    var data = await client.GetByteArrayAsync(testFile);
+
+                    stopwatch.Stop();
+
+                    double seconds = stopwatch.Elapsed.TotalSeconds;
+                    double megabits = (data.Length * 8.0) / 1_000_000; 
+                    double speedMbps = megabits / seconds;
+
+                    if (speedMbps >= 50)
+                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png";
+                    else if (speedMbps >= 25)
+                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png";
+                    else if (speedMbps >= 14)
+                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png";
+                    else if (speedMbps >= 7)
+                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png";
+                    else
+                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png"; 
+                }               
             }
+            catch
+            {
+                iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_unavailable.png";
+            }
+            WifiButton.Source = new BitmapImage(new Uri(iconUri));
         }
+
     }
 }
