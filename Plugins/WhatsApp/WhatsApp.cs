@@ -83,7 +83,7 @@ namespace WhatsApp
 
         public async Task<bool> PopulateSidebarInformation()
         {           
-            SidebarInformation = new SidebarData("Whatsapp User", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown);
+            SidebarInformation = new SidebarData("Whatsapp User", "whatsapp-user@s.whatsapp.net", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown);
             return true;
         }
 

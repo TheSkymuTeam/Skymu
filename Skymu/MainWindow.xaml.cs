@@ -158,6 +158,8 @@ typeof(MainWindow));
 
         internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
 
+        internal static string Identifier = String.Empty;
+
         static BitmapImage LoadAvatar()
         {
             var bmp = new BitmapImage();
@@ -524,7 +526,6 @@ typeof(MainWindow));
                 GlobalUserCount.Text = count + " " + label + " online";
             });
         }
-
         private async Task InitSidebar()
         {
             await Universal.Plugin.PopulateSidebarInformation();
@@ -533,8 +534,9 @@ typeof(MainWindow));
             GlobalUserCount.Text = "Loading online user count...";
             SkymuApiStatusHandler();
             CheckSetUsersOnline();
-            WindowTitle = "Skype™ - " + data.Username;
-            StatusBox.Text = data.Username;
+            WindowTitle = "Skype™ - " + data.DisplayName;
+            Identifier = data.Identifier;
+            StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
             ContactsList.ItemsSource = Universal.Plugin.ContactsList;
@@ -753,6 +755,30 @@ typeof(MainWindow));
         }
     }
 
+    public class IdentifierToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+                              object parameter, CultureInfo culture)
+        {
+            string identifier = value as string;
 
+
+            if (identifier == MainWindow.Identifier)
+            {
+                return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
+            }
+
+            else
+            {
+                return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType,
+                                  object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
 
 }

@@ -13,6 +13,7 @@
         Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
     <Window.Resources>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
+        <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -123,7 +124,8 @@ Width="14" Grid.Row="1"/>
                    Margin="-1000,0,0,0"
                    FontSize="11"
                    FontFamily="Tahoma"
-                   Foreground="#999999"
+                   Foreground="{Binding SentByID,
+                        Converter={StaticResource IdToColorConverter}}"
                    TextTrimming="None"/>
                 <TextBlock Grid.Column="2" 
                    Width="430"

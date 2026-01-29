@@ -50,12 +50,14 @@ namespace MiddleMan
 
     public class SidebarData
     {   
-        public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string Identifier { get; set; }
         public string SkypeCreditText { get; set; }
         public int ConnectionStatus { get; set; }
-        public SidebarData(string username, string skypeCreditText, int connectionStatus)
+        public SidebarData(string username, string identifier, string skypeCreditText, int connectionStatus)
         {
-            Username = username;
+            DisplayName = username;
+            Identifier = identifier;
             SkypeCreditText = skypeCreditText;
             ConnectionStatus = connectionStatus;
         }

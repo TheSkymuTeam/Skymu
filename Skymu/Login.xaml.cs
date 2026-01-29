@@ -13,6 +13,7 @@ using MiddleMan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Printing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -151,6 +152,10 @@ namespace Skymu
                 {
                     InitiateMainWindow();
                     return;
+                }
+                else
+                {
+                    LoginToggleAnimation(false);
                 }
             }
         }
