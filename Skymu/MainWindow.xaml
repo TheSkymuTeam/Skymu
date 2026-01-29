@@ -128,7 +128,7 @@ Width="14" Grid.Row="1"/>
                 <TextBlock Grid.Column="2" 
                    Width="430"
                    Text="{Binding Body}" 
-                           Padding="0,0,10,0"
+                           Padding="0,0,15,0"
                    HorizontalAlignment="Left"
                    TextAlignment="Left"
                    FontSize="11"
