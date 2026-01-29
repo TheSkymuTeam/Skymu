@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace SeanKypeUniversal
+namespace SkymuInstallers
 {
     public partial class installselector : Form
     {

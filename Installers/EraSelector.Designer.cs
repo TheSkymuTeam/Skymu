@@ -1,4 +1,4 @@
-﻿namespace SeanKypeUniversal
+﻿namespace SkymuInstallers
 {
     partial class installselector
     {
@@ -45,7 +45,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::SeanKypeUniversal.Properties.Resources.seasmalln;
+            this.pictureBox1.Image = global::SkymuInstallers.Properties.Resources.seasmalln;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(501, 220);

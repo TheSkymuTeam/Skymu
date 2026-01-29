@@ -1,4 +1,4 @@
-﻿namespace SeanKypeUniversal
+﻿namespace SkymuInstallers
 {
     partial class s7InstallerPg3
     {
@@ -75,7 +75,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::SeanKypeUniversal.Properties.Resources.skype_7_16_0_102_poa6PB1fw1;
+            this.pictureBox1.Image = global::SkymuInstallers.Properties.Resources.skype_7_16_0_102_poa6PB1fw1;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(720, 122);
