@@ -257,17 +257,23 @@ namespace Discord
 
         public async Task<bool> PopulateContactsList()
         {
-            await PopulateListsBackend();
+            await PopulateListsBackend(ListType.Contacts);
             return true;
         }
 
         public async Task<bool> PopulateRecentsList()
         {
-            await PopulateListsBackend(true);
+            await PopulateListsBackend(ListType.Recents);
             return true;
         }
 
-        public async Task<bool> PopulateListsBackend(bool loadRecents = false)
+        public enum ListType
+        {
+            Contacts,
+            Recents
+        }
+
+        public async Task<bool> PopulateListsBackend(ListType toLoad)
         {
             pluginOOTBStuff ootb = new pluginOOTBStuff();
 
@@ -282,7 +288,7 @@ namespace Discord
                     .OfType<JsonObject>()
                     .Where(c => c["type"]?.GetValue<int>() == 1);
 
-                if (loadRecents)
+                if (toLoad == ListType.Recents)
                 {
                     dmChannels = dmChannels
                         .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0");
@@ -307,7 +313,7 @@ namespace Discord
 
                     var profileData = await CreateProfileDataAsync(ootb, userId, skymuId, globalName, username, avatarHash);
 
-                    if (loadRecents)
+                    if (toLoad == ListType.Recents)
                         RecentsList.Add(profileData);
                     else
                         ContactsList.Add(profileData);
