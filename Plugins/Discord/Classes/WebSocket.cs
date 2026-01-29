@@ -47,6 +47,9 @@ namespace Discord.Classes
         // Used in functions outside and inside WebSocket.cs to parse data - now stores JToken instead of string to avoid ToString() allocation
         public JsonNode recipientsData;
 
+        // Used to store all private channels (DMs and GCs)
+        public JsonNode privateChannelsData;
+
         // Used for sending the first payload required
         private string identifyPayloadJson;
 
@@ -218,6 +221,7 @@ namespace Discord.Classes
 
                                 var readyData = json["d"];
                                 recipientsData = readyData["relationships"] ?? new JsonArray();
+                                privateChannelsData = readyData["private_channels"] ?? new JsonArray();
 
                                 CanCheckData = true;
                                 break;

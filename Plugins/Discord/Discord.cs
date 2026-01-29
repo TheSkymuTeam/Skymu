@@ -242,6 +242,8 @@ namespace Discord
             JsonArray parsedAPICJson = new JsonArray();
             try
             {
+                while (!WebSocket.CanCheckData)
+                    await Task.Delay(100);
                 // We need to make a separate call to the Discord API to get all of the channel IDs
                 // The ID for a friend is separated like this <user_id>;<channel_id> for each user.
                 string channels = await api.SendAPI("/users/@me/channels", HttpMethod.Get, DscToken, null, null, null);
@@ -251,7 +253,6 @@ namespace Discord
 
                 foreach (var friend in parsedWSJson)
                 {
-                    byte[] avatarImage = null;
                     string friendId = friend["id"]?.GetValue<string>() ?? "N/A";
                     string channelId = parsedAPICJson
                         .OfType<JsonObject>()
@@ -262,31 +263,14 @@ namespace Discord
                         )
                         .Select(c => c["id"]?.GetValue<string>())
                         .FirstOrDefault();
-                    string skymuId = channelId != null
-                        ? $"{friendId};{channelId}"
-                        : friendId;
+
+                    string skymuId = channelId != null ? $"{friendId};{channelId}" : friendId;
                     string friendGlobalName = friend["user"]["global_name"]?.GetValue<string>() ?? "N/A";
                     string friendUsername = friend["user"]["username"]?.GetValue<string>() ?? "N/A";
                     string friendAvatarHash = friend["user"]["avatar"]?.GetValue<string>();
 
-                    string statusStr = WebSocket.UserStatusStore.GetStatus(friendId);
-                    int friendStatus = ootb.MapStatus(statusStr);
-
-                    string custStatusStr = WebSocket.UserStatusStore.GetCustomStatus(friendId);
-
-
-                    if (!string.IsNullOrEmpty(friendAvatarHash))
-                    {
-                        avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
-                    }
-
-                    ContactsList.Add(new ProfileData(
-                        string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName,
-                        skymuId,
-                        custStatusStr,
-                        friendStatus,
-                        avatarImage
-                    ));
+                    var profileData = await CreateProfileDataAsync(ootb, friendId, skymuId, friendGlobalName, friendUsername, friendAvatarHash);
+                    ContactsList.Add(profileData);
                 }
             }
             catch (Exception ex)
@@ -299,9 +283,70 @@ namespace Discord
 
         public async Task<bool> PopulateRecentsList()
         {
-            RecentsList.Add(new ProfileData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
-            RecentsList.Add(new ProfileData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+            try
+            {
+                while (!WebSocket.CanCheckData)
+                    await Task.Delay(100);
+
+                var privateChannels = WebSocket.privateChannelsData as JsonArray ?? new JsonArray();
+
+                // Filter for DM channels (type 1) and sort by last_message_id descending (most recent first)
+                var dmChannels = privateChannels
+                    .OfType<JsonObject>()
+                    .Where(c => c["type"]?.GetValue<int>() == 1)
+                    .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0")
+                    .ToList();
+
+                foreach (var channel in dmChannels)
+                {
+                    var recipients = channel["recipients"] as JsonArray;
+                    if (recipients == null || recipients.Count == 0)
+                        continue;
+
+                    var recipient = recipients[0] as JsonObject;
+                    if (recipient == null)
+                        continue;
+
+                    string userId = recipient["id"]?.GetValue<string>() ?? "N/A";
+                    string channelId = channel["id"]?.GetValue<string>() ?? "N/A";
+                    string skymuId = $"{userId};{channelId}";
+                    string globalName = recipient["global_name"]?.GetValue<string>() ?? "N/A";
+                    string username = recipient["username"]?.GetValue<string>() ?? "N/A";
+                    string avatarHash = recipient["avatar"]?.GetValue<string>();
+
+                    var profileData = await CreateProfileDataAsync(ootb, userId, skymuId, globalName, username, avatarHash);
+                    RecentsList.Add(profileData);
+                }
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Parse error: {ex.Message}"));
+                return false;
+            }
             return true;
+        }
+
+        private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash)
+        {
+            byte[] avatarImage = null;
+
+            string statusStr = WebSocket.UserStatusStore.GetStatus(userId);
+            int userStatus = ootb.MapStatus(statusStr);
+            string custStatusStr = WebSocket.UserStatusStore.GetCustomStatus(userId);
+
+            if (!string.IsNullOrEmpty(avatarHash))
+            {
+                avatarImage = await ootb.GetCachedAvatarAsync(userId, avatarHash);
+            }
+
+            return new ProfileData(
+                string.IsNullOrEmpty(globalName) ? username : globalName,
+                skymuId,
+                custStatusStr,
+                userStatus,
+                avatarImage
+            );
         }
 
         public async Task<LoginResult> TryAutoLogin()
