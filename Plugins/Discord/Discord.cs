@@ -81,7 +81,7 @@ namespace Discord
                 password = password
             };
             var loginResponse = JsonNode.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody)).AsObject();
-            Console.WriteLine($"The response from the API is: {loginResponse}");
+            //Console.WriteLine($"The response from the API is: {loginResponse}");
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
@@ -201,17 +201,47 @@ namespace Discord
 
             if (string.IsNullOrEmpty(identifier))
                 return false;
-
             string[] parts = identifier.Split(';');
             if (parts.Length < 2)
                 return false;
 
             string channelId = parts[1];
 
-            string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=5", HttpMethod.Get, DscToken, null, null, null);
-            Debug.WriteLine($"The JSON for the conversation is: {conversation}");
+            try
+            {
+                string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=100", HttpMethod.Get, DscToken, null, null, null);
+                var parsedJson = JsonNode.Parse(conversation);
 
-            return true;
+                if (parsedJson is not JsonArray messages)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {conversation}"));
+                    return false;
+                }
+
+                var sortedMessages = messages.Reverse();
+                foreach (var message in sortedMessages)
+                {
+                    string authorName = message["author"]["global_name"]?.GetValue<string>()
+                        ?? message["author"]["username"]?.GetValue<string>()
+                        ?? "Unknown";
+                    string authorId = message["author"]["id"]?.GetValue<string>() ?? "0";
+                    string content = message["content"]?.GetValue<string>() ?? "";
+                    string timestampStr = message["timestamp"]?.GetValue<string>();
+
+                    DateTime timestamp = DateTime.UtcNow;
+                    if (!string.IsNullOrEmpty(timestampStr))
+                    {
+                        DateTime.TryParse(timestampStr, out timestamp);
+                    }
+                    ActiveConversation.Add(new MessageItem(authorId, authorName, content, timestamp));
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                return false;
+            }
         }
 
         public SidebarData SidebarInformation { get; private set; }

@@ -573,6 +573,7 @@ typeof(MainWindow));
 
         private async void SendMessage(object sender, MouseButtonEventArgs e)
         {
+            MessageTextBox.Clear();
             bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageTextBox.Text);
         }
 
