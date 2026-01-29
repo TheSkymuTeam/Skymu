@@ -16,9 +16,8 @@
 
 #pragma warning disable 4014
 
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -26,13 +25,17 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Security.Authentication;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Discord.Classes
 {
     class WebSocket
     {
+        public WebSocketState State => WSClient?.State ?? WebSocketState.None;
         private const SslProtocols Tls12 = SslProtocols.Tls12;
 
         // Discord's WebSocket / Gateway URL
@@ -65,13 +68,15 @@ namespace Discord.Classes
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
-        private readonly char[] _charBuffer = new char[8192];
-        private readonly Decoder _utf8Decoder = Encoding.UTF8.GetDecoder();
         private readonly ArraySegment<byte> _heartbeatBuffer;
         private readonly ArraySegment<byte> _identifyBuffer;
 
+        private CancellationTokenSource _receiveCts;
+
         // Event for new messages
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        // Provides a method for asynchronous background processing of messages, makes the app smoother.
+        private readonly Channel<MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<MessageReceivedEventArgs>();
 
         public WebSocket()
         {
@@ -98,6 +103,7 @@ namespace Discord.Classes
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
 
             ConnectAsync();
+            StartMessageProcessor();
         }
 
         public async Task ConnectAsync()
@@ -133,11 +139,12 @@ namespace Discord.Classes
             WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
 
             var uri = new Uri(gatewayUrl);
-            await WSClient.ConnectAsync(uri, CancellationToken.None);
+            await WSClient.ConnectAsync(uri, CancellationToken.None).ConfigureAwait(false);
 
             await SendPayload();
 
-            _ = Task.Run(ReceiveLoop);
+            _receiveCts = new CancellationTokenSource();
+            _ = Task.Run(() => ReceiveLoop(_receiveCts.Token));
         }
 
         private void StartHeartbeat()
@@ -158,44 +165,64 @@ namespace Discord.Classes
 
         private async Task SendPayload(string payload = null)
         {
-            if (WSClient.State != WebSocketState.Open) return;
+            if (WSClient?.State != WebSocketState.Open) return;
 
             if (payload == null)
-                await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
-            else
             {
-                var bytes = Encoding.UTF8.GetBytes(payload);
-                await WSClient.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                return;
+            }
+
+            var byteCount = Encoding.UTF8.GetByteCount(payload);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(byteCount);
+
+            try
+            {
+                int bytesWritten = Encoding.UTF8.GetBytes(payload, 0, payload.Length, buffer, 0);
+                await WSClient.SendAsync(new ArraySegment<byte>(buffer, 0, bytesWritten), WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
         }
 
-        private async Task ReceiveLoop()
+        private async Task ReceiveLoop(CancellationToken cancellationToken)
         {
-            var messageBuilder = new StringBuilder(8192);  // Pre-allocate with reasonable capacity
-
+            using var ms = new MemoryStream();
             try
             {
                 while (WSClient.State == WebSocketState.Open)
                 {
-                    WebSocketReceiveResult result;
-                    do
+                    var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
+                    if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), CancellationToken.None);
-                        if (result.Count > 0)
-                        {
-                            int charsDecoded = _utf8Decoder.GetChars(_receiveBuffer, 0, result.Count, _charBuffer, 0, false);
-                            messageBuilder.Append(_charBuffer, 0, charsDecoded);
-                        }
+                        Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
+                        await ReconnectWithDelay(1);
+                        return;
                     }
-                    while (!result.EndOfMessage);
 
-                    if (messageBuilder.Length > 0)
+                    if (result.Count > 0)
                     {
-                        var completeMessage = messageBuilder.ToString();
-                        messageBuilder.Clear();
-                        HandleMessage(completeMessage);
+                        ms.Write(_receiveBuffer, 0, result.Count);
+                    }
+
+                    if (result.EndOfMessage)
+                    {
+                        string message = Encoding.UTF8.GetString(ms.ToArray());
+                        ms.SetLength(0);
+                        HandleMessage(message);
                     }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected during shutdown
+            }
+            catch (WebSocketException ex)
+            {
+                Debug.WriteLine($"WebSocket error: {ex.Message}");
+                await ReconnectWithDelay();
             }
             catch (Exception ex)
             {
@@ -219,7 +246,8 @@ namespace Discord.Classes
                         switch (eventType)
                         {
                             case "READY":
-                                Debug.WriteLine(json["d"]?.ToJsonString());
+                                // Only uncomment this if you need to debug the READY event from Discord.
+                                // Debug.WriteLine(json["d"]?.ToJsonString());
                                 HandleUserStatus(json["d"]);
 
                                 var readyData = json["d"];
@@ -239,8 +267,11 @@ namespace Discord.Classes
                         break;
 
                     case 10: // Hello from the gateway (Op 10)
-                        heartbeatInterval = json["d"]?["heartbeat_interval"]?.GetValue<int>() ?? 0;
+                        heartbeatInterval = json["d"]?["heartbeat_interval"]?.GetValue<int>() ?? 41250;
                         StartHeartbeat();
+                        break;
+                    case 11:
+                        Debug.WriteLine("Heartbeat acknowledged");
                         break;
                     default:
                         break;
@@ -256,29 +287,26 @@ namespace Discord.Classes
         {
             try
             {
-                string channelId = messageData["channel_id"]?.GetValue<string>();
-                string authorId = messageData["author"]?["id"]?.GetValue<string>();
-                string authorName = messageData["author"]?["global_name"]?.GetValue<string>()
-                    ?? messageData["author"]?["username"]?.GetValue<string>()
-                    ?? "Unknown";
-                string content = messageData["content"]?.GetValue<string>() ?? "";
-                string timestampStr = messageData["timestamp"]?.GetValue<string>();
+                string channelId = GetString(messageData, "channel_id");
+                string authorId = GetString(messageData["author"], "id");
+                string authorName = GetString(messageData["author"], "global_name", GetString(messageData["author"], "username", "Unknown"));
+                string content = GetString(messageData, "content");
 
                 DateTime timestamp = DateTime.UtcNow;
+                string timestampStr = GetString(messageData, "timestamp");
                 if (!string.IsNullOrEmpty(timestampStr))
-                {
                     DateTime.TryParse(timestampStr, out timestamp);
-                }
 
-                // Raise the event
-                MessageReceived?.Invoke(this, new MessageReceivedEventArgs
+                var args = new MessageReceivedEventArgs
                 {
                     ChannelId = channelId,
                     AuthorId = authorId,
                     AuthorName = authorName,
                     Content = content,
                     Timestamp = timestamp
-                });
+                };
+
+                _ = _messageQueue.Writer.WriteAsync(args);
             }
             catch (Exception ex)
             {
@@ -286,21 +314,30 @@ namespace Discord.Classes
             }
         }
 
+        private void StartMessageProcessor()
+        {
+            _ = Task.Run(async () =>
+            {
+                await foreach (var msg in _messageQueue.Reader.ReadAllAsync())
+                {
+                    try { MessageReceived?.Invoke(this, msg); }
+                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
+                }
+            });
+        }
+
         private void HandleUserStatus(JsonNode messageData)
         {
             if (messageData["user_settings"] is JsonObject userSettings)
             {
-                foreach (var setting in userSettings)
-                {
-                    string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "Unknown";
-                    string rawCustomStatus = string.Empty;
+                string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "Unknown";
+                string rawCustomStatus = string.Empty;
 
-                    if (userSettings["custom_status"] is JsonObject customStatusObj)
-                    {
-                        rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
-                    }
-                    UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
+                if (userSettings["custom_status"] is JsonObject customStatusObj)
+                {
+                    rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
                 }
+                UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
             }
 
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
@@ -356,17 +393,45 @@ namespace Discord.Classes
             }
         }
 
-        private async Task ReconnectWithDelay(int delayMs = 500)
+        private async Task ReconnectWithDelay(int attempt = 1)
+        {
+            WSDispose();
+
+            int delayMs = Math.Min(1000 * (int)Math.Pow(2, attempt), 30000);
+            await Task.Delay(delayMs);
+
+            try
+            {
+                await InitWS();
+            }
+            catch
+            {
+                _ = ReconnectWithDelay(attempt + 1);
+            }
+        }
+
+        public void WSDispose()
         {
             StopHeartbeat();
+            _receiveCts?.Cancel();
+            _receiveCts?.Dispose();
+            try
+            {
+                WSClient?.Abort();
+            }
+            catch { /* This ignores any abort errors */ }
             WSClient?.Dispose();
-            await Task.Delay(delayMs);
-            await InitWS();
         }
 
         private void StopHeartbeat()
         {
             heartbeatCts?.Cancel();
+            heartbeatCts?.Dispose();
+            heartbeatCts = null;
+        }
+        private static string GetString(JsonNode node, string key, string defaultValue = "")
+        {
+            return node?[key]?.GetValue<string>() ?? defaultValue;
         }
     }
 
