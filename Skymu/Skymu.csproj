@@ -42,6 +42,7 @@
     <Page Remove="UniversalResources\Buttons\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="ResourcesLight\ChatWindow\reply-arrow.png" />
     <None Remove="UniversalResources\Branding\skymu-about-logo.png" />
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +62,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="ResourcesLight\ChatWindow\reply-arrow.png" />
     <Resource Include="UniversalResources\Branding\skymu-about-logo.png" />
     <Resource Include="UniversalResources\WindowBorder\close.png" />
     <Resource Include="UniversalResources\WindowBorder\join.png" />

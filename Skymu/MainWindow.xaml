@@ -111,6 +111,11 @@ Width="14" Grid.Row="1"/>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
             <Grid Margin="0,9.5,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="62"/>
                     <ColumnDefinition Width="16"/>
@@ -118,41 +123,46 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" 
-                   Text="{Binding SentByDN}" 
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="78,0,0,2">
+                    <Image Source="/ResourcesLight/ChatWindow/reply-arrow.png" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center" />
+                    <TextBlock Text="Replied to &quot;patricktbp - Hello!&quot;" FontSize="11" FontFamily="Tahoma" Foreground="#999999" />
+                </StackPanel>
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                   Text="{Binding SentByDN}"
                    HorizontalAlignment="Right"
                    Margin="-1000,0,0,0"
                    FontSize="11"
                    FontFamily="Tahoma"
                    Foreground="{Binding SentByID,
-                        Converter={StaticResource IdToColorConverter}}"
-                   TextTrimming="None"/>
-                <TextBlock Grid.Column="2" 
+                        Converter={StaticResource IdToColorConverter}}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="2"
                    Width="430"
-                   Text="{Binding Body}" 
-                           Padding="0,0,15,0"
-                   HorizontalAlignment="Left"
-                   TextAlignment="Left"
+                   Text="{Binding Body}"
+                   Padding="0,0,15,0"
                    FontSize="11"
                    VerticalAlignment="Top"
                    TextWrapping="Wrap"
                    FontFamily="Tahoma"
                    TextTrimming="CharacterEllipsis"/>
 
-                <TextBlock Grid.Column="2" Width="430"
-                   Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" 
-                   HorizontalAlignment="Left" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
-
-                <TextBlock Grid.Column="2" Width="430"
-                   Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" 
-                   HorizontalAlignment="Left" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
-
-                <TextBlock Grid.Column="3" 
-                   Text="{Binding Time, StringFormat=h:mm tt}" 
-                   Margin="0,0,0,0"
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                   Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
                    FontSize="11"
                    FontFamily="Tahoma"
-                   HorizontalAlignment="Left"
+                   Foreground="#999999"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                   Text="{Binding StartedBy, StringFormat='Call started by: {0}'}"
+                   FontSize="11"
+                   FontFamily="Tahoma"
+                   Foreground="#999999"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="3"
+                   Text="{Binding Time, StringFormat=h:mm tt}"
+                   FontSize="11"
+                   FontFamily="Tahoma"
                    Foreground="#999999"/>
             </Grid>
         </DataTemplate>

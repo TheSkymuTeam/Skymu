@@ -203,7 +203,6 @@ namespace Discord
                     }
                     else
                     {
-                        // Fallback if no context available
                         ActiveConversation.Add(messageItem);
                     }
                 }
@@ -327,8 +326,18 @@ namespace Discord
                 globalName = parsedJson["global_name"]?.GetValue<string>() ?? String.Empty;
                 username = parsedJson["username"]?.GetValue<string>() ?? String.Empty;
 
-                while (!WebSocket.CanCheckData)
+                int timeout = 30; // 3 seconds
+                while (!WebSocket.CanCheckData && timeout > 0)
+                {
                     await Task.Delay(100);
+                    timeout--;
+                }
+
+                if (!WebSocket.CanCheckData)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("WebSocket failed to initialize in time."));
+                    return false;
+                }
 
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
                 mainUsrStatusSkymu = new pluginOOTBStuff().MapStatus(mainUsrStatus);
@@ -511,6 +520,8 @@ namespace Discord
         public class pluginOOTBStuff
         {
             private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
+            private static readonly HttpClient _httpClient = new HttpClient();
+
             public pluginOOTBStuff()
             {
                 // Make sure the cache directory exists
@@ -520,25 +531,22 @@ namespace Discord
             // So we don't have to fetch the data everytime
             public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
             {
-                pluginOOTBStuff ootb = new pluginOOTBStuff();
-
-                string pattern = $"*-{userId}.png";
                 string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
                 if (File.Exists(cachedFile))
                     return File.ReadAllBytes(cachedFile);
 
+                string pattern = $"*-{userId}.png";
                 foreach (var file in Directory.GetFiles(cacheDir, pattern))
-                    File.Delete(file);
-
-                string url = ootb.GetAvatarUrl(userId, hash, false, isGC);
-                using (var hc = new HttpClient())
                 {
-                    byte[] data = await hc.GetByteArrayAsync(url);
-                    await File.WriteAllBytesAsync(cachedFile, data);
+                    if (file != cachedFile)
+                        File.Delete(file);
                 }
 
-                return File.ReadAllBytes(cachedFile);
+                string url = GetAvatarUrl(userId, hash, false, isGC);
+                byte[] data = await _httpClient.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(cachedFile, data);
+                return data;
             }
 
             public int MapStatus(string statusStr)
