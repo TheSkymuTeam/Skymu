@@ -134,7 +134,9 @@
     <Resource Include="ResourcesLight\Backgrounds\aboutBackground.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UniversalResources\Branding\SkypeLogoBig.png" />
+    <Resource Include="UniversalResources\Branding\SkypeLogoBig.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\MainSidebar\ms_Status_Bottom.png" />
