@@ -109,9 +109,9 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="35,7.5,0,0">
+            <Grid Margin="0,7.5,65,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="430"/>
                     <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
