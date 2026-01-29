@@ -173,6 +173,7 @@ namespace Skymu
             {
                 signInControls.Visibility = Visibility.Collapsed;
                 throbber.Visibility = Visibility.Visible;
+                header.Foreground = new BrushConverter().ConvertFromString("#00AFF0") as SolidColorBrush;
                 header.Text = "Signing in";
             }
             else

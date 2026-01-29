@@ -522,6 +522,12 @@ typeof(MainWindow));
 
             await Dispatcher.InvokeAsync(() =>
             {
+                if (count == -1)
+                {
+                    GlobalUserCount.Text = "Couldn't get online user count";
+                    return;
+                }
+
                 string label = count == 1 ? "user" : "users";
                 GlobalUserCount.Text = count + " " + label + " online";
             });

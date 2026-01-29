@@ -90,7 +90,7 @@ namespace Skymu
             try
             {
                 using (var req = new HttpRequestMessage(
-                    HttpMethod.Post,
+                    HttpMethod.Get,
                     skymuCountUri))
                 {
                     using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
@@ -103,7 +103,7 @@ namespace Skymu
             }
             catch
             {
-                return 0;
+                return -1;
             }
         }
     }

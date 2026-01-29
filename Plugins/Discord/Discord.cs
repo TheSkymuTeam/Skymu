@@ -54,6 +54,24 @@ namespace Discord
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
+            if (username.ToUpper() == "$TOKEN" && !string.IsNullOrWhiteSpace(password))
+            {
+                DscToken = password;
+                string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
+
+                if (userCheckTkn.Contains("username"))
+                {
+                    File.WriteAllText("discord.smcred", DscToken);
+                    _webSocket ??= new WebSocket();
+                    return LoginResult.Success;
+                }
+                else
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("The provided token is invalid."));
+                    return LoginResult.Failure;
+                }
+            }
+
             var loginBody = new
             {
                 login = username,
