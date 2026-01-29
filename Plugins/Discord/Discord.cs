@@ -110,8 +110,7 @@ namespace Discord
             }
             else
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to log in. Please contact us on the Discord server and upload the file debug_log_in.skdbg to your message, as well as sharing a screenshot of this dialog. Error is as follows:\n\n" + loginResponse.ToJsonString()));
-                File.WriteAllText("debug_log_in.skdbg", "RESPONSE:\n\n" + loginResponse.ToJsonString() + "\n\nREQUEST\n\n" + JsonSerializer.Serialize(loginBody));
+                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to log in. Error is as follows:\n\nRESPONSE:" + loginResponse.ToJsonString() + "\n\nREQUEST:" + loginBody));
                 return LoginResult.Failure;
             }
         }
