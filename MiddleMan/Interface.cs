@@ -150,7 +150,7 @@ namespace MiddleMan
         Task<LoginResult> LoginMainStep(string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
-        Task<bool> SendMessage(string user, string text); // Sends a message. Returns true on success.
+        Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.
         SidebarData SidebarInformation { get; } // field for sidebar data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         Task<LoginResult> TryAutoLogin(); // Tries to log in with saved tokens/credentials

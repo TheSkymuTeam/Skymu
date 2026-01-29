@@ -529,7 +529,7 @@ typeof(MainWindow));
         private async Task InitSidebar()
         {
             await Universal.Plugin.PopulateSidebarInformation();
-            await Universal.Plugin.PopulateContactsList();
+            await Universal.Plugin.PopulateRecentsList();
             SidebarData data = Universal.Plugin.SidebarInformation;
             GlobalUserCount.Text = "Loading online user count...";
             SkymuApiStatusHandler();
@@ -539,7 +539,7 @@ typeof(MainWindow));
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
-            ContactsList.ItemsSource = Universal.Plugin.ContactsList;
+            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
             SpeedTester();
             Ready?.Invoke(this, EventArgs.Empty);
         }
@@ -568,15 +568,6 @@ typeof(MainWindow));
         private async void SendMessage(object sender, MouseButtonEventArgs e)
         {
             bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageTextBox.Text);
-            if (didSend)
-            {
-                Universal.ShowMsg("sent");
-            }
-            else
-            {
-                Universal.ShowMsg("fail");
-            }
-
         }
 
         public static string GetDisplayName(string identifier)

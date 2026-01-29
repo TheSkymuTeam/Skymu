@@ -147,9 +147,29 @@ namespace Discord
             }
         }
 
-        public async Task<bool> SendMessage(string user, string text)
+        public async Task<bool> SendMessage(string identifier, string text)
         {
-            return true;
+            if (string.IsNullOrEmpty(identifier) || string.IsNullOrEmpty(text))
+                return false;
+
+            string[] parts = identifier.Split(';');
+            if (parts.Length < 2)
+                return false;
+
+            string channelId = parts[1];
+
+            try
+            {
+                var messageBody = new { content = text };
+                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, messageBody);
+
+                return !string.IsNullOrEmpty(response) && !response.Contains("error");
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                return false;
+            }
         }
 
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();

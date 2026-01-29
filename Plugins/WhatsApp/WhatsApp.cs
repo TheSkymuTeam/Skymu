@@ -39,7 +39,7 @@ namespace WhatsApp
             return LoginResult.Success;
         }
 
-        public async Task<bool> SendMessage(string user, string text)
+        public async Task<bool> SendMessage(string identifier, string text)
         {
             return true;
         }
