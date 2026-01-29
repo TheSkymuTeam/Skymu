@@ -8,11 +8,14 @@
         mc:Ignorable="d"
         WindowStyle="None"
         AllowsTransparency="True"
-        Title="About" Height="481" Width="501">
+        Title="About" Height="454" Width="501">
     <Window.Background>
-        <ImageBrush ImageSource="/ResourcesLight/Backgrounds/aboutBackground.png"  Stretch="Uniform" /> 
+        <ImageBrush ImageSource="/ResourcesLight/Backgrounds/aboutBackground.png" Stretch="Uniform" /> 
     </Window.Background>
-    <Grid>
-        <Image Source="/UniversalResources/Branding/skymu-about-logo.png" Height="111" Margin="0,0,0,100" />
-    </Grid>
+    <StackPanel>
+        <Image Source="/UniversalResources/Branding/skymu-about-logo.png" Height="111" Margin="0,115,0,0" />
+        <TextBlock Text="Skymu, a Skype-like instant messenger" HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" FontSize="11" Margin="0,18,16,0"/>
+        <TextBlock Text="FOSS software, licensed under (Placeholder)&#x0a;You can find our repository over at GitHub under the Skymu name.&#x0a;Skymu is not associated with Skype nor Microsoft, all assets are owned by Microsoft and Skype Limited." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,23,13,0" FontFamily="Tahoma" FontSize="11" />
+        <TextBlock Text="Warning: If you have paid for this software with real currency, please ask for a chargeback from your bank! Skymu is free and forever will be free, please report the URL with the paid content to support@hubaxe.fr. We will handle the situation and take it down." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,16,13,0" FontFamily="Tahoma" FontSize="11"/>
+    </StackPanel>
 </Window>
