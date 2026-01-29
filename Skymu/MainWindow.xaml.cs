@@ -571,7 +571,12 @@ typeof(MainWindow));
             catch { }
         }
 
-        private async void SendMessage(object sender, MouseButtonEventArgs e)
+        private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
+        {
+            SendMessage();
+        }
+
+        private async Task SendMessage()
         {
             string body = MessageTextBox.Text;
             MessageTextBox.Clear();
@@ -725,6 +730,21 @@ typeof(MainWindow));
         private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Keyboard.ClearFocus();
+        }
+
+        private void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                // Shift+Enter → allow newline
+                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+                    return;
+
+                // Enter alone → treat as "send"
+                e.Handled = true;
+
+                SendMessage();
+            }
         }
     }
 

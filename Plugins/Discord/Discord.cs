@@ -49,6 +49,9 @@ namespace Discord
         public bool CanSetStatusOnSkymuAPI;
         internal static readonly API api = new API();
 
+        // Track the active channel ID for real-time updates
+        private string _activeChannelId;
+        private SynchronizationContext _uiContext;
         public string TextUsername { get { return "Email address"; } }
         public string CustomLoginButtonText { get { return null; } }
         // Skymu authentication method
@@ -66,6 +69,7 @@ namespace Discord
                 {
                     File.WriteAllText("discord.smcred", DscToken);
                     _webSocket ??= new WebSocket();
+                    SubscribeToWebSocketEvents();
                     return LoginResult.Success;
                 }
                 else
@@ -88,6 +92,7 @@ namespace Discord
                 DscToken = loginResponse["token"].GetValue<string>();
                 File.WriteAllText("discord.smcred", loginResponse["token"]?.GetValue<string>());
                 _webSocket ??= new WebSocket();
+                SubscribeToWebSocketEvents();
 
                 return LoginResult.Success;
             }
@@ -161,6 +166,7 @@ namespace Discord
                     File.WriteAllText("discord.smcred", jsonResponse["token"].GetValue<string>());
 
                     _webSocket ??= new WebSocket();
+                    SubscribeToWebSocketEvents();
 
                     return LoginResult.Success;
                 }
@@ -168,6 +174,42 @@ namespace Discord
                 {
                     OnError?.Invoke(this, new PluginMessageEventArgs("Your MFA code is invalid, please double check that it is correct before retrying."));
                     return LoginResult.Failure;
+                }
+            }
+        }
+
+        private void SubscribeToWebSocketEvents()
+        {
+            if (_webSocket != null)
+            {
+                _webSocket.MessageReceived += OnWebSocketMessageReceived;
+            }
+        }
+
+        private void OnWebSocketMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            // Only add messages if they're for the currently active channel
+            if (e.ChannelId == _activeChannelId)
+            {
+                try
+                {
+                    var messageItem = new MessageItem(e.AuthorId, e.AuthorName, e.Content, e.Timestamp);
+
+                    // Use SynchronizationContext to marshal to UI thread (works in plugins)
+                    var context = SynchronizationContext.Current ?? _uiContext;
+                    if (context != null)
+                    {
+                        context.Post(_ => ActiveConversation.Add(messageItem), null);
+                    }
+                    else
+                    {
+                        // Fallback if no context available
+                        ActiveConversation.Add(messageItem);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error adding message to conversation: {ex.Message}");
                 }
             }
         }
@@ -204,15 +246,24 @@ namespace Discord
             ActiveConversation.Clear();
 
             if (string.IsNullOrEmpty(identifier))
+            {
+                _activeChannelId = null;
                 return false;
+            }
+
             string[] parts = identifier.Split(';');
             if (parts.Length < 2)
+            {
+                _activeChannelId = null;
                 return false;
+            }
 
             string channelId = parts[1];
+            _activeChannelId = channelId; // Store the active channel ID for WebSocket filtering
 
             try
             {
+                // Fetch initial message history
                 string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=100", HttpMethod.Get, DscToken, null, null, null);
                 var parsedJson = JsonNode.Parse(conversation);
 
@@ -239,11 +290,14 @@ namespace Discord
                     }
                     ActiveConversation.Add(new MessageItem(authorId, authorName, content, timestamp));
                 }
+
+                // Now the WebSocket event handler will automatically add new messages
                 return true;
             }
             catch (Exception ex)
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                _activeChannelId = null;
                 return false;
             }
         }
@@ -256,6 +310,7 @@ namespace Discord
 
         public async Task<bool> PopulateSidebarInformation()
         {
+            _uiContext = SynchronizationContext.Current;
             // User details
             string globalName;
             string username;
@@ -437,6 +492,7 @@ namespace Discord
                     }
 
                     _webSocket ??= new WebSocket();
+                    SubscribeToWebSocketEvents();
                     return LoginResult.Success;
                 }
                 else
@@ -494,7 +550,7 @@ namespace Discord
                     "dnd" => UserConnectionStatus.DoNotDisturb,
                     "offline" => UserConnectionStatus.Invisible,
                     _ => UserConnectionStatus.Invisible
-                };
+                }; 
             }
 
             public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)

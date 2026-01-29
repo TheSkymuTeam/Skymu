@@ -70,6 +70,9 @@ namespace Discord.Classes
         private readonly ArraySegment<byte> _heartbeatBuffer;
         private readonly ArraySegment<byte> _identifyBuffer;
 
+        // Event for new messages
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
         public WebSocket()
         {
             token = File.ReadAllText("discord.smcred");
@@ -227,7 +230,7 @@ namespace Discord.Classes
                                 break;
 
                             case "MESSAGE_CREATE":
-                                // TODO: Implement
+                                HandleMessageCreate(json["d"]);
                                 break;
                             default:
                                 // Debug.WriteLine($"Unhandled event type: {eventType}");
@@ -246,6 +249,40 @@ namespace Discord.Classes
             catch (Exception ex)
             {
                 Debug.WriteLine($"Error processing message: {ex.Message}");
+            }
+        }
+
+        private void HandleMessageCreate(JsonNode messageData)
+        {
+            try
+            {
+                string channelId = messageData["channel_id"]?.GetValue<string>();
+                string authorId = messageData["author"]?["id"]?.GetValue<string>();
+                string authorName = messageData["author"]?["global_name"]?.GetValue<string>()
+                    ?? messageData["author"]?["username"]?.GetValue<string>()
+                    ?? "Unknown";
+                string content = messageData["content"]?.GetValue<string>() ?? "";
+                string timestampStr = messageData["timestamp"]?.GetValue<string>();
+
+                DateTime timestamp = DateTime.UtcNow;
+                if (!string.IsNullOrEmpty(timestampStr))
+                {
+                    DateTime.TryParse(timestampStr, out timestamp);
+                }
+
+                // Raise the event
+                MessageReceived?.Invoke(this, new MessageReceivedEventArgs
+                {
+                    ChannelId = channelId,
+                    AuthorId = authorId,
+                    AuthorName = authorName,
+                    Content = content,
+                    Timestamp = timestamp
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling MESSAGE_CREATE: {ex.Message}");
             }
         }
 
@@ -331,5 +368,14 @@ namespace Discord.Classes
         {
             heartbeatCts?.Cancel();
         }
+    }
+
+    public class MessageReceivedEventArgs : EventArgs
+    {
+        public string ChannelId { get; set; }
+        public string AuthorId { get; set; }
+        public string AuthorName { get; set; }
+        public string Content { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }
