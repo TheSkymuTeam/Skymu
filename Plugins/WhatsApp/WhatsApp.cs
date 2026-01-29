@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace WhatsApp
 {
-    public class Core :ICore
+    public class Core : ICore
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -44,23 +44,61 @@ namespace WhatsApp
             return true;
         }
 
-        public async Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier)
-        {
-            ObservableCollection<ConversationItem> items = new ObservableCollection<ConversationItem>();
-            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
-            items.Add(new MessageItem("23585235237655234", "Sensei Wu", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
-            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
-            items.Add(new CallStartedItem("Sensei Wu", false, new DateTime(2012, 1, 1, 0, 3, 12)));
-            items.Add(new CallEndedItem(TimeSpan.FromMinutes(20), false, new DateTime(2012, 1, 1, 0, 23, 12)));
-            return items;
+        public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
+
+        public async Task<bool> SetActiveConversation(string identifier) // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
+        {                                                                // DO NOT USE THIS FORMAT AS A REFERENCE FOR YOUR PLUGIN. HAVE THIS METHOD SET THE ACTIVE CONV. IDENTIFIER
+                                                                         // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
+            ActiveConversation.Clear();
+
+            // Conversation stub from your chat
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "i play genshin impact on the steam deck it doesnt ban you tho 💀", new DateTime(2025, 4, 30, 8, 10, 0)));
+            ActiveConversation.Add(new MessageItem("omega", "omega", "no commen", new DateTime(2025, 4, 30, 8, 10, 10)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "bro\nits a fucking game", new DateTime(2025, 4, 30, 8, 10, 20)));
+            ActiveConversation.Add(new MessageItem("omega", "omega", "ok no comment", new DateTime(2025, 4, 30, 8, 10, 30)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "stop hating on people for playing a game", new DateTime(2025, 4, 30, 8, 10, 40)));
+            ActiveConversation.Add(new MessageItem("omega", "omega", "i didnt say anything", new DateTime(2025, 4, 30, 8, 10, 50)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "nah but you fucking implied it", new DateTime(2025, 4, 30, 8, 11, 0)));
+            ActiveConversation.Add(new MessageItem("omega", "omega", "no?", new DateTime(2025, 4, 30, 8, 11, 10)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "fucking hate people like you unironically dude \"... no comment\" its a fucking game. i dont spend money on it and i like doing the quests. its the same as ZZZ\nyou have no fucking excuse to hate on a game\nunless its shit like concord\ngenshin impact genuinely is a decent game gameplay wise", new DateTime(2025, 4, 30, 8, 11, 20)));
+
+            ActiveConversation.Add(new MessageItem("patricktbp", "patricktbp", "holy shit stfu both of you", new DateTime(2025, 4, 30, 8, 12, 40)));
+
+            ActiveConversation.Add(new MessageItem("patricktbp", "patricktbp", "@Mixin do u wanna js go to dms\nto do this shit", new DateTime(2025, 4, 30, 8, 13, 30)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", new DateTime(2025, 4, 30, 8, 14, 0)));
+            ActiveConversation.Add(new MessageItem("Nova", "Nova", "nah i dont wanna collab on this project anymore while this piece of shit is in here unironically.", new DateTime(2025, 4, 30, 8, 15, 0)));
+            ActiveConversation.Add(new MessageItem("omega", "omega", "bro i just said no comment on genshin impact...\nanyways", new DateTime(2025, 4, 30, 8, 15, 20)));
+            ActiveConversation.Add(new MessageItem("patricktbp", "patricktbp", "ggwp", new DateTime(2025, 4, 30, 8, 15, 30)));
+            ActiveConversation.Add(new MessageItem("Mixin", "Mixin", "man wtf", new DateTime(2025, 4, 30, 8, 15, 40)));
+
+
+            return true;
         }
 
-        public async Task<SidebarData> FetchSidebarData()
+        public SidebarData SidebarInformation { get; private set; }
+
+        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
+
+        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
+
+        public async Task<bool> PopulateSidebarInformation()
+        {           
+            SidebarInformation = new SidebarData("Whatsapp User", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown);
+            return true;
+        }
+
+        public async Task<bool> PopulateContactsList()
         {
-            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
-            contacts.Add(new ContactData("Alice", "alice@s.whatsapp.net", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
-            contacts.Add(new ContactData("Bob", "bob@s.whatsapp.net", "HELLO", UserConnectionStatus.Away, null));
-            return new SidebarData("Whatsapp User", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown, contacts);
+            ContactsList.Add(new ProfileData("Alice", "alice@s.whatsapp.net", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
+            ContactsList.Add(new ProfileData("Bob", "bob@s.whatsapp.net", "HELLO", UserConnectionStatus.Away, null));
+            return true;
+        }
+
+        public async Task<bool> PopulateRecentsList()
+        {
+            RecentsList.Add(new ProfileData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
+            RecentsList.Add(new ProfileData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
+            return true;
         }
 
         public async Task<LoginResult> TryAutoLogin()

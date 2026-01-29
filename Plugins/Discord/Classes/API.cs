@@ -12,7 +12,7 @@
 // Copied from Naticord which is found here: https://github.com/Naticord/naticord/blob/dev/Naticord/Networking/API.cs
 // This is done by, and with permission from, the original creator (patricktbp).
 
-using Newtonsoft.Json;
+using System.Text.Json;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -58,7 +58,7 @@ namespace Discord.Classes
 
                 if (data != null)
                 {
-                    string jsonData = JsonConvert.SerializeObject(data);
+                    string jsonData = JsonSerializer.Serialize(data);
                     content.Add(new StringContent(jsonData, Encoding.UTF8, "application/json"), "payload_json");
                 }
 
@@ -66,7 +66,7 @@ namespace Discord.Classes
             }
             else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put) && data != null)
             {
-                string jsonData = JsonConvert.SerializeObject(data);
+                string jsonData = JsonSerializer.Serialize(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             }
 
@@ -81,11 +81,8 @@ namespace Discord.Classes
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[API] An error occurred while sending the request: {ex.Message}");
-                Debug.WriteLine($"[API] URL used when the error occurred: {url}");
+                return $"[API] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
             }
-
-            return string.Empty;
         }
     }
 }

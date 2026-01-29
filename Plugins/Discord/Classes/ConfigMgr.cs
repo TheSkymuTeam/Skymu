@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +70,7 @@ namespace Discord.Classes
             };
 
             // Returns the finished XSP!
-            return JsonConvert.SerializeObject(dict, Formatting.None);
+            return JsonSerializer.Serialize(dict);
         }
 
         // These functions below were rewritten from the source code of Discord Messenger, the exact file can be found here:

@@ -11,12 +11,14 @@
 
 using Discord.Classes;
 using MiddleMan;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -42,9 +44,8 @@ namespace Discord
         public CookieCollection DiscordCookies;
         private static WebSocket _webSocket;
         internal static WebSocket WebSocket => _webSocket;
-        private static System.Timers.Timer pingTimer;
         public bool CanSetStatusOnSkymuAPI;
-        API api;
+        internal static readonly API api = new API();
 
         public string TextUsername { get { return "Email address"; } }
         public string CustomLoginButtonText { get { return null; } }
@@ -58,25 +59,26 @@ namespace Discord
                 login = username,
                 password = password
             };
-            var loginResponse = JObject.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody));
+            var loginResponse = JsonNode.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody)).AsObject();
             Console.WriteLine($"The response from the API is: {loginResponse}");
 
             if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
             {
-                File.WriteAllText("discord.smcred", loginResponse["token"]?.ToString());
+                DscToken = loginResponse["token"].GetValue<string>();
+                File.WriteAllText("discord.smcred", loginResponse["token"]?.GetValue<string>());
                 _webSocket ??= new WebSocket();
 
                 return LoginResult.Success;
             }
             else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
             {
-                MFATicket = loginResponse["ticket"]?.ToString();
-                InstanceID = loginResponse["login_instance_id"]?.ToString();
+                MFATicket = loginResponse["ticket"]?.GetValue<string>();
+                InstanceID = loginResponse["login_instance_id"]?.GetValue<string>();
 
-                var fingerprintResponse = JObject.Parse(await api.SendAPI("experiments?with_guild_experiments=true", HttpMethod.Get, null, null));
+                var fingerprintResponse = JsonNode.Parse(await api.SendAPI("experiments?with_guild_experiments=true", HttpMethod.Get, null, null)).AsObject();
                 if (fingerprintResponse.ContainsKey("fingerprint"))
                 {
-                    DscFingerprint = fingerprintResponse["fingerprint"]?.ToString();
+                    DscFingerprint = fingerprintResponse["fingerprint"]?.GetValue<string>();
                 }
                 return LoginResult.OptStepRequired;
             }
@@ -87,14 +89,15 @@ namespace Discord
             }
             else
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Could not log in. Please try your details again, or check the logs in the plugins directory of Skymu."));
+                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to log in. Please contact us on the Discord server and upload the file debug_log_in.skdbg to your message, as well as sharing a screenshot of this dialog. Error is as follows:\n\n" + loginResponse.ToJsonString()));
+                File.WriteAllText("debug_log_in.skdbg", "RESPONSE:\n\n" + loginResponse.ToJsonString() + "\n\nREQUEST\n\n" + JsonSerializer.Serialize(loginBody));
                 return LoginResult.Failure;
             }
         }
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
-            string jsonData = JsonConvert.SerializeObject(new { ticket = MFATicket, login_instance_id = InstanceID, code });
+            string jsonData = JsonSerializer.Serialize(new { ticket = MFATicket, login_instance_id = InstanceID, code });
             string headers = string.Join(" ",
                 "-H \"Content-Type: application/json\"",
                 $"-H \"User-Agent: {API.UserAgent}\"",
@@ -126,10 +129,11 @@ namespace Discord
                 string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
-                dynamic jsonResponse = JsonConvert.DeserializeObject(output);
-                if (jsonResponse != null && jsonResponse.token != null)
+                var jsonResponse = JsonNode.Parse(output);
+                if (jsonResponse != null && jsonResponse["token"] != null)
                 {
-                   File.WriteAllText("discord.smcred", jsonResponse.token.ToString());
+                    DscToken = jsonResponse["token"].GetValue<string>();
+                    File.WriteAllText("discord.smcred", jsonResponse["token"].GetValue<string>());
 
                     _webSocket ??= new WebSocket();
 
@@ -148,85 +152,138 @@ namespace Discord
             return true;
         }
 
-        public async Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier)
+        public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
+
+        public async Task<bool> SetActiveConversation(string identifier)
         {
-            ObservableCollection<ConversationItem> items = new ObservableCollection<ConversationItem>();
-            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Happy new year!", new DateTime(2012, 1, 1, 0, 0, 0)));
-            items.Add(new MessageItem("23585235237655234", "Sensei Wu", "Happy New Year to you too!", new DateTime(2012, 1, 1, 0, 2, 42)));
-            items.Add(new MessageItem("80351110224678912", "thegamingkart", "Call me 🙂", new DateTime(2012, 1, 1, 0, 2, 57)));
-            items.Add(new CallStartedItem("Sensei Wu", false, new DateTime(2012, 1, 1, 0, 3, 12)));
-            items.Add(new CallEndedItem(TimeSpan.FromMinutes(20), false, new DateTime(2012, 1, 1, 0, 23, 12)));
-            return items;
+            ActiveConversation.Clear();
+
+            if (string.IsNullOrEmpty(identifier))
+                return false;
+
+            string[] parts = identifier.Split(';');
+            if (parts.Length < 2)
+                return false;
+
+            string channelId = parts[1];
+
+            string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=5", HttpMethod.Get, DscToken, null, null, null);
+            Debug.WriteLine($"The JSON for the conversation is: {conversation}");
+
+            return true;
         }
 
-        public async Task<SidebarData> FetchSidebarData()
+        public SidebarData SidebarInformation { get; private set; }
+
+        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
+
+        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
+
+        public async Task<bool> PopulateSidebarInformation()
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
-
             // User details
-            string globalName = "N/A";
-            string username = "N/A";
+            string globalName;
+            string username;
+            JsonObject parsedJson = new JsonObject();
             int mainUsrStatusSkymu = 0;
-
-            // Define the contacts list for later
-            ObservableCollection<ContactData> contacts = new ObservableCollection<ContactData>();
 
             // Personal user details like the username and also Skymu online server count
             try
             {
                 string userDetails = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
-                JObject parsedJson = JObject.Parse(userDetails);
-
-                globalName = parsedJson["global_name"]?.ToString() ?? "N/A";
-                username = parsedJson["username"]?.ToString() ?? "N/A";
+                parsedJson = JsonNode.Parse(userDetails).AsObject();
+                globalName = parsedJson["global_name"]?.GetValue<string>() ?? String.Empty;
+                username = parsedJson["username"]?.GetValue<string>() ?? String.Empty;
 
                 while (!WebSocket.CanCheckData)
                     await Task.Delay(100);
 
+
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
-                mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
+                mainUsrStatusSkymu = new pluginOOTBStuff().MapStatus(mainUsrStatus);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Parse error: {ex.Message}");
+
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Parse error: {ex.Message}\nResponse from server:\n" + parsedJson.ToJsonString()));
+                return false;
             }
 
+            SidebarInformation = new SidebarData(string.IsNullOrEmpty(globalName) ? username : globalName, "$0.00 - No subscription", mainUsrStatusSkymu);
+            return true;
+        }
+
+        public async Task<bool> PopulateContactsList()
+        {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+            JsonArray parsedWSJson = new JsonArray();
+            JsonArray parsedAPICJson = new JsonArray();
             try
             {
-                string friendList = WebSocket.recipientsData;
-                JArray parsedJson = JArray.Parse(friendList);
+                // We need to make a separate call to the Discord API to get all of the channel IDs
+                // The ID for a friend is separated like this <user_id>;<channel_id> for each user.
+                string channels = await api.SendAPI("/users/@me/channels", HttpMethod.Get, DscToken, null, null, null);
+                parsedAPICJson = JsonNode.Parse(channels).AsArray();
+                // Use the JToken directly instead of converting to string and re-parsing
+                parsedWSJson = WebSocket.recipientsData as JsonArray ?? new JsonArray();
 
-                foreach (var friend in parsedJson)
+                foreach (var friend in parsedWSJson)
                 {
                     byte[] avatarImage = null;
-                    string friendId = friend["id"]?.ToString() ?? "N/A";
-                    string friendGlobalName = friend["user"]["global_name"]?.ToString() ?? "N/A";
-                    string friendUsername = friend["user"]["username"]?.ToString() ?? "N/A";
-                    string friendAvatarHash = friend["user"]["avatar"]?.ToString();
+                    string friendId = friend["id"]?.GetValue<string>() ?? "N/A";
+                    string channelId = parsedAPICJson
+                        .OfType<JsonObject>()
+                        .Where(c => c["type"]?.GetValue<int>() == 1)
+                        .Where(c =>
+                            c["recipients"] is JsonArray recipients &&
+                            recipients.Any(r => r["id"]?.GetValue<string>() == friendId)
+                        )
+                        .Select(c => c["id"]?.GetValue<string>())
+                        .FirstOrDefault();
+                    string skymuId = channelId != null
+                        ? $"{friendId};{channelId}"
+                        : friendId;
+                    string friendGlobalName = friend["user"]["global_name"]?.GetValue<string>() ?? "N/A";
+                    string friendUsername = friend["user"]["username"]?.GetValue<string>() ?? "N/A";
+                    string friendAvatarHash = friend["user"]["avatar"]?.GetValue<string>();
 
                     string statusStr = WebSocket.UserStatusStore.GetStatus(friendId);
                     int friendStatus = ootb.MapStatus(statusStr);
 
                     string custStatusStr = WebSocket.UserStatusStore.GetCustomStatus(friendId);
 
+
                     if (!string.IsNullOrEmpty(friendAvatarHash))
                     {
                         avatarImage = await ootb.GetCachedAvatarAsync(friendId, friendAvatarHash);
                     }
 
-                    contacts.Add(new ContactData(string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName, friendUsername, custStatusStr, friendStatus, avatarImage));
+                    ContactsList.Add(new ProfileData(
+                        string.IsNullOrEmpty(friendGlobalName) ? friendUsername : friendGlobalName,
+                        skymuId,
+                        custStatusStr,
+                        friendStatus,
+                        avatarImage
+                    ));
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading friend list: {ex.Message}");
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Parse error: {ex.Message}\nResponse from server:\n" + parsedWSJson.ToJsonString()));
+                return false;
             }
-            return new SidebarData(globalName, "$0.00 - No subscription", mainUsrStatusSkymu, contacts);
+            return true;
+        }
+
+        public async Task<bool> PopulateRecentsList()
+        {
+            RecentsList.Add(new ProfileData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
+            RecentsList.Add(new ProfileData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
+            return true;
         }
 
         public async Task<LoginResult> TryAutoLogin()
         {
-            api = new API();
             if (File.Exists("discord.smcred"))
             {
                 DscToken = File.ReadAllText("discord.smcred");
@@ -237,6 +294,7 @@ namespace Discord
                 string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to automatically login to Discord (Your token might be expired!). Please login manually. Error:\n" + userCheckTkn));
                     return LoginResult.Failure;
                 }
                 else if (userCheckTkn.Contains("username"))
@@ -249,6 +307,7 @@ namespace Discord
             }
             else
             {
+                OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid. Please log in manually."));
                 return LoginResult.Failure;
             }
         }
@@ -309,7 +368,7 @@ namespace Discord
             }
             else
             {
-                return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=64";
+                return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=256";
             }
         }
     }

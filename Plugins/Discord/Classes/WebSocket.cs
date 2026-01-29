@@ -16,8 +16,8 @@
 
 #pragma warning disable 4014
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -44,19 +44,28 @@ namespace Discord.Classes
         // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not.
         public bool CanCheckData = false;
 
-        // Used in functions outside and inside WebSocket.cs to parse data
-        public string recipientsData;
+        // Used in functions outside and inside WebSocket.cs to parse data - now stores JToken instead of string to avoid ToString() allocation
+        public JsonNode recipientsData;
 
         // Used for sending the first payload required
         private string identifyPayloadJson;
 
         // Used for the heartbeat payloads
-        private readonly string heartbeatPayloadJson = JsonConvert.SerializeObject(new { op = 1, d = (object)null });
-        private Timer heartbeatTimer;
+        private readonly string heartbeatPayloadJson = JsonSerializer.Serialize(new { op = 1, d = (object)null });
+        private Task heartbeatTask;
+        private CancellationTokenSource heartbeatCts;
+
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
         public ClientWebSocket WSClient { get; private set; }
+
+        // Reusable buffers for memory efficiency
+        private readonly byte[] _receiveBuffer = new byte[8192];
+        private readonly char[] _charBuffer = new char[8192];
+        private readonly Decoder _utf8Decoder = Encoding.UTF8.GetDecoder();
+        private readonly ArraySegment<byte> _heartbeatBuffer;
+        private readonly ArraySegment<byte> _identifyBuffer;
 
         public WebSocket()
         {
@@ -64,7 +73,7 @@ namespace Discord.Classes
             gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            identifyPayloadJson = JsonConvert.SerializeObject(new
+            identifyPayloadJson = JsonSerializer.Serialize(new
             {
                 op = 2,
                 d = new
@@ -78,6 +87,9 @@ namespace Discord.Classes
                     }
                 }
             });
+
+            _heartbeatBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(heartbeatPayloadJson));
+            _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
 
             ConnectAsync();
         }
@@ -125,30 +137,35 @@ namespace Discord.Classes
         private void StartHeartbeat()
         {
             StopHeartbeat();
-            heartbeatTimer = new Timer(async _ =>
+            heartbeatCts = new CancellationTokenSource();
+            heartbeatTask = Task.Run(async () =>
             {
-                if (WSClient.State == WebSocketState.Open)
-                    await SendPayload(heartbeatPayloadJson);
-            }, null, heartbeatInterval, heartbeatInterval);
+                var token = heartbeatCts.Token;
+                while (!token.IsCancellationRequested && WSClient.State == WebSocketState.Open)
+                {
+                    await Task.Delay(heartbeatInterval, token);
+                    if (WSClient.State == WebSocketState.Open)
+                        await WSClient.SendAsync(_heartbeatBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            });
         }
 
         private async Task SendPayload(string payload = null)
         {
-            if (payload == null) payload = identifyPayloadJson;
+            if (WSClient.State != WebSocketState.Open) return;
 
-            var bytes = Encoding.UTF8.GetBytes(payload);
-            var buffer = new ArraySegment<byte>(bytes);
-
-            if (WSClient.State == WebSocketState.Open)
+            if (payload == null)
+                await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            else
             {
-                await WSClient.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                var bytes = Encoding.UTF8.GetBytes(payload);
+                await WSClient.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
 
         private async Task ReceiveLoop()
         {
-            var buffer = new byte[8192];
-            var messageBuilder = new StringBuilder();
+            var messageBuilder = new StringBuilder(8192);  // Pre-allocate with reasonable capacity
 
             try
             {
@@ -157,16 +174,21 @@ namespace Discord.Classes
                     WebSocketReceiveResult result;
                     do
                     {
-                        result = await WSClient.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                        var chunk = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                        messageBuilder.Append(chunk);
+                        result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), CancellationToken.None);
+                        if (result.Count > 0)
+                        {
+                            int charsDecoded = _utf8Decoder.GetChars(_receiveBuffer, 0, result.Count, _charBuffer, 0, false);
+                            messageBuilder.Append(_charBuffer, 0, charsDecoded);
+                        }
                     }
                     while (!result.EndOfMessage);
 
-                    var completeMessage = messageBuilder.ToString();
-                    messageBuilder.Clear();
-
-                    HandleMessage(completeMessage);
+                    if (messageBuilder.Length > 0)
+                    {
+                        var completeMessage = messageBuilder.ToString();
+                        messageBuilder.Clear();
+                        HandleMessage(completeMessage);
+                    }
                 }
             }
             catch (Exception ex)
@@ -180,22 +202,22 @@ namespace Discord.Classes
         {
             try
             {
-                //Debug.Write(data);
-                var json = JObject.Parse(data);
-                int opCode = json["op"]?.Value<int>() ?? -1;
+                var json = JsonNode.Parse(data);
+                int opCode = json["op"]?.GetValue<int>() ?? -1;
 
                 switch (opCode)
                 {
                     case 0:
-                        string eventType = json["t"]?.Value<string>() ?? "";
+                        string eventType = json["t"]?.GetValue<string>() ?? "";
 
                         switch (eventType)
                         {
                             case "READY":
+                                Debug.WriteLine(json["d"]?.ToJsonString());
                                 HandleUserStatus(json["d"]);
 
                                 var readyData = json["d"];
-                                recipientsData = readyData["relationships"]?.ToString() ?? "";
+                                recipientsData = readyData["relationships"] ?? new JsonArray();
 
                                 CanCheckData = true;
                                 break;
@@ -210,7 +232,7 @@ namespace Discord.Classes
                         break;
 
                     case 10: // Hello from the gateway (Op 10)
-                        heartbeatInterval = json["d"]?["heartbeat_interval"]?.Value<int>() ?? 0;
+                        heartbeatInterval = json["d"]?["heartbeat_interval"]?.GetValue<int>() ?? 0;
                         StartHeartbeat();
                         break;
                     default:
@@ -223,41 +245,69 @@ namespace Discord.Classes
             }
         }
 
-        private void HandleUserStatus(JToken messageData)
+        private void HandleUserStatus(JsonNode messageData)
         {
-            if (messageData["user_settings"] is JObject userSettings)
+            if (messageData["user_settings"] is JsonObject userSettings)
             {
                 foreach (var setting in userSettings)
                 {
-                    string rawMainStatus = userSettings["status"]?.Value<string>() ?? "Unknown";
+                    string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "Unknown";
                     string rawCustomStatus = string.Empty;
 
-                    if (userSettings["custom_status"] is JObject customStatusObj)
+                    if (userSettings["custom_status"] is JsonObject customStatusObj)
                     {
-                        rawCustomStatus = customStatusObj["text"]?.Value<string>() ?? string.Empty;
+                        rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
                     }
                     UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
                 }
             }
 
-            foreach (var presence in messageData["presences"] ?? new JArray())
+            foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
             {
-                string userId = presence["user"]?["id"]?.Value<string>();
+                string userId = presence["user"]?["id"]?.GetValue<string>();
                 if (userId == null) continue;
 
-                string status = presence["status"]?.Value<string>() ?? "offline";
+                string status = presence["status"]?.GetValue<string>() ?? "offline";
                 string customStatus = string.Empty;
 
-                var activities = presence["activities"] as JArray;
-                if (activities != null)
+                var activities = presence["activities"] as JsonArray;
+                if (activities != null && activities.Count > 0)
                 {
                     foreach (var activity in activities)
                     {
-                        int type = activity["type"]?.Value<int>() ?? -1;
-                        if (type == 0) { customStatus = $"Playing {activity["name"]}"; break; }
-                        if (type == 1) { customStatus = $"Streaming {activity["details"]}"; break; }
-                        if (type == 2) { customStatus = $"Listening to {activity["name"]}"; break; }
-                        if (type == 4) { customStatus = activity["state"]?.Value<string>() ?? string.Empty; break; }
+                        int type = activity["type"]?.GetValue<int>() ?? -1;
+                        if (type == 0)
+                        {
+                            string activityName = activity["name"]?.GetValue<string>();
+                            if (activityName != null)
+                            {
+                                customStatus = $"Playing {activityName}";
+                                break;
+                            }
+                        }
+                        else if (type == 1)
+                        {
+                            string details = activity["details"]?.GetValue<string>();
+                            if (details != null)
+                            {
+                                customStatus = $"Streaming {details}";
+                                break;
+                            }
+                        }
+                        else if (type == 2)
+                        {
+                            string activityName = activity["name"]?.GetValue<string>();
+                            if (activityName != null)
+                            {
+                                customStatus = $"Listening to {activityName}";
+                                break;
+                            }
+                        }
+                        else if (type == 4)
+                        {
+                            customStatus = activity["state"]?.GetValue<string>() ?? string.Empty;
+                            break;
+                        }
                     }
                 }
 
@@ -273,6 +323,9 @@ namespace Discord.Classes
             await InitWS();
         }
 
-        private void StopHeartbeat() => heartbeatTimer?.Dispose();
+        private void StopHeartbeat()
+        {
+            heartbeatCts?.Cancel();
+        }
     }
 }

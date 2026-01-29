@@ -29,6 +29,7 @@ namespace Skymu
         public static Login Instance;
         private MainWindow _mainWindow;
         public static bool noCloseEvent;
+        public static bool useAutoLogin = false; // SET THIS IN CODE
 
         public Login()
         {
@@ -138,17 +139,18 @@ namespace Skymu
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            LoginResult lr = await Task.Run(async () =>
-        await Universal.Plugin.TryAutoLogin()
-    );
-            if (lr == LoginResult.Success)
+            if (useAutoLogin == true)
             {
-                InitiateMainWindow();
+                LoginResult lr = await Task.Run(async () =>
+             await Universal.Plugin.TryAutoLogin()
+         );
+                if (lr == LoginResult.Success)
+                {
+                    InitiateMainWindow();
+                    return;
+                }
             }
-            else
-            {
-                LoginToggleAnimation(false);
-            }
+            LoginToggleAnimation(false);
         }
 
         private void InitiateMainWindow()
@@ -200,7 +202,7 @@ namespace Skymu
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start("https://skymu.app/");
+            Process.Start("https://discord.gg/VnGdqRNfSr");
             e.Handled = true;
         }
 

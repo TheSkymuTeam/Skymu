@@ -31,6 +31,17 @@
                 <Setter Property="SnapsToDevicePixels" Value="True" />
             </Style>
 
+            <Style TargetType="ListBox">
+                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+                <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
+            </Style>
+            <Style TargetType="ListView">
+                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
+                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
+                <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True"/>
+            </Style>
+
 
         </ResourceDictionary>
 

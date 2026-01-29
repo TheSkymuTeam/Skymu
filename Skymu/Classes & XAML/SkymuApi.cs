@@ -15,8 +15,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
@@ -32,52 +32,53 @@ namespace Skymu
         public static async Task<string> GenerateUID()
         {
             string skymuGenerateUri = "https://skymu.kier.ovh/generate";
-            string SkymuToken;
-
             try
             {
-                HttpClient client = new HttpClient();
-                HttpResponseMessage generateResponse = await client.GetAsync(skymuGenerateUri);
-                string genResBody = await generateResponse.Content.ReadAsStringAsync();
-                JObject parsedGenJson = JObject.Parse(genResBody);
-                SkymuToken = parsedGenJson["token"].ToString();
+                using (HttpResponseMessage generateResponse = await Universal.HttpClient.GetAsync(skymuGenerateUri))
+                {
+
+                    string genResBody = await generateResponse.Content.ReadAsStringAsync();
+                    return JsonNode.Parse(genResBody)["token"].ToString();
+                }
             }
             catch
             {
-                SkymuToken = String.Empty;
+                return String.Empty;
             }
-
-            return SkymuToken;
         }
 
-        public static async Task SetStatus(bool onlineState, string SkymuClientToken)
+        public static async Task SetStatus(bool onlineState, string token)
         {
-            string skymuAPIUri = "https://skymu.kier.ovh";
-            string endpoint = onlineState ? "/online" : "/offline";
+            if (string.IsNullOrEmpty(token))
+                return;
 
-            if (!String.IsNullOrEmpty(SkymuClientToken))
+            string endpoint = onlineState ? "/online" : "/offline";
+            using (var req = new HttpRequestMessage(
+                HttpMethod.Post,
+                $"https://skymu.kier.ovh{endpoint}"))
             {
-                using (HttpClient client = new HttpClient())
+                req.Headers.Add("X-Skymu-Auth", token);
+                using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
                 {
-                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuClientToken);
-                    HttpResponseMessage response = await client.PostAsync($"{skymuAPIUri}{endpoint}", new StringContent(string.Empty));
-                    string resBody = await response.Content.ReadAsStringAsync();
+                    string resBody = await resp.Content.ReadAsStringAsync();
                     Debug.WriteLine($"Status set response ({endpoint}): {resBody}");
                 }
             }
         }
 
-        public static async Task StatusPing(bool onlineState, string SkymuClientToken)
+        public static async Task StatusPing(string token)
         {
+            if (string.IsNullOrEmpty(token))
+                return;
             string skymuPingUri = "https://skymu.kier.ovh/ping";
-
-            if (!String.IsNullOrEmpty(SkymuClientToken))
+            using (var req = new HttpRequestMessage(
+                HttpMethod.Post,
+                skymuPingUri))
             {
-                using (HttpClient client = new HttpClient())
+                req.Headers.Add("X-Skymu-Auth", token);
+                using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
                 {
-                    client.DefaultRequestHeaders.Add("X-Skymu-Auth", SkymuClientToken);
-                    HttpResponseMessage response = await client.PostAsync(skymuPingUri, new StringContent(string.Empty));
-                    string resBody = await response.Content.ReadAsStringAsync();
+                    string resBody = await resp.Content.ReadAsStringAsync();
                     Debug.WriteLine($"Ping response ({skymuPingUri}): {resBody}");
                 }
             }
@@ -86,21 +87,24 @@ namespace Skymu
         public static async Task<int> FetchUserCount()
         {
             string skymuCountUri = "https://skymu.kier.ovh/usr_count";
-            int onlineCount;
             try
             {
-                HttpClient client = new HttpClient();
-
-                HttpResponseMessage response = await client.GetAsync(skymuCountUri);
-                string resBody = await response.Content.ReadAsStringAsync();
-                JObject parsedJson = JObject.Parse(resBody);
-                onlineCount = parsedJson["online_count"].ToObject<int>();
+                using (var req = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    skymuCountUri))
+                {
+                    using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
+                    {
+                        string resBody = await resp.Content.ReadAsStringAsync();
+                        JsonNode parsedJson = JsonNode.Parse(resBody);
+                        return parsedJson["online_count"].GetValue<int>();
+                    }
+                }
             }
             catch
             {
-                onlineCount = 0;
+                return 0;
             }
-            return onlineCount;
         }
     }
 }

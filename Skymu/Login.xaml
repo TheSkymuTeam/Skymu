@@ -91,7 +91,7 @@
             <TextBlock x:Name="forgotPasswordLink" FontFamily="Tahoma" FontSize="11" FontWeight="Normal"
                    Height="28" HorizontalAlignment="Left" Margin="136,225,0,0"
                    VerticalAlignment="Top"><Hyperlink Style="{StaticResource HoverUnderlineHyperlink}"
-                       NavigateUri="#" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="Unable to login?"/></Hyperlink></TextBlock>
+                       NavigateUri="#" RequestNavigate="Hyperlink_RequestNavigate"><Run Text="Unable to login? Ask for help here!"/></Hyperlink></TextBlock>
 
             <TextBlock x:Name="passwordText" FontFamily="Tahoma" FontSize="11" FontWeight="Normal"
                    Height="28" HorizontalAlignment="Left" Margin="136,183,0,0"

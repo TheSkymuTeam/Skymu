@@ -11,6 +11,7 @@
 
 using MiddleMan;
 using System;
+using System.Net.Http;
 using System.Windows;
 
 using System.Windows.Threading;
@@ -29,6 +30,10 @@ namespace Skymu
         {
             new Dialog(1, e.Message, "Warning from plugin " + ((ICore)sender).Name);
         }
+        internal static readonly HttpClient HttpClient = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs ev)
         {
             ExceptionHandler(ev.Exception);

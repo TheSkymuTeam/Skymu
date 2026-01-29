@@ -11,7 +11,8 @@
 
 #pragma warning disable 4014
 
-
+using System.Collections.Specialized;
+using System.Windows.Threading;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,8 @@ namespace Skymu
     public partial class MainWindow : Window
     {
         public static MainWindow Instance;
+        private System.Timers.Timer _pingTimer;
+        private System.Timers.Timer _usersOnlineTimer;
         private bool deactivatedWindow;
         public event EventHandler Ready;
         public MainWindow()
@@ -76,15 +79,15 @@ namespace Skymu
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;
+            this.Closed += MainWindow_Closed;
 
             Tray.PushIcon("online", "Skype (Online)");
-            btnContacts.SetState(ButtonVisualState.Pressed);
             SetWindow(WindowType.Home);
         }
 
         public async Task InitializeAsync()
         {
-            await PopulateSidebar();
+            await InitSidebar();
         }
 
         public static readonly DependencyProperty WindowTitleProperty =
@@ -151,6 +154,21 @@ typeof(MainWindow));
         {
             WindowActivationToggle(18, 1, 0, 0, 0);
             deactivatedWindow = false;
+        }
+
+        internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
+
+        static BitmapImage LoadAvatar()
+        {
+            var bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.UriSource = new Uri(
+                "pack://application:,,,/ResourcesLight/ProfilePictures/profile_anonymous.png",
+                UriKind.Absolute);
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            bmp.EndInit();
+            bmp.Freeze();
+            return bmp;
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -285,60 +303,74 @@ typeof(MainWindow));
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
         private void mn_Options(object sender, RoutedEventArgs e) { }
 
-        private ContactData selectedContact;
+        private ProfileData selectedContact;
 
-        private BitmapImage ByteArrToImg(byte[] array)
+        private static T FindVisualChild<T>(DependencyObject parent)
+    where T : DependencyObject
         {
-            if (array == null || array.Length == 0)
+            if (parent == null)
                 return null;
 
-            var image = new BitmapImage();
-            using (var ms = new MemoryStream(array))
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
             {
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = ms;
-                image.EndInit();
-                image.Freeze();
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T typedChild)
+                    return typedChild;
+
+                T result = FindVisualChild<T>(child);
+                if (result != null)
+                    return result;
             }
-            return image;
+
+            return null;
         }
 
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var listBox = (ListBox)sender;
+            if (listBox.SelectedItem == null)
+                return;
 
-            if (((ListBox)sender).SelectedItem != null)
+            selectedContact = (ProfileData)listBox.SelectedItem;
+
+            SetWindow(WindowType.Chat);
+            chatHeader.Text = selectedContact.DisplayName;
+            PlaceholderTextMTB = "Type a message to " + selectedContact.DisplayName + " here";
+            MessageTextBox.Text = PlaceholderTextMTB;
+
+            // Get the ListBoxItem container
+            var container = (ListBoxItem)listBox.ItemContainerGenerator
+                .ContainerFromItem(selectedContact);
+
+
+            // Find the Image inside the ListBoxItem
+            Image sourceImage = FindVisualChild<Image>(container);
+
+
+            // Reuse the same BitmapImage instance
+            CPAProfilePic.Source = sourceImage.Source;
+
+
+
+            CPAStatusIcon.DefaultIndex = selectedContact.PresenceStatus;
+
+            switch (selectedContact.PresenceStatus)
             {
-                selectedContact = (ContactData)((ListBox)sender).SelectedItem;
-                SetWindow(WindowType.Chat);
-                chatHeader.Text = selectedContact.DisplayName;
-                if (selectedContact.ProfilePicture != null)
-                {
-                    CPAProfilePic.Source = ByteArrToImg(selectedContact.ProfilePicture);
-                }
-                else
-                {
-                    CPAProfilePic.Source = new BitmapImage(new Uri("pack://application:,,,/ResourcesLight/ProfilePictures/profile_anonymous.png"));
-                }
-                CPAStatusIcon.DefaultIndex = selectedContact.PresenceStatus;
-                switch (selectedContact.PresenceStatus)
-                {
-                    case 2:
-                        CPAStatusText.Text = "Online";
-                        break;
-                    case 3:
-                        CPAStatusText.Text = "Away";
-                        break;
-                    case 19:
-                        CPAStatusText.Text = "Offline";
-                        break;
-                    case 5:
-                        CPAStatusText.Text = "Do not disturb";
-                        break;
-                }
-                ConversationItemsList.ItemsSource = await Universal.Plugin.FetchConversationHistory(selectedContact.Identifier);
+                case 2: CPAStatusText.Text = "Online"; break;
+                case 3: CPAStatusText.Text = "Away"; break;
+                case 19: CPAStatusText.Text = "Offline"; break;
+                case 5: CPAStatusText.Text = "Do not disturb"; break;
             }
+
+            if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
+            {
+                ConversationItemsList.ItemsSource = Universal.Plugin.ActiveConversation;
+            }
+
         }
+
 
         private void ChatWindow_Close(object sender, MouseButtonEventArgs e)
         {
@@ -458,17 +490,15 @@ typeof(MainWindow));
         {
             string SkymuClientToken = await SkymuApi.GenerateUID();
             await SkymuApi.SetStatus(CanSetStatus(), SkymuClientToken);
+            _pingTimer = new System.Timers.Timer(29.5 * 60 * 1000);
+            _pingTimer.Elapsed += async (sender, e) => await SkymuApi.StatusPing(SkymuClientToken);
+            _pingTimer.AutoReset = true;
+            _pingTimer.Enabled = true;
 
-            System.Timers.Timer pingTimer = new System.Timers.Timer(29.5 * 60 * 1000);
-            pingTimer.Elapsed += async (sender, e) => await SkymuApi.StatusPing(CanSetStatus(), SkymuClientToken);
-            pingTimer.AutoReset = true;
-            pingTimer.Enabled = true;
-
-            System.Timers.Timer usersOnlineTimer = new System.Timers.Timer(2 * 60 * 1000);
-            usersOnlineTimer.Elapsed += async (sender, e) =>
-                await CheckSetUsersOnline();
-            usersOnlineTimer.AutoReset = true;
-            usersOnlineTimer.Enabled = true;
+            _usersOnlineTimer = new System.Timers.Timer(2 * 60 * 1000);
+            _usersOnlineTimer.Elapsed += async (sender, e) => await CheckSetUsersOnline();
+            _usersOnlineTimer.AutoReset = true;
+            _usersOnlineTimer.Enabled = true;
         }
 
         private bool CanSetStatus()
@@ -495,9 +525,11 @@ typeof(MainWindow));
             });
         }
 
-        private async Task PopulateSidebar()
+        private async Task InitSidebar()
         {
-            SidebarData data = await Universal.Plugin.FetchSidebarData();
+            await Universal.Plugin.PopulateSidebarInformation();
+            await Universal.Plugin.PopulateContactsList();
+            SidebarData data = Universal.Plugin.SidebarInformation;
             GlobalUserCount.Text = "Loading online user count...";
             SkymuApiStatusHandler();
             CheckSetUsersOnline();
@@ -505,13 +537,35 @@ typeof(MainWindow));
             StatusBox.Text = data.Username;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
-            ContactsList.ItemsSource = data.ContactList;
+            ContactsList.ItemsSource = Universal.Plugin.ContactsList;
+            SpeedTester();
             Ready?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_pingTimer != null)
+                {
+                    _pingTimer.Stop();
+                    _pingTimer.Dispose();
+                    _pingTimer = null;
+                }
+
+                if (_usersOnlineTimer != null)
+                {
+                    _usersOnlineTimer.Stop();
+                    _usersOnlineTimer.Dispose();
+                    _usersOnlineTimer = null;
+                }
+            }
+            catch { }
         }
 
         private async void SendMessage(object sender, MouseButtonEventArgs e)
         {
-            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageBox.Text);
+            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageTextBox.Text);
             if (didSend)
             {
                 Universal.ShowMsg("sent");
@@ -530,49 +584,175 @@ typeof(MainWindow));
 
         private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
         {
-            CheckConnectionStrength();
+            SpeedTester();
         }
 
-        private async Task CheckConnectionStrength()
+        private async Task SpeedTester()
         {
             string iconUri;
-            string testFile = "https://speed.cloudflare.com/__down?bytes=4348576";
-            try {
+            string testFile = "https://speed.cloudflare.com/__down?bytes=5242880";
+            try
+            {
 
 
-                using (var client = new HttpClient())
-                {
-                    client.Timeout = TimeSpan.FromSeconds(10);
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-                    var stopwatch = new Stopwatch();
-                    stopwatch.Start();
+                var data = await Universal.HttpClient.GetByteArrayAsync(testFile);
 
-                    var data = await client.GetByteArrayAsync(testFile);
+                stopwatch.Stop();
 
-                    stopwatch.Stop();
+                double seconds = stopwatch.Elapsed.TotalSeconds;
+                double megabits = (data.Length * 8.0) / 1_000_000;
+                double speedMbps = megabits / seconds;
 
-                    double seconds = stopwatch.Elapsed.TotalSeconds;
-                    double megabits = (data.Length * 8.0) / 1_000_000; 
-                    double speedMbps = megabits / seconds;
+                // Map speed to bars
 
-                    if (speedMbps >= 50)
-                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png";
-                    else if (speedMbps >= 25)
-                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png";
-                    else if (speedMbps >= 14)
-                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png";
-                    else if (speedMbps >= 7)
-                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png";
-                    else
-                        iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png"; 
-                }               
+                if (speedMbps >= 50)
+                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png";
+                else if (speedMbps >= 20)
+                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png";
+                else if (speedMbps >= 10)
+                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png";
+                else if (speedMbps >= 5)
+                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png";
+                else
+                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png";
+
             }
             catch
             {
                 iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_unavailable.png";
             }
-            WifiButton.Source = new BitmapImage(new Uri(iconUri));
+            var uri = new Uri(
+     iconUri,
+     UriKind.Absolute);
+
+            var bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.UriSource = uri;
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            bmp.EndInit();
+            bmp.Freeze();
+
+            WifiButton.Source = bmp;
         }
 
+        private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
+        {
+            var listBox = (ListBox)sender;
+
+            ScrollToBottom(listBox);
+
+            if (listBox.Items is INotifyCollectionChanged notifyCollection)
+            {
+                notifyCollection.CollectionChanged += (s, args) =>
+                {
+                    Dispatcher.BeginInvoke(
+                        DispatcherPriority.Background,
+                        new Action(() => ScrollToBottom(listBox)));
+                };
+            }
+        }
+        private void ScrollToBottom(ListBox listBox)
+        {
+            if (listBox.Items.Count > 0)
+            {
+                listBox.ScrollIntoView(
+                    listBox.Items[listBox.Items.Count - 1]);
+            }
+        }
+
+        private static readonly Brush PlaceholderBrush = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0x99));
+        private bool _isPlaceholderActiveSB = true;
+        private bool _isPlaceholderActiveMTB = true;
+        private string PlaceholderTextSB = "Search";
+        private string PlaceholderTextMTB = String.Empty;
+
+        private void ApplyPlaceholder(
+    TextBox textBox,
+    ref bool isPlaceholderActive,
+    string placeholderText)
+        {
+            if (!string.IsNullOrEmpty(textBox.Text))
+                return;
+
+            textBox.Text = placeholderText;
+            textBox.Foreground = PlaceholderBrush;
+            isPlaceholderActive = true;
+        }
+
+        private void RemovePlaceholder(
+            TextBox textBox,
+            ref bool isPlaceholderActive)
+        {
+            if (!isPlaceholderActive)
+                return;
+
+            textBox.Text = string.Empty;
+            textBox.Foreground = Brushes.Black;
+            isPlaceholderActive = false;
+        }
+
+        private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            PseudoSearchBox.SetState(ButtonVisualState.Pressed);
+
+            RemovePlaceholder(SearchBox, ref _isPlaceholderActiveSB);
+        }
+
+        private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            PseudoSearchBox.SetState(ButtonVisualState.Default);
+
+            ApplyPlaceholder(SearchBox, ref _isPlaceholderActiveSB, PlaceholderTextSB);
+        }
+
+        private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            RemovePlaceholder(MessageTextBox, ref _isPlaceholderActiveMTB);
+        }
+
+        private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            ApplyPlaceholder(MessageTextBox, ref _isPlaceholderActiveMTB, PlaceholderTextMTB);
+        }
+
+
+        private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
+        }
     }
+
+    public class ByteArrayToImageSourceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+                              object parameter, CultureInfo culture)
+        {
+            byte[] bytes = value as byte[];
+
+            if (bytes == null || bytes.Length == 0)
+                return MainWindow.AnonymousAvatar;
+
+            BitmapImage bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.CacheOption = BitmapCacheOption.OnLoad;
+            bmp.StreamSource = new MemoryStream(bytes);
+            bmp.EndInit();
+
+            bmp.Freeze();
+
+            return bmp;
+        }
+
+        public object ConvertBack(object value, Type targetType,
+                                  object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
+
+
 }

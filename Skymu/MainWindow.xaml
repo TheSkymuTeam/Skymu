@@ -12,6 +12,7 @@
         StateChanged="Window_StateChanged" Activated="Window_Activated"
         Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
     <Window.Resources>
+        <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -55,19 +56,9 @@
 
                         <Grid>
 
-                            <Image Stretch="UniformToFill">
-                                <Image.Source>
-                                    <Binding Path="ProfilePicture">
-                                        <Binding.FallbackValue>
-                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_anonymous.png"/>
-                                        </Binding.FallbackValue>
-                                        <Binding.TargetNullValue>
-                                            <BitmapImage UriSource="/ResourcesLight/ProfilePictures/profile_anonymous.png"/>
-                                        </Binding.TargetNullValue>
-                                    </Binding>
-                                </Image.Source>
-                            </Image>
-
+                            <Image Stretch="UniformToFill"
+       Source="{Binding ProfilePicture,
+                        Converter={StaticResource ByteArrayToImageConverter}}" />
                             <!-- Inner border overlay -->
                             <Border
                 BorderBrush="#80BBBBBB"
@@ -113,27 +104,30 @@ Width="14" Grid.Row="1"/>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" 
                      Value="True">
                     <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="LightGray"/>
+                    <Setter TargetName="statusText" Property="Foreground" Value="#BABABA"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Height="32">
+            <Grid Margin="35,7.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="430"/>
                     <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
 
 
-                <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="{Binding SentByDN}" 
+                <TextBlock Grid.Column="0" Margin="0,0,16,0" Text="{Binding SentByDN}" 
                            FontSize="11"
+                           HorizontalAlignment="Right"
                                FontFamily="Tahoma"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
                 <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" Text="{Binding Body}" 
                            HorizontalAlignment="Left"
            FontSize="11"
+                           VerticalAlignment="Top"
+                           TextWrapping="Wrap"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
                 <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" 
@@ -152,9 +146,10 @@ Width="14" Grid.Row="1"/>
            TextTrimming="CharacterEllipsis"/>
 
                 <TextBlock Text="{Binding Time, StringFormat=HH:mm tt}" 
-                               Grid.Column="2" Margin="10,1,0,0"
+                               Grid.Column="2" Margin="1,1,0,0"
                            FontSize="11"
     FontFamily="Tahoma"
+                           HorizontalAlignment="Left"
                            Foreground="#999999"
                            TextTrimming="CharacterEllipsis"/>
 
@@ -265,7 +260,7 @@ Width="14" Grid.Row="1"/>
                        Margin="8,0,0,0" />
             </Grid>
         </Grid>
-        <Grid x:Name="WindowArea" Margin="8,30,8,8">
+        <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="8,30,8,8">
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#c5defe" Offset="0.0"/>
@@ -362,6 +357,8 @@ Width="14" Grid.Row="1"/>
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
+                                ButtonStateOnInit="Pressed"
+                                IsRadioButton="True"
                                 HoverIndex="-1"
                                 PressedIndex="2"
                                 IsHitTestVisible="False"
@@ -370,7 +367,7 @@ Width="14" Grid.Row="1"/>
                                 TextFont="Arial"
                                 TextWeight="Bold"
                                 TextSize="13"
-                                TextColor="#333333"/>
+                                TextColor="#FFFFFF"/>
                             <local:SliceControl
                                 Grid.Row="0"
                                 x:Name="StatusIcon"
@@ -391,6 +388,7 @@ Width="14" Grid.Row="1"/>
     ElementCount="3"
     StackDirection="Horizontal"
     DefaultIndex="0"
+                                ButtonStateOnInit="Pressed"
     HorizontalAlignment="Right"
     Margin="0,0,11,0"
                                 IsHitTestVisible="False"
@@ -434,7 +432,8 @@ Cursor="Hand"
                             <local:SliceControl
                                 x:Name="btnContacts"
                                 Grid.Column="0"
-                           
+                                IsRadioButton="True"
+                                ButtonStateOnInit="Pressed"
                                 Source="/ResourcesLight/MainSidebar/ms_Contacts.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
@@ -452,13 +451,13 @@ Cursor="Hand"
                             <local:SliceControl
                                 x:Name="btnRecents"
                                 Grid.Column="1"
-                    
+                                IsRadioButton="True"
                                 Source="/ResourcesLight/MainSidebar/ms_Recents.png"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
-                                PressedIndex="2"
+                                PressedIndex="-1"
                                 Text="Recent"
                                 TextStartPositionX="30"
                                 TextFont="Arial"
@@ -483,18 +482,32 @@ Cursor="Hand"
                                 <local:SliceControl
                                     Grid.Row="0"
                                     Cursor="IBeam"
+                                    x:Name="PseudoSearchBox"
                                     Source="/ResourcesLight/MainSidebar/ms_SearchBox.png"
                                     ElementCount="2"
                                     StackDirection="Vertical"
                                     DefaultIndex="1"
-                                    HoverIndex="1"
+                                    IsHitTestVisible="False"
+                                    HoverIndex="-1"
                                     PressedIndex="0"
-                                    Text="Search"
-                                    TextStartPositionX="33"
-                                    TextFont="Tahoma"
-                                    TextSize="11"
-                                    TextColor="#999999"
                                     HorizontalAlignment="Stretch" />
+                                <TextBox
+    Grid.Row="0"
+    Cursor="IBeam"
+    x:Name="SearchBox"
+    GotKeyboardFocus="SearchBox_Focused"
+    LostKeyboardFocus="SearchBox_Unfocused"
+    Text="Search"
+    Padding="33,0,0,0"
+    Background="Transparent"
+    FontFamily="Tahoma"
+    FontSize="11"
+    Foreground="#999999"
+    TextOptions.TextFormattingMode="Display"
+    TextOptions.TextRenderingMode="ClearType"
+    TextOptions.TextHintingMode="Fixed"
+    HorizontalAlignment="Stretch"
+    VerticalContentAlignment="Center"/>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
                                 <ListBox x:Name="ContactsList"  
     Grid.Row="2"        
@@ -502,10 +515,16 @@ Cursor="Hand"
     Style="{StaticResource NoInsetListBox}"
     ItemTemplate="{StaticResource ContactItemTemplate}"
     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         ScrollViewer.CanContentScroll="True"
     SelectionChanged="ContactList_SelectionChanged"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
+    mc:Ignorable="d" >
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -640,7 +659,8 @@ ElementCount="5"
  x:Name="MainPageButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
-                          
+   IsRadioButton="True"    
+                                ButtonStateOnInit="Pressed"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
@@ -663,9 +683,9 @@ ElementCount="5"
  x:Name="ProfileButton"                               
 StackDirection="Vertical"
 DefaultIndex="0"
-                          
+    IsRadioButton="True"                      
 HoverIndex="-1"
-PressedIndex="2"
+PressedIndex="-1"
 TextStartPositionX="31"
 Text="Profile"                                
 TextFont="Arial"
@@ -687,8 +707,8 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="-1"
-                           
-PressedIndex="2"
+ IsRadioButton="True"                          
+PressedIndex="-1"
 TextStartPositionX="31"
 Text="Give feedback"                                
 TextFont="Arial"
@@ -763,7 +783,7 @@ CornerRadius="4,4,4,4">
                                     <RowDefinition Height="34"></RowDefinition>
                                     <RowDefinition Height="1"></RowDefinition>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="14"/>
+                                    <RowDefinition Height="23"/>
                                     <RowDefinition Height="Auto" ></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <StackPanel  Grid.Row="0"
@@ -842,9 +862,17 @@ BorderThickness="0"
 Style="{StaticResource NoInsetListBox}"
 ItemTemplate="{StaticResource ConversationItemTemplate}"
 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         Loaded="ConversationItemsList_Loaded"
+                                         ScrollViewer.CanContentScroll="True"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
+mc:Ignorable="d"
+  d:ItemsSource="{d:SampleData ItemCount=5}"                                       >
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
                                     <ListBox.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -862,7 +890,7 @@ mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
                                 <Grid Grid.Row="4">
-                                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,4">
+                                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,5">
 
                                         <StackPanel x:Name="MessageBoxPanel" 
                     Orientation="Vertical" 
@@ -876,13 +904,16 @@ mc:Ignorable="d" d:ItemsSource="{d:SampleData ItemCount=5}">
                     MinHeight="35">
                                                 <TextBox BorderThickness="0"
                          Background="Transparent"
-                         Padding="4"
-                                                         x:Name="MessageBox"
+                         Padding="4,5,4,4"
+                                                         x:Name="MessageTextBox"
                          AcceptsReturn="True"
                          VerticalScrollBarVisibility="Auto"
                          MaxLines="10"
                          TextWrapping="Wrap"
                          SnapsToDevicePixels="True"
+                                                         Foreground="#999999"
+                                                         GotKeyboardFocus="MessageTextBox_Focused"
+                                                         LostKeyboardFocus="MessageTextBox_Unfocused"
                                                          TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display"
                  TextOptions.TextHintingMode="Fixed"
                          FontFamily="Tahoma"
@@ -903,7 +934,7 @@ x:Name="SendMsgButton"
 VerticalAlignment="Top"
 HorizontalAlignment="Center"
  MouseLeftButtonUp="SendMessage"                                                                     
-Margin="578,0,0,0"
+Margin="574,0,0,0"
 Text="Send message"
 TextStartPositionX="26"
 TextFont="Arial"

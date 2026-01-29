@@ -53,24 +53,22 @@ namespace MiddleMan
         public string Username { get; set; }
         public string SkypeCreditText { get; set; }
         public int ConnectionStatus { get; set; }
-        public ObservableCollection<ContactData> ContactList { get; set; }
-        public SidebarData(string username, string skypeCreditText, int connectionStatus, ObservableCollection<ContactData> contactList)
+        public SidebarData(string username, string skypeCreditText, int connectionStatus)
         {
             Username = username;
             SkypeCreditText = skypeCreditText;
-            ContactList = contactList;
             ConnectionStatus = connectionStatus;
         }
     }
 
-    public class ContactData
+    public class ProfileData
     {
         public string DisplayName { get; set; } // publicly displayed name.
         public string Identifier { get; set;} // this is what will be used to make requests such as SendMessage. 
         public string Status { get; set; } // textual status, e.g. "I'm good!"
         public int PresenceStatus { get; set; } // away, online, offline, etc
         public byte[] ProfilePicture { get; set; }
-        public ContactData(string displayName, string identifier, string status, int presenceStatus, byte[] profilePicture)
+        public ProfileData(string displayName, string identifier, string status, int presenceStatus, byte[] profilePicture)
         {
             DisplayName = displayName;
             Identifier = identifier;
@@ -150,10 +148,16 @@ namespace MiddleMan
         Task<LoginResult> LoginMainStep(string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
-        Task<bool> SendMessage(string user, string text); // Sends a message, returns true if it was successful.
-        Task<SidebarData> FetchSidebarData(); // Fetches sidebar data (contacts list, username, text placeholders, etc.)
+        Task<bool> SendMessage(string user, string text); // Sends a message. Returns true on success.
+        SidebarData SidebarInformation { get; } // field for sidebar data, ideally bound to a WebSocket or similar for real-time updates.
+        Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         Task<LoginResult> TryAutoLogin(); // Tries to log in with saved tokens/credentials
-        Task<ObservableCollection<ConversationItem>> FetchConversationHistory(string identifier); // Fetches the conversation history between you and the specified identifier.
+        ObservableCollection<ConversationItem> ActiveConversation { get; } // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.
+        ObservableCollection<ProfileData> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
+        ObservableCollection<ProfileData> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
+        Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
+        Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
+        Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
