@@ -102,7 +102,7 @@ namespace Skymu
                         break;
                 }*/
 
-                new About().ShowDialog();
+                new About().Show();
                 //Universal.NotImplemented("Windows Native Menu Bar");
             }
             return IntPtr.Zero;
