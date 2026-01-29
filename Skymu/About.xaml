@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Skymu"
         mc:Ignorable="d"
-        Title="About" Height="450" Width="800">
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Title="About" Height="454" Width="501">
+    <Window.Background>
+        <ImageBrush ImageSource="/ResourcesLight/Backgrounds/aboutBackground.png" Stretch="Uniform" /> 
+    </Window.Background>
     <Grid>
-        
+        <Image Source="/UniversalResources/Branding/skymu-about-logo.png" Height="111" Margin="0,0,0,100" />
     </Grid>
 </Window>
