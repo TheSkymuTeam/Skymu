@@ -45,9 +45,6 @@
     <None Remove="UniversalResources\Branding\skymu-about-logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero">
-      <Private>True</Private>
-    </Reference>
     <PackageReference Include="LibreSpeed.NET" Version="1.0.0" />
     <PackageReference Include="ManagedNativeWifi" Version="3.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.3.9" />
