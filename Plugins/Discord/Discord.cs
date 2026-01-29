@@ -23,6 +23,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -254,6 +255,12 @@ namespace Discord
             return true;
         }
 
+        private enum ListType
+        {
+            Contacts,
+            Recents
+        }
+
         public async Task<bool> PopulateContactsList()
         {
             await PopulateListsBackend(ListType.Contacts);
@@ -266,53 +273,83 @@ namespace Discord
             return true;
         }
 
-        public enum ListType
-        {
-            Contacts,
-            Recents
-        }
-
-        public async Task<bool> PopulateListsBackend(ListType toLoad)
+        private async Task<bool> PopulateListsBackend(ListType lType)
         {
             pluginOOTBStuff ootb = new pluginOOTBStuff();
             try
             {
                 var privateChannels = WebSocket.privateChannelsData as JsonArray ?? new JsonArray();
-
-                var dmChannels = privateChannels
+                var allChannels = privateChannels
                     .OfType<JsonObject>()
-                    .Where(c => c["type"]?.GetValue<int>() == 1);
+                    .Where(c => c["type"]?.GetValue<int>() == 1 || c["type"]?.GetValue<int>() == 3);
 
-                if (toLoad == ListType.Recents)
+                if (lType == ListType.Recents)
                 {
-                    dmChannels = dmChannels
-                        .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0")
-                        .Where(c => c["last_message_id"]?.GetValue<string>() != "0");
+                    allChannels = allChannels
+                        .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0");
                 }
 
-                foreach (var channel in dmChannels)
+                foreach (var channel in allChannels)
                 {
-                    var recipients = channel["recipients"] as JsonArray;
-                    if (recipients == null || recipients.Count == 0)
-                        continue;
+                    int type = channel["type"]?.GetValue<int>() ?? 0;
 
-                    var recipient = recipients[0] as JsonObject;
-                    if (recipient == null)
-                        continue;
+                    if (type == 1)
+                    {
+                        var recipients = channel["recipients"] as JsonArray;
+                        if (recipients == null || recipients.Count == 0) continue;
 
-                    string userId = recipient["id"]?.GetValue<string>() ?? "N/A";
-                    string channelId = channel["id"]?.GetValue<string>() ?? "N/A";
-                    string skymuId = $"{userId};{channelId}";
-                    string globalName = recipient["global_name"]?.GetValue<string>() ?? "N/A";
-                    string username = recipient["username"]?.GetValue<string>() ?? "N/A";
-                    string avatarHash = recipient["avatar"]?.GetValue<string>();
+                        var recipient = recipients[0] as JsonObject;
+                        if (recipient == null) continue;
 
-                    var profileData = await CreateProfileDataAsync(ootb, userId, skymuId, globalName, username, avatarHash);
+                        string userId = recipient["id"]?.GetValue<string>() ?? "N/A";
+                        string channelId = channel["id"]?.GetValue<string>() ?? "N/A";
+                        string skymuId = $"{userId};{channelId}";
+                        string globalName = recipient["global_name"]?.GetValue<string>() ?? "N/A";
+                        string username = recipient["username"]?.GetValue<string>() ?? "N/A";
+                        string avatarHash = recipient["avatar"]?.GetValue<string>();
 
-                    if (toLoad == ListType.Recents)
-                        RecentsList.Add(profileData);
-                    else
-                        ContactsList.Add(profileData);
+                        var profileData = await CreateProfileDataAsync(ootb, userId, skymuId, globalName, username, avatarHash);
+
+                        if (lType == ListType.Recents)
+                            RecentsList.Add(profileData);
+                        else
+                            ContactsList.Add(profileData);
+                    }
+                    else if (type == 3)
+                    {
+                        var recipients = channel["recipients"] as JsonArray;
+                        int recipientCount = recipients?.Count ?? 0;
+                        int memberCount = recipientCount + 1;
+
+                        string channelId = channel["id"]?.GetValue<string>();
+                        string name = channel["name"]?.GetValue<string>();
+                        string avatarHash = channel["icon"]?.GetValue<string>();
+
+                        if (string.IsNullOrWhiteSpace(name))
+                        {
+                            var recipientNames = recipients?
+                                .OfType<JsonObject>()
+                                .Select(r =>
+                                    r["global_name"]?.GetValue<string>() ??
+                                    r["username"]?.GetValue<string>())
+                                .Where(n => !string.IsNullOrWhiteSpace(n));
+
+                            name = recipientNames != null
+                                ? string.Join(", ", recipientNames)
+                                : "N/A";
+                        }
+
+                        string skymuId = $"group;{channelId}";
+
+                        var profileData = await CreateProfileDataAsync(
+                            ootb, channelId, skymuId, name, name, avatarHash, true, $"{memberCount} members"
+                        );
+
+                        if (lType == ListType.Recents)
+                            RecentsList.Add(profileData);
+                        else
+                            ContactsList.Add(profileData);
+                    }
                 }
             }
             catch (Exception ex)
@@ -323,7 +360,7 @@ namespace Discord
             return true;
         }
 
-        private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash)
+        private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash, bool isGC = false, string manualStatus = null)
         {
             byte[] avatarImage = null;
 
@@ -333,13 +370,13 @@ namespace Discord
 
             if (!string.IsNullOrEmpty(avatarHash))
             {
-                avatarImage = await ootb.GetCachedAvatarAsync(userId, avatarHash);
+                avatarImage = await ootb.GetCachedAvatarAsync(userId, avatarHash, isGC);
             }
 
             return new ProfileData(
                 string.IsNullOrEmpty(globalName) ? username : globalName,
                 skymuId,
-                custStatusStr,
+                custStatusStr ?? manualStatus,
                 userStatus,
                 avatarImage
             );
@@ -387,8 +424,10 @@ namespace Discord
         }
 
         // So we don't have to fetch the data everytime
-        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash)
+        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
         {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+
             string pattern = $"*-{userId}.png";
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
@@ -398,10 +437,11 @@ namespace Discord
             foreach (var file in Directory.GetFiles(cacheDir, pattern))
                 File.Delete(file);
 
-            string url = $"https://cdn.discordapp.com/avatars/{userId}/{hash}.png?size=64";
-            using (var wc = new WebClient())
+            string url = ootb.GetAvatarUrl(userId, hash, false, isGC);
+            using (var hc = new HttpClient())
             {
-                await wc.DownloadFileTaskAsync(url, cachedFile);
+                byte[] data = await hc.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(cachedFile, data);
             }
 
             return File.ReadAllBytes(cachedFile);
