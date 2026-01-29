@@ -110,7 +110,7 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="0,8.5,0,0">
+            <Grid Margin="0,9.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="62"/>
                     <ColumnDefinition Width="16"/>
@@ -149,7 +149,7 @@ Width="14" Grid.Row="1"/>
 
                 <TextBlock Grid.Column="3" 
                    Text="{Binding Time, StringFormat=h:mm tt}" 
-                   Margin="0,1,0,0"
+                   Margin="0,0,0,0"
                    FontSize="11"
                    FontFamily="Tahoma"
                    HorizontalAlignment="Left"
