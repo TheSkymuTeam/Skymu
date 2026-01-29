@@ -415,67 +415,68 @@ namespace Discord
             {
                 return LoginResult.Failure;
             }
-    }
-
-    // This is used for any custom stuff needed by the Discord plugin.
-    public class pluginOOTBStuff
-    {
-        private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
-        public pluginOOTBStuff()
-        {
-            // Make sure the cache directory exists
-            Directory.CreateDirectory(cacheDir);
         }
 
-        // So we don't have to fetch the data everytime
-        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
+        // This is used for any custom stuff needed by the Discord plugin.
+        public class pluginOOTBStuff
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
+            private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
+            public pluginOOTBStuff()
+            {
+                // Make sure the cache directory exists
+                Directory.CreateDirectory(cacheDir);
+            }
 
-            string pattern = $"*-{userId}.png";
-            string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
+            // So we don't have to fetch the data everytime
+            public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
+            {
+                pluginOOTBStuff ootb = new pluginOOTBStuff();
 
-            if (File.Exists(cachedFile))
+                string pattern = $"*-{userId}.png";
+                string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
+
+                if (File.Exists(cachedFile))
+                    return File.ReadAllBytes(cachedFile);
+
+                foreach (var file in Directory.GetFiles(cacheDir, pattern))
+                    File.Delete(file);
+
+                string url = ootb.GetAvatarUrl(userId, hash, false, isGC);
+                using (var hc = new HttpClient())
+                {
+                    byte[] data = await hc.GetByteArrayAsync(url);
+                    await File.WriteAllBytesAsync(cachedFile, data);
+                }
+
                 return File.ReadAllBytes(cachedFile);
-
-            foreach (var file in Directory.GetFiles(cacheDir, pattern))
-                File.Delete(file);
-
-            string url = ootb.GetAvatarUrl(userId, hash, false, isGC);
-            using (var hc = new HttpClient())
-            {
-                byte[] data = await hc.GetByteArrayAsync(url);
-                await File.WriteAllBytesAsync(cachedFile, data);
             }
 
-            return File.ReadAllBytes(cachedFile);
-        }
-
-        public int MapStatus(string statusStr)
-        {
-            return statusStr switch
+            public int MapStatus(string statusStr)
             {
-                "online" => UserConnectionStatus.Online,
-                "idle" => UserConnectionStatus.Away,
-                "dnd" => UserConnectionStatus.DoNotDisturb,
-                "offline" => UserConnectionStatus.Invisible,
-                _ => UserConnectionStatus.Invisible
-            };
-        }
-
-        public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
-        {
-            if (isServer)
-            {
-                return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size=64";
+                return statusStr switch
+                {
+                    "online" => UserConnectionStatus.Online,
+                    "idle" => UserConnectionStatus.Away,
+                    "dnd" => UserConnectionStatus.DoNotDisturb,
+                    "offline" => UserConnectionStatus.Invisible,
+                    _ => UserConnectionStatus.Invisible
+                };
             }
-            else if (isGC)
+
+            public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
             {
-                return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size=64";
-            }
-            else
-            {
-                return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=256";
+                if (isServer)
+                {
+                    return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size=64";
+                }
+                else if (isGC)
+                {
+                    return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size=64";
+                }
+                else
+                {
+                    return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=256";
+                }
             }
         }
     }
