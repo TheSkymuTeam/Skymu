@@ -573,8 +573,9 @@ typeof(MainWindow));
 
         private async void SendMessage(object sender, MouseButtonEventArgs e)
         {
+            string body = MessageTextBox.Text;
             MessageTextBox.Clear();
-            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, MessageTextBox.Text);
+            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, body);
         }
 
         public static string GetDisplayName(string identifier)
@@ -680,6 +681,7 @@ typeof(MainWindow));
             textBox.Text = placeholderText;
             textBox.Foreground = PlaceholderBrush;
             isPlaceholderActive = true;
+            SendMsgButton.IsEnabled = !isPlaceholderActive;
         }
 
         private void RemovePlaceholder(
@@ -692,6 +694,7 @@ typeof(MainWindow));
             textBox.Text = string.Empty;
             textBox.Foreground = Brushes.Black;
             isPlaceholderActive = false;
+            SendMsgButton.IsEnabled = !isPlaceholderActive;
         }
 
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
