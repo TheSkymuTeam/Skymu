@@ -11,9 +11,8 @@
 
 using Discord.Classes;
 using MiddleMan;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
@@ -21,6 +20,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -57,6 +58,7 @@ namespace Discord
             if (username.ToUpper() == "$TOKEN" && !string.IsNullOrWhiteSpace(password))
             {
                 DscToken = password;
+
                 string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
 
                 if (userCheckTkn.Contains("username"))
@@ -255,53 +257,20 @@ namespace Discord
 
         public async Task<bool> PopulateContactsList()
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
-            JsonArray parsedWSJson = new JsonArray();
-            JsonArray parsedAPICJson = new JsonArray();
-            try
-            {
-                while (!WebSocket.CanCheckData)
-                    await Task.Delay(100);
-                // We need to make a separate call to the Discord API to get all of the channel IDs
-                // The ID for a friend is separated like this <user_id>;<channel_id> for each user.
-                string channels = await api.SendAPI("/users/@me/channels", HttpMethod.Get, DscToken, null, null, null);
-                parsedAPICJson = JsonNode.Parse(channels).AsArray();
-                // Use the JToken directly instead of converting to string and re-parsing
-                parsedWSJson = WebSocket.recipientsData as JsonArray ?? new JsonArray();
-
-                foreach (var friend in parsedWSJson)
-                {
-                    string friendId = friend["id"]?.GetValue<string>() ?? "N/A";
-                    string channelId = parsedAPICJson
-                        .OfType<JsonObject>()
-                        .Where(c => c["type"]?.GetValue<int>() == 1)
-                        .Where(c =>
-                            c["recipients"] is JsonArray recipients &&
-                            recipients.Any(r => r["id"]?.GetValue<string>() == friendId)
-                        )
-                        .Select(c => c["id"]?.GetValue<string>())
-                        .FirstOrDefault();
-
-                    string skymuId = channelId != null ? $"{friendId};{channelId}" : friendId;
-                    string friendGlobalName = friend["user"]["global_name"]?.GetValue<string>() ?? "N/A";
-                    string friendUsername = friend["user"]["username"]?.GetValue<string>() ?? "N/A";
-                    string friendAvatarHash = friend["user"]["avatar"]?.GetValue<string>();
-
-                    var profileData = await CreateProfileDataAsync(ootb, friendId, skymuId, friendGlobalName, friendUsername, friendAvatarHash);
-                    ContactsList.Add(profileData);
-                }
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Parse error: {ex.Message}\nResponse from server:\n" + parsedWSJson.ToJsonString()));
-                return false;
-            }
+            await PopulateListsBackend();
             return true;
         }
 
         public async Task<bool> PopulateRecentsList()
         {
+            await PopulateListsBackend(true);
+            return true;
+        }
+
+        public async Task<bool> PopulateListsBackend(bool loadRecents = false)
+        {
             pluginOOTBStuff ootb = new pluginOOTBStuff();
+
             try
             {
                 while (!WebSocket.CanCheckData)
@@ -309,12 +278,15 @@ namespace Discord
 
                 var privateChannels = WebSocket.privateChannelsData as JsonArray ?? new JsonArray();
 
-                // Filter for DM channels (type 1) and sort by last_message_id descending (most recent first)
                 var dmChannels = privateChannels
                     .OfType<JsonObject>()
-                    .Where(c => c["type"]?.GetValue<int>() == 1)
-                    .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0")
-                    .ToList();
+                    .Where(c => c["type"]?.GetValue<int>() == 1);
+
+                if (loadRecents)
+                {
+                    dmChannels = dmChannels
+                        .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0");
+                }
 
                 foreach (var channel in dmChannels)
                 {
@@ -334,7 +306,11 @@ namespace Discord
                     string avatarHash = recipient["avatar"]?.GetValue<string>();
 
                     var profileData = await CreateProfileDataAsync(ootb, userId, skymuId, globalName, username, avatarHash);
-                    RecentsList.Add(profileData);
+
+                    if (loadRecents)
+                        RecentsList.Add(profileData);
+                    else
+                        ContactsList.Add(profileData);
                 }
             }
             catch (Exception ex)
