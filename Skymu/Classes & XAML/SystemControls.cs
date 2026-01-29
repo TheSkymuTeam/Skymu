@@ -13,6 +13,7 @@ using System;
 using System.Windows;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace Skymu
 {
@@ -101,7 +102,8 @@ namespace Skymu
                         break;
                 }*/
 
-                Universal.NotImplemented("Windows Native Menu Bar");
+                new About().ShowDialog();
+                //Universal.NotImplemented("Windows Native Menu Bar");
             }
             return IntPtr.Zero;
         }

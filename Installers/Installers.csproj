@@ -8,8 +8,8 @@
     <ProjectGuid>{82EC0D75-013A-4A49-893B-93A657F22F24}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SeanKypeUniversal</RootNamespace>
-    <AssemblyName>SeanKypeUniversal</AssemblyName>
+    <RootNamespace>SkymuInstallers</RootNamespace>
+    <AssemblyName>SkymuInstallers</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
