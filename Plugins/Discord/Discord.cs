@@ -286,7 +286,8 @@ namespace Discord
                 if (toLoad == ListType.Recents)
                 {
                     dmChannels = dmChannels
-                        .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0");
+                        .OrderByDescending(c => c["last_message_id"]?.GetValue<string>() ?? "0")
+                        .Where(c => c["last_message_id"]?.GetValue<string>() != "0");
                 }
 
                 foreach (var channel in dmChannels)
