@@ -36,6 +36,15 @@
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="UniversalResources\Buttons\**" />
+    <EmbeddedResource Remove="UniversalResources\Buttons\**" />
+    <None Remove="UniversalResources\Buttons\**" />
+    <Page Remove="UniversalResources\Buttons\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="UniversalResources\Branding\skymu-about-logo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="PresentationFramework.Aero">
       <Private>True</Private>
     </Reference>
@@ -55,6 +64,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="UniversalResources\Branding\skymu-about-logo.png" />
     <Resource Include="UniversalResources\WindowBorder\close.png" />
     <Resource Include="UniversalResources\WindowBorder\join.png" />
     <Resource Include="UniversalResources\WindowBorder\maximize.png" />
@@ -120,9 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Skype.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UniversalResources\Buttons\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ResourcesLight\Buttons\plain.png" />

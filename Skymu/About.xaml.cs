@@ -22,6 +22,7 @@ namespace Skymu
         public About()
         {
             InitializeComponent();
+            
         }
     }
 }
