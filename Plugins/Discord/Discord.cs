@@ -387,30 +387,34 @@ namespace Discord
             if (File.Exists("discord.smcred"))
             {
                 DscToken = File.ReadAllText("discord.smcred");
-            }
 
-            if (!string.IsNullOrWhiteSpace(DscToken))
-            {
-                string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
-                if (userCheckTkn.Contains("401: Unauthorized"))
+
+                if (!string.IsNullOrWhiteSpace(DscToken))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to automatically login to Discord (Your token might be expired!). Please login manually. Error:\n" + userCheckTkn));
+                    string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
+                    if (userCheckTkn.Contains("401: Unauthorized"))
+                    {
+                        OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to automatically login to Discord (Your token might be expired!). Please login manually. Error:\n" + userCheckTkn));
+                        return LoginResult.Failure;
+                    }
+                    else if (userCheckTkn.Contains("username"))
+                    {
+                        // Do nothing and let the client continue as normal.
+                    }
+
+                    _webSocket ??= new WebSocket();
+                    return LoginResult.Success;
+                }
+                else
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid. Please log in manually."));
                     return LoginResult.Failure;
                 }
-                else if (userCheckTkn.Contains("username"))
-                {
-                    // Do nothing and let the client continue as normal.
-                }
-
-                _webSocket ??= new WebSocket();
-                return LoginResult.Success;
             }
             else
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid. Please log in manually."));
                 return LoginResult.Failure;
             }
-        }
     }
 
     // This is used for any custom stuff needed by the Discord plugin.
