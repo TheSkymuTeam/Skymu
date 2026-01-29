@@ -240,7 +240,6 @@ namespace Discord
                 while (!WebSocket.CanCheckData)
                     await Task.Delay(100);
 
-
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
                 mainUsrStatusSkymu = new pluginOOTBStuff().MapStatus(mainUsrStatus);
             }
@@ -276,12 +275,8 @@ namespace Discord
         public async Task<bool> PopulateListsBackend(ListType toLoad)
         {
             pluginOOTBStuff ootb = new pluginOOTBStuff();
-
             try
             {
-                while (!WebSocket.CanCheckData)
-                    await Task.Delay(100);
-
                 var privateChannels = WebSocket.privateChannelsData as JsonArray ?? new JsonArray();
 
                 var dmChannels = privateChannels
