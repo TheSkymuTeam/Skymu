@@ -108,6 +108,11 @@ namespace Discord
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Discord has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
                 return LoginResult.Failure;
             }
+            else if (loginResponse.ContainsKey("message"))
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to log in. Server responded with: " + loginResponse["message"].ToString()));
+                return LoginResult.Failure;
+            }
             else
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs("Failed to log in. Error is as follows:\n\nRESPONSE:" + loginResponse.ToJsonString() + "\n\nREQUEST:" + loginBody));
