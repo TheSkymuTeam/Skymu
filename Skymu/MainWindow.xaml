@@ -109,53 +109,49 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="0,7.5,65,0">
+            <Grid Margin="0,8.5,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="16"/>
                     <ColumnDefinition Width="430"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <TextBlock Grid.Column="0" 
+                   Text="{Binding SentByDN}" 
+                   HorizontalAlignment="Right"
+                   Margin="-1000,0,0,0"
+                   FontSize="11"
+                   FontFamily="Tahoma"
+                   Foreground="#999999"
+                   TextTrimming="None"/>
+                <TextBlock Grid.Column="2" 
+                   Width="430"
+                   Text="{Binding Body}" 
+                           Padding="0,0,10,0"
+                   HorizontalAlignment="Left"
+                   TextAlignment="Left"
+                   FontSize="11"
+                   VerticalAlignment="Top"
+                   TextWrapping="Wrap"
+                   FontFamily="Tahoma"
+                   TextTrimming="CharacterEllipsis"/>
 
-                <TextBlock Grid.Column="0" Margin="0,0,16,0" Text="{Binding SentByDN}" 
-                           FontSize="11"
-                           HorizontalAlignment="Right"
-                               FontFamily="Tahoma"
-                           Foreground="#999999"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" Text="{Binding Body}" 
-                           HorizontalAlignment="Left"
-           FontSize="11"
-                           VerticalAlignment="Top"
-                           TextWrapping="Wrap"
-               FontFamily="Tahoma"
-           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" 
-           Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" 
-           HorizontalAlignment="Left"
-           FontSize="11"
-           FontFamily="Tahoma"
-                           Foreground="#999999"
-           TextTrimming="CharacterEllipsis"/>
-                <TextBlock Width="413" Grid.Column="1" Margin="0,0,0,0" 
-           Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" 
-           HorizontalAlignment="Left"
-           FontSize="11"
-           FontFamily="Tahoma"
-                           Foreground="#999999"
-           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="2" Width="430"
+                   Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" 
+                   HorizontalAlignment="Left" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
 
-                <TextBlock Text="{Binding Time, StringFormat=HH:mm tt}" 
-                               Grid.Column="2" Margin="1,1,0,0"
-                           FontSize="11"
-    FontFamily="Tahoma"
-                           HorizontalAlignment="Left"
-                           Foreground="#999999"
-                           TextTrimming="CharacterEllipsis"/>
+                <TextBlock Grid.Column="2" Width="430"
+                   Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" 
+                   HorizontalAlignment="Left" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
 
-
-
-
+                <TextBlock Grid.Column="3" 
+                   Text="{Binding Time, StringFormat=h:mm tt}" 
+                   Margin="0,1,0,0"
+                   FontSize="11"
+                   FontFamily="Tahoma"
+                   HorizontalAlignment="Left"
+                   Foreground="#999999"/>
             </Grid>
         </DataTemplate>
         <Style x:Key="NoInsetListBox" TargetType="ListBox">
@@ -772,7 +768,7 @@ Width="14"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
-                        <Border x:Name="MessageWindow" Grid.Row="2"
+                        <Border x:Name="MessageWindow" MinWidth="710" Grid.Row="2"
 Background="#FFF"
 BorderBrush="#26000000"
                                 Margin="0,4,0,0"

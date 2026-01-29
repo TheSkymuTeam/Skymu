@@ -24,11 +24,18 @@ namespace Skymu
         public static ICore[] PluginList;
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
-            new Dialog(1, e.Message, "Error in plugin " + ((ICore)sender).Name); 
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                new Dialog(1, e.Message, "Error in plugin " + ((ICore)sender).Name);
+            });
         }
+
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
-            new Dialog(1, e.Message, "Warning from plugin " + ((ICore)sender).Name);
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                new Dialog(1, e.Message, "Warning from plugin " + ((ICore)sender).Name);
+            });
         }
         internal static readonly HttpClient HttpClient = new HttpClient
         {

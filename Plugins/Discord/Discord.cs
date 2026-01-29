@@ -157,20 +157,48 @@ namespace Discord
         public async Task<bool> SetActiveConversation(string identifier)
         {
             ActiveConversation.Clear();
-
             if (string.IsNullOrEmpty(identifier))
                 return false;
-
             string[] parts = identifier.Split(';');
             if (parts.Length < 2)
                 return false;
-
             string channelId = parts[1];
+            try
+            {
+                string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=50", HttpMethod.Get, DscToken, null, null, null);
+                var parsedJson = JsonNode.Parse(conversation);
 
-            string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=5", HttpMethod.Get, DscToken, null, null, null);
-            Debug.WriteLine($"The JSON for the conversation is: {conversation}");
+                // Check if it's actually an array
+                if (parsedJson is not JsonArray messages)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {conversation}"));
+                    return false;
+                }
 
-            return true;
+                // Discord returns messages in reverse chronological order (newest first), so we need to reverse
+                var sortedMessages = messages.Reverse();
+                foreach (var message in sortedMessages)
+                {
+                    string authorName = message["author"]["global_name"]?.GetValue<string>()
+                        ?? message["author"]["username"]?.GetValue<string>()
+                        ?? "Unknown";
+                    string authorId = message["author"]["id"]?.GetValue<string>() ?? "0";
+                    string content = message["content"]?.GetValue<string>() ?? "";
+                    string timestampStr = message["timestamp"]?.GetValue<string>();
+                    DateTime timestamp = DateTime.UtcNow;
+                    if (!string.IsNullOrEmpty(timestampStr))
+                    {
+                        DateTime.TryParse(timestampStr, out timestamp);
+                    }
+                    ActiveConversation.Add(new MessageItem(authorId, authorName, content, timestamp));
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                return false;
+            }
         }
 
         public SidebarData SidebarInformation { get; private set; }

@@ -29,7 +29,7 @@ namespace Skymu
         public static Login Instance;
         private MainWindow _mainWindow;
         public static bool noCloseEvent;
-        public static bool useAutoLogin = false; // SET THIS IN CODE
+        public static bool useAutoLogin = true; // SET THIS IN CODE
 
         public Login()
         {
@@ -134,12 +134,15 @@ namespace Skymu
 
             comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
             Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
-            LoginToggleAnimation(true);
+            if (useAutoLogin)
+            {
+                LoginToggleAnimation(true);
+            }
         }
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            if (useAutoLogin == true)
+            if (useAutoLogin)
             {
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin()
@@ -150,7 +153,6 @@ namespace Skymu
                     return;
                 }
             }
-            LoginToggleAnimation(false);
         }
 
         private void InitiateMainWindow()
