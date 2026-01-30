@@ -4,18 +4,20 @@
         xmlns:local="clr-namespace:Skymu"
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
         WindowStyle="None"
+        Background="#8cbeff"
         AllowsTransparency="False"
         ResizeMode="CanResize"
-        Background="Transparent"
         WindowStartupLocation="CenterScreen"
         Title="Skype" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
         StateChanged="Window_StateChanged" Activated="Window_Activated"
         Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
+
     <Window.Resources>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <local:ReplyIDToBoolConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
+        <local:DisplayNameBlanker x:Key="DNBlanker"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -119,14 +121,14 @@ Width="14" Grid.Row="1"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="62"/>
+                    <ColumnDefinition Width="98"/>
                     <ColumnDefinition Width="16"/>
                     <ColumnDefinition Width="430"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Visibility="{Binding ReplyToID,
-                        Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="78,0,0,2">
+                        Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
                     <Image Source="/ResourcesLight/ChatWindow/reply-arrow.png" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center" />
                     <TextBlock TextWrapping="NoWrap"
     TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
@@ -140,13 +142,19 @@ Width="14" Grid.Row="1"/>
                 </StackPanel>
 
                 <TextBlock Grid.Row="1" Grid.Column="0"
-                   Text="{Binding SentByDN}"
                    HorizontalAlignment="Right"
                    Margin="-1000,0,0,0"
                    FontSize="11"
                    FontFamily="Tahoma"
                    Foreground="{Binding SentByID,
-                        Converter={StaticResource IdToColorConverter}}"/>
+                        Converter={StaticResource IdToColorConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource DNBlanker}">
+                            <Binding Path="SentByDN" />
+                            <Binding Path="SentByID" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
 
                 <TextBlock Grid.Row="1" Grid.Column="2"
                    Width="430"
@@ -174,7 +182,8 @@ Width="14" Grid.Row="1"/>
                    Text="{Binding Time, StringFormat=h:mm tt}"
                    FontSize="11"
                    FontFamily="Tahoma"
-                   Foreground="#999999"/>
+                   Foreground="#999999"
+                           HorizontalAlignment="Left"/>
             </Grid>
         </DataTemplate>
         <Style x:Key="NoInsetListBox" TargetType="ListBox">
@@ -196,90 +205,101 @@ Width="14" Grid.Row="1"/>
     </Window.Resources>
 
     <Grid>
-        <Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="121" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
-                <Image Style="{StaticResource WindowButtonStyle}" x:Name="split" Margin="0" Width="26"
+  
+            <Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
+                <Grid.Background>
+
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#FF6B9DE0" Offset="0.0"/>
+
+                    <GradientStop Color="#f0f6fe" Offset="0.0634"/>
+
+                    <GradientStop Color="#d2e5fe" Offset="0.0667"/>
+                    <GradientStop Color="#8cbeff" Offset="1"/>
+                </LinearGradientBrush>
+
+                </Grid.Background>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="121" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
+                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="split" Margin="0" Width="26"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                <Image Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24"
+                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                <Image Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24"
+                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                <Image Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
+                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-            </StackPanel>
-            <Grid Grid.Column="0" x:Name="IconText">
-                <TextBlock
+                </StackPanel>
+                <Grid Grid.Column="0" x:Name="IconText">
+                    <TextBlock
                     x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
+                        Visibility="Hidden"
                     FontSize="12"
                     Foreground="White"
                     VerticalAlignment="Top"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect
+                        <TextBlock.Effect>
+                            <BlurEffect
                             Radius="15.0"
                             KernelType="Gaussian" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
                     x:Name="TitleShadow2" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
+                        Visibility="Hidden"
                     FontSize="12"
                     Foreground="White"
                     VerticalAlignment="Top"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect
+                        <TextBlock.Effect>
+                            <BlurEffect
                             Radius="20.0"
                             KernelType="Gaussian" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
                     x:Name="TitleShadow3" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                     FontSize="12"
                     Foreground="White"
                     VerticalAlignment="Top"
+                        Visibility="Hidden"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect
+                        <TextBlock.Effect>
+                            <BlurEffect
                             Radius="17.0"
                             KernelType="Gaussian" />
-                    </TextBlock.Effect>
-                </TextBlock>
+                        </TextBlock.Effect>
+                    </TextBlock>
 
                 <TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
-                           FontFamily="Segoe UI"
-                           FontSize="12"
-                           Foreground="Black"
+                           FontFamily="Arial"
+                           FontSize="13"
+                               FontWeight="Bold"
+                           Foreground="#333333"
                            VerticalAlignment="Top"
                            Margin="50,7,0,0"
                            Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <DropShadowEffect
-                            ShadowDepth="0"
-                            Direction="330"
-                            Color="White"
-                            Opacity="1"
-                            BlurRadius="20" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <Image Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
+                       
+                    </TextBlock>
+                    <Image Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
                        Margin="8,0,0,0" />
+                </Grid>
             </Grid>
-        </Grid>
-        <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="8,30,8,8">
+  
+        <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="4,30,4,4">
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#c5defe" Offset="0.0"/>
@@ -888,7 +908,7 @@ ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 mc:Ignorable="d"
-  d:ItemsSource="{d:SampleData ItemCount=5}"                                       >
+                                     >
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>

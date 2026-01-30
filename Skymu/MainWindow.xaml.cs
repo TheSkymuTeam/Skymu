@@ -42,6 +42,8 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
+        public static bool UseSkypeAeroBorder = false;
+
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
         private System.Timers.Timer _usersOnlineTimer;
@@ -75,6 +77,30 @@ namespace Skymu
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0, 0, 0, 0);
+            }
+
+            if (DwmHelper.IsDwmEnabled() && UseSkypeAeroBorder == true)
+            {
+                this.Background = Brushes.Transparent;
+                TitleBar.Background = Brushes.Transparent;
+                WindowArea.Margin = new Thickness(8, 30, 8, 8);
+                TitleMain.FontFamily = new FontFamily("Segoe UI");
+                TitleMain.FontWeight = FontWeights.Normal;
+                TitleMain.Foreground = Brushes.Black;
+                TitleMain.Margin = new Thickness(50, 7, 0, 0);
+                TextOptions.SetTextRenderingMode(TitleMain, TextRenderingMode.ClearType);
+                TitleMain.Effect = new DropShadowEffect
+                {
+                    ShadowDepth = 0,
+                    Direction = 330,
+                    Color = Colors.White,
+                    Opacity = 1,
+                    BlurRadius = 20
+                };
+                TitleMain.FontSize = 12;
+                TitleShadow.Visibility = Visibility.Visible;
+                TitleShadow2.Visibility = Visibility.Visible;
+                TitleShadow3.Visibility = Visibility.Visible;
             }
 
             this.MouseLeftButtonUp += MouseRelease;
@@ -338,7 +364,7 @@ typeof(MainWindow));
             selectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
-            
+
             PlaceholderTextMTB = "Type a message to " + selectedContact.DisplayName + " here";
             MessageTextBox.Text = PlaceholderTextMTB;
 
@@ -730,6 +756,7 @@ typeof(MainWindow));
                 SendMessage();
             }
         }
+        internal static string LastMessageIdentifier;
     }
 
     public class ByteArrayToImageSourceConverter : IValueConverter
@@ -760,14 +787,14 @@ typeof(MainWindow));
         }
     }
 
+
+
     public class IdentifierToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
         {
             string identifier = value as string;
-
-
             if (identifier == MainWindow.Identifier)
             {
                 return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
@@ -796,8 +823,8 @@ typeof(MainWindow));
 
             switch (statInt)
             {
-                case 2: return "Online"; 
-                case 3: return "Away"; 
+                case 2: return "Online";
+                case 3: return "Away";
                 case 19: return "Offline";
                 case 5: return "Do not disturb";
                 default: return "Unknown";
@@ -825,6 +852,28 @@ typeof(MainWindow));
         {
             return Binding.DoNothing;
         }
+    }
+
+    public class DisplayNameBlanker : IMultiValueConverter
+    {
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture)
+        {
+            string displayName = values[0] as string;
+            string identifier = values[1] as string;
+            string lastIdentifier = MainWindow.LastMessageIdentifier;
+            MainWindow.LastMessageIdentifier = identifier;
+            if (lastIdentifier == identifier) return String.Empty;
+            else return displayName;
+        }
+
+        public object[] ConvertBack(object value,
+    Type[] targetTypes,
+    object parameter, CultureInfo culture) =>
+            throw new NotSupportedException();
     }
 
 }

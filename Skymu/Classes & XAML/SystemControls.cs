@@ -17,6 +17,21 @@ using System.Runtime.CompilerServices;
 
 namespace Skymu
 {
+
+    public static class DwmHelper
+    {
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        private static extern int DwmIsCompositionEnabled(out bool pfEnabled);
+
+        public static bool IsDwmEnabled()
+        {
+            if (Environment.OSVersion.Version.Major < 6)
+                return false;
+
+            bool enabled;
+            return DwmIsCompositionEnabled(out enabled) == 0 && enabled;
+        }
+    }
     public class MenuBar
     {
         [DllImport("user32.dll")]
