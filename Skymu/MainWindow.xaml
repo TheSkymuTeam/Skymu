@@ -134,7 +134,7 @@ Width="14" Grid.Row="1"/>
     TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
                         <TextBlock.Text>
                             <MultiBinding StringFormat='Replying to {0} - “{1}”'>
-                                <Binding Path="ReplyToDN"/>
+                                <Binding Path="ReplyToDN" />
                                 <Binding Path="ReplyBody"/>
                             </MultiBinding>
                         </TextBlock.Text>
@@ -907,7 +907,7 @@ ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          ScrollViewer.CanContentScroll="True"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-mc:Ignorable="d"
+mc:Ignorable="d"      
                                      >
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
