@@ -51,10 +51,10 @@ namespace MiddleMan
 
     public class SidebarData
     {   
-        public string DisplayName { get; set; }
-        public string Identifier { get; set; }
-        public string SkypeCreditText { get; set; }
-        public int ConnectionStatus { get; set; }
+        public string DisplayName { get; set; } // The current user's display name.
+        public string Identifier { get; set; } // The current user's unique identifier.
+        public string SkypeCreditText { get; set; } // The text you want to put in place of Skype Credit.
+        public int ConnectionStatus { get; set; } // Icon status (e.g. "Online")
         public SidebarData(string username, string identifier, string skypeCreditText, int connectionStatus)
         {
             DisplayName = username;
@@ -64,70 +64,40 @@ namespace MiddleMan
         }
     }
 
-    
 
-public class ProfileData : INotifyPropertyChanged
+    public class ProfileData : INotifyPropertyChanged
     {
-        private string _displayName;
-        private string _status;
-        private int _presenceStatus;
-        private byte[] _profilePicture;
+        string _displayName, _status;
+        int _presenceStatus;
+        byte[] _profilePicture;
 
         public string DisplayName
         {
-            get => _displayName;
-            set
-            {
-                if (_displayName != value)
-                {
-                    _displayName = value;
-                    OnPropertyChanged(nameof(DisplayName));
-                }
-            }
+            get => _displayName; // Display name. Prefer nickname over username or general name where it applies.
+            set => Set(ref _displayName, value, nameof(DisplayName));
         }
+        public string Identifier { get; set; } // Unique identifier of the user. The end user is not going to see this. It is used internally.
 
-        public string Identifier { get; set; }
-
-        public string Status
+        public string Status // Textual status (e.g. "I'm doing good today.")
         {
             get => _status;
-            set
-            {
-                if (_status != value)
-                {
-                    _status = value;
-                    OnPropertyChanged(nameof(Status));
-                }
-            }
+            set => Set(ref _status, value, nameof(Status));
         }
 
-        public int PresenceStatus
+        public int PresenceStatus // Icon status (e.g. "Online")
         {
             get => _presenceStatus;
-            set
-            {
-                if (_presenceStatus != value)
-                {
-                    _presenceStatus = value;
-                    OnPropertyChanged(nameof(PresenceStatus));
-                }
-            }
+            set => Set(ref _presenceStatus, value, nameof(PresenceStatus));
         }
 
-        public byte[] ProfilePicture
+        public byte[] ProfilePicture // Raw image data for profile picture. Reasonable resolutions (not too low/high) preferred.
         {
             get => _profilePicture;
-            set
-            {
-                if (_profilePicture != value)
-                {
-                    _profilePicture = value;
-                    OnPropertyChanged(nameof(ProfilePicture));
-                }
-            }
+            set => Set(ref _profilePicture, value, nameof(ProfilePicture));
         }
 
-        public ProfileData(string displayName, string identifier, string status, int presenceStatus, byte[] profilePicture)
+        public ProfileData(string displayName, string identifier, string status,
+                           int presenceStatus, byte[] profilePicture)
         {
             _displayName = displayName;
             Identifier = identifier;
@@ -138,11 +108,14 @@ public class ProfileData : INotifyPropertyChanged
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        void Set<T>(ref T field, T value, string name)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (Equals(field, value)) return;
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
+
 
     public abstract class ConversationItem
     {
@@ -150,23 +123,30 @@ public class ProfileData : INotifyPropertyChanged
     }
 
     public class MessageItem : ConversationItem
-    {
-        public string SentByDN { get; set; }
-        public string SentByID { get; set; }
+    { // The reason this class asks for both Display Name and Identifier for SentBy and ReplyTo is because identifier => display name mapping in the UI
+      // becomes very complex in servers with large amounts of people, as well as other possible complications. To simplify everything, just provide both.
+        public string MessageID { get; set; } // Unique identifier for the message
+        public string SentByDN { get; set; } // Who sent the message (Display Name)
+        public string SentByID { get; set; } // Who sent the message (Identifier)
+        public string ReplyToDN { get; set; } // Who the message is replying to (Display Name)
+        public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
         public string Body { get; set; } // Message body      
-        public MessageItem(string sentByIdentifier, string sentByDisplayName, string body, DateTime time)
+        public MessageItem (string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null)
         {
+            MessageID = messageID;
             SentByID = sentByIdentifier;
             SentByDN = sentByDisplayName;
             Body = body;
             Time = time;
+            ReplyToID = replyToIdentifier;
+            ReplyToDN = replyToDisplayName;
         }
     }
 
     public class CallStartedItem : ConversationItem
     {
         public string StartedBy { get; set; } // Return the user's display name (NOT identifier)
-        public bool IsVideoCall { get; set; }
+        public bool IsVideoCall { get; set; } // Set to true if the call is video
         public CallStartedItem(string startedByDisplayName, bool isVideoCall, DateTime time)
         {
             StartedBy = startedByDisplayName;
@@ -178,7 +158,7 @@ public class ProfileData : INotifyPropertyChanged
     public class CallEndedItem : ConversationItem
     {
         public TimeSpan Duration { get; set; } // Length of call
-        public bool IsVideoCall { get; set; }
+        public bool IsVideoCall { get; set; } // Set to true if the call was video
         public CallEndedItem(TimeSpan duration, bool isVideoCall, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
         {
             Duration = duration;

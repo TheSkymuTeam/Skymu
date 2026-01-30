@@ -48,6 +48,7 @@ namespace Discord
         internal static WebSocket WebSocket => _webSocket;
         public bool CanSetStatusOnSkymuAPI;
         internal static readonly API api = new API();
+        private readonly pluginOOTBStuff ootb = new pluginOOTBStuff();
 
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
@@ -176,6 +177,8 @@ namespace Discord
             }
         }
 
+        #region WebSocket Event Handlers
+
         private void SubscribeToWebSocketEvents()
         {
             if (_webSocket != null)
@@ -189,7 +192,7 @@ namespace Discord
         }
 
         private void OnWebSocketMessageReceived(object sender, MessageReceivedEventArgs e)
-        
+
         {
             // Only add messages if they're for the currently active channel
             if (e.ChannelId == _activeChannelId)
@@ -198,7 +201,7 @@ namespace Discord
                 {
                     var messageItem = new MessageItem(e.AuthorId, e.AuthorName, e.Content, e.Timestamp);
                     // Use SynchronizationContext to marshal to UI thread (works in plugins)                  
-                     _uiContext?.Post(_ => ActiveConversation.Add(messageItem), null);                   
+                    _uiContext?.Post(_ => ActiveConversation.Add(messageItem), null);
                 }
                 catch (Exception ex)
                 {
@@ -280,7 +283,6 @@ namespace Discord
 
         private void UpdatePresenceInList(ObservableCollection<ProfileData> list, string userId, string status, string customStatus)
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
             int mappedStatus = ootb.MapStatus(status);
 
             foreach (var profile in list)
@@ -296,8 +298,6 @@ namespace Discord
 
         private async void UpdateChannelInList(ObservableCollection<ProfileData> list, string channelId, string name, string icon)
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
-
             foreach (var profile in list)
             {
                 if (profile.Identifier != null && profile.Identifier.EndsWith(";" + channelId))
@@ -327,8 +327,6 @@ namespace Discord
 
         private async void UpdateUserInList(ObservableCollection<ProfileData> list, string userId, string globalName, string username, string avatar)
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
-
             foreach (var profile in list)
             {
                 if (profile.Identifier != null && profile.Identifier.StartsWith(userId + ";"))
@@ -363,6 +361,8 @@ namespace Discord
                 list.Remove(itemToRemove);
             }
         }
+
+        #endregion
 
         public async Task<bool> SendMessage(string identifier, string text)
         {
@@ -480,7 +480,7 @@ namespace Discord
                     await Task.Delay(100);
 
                 string mainUsrStatus = WebSocket.UserStatusStore.GetStatus("0");
-                mainUsrStatusSkymu = new pluginOOTBStuff().MapStatus(mainUsrStatus);
+                mainUsrStatusSkymu = ootb.MapStatus(mainUsrStatus);
             }
             catch (Exception ex)
             {
@@ -513,7 +513,6 @@ namespace Discord
 
         private async Task<bool> PopulateListsBackend(ListType lType)
         {
-            pluginOOTBStuff ootb = new pluginOOTBStuff();
             try
             {
                 var privateChannels = WebSocket.privateChannelsData as JsonArray ?? new JsonArray();

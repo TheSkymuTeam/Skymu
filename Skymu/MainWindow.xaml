@@ -14,6 +14,7 @@
     <Window.Resources>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
+        <local:ReplyIDToBoolConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -124,9 +125,10 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="78,0,0,2">
+                <StackPanel Visibility="{Binding ReplyToID,
+                        Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="78,0,0,2">
                     <Image Source="/ResourcesLight/ChatWindow/reply-arrow.png" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center" />
-                    <TextBlock Text="Replied to &quot;patricktbp - Hello!&quot;" FontSize="11" FontFamily="Tahoma" Foreground="#999999" />
+                    <TextBlock Text="{Binding ReplyToDN, StringFormat=Replying to: {0}}" FontSize="11" FontFamily="Tahoma" Foreground="#999999" />
                 </StackPanel>
 
                 <TextBlock Grid.Row="1" Grid.Column="0"

@@ -811,4 +811,20 @@ typeof(MainWindow));
         }
     }
 
+    public class ReplyIDToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+                              object parameter, CultureInfo culture)
+        {
+            if (value is null) return Visibility.Collapsed;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType,
+                                  object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
 }
