@@ -784,7 +784,8 @@ HorizontalAlignment="Stretch" />
                                     <RowDefinition Height="14"></RowDefinition>
                                     <RowDefinition Height="*"></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="{Binding ProfilePicture}">
+                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="{Binding ProfilePicture,
+                        Converter={StaticResource ByteArrayToImageConverter}}">
                                     <Image.Effect>
                                         <DropShadowEffect
                        Color="#FFA0A0A0"

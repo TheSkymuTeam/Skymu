@@ -55,7 +55,6 @@ namespace Discord
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
-            _uiContext = SynchronizationContext.Current;
             DscToken = username;
             File.WriteAllText(credFile, DscToken);
 
@@ -88,17 +87,12 @@ namespace Discord
             {
                 try
                 {
-                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName);
+                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
 
                     // Use SynchronizationContext to marshal to UI thread (works in plugins)
-                    if (_uiContext != null)
-                    {
-                        _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
-                    }
-                    else
-                    {
-                        ActiveConversation.Add(messageItem);
-                    }
+
+                    _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
+
                 }
                 catch (Exception ex)
                 {
@@ -228,7 +222,8 @@ namespace Discord
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
 
         public async Task<bool> PopulateSidebarInformation()
-        {           
+        {
+            _uiContext = SynchronizationContext.Current; // this really should be moved
             // User details
             string globalName;
             string username;
@@ -419,14 +414,9 @@ namespace Discord
                 }
             }
 
-            if (_uiContext != null)
-            {
-                _uiContext.Post(_ => MoveToTop(), null);
-            }
-            else
-            {
-                MoveToTop();
-            }
+        
+                _uiContext?.Post(_ => MoveToTop(), null);
+            
         }
 
         private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash, bool isGC = false, string manualStatus = null)
@@ -454,10 +444,8 @@ namespace Discord
         public async Task<LoginResult> TryAutoLogin()
         {
             if (!File.Exists(credFile))
-                return LoginResult.Failure;
-            _uiContext = SynchronizationContext.Current;
-            DscToken = File.ReadAllText(credFile);
-
+                return LoginResult.Failure;           
+            DscToken = File.ReadAllText(credFile);          
             if (string.IsNullOrWhiteSpace(DscToken))
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid or has expired. Please log in again."));

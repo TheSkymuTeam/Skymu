@@ -32,7 +32,7 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        private static WindowFrame border = WindowFrame.SkypeAero;
+        private static WindowFrame border = WindowFrame.SkypeBasic;
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
