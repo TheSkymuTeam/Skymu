@@ -47,12 +47,15 @@ namespace Discord
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
         private SynchronizationContext _uiContext;
+        // This is the file Skymu uses to find the Discord token
+        private const string credFile = "discord.smcred";
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
-            DscToken = username; 
-            await StartClient();
+            DscToken = username;
+            File.WriteAllText(credFile, DscToken);
 
+            await StartClient();
             return LoginResult.Success;
         }
 
@@ -305,11 +308,11 @@ namespace Discord
                         var recipient = recipients[0] as JsonObject;
                         if (recipient == null) continue;
 
-                        string userId = recipient["id"]?.GetValue<string>() ?? "N/A";
-                        string channelId = channel["id"]?.GetValue<string>() ?? "N/A";
+                        string userId = recipient["id"]?.GetValue<string>();
+                        string channelId = channel["id"]?.GetValue<string>();
                         string skymuId = $"{userId};{channelId}";
-                        string globalName = recipient["global_name"]?.GetValue<string>() ?? "N/A";
-                        string username = recipient["username"]?.GetValue<string>() ?? "N/A";
+                        string globalName = recipient["global_name"]?.GetValue<string>();
+                        string username = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
 
                         var profileData = await CreateProfileDataAsync(_ootb, userId, skymuId, globalName, username, avatarHash);
@@ -387,10 +390,10 @@ namespace Discord
 
         public async Task<LoginResult> TryAutoLogin()
         {
-            if (!File.Exists("discord.smcred"))
+            if (!File.Exists(credFile))
                 return LoginResult.Failure;
 
-            DscToken = File.ReadAllText("discord.smcred");
+            DscToken = File.ReadAllText(credFile);
 
             if (string.IsNullOrWhiteSpace(DscToken))
             {
