@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.WebSockets;
+using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -312,8 +313,8 @@ namespace Discord.Classes
                 {
                     replyToId = GetString(referencedMessage["author"], "id");
                     replyToName = GetString(referencedMessage["author"], "global_name",
-                                  GetString(referencedMessage["author"], "username", "[unknown user]"));
-                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "[unavailable]";
+                                  GetString(referencedMessage["author"], "username", "Unknown"));
+                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? string.Empty;
                 }
 
                 var args = new MessageReceivedEventArgs
