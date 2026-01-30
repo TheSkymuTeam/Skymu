@@ -19,15 +19,16 @@ namespace Skymu
 
     public class DwmHelper
     {
-        private static readonly bool isCompDisabled =
-            !System.Windows.Forms.Application.RenderWithVisualStyles;
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmIsCompositionEnabled(out bool enabled);
 
         public static bool IsDwmEnabled()
         {
             if (Environment.OSVersion.Version.Major < 6)
                 return false;
 
-            return !isCompDisabled;
+            bool enabled;
+            return DwmIsCompositionEnabled(out enabled) == 0 && enabled;
         }
     }
     public class MenuBar
