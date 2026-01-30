@@ -424,7 +424,9 @@ namespace Discord
             byte[] avatarImage = null;
 
             string statusStr = WebSocket.UserStatusStore.GetStatus(userId);
-            int userStatus = ootb.MapStatus(statusStr);
+            int userStatus;
+            if (isGC) userStatus = UserConnectionStatus.Group;
+            else userStatus = ootb.MapStatus(statusStr);
             string custStatusStr = WebSocket.UserStatusStore.GetCustomStatus(userId);
 
             if (!string.IsNullOrEmpty(avatarHash))

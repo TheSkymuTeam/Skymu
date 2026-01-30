@@ -22,5 +22,29 @@ namespace Skymu.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int WindowFrame {
+            get {
+                return ((int)(this["WindowFrame"]));
+            }
+            set {
+                this["WindowFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoLoginEnabled {
+            get {
+                return ((bool)(this["AutoLoginEnabled"]));
+            }
+            set {
+                this["AutoLoginEnabled"] = value;
+            }
+        }
     }
 }

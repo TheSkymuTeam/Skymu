@@ -32,6 +32,7 @@ namespace MiddleMan
 
     public static class UserConnectionStatus
     {
+        public const int Group = 21;
         public const int Invisible = 19;
         public const int DoNotDisturb = 5;
         public const int Online = 2;

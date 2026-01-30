@@ -32,7 +32,7 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        private static WindowFrame border = WindowFrame.SkypeBasic;
+        private static WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
@@ -823,6 +823,7 @@ typeof(MainWindow));
                 case 3: return "Away";
                 case 19: return "Offline";
                 case 5: return "Do not disturb";
+                case 21: return "Group chat";
                 default: return "Unknown";
             }
         }
