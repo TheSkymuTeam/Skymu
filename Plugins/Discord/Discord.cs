@@ -55,6 +55,7 @@ namespace Discord
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
+            _uiContext = SynchronizationContext.Current;
             DscToken = username;
             File.WriteAllText(credFile, DscToken);
 
@@ -90,10 +91,9 @@ namespace Discord
                     var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName);
 
                     // Use SynchronizationContext to marshal to UI thread (works in plugins)
-                    var context = SynchronizationContext.Current ?? _uiContext;
-                    if (context != null)
+                    if (_uiContext != null)
                     {
-                        context.Post(_ => ActiveConversation.Add(messageItem), null);
+                        _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
                     }
                     else
                     {
@@ -194,8 +194,8 @@ namespace Discord
                         replyToId = referencedMessage["author"]?["id"]?.GetValue<string>();
                         replyToName = referencedMessage["author"]?["global_name"]?.GetValue<string>()
                             ?? referencedMessage["author"]?["username"]?.GetValue<string>()
-                            ?? "Unknown";
-                        replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "";
+                            ?? "[unknown user]";
+                        replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "[unavailable]";
                     }
 
                     ActiveConversation.Add(new MessageItem(
@@ -228,8 +228,7 @@ namespace Discord
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
 
         public async Task<bool> PopulateSidebarInformation()
-        {
-            _uiContext = SynchronizationContext.Current;
+        {           
             // User details
             string globalName;
             string username;
@@ -420,10 +419,9 @@ namespace Discord
                 }
             }
 
-            var context = SynchronizationContext.Current ?? _uiContext;
-            if (context != null)
+            if (_uiContext != null)
             {
-                context.Post(_ => MoveToTop(), null);
+                _uiContext.Post(_ => MoveToTop(), null);
             }
             else
             {
@@ -457,7 +455,7 @@ namespace Discord
         {
             if (!File.Exists(credFile))
                 return LoginResult.Failure;
-
+            _uiContext = SynchronizationContext.Current;
             DscToken = File.ReadAllText(credFile);
 
             if (string.IsNullOrWhiteSpace(DscToken))

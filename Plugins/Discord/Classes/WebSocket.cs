@@ -312,8 +312,8 @@ namespace Discord.Classes
                 {
                     replyToId = GetString(referencedMessage["author"], "id");
                     replyToName = GetString(referencedMessage["author"], "global_name",
-                                  GetString(referencedMessage["author"], "username", "Unknown"));
-                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "";
+                                  GetString(referencedMessage["author"], "username", "[unknown user]"));
+                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "[unavailable]";
                 }
 
                 var args = new MessageReceivedEventArgs
