@@ -87,7 +87,16 @@ namespace Discord
             {
                 try
                 {
-                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName);
+                    var messageItem = new MessageItem(
+                        e.MessageId,
+                        e.AuthorId,
+                        e.AuthorName,
+                        e.Content,
+                        e.Timestamp,
+                        e.ReplyToId,
+                        e.ReplyToName,
+                        e.ReplyMsgContent
+                    );
 
                     // Use SynchronizationContext to marshal to UI thread (works in plugins)
                     var context = SynchronizationContext.Current ?? _uiContext;
@@ -195,7 +204,7 @@ namespace Discord
                         replyToName = referencedMessage["author"]?["global_name"]?.GetValue<string>()
                             ?? referencedMessage["author"]?["username"]?.GetValue<string>()
                             ?? "Unknown";
-                        replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "";
+                        replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? string.Empty;
                     }
 
                     ActiveConversation.Add(new MessageItem(
@@ -416,7 +425,7 @@ namespace Discord
                 if (isActiveChannel)
                 {
                     // TODO: Implement something in the GUI that lets me reselect an item visually but not actually
-                    //       OmegaAOL can you do this please? Would be really helpfull
+                    //       OmegaAOL can you do this please? Would be really helpful.
                 }
             }
 
