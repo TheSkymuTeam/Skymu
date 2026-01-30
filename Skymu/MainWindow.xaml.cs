@@ -338,7 +338,7 @@ typeof(MainWindow));
             selectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
-            chatHeader.Text = selectedContact.DisplayName;
+            
             PlaceholderTextMTB = "Type a message to " + selectedContact.DisplayName + " here";
             MessageTextBox.Text = PlaceholderTextMTB;
 
@@ -349,22 +349,6 @@ typeof(MainWindow));
 
             // Find the Image inside the ListBoxItem
             Image sourceImage = FindVisualChild<Image>(container);
-
-
-            // Reuse the same BitmapImage instance
-            CPAProfilePic.Source = sourceImage.Source;
-
-
-
-            CPAStatusIcon.DefaultIndex = selectedContact.PresenceStatus;
-
-            switch (selectedContact.PresenceStatus)
-            {
-                case 2: CPAStatusText.Text = "Online"; break;
-                case 3: CPAStatusText.Text = "Away"; break;
-                case 19: CPAStatusText.Text = "Offline"; break;
-                case 5: CPAStatusText.Text = "Do not disturb"; break;
-            }
 
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
             {
@@ -792,6 +776,31 @@ typeof(MainWindow));
             else
             {
                 return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType,
+                                  object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
+    public class StatusToTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType,
+                              object parameter, CultureInfo culture)
+        {
+            int statInt = (Int32)value;
+
+
+            switch (statInt)
+            {
+                case 2: return "Online"; 
+                case 3: return "Away"; 
+                case 19: return "Offline";
+                case 5: return "Do not disturb";
+                default: return "Unknown";
             }
         }
 

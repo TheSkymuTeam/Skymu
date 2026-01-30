@@ -51,32 +51,29 @@ namespace Discord
 
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
+        // UI SynchronizationContext for marshaling updates
         private SynchronizationContext _uiContext;
-        public string TextUsername { get { return "Email address"; } }
-        public string CustomLoginButtonText { get { return null; } }
+        public string TextUsername { get { return "Token"; } }
         // Skymu authentication method
-        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Standard; } }
+        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
-        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool autoLogin = false)
         {
-            if (username.ToUpper() == "$TOKEN" && !string.IsNullOrWhiteSpace(password))
+            DscToken = username;
+            _uiContext = SynchronizationContext.Current;
+            string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
+
+            if (userCheckTkn.Contains("username"))
             {
-                DscToken = password;
-
-                string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
-
-                if (userCheckTkn.Contains("username"))
-                {
-                    File.WriteAllText("discord.smcred", DscToken);
-                    _webSocket ??= new WebSocket();
-                    SubscribeToWebSocketEvents();
-                    return LoginResult.Success;
-                }
-                else
-                {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("The provided token is invalid."));
-                    return LoginResult.Failure;
-                }
+                File.WriteAllText("discord.smcred", DscToken);
+                _webSocket ??= new WebSocket();
+                SubscribeToWebSocketEvents();
+                return LoginResult.Success;
+            }
+            else
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs("The provided token is invalid."));
+                return LoginResult.Failure;
             }
 
             var loginBody = new
@@ -84,6 +81,7 @@ namespace Discord
                 login = username,
                 password = password
             };
+
             var loginResponse = JsonNode.Parse(await api.SendAPI("auth/login", HttpMethod.Post, null, loginBody)).AsObject();
             //Console.WriteLine($"The response from the API is: {loginResponse}");
 
@@ -183,10 +181,15 @@ namespace Discord
             if (_webSocket != null)
             {
                 _webSocket.MessageReceived += OnWebSocketMessageReceived;
+                _webSocket.PresenceUpdated += OnWebSocketPresenceUpdated;
+                _webSocket.ChannelUpdated += OnWebSocketChannelUpdated;
+                _webSocket.UserUpdated += OnWebSocketUserUpdated;
+                _webSocket.RelationshipUpdated += OnWebSocketRelationshipUpdated;
             }
         }
 
         private void OnWebSocketMessageReceived(object sender, MessageReceivedEventArgs e)
+        
         {
             // Only add messages if they're for the currently active channel
             if (e.ChannelId == _activeChannelId)
@@ -194,23 +197,170 @@ namespace Discord
                 try
                 {
                     var messageItem = new MessageItem(e.AuthorId, e.AuthorName, e.Content, e.Timestamp);
-
-                    // Use SynchronizationContext to marshal to UI thread (works in plugins)
-                    var context = SynchronizationContext.Current ?? _uiContext;
-                    if (context != null)
-                    {
-                        context.Post(_ => ActiveConversation.Add(messageItem), null);
-                    }
-                    else
-                    {
-                        // Fallback if no context available
-                        ActiveConversation.Add(messageItem);
-                    }
+                    // Use SynchronizationContext to marshal to UI thread (works in plugins)                  
+                     _uiContext?.Post(_ => ActiveConversation.Add(messageItem), null);                   
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Error adding message to conversation: {ex.Message}");
                 }
+            }
+        }
+
+        private void OnWebSocketPresenceUpdated(object sender, PresenceUpdateEventArgs e)
+        {
+            try
+            {
+                _uiContext?.Post(_ =>
+                {
+                    UpdatePresenceInList(ContactsList, e.UserId, e.Status, e.CustomStatus);
+                    UpdatePresenceInList(RecentsList, e.UserId, e.Status, e.CustomStatus);
+                }, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling presence update: {ex.Message}");
+            }
+        }
+
+        private void OnWebSocketChannelUpdated(object sender, ChannelUpdateEventArgs e)
+        {
+            try
+            {
+                _uiContext?.Post(_ =>
+                {
+                    UpdateChannelInList(ContactsList, e.ChannelId, e.Name, e.Icon);
+                    UpdateChannelInList(RecentsList, e.ChannelId, e.Name, e.Icon);
+                }, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling channel update: {ex.Message}");
+            }
+        }
+
+        private void OnWebSocketUserUpdated(object sender, UserUpdateEventArgs e)
+        {
+            try
+            {
+                _uiContext?.Post(_ =>
+                {
+                    UpdateUserInList(ContactsList, e.UserId, e.GlobalName, e.Username, e.Avatar);
+                    UpdateUserInList(RecentsList, e.UserId, e.GlobalName, e.Username, e.Avatar);
+                }, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling user update: {ex.Message}");
+            }
+        }
+
+        private void OnWebSocketRelationshipUpdated(object sender, RelationshipUpdateEventArgs e)
+        {
+            try
+            {
+                _uiContext?.Post(async _ =>
+                {
+                    if (e.Type == "friend_add")
+                    {
+                        await PopulateContactsList();
+                    }
+                    else if (e.Type == "friend_remove")
+                    {
+                        RemoveFromList(ContactsList, e.UserId);
+                        RemoveFromList(RecentsList, e.UserId);
+                    }
+                }, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling relationship update: {ex.Message}");
+            }
+        }
+
+        private void UpdatePresenceInList(ObservableCollection<ProfileData> list, string userId, string status, string customStatus)
+        {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+            int mappedStatus = ootb.MapStatus(status);
+
+            foreach (var profile in list)
+            {
+                if (profile.Identifier != null && profile.Identifier.StartsWith(userId + ";"))
+                {
+                    profile.PresenceStatus = mappedStatus;
+                    profile.Status = customStatus;
+                    break;
+                }
+            }
+        }
+
+        private async void UpdateChannelInList(ObservableCollection<ProfileData> list, string channelId, string name, string icon)
+        {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+
+            foreach (var profile in list)
+            {
+                if (profile.Identifier != null && profile.Identifier.EndsWith(";" + channelId))
+                {
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        profile.DisplayName = name;
+                    }
+
+                    if (!string.IsNullOrEmpty(icon))
+                    {
+                        try
+                        {
+                            bool isGC = profile.Identifier.StartsWith("group;");
+                            byte[] newAvatar = await ootb.GetCachedAvatarAsync(channelId, icon, isGC);
+                            profile.ProfilePicture = newAvatar;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Error updating channel avatar: {ex.Message}");
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        private async void UpdateUserInList(ObservableCollection<ProfileData> list, string userId, string globalName, string username, string avatar)
+        {
+            pluginOOTBStuff ootb = new pluginOOTBStuff();
+
+            foreach (var profile in list)
+            {
+                if (profile.Identifier != null && profile.Identifier.StartsWith(userId + ";"))
+                {
+                    if (!string.IsNullOrEmpty(globalName) || !string.IsNullOrEmpty(username))
+                    {
+                        profile.DisplayName = string.IsNullOrEmpty(globalName) ? username : globalName;
+                    }
+
+                    if (!string.IsNullOrEmpty(avatar))
+                    {
+                        try
+                        {
+                            byte[] newAvatar = await ootb.GetCachedAvatarAsync(userId, avatar, false);
+                            profile.ProfilePicture = newAvatar;
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"Error updating user avatar: {ex.Message}");
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void RemoveFromList(ObservableCollection<ProfileData> list, string userId)
+        {
+            var itemToRemove = list.FirstOrDefault(p => p.Identifier != null && p.Identifier.StartsWith(userId + ";"));
+            if (itemToRemove != null)
+            {
+                list.Remove(itemToRemove);
             }
         }
 
@@ -310,7 +460,6 @@ namespace Discord
 
         public async Task<bool> PopulateSidebarInformation()
         {
-            _uiContext = SynchronizationContext.Current;
             // User details
             string globalName;
             string username;
@@ -476,8 +625,7 @@ namespace Discord
             if (File.Exists("discord.smcred"))
             {
                 DscToken = File.ReadAllText("discord.smcred");
-
-
+                _uiContext = SynchronizationContext.Current;
                 if (!string.IsNullOrWhiteSpace(DscToken))
                 {
                     string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null);
@@ -550,7 +698,7 @@ namespace Discord
                     "dnd" => UserConnectionStatus.DoNotDisturb,
                     "offline" => UserConnectionStatus.Invisible,
                     _ => UserConnectionStatus.Invisible
-                }; 
+                };
             }
 
             public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)

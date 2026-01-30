@@ -73,10 +73,14 @@ namespace Discord.Classes
 
         private CancellationTokenSource _receiveCts;
 
-        // Event for new messages
+        // Various events to hook into for Discord activities
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<PresenceUpdateEventArgs> PresenceUpdated;
+        public event EventHandler<ChannelUpdateEventArgs> ChannelUpdated;
+        public event EventHandler<UserUpdateEventArgs> UserUpdated;
+        public event EventHandler<RelationshipUpdateEventArgs> RelationshipUpdated;
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
-        private readonly Channel<MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<MessageReceivedEventArgs>();
+        private readonly Channel<WebSocketEventArgs> _messageQueue = Channel.CreateUnbounded<WebSocketEventArgs>();
 
         public WebSocket()
         {
@@ -260,8 +264,25 @@ namespace Discord.Classes
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
                                 break;
+
+                            case "PRESENCE_UPDATE":
+                                HandlePresenceUpdate(json["d"]);
+                                break;
+
+                            case "CHANNEL_UPDATE":
+                                HandleChannelUpdate(json["d"]);
+                                break;
+
+                            case "USER_UPDATE":
+                                HandleUserUpdate(json["d"]);
+                                break;
+
+                            case "RELATIONSHIP_ADD":
+                            case "RELATIONSHIP_REMOVE":
+                                HandleRelationshipUpdate(json["d"], eventType);
+                                break;
+
                             default:
-                                // Debug.WriteLine($"Unhandled event type: {eventType}");
                                 break;
                         }
                         break;
@@ -314,14 +335,148 @@ namespace Discord.Classes
             }
         }
 
+        private void HandlePresenceUpdate(JsonNode presenceData)
+        {
+            try
+            {
+                string userId = presenceData["user"]?["id"]?.GetValue<string>();
+                if (userId == null) return;
+
+                string status = presenceData["status"]?.GetValue<string>() ?? "offline";
+                string customStatus = string.Empty;
+
+                var activities = presenceData["activities"] as JsonArray;
+                if (activities != null && activities.Count > 0)
+                {
+                    foreach (var activity in activities)
+                    {
+                        int type = activity["type"]?.GetValue<int>() ?? -1;
+                        if (type == 4) // Custom status
+                        {
+                            customStatus = activity["state"]?.GetValue<string>() ?? string.Empty;
+                            break;
+                        }
+                        // ... handle other activity types ...
+                    }
+                }
+
+                UserStatusStore.UpdateStatus(userId, status, customStatus);
+
+                var args = new PresenceUpdateEventArgs
+                {
+                    UserId = userId,
+                    Status = status,
+                    CustomStatus = customStatus
+                };
+
+                _ = _messageQueue.Writer.WriteAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling PRESENCE_UPDATE: {ex.Message}");
+            }
+        }
+
+        private void HandleChannelUpdate(JsonNode channelData)
+        {
+            try
+            {
+                string channelId = GetString(channelData, "id");
+                string name = GetString(channelData, "name");
+                string icon = GetString(channelData, "icon");
+
+                var args = new ChannelUpdateEventArgs
+                {
+                    ChannelId = channelId,
+                    Name = name,
+                    Icon = icon
+                };
+
+                _ = _messageQueue.Writer.WriteAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling CHANNEL_UPDATE: {ex.Message}");
+            }
+        }
+
+        private void HandleUserUpdate(JsonNode userData)
+        {
+            try
+            {
+                string userId = GetString(userData, "id");
+                string globalName = GetString(userData, "global_name");
+                string username = GetString(userData, "username");
+                string avatar = GetString(userData, "avatar");
+
+                var args = new UserUpdateEventArgs
+                {
+                    UserId = userId,
+                    GlobalName = globalName,
+                    Username = username,
+                    Avatar = avatar
+                };
+
+                _ = _messageQueue.Writer.WriteAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling USER_UPDATE: {ex.Message}");
+            }
+        }
+
+        private void HandleRelationshipUpdate(JsonNode relationshipData, string eventType)
+        {
+            try
+            {
+                string userId = GetString(relationshipData, "id");
+                string type = eventType == "RELATIONSHIP_ADD" ? "friend_add" : "friend_remove";
+
+                var args = new RelationshipUpdateEventArgs
+                {
+                    UserId = userId,
+                    Type = type
+                };
+
+                _ = _messageQueue.Writer.WriteAsync(args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error handling {eventType}: {ex.Message}");
+            }
+        }
+
         private void StartMessageProcessor()
         {
             _ = Task.Run(async () =>
             {
-                await foreach (var msg in _messageQueue.Reader.ReadAllAsync())
+                await foreach (var eventArgs in _messageQueue.Reader.ReadAllAsync())
                 {
-                    try { MessageReceived?.Invoke(this, msg); }
-                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
+                    try
+                    {
+                        switch (eventArgs)
+                        {
+                            case MessageReceivedEventArgs msgArgs:
+                                MessageReceived?.Invoke(this, msgArgs);
+                                break;
+                            case PresenceUpdateEventArgs presenceArgs:
+                                PresenceUpdated?.Invoke(this, presenceArgs);
+                                break;
+                            case ChannelUpdateEventArgs channelArgs:
+                                ChannelUpdated?.Invoke(this, channelArgs);
+                                break;
+                            case UserUpdateEventArgs userArgs:
+                                UserUpdated?.Invoke(this, userArgs);
+                                break;
+                            case RelationshipUpdateEventArgs relationshipArgs:
+                                RelationshipUpdated?.Invoke(this, relationshipArgs);
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error processing event: {ex.Message}");
+                    }
                 }
             });
         }
@@ -433,14 +588,5 @@ namespace Discord.Classes
         {
             return node?[key]?.GetValue<string>() ?? defaultValue;
         }
-    }
-
-    public class MessageReceivedEventArgs : EventArgs
-    {
-        public string ChannelId { get; set; }
-        public string AuthorId { get; set; }
-        public string AuthorName { get; set; }
-        public string Content { get; set; }
-        public DateTime Timestamp { get; set; }
     }
 }

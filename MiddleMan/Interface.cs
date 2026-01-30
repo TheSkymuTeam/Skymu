@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -63,20 +64,83 @@ namespace MiddleMan
         }
     }
 
-    public class ProfileData
+    
+
+public class ProfileData : INotifyPropertyChanged
     {
-        public string DisplayName { get; set; } // publicly displayed name.
-        public string Identifier { get; set;} // this is what will be used to make requests such as SendMessage. 
-        public string Status { get; set; } // textual status, e.g. "I'm good!"
-        public int PresenceStatus { get; set; } // away, online, offline, etc
-        public byte[] ProfilePicture { get; set; }
+        private string _displayName;
+        private string _status;
+        private int _presenceStatus;
+        private byte[] _profilePicture;
+
+        public string DisplayName
+        {
+            get => _displayName;
+            set
+            {
+                if (_displayName != value)
+                {
+                    _displayName = value;
+                    OnPropertyChanged(nameof(DisplayName));
+                }
+            }
+        }
+
+        public string Identifier { get; set; }
+
+        public string Status
+        {
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    OnPropertyChanged(nameof(Status));
+                }
+            }
+        }
+
+        public int PresenceStatus
+        {
+            get => _presenceStatus;
+            set
+            {
+                if (_presenceStatus != value)
+                {
+                    _presenceStatus = value;
+                    OnPropertyChanged(nameof(PresenceStatus));
+                }
+            }
+        }
+
+        public byte[] ProfilePicture
+        {
+            get => _profilePicture;
+            set
+            {
+                if (_profilePicture != value)
+                {
+                    _profilePicture = value;
+                    OnPropertyChanged(nameof(ProfilePicture));
+                }
+            }
+        }
+
         public ProfileData(string displayName, string identifier, string status, int presenceStatus, byte[] profilePicture)
         {
-            DisplayName = displayName;
+            _displayName = displayName;
             Identifier = identifier;
-            Status = status;
-            PresenceStatus = presenceStatus;
-            ProfilePicture = profilePicture;
+            _status = status;
+            _presenceStatus = presenceStatus;
+            _profilePicture = profilePicture;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -145,7 +209,7 @@ namespace MiddleMan
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName {  get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
-        string CustomLoginButtonText { get; } // Return null unless you absolutely need to change the login button text
+        string CustomLoginButtonText => "Sign in"; 
         AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard (Standard is most commonly used)
         Task<LoginResult> LoginMainStep(string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.

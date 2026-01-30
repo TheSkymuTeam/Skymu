@@ -14,6 +14,7 @@
     <Window.Resources>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
+        <local:StatusToTextConverter x:Key="StatIntToText"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -588,7 +589,7 @@ Cursor="Hand"
                     </Grid>
                     <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press"
                                MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE" />
-                    <Grid Grid.Column="2" x:Name="chatWindowArea">
+                    <Grid Grid.Column="2" x:Name="chatWindowArea" DataContext="{Binding SelectedItem, ElementName=ContactsList}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="32" />
                             <RowDefinition x:Name="TopbarWindowRow" Height="120" />
@@ -610,7 +611,7 @@ DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="-1"
 TextStartPositionX="13"
-Text="thegamingkart"                                
+Text="{Binding DisplayName}"                                
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
@@ -743,7 +744,7 @@ HorizontalAlignment="Stretch" />
                                     <RowDefinition Height="14"></RowDefinition>
                                     <RowDefinition Height="*"></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="/ResourcesLight/ProfilePictures/profile_anonymous.png">
+                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="{Binding ProfilePicture}">
                                     <Image.Effect>
                                         <DropShadowEffect
                        Color="#FFA0A0A0"
@@ -759,12 +760,13 @@ x:Name="CPAStatusIcon"
 Source="/ResourcesLight/MainSidebar/ms_SkypeStatus_Small.png"
 ElementCount="21"
 StackDirection="Horizontal"
-DefaultIndex="{Binding ConnectionStatus}"
+DefaultIndex="{Binding PresenceStatus}"
 HoverIndex="-1"
 PressedIndex="-1"
 Slice="false"
 Width="14"/>
-                                    <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="Unknown" 
+                                    <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="{Binding PresenceStatus,
+                        Converter={StaticResource StatIntToText}}" 
            FontSize="11"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
