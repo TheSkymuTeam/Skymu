@@ -527,15 +527,15 @@ namespace Discord
             {
                 if (isServer)
                 {
-                    return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size=64";
+                    return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size=128";
                 }
                 else if (isGC)
                 {
-                    return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size=64";
+                    return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size=128";
                 }
                 else
                 {
-                    return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=256";
+                    return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size=128";
                 }
             }
         }
