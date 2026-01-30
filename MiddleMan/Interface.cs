@@ -130,8 +130,9 @@ namespace MiddleMan
         public string SentByID { get; set; } // Who sent the message (Identifier)
         public string ReplyToDN { get; set; } // Who the message is replying to (Display Name)
         public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
+        public string ReplyBody { get; set; } // Body of the message being replied to
         public string Body { get; set; } // Message body      
-        public MessageItem (string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null)
+        public MessageItem (string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
         {
             MessageID = messageID;
             SentByID = sentByIdentifier;
@@ -140,6 +141,7 @@ namespace MiddleMan
             Time = time;
             ReplyToID = replyToIdentifier;
             ReplyToDN = replyToDisplayName;
+            ReplyBody = replyToBody;
         }
     }
 

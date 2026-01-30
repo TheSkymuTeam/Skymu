@@ -128,7 +128,14 @@ Width="14" Grid.Row="1"/>
                 <StackPanel Visibility="{Binding ReplyToID,
                         Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="78,0,0,2">
                     <Image Source="/ResourcesLight/ChatWindow/reply-arrow.png" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center" />
-                    <TextBlock Text="{Binding ReplyToDN, StringFormat=Replying to: {0}}" FontSize="11" FontFamily="Tahoma" Foreground="#999999" />
+                    <TextBlock FontSize="11" FontFamily="Tahoma" Foreground="#999999">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat='Replying to {0} - “{1}”'>
+                                <Binding Path="ReplyToDN"/>
+                                <Binding Path="ReplyBody"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
                 </StackPanel>
 
                 <TextBlock Grid.Row="1" Grid.Column="0"

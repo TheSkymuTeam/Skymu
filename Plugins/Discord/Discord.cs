@@ -56,7 +56,7 @@ namespace Discord
         private SynchronizationContext _uiContext;
 
         // Skymu plugin details
-        public string TextUsername { get { return "Discord token"; } }
+        public string TextUsername { get { return "Token"; } }
         public string CustomLoginButtonText { get { return null; } }
         // Skymu authentication method
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
@@ -89,7 +89,7 @@ namespace Discord
             {
                 try
                 {
-                    var messageItem = new MessageItem(e.AuthorId, e.AuthorName, e.Content, e.Timestamp);
+                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName);
 
                     // Use SynchronizationContext to marshal to UI thread (works in plugins)
                     var context = SynchronizationContext.Current ?? _uiContext;
@@ -171,6 +171,7 @@ namespace Discord
                 var sortedMessages = messages.Reverse();
                 foreach (var message in sortedMessages)
                 {
+                    string messageId = message["id"]?.GetValue<string>() ?? "0";
                     string authorName = message["author"]["global_name"]?.GetValue<string>()
                         ?? message["author"]["username"]?.GetValue<string>()
                         ?? "Unknown";
@@ -183,7 +184,32 @@ namespace Discord
                     {
                         DateTime.TryParse(timestampStr, out timestamp);
                     }
-                    ActiveConversation.Add(new MessageItem(authorId, authorName, content, timestamp));
+
+                    // Handle reply/reference information
+                    string replyToId = null;
+                    string replyToName = null;
+                    string replyMsgContent = null;
+
+                    var referencedMessage = message["referenced_message"];
+                    if (referencedMessage != null)
+                    {
+                        replyToId = referencedMessage["author"]?["id"]?.GetValue<string>();
+                        replyToName = referencedMessage["author"]?["global_name"]?.GetValue<string>()
+                            ?? referencedMessage["author"]?["username"]?.GetValue<string>()
+                            ?? "Unknown";
+                        replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "";
+                    }
+
+                    ActiveConversation.Add(new MessageItem(
+                        messageID: messageId,
+                        sentByIdentifier: authorId,
+                        sentByDisplayName: authorName,
+                        body: content,
+                        time: timestamp,
+                        replyToIdentifier: replyToId,
+                        replyToDisplayName: replyToName,
+                        replyToBody: replyMsgContent
+                    ));
                 }
 
                 // Now the WebSocket event handler will automatically add new messages

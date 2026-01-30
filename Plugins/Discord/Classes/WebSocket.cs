@@ -288,7 +288,8 @@ namespace Discord.Classes
             try
             {
                 string channelId = GetString(messageData, "channel_id");
-                string authorId = GetString(messageData["author"], "id");
+                string messageId = GetString(messageData, "id");
+                string authorId = GetString(messageData["author"], "id", "0");
                 string authorName = GetString(messageData["author"], "global_name", GetString(messageData["author"], "username", "Unknown"));
                 string content = GetString(messageData, "content");
 
@@ -297,13 +298,31 @@ namespace Discord.Classes
                 if (!string.IsNullOrEmpty(timestampStr))
                     DateTime.TryParse(timestampStr, out timestamp);
 
+                // Handle reply/reference information
+                string replyToId = null;
+                string replyToName = null;
+                string replyMsgContent = null;
+
+                var referencedMessage = messageData["referenced_message"];
+                if (referencedMessage != null)
+                {
+                    replyToId = GetString(referencedMessage["author"], "id");
+                    replyToName = GetString(referencedMessage["author"], "global_name",
+                                  GetString(referencedMessage["author"], "username", "Unknown"));
+                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "";
+                }
+
                 var args = new MessageReceivedEventArgs
                 {
                     ChannelId = channelId,
+                    MessageId = messageId,
                     AuthorId = authorId,
                     AuthorName = authorName,
                     Content = content,
-                    Timestamp = timestamp
+                    Timestamp = timestamp,
+                    ReplyToId = replyToId,
+                    ReplyToName = replyToName,
+                    ReplyMsgContent = replyMsgContent
                 };
 
                 _ = _messageQueue.Writer.WriteAsync(args);
@@ -438,9 +457,13 @@ namespace Discord.Classes
     public class MessageReceivedEventArgs : EventArgs
     {
         public string ChannelId { get; set; }
+        public string MessageId { get; set; }
         public string AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
+        public string ReplyToId { get; set; }
+        public string ReplyToName { get; set; }
+        public string ReplyMsgContent { get; set; }
     }
 }
