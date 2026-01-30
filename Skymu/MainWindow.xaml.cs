@@ -32,7 +32,7 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        public static bool UseSkypeAeroBorder = true, UseSystemNativeBorder = false; // developer toggles
+        private static WindowFrame border = WindowFrame.SkypeAero;
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
@@ -50,7 +50,7 @@ namespace Skymu
 
             SetClickable(close, minimize, maximize, split, tbli);
 
-            if (!UseSystemNativeBorder)
+            if (border != WindowFrame.Native)
             {
                 this.WindowStyle = WindowStyle.None;
                 var chrome = new WindowChrome
@@ -60,7 +60,7 @@ namespace Skymu
                 };
 
                 WindowChrome.SetWindowChrome(this, chrome);
-                if (DwmHelper.IsDwmEnabled() && UseSkypeAeroBorder == true)
+                if (DwmHelper.IsDwmEnabled() && border == WindowFrame.SkypeAero)
                 {
                     this.Background = Brushes.Transparent;
                     TitleBar.Background = Brushes.Transparent;
@@ -116,6 +116,13 @@ typeof(MainWindow));
             get { return (string)GetValue(WindowTitleProperty); }
             set { SetValue(WindowTitleProperty, value); }
         }
+
+        private enum WindowFrame
+        {
+            Native,
+            SkypeAero,
+            SkypeBasic
+        };
 
         private void SetClickable(params Image[] buttons)
         {
