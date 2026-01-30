@@ -57,16 +57,14 @@ namespace Discord
 
         // Skymu plugin details
         public string TextUsername { get { return "Discord token"; } }
-        public string CustomLoginButtonText { get { return null; } }
+        public string CustomLoginButtonText { get { return "Sign in"; } }
         // Skymu authentication method
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             DscToken = username; 
-            await StartClient();
-
-            return LoginResult.Success;
+            return await StartClient();
         }
 
         public async Task<LoginResult> LoginOptStep(string code)
