@@ -64,6 +64,9 @@ namespace Discord.Classes
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
+        // This is the file Skymu uses to find the Discord token
+        private const string credFile = "discord.smcred";
+
         public ClientWebSocket WSClient { get; private set; }
 
         // Reusable buffers for memory efficiency
@@ -80,7 +83,7 @@ namespace Discord.Classes
 
         public WebSocket()
         {
-            token = File.ReadAllText("discord.smcred");
+            token = File.ReadAllText(credFile);
             gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
