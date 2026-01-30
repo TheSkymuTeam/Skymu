@@ -32,7 +32,7 @@ namespace Skymu
     public static class UI
     {
         // Change this bool to true for a dark theme
-        public static bool darkTheme = false, nativeBorder = false;
+        public static bool darkTheme = false;
         public static string resroot = "ResourcesLight";
         public static Dictionary<string, BitmapImage> loadedImages = new Dictionary<string, BitmapImage>();
         public enum CropType { None = 0, VerticalStack = 1, HorizontalStack = 2, VerticalTriSplit = 3, HorizontalTriSplit = 4 }
