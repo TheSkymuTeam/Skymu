@@ -403,10 +403,21 @@ namespace Discord
             if (existing == null)
                 return;
 
+            if (RecentsList.IndexOf(existing) == 0)
+                return;
+
+            bool isActiveChannel = channelId == _activeChannelId;
+
             void MoveToTop()
             {
                 RecentsList.Remove(existing);
                 RecentsList.Insert(0, existing);
+
+                if (isActiveChannel)
+                {
+                    // TODO: Implement something in the GUI that lets me reselect an item visually but not actually
+                    //       OmegaAOL can you do this please? Would be really helpfull
+                }
             }
 
             var context = SynchronizationContext.Current ?? _uiContext;
