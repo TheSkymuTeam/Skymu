@@ -162,6 +162,7 @@ namespace Skymu
 
         private void InitiateMainWindow()
         {
+            header.Text = "Loading user data";
             _mainWindow = new MainWindow();
             _mainWindow.Ready += MainWindow_Ready;
             _ = _mainWindow.InitializeAsync();
@@ -188,10 +189,10 @@ namespace Skymu
         {
             Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
             skypenameText.Text = Universal.Plugin.TextUsername;
+            signInText.Text = Universal.Plugin.CustomLoginButtonText;
 
             if (Universal.Plugin.AuthenticationType != AuthenticationMethod.Standard)
             {
-                signInText.Text = "Send code";
                 passwordTokenBox.IsEnabled = false;
                 passwordText.Text = "field not required";
                 passwordText.FontStyle = FontStyles.Italic;
@@ -200,7 +201,6 @@ namespace Skymu
             else
             {
                 passwordText.Foreground = new SolidColorBrush(Colors.Black);
-                signInText.Text = "Sign in";
                 passwordTokenBox.IsEnabled = true;
                 passwordText.Text = "Password";
                 passwordText.FontStyle = FontStyles.Normal;
