@@ -17,24 +17,17 @@ using System.Windows.Interop;
 namespace Skymu
 {
 
-    public static class DwmHelper
+    public class DwmHelper
     {
-        [DllImport("dwmapi.dll", PreserveSig = true)]
-        private static extern int DwmIsCompositionEnabled(out bool pfEnabled);
+        private static readonly bool isCompDisabled =
+            !System.Windows.Forms.Application.RenderWithVisualStyles;
 
         public static bool IsDwmEnabled()
         {
             if (Environment.OSVersion.Version.Major < 6)
                 return false;
 
-            try
-            {
-                return DwmIsCompositionEnabled(out bool enabled) == 0 && enabled;
-            }
-            catch (DllNotFoundException)
-            {
-                return false;
-            }
+            return !isCompDisabled;
         }
     }
     public class MenuBar
