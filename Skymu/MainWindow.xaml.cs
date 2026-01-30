@@ -42,7 +42,7 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        public static bool UseSkypeAeroBorder = false, UseSystemNativeBorder = false; // developer toggles
+        public static bool UseSkypeAeroBorder = true, UseSystemNativeBorder = false; // developer toggles
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
