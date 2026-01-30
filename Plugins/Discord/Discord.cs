@@ -12,20 +12,14 @@
 using Discord.Classes;
 using MiddleMan;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace Discord
 {
@@ -36,17 +30,16 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
+        public string TextUsername { get { return "Discord token"; } }
+        public string CustomLoginButtonText { get { return "Sign in"; } }
+        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
         // Initialize API classes and strings
-        // The online user count of Skymu
-        public string UserCountSkymu;
         // The Discord token used by all of the Discord plugin
         public string DscToken;
         // We reuse this to avoid creating more WebSocket instances, which is quite heavy
         private static WebSocket _webSocket;
         internal static WebSocket WebSocket => _webSocket;
-        // This is a check to see if we can set the status on the Skymu servers, if the user is online or do not disturb and such
-        public bool CanSetStatusOnSkymuAPI;
         // We reuse this to avoid creating more API instances, which is quite heavy
         internal static readonly API api = new API();
         // We reuse this to avoid creating more OOTB instances, despite being lightweight
@@ -54,12 +47,6 @@ namespace Discord
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
         private SynchronizationContext _uiContext;
-
-        // Skymu plugin details
-        public string TextUsername { get { return "Token"; } }
-        public string CustomLoginButtonText { get { return null; } }
-        // Skymu authentication method
-        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
         public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
