@@ -407,6 +407,7 @@ namespace Discord
         public async Task<LoginResult> StartClient()
         {
             string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
+           
             if (userCheckTkn.Contains("401: Unauthorized"))
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to automatically login to Discord, your token might be expired. Please log in again. Error:\n" + userCheckTkn));
@@ -416,13 +417,13 @@ namespace Discord
             {
                 // Do nothing and let the client continue as normal.
             }
-
+            File.WriteAllText("discord.smcred", DscToken.ToString());
             if (_webSocket == null)
             {
                 _webSocket = new WebSocket();
                 SubscribeToWebSocketEvents();
             }
-
+  
             return LoginResult.Success;
         }
 
