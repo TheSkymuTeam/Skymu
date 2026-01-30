@@ -468,7 +468,7 @@ namespace Discord
                     "dnd" => UserConnectionStatus.DoNotDisturb,
                     "offline" => UserConnectionStatus.Invisible,
                     _ => UserConnectionStatus.Invisible
-                }; 
+                };
             }
 
             public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)

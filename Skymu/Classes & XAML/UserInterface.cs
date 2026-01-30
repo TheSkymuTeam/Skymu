@@ -21,14 +21,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
 
 namespace Skymu
-{  
+{
     public static class UI
     {
         // Change this bool to true for a dark theme
@@ -109,7 +108,7 @@ namespace Skymu
             string initpath;
             if (resrootTheme) { initpath = "pack://application:,,,/" + resroot + "/" + subpath + "/"; }
             else { initpath = "pack://application:,,,/UniversalResources/" + subpath + "/"; }
-            string path = initpath + imgName + ".png";         
+            string path = initpath + imgName + ".png";
 
             BitmapImage image = new BitmapImage();
             image.BeginInit();
@@ -156,7 +155,7 @@ namespace Skymu
                 {
                     cropped.Freeze(); // makes cropped image read only
                     imgArray[0].Source = cropped; // sets this bitmap as the source
-                }              
+                }
             }
 
             catch (Exception ex)
@@ -172,7 +171,7 @@ namespace Skymu
             int middleEnd = ((int)(toSlice.PixelWidth * 0.6)); // where the middle slice should end 
             int rightEnd = ((int)(toSlice.PixelWidth));
             int height = toSlice.PixelHeight; // image height (TriSlice is horizontal)
-            
+
             var rects = new[]
             {
                 Tuple.Create(0, 0, leftEnd, height),
@@ -185,7 +184,7 @@ namespace Skymu
                 var rect = rects[count];
                 var cropped = new CroppedBitmap(toSlice, new Int32Rect(rect.Item1, rect.Item2, rect.Item3, rect.Item4));
                 cropped.Freeze();
-                imgArray[count].Source = cropped;               
+                imgArray[count].Source = cropped;
             }
         }
 

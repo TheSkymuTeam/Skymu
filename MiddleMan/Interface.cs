@@ -10,18 +10,9 @@
 /*==========================================================*/
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace MiddleMan
 {
@@ -50,7 +41,7 @@ namespace MiddleMan
     }
 
     public class SidebarData
-    {   
+    {
         public string DisplayName { get; set; } // The current user's display name.
         public string Identifier { get; set; } // The current user's unique identifier.
         public string SkypeCreditText { get; set; } // The text you want to put in place of Skype Credit.
@@ -132,7 +123,7 @@ namespace MiddleMan
         public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
         public string ReplyBody { get; set; } // Body of the message being replied to
         public string Body { get; set; } // Message body      
-        public MessageItem (string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
+        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
         {
             MessageID = messageID;
             SentByID = sentByIdentifier;
@@ -181,7 +172,7 @@ namespace MiddleMan
         public PluginMessageEventArgs(string message)
         {
             Message = message;
-        }       
+        }
     }
 
     public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
@@ -189,9 +180,9 @@ namespace MiddleMan
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
         string Name { get; } // Name of the protocol. (e.g. Discord)
-        string InternalName {  get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
+        string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
-        string CustomLoginButtonText => "Sign in"; 
+        string CustomLoginButtonText => "Sign in";
         AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard (Standard is most commonly used)
         Task<LoginResult> LoginMainStep(string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.

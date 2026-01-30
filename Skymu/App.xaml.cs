@@ -61,20 +61,20 @@ namespace Skymu
                 ExceptionHandler(new Exception("CurrentDomain non-exception object thrown"));
             }
         }
-    
+
         public static void Shutdown(System.ComponentModel.CancelEventArgs ev)
-        {          
+        {
             if (ev != null)
             {
                 ev.Cancel = true;
             }
 
-            new Dialog(3);           
+            new Dialog(3);
         }
 
-        public static void ExceptionHandler(Exception ex) 
+        public static void ExceptionHandler(Exception ex)
         {
-            new Dialog(5, ex.Message); 
+            new Dialog(5, ex.Message);
         }
 
         public static void ShowMsg(string content, string title = "Message")
@@ -84,7 +84,7 @@ namespace Skymu
 
         public static void NotImplemented(string feature)
         {
-            new Dialog(6, feature); 
+            new Dialog(6, feature);
         }
 
         protected override void OnStartup(StartupEventArgs ev)
@@ -97,7 +97,7 @@ namespace Skymu
         protected override void OnExit(ExitEventArgs ev)
         {
             Tray.DisposeIcon();
-            base.OnExit(ev);        
+            base.OnExit(ev);
         }
     }
 }

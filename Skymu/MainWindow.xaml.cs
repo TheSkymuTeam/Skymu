@@ -11,32 +11,22 @@
 
 #pragma warning disable 4014
 
-using System.Collections.Specialized;
-using System.Windows.Threading;
 using MiddleMan;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http;
-using System.Security.Principal;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using System.Windows.Threading;
 
 namespace Skymu
 {
@@ -100,7 +90,7 @@ namespace Skymu
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0, 0, 0, 0);
-            }          
+            }
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SkymuInstallers
@@ -39,7 +34,7 @@ namespace SkymuInstallers
             {
                 s53InstallerPg1 form = new s53InstallerPg1();
                 form.Show();
-                
+
             }
 
             else if (comboBox1.SelectedIndex == 2)

@@ -10,10 +10,9 @@
 /*==========================================================*/
 
 using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 namespace Skymu
 {
@@ -25,7 +24,17 @@ namespace Skymu
 
         public static bool IsDwmEnabled()
         {
-            return SystemParameters.IsGlassEnabled;
+            if (Environment.OSVersion.Version.Major < 6)
+                return false;
+
+            try
+            {
+                return DwmIsCompositionEnabled(out bool enabled) == 0 && enabled;
+            }
+            catch (DllNotFoundException)
+            {
+                return false;
+            }
         }
     }
     public class MenuBar

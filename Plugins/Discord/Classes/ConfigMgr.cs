@@ -1,9 +1,7 @@
-﻿using System.Text.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Discord.Classes
 {
@@ -98,14 +96,14 @@ namespace Discord.Classes
             ulong launchUuidPart1 = RandU64();
             ulong launchUuidPart2 = RandU64();
 
-             launchUuidPart1 &= ~(
-                (1UL << 11) |
-                (1UL << 24) |
-                (1UL << 38) |
-                (1UL << 48) |
-                (1UL << 55) |
-                (1UL << 61)
-            );
+            launchUuidPart1 &= ~(
+               (1UL << 11) |
+               (1UL << 24) |
+               (1UL << 38) |
+               (1UL << 48) |
+               (1UL << 55) |
+               (1UL << 61)
+           );
 
             launchUuidPart2 &= ~(
                 (1UL << 11) |

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SkymuInstallers
@@ -30,8 +26,8 @@ namespace SkymuInstallers
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            Color borderColor = ColorTranslator.FromHtml("#dadada");  
-            int borderWidth = 1; 
+            Color borderColor = ColorTranslator.FromHtml("#dadada");
+            int borderWidth = 1;
 
             using (Pen pen = new Pen(borderColor, borderWidth))
             {

@@ -10,8 +10,6 @@
 /*==========================================================*/
 
 using System;
-using System.Linq;
-using System.Reflection.Emit;
 using System.Windows;
 using System.Windows.Media;
 
@@ -63,8 +61,9 @@ namespace Skymu
                     }*/
 
                     this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    if (autoShow) { 
-                    this.ShowDialog();
+                    if (autoShow)
+                    {
+                        this.ShowDialog();
                     }
                 }
 
@@ -169,8 +168,8 @@ namespace Skymu
                     buttonRight.Content = "Log In";
                     bRAction = () =>
                     {
-                        TextBoxText = DialogTextBox.Text;  
-                        DialogResult = true;            
+                        TextBoxText = DialogTextBox.Text;
+                        DialogResult = true;
                     };
                     return 2;
             }

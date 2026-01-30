@@ -12,11 +12,10 @@
 // Copied from Naticord which is found here: https://github.com/Naticord/naticord/blob/dev/Naticord/Networking/API.cs
 // This is done by, and with permission from, the original creator (patricktbp).
 
-using System.Text.Json;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Discord.Classes

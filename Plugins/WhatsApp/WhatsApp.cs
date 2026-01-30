@@ -11,10 +11,7 @@
 
 using MiddleMan;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace WhatsApp
@@ -82,7 +79,7 @@ namespace WhatsApp
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
 
         public async Task<bool> PopulateSidebarInformation()
-        {           
+        {
             SidebarInformation = new SidebarData("Whatsapp User", "whatsapp-user@s.whatsapp.net", "$ 69420.67 Meta Bucks", UserConnectionStatus.Unknown);
             return true;
         }

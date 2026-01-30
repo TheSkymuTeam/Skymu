@@ -13,10 +13,7 @@ using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Skymu
 {
@@ -40,9 +37,9 @@ namespace Skymu
 
                     foreach (Type t in asm.GetTypes())
                     {
-                            if (typeof(ICore).IsAssignableFrom(t) &&
-                            !t.IsInterface &&
-                            !t.IsAbstract)
+                        if (typeof(ICore).IsAssignableFrom(t) &&
+                        !t.IsInterface &&
+                        !t.IsAbstract)
                         {
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;

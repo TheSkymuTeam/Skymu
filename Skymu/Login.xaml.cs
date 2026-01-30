@@ -13,7 +13,6 @@ using MiddleMan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Printing;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -232,7 +231,7 @@ namespace Skymu
                 DisplayName = name;
                 InternalName = intName;
                 UsernameText = usertext;
-                AuthenticationType = authType;  
+                AuthenticationType = authType;
             }
 
             public string DisplayName { get; private set; }

@@ -8,14 +8,10 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/license.txt
 /*==========================================================*/
-using System.Drawing;
 using System;
-using System.Linq;
-using System.Windows;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using Winforms = System.Windows.Forms;
-using System.IO;
-using System.Reflection;
 
 namespace Skymu
 {
