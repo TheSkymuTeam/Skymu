@@ -30,7 +30,7 @@ namespace Skymu
         public static Login Instance;
         private MainWindow _mainWindow;
         public static bool noCloseEvent;
-        public static bool useAutoLogin = false; // SET THIS IN CODE
+        public static bool useAutoLogin = true; // SET THIS IN CODE
 
         public Login()
         {
