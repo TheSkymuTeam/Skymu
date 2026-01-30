@@ -85,7 +85,7 @@ namespace Skymu
                 }
             }
 
-            else if (UseSystemNativeBorder)
+            else if (border == WindowFrame.Native)
             {
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
