@@ -25,11 +25,7 @@ namespace Skymu
 
         public static bool IsDwmEnabled()
         {
-            if (Environment.OSVersion.Version.Major < 6)
-                return false;
-
-            bool enabled;
-            return DwmIsCompositionEnabled(out enabled) == 0 && enabled;
+            return SystemParameters.IsGlassEnabled;
         }
     }
     public class MenuBar

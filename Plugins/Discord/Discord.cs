@@ -308,11 +308,11 @@ namespace Discord
                         var recipient = recipients[0] as JsonObject;
                         if (recipient == null) continue;
 
-                        string userId = recipient["id"]?.GetValue<string>() ?? "N/A";
-                        string channelId = channel["id"]?.GetValue<string>() ?? "N/A";
+                        string userId = recipient["id"]?.GetValue<string>();
+                        string channelId = channel["id"]?.GetValue<string>();
                         string skymuId = $"{userId};{channelId}";
-                        string globalName = recipient["global_name"]?.GetValue<string>() ?? "N/A";
-                        string username = recipient["username"]?.GetValue<string>() ?? "N/A";
+                        string globalName = recipient["global_name"]?.GetValue<string>();
+                        string username = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
 
                         var profileData = await CreateProfileDataAsync(_ootb, userId, skymuId, globalName, username, avatarHash);
