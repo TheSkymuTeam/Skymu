@@ -12,6 +12,7 @@
 using Discord.Classes;
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -47,6 +48,8 @@ namespace Discord
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
         private SynchronizationContext _uiContext;
+        // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
+        public readonly Dictionary<string, string?> _recentChannelMap = new();
         // This is the file Skymu uses to find the Discord token
         private const string credFile = "discord.smcred";
 
@@ -74,6 +77,11 @@ namespace Discord
 
         private void OnWebSocketMessageReceived(object sender, MessageReceivedEventArgs e)
         {
+            if (_recentChannelMap.ContainsKey(e.ChannelId))
+            {
+                TouchRecent(e.ChannelId);
+            }
+
             // Only add messages if they're for the currently active channel
             if (e.ChannelId == _activeChannelId)
             {
@@ -315,6 +323,11 @@ namespace Discord
                         string username = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
 
+                        if (lType == ListType.Recents)
+                        {
+                            _recentChannelMap[channelId] = userId;
+                        }
+
                         var profileData = await CreateProfileDataAsync(_ootb, userId, skymuId, globalName, username, avatarHash);
 
                         if (lType == ListType.Recents)
@@ -331,6 +344,11 @@ namespace Discord
                         string channelId = channel["id"]?.GetValue<string>();
                         string name = channel["name"]?.GetValue<string>();
                         string avatarHash = channel["icon"]?.GetValue<string>();
+
+                        if (lType == ListType.Recents)
+                        {
+                            _recentChannelMap[channelId] = null;
+                        }
 
                         if (string.IsNullOrWhiteSpace(name))
                         {
@@ -364,6 +382,42 @@ namespace Discord
                 return false;
             }
             return true;
+        }
+
+        private void TouchRecent(string channelId)
+        {
+            if (string.IsNullOrEmpty(channelId))
+                return;
+
+            ProfileData existing = null;
+
+            foreach (var item in RecentsList)
+            {
+                if (item.Identifier != null && item.Identifier.EndsWith(";" + channelId))
+                {
+                    existing = item;
+                    break;
+                }
+            }
+
+            if (existing == null)
+                return;
+
+            void MoveToTop()
+            {
+                RecentsList.Remove(existing);
+                RecentsList.Insert(0, existing);
+            }
+
+            var context = SynchronizationContext.Current ?? _uiContext;
+            if (context != null)
+            {
+                context.Post(_ => MoveToTop(), null);
+            }
+            else
+            {
+                MoveToTop();
+            }
         }
 
         private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash, bool isGC = false, string manualStatus = null)

@@ -16,6 +16,7 @@
 
 #pragma warning disable 4014
 
+using Discord;
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
@@ -286,7 +287,7 @@ namespace Discord.Classes
             }
         }
 
-        private void HandleMessageCreate(JsonNode messageData)
+        private async Task HandleMessageCreate(JsonNode messageData)
         {
             try
             {
