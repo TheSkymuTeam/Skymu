@@ -42,7 +42,7 @@ namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        public static bool UseSkypeAeroBorder = false;
+        public static bool UseSkypeAeroBorder = false, UseSystemNativeBorder = false; // developer toggles
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
@@ -60,7 +60,7 @@ namespace Skymu
 
             SetClickable(close, minimize, maximize, split, tbli);
 
-            if (!UI.nativeBorder)
+            if (!UseSystemNativeBorder)
             {
                 this.WindowStyle = WindowStyle.None;
                 var chrome = new WindowChrome
@@ -70,38 +70,37 @@ namespace Skymu
                 };
 
                 WindowChrome.SetWindowChrome(this, chrome);
+                if (DwmHelper.IsDwmEnabled() && UseSkypeAeroBorder == true)
+                {
+                    this.Background = Brushes.Transparent;
+                    TitleBar.Background = Brushes.Transparent;
+                    WindowArea.Margin = new Thickness(8, 30, 8, 8);
+                    TitleMain.FontFamily = new FontFamily("Segoe UI");
+                    TitleMain.FontWeight = FontWeights.Normal;
+                    TitleMain.Foreground = Brushes.Black;
+                    TitleMain.Margin = new Thickness(50, 7, 0, 0);
+                    TextOptions.SetTextRenderingMode(TitleMain, TextRenderingMode.ClearType);
+                    TitleMain.Effect = new DropShadowEffect
+                    {
+                        ShadowDepth = 0,
+                        Direction = 330,
+                        Color = Colors.White,
+                        Opacity = 1,
+                        BlurRadius = 20
+                    };
+                    TitleMain.FontSize = 12;
+                    TitleShadow.Visibility = Visibility.Visible;
+                    TitleShadow2.Visibility = Visibility.Visible;
+                    TitleShadow3.Visibility = Visibility.Visible;
+                }
             }
 
-            else if (UI.nativeBorder)
+            else if (UseSystemNativeBorder)
             {
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0, 0, 0, 0);
-            }
-
-            if (DwmHelper.IsDwmEnabled() && UseSkypeAeroBorder == true)
-            {
-                this.Background = Brushes.Transparent;
-                TitleBar.Background = Brushes.Transparent;
-                WindowArea.Margin = new Thickness(8, 30, 8, 8);
-                TitleMain.FontFamily = new FontFamily("Segoe UI");
-                TitleMain.FontWeight = FontWeights.Normal;
-                TitleMain.Foreground = Brushes.Black;
-                TitleMain.Margin = new Thickness(50, 7, 0, 0);
-                TextOptions.SetTextRenderingMode(TitleMain, TextRenderingMode.ClearType);
-                TitleMain.Effect = new DropShadowEffect
-                {
-                    ShadowDepth = 0,
-                    Direction = 330,
-                    Color = Colors.White,
-                    Opacity = 1,
-                    BlurRadius = 20
-                };
-                TitleMain.FontSize = 12;
-                TitleShadow.Visibility = Visibility.Visible;
-                TitleShadow2.Visibility = Visibility.Visible;
-                TitleShadow3.Visibility = Visibility.Visible;
-            }
+            }          
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;
