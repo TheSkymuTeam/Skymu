@@ -21,7 +21,7 @@ namespace Skymu
     {
         public static ICore[] LoadPlugins(string path)
         {
-            var plugins = new List<ICore>();
+            var PluginList = new List<ICore>();
 
             if (!Directory.Exists(path))
             {
@@ -44,7 +44,7 @@ namespace Skymu
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;
                             instance.OnWarning += Universal.PluginWarningHandler;
-                            plugins.Add(instance);
+                            PluginList.Add(instance);
                             pluginCount++;
                         }
                     }
@@ -58,7 +58,7 @@ namespace Skymu
                     new Exception("No plugins detected in the plugin folder. Please download some from our website.")
                 );
             }
-            return plugins.ToArray();
+            return PluginList.ToArray();
         }
     }
 }

@@ -114,7 +114,7 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="0,9.5,0,0">
+            <Grid Margin="0,9.5,16,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>

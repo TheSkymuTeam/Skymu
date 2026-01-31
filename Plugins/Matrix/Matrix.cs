@@ -25,6 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 
+#pragma warning disable CS8618
 namespace Matrix
 {
     public class Core : ICore
@@ -34,9 +35,8 @@ namespace Matrix
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public string Name { get { return "Matrix"; } }
         public string InternalName { get { return "skymu-matrix-plugin"; } }
-        public string TextUsername { get { return "Username"; } }
-        public string CustomLoginButtonText { get { return "Sign in"; } }
-        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Standard; } }
+        public string TextUsername { get { return "Matrix ID (username@homeserver.com)"; } }
+        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
 
         // Matrix-specific data
         private string _accessToken;
@@ -60,7 +60,7 @@ namespace Matrix
         // File for storing credentials
         private const string credFile = "matrix.smcred";
 
-        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {

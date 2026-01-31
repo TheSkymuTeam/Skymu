@@ -18,16 +18,19 @@ namespace MiddleMan
 {
     public enum AuthenticationMethod
     {
-        Standard,
+        Password,
+        QRCode,
         Passwordless,
-        OAuth
+        External,
+        Token
     }
 
     public enum LoginResult
     {
         Success,
         OptStepRequired,
-        Failure
+        Failure,
+        UnsupportedAuthType
     }
 
     public static class UserConnectionStatus
@@ -184,9 +187,8 @@ namespace MiddleMan
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
-        string CustomLoginButtonText => "Sign in";
-        AuthenticationMethod AuthenticationType { get; } // OAuth, Passwordless, or Standard (Standard is most commonly used)
-        Task<LoginResult> LoginMainStep(string username, string password,
+        AuthenticationMethod[] AuthenticationType { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
+        Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
         Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.

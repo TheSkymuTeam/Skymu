@@ -31,9 +31,8 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
-        public string TextUsername { get { return "Token"; } }
-        public string CustomLoginButtonText { get { return "Sign in"; } }
-        public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
+        public string TextUsername { get { return "Discord token"; } }
+        public AuthenticationMethod[] AuthenticationType { get { return new[]{ AuthenticationMethod.Token }; } }
 
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
@@ -53,7 +52,7 @@ namespace Discord
         // This is the file Skymu uses to find the Discord token
         private const string credFile = "discord.smcred";
 
-        public async Task<LoginResult> LoginMainStep(string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             DscToken = username;
             File.WriteAllText(credFile, DscToken);
@@ -456,24 +455,37 @@ namespace Discord
         public async Task<LoginResult> StartClient()
         {
             string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
-
-            if (userCheckTkn.Contains("401: Unauthorized"))
+            if (userCheckTkn.Contains("username"))
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Your token has been rejected, possibly due to a display name, username, or password change. Please retrieve a new token."));
+                File.WriteAllText("discord.smcred", DscToken);
+                if (_webSocket is null)
+                {
+                    _webSocket = new WebSocket();
+                    SubscribeToWebSocketEvents();
+                }
+
+                return LoginResult.Success;
+            }
+            else
+            {
+                if (userCheckTkn.Contains("401: Unauthorized"))
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Your token has been rejected, possibly due to a display name, username, or password change. Please retrieve a new token."));
+                }
+                else if (userCheckTkn.Contains("[API/ParseError]"))
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("The provided token has an invalid format. Please ensure that you are entering it correctly."));
+                }
+                else if (userCheckTkn.Contains("[API/RequestError]"))
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("There was an error performing the request (perhaps Discord's servers are down?) Please try again later."));
+                }
+                else
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again."));
+                }
                 return LoginResult.Failure;
-            }
-            else if (userCheckTkn.Contains("username"))
-            {
-                // Do nothing and let the client continue as normal.
-            }
-            File.WriteAllText("discord.smcred", DscToken);
-            if (_webSocket is null)
-            {
-                _webSocket = new WebSocket();
-                SubscribeToWebSocketEvents();
-            }
-
-            return LoginResult.Success;
+            }          
         }
 
         // This is used for any custom stuff needed by the Discord plugin.

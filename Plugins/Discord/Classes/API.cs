@@ -45,7 +45,14 @@ namespace Discord.Classes
 
             if (!string.IsNullOrEmpty(token))
             {
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token);
+                try
+                {
+                    request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token);
+                }
+                catch (Exception ex)
+                {
+                    return $"[API/ParseError] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
+                }
             }
 
             if (fileData is not null && !string.IsNullOrEmpty(fileName))
@@ -80,7 +87,7 @@ namespace Discord.Classes
             }
             catch (Exception ex)
             {
-                return $"[API] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
+                return $"[API/RequestError] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
             }
         }
     }
