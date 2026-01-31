@@ -172,7 +172,7 @@ namespace Discord.Classes
         {
             if (WSClient?.State != WebSocketState.Open) return;
 
-            if (payload == null)
+            if (payload is null)
             {
                 await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
                 return;
@@ -309,7 +309,7 @@ namespace Discord.Classes
                 string replyMsgContent = null;
 
                 var referencedMessage = messageData["referenced_message"];
-                if (referencedMessage != null)
+                if (referencedMessage is not null)
                 {
                     replyToId = GetString(referencedMessage["author"], "id");
                     replyToName = GetString(referencedMessage["author"], "global_name",
@@ -367,13 +367,13 @@ namespace Discord.Classes
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
             {
                 string userId = presence["user"]?["id"]?.GetValue<string>();
-                if (userId == null) continue;
+                if (userId is null) continue;
 
                 string status = presence["status"]?.GetValue<string>() ?? "offline";
                 string customStatus = string.Empty;
 
                 var activities = presence["activities"] as JsonArray;
-                if (activities != null && activities.Count > 0)
+                if (activities is not null && activities.Count > 0)
                 {
                     foreach (var activity in activities)
                     {
@@ -381,7 +381,7 @@ namespace Discord.Classes
                         if (type == 0)
                         {
                             string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName != null)
+                            if (activityName is not null)
                             {
                                 customStatus = $"Playing {activityName}";
                                 break;
@@ -390,7 +390,7 @@ namespace Discord.Classes
                         else if (type == 1)
                         {
                             string details = activity["details"]?.GetValue<string>();
-                            if (details != null)
+                            if (details is not null)
                             {
                                 customStatus = $"Streaming {details}";
                                 break;
@@ -399,7 +399,7 @@ namespace Discord.Classes
                         else if (type == 2)
                         {
                             string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName != null)
+                            if (activityName is not null)
                             {
                                 customStatus = $"Listening to {activityName}";
                                 break;

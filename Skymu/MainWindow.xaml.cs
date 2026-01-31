@@ -234,7 +234,7 @@ typeof(MainWindow));
                 span = 17;
             }
 
-            if (img != null)
+            if (img is not null)
             {
                 img.Effect = glowEffectCyan;
                 switch (img.Name)
@@ -256,7 +256,7 @@ typeof(MainWindow));
             int height = 0;
             if (!deactivatedWindow)
             {
-                if (img != null)
+                if (img is not null)
                 {
                     img.Effect = null;
                     switch (img.Name)
@@ -285,7 +285,7 @@ typeof(MainWindow));
             int width = 0;
             int height = 55;
             int span = 17;
-            if (img != null)
+            if (img is not null)
             {
                 switch (img.Name)
                 {
@@ -301,7 +301,7 @@ typeof(MainWindow));
         private void TitleButton_Click(object sender, RoutedEventArgs e)
         {
             var img = sender as Image;
-            if (img != null)
+            if (img is not null)
             {
                 switch (img.Name)
                 {
@@ -332,7 +332,7 @@ typeof(MainWindow));
         private static T FindVisualChild<T>(DependencyObject parent)
     where T : DependencyObject
         {
-            if (parent == null)
+            if (parent is null)
                 return null;
 
             int count = VisualTreeHelper.GetChildrenCount(parent);
@@ -344,7 +344,7 @@ typeof(MainWindow));
                     return typedChild;
 
                 T result = FindVisualChild<T>(child);
-                if (result != null)
+                if (result is not null)
                     return result;
             }
 
@@ -354,7 +354,7 @@ typeof(MainWindow));
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listBox = (ListBox)sender;
-            if (listBox.SelectedItem == null)
+            if (listBox.SelectedItem is null)
                 return;
 
             selectedContact = (ProfileData)listBox.SelectedItem;
@@ -374,7 +374,26 @@ typeof(MainWindow));
 
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
             {
-                ConversationItemsList.ItemsSource = Universal.Plugin.ActiveConversation;
+                var collection = Universal.Plugin.ActiveConversation;
+
+                for (int i = 0; i < collection.Count; i++)
+                {
+                    if (collection[i] is MessageItem msg)
+                    {
+                        string prevID = null;
+                        for (int j = i - 1; j >= 0; j--)
+                        {
+                            if (collection[j] is MessageItem prevMsg)
+                            {
+                                prevID = prevMsg.SentByID;
+                                break;
+                            }
+                        }
+                        msg.PreviousMessageIdentifier = prevID;
+                    }
+                }
+
+                ConversationItemsList.ItemsSource = collection;
             }
 
         }
@@ -467,7 +486,7 @@ typeof(MainWindow));
             dragStart = e.GetPosition(this);
             capturedElement = sender as UIElement; // Store the element reference
 
-            if (capturedElement != null)
+            if (capturedElement is not null)
             {
                 capturedElement.CaptureMouse();
                 e.Handled = true;
@@ -481,7 +500,7 @@ typeof(MainWindow));
                 isDragging = false;
 
                 // Use the stored reference instead of sender
-                if (capturedElement != null && capturedElement.IsMouseCaptured)
+                if (capturedElement is not null && capturedElement.IsMouseCaptured)
                 {
                     capturedElement.ReleaseMouseCapture();
                 }
@@ -560,14 +579,14 @@ typeof(MainWindow));
         {
             try
             {
-                if (_pingTimer != null)
+                if (_pingTimer is not null)
                 {
                     _pingTimer.Stop();
                     _pingTimer.Dispose();
                     _pingTimer = null;
                 }
 
-                if (_usersOnlineTimer != null)
+                if (_usersOnlineTimer is not null)
                 {
                     _usersOnlineTimer.Stop();
                     _usersOnlineTimer.Dispose();
@@ -660,6 +679,27 @@ typeof(MainWindow));
             {
                 notifyCollection.CollectionChanged += (s, args) =>
                 {
+                    if (args.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        foreach (var newItem in args.NewItems)
+                        {
+                            if (newItem is MessageItem msg)
+                            {
+                                int index = listBox.Items.IndexOf(msg);
+                                string prevID = null;
+                                for (int j = index - 1; j >= 0; j--)
+                                {
+                                    if (listBox.Items[j] is MessageItem prevMsg)
+                                    {
+                                        prevID = prevMsg.SentByID;
+                                        break;
+                                    }
+                                }
+                                msg.PreviousMessageIdentifier = prevID;
+                            }
+                        }
+                    }
+
                     Dispatcher.BeginInvoke(
                         DispatcherPriority.Background,
                         new Action(() => ScrollToBottom(listBox)));
@@ -762,7 +802,7 @@ typeof(MainWindow));
         {
             byte[] bytes = value as byte[];
 
-            if (bytes == null || bytes.Length == 0)
+            if (bytes is null || bytes.Length == 0)
                 return MainWindow.AnonymousAvatar;
 
             BitmapImage bmp = new BitmapImage();
@@ -835,7 +875,7 @@ typeof(MainWindow));
         }
     }
 
-    public class ReplyIDToBoolConverter : IValueConverter
+    public class ReplyIDToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType,
                               object parameter, CultureInfo culture)
@@ -851,7 +891,7 @@ typeof(MainWindow));
         }
     }
 
-    public class DisplayNameBlanker : IMultiValueConverter
+    public class MessageIDToVisibilityConverter : IMultiValueConverter
     {
         public object Convert(
             object[] values,
@@ -859,12 +899,8 @@ typeof(MainWindow));
             object parameter,
             CultureInfo culture)
         {
-            string displayName = values[0] as string;
-            string identifier = values[1] as string;
-            string lastIdentifier = MainWindow.LastMessageIdentifier;
-            MainWindow.LastMessageIdentifier = identifier;
-            if (lastIdentifier == identifier) return String.Empty;
-            else return displayName;
+            if (values[0] as string == values[1] as string) return Visibility.Hidden;
+            else return Visibility.Visible;
         }
 
         public object[] ConvertBack(object value,

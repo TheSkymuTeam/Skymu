@@ -48,14 +48,14 @@ namespace Discord.Classes
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token);
             }
 
-            if (fileData != null && !string.IsNullOrEmpty(fileName))
+            if (fileData is not null && !string.IsNullOrEmpty(fileName))
             {
                 var content = new MultipartFormDataContent
                 {
                     { new ByteArrayContent(fileData) { Headers = { { "Content-Type", "application/octet-stream" } } }, "file", fileName }
                 };
 
-                if (data != null)
+                if (data is not null)
                 {
                     string jsonData = JsonSerializer.Serialize(data);
                     content.Add(new StringContent(jsonData, Encoding.UTF8, "application/json"), "payload_json");
@@ -63,7 +63,7 @@ namespace Discord.Classes
 
                 request.Content = content;
             }
-            else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put) && data != null)
+            else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put) && data is not null)
             {
                 string jsonData = JsonSerializer.Serialize(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");

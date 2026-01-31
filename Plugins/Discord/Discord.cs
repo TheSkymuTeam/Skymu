@@ -31,7 +31,7 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
-        public string TextUsername { get { return "Discord token"; } }
+        public string TextUsername { get { return "Token"; } }
         public string CustomLoginButtonText { get { return "Sign in"; } }
         public AuthenticationMethod AuthenticationType { get { return AuthenticationMethod.Passwordless; } }
 
@@ -58,8 +58,7 @@ namespace Discord
             DscToken = username;
             File.WriteAllText(credFile, DscToken);
 
-            await StartClient();
-            return LoginResult.Success;
+            return await StartClient();
         }
 
         public async Task<LoginResult> LoginOptStep(string code)
@@ -69,7 +68,7 @@ namespace Discord
 
         private void SubscribeToWebSocketEvents()
         {
-            if (_webSocket != null)
+            if (_webSocket is not null)
             {
                 _webSocket.MessageReceived += OnWebSocketMessageReceived;
             }
@@ -79,7 +78,7 @@ namespace Discord
         {
             if (_recentChannelMap.ContainsKey(e.ChannelId))
             {
-                TouchRecent(e.ChannelId);
+                // TouchRecent(e.ChannelId); // Reimplement this in the UI not in the plugin please
             }
 
             // Only add messages if they're for the currently active channel
@@ -88,8 +87,6 @@ namespace Discord
                 try
                 {
                     var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
-
-                    // Use SynchronizationContext to marshal to UI thread (works in plugins)
 
                     _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
 
@@ -151,7 +148,7 @@ namespace Discord
             try
             {
                 // Fetch initial message history
-                string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=50", HttpMethod.Get, DscToken, null, null, null);
+                string conversation = await api.SendAPI($"/channels/{channelId}/messages?limit=100", HttpMethod.Get, DscToken, null, null, null);
                 var parsedJson = JsonNode.Parse(conversation);
 
                 if (parsedJson is not JsonArray messages)
@@ -183,7 +180,7 @@ namespace Discord
                     string replyMsgContent = null;
 
                     var referencedMessage = message["referenced_message"];
-                    if (referencedMessage != null)
+                    if (referencedMessage is not null)
                     {
                         replyToId = referencedMessage["author"]?["id"]?.GetValue<string>();
                         replyToName = referencedMessage["author"]?["global_name"]?.GetValue<string>()
@@ -240,7 +237,7 @@ namespace Discord
                 globalName = parsedJson["global_name"]?.GetValue<string>() ?? String.Empty;
                 username = parsedJson["username"]?.GetValue<string>() ?? String.Empty;
 
-                int timeout = 30; // 3 seconds
+                int timeout = 100; // 3 seconds
                 while (!WebSocket.CanCheckData && timeout > 0)
                 {
                     await Task.Delay(100).ConfigureAwait(false);
@@ -305,10 +302,10 @@ namespace Discord
                     if (type == 1)
                     {
                         var recipients = channel["recipients"] as JsonArray;
-                        if (recipients == null || recipients.Count == 0) continue;
+                        if (recipients is null || recipients.Count == 0) continue;
 
                         var recipient = recipients[0] as JsonObject;
-                        if (recipient == null) continue;
+                        if (recipient is null) continue;
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
@@ -353,7 +350,7 @@ namespace Discord
                                     r["username"]?.GetValue<string>())
                                 .Where(n => !string.IsNullOrWhiteSpace(n));
 
-                            name = recipientNames != null
+                            name = recipientNames is not null
                                 ? string.Join(", ", recipientNames)
                                 : "N/A";
                         }
@@ -387,14 +384,14 @@ namespace Discord
 
             foreach (var item in RecentsList)
             {
-                if (item.Identifier != null && item.Identifier.EndsWith(";" + channelId))
+                if (item.Identifier is not null && item.Identifier.EndsWith(";" + channelId))
                 {
                     existing = item;
                     break;
                 }
             }
 
-            if (existing == null)
+            if (existing is null)
                 return;
 
             if (RecentsList.IndexOf(existing) == 0)
@@ -446,7 +443,7 @@ namespace Discord
         public async Task<LoginResult> TryAutoLogin()
         {
             if (!File.Exists(credFile))
-                return LoginResult.Failure;           
+                return LoginResult.OptStepRequired;           
             DscToken = File.ReadAllText(credFile);          
             if (string.IsNullOrWhiteSpace(DscToken))
             {
@@ -463,15 +460,15 @@ namespace Discord
 
             if (userCheckTkn.Contains("401: Unauthorized"))
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to automatically login to Discord, your token might be expired. Please log in again. Error:\n" + userCheckTkn));
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Your token has been rejected, possibly due to a display name, username, or password change. Please retrieve a new token."));
                 return LoginResult.Failure;
             }
             else if (userCheckTkn.Contains("username"))
             {
                 // Do nothing and let the client continue as normal.
             }
-            File.WriteAllText("discord.smcred", DscToken.ToString());
-            if (_webSocket == null)
+            File.WriteAllText("discord.smcred", DscToken);
+            if (_webSocket is null)
             {
                 _webSocket = new WebSocket();
                 SubscribeToWebSocketEvents();

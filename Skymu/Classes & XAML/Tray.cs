@@ -99,7 +99,7 @@ namespace Skymu
             switch (commandId)
             {
                 case MENU_OPEN_SKYPE:
-                    if (System.Windows.Application.Current.Windows != null)
+                    if (System.Windows.Application.Current.Windows is not null)
                     {
                     }
                     else
@@ -108,7 +108,7 @@ namespace Skymu
                     break;
 
                 case MENU_SIGN_IN:
-                    if (System.Windows.Application.Current.Windows != null)
+                    if (System.Windows.Application.Current.Windows is not null)
                     {
                     }
                     else
@@ -167,7 +167,7 @@ namespace Skymu
             var resourceUri = new Uri("pack://application:,,,/UniversalResources/Icon/skype" + icon + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
-            if (Icon != null)
+            if (Icon is not null)
             {
                 Icon.Icon = new Icon(resourceStreamInfo.Stream);
             }

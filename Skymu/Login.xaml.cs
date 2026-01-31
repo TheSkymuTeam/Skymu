@@ -87,7 +87,7 @@ namespace Skymu
         private void SetHeaderToFail()
         {
             header.Text = "Authentication failed";
-            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#A30000"));
+            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D10000"));
         }
 
         private void MainWindow_Ready(object sender, EventArgs e)
@@ -155,6 +155,10 @@ namespace Skymu
                 else
                 {
                     LoginToggleAnimation(false);
+                    if (lr == LoginResult.Failure)
+                    {
+                        SetHeaderToFail();
+                    }                                 
                 }
             }
         }

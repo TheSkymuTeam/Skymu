@@ -123,7 +123,8 @@ namespace MiddleMan
         public string ReplyToDN { get; set; } // Who the message is replying to (Display Name)
         public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
         public string ReplyBody { get; set; } // Body of the message being replied to
-        public string Body { get; set; } // Message body      
+        public string Body { get; set; } // Message body
+        public string PreviousMessageIdentifier { get; set; } // This is not set by you
         public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
         {
             MessageID = messageID;

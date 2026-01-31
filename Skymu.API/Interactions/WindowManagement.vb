@@ -1,0 +1,1 @@
+﻿' Stuff will be added here to make plugins able to manage windows .

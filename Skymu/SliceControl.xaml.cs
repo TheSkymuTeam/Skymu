@@ -282,7 +282,7 @@ namespace Skymu
 
         private void UpdateTextOffset()
         {
-            if (OverlayText == null) return;
+            if (OverlayText is null) return;
             OverlayText.Margin = new Thickness(
                 TextStartPositionX,
                 _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
@@ -315,7 +315,7 @@ namespace Skymu
 
         private void UpdateText()
         {
-            if (OverlayText == null) return;
+            if (OverlayText is null) return;
 
             OverlayText.Text = Text;
             OverlayText.FontFamily = TextFont;
@@ -347,7 +347,7 @@ namespace Skymu
         private Rect GetStateViewbox()
         {
             var bmp = Source as BitmapSource;
-            if (bmp == null || ElementCount <= 0)
+            if (bmp is null || ElementCount <= 0)
                 return new Rect(0, 0, 1, 1);
 
             int index = GetCurrentIndex();
@@ -371,7 +371,7 @@ namespace Skymu
         private double GetElementHeight()
         {
             var bmp = Source as BitmapSource;
-            if (bmp == null || ElementCount <= 0)
+            if (bmp is null || ElementCount <= 0)
                 return ActualHeight;
 
             return StackDirection == SpriteStackDirection.Vertical
@@ -382,7 +382,7 @@ namespace Skymu
         private void UpdateSlices()
         {
             var bmp = Source as BitmapSource;
-            if (bmp == null) return;
+            if (bmp is null) return;
 
             if (!Slice)
             {

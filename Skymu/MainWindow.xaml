@@ -15,9 +15,9 @@
     <Window.Resources>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
-        <local:ReplyIDToBoolConverter x:Key="ReplyCheckConverter"/>
+        <local:ReplyIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
-        <local:DisplayNameBlanker x:Key="DNBlanker"/>
+        <local:MessageIDToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -145,15 +145,16 @@ Width="14" Grid.Row="1"/>
                    HorizontalAlignment="Right"
                    Margin="-1000,0,0,0"
                    FontSize="11"
+                           Text="{Binding SentByDN}"
                    FontFamily="Tahoma"
                    Foreground="{Binding SentByID,
                         Converter={StaticResource IdToColorConverter}}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource DNBlanker}">
-                            <Binding Path="SentByDN" />
+                    <TextBlock.Visibility>
+                        <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
+                            <Binding Path="PreviousMessageIdentifier" />
                             <Binding Path="SentByID" />
                         </MultiBinding>
-                    </TextBlock.Text>
+                    </TextBlock.Visibility>
                 </TextBlock>
 
                 <TextBlock Grid.Row="1" Grid.Column="2"

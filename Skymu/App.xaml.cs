@@ -51,7 +51,7 @@ namespace Skymu
         {
             Exception exception = ev.ExceptionObject as Exception;
 
-            if (exception != null)
+            if (exception is not null)
             {
                 ExceptionHandler(exception);
             }
@@ -64,7 +64,7 @@ namespace Skymu
 
         public static void Shutdown(System.ComponentModel.CancelEventArgs ev)
         {
-            if (ev != null)
+            if (ev is not null)
             {
                 ev.Cancel = true;
             }
