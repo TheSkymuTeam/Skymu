@@ -308,7 +308,7 @@ typeof(MainWindow));
                     case "close": Close(); break;
                     case "split": Universal.NotImplemented("Split Window"); break;
                     case "minimize": WindowState = WindowState.Minimized; break;
-                    // case "maximize": width = 24; if (WindowState == WindowState.Normal) { WindowState = WindowState.Maximized; } else { WindowState = WindowState.Normal; } break;
+                    // case "maximize": if (WindowState == WindowState.Normal) { WindowState = WindowState.Maximized; } else { WindowState = WindowState.Normal; } break;
                     case "maximize": Universal.NotImplemented("Maximizing and Fullscreen"); break;
                 }
             }
