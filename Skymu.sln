@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiddleMan", "MiddleMan\Midd
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord", "Plugins\Discord\Discord.csproj", "{F5495418-88EB-4C33-BFBB-DA0B43AE6A83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhatsApp", "Plugins\WhatsApp\WhatsApp.csproj", "{ECC37E95-62A6-482E-A82C-54F702B541BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Matrix", "Plugins\WhatsApp\Matrix.csproj", "{ECC37E95-62A6-482E-A82C-54F702B541BC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{E41413D5-8999-415D-A41D-B821197D0DE1}"
 EndProject

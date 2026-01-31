@@ -128,7 +128,6 @@ namespace Discord
         public async Task<bool> SetActiveConversation(string identifier)
         {
             ActiveConversation.Clear();
-
             if (string.IsNullOrEmpty(identifier))
             {
                 _activeChannelId = null;

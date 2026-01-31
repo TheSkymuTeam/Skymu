@@ -8,7 +8,7 @@
         MinHeight="235"
         MaxHeight="800"
         Width="373"
-        Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
+        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -164,7 +164,7 @@ namespace Skymu
 
         public static void PushIcon(string icon, string iconText = "Skype")
         {
-            var resourceUri = new Uri("pack://application:,,,/UniversalResources/Icon/skype" + icon + ".ico", UriKind.Absolute);
+            var resourceUri = new Uri("pack://application:,,,/Resources/Universal/Icon/skype-" + icon + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
             if (Icon is not null)

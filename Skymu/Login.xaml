@@ -6,7 +6,7 @@
         Title="Skype" Closing="Login_Closing" Height="429" Width="526" ResizeMode="NoResize"
         WindowStyle="SingleBorderWindow" Loaded="Login_Loaded"
         WindowStartupLocation="CenterScreen"
-        Icon="/Skymu;component/UniversalResources/Icon/Skype.ico">
+        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
     <Window.Resources>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
             <Setter Property="Foreground" Value="{StaticResource Sk5Link}" />
@@ -19,7 +19,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="pack://application:,,,/ResourcesLight/Backgrounds/loginBackground.png" Stretch="Fill"/>
+        <ImageBrush ImageSource="pack://application:,,,/Resources/Light/Backgrounds/loginBackground.png" Stretch="Fill"/>
     </Window.Background>
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill" />
@@ -27,7 +27,7 @@
         <TextBlock x:Name="header" Text="Welcome to Skype." Foreground="{StaticResource SkBlue}"
                    Height="32" HorizontalAlignment="Center" Margin="0,44,0,0"
                    VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20" />
-        <Image x:Name="throbber" Source="/UniversalResources/Animations/LoginCircler_Remake.png"
+        <Image x:Name="throbber" Source="/Resources/Universal/Animations/login-throbber.png"
            Width="128"
            Height="128"
            Margin="0,0,0,48"
@@ -63,22 +63,6 @@
             </Image.Triggers>
 
         </Image>
-        <local:SliceControl
-    x:Name="oldthrobber"
-    Grid.Column="1"
-    Source="/UniversalResources/Animations/LoginCircler.png"
-    ElementCount="36"
-    StackDirection="Vertical"
-    DefaultIndex="0"
-    HoverIndex="-1"
-    PressedIndex="-1"
-    TextWeight="Bold"
-    Slice="False"
-            IsAnimation="True"
-            AnimationFps="60"
-    HorizontalAlignment="Center" 
-            Margin="0,0,0,48"
-            Width="128" d:IsHidden="True" Visibility="Collapsed"/>
         <Grid x:Name="signInControls">
             <TextBlock x:Name="skypenameText" Text="Username" Height="28" HorizontalAlignment="Left"
                    Margin="136,140,0,0" VerticalAlignment="Top"
@@ -121,7 +105,7 @@ Foreground="#FF393A48" />
                     x:Name="LoginButton"
                     Grid.Row="0"
                     Cursor="Hand"
-                    Source="/ResourcesLight/Buttons/plain.png"
+                    Source="/Resources/Light/Buttons/plain.png"
                     ElementCount="5"
                     StackDirection="Vertical"
                     DefaultIndex="0"

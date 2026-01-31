@@ -187,7 +187,7 @@ typeof(MainWindow));
             var bmp = new BitmapImage();
             bmp.BeginInit();
             bmp.UriSource = new Uri(
-                "pack://application:,,,/ResourcesLight/ProfilePictures/profile_anonymous.png",
+                "pack://application:,,,/Resources/Light/Profile Pictures/profile_anonymous.png",
                 UriKind.Absolute);
             bmp.CacheOption = BitmapCacheOption.OnLoad;
             bmp.EndInit();
@@ -353,6 +353,7 @@ typeof(MainWindow));
 
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Universal.Plugin.ActiveConversation.Clear();
             var listBox = (ListBox)sender;
             if (listBox.SelectedItem is null)
                 return;
@@ -399,7 +400,7 @@ typeof(MainWindow));
         }
 
 
-        private void ChatWindow_Close(object sender, MouseButtonEventArgs e)
+        private void Chat_Close(object sender, MouseButtonEventArgs e)
         {
             SetWindow(WindowType.Home);
         }
@@ -640,20 +641,20 @@ typeof(MainWindow));
                 // Map speed to bars
 
                 if (speedMbps >= 50)
-                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_good.png";
+                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_good.png";
                 else if (speedMbps >= 20)
-                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_best.png";
+                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_best.png";
                 else if (speedMbps >= 10)
-                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med.png";
+                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_med.png";
                 else if (speedMbps >= 5)
-                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_med2.png";
+                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_med2.png";
                 else
-                    iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_bad.png";
+                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_bad.png";
 
             }
             catch
             {
-                iconUri = "pack://application:,,,/Skymu;component/ResourcesLight/ChatWindow/btn_pill_small_network_unavailable.png";
+                iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_unavailable.png";
             }
             var uri = new Uri(
      iconUri,
@@ -793,6 +794,11 @@ typeof(MainWindow));
             }
         }
         internal static string LastMessageIdentifier;
+
+        private void mn_About(object sender, RoutedEventArgs e)
+        {
+            new About().Show();
+        }
     }
 
     public class ByteArrayToImageSourceConverter : IValueConverter
