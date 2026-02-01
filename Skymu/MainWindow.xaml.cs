@@ -928,7 +928,7 @@ typeof(MainWindow));
             if (value is not string text)
                 return null;
 
-            var tb = MessageTools.FormatFullText(text);
+            var tb = MessageTools.MarkdownFormat(text);
 
             if (TextBlockStyle != null)
                 tb.Style = TextBlockStyle;

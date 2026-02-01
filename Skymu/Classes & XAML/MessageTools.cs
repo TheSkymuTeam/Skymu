@@ -28,7 +28,7 @@ namespace Skymu
             return false;
         }
 
-        public static TextBlock FormatFullText(string input)
+        public static TextBlock MarkdownFormat(string input)
         {
             var textBlock = new TextBlock
             {
