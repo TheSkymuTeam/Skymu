@@ -46,5 +46,17 @@ namespace Skymu.Properties {
                 this["AutoLoginEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Skype")]
+        public string BrandingName {
+            get {
+                return ((string)(this["BrandingName"]));
+            }
+            set {
+                this["BrandingName"] = value;
+            }
+        }
     }
 }

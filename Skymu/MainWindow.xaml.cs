@@ -96,7 +96,7 @@ namespace Skymu
             this.SizeChanged += MainWindow_SizeChanged;
             this.Closed += MainWindow_Closed;
 
-            Tray.PushIcon("online", "Skype (Online)");
+            Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
             SetWindow(WindowType.Home);
         }
 
@@ -314,12 +314,18 @@ typeof(MainWindow));
             }
         }
 
-        private void tbli_Click(object sender, RoutedEventArgs e) { Process.Start("https://www.youtube.com/watch?v=kVsH_ySm5_E"); }
+        private void tbli_Click(object sender, RoutedEventArgs e) {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://www.youtube.com/watch?v=kVsH_ySm5_E",
+                UseShellExecute = true
+            });
+        }
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { Universal.Shutdown(ev); }
         // For menu bars
         private void mn_New(object sender, RoutedEventArgs e) { }
         private void mn_Open(object sender, RoutedEventArgs e) { }
-        private void mn_Close(object sender, RoutedEventArgs e) { }
+        private void mn_Close(object sender, RoutedEventArgs e) { Universal.Shutdown(); }
         private void mn_Apps(object sender, RoutedEventArgs e) { }
         private void mn_Language(object sender, RoutedEventArgs e) { }
         private void mn_Accessibility(object sender, RoutedEventArgs e) { }
@@ -566,7 +572,7 @@ typeof(MainWindow));
             GlobalUserCount.Text = "Loading online user count...";
             SkymuApiStatusHandler();
             CheckSetUsersOnline();
-            WindowTitle = "Skype™ - " + data.DisplayName;
+            WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.DisplayName;
             Identifier = data.Identifier;
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;

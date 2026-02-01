@@ -31,7 +31,7 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
-        public string TextUsername { get { return "Discord token"; } }
+        public string TextUsername { get { return "Token"; } }
         public AuthenticationMethod[] AuthenticationType { get { return new[]{ AuthenticationMethod.Token }; } }
 
         // Initialize API classes and strings
@@ -367,7 +367,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Parse error: {ex.Message}"));
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Unable to parse the following message: {ex.Message}"));
                 return false;
             }
             return true;
@@ -470,7 +470,7 @@ namespace Discord
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Your token has been rejected, possibly due to a display name, username, or password change. Please retrieve a new token."));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
                 }
                 else if (userCheckTkn.Contains("[API/ParseError]"))
                 {

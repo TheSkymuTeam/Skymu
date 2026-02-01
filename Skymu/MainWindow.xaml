@@ -2,13 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Skymu"
+        xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
         WindowStyle="None"
         Background="#8cbeff"
         AllowsTransparency="False"
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
-        Title="Skype" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
+        Title="{Binding Source={x:Static properties:Settings.Default},
+                      Path=BrandingName}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
         StateChanged="Window_StateChanged" Activated="Window_Activated"
         Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
 
@@ -317,22 +319,38 @@ Width="14" Grid.Row="1"/>
 
             <Menu Grid.Row="0" Height="20" Background="Transparent" FontFamily="Tahoma" Name="menu1"
                   VerticalAlignment="Top" FontSize="11">
-                <MenuItem Header="_Skype">
+                <MenuItem Header="{Binding Source={x:Static properties:Settings.Default},
+                      Path=BrandingName,
+                      StringFormat={}_{0})}">
                     <MenuItem Header="Online Status" />
                     <Separator />
                     <MenuItem Header="Privacy..." />
                     <MenuItem Header="Account..." />
-                    <MenuItem Header="Buy Skype Credit..." />
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat=Buy {0} Credit...}" />
+                        </MenuItem.Header>
+                    </MenuItem>
                     <Separator />
                     <MenuItem Header="Change Password..." />
                     <MenuItem Header="Sign Out" />
                     <MenuItem Header="Switch User" />
-                    <MenuItem Header="Close" />
+                    <MenuItem Header="Close" Click="mn_Close"/>
                 </MenuItem>
                 <MenuItem Header="C_ontacts">
                     <MenuItem Header="Add a Contact..." />
                     <MenuItem Header="New Contact..." />
-                    <MenuItem Header="Search for Skype Users..." />
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat=Search for {0} Users...}" />
+                        </MenuItem.Header>
+                    </MenuItem>
                     <MenuItem Header="Import Contacts..." />
                     <MenuItem Header="Create New Group..." />
                     <Separator />
@@ -350,22 +368,53 @@ Width="14" Grid.Row="1"/>
                     <MenuItem Header="Change Language" Click="mn_Language" />
                     <Separator />
                     <MenuItem Header="Accessibility" Click="mn_Accessibility" />
-                    <MenuItem Header="Share Skype with a Friend..." Click="mn_ShareWithFriend" />
+                    <MenuItem Click="mn_ShareWithFriend">
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat=Share {0} with a Friend...}" />
+                        </MenuItem.Header>
+                    </MenuItem>
                     <Separator />
-                    <MenuItem Header="Skype Wi-Fi Access..." Click="mn_SkypeWifi" />
+                    <MenuItem Click="mn_SkypeWifi">
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat={}{0} Wi-Fi Access...}" />
+                        </MenuItem.Header>
+                    </MenuItem>
+
                     <Separator />
                     <MenuItem Header="Options..." Click="mn_Options" />
                 </MenuItem>
                 <MenuItem Header="_Help">
                     <MenuItem Header="Get Help: Answers and Support" />
-                    <MenuItem Header="Heartbeat (Skype Status)" />
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat=Heartbeat ({0} Status)}" />
+                        </MenuItem.Header>
+                    </MenuItem>
+
                     <MenuItem Header="Welcome Screen" />
                     <Separator />
                     <MenuItem Header="Call Quality Guide" />
                     <MenuItem Header="Check for Updates" />
                     <MenuItem Header="Give feedback" />
                     <Separator />
-                    <MenuItem Header="About Skype" Click="mn_About"/>
+                    <MenuItem Click="mn_About">
+                        <MenuItem.Header>
+                            <TextBlock
+            Text="{Binding Source={x:Static properties:Settings.Default},
+                           Path=BrandingName,
+                           StringFormat=About {0}}" />
+                        </MenuItem.Header>
+                    </MenuItem>
+
                 </MenuItem>
             </Menu>
             <Rectangle Grid.Row="0" Height="1" VerticalAlignment="Bottom" Fill="#8cbeff" />
@@ -705,7 +754,9 @@ DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
-Text="Skype Home"                                
+Text="{Binding Source={x:Static properties:Settings.Default},
+                      Path=BrandingName,
+                      StringFormat={}{0} Home}"                                
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"

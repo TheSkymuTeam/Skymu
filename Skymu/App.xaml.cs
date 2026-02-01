@@ -62,7 +62,7 @@ namespace Skymu
             }
         }
 
-        public static void Shutdown(System.ComponentModel.CancelEventArgs ev)
+        public static void Shutdown(System.ComponentModel.CancelEventArgs ev = null)
         {
             if (ev is not null)
             {

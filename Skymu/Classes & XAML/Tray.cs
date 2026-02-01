@@ -132,7 +132,7 @@ namespace Skymu
             {
                 hMenu = CreatePopupMenu();
 
-                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_OPEN_SKYPE, "Open Skype");
+                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_OPEN_SKYPE, "Open " + Properties.Settings.Default.BrandingName);
                 AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_SIGN_IN, "Sign in");
                 AppendMenu(hMenu, MF_SEPARATOR, UIntPtr.Zero, null);
                 AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_QUIT, "Quit");
@@ -162,8 +162,12 @@ namespace Skymu
             PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
         }
 
-        public static void PushIcon(string icon, string iconText = "Skype")
+        public static void PushIcon(string icon, string iconText = "")
         {
+            if (iconText == String.Empty)
+            {
+                iconText = Properties.Settings.Default.BrandingName;
+            }
             var resourceUri = new Uri("pack://application:,,,/Resources/Universal/Icon/skype-" + icon + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 

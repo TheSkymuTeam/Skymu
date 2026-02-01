@@ -44,7 +44,7 @@ namespace Skymu
             this.ContentRendered += Login_ContentRendered;
 
             UI.themeSetterLogin();
-            Tray.PushIcon("offline", "Skype (Not signed in)");
+            Tray.PushIcon("offline", Properties.Settings.Default.BrandingName + " (Not signed in)");
         }
 
         private async void buttonLaunch(object state, RoutedEventArgs e)
@@ -120,10 +120,10 @@ namespace Skymu
         private async void Login_Loaded(object sender, EventArgs e)
         {
             MenuBar.MenuInit(this);
-            MenuBar.MenuCreator("&Skype", "Close");
+            MenuBar.MenuCreator("&" + Properties.Settings.Default.BrandingName, "Close");
             MenuBar.MenuCreator("&Tools", "Change language", "$", "Connection options...", "$", "Accessibility");
             MenuBar.MenuCreator("&Help", "Get Help: Answers and Support", "$", "Check for Updates", "$",
-                "Privacy Policy", "About Skype");
+                "Privacy Policy", "About " + Properties.Settings.Default.BrandingName);
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
@@ -215,7 +215,7 @@ namespace Skymu
             {
                 signInControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
-                header.Text = "Welcome to Skype.";
+                header.Text = "Welcome to " + Properties.Settings.Default.BrandingName + ".";
             }
         }
 

@@ -16,7 +16,7 @@ using System.Windows.Media;
 namespace Skymu
 {
     // Dialog Types:
-    // 0 = Default (Just Skype logo, usie for messageboxes, etc)
+    // 0 = Default (Just Skype logo, use for messageboxes, etc)
     // 1 = Error
     // 2 = Warning
     // 3 = Quit Skype Dialog
@@ -84,7 +84,7 @@ namespace Skymu
             switch (dialogType)
             {
                 case 0:
-                    Title = "Skype";
+                    Title = Properties.Settings.Default.BrandingName;
                     header.Text = headerText;
                     sub.Text = content;
                     buttonLeft.Visibility = Visibility.Hidden;
@@ -93,7 +93,7 @@ namespace Skymu
                     return 0;
 
                 case 1:
-                    Title = "Skype Error";
+                    Title = Properties.Settings.Default.BrandingName + " Error";
                     header.Text = headerText;
                     sub.Text = content;
                     buttonLeft.Visibility = Visibility.Hidden;
@@ -102,7 +102,7 @@ namespace Skymu
                     return 1;
 
                 case 2:
-                    Title = "Skype Warning";
+                    Title = Properties.Settings.Default.BrandingName + " Warning";
                     header.Text = headerText;
                     sub.Text = content;
                     buttonLeft.Visibility = Visibility.Hidden;
@@ -111,8 +111,8 @@ namespace Skymu
                     return 2;
 
                 case 3:
-                    Title = "Quit Skype?";
-                    header.Text = "Sure you want to quit Skype?";
+                    Title = "Quit " + Properties.Settings.Default.BrandingName + "?";
+                    header.Text = "Sure you want to quit " + Properties.Settings.Default.BrandingName + "?";
                     sub.Text =
                         "You won't be able to send or recieve instant\n" +
                         "messages and calls if you do.";
@@ -124,7 +124,7 @@ namespace Skymu
                     return 3;
 
                 case 4:
-                    Title = "Skype Picture";
+                    Title = Properties.Settings.Default.BrandingName + " Picture";
                     header.Text = headerText;
                     sub.Text = content;
                     buttonLeft.Visibility = Visibility.Visible;
@@ -135,11 +135,11 @@ namespace Skymu
                     return 4;
 
                 case 5:
-                    Title = "Skymu Exception Handling";
-                    header.Text = "Exception thrown in Skymu";
+                    Title = Properties.Settings.Default.BrandingName + " Exception Handling";
+                    header.Text = "Exception thrown in " + Properties.Settings.Default.BrandingName;
                     sub.Text =
                         content +
-                        "\n\nReport this (and any observable issues) on GitHub.";
+                        "\n\nReport this (and any observable issues) on the Discord / GitHub.";
                     buttonLeft.Visibility = Visibility.Visible;
                     buttonLeft.Content = "Exit";
                     buttonRight.Content = "Ignore";
@@ -148,10 +148,10 @@ namespace Skymu
                     return 1;
 
                 case 6:
-                    Title = "Skymu - Not Implemented";
+                    Title = Properties.Settings.Default.BrandingName + " - Not Implemented";
                     header.Text = "Feature not implemented";
                     sub.Text =
-                        "Feature not yet implemented in Skymu:\n" + content;
+                        "Feature not yet implemented in " + Properties.Settings.Default.BrandingName + ":\n" + content;
                     buttonLeft.Visibility = Visibility.Hidden;
                     buttonLeft.Content = "";
                     buttonRight.Content = "OK";
@@ -160,7 +160,7 @@ namespace Skymu
                     return 2;
 
                 case 7:
-                    Title = "Skype Login";
+                    Title = Properties.Settings.Default.BrandingName + " Login";
                     header.Text = "Two-factor authentication required";
                     sub.Text = content + " has requested that you provide a 2FA code to log in. Please enter it below.";
                     DialogTextBox.Visibility = Visibility.Visible;
