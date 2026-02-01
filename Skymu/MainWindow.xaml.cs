@@ -712,6 +712,38 @@ typeof(MainWindow));
                         new Action(() => ScrollToBottom(listBox)));
                 };
             }
+            var sv = FindScrollViewer(listBox); // use the helper
+
+            if (false)
+            {
+                // LayoutUpdated fires whenever the ScrollViewer changes size/content
+                sv.LayoutUpdated += (s, args) =>
+                {
+                    if (sv.ExtentHeight > sv.ViewportHeight)
+                    {
+                        // Scrollbar needed → remove extra margin
+                        listBox.Margin = new Thickness(0, 0, 0, 0);
+                    }
+                    else
+                    {
+                        // No scrollbar → reserve 16px for overlay/reserved space
+                        listBox.Margin = new Thickness(0, 0, 16, 0);
+                    }
+                };
+            }
+        }
+        public static ScrollViewer FindScrollViewer(DependencyObject d)
+        {
+            if (d == null) return null;
+            if (d is ScrollViewer sv) return sv;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++)
+            {
+                var child = VisualTreeHelper.GetChild(d, i);
+                var result = FindScrollViewer(child);
+                if (result != null) return result;
+            }
+            return null;
         }
         private void ScrollToBottom(ListBox listBox)
         {
@@ -885,6 +917,27 @@ typeof(MainWindow));
         {
             return Binding.DoNothing;
         }
+    }
+
+    public sealed class FormatFullTextConverter : IValueConverter
+    {
+        public Style TextBlockStyle { get; set; }
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not string text)
+                return null;
+
+            var tb = MessageTools.FormatFullText(text);
+
+            if (TextBlockStyle != null)
+                tb.Style = TextBlockStyle;
+
+            return tb;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
     }
 
     public class ReplyIDToVisibilityConverter : IValueConverter

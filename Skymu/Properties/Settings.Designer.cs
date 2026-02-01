@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -56,6 +56,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["BrandingName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("☛")]
+        public string ListDelimiterCharacter {
+            get {
+                return ((string)(this["ListDelimiterCharacter"]));
+            }
+            set {
+                this["ListDelimiterCharacter"] = value;
             }
         }
     }

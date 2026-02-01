@@ -6,10 +6,13 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="AutoLoginEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BrandingName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skype</Value>
+    </Setting>
+    <Setting Name="ListDelimiterCharacter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">☛</Value>
     </Setting>
   </Settings>
 </SettingsFile>

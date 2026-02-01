@@ -15,11 +15,25 @@
         Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
 
     <Window.Resources>
+        <Style x:Key="MessageTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Width" Value="430"/>
+            <Setter Property="Padding" Value="0,0,15,0"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontFamily" Value="Tahoma"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+            <Setter Property="TextOptions.TextHintingMode" Value="Fixed"/>
+        </Style>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <local:ReplyIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:MessageIDToVisibilityConverter x:Key="IDToVisibilityConverter"/>
+        <local:FormatFullTextConverter x:Key="FormatFullTextConverter"
+                               TextBlockStyle="{StaticResource MessageTextBlockStyle}" />
         <Style x:Key="WindowButtonStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -116,7 +130,7 @@ Width="14" Grid.Row="1"/>
             </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate x:Key="ConversationItemTemplate">
-            <Grid Margin="0,9.5,16,0">
+            <Grid x:Name="ConversationGrid" Margin="0,9.5,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -159,15 +173,11 @@ Width="14" Grid.Row="1"/>
                     </TextBlock.Visibility>
                 </TextBlock>
 
-                <TextBlock Grid.Row="1" Grid.Column="2"
-                   Width="430"
-                   Text="{Binding Body}"
-                   Padding="0,0,15,0"
-                   FontSize="11"
-                   VerticalAlignment="Top"
-                   TextWrapping="Wrap"
-                   FontFamily="Tahoma"
-                   TextTrimming="CharacterEllipsis"/>
+                <ContentControl
+    Grid.Row="1"
+    Grid.Column="2"
+    Content="{Binding Body,
+                      Converter={StaticResource FormatFullTextConverter}}" />
 
                 <TextBlock Grid.Row="1" Grid.Column="2"
                    Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
@@ -198,7 +208,8 @@ Width="14" Grid.Row="1"/>
                         <ScrollViewer x:Name="ScrollViewer"
                               Focusable="false"
                               Padding="0"
-                              Margin="0">
+                              Margin="0"
+                                      VerticalContentAlignment="Bottom">
                             <ItemsPresenter />
                         </ScrollViewer>
                     </ControlTemplate>
@@ -952,12 +963,12 @@ Margin="10,0,0,0" />
 Grid.Row="2"        
 BorderThickness="0"
                                         VerticalAlignment="Bottom"
-                                        
+                                        Margin="0,0,0,0"
 Style="{StaticResource NoInsetListBox}"
 ItemTemplate="{StaticResource ConversationItemTemplate}"
 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          Loaded="ConversationItemsList_Loaded"
-                                         ScrollViewer.CanContentScroll="True"
+                                         ScrollViewer.CanContentScroll="False"
 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 mc:Ignorable="d"      
