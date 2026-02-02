@@ -55,8 +55,10 @@ namespace Skymu
         {
             var textBlock = new TextBlock
             {
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
             };
+
+            TextOptions.SetTextFormattingMode(textBlock, TextFormattingMode.Display);
 
             var inlines = new List<Inline>();
             int pos = 0;
@@ -232,7 +234,7 @@ namespace Skymu
 
                         inlines.Add(new InlineUIContainer(sliceControl)
                         {
-                            BaselineAlignment = BaselineAlignment.TextBottom
+                            BaselineAlignment = BaselineAlignment.Baseline
                         });
                     }
                     else
