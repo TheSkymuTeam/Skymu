@@ -15,9 +15,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.Win32;
 using System.Windows.Controls;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Media;
 using System.Windows.Navigation;
+
+# pragma warning disable CA1416
 
 namespace Skymu
 {
@@ -48,6 +53,51 @@ namespace Skymu
             Tray.PushIcon("offline", Properties.Settings.Default.BrandingName + " (Not signed in)");
         }
 
+        private async Task WriteCredentials()
+        {
+            string[] credentials = await Universal.Plugin.SaveAutoLoginCredential();
+            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
+            {
+                if (key != null)
+                {
+                    for (int i = 0; i < credentials.Length; i++)
+                    {
+                        key.SetValue(i.ToString(), EncryptToString(credentials[i]));
+                    }
+                }
+            }
+        }
+
+        private async Task<string[]> ReadCredentials()
+        {
+            string[] credentials;
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+       @"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
+            {
+                if (key != null)
+                {
+                    string[] valueNames = key.GetValueNames();
+                    credentials = new string[valueNames.Length];
+
+                    for (int i = 0; i < valueNames.Length; i++)
+                    {
+                        credentials[i] = DecryptFromString(key.GetValue(valueNames[i])?.ToString());
+                    }
+
+                    if (credentials.Length <= 0)
+                    {
+                        credentials = new string[1];
+                    }
+                }
+                else
+                {
+                    credentials = new string[1];
+                }
+            }
+            return credentials;
+        }
+
+
         private async void buttonLaunch(object state, RoutedEventArgs e)
         {
             LoginToggleAnimation(true);
@@ -56,6 +106,7 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
+                    WriteCredentials();
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
@@ -132,7 +183,7 @@ namespace Skymu
             comboProtocolBox.SelectedValuePath = "DisplayName";
 
             Universal.PluginList = PluginLoader.LoadPlugins("plugins");
-            int pluginIndex = 0; 
+            int pluginIndex = 0;
             foreach (var plugin in Universal.PluginList)
             {
                 if (plugin.AuthenticationType.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationType[0]));
@@ -174,12 +225,34 @@ namespace Skymu
             }
         }
 
+        public static string EncryptToString(string plaintext)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(plaintext);
+            byte[] encrypted = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(encrypted);
+        }
+
+        public static string DecryptFromString(string encryptedString)
+        {
+            if (encryptedString != null)
+            {
+                byte[] encryptedData = Convert.FromBase64String(encryptedString);
+                byte[] decrypted = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(decrypted);
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
             if (useAutoLogin)
             {
+                string[] credentials = await ReadCredentials();
                 LoginResult lr = await Task.Run(async () =>
-             await Universal.Plugin.TryAutoLogin()
+             await Universal.Plugin.TryAutoLogin(credentials)
          );
                 if (lr == LoginResult.Success)
                 {
@@ -223,7 +296,7 @@ namespace Skymu
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {           
+        {
             selectedListing = (PluginListing)comboProtocolBox.SelectedItem;
             Universal.Plugin = Universal.PluginList[selectedListing.PluginIndex];
             SkypeName.Text = Universal.Plugin.TextUsername;

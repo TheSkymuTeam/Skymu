@@ -67,7 +67,6 @@ namespace Discord.Classes
         private int heartbeatInterval;
 
         // This is the file Skymu uses to find the Discord token
-        private const string credFile = "discord.smcred";
 
         public ClientWebSocket WSClient { get; private set; }
 
@@ -83,9 +82,8 @@ namespace Discord.Classes
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
         private readonly Channel<MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<MessageReceivedEventArgs>();
 
-        public WebSocket()
+        public WebSocket(string token)
         {
-            token = File.ReadAllText(credFile);
             gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
