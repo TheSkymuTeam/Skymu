@@ -10,90 +10,123 @@
 /*==========================================================*/
 
 using System;
-using System.Diagnostics;
 using System.Net.Http;
+using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Skymu
 {
     internal class SkymuApi
     {
-        public static async Task<string> GenerateUID()
+        // REST API variables
+        private static readonly HttpClient httpClient = new HttpClient
         {
-            string skymuGenerateUri = "https://skymu.kier.ovh/generate";
-            try
-            {
-                using (HttpResponseMessage generateResponse = await Universal.HttpClient.GetAsync(skymuGenerateUri))
-                {
+            BaseAddress = new Uri("https://skymu.kier.ovh")
+        };
+        public string ApiTkn = null;
+        public string WsUrl = "ws://skymu.kier.ovh/ws";
 
-                    string genResBody = await generateResponse.Content.ReadAsStringAsync();
-                    return JsonNode.Parse(genResBody)["token"].ToString();
-                }
-            }
-            catch
-            {
-                return String.Empty;
-            }
+
+        // WebSocket variables
+        private ClientWebSocket ws;
+        private CancellationTokenSource cts = new CancellationTokenSource();
+        public event Action<int> OnUserCountUpdate;
+
+        // REST API functions
+        public async Task GenerateUID()
+        {
+            string json = await httpClient.GetStringAsync("/token");
+            JsonNode node = JsonNode.Parse(json);
+            ApiTkn = node?["token"]?.ToString();
         }
 
-        public static async Task SetStatus(bool onlineState, string token)
+        public async Task<bool> SetUsrStatus(bool online)
         {
-            if (string.IsNullOrEmpty(token))
-                return;
-
-            string endpoint = onlineState ? "/online" : "/offline";
-            using (var req = new HttpRequestMessage(
-                HttpMethod.Post,
-                $"https://skymu.kier.ovh{endpoint}"))
+            var payload = new
             {
-                req.Headers.Add("X-Skymu-Auth", token);
-                using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
-                {
-                    string resBody = await resp.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Status set response ({endpoint}): {resBody}");
-                }
-            }
+                token = ApiTkn,
+                online
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+
+            using var content = new StringContent(json);
+            using var response = await httpClient.PostAsync("/set_status", content);
+
+            return true;
         }
 
-        public static async Task StatusPing(string token)
+        public async Task<bool> SendPingToServ()
         {
-            if (string.IsNullOrEmpty(token))
-                return;
-            string skymuPingUri = "https://skymu.kier.ovh/ping";
-            using (var req = new HttpRequestMessage(
-                HttpMethod.Post,
-                skymuPingUri))
+            var payload = new
             {
-                req.Headers.Add("X-Skymu-Auth", token);
-                using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
-                {
-                    string resBody = await resp.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"Ping response ({skymuPingUri}): {resBody}");
-                }
-            }
+                token = ApiTkn
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+
+            using var content = new StringContent(json);
+            using var response = await httpClient.PostAsync("/ping", content);
+
+            return true;
         }
 
-        public static async Task<int> FetchUserCount()
+        // WebSocket functions
+        public async Task ConnectWS()
         {
-            string skymuCountUri = "https://skymu.kier.ovh/usr_count";
-            try
+            ws = new ClientWebSocket();
+            await ws.ConnectAsync(new Uri(WsUrl), cts.Token);
+
+            var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
+            var initBytes = Encoding.UTF8.GetBytes(initMsg);
+            await ws.SendAsync(initBytes, WebSocketMessageType.Text, true, cts.Token);
+
+            _ = Task.Run(ReceiveLoop);
+        }
+
+        private async Task ReceiveLoop()
+        {
+            var buffer = new byte[4096];
+
+            while (ws.State == WebSocketState.Open)
             {
-                using (var req = new HttpRequestMessage(
-                    HttpMethod.Get,
-                    skymuCountUri))
+                var result = await ws.ReceiveAsync(buffer, cts.Token);
+                if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    using (HttpResponseMessage resp = await Universal.HttpClient.SendAsync(req))
+                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                }
+                else if (result.MessageType == WebSocketMessageType.Text)
+                {
+                    string msg = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                    var node = JsonNode.Parse(msg);
+                    if (node?["type"]?.ToString() == "user_count")
                     {
-                        string resBody = await resp.Content.ReadAsStringAsync();
-                        JsonNode parsedJson = JsonNode.Parse(resBody);
-                        return parsedJson["online_count"].GetValue<int>();
+                        int count = node["count"]?.GetValue<int>() ?? 0;
+                        OnUserCountUpdate?.Invoke(count);
                     }
                 }
             }
-            catch
+        }
+
+        public async Task SendGetCount()
+        {
+            if (ws.State == WebSocketState.Open)
             {
-                return -1;
+                var msg = JsonSerializer.Serialize(new { action = "get_count" });
+                var bytes = Encoding.UTF8.GetBytes(msg);
+                await ws.SendAsync(bytes, WebSocketMessageType.Text, true, cts.Token);
+            }
+        }
+
+        public async Task CloseWS()
+        {
+            if (ws.State == WebSocketState.Open)
+            {
+                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client is being closed", CancellationToken.None);
             }
         }
     }
