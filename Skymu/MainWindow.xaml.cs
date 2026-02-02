@@ -356,7 +356,7 @@ typeof(MainWindow));
 
             return null;
         }
-
+        private bool _isLoadingConversation;
         private NotifyCollectionChangedEventHandler _activeConversationChangedHandler;
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -376,7 +376,7 @@ typeof(MainWindow));
                 .ContainerFromItem(selectedContact);
 
             Image sourceImage = FindVisualChild<Image>(container);
-
+            _isLoadingConversation = true;
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
             {
                 var collection = Universal.Plugin.ActiveConversation;
@@ -403,6 +403,8 @@ typeof(MainWindow));
 
                 _activeConversationChangedHandler = new NotifyCollectionChangedEventHandler((s, args) =>
                 {
+                    if (_isLoadingConversation)
+                        return;
                     if (args.Action == NotifyCollectionChangedAction.Add)
                     {
                         foreach (var newItem in args.NewItems)
@@ -421,6 +423,7 @@ typeof(MainWindow));
 
                 collection.CollectionChanged += _activeConversationChangedHandler;
                 ConversationItemsList.ItemsSource = collection;
+                _isLoadingConversation = false;
             }
         }
 
