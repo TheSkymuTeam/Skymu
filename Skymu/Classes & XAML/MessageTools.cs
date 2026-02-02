@@ -1,30 +1,57 @@
-﻿using System;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team at contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Skymu
 {
     internal class MessageTools
     {
-        private bool ContainsEmoji(string text)
+        private static bool IsEmojiTextElement(string element)
         {
-            if (text.Contains(':') && text.IndexOf(':') != text.LastIndexOf(':'))
-                return true;
+            bool hasEmojiRune = false;
 
-            foreach (char c in text)
+            foreach (var rune in element.EnumerateRunes())
             {
-                if (char.IsSurrogate(c) || char.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.OtherSymbol)
+                int v = rune.Value;
+
+                if (v == 0x200D || v == 0xFE0F)
                     return true;
+
+
+                if (
+                    (v >= 0x1F300 && v <= 0x1FAFF) || 
+                    (v >= 0x2600 && v <= 0x26FF) || 
+                    (v >= 0x2700 && v <= 0x27BF) ||
+                    (v >= 0x1F1E6 && v <= 0x1F1FF)  
+                )
+                {
+                    hasEmojiRune = true;
+                }
             }
 
-            return false;
+            return hasEmojiRune;
         }
 
-        public static TextBlock MarkdownFormat(string input)
+        public static TextBlock FormTextblock(string input)
         {
             var textBlock = new TextBlock
             {
@@ -96,19 +123,17 @@ namespace Skymu
 
         private static void AddTextOrLink(List<Inline> inlines, string text)
         {
-            int pos = 0;
-
+            int position = 0;
             // match either Markdown link or plain URL
             string pattern = @"\[(.+?)\]\((https?://[^\s)]+)\)|((?:https?|ftp|gopher)://[^\s]+)";
             char[] punctuation = new char[] { '.', ',', ';', ')', ']', '"', '\'' };
             foreach (Match m in Regex.Matches(text, pattern))
             {
-                if (m.Index > pos)
-                    inlines.Add(new Run(text.Substring(pos, m.Index - pos)));
-
+                if (m.Index > position)
+                    ProcessTextWithEmoji(inlines, text.Substring(position, m.Index - position));
                 if (m.Groups[1].Success && m.Groups[2].Success)
                 {
-                    // remminder: markdown link: [text](url)
+                    // reminder: markdown link: [text](url)
                     string display = m.Groups[1].Value;
                     string url = m.Groups[2].Value.TrimEnd(punctuation);
                     if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
@@ -148,14 +173,70 @@ namespace Skymu
                         inlines.Add(new Run(url));
                     }
                 }
-
-                pos = m.Index + m.Length;
+                position = m.Index + m.Length;
             }
-
-            if (pos < text.Length)
-                inlines.Add(new Run(text.Substring(pos)));
+            if (position < text.Length)
+                ProcessTextWithEmoji(inlines, text.Substring(position));
         }
 
+        private static void ProcessTextWithEmoji(List<Inline> inlines, string text)
+        {
+            StringInfo info = new StringInfo(text);
+            int loopCount = info.LengthInTextElements;
+            Run currentRun = new Run();
 
+            for (int i = 0; i < loopCount; i++)
+            {
+                string element = info.SubstringByTextElements(i, 1);
+
+                if (IsEmojiTextElement(element))
+                {
+                    if (!string.IsNullOrEmpty(currentRun.Text))
+                    {
+                        inlines.Add(currentRun);
+                        currentRun = new Run();
+                    }
+
+                    // Build emoji key from runes
+                    string emojiKey = string.Join("-",
+                        element.EnumerateRunes()
+                               .Select(r => r.Value.ToString("X")));
+                    Debug.WriteLine(emojiKey);
+
+                    if (EmojiDictionary.Map.TryGetValue(emojiKey, out var emojiFilename))
+                    {
+                        var image = new Image
+                        {
+                            Source = new BitmapImage(
+                                new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiFilename}/views/default_20/index.png") // the 20px folder
+                            ),
+                            Width = 20,
+                            Height = 20,
+                            UseLayoutRounding = true,
+                            SnapsToDevicePixels = true
+                        };
+
+                        image.Source.Freeze();
+
+                        inlines.Add(new InlineUIContainer(image)
+                        {
+                            BaselineAlignment = BaselineAlignment.TextBottom
+                        });
+                    }
+                    else
+                    {
+                        // fallback: keep Unicode emoji
+                        currentRun.Text += element;
+                    }
+                }
+                else
+                {
+                    currentRun.Text += element;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(currentRun.Text))
+                inlines.Add(currentRun);
+        }
     }
 }
