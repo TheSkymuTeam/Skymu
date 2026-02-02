@@ -19,7 +19,7 @@ namespace Skymu
         {
             Load("message-sent", "Sounds/IM_SENT.WAV");
             Load("message-recieved", "Sounds/IM.WAV");
-            Load("call-error", "Sounds/CALL_ERROR.WAV");
+            Load("call-error", "Sounds/CALL_ERROR1.WAV");
             Load("login", "Sounds/LOGIN.WAV");
         }
 
