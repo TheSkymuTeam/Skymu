@@ -33,6 +33,7 @@ namespace Skymu
     public partial class MainWindow : Window
     {
         private static WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
+        private SkymuApi api;
 
         public static MainWindow Instance;
         private System.Timers.Timer _pingTimer;
@@ -47,6 +48,7 @@ namespace Skymu
             this.MinWidth = 800;
 
             UI.themeSetterMain();
+            api = new SkymuApi();
 
             SetClickable(close, minimize, maximize, split, tbli);
 
@@ -95,7 +97,6 @@ namespace Skymu
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;
             this.Closed += MainWindow_Closed;
-           
             SetWindow(WindowType.Home);
         }
 
@@ -541,17 +542,18 @@ typeof(MainWindow));
         }
         private async Task SkymuApiStatusHandler()
         {
-            string SkymuClientToken = await SkymuApi.GenerateUID();
-            await SkymuApi.SetStatus(CanSetStatus(), SkymuClientToken);
-            _pingTimer = new System.Timers.Timer(29.5 * 60 * 1000);
-            _pingTimer.Elapsed += async (sender, e) => await SkymuApi.StatusPing(SkymuClientToken);
-            _pingTimer.AutoReset = true;
-            _pingTimer.Enabled = true;
+            await api.GenerateUID();
+            await api.SetUsrStatus(CanSetStatus());
+            await api.ConnectWS();
 
-            _usersOnlineTimer = new System.Timers.Timer(2 * 60 * 1000);
-            _usersOnlineTimer.Elapsed += async (sender, e) => await CheckSetUsersOnline();
-            _usersOnlineTimer.AutoReset = true;
-            _usersOnlineTimer.Enabled = true;
+            _ = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(60000);
+                    await api.SendPingToServ();
+                }
+            });
         }
 
         private bool CanSetStatus()
@@ -567,37 +569,33 @@ typeof(MainWindow));
             }
         }
 
-        private async Task CheckSetUsersOnline()
-        {
-            int count = await SkymuApi.FetchUserCount();
-
-            await Dispatcher.InvokeAsync(() =>
-            {
-                if (count == -1)
-                {
-                    GlobalUserCount.Text = "Couldn't get online user count";
-                    return;
-                }
-
-                string label = count == 1 ? "user" : "users";
-                GlobalUserCount.Text = count + " " + label + " online";
-            });
-        }
         private async Task InitSidebar()
         {
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
+
             SidebarData data = Universal.Plugin.SidebarInformation;
             GlobalUserCount.Text = "Loading online user count...";
-            SkymuApiStatusHandler();
-            CheckSetUsersOnline();
+            await SkymuApiStatusHandler();
+            api.OnUserCountUpdate += usrCount =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    GlobalUserCount.Text = $"{usrCount} online users";
+                });
+            };
+
             WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.DisplayName;
+
             Identifier = data.Identifier;
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = data.ConnectionStatus;
+
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+
             SpeedTester();
+
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
