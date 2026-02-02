@@ -60,7 +60,7 @@ namespace Skymu
                 else if (m.Groups[9].Success) // quote
                     inlines.Add(new Run("“" + m.Groups[9].Value.Trim() + "”")
                     {
-                       // FontStyle = FontStyles.Italic,
+                        FontStyle = FontStyles.Italic,
                         Foreground = Brushes.DimGray
                     });
                 else if (m.Groups[10].Success) // header
@@ -70,7 +70,7 @@ namespace Skymu
                     {
                         case 1: run.FontSize = 24; break;
                         case 2: run.FontSize = 20; break;
-                        case 3: run.FontSize = 18; break;
+                        case 3: run.FontSize = 16; break;
                         default: run.FontSize = 16; break;
                     }
                     inlines.Add(run);
