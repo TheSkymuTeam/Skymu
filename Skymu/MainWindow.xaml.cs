@@ -9,14 +9,14 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
-#pragma warning disable 4014
-
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,80 +36,31 @@ namespace Skymu
         private SkymuApi api;
 
         public static MainWindow Instance;
-        private System.Timers.Timer _pingTimer;
-        private System.Timers.Timer _usersOnlineTimer;
         private bool deactivatedWindow;
         public event EventHandler Ready;
+
         public MainWindow()
         {
-            InitializeComponent();
-            Instance = this;
-            this.MinHeight = 450;
-            this.MinWidth = 800;
-
-            UI.themeSetterMain();
             api = new SkymuApi();
 
-            SetClickable(close, minimize, maximize, split, tbli);
+            InitializeComponent();
+            Instance = this;
 
-            if (border != WindowFrame.Native)
-            {
-                this.WindowStyle = WindowStyle.None;
-                var chrome = new WindowChrome
-                {
-                    GlassFrameThickness = new Thickness(8, 30, 8, 8),
-                    ResizeBorderThickness = new Thickness(8)
-                };
+            // Legacy code, should be removed!
+            UI.themeSetterMain();
 
-                WindowChrome.SetWindowChrome(this, chrome);
-                if (DwmHelper.IsDwmEnabled() && border == WindowFrame.SkypeAero)
-                {
-                    this.Background = Brushes.Transparent;
-                    TitleBar.Background = Brushes.Transparent;
-                    WindowArea.Margin = new Thickness(8, 30, 8, 8);
-                    TitleMain.FontFamily = new FontFamily("Segoe UI");
-                    TitleMain.FontWeight = FontWeights.Normal;
-                    TitleMain.Foreground = Brushes.Black;
-                    TitleMain.Margin = new Thickness(50, 7, 0, 0);
-                    TextOptions.SetTextRenderingMode(TitleMain, TextRenderingMode.ClearType);
-                    TitleMain.Effect = new DropShadowEffect
-                    {
-                        ShadowDepth = 0,
-                        Direction = 330,
-                        Color = Colors.White,
-                        Opacity = 1,
-                        BlurRadius = 20
-                    };
-                    TitleMain.FontSize = 12;
-                    TitleShadow.Visibility = Visibility.Visible;
-                    TitleShadow2.Visibility = Visibility.Visible;
-                    TitleShadow3.Visibility = Visibility.Visible;
-                }
-            }
-
-            else if (border == WindowFrame.Native)
-            {
-                this.WindowStyle = WindowStyle.SingleBorderWindow;
-                TitleBar.Visibility = Visibility.Collapsed;
-                WindowArea.Margin = new Thickness(0, 0, 0, 0);
-            }
+            InitializeWindow();
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;
-            this.Closed += MainWindow_Closed;
             SetWindow(WindowType.Home);
         }
 
-        public async Task InitializeAsync()
-        {
-            await InitSidebar();
-        }
-
         public static readonly DependencyProperty WindowTitleProperty =
-DependencyProperty.Register(
-"WindowTitle",
-typeof(string),
-typeof(MainWindow));
+            DependencyProperty.Register(
+            "WindowTitle",
+            typeof(string),
+            typeof(MainWindow));
 
         public string WindowTitle
         {
@@ -124,40 +75,110 @@ typeof(MainWindow));
             SkypeBasic
         };
 
-        private void SetClickable(params Image[] buttons)
+        public void InitializeWindow()
         {
-            foreach (Image button in buttons)
+            this.MinHeight = 450;
+            this.MinWidth = 800;
+
+            SetClickable(close, minimize, maximize, split, tbli);
+
+            if (border != WindowFrame.Native)
             {
-                WindowChrome.SetIsHitTestVisibleInChrome(button, true);
+                this.WindowStyle = WindowStyle.None;
+
+                // Setup WindowChrome
+                var chrome = new WindowChrome
+                {
+                    GlassFrameThickness = new Thickness(8, 30, 8, 8),
+                    ResizeBorderThickness = new Thickness(8)
+                };
+                WindowChrome.SetWindowChrome(this, chrome);
+
+                // This checks if composition is enabled and if the frame is the custom frame used by Skype.
+                if (DwmHelper.IsDwmEnabled() && border == WindowFrame.SkypeAero)
+                {
+                    // Setup the window background and margin
+                    this.Background = Brushes.Transparent;
+                    TitleBar.Background = Brushes.Transparent;
+                    WindowArea.Margin = new Thickness(8, 30, 8, 8);
+
+                    // Titlebar font styling
+                    TitleMain.FontFamily = new FontFamily("Segoe UI");
+                    TitleMain.FontWeight = FontWeights.Normal;
+                    TitleMain.FontSize = 12;
+                    TitleMain.Foreground = Brushes.Black;
+                    TitleMain.Margin = new Thickness(50, 7, 0, 0);
+                    TextOptions.SetTextRenderingMode(TitleMain, TextRenderingMode.ClearType);
+
+                    // Titlebar drop shadow (Imitates the Windows 7 glow effect)
+                    TitleMain.Effect = new DropShadowEffect
+                    {
+                        ShadowDepth = 0,
+                        Direction = 330,
+                        Color = Colors.White,
+                        Opacity = 1,
+                        BlurRadius = 20
+                    };
+
+                    // Finds all of the title shadow elements and makes them visible
+                    foreach (var shadow in LogicalTreeHelper.GetChildren(this)
+                                 .OfType<FrameworkElement>()
+                                 .Where(e => e.Name.StartsWith("TitleShadow")))
+                    {
+                        shadow.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+            else if (border == WindowFrame.Native)
+            {
+                WindowStyle = WindowStyle.SingleBorderWindow;
+                TitleBar.Visibility = Visibility.Collapsed;
+                WindowArea.Margin = new Thickness(); // 0, 0, 0, 0
             }
         }
 
-        private readonly DropShadowEffect glowEffectCyan = new DropShadowEffect
+        public async Task InitializeData()
         {
-            Color = Colors.Cyan,
+            // Initializes the sidebar data used by Skymu and it's respective plugins
+            await InitSidebar();
+        }
+
+        private static DropShadowEffect CreateDropShadow(Color color) => new()
+        {
+            Color = color,
             BlurRadius = 16,
             ShadowDepth = 0,
             Opacity = 0.8
         };
 
-        private readonly DropShadowEffect glowEffectRed = new DropShadowEffect
+        private static void SetClickable(params Image[] buttons)
         {
-            Color = Colors.Red,
-            BlurRadius = 16,
-            ShadowDepth = 0,
-            Opacity = 0.8
-        };
+            foreach (var b in buttons)
+                WindowChrome.SetIsHitTestVisibleInChrome(b, true);
+        }
 
-        private void WindowActivationToggle(byte span, byte bigmarge, byte smallmarge, byte position, byte positionClose)
+        private void WindowActivationToggle(byte span, byte activeMargin, byte inactiveMargin, byte position, byte closePosition)
         {
-            UI.ImageCropper(new Image[] { close }, close.Name, 42, 18, positionClose, UI.CropType.VerticalStack);
-            UI.ImageCropper(new Image[] { split }, split.Name, 26, span, position, UI.CropType.VerticalStack);
-            UI.ImageCropper(new Image[] { minimize }, minimize.Name, 24, span, position, UI.CropType.VerticalStack);
-            UI.ImageCropper(new Image[] { maximize }, maximize.Name, 24, span, position, UI.CropType.VerticalStack);
-            minimize.Margin = new Thickness(minimize.Margin.Left, bigmarge, minimize.Margin.Right, minimize.Margin.Bottom);
-            maximize.Margin = new Thickness(maximize.Margin.Left, bigmarge, maximize.Margin.Right, maximize.Margin.Bottom);
-            split.Margin = new Thickness(split.Margin.Left, bigmarge, split.Margin.Right, split.Margin.Bottom);
-            close.Margin = new Thickness(close.Margin.Left, smallmarge, close.Margin.Right, close.Margin.Bottom);
+            // Legacy code, should be removed!
+            UI.ImageCropper(new[] { close }, close.Name, 42, 18, closePosition, UI.CropType.VerticalStack);
+            UI.ImageCropper(new[] { split }, split.Name, 26, span, position, UI.CropType.VerticalStack);
+            UI.ImageCropper(new[] { minimize }, minimize.Name, 24, span, position, UI.CropType.VerticalStack);
+            UI.ImageCropper(new[] { maximize }, maximize.Name, 24, span, position, UI.CropType.VerticalStack);
+
+            SetTopMargin(minimize, activeMargin);
+            SetTopMargin(maximize, activeMargin);
+            SetTopMargin(split, activeMargin);
+            SetTopMargin(close, inactiveMargin);
+        }
+
+        private void SetTopMargin(FrameworkElement element, double topMargin)
+        {
+            element.Margin = new Thickness(
+                element.Margin.Left,
+                topMargin,
+                element.Margin.Right,
+                element.Margin.Bottom
+            );
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
@@ -178,22 +199,23 @@ typeof(MainWindow));
             deactivatedWindow = false;
         }
 
+        private static BitmapImage LoadAvatar()
+        {
+            const string AvatarPath = "pack://application:,,,/Resources/Light/Profile Pictures/profile_anonymous.png";
+
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(AvatarPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+
+            return bitmap;
+        }
+
         internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
 
         internal static string Identifier = String.Empty;
-
-        static BitmapImage LoadAvatar()
-        {
-            var bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.UriSource = new Uri(
-                "pack://application:,,,/Resources/Light/Profile Pictures/profile_anonymous.png",
-                UriKind.Absolute);
-            bmp.CacheOption = BitmapCacheOption.OnLoad;
-            bmp.EndInit();
-            bmp.Freeze();
-            return bmp;
-        }
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -236,14 +258,14 @@ typeof(MainWindow));
 
             if (img is not null)
             {
-                img.Effect = glowEffectCyan;
+                img.Effect = CreateDropShadow(Colors.Cyan);
                 switch (img.Name)
                 {
-                    case "close": img.Effect = glowEffectRed; width = 42; height--; span++; break;
+                    case "close": img.Effect = CreateDropShadow(Colors.Red); width = 42; height--; span++; break;
                     case "split": width = 26; break;
                     case "minimize": width = 24; break;
                     case "maximize": width = 24; break;
-                    case "titleBarLongIcon": img.Effect = glowEffectCyan; break;
+                    case "titleBarLongIcon": img.Effect = CreateDropShadow(Colors.Cyan); break;
                 }
                 UI.ImageCropper(new Image[] { img }, img.Name, width, span, height, UI.CropType.VerticalStack);
             }
@@ -281,21 +303,28 @@ typeof(MainWindow));
 
         private void TitleButton_Pressed(object sender, RoutedEventArgs e)
         {
-            var img = sender as Image;
+            if (sender is not Image img) return;
+
             int width = 0;
             int height = 55;
             int span = 17;
-            if (img is not null)
+
+            switch (img.Name)
             {
-                switch (img.Name)
-                {
-                    case "close": width = 42; height--; span++; break;
-                    case "split": width = 26; break;
-                    case "minimize": width = 24; break;
-                    case "maximize": width = 24; break;
-                }
-                UI.ImageCropper(new Image[] { img }, img.Name, width, span, height, UI.CropType.VerticalStack);
+                case "close":
+                    width = 42;
+                    height--;
+                    break;
+                case "split":
+                    width = 26;
+                    break;
+                case "minimize":
+                case "maximize":
+                    width = 24;
+                    break;
             }
+
+            UI.ImageCropper(new Image[] { img }, img.Name, width, span, height, UI.CropType.VerticalStack);
         }
 
         private void TitleButton_Click(object sender, RoutedEventArgs e)
@@ -314,7 +343,8 @@ typeof(MainWindow));
             }
         }
 
-        private void tbli_Click(object sender, RoutedEventArgs e) {
+        private void tbli_Click(object sender, RoutedEventArgs e)
+        {
             Process.Start(new ProcessStartInfo
             {
                 FileName = "https://www.youtube.com/watch?v=kVsH_ySm5_E",
@@ -322,7 +352,7 @@ typeof(MainWindow));
             });
         }
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { Universal.Shutdown(ev); }
-        // For menu bars
+        // For the menu bar at the top of the Skymu window
         private void mn_New(object sender, RoutedEventArgs e) { }
         private void mn_Open(object sender, RoutedEventArgs e) { }
         private void mn_Close(object sender, RoutedEventArgs e) { Universal.Shutdown(); }
@@ -332,102 +362,92 @@ typeof(MainWindow));
         private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
         private void mn_Options(object sender, RoutedEventArgs e) { }
+        private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
 
         private ProfileData selectedContact;
 
-        private static T FindVisualChild<T>(DependencyObject parent)
-    where T : DependencyObject
+        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
-            if (parent is null)
+            if (parent == null)
                 return null;
 
-            int count = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < count; i++)
+            int childCount = VisualTreeHelper.GetChildrenCount(parent);
+
+            for (int i = 0; i < childCount; i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                var child = VisualTreeHelper.GetChild(parent, i);
 
-                if (child is T typedChild)
-                    return typedChild;
+                if (child is T matchedChild)
+                    return matchedChild;
 
-                T result = FindVisualChild<T>(child);
-                if (result is not null)
+                var result = FindVisualChild<T>(child);
+                if (result != null)
                     return result;
             }
 
             return null;
         }
+
         private bool _isLoadingConversation;
         private NotifyCollectionChangedEventHandler _activeConversationChangedHandler;
+
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Universal.Plugin.ActiveConversation.Clear();
             var listBox = (ListBox)sender;
             if (listBox.SelectedItem is null)
                 return;
 
+            Universal.Plugin.ActiveConversation.Clear();
             selectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
-
-            PlaceholderTextMTB = "Type a message to " + selectedContact.DisplayName + " here";
+            PlaceholderTextMTB = $"Type a message to {selectedContact.DisplayName} here";
             MessageTextBox.Text = PlaceholderTextMTB;
 
-            var container = (ListBoxItem)listBox.ItemContainerGenerator
-                .ContainerFromItem(selectedContact);
-
-            Image sourceImage = FindVisualChild<Image>(container);
             _isLoadingConversation = true;
+
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
             {
-                var collection = Universal.Plugin.ActiveConversation;
+                var conversation = Universal.Plugin.ActiveConversation;
 
-                for (int i = 0; i < collection.Count; i++)
+                for (int i = 0; i < conversation.Count; i++)
                 {
-                    if (collection[i] is MessageItem msg)
+                    if (conversation[i] is MessageItem message)
                     {
-                        string prevID = null;
                         for (int j = i - 1; j >= 0; j--)
                         {
-                            if (collection[j] is MessageItem prevMsg)
+                            if (conversation[j] is MessageItem previousMessage)
                             {
-                                prevID = prevMsg.SentByID;
+                                message.PreviousMessageIdentifier = previousMessage.SentByID;
                                 break;
                             }
                         }
-                        msg.PreviousMessageIdentifier = prevID;
                     }
                 }
 
                 if (_activeConversationChangedHandler != null)
-                    collection.CollectionChanged -= _activeConversationChangedHandler;
+                    conversation.CollectionChanged -= _activeConversationChangedHandler;
 
-                _activeConversationChangedHandler = new NotifyCollectionChangedEventHandler((s, args) =>
+                _activeConversationChangedHandler = (s, args) =>
                 {
-                    if (_isLoadingConversation)
+                    if (_isLoadingConversation || args.Action != NotifyCollectionChangedAction.Add)
                         return;
-                    if (args.Action == NotifyCollectionChangedAction.Add)
+
+                    foreach (var item in args.NewItems)
                     {
-                        foreach (var newItem in args.NewItems)
+                        if (item is MessageItem message && message.SentByID != MainWindow.Identifier)
                         {
-                            if (newItem is MessageItem msg)
-                            {
-                                if (msg.SentByID != MainWindow.Identifier)
-                                {
-                                    Sounds.Play("message-recieved");
-                                    break;
-                                }
-                            }
+                            Sounds.Play("message-recieved");
+                            break;
                         }
                     }
-                });
+                };
 
-                collection.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = collection;
+                conversation.CollectionChanged += _activeConversationChangedHandler;
+                ConversationItemsList.ItemsSource = conversation;
                 _isLoadingConversation = false;
             }
         }
-
-
 
         private void Chat_Close(object sender, MouseButtonEventArgs e)
         {
@@ -441,49 +461,64 @@ typeof(MainWindow));
         }
 
         private WindowType currentWindow = WindowType.Chat;
+
         private void SetWindow(WindowType type)
         {
-            if (type == WindowType.Home && currentWindow != WindowType.Home)
+            if (type == currentWindow)
+                return;
+
+            currentWindow = type;
+
+            switch (type)
             {
-                ToggleStBSelection(true);
-                HomeTopbar.Visibility = Visibility.Visible;
-                ChatTopbar.Visibility = Visibility.Collapsed;
-                ChatProfileArea.Visibility = Visibility.Collapsed;
-                TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                MessageWindowRow.Height = new GridLength(0);
-                MessageWindow.Visibility = Visibility.Collapsed;
-                MainPageButton.SetState(ButtonVisualState.Pressed);
-                ContactsList.SelectedItem = null;
-                currentWindow = WindowType.Home;
-            }
-            else if (type == WindowType.Chat && currentWindow != WindowType.Chat)
-            {
-                ToggleStBSelection(false);
-                StatusBox.SetState(ButtonVisualState.Default);
-                HomeTopbar.Visibility = Visibility.Collapsed;
-                ChatTopbar.Visibility = Visibility.Visible;
-                ChatProfileArea.Visibility = Visibility.Visible;
-                TopbarWindowRow.Height = new GridLength(120);
-                MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                MessageWindow.Visibility = Visibility.Visible;
-                currentWindow = WindowType.Chat;
+                case WindowType.Home:
+                    SetHomeWindow();
+                    break;
+
+                case WindowType.Chat:
+                    SetChatWindow();
+                    break;
             }
         }
 
+        private void SetHomeWindow()
+        {
+            ToggleStBSelection(true);
+
+            HomeTopbar.Visibility = Visibility.Visible;
+            ChatTopbar.Visibility = Visibility.Collapsed;
+            ChatProfileArea.Visibility = Visibility.Collapsed;
+            MessageWindow.Visibility = Visibility.Collapsed;
+
+            TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+            MessageWindowRow.Height = new GridLength(0);
+
+            MainPageButton.SetState(ButtonVisualState.Pressed);
+            ContactsList.SelectedItem = null;
+        }
+
+        private void SetChatWindow()
+        {
+            ToggleStBSelection(false);
+            StatusBox.SetState(ButtonVisualState.Default);
+
+            HomeTopbar.Visibility = Visibility.Collapsed;
+            ChatTopbar.Visibility = Visibility.Visible;
+            ChatProfileArea.Visibility = Visibility.Visible;
+            MessageWindow.Visibility = Visibility.Visible;
+
+            TopbarWindowRow.Height = new GridLength(120);
+            MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+        }
+
+        private static readonly Brush DefaultTextBrush =
+            (Brush)new BrushConverter().ConvertFromString("#333333");
+
         private void ToggleStBSelection(bool selected)
         {
-            if (selected)
-            {
-                StatusBox.SetState(ButtonVisualState.Pressed);
-                StatusBox.TextColor = Brushes.White;
-                SBHomeButton.SetState(ButtonVisualState.Pressed);
-            }
-            else
-            {
-                StatusBox.SetState(ButtonVisualState.Default);
-                StatusBox.TextColor = (Brush)new BrushConverter().ConvertFromString("#333333");
-                SBHomeButton.SetState(ButtonVisualState.Default);
-            }
+            StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
+            StatusBox.TextColor = selected ? Brushes.White : DefaultTextBrush;
+            SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
         }
 
         private bool isDragging = false;
@@ -562,14 +597,7 @@ typeof(MainWindow));
         private bool CanSetStatus()
         {
             int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            if (index == 5 || index == 2 || index == 3 || index == 19) { return true; } else { return false; }
         }
 
         private async Task InitSidebar()
@@ -579,6 +607,7 @@ typeof(MainWindow));
 
             SidebarData data = Universal.Plugin.SidebarInformation;
             GlobalUserCount.Text = "Loading online user count...";
+
             await SkymuApiStatusHandler();
             api.OnUserCountUpdate += usrCount =>
             {
@@ -597,102 +626,65 @@ typeof(MainWindow));
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
-            SpeedTester();
+            await SpeedTester();
 
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
-        private void MainWindow_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_pingTimer is not null)
-                {
-                    _pingTimer.Stop();
-                    _pingTimer.Dispose();
-                    _pingTimer = null;
-                }
-
-                if (_usersOnlineTimer is not null)
-                {
-                    _usersOnlineTimer.Stop();
-                    _usersOnlineTimer.Dispose();
-                    _usersOnlineTimer = null;
-                }
-            }
-            catch { }
-        }
-
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
         {
-            SendMessage();
+            await SendMessage();
         }
 
         private async Task SendMessage()
-        {            
-            string body = MessageTextBox.Text;
+        {
+            string messageBody = MessageTextBox.Text;
             MessageTextBox.Clear();
-            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, body);
+
+            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
+
             if (didSend)
             {
                 Sounds.Play("message-sent");
             }
         }
 
-        public static string GetDisplayName(string identifier)
-        {
-            return "";
-        }
-
         private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
         {
-            SpeedTester();
+            await SpeedTester();
         }
 
         private async Task SpeedTester()
         {
-            string iconUri;
-            string testFile = "https://speed.cloudflare.com/__down?bytes=5242880";
+            const string TestFileUrl = "https://speed.cloudflare.com/__down?bytes=5242880";
+
+            string iconFileName;
             try
             {
-
-
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-
-                var data = await Universal.HttpClient.GetByteArrayAsync(testFile);
-
+                var stopwatch = Stopwatch.StartNew();
+                var data = await Universal.HttpClient.GetByteArrayAsync(TestFileUrl);
                 stopwatch.Stop();
 
-                double seconds = stopwatch.Elapsed.TotalSeconds;
-                double megabits = (data.Length * 8.0) / 1_000_000;
-                double speedMbps = megabits / seconds;
+                double speedMbps = (data.Length * 8.0) / 1_000_000 / stopwatch.Elapsed.TotalSeconds;
 
-                // Map speed to bars
-
-                if (speedMbps >= 50)
-                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_good.png";
-                else if (speedMbps >= 20)
-                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_best.png";
-                else if (speedMbps >= 10)
-                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_med.png";
-                else if (speedMbps >= 5)
-                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_med2.png";
-                else
-                    iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_bad.png";
-
+                iconFileName = speedMbps switch
+                {
+                    >= 50 => "btn_pill_small_network_good.png",
+                    >= 20 => "btn_pill_small_network_best.png",
+                    >= 10 => "btn_pill_small_network_med.png",
+                    >= 5 => "btn_pill_small_network_med2.png",
+                    _ => "btn_pill_small_network_bad.png"
+                };
             }
             catch
             {
-                iconUri = "pack://application:,,,/Skymu;component/Resources/Light/Chat/btn_pill_small_network_unavailable.png";
+                iconFileName = "btn_pill_small_network_unavailable.png";
             }
-            var uri = new Uri(
-     iconUri,
-     UriKind.Absolute);
 
+            var iconUri = $"pack://application:,,,/Skymu;component/Resources/Light/Chat/{iconFileName}";
             var bmp = new BitmapImage();
             bmp.BeginInit();
-            bmp.UriSource = uri;
+            bmp.UriSource = new Uri(iconUri, UriKind.Absolute);
             bmp.CacheOption = BitmapCacheOption.OnLoad;
             bmp.EndInit();
             bmp.Freeze();
@@ -703,7 +695,6 @@ typeof(MainWindow));
         private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
         {
             var listBox = (ListBox)sender;
-
             ScrollToBottom(listBox);
 
             if (listBox.Items is INotifyCollectionChanged notifyCollection)
@@ -712,102 +703,90 @@ typeof(MainWindow));
                 {
                     if (args.Action == NotifyCollectionChangedAction.Add)
                     {
-                        foreach (var newItem in args.NewItems)
+                        foreach (var item in args.NewItems)
                         {
-                            if (newItem is MessageItem msg)
+                            if (item is MessageItem message)
                             {
-                                int index = listBox.Items.IndexOf(msg);
-                                string prevID = null;
-                                for (int j = index - 1; j >= 0; j--)
+                                int currentIndex = listBox.Items.IndexOf(message);
+
+                                for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-                                    if (listBox.Items[j] is MessageItem prevMsg)
+                                    if (listBox.Items[i] is MessageItem previousMessage)
                                     {
-                                        prevID = prevMsg.SentByID;
+                                        message.PreviousMessageIdentifier = previousMessage.SentByID;
                                         break;
                                     }
                                 }
-                                msg.PreviousMessageIdentifier = prevID;
                             }
                         }
                     }
 
-                    Dispatcher.BeginInvoke(
-                        DispatcherPriority.Background,
+                    Dispatcher.BeginInvoke(DispatcherPriority.Background,
                         new Action(() => ScrollToBottom(listBox)));
                 };
             }
-            var sv = FindScrollViewer(listBox); // use the helper
-
-            if (false)
-            {
-                // LayoutUpdated fires whenever the ScrollViewer changes size/content
-                sv.LayoutUpdated += (s, args) =>
-                {
-                    if (sv.ExtentHeight > sv.ViewportHeight)
-                    {
-                        // Scrollbar needed → remove extra margin
-                        listBox.Margin = new Thickness(0, 0, 0, 0);
-                    }
-                    else
-                    {
-                        // No scrollbar → reserve 16px for overlay/reserved space
-                        listBox.Margin = new Thickness(0, 0, 16, 0);
-                    }
-                };
-            }
         }
-        public static ScrollViewer FindScrollViewer(DependencyObject d)
-        {
-            if (d == null) return null;
-            if (d is ScrollViewer sv) return sv;
 
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++)
-            {
-                var child = VisualTreeHelper.GetChild(d, i);
-                var result = FindScrollViewer(child);
-                if (result != null) return result;
-            }
-            return null;
-        }
         private void ScrollToBottom(ListBox listBox)
         {
-            if (listBox.Items.Count > 0)
+            if (listBox?.Items.Count > 0)
             {
-                listBox.ScrollIntoView(
-                    listBox.Items[listBox.Items.Count - 1]);
+                var scrollViewer = FindScrollViewer(listBox);
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ScrollToEnd();
+                }
+                else
+                {
+                    listBox.ScrollIntoView(listBox.Items[^1]);
+                }
             }
         }
 
-        private static readonly Brush PlaceholderBrush = new SolidColorBrush(Color.FromRgb(0x99, 0x99, 0x99));
-        private bool _isPlaceholderActiveSB = true;
-        private bool _isPlaceholderActiveMTB = true;
-        private string PlaceholderTextSB = "Search";
-        private string PlaceholderTextMTB = String.Empty;
+        private static ScrollViewer FindScrollViewer(DependencyObject element)
+        {
+            if (element == null)
+                return null;
 
-        private void ApplyPlaceholder(
-    TextBox textBox,
-    ref bool isPlaceholderActive,
-    string placeholderText)
+            if (element is ScrollViewer scrollViewer)
+                return scrollViewer;
+
+            int childCount = VisualTreeHelper.GetChildrenCount(element);
+            for (int i = 0; i < childCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(element, i);
+                var result = FindScrollViewer(child);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+        private string PlaceholderTextMTB = String.Empty;
+        private bool isPlaceholderActive;
+
+        private void ApplyPlaceholder(TextBox textBox, string placeholderText)
         {
             if (!string.IsNullOrEmpty(textBox.Text))
                 return;
 
             textBox.Text = placeholderText;
             textBox.Foreground = PlaceholderBrush;
-            isPlaceholderActive = true;
-            SendMsgButton.IsEnabled = !isPlaceholderActive;
+            UpdateSendButtonState();
         }
 
-        private void RemovePlaceholder(
-            TextBox textBox,
-            ref bool isPlaceholderActive)
+        private void RemovePlaceholder(TextBox textBox)
         {
-            if (!isPlaceholderActive)
-                return;
-
             textBox.Text = string.Empty;
             textBox.Foreground = Brushes.Black;
             isPlaceholderActive = false;
+            UpdateSendButtonState();
+        }
+
+        private void UpdateSendButtonState()
+        {
             SendMsgButton.IsEnabled = !isPlaceholderActive;
         }
 
@@ -815,51 +794,42 @@ typeof(MainWindow));
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
 
-            RemovePlaceholder(SearchBox, ref _isPlaceholderActiveSB);
+            RemovePlaceholder(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
 
-            ApplyPlaceholder(SearchBox, ref _isPlaceholderActiveSB, PlaceholderTextSB);
+            ApplyPlaceholder(SearchBox, "Search");
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            RemovePlaceholder(MessageTextBox, ref _isPlaceholderActiveMTB);
+            RemovePlaceholder(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ApplyPlaceholder(MessageTextBox, ref _isPlaceholderActiveMTB, PlaceholderTextMTB);
+            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
         }
-
 
         private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Keyboard.ClearFocus();
         }
 
-        private void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private async void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                // Shift+Enter → allow newline
-                if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
-                    return;
+            if (e.Key != Key.Enter)
+                return;
 
-                // Enter alone → treat as "send"
-                e.Handled = true;
+            // Shift+Enter for newline
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                return;
 
-                SendMessage();
-            }
-        }
-        internal static string LastMessageIdentifier;
-
-        private void mn_About(object sender, RoutedEventArgs e)
-        {
-            new About().Show();
+            e.Handled = true;
+            await SendMessage();
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
@@ -884,55 +854,49 @@ typeof(MainWindow));
         }
     }
 
+    // Converters used in the MainWindow XAML
     public class ByteArrayToImageSourceConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType,
-                              object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            byte[] bytes = value as byte[];
-
-            if (bytes is null || bytes.Length == 0)
+            if (value is not byte[] bytes || bytes.Length == 0)
                 return MainWindow.AnonymousAvatar;
 
-            BitmapImage bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.CacheOption = BitmapCacheOption.OnLoad;
-            bmp.StreamSource = new MemoryStream(bytes);
-            bmp.EndInit();
-
+            var bmp = new BitmapImage();
+            using (var stream = new MemoryStream(bytes))
+            {
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.StreamSource = stream;
+                bmp.EndInit();
+            }
             bmp.Freeze();
 
             return bmp;
         }
 
-        public object ConvertBack(object value, Type targetType,
-                                  object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Binding.DoNothing;
         }
     }
 
-
-
     public class IdentifierToColorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType,
-                              object parameter, CultureInfo culture)
-        {
-            string identifier = value as string;
-            if (identifier == MainWindow.Identifier)
-            {
-                return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
-            }
+        private static readonly SolidColorBrush ActiveBrush =
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
 
-            else
-            {
-                return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
-            }
+        private static readonly SolidColorBrush InactiveBrush =
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value is string identifier && identifier == MainWindow.Identifier
+                ? ActiveBrush
+                : InactiveBrush;
         }
 
-        public object ConvertBack(object value, Type targetType,
-                                  object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Binding.DoNothing;
         }
@@ -940,25 +904,24 @@ typeof(MainWindow));
 
     public class StatusToTextConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType,
-                              object parameter, CultureInfo culture)
+        private static readonly Dictionary<int, string> StatusMap = new()
         {
-            int statInt = (Int32)value;
+            { 2, "Online" },
+            { 3, "Away" },
+            { 19, "Offline" },
+            { 5, "Do not disturb" },
+            { 21, "Group chat" }
+        };
 
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not int statInt)
+                return "Unknown";
 
-            switch (statInt)
-            {
-                case 2: return "Online";
-                case 3: return "Away";
-                case 19: return "Offline";
-                case 5: return "Do not disturb";
-                case 21: return "Group chat";
-                default: return "Unknown";
-            }
+            return StatusMap.TryGetValue(statInt, out var statusText) ? statusText : "Unknown";
         }
 
-        public object ConvertBack(object value, Type targetType,
-                                  object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Binding.DoNothing;
         }
@@ -967,12 +930,10 @@ typeof(MainWindow));
     public sealed class FormatFullTextConverter : IValueConverter
     {
         public Style TextBlockStyle { get; set; }
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not string text)
-                return null;
-
+                return DependencyProperty.UnsetValue;
             var tb = MessageTools.MarkdownFormat(text);
 
             if (TextBlockStyle != null)
@@ -985,38 +946,33 @@ typeof(MainWindow));
             => throw new NotSupportedException();
     }
 
-    public class ReplyIDToVisibilityConverter : IValueConverter
+    public class MsgIDToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType,
-                              object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is null) return Visibility.Collapsed;
-            return Visibility.Visible;
+            return value == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        public object ConvertBack(object value, Type targetType,
-                                  object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return Binding.DoNothing;
         }
     }
 
-    public class MessageIDToVisibilityConverter : IMultiValueConverter
+    public class MsgIDMultiToVisibilityConverter : IMultiValueConverter
     {
-        public object Convert(
-            object[] values,
-            Type targetType,
-            object parameter,
-            CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values[0] as string == values[1] as string) return Visibility.Hidden;
-            else return Visibility.Visible;
+            if (values.Length < 2) return Visibility.Collapsed;
+
+            return values[0] as string == values[1] as string
+                ? Visibility.Hidden
+                : Visibility.Visible;
         }
 
-        public object[] ConvertBack(object value,
-    Type[] targetTypes,
-    object parameter, CultureInfo culture) =>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
             throw new NotSupportedException();
+        }
     }
-
 }

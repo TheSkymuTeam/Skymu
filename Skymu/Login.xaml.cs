@@ -9,16 +9,16 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using Microsoft.Win32;
 using MiddleMan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows;
-using Microsoft.Win32;
-using System.Windows.Controls;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 
@@ -68,7 +68,7 @@ namespace Skymu
             }
         }
 
-        private async Task<string[]> ReadCredentials()
+        private string[] ReadCredentials()
         {
             string[] credentials;
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
@@ -106,7 +106,7 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    WriteCredentials();
+                    await WriteCredentials();
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
@@ -171,7 +171,7 @@ namespace Skymu
             }
         }
 
-        private async void Login_Loaded(object sender, EventArgs e)
+        private void Login_Loaded(object sender, EventArgs e)
         {
             MenuBar.MenuInit(this);
             MenuBar.MenuCreator("&" + Properties.Settings.Default.BrandingName, "Close");
@@ -250,7 +250,7 @@ namespace Skymu
         {
             if (useAutoLogin)
             {
-                string[] credentials = await ReadCredentials();
+                string[] credentials = ReadCredentials();
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin(credentials)
          );
@@ -275,7 +275,7 @@ namespace Skymu
             header.Text = "Loading user data";
             _mainWindow = new MainWindow();
             _mainWindow.Ready += MainWindow_Ready;
-            _ = _mainWindow.InitializeAsync();
+            _ = _mainWindow.InitializeData();
         }
 
         private void LoginToggleAnimation(bool anim)
