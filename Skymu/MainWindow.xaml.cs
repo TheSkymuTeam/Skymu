@@ -636,10 +636,6 @@ typeof(MainWindow));
             {
                 Sounds.Play("message-sent");
             }
-            else
-            {
-                Sounds.Play("error");
-            }
         }
 
         public static string GetDisplayName(string identifier)
@@ -867,7 +863,7 @@ typeof(MainWindow));
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            Sounds.Play("error");
+            Sounds.Play("call-error");
             Universal.ShowMsg("Hahahahaha... nice try. Get a damn Vonage.");
         }
 
