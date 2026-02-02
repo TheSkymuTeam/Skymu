@@ -29,9 +29,9 @@
         </Style>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
-        <local:ReplyIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
+        <local:MsgIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
-        <local:MessageIDToVisibilityConverter x:Key="IDToVisibilityConverter"/>
+        <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <local:FormatFullTextConverter x:Key="FormatFullTextConverter"
                                TextBlockStyle="{StaticResource MessageTextBlockStyle}" />
         <Style x:Key="WindowButtonStyle" TargetType="Image">
