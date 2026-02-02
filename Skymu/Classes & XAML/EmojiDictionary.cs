@@ -102,13 +102,12 @@ public static class EmojiDictionary
             { "1F484", "makeup" },
             
             // Animals
-            { "1F987", "bat" },
+            { "1F987", "batcry" },
             { "1F41B", "bug" },
             { "1F430", "bunny" },
             { "1F431", "cat" },
             { "1F436", "dog" },
             { "1F434", "donkey" },
-            { "1F98A", "fox" },
             { "1F47B", "ghost" },
             { "1F994", "hedgehog" },
             { "1F411", "lamb" },
@@ -167,7 +166,6 @@ public static class EmojiDictionary
             { "1F3AF", "target" },
             
             // Activities
-            { "1F3C0", "basketball" },
             { "1F3AE", "games" },
             { "1F3A7", "headphones" },
             { "1F3AC", "movie" },
@@ -179,7 +177,6 @@ public static class EmojiDictionary
             { "1F3C8", "americanfootball" },
             
             // Nature and weather
-            { "1F525", "fire" },
             { "1F386", "fireworks" },
             { "1F338", "flower" },
             { "1F3DD", "island" },

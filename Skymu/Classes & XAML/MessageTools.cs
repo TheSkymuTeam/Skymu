@@ -222,7 +222,7 @@ namespace Skymu
                             DefaultIndex = 0,
                             Slice = false, 
                             IsAnimation = true, 
-                            AnimationFps = 30.0, 
+                            AnimationFps = 45.0, 
                             UseLayoutRounding = true,
                             SnapsToDevicePixels = true
                         };
