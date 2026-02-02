@@ -584,7 +584,7 @@ typeof(MainWindow));
             {
                 Dispatcher.Invoke(() =>
                 {
-                    GlobalUserCount.Text = $"{usrCount} online users";
+                    GlobalUserCount.Text = $"{usrCount} people on Skymu";
                 });
             };
 
