@@ -38,10 +38,10 @@ namespace Skymu
 
 
                 if (
-                    (v >= 0x1F300 && v <= 0x1FAFF) || 
-                    (v >= 0x2600 && v <= 0x26FF) || 
+                    (v >= 0x1F300 && v <= 0x1FAFF) ||
+                    (v >= 0x2600 && v <= 0x26FF) ||
                     (v >= 0x2700 && v <= 0x27BF) ||
-                    (v >= 0x1F1E6 && v <= 0x1F1FF)  
+                    (v >= 0x1F1E6 && v <= 0x1F1FF)
                 )
                 {
                     hasEmojiRune = true;
@@ -205,20 +205,33 @@ namespace Skymu
 
                     if (EmojiDictionary.Map.TryGetValue(emojiKey, out var emojiFilename))
                     {
-                        var image = new Image
+                        var uri = new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiFilename}/views/default_20_anim/index.png", UriKind.Absolute);
+                        var sourceImg = new BitmapImage();
+                        sourceImg.BeginInit();
+                        sourceImg.UriSource = uri;
+                        sourceImg.CacheOption = BitmapCacheOption.OnLoad;
+                        sourceImg.EndInit();
+                        sourceImg.Freeze();
+                        var sliceControl = new SliceControl
                         {
-                            Source = new BitmapImage(
-                                new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiFilename}/views/default_20/index.png") // the 20px folder
-                            ),
+                            Source = sourceImg,
+                            IsHitTestVisible = false,
                             Width = 20,
                             Height = 20,
+                            ElementCount = (sourceImg.PixelHeight / 20), 
+                            StackDirection = SpriteStackDirection.Vertical,
+                            DefaultIndex = 0,
+                            Slice = false, 
+                            IsAnimation = true, 
+                            AnimationFps = 30.0, 
                             UseLayoutRounding = true,
                             SnapsToDevicePixels = true
                         };
 
-                        image.Source.Freeze();
+                        RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
+                        RenderOptions.SetEdgeMode(sliceControl, EdgeMode.Aliased);
 
-                        inlines.Add(new InlineUIContainer(image)
+                        inlines.Add(new InlineUIContainer(sliceControl)
                         {
                             BaselineAlignment = BaselineAlignment.TextBottom
                         });
