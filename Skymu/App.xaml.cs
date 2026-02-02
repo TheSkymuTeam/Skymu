@@ -84,6 +84,7 @@ namespace Skymu
 
         public static void NotImplemented(string feature)
         {
+            Sounds.Play("error");
             new Dialog(6, feature);
         }
 

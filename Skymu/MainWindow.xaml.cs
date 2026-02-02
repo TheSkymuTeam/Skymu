@@ -410,14 +410,15 @@ typeof(MainWindow));
                             {
                                 if (msg.SentByID != MainWindow.Identifier)
                                 {
-                                    Sounds.Play("message-recieved"); 
+                                    Sounds.Play("message-recieved");
+                                    break;
                                 }
                             }
                         }
                     }
                 });
-                collection.CollectionChanged += _activeConversationChangedHandler;
 
+                collection.CollectionChanged += _activeConversationChangedHandler;
                 ConversationItemsList.ItemsSource = collection;
             }
         }
@@ -862,6 +863,27 @@ typeof(MainWindow));
         private void mn_About(object sender, RoutedEventArgs e)
         {
             new About().Show();
+        }
+
+        private void CallPhones_Click(object sender, MouseButtonEventArgs e)
+        {
+            Sounds.Play("error");
+            Universal.ShowMsg("Hahahahaha... nice try. Get a damn Vonage.");
+        }
+
+        private void AddButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Adding contacts to conversations");
+        }
+
+        private void CallButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Voice calling");
+        }
+
+        private void VideoCallButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Video calling");
         }
     }
 

@@ -135,7 +135,7 @@ namespace Skymu
                     return 4;
 
                 case 5:
-                    Title = Properties.Settings.Default.BrandingName + " Exception Handling";
+                    Title = "Skymu Exception Handling";
                     header.Text = "Exception thrown in " + Properties.Settings.Default.BrandingName;
                     sub.Text =
                         content +
@@ -148,10 +148,10 @@ namespace Skymu
                     return 1;
 
                 case 6:
-                    Title = Properties.Settings.Default.BrandingName + " - Not Implemented";
+                    Title = "Warning";
                     header.Text = "Feature not implemented";
                     sub.Text =
-                        "Feature not yet implemented in " + Properties.Settings.Default.BrandingName + ":\n" + content;
+                        content + " hasn't been added to Skymu yet.";
                     buttonLeft.Visibility = Visibility.Hidden;
                     buttonLeft.Content = "";
                     buttonRight.Content = "OK";
