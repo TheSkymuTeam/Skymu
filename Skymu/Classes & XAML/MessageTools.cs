@@ -60,7 +60,7 @@ namespace Skymu
                 else if (m.Groups[9].Success) // quote
                     inlines.Add(new Run("“" + m.Groups[9].Value.Trim() + "”")
                     {
-                        FontStyle = FontStyles.Italic,
+                       // FontStyle = FontStyles.Italic,
                         Foreground = Brushes.DimGray
                     });
                 else if (m.Groups[10].Success) // header

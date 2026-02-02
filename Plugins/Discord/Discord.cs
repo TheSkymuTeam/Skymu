@@ -164,6 +164,10 @@ namespace Discord
                         ?? "Unknown";
                     string authorId = message["author"]["id"]?.GetValue<string>() ?? "0";
                     string content = message["content"]?.GetValue<string>() ?? "";
+                    if (message["attachments"] is JsonArray attachments && attachments.Count > 0) // image placeholder
+                    {
+                        content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
+                    }
                     string timestampStr = message["timestamp"]?.GetValue<string>();
 
                     DateTime timestamp = DateTime.UtcNow;
@@ -367,7 +371,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Unable to parse the following message: {ex.Message}"));
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Error while populating lists: {ex.Message}"));
                 return false;
             }
             return true;

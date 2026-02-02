@@ -57,15 +57,15 @@
   <ItemGroup>
     <Resource Include="Resources\Light\Chat\reply-arrow.png" />
     <Resource Include="Resources\Universal\Branding\skymu-about-logo.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\close.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\join.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\maximize.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\minimize.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\split.png" />
-    <Resource Include="Resources\Universal\Window Frame\Aero\unmaximize.png" />
+    <Resource Include="Resources\Universal\Window Frame\close.png" />
+    <Resource Include="Resources\Universal\Window Frame\join.png" />
+    <Resource Include="Resources\Universal\Window Frame\maximize.png" />
+    <Resource Include="Resources\Universal\Window Frame\minimize.png" />
+    <Resource Include="Resources\Universal\Window Frame\split.png" />
+    <Resource Include="Resources\Universal\Window Frame\unmaximize.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Universal\Window Frame\Aero\longIcon.png" />
+    <Resource Include="Resources\Universal\Window Frame\longIcon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Backgrounds\loginBackground.png" />
@@ -79,7 +79,7 @@
     <Resource Include="Resources\Light\Sidebar\ms_Recents.png" />
     <Resource Include="Resources\Light\Sidebar\ms_RecentsOrange.png" />
     <Resource Include="Resources\Light\Sidebar\ms_SearchBox.png" />
-    <Resource Include="Resources\Light\Sidebar\ms_SkypeStatus.png" />
+    <Resource Include="Resources\Universal\Icon Bitmap\skype-status.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Universal\Icon\skype-away.ico" />
@@ -89,9 +89,6 @@
     <Resource Include="Resources\Universal\Icon\skype-oncall.ico" />
     <Resource Include="Resources\Universal\Icon\skype-online.ico" />
     <Resource Include="Resources\Universal\Icon\skype-question.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Universal\Icon Bitmap\skype-status.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Universal\Icon\skype.ico" />
@@ -145,7 +142,7 @@
     <Resource Include="Resources\Light\Sidebar\ms_Status_DropArrow.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Sidebar\ms_Credit.png" />
+    <Resource Include="Resources\Universal\Sidebar\credit.png" />
     <Resource Include="Resources\Light\Sidebar\ms_Facebook.png" />
   </ItemGroup>
   <ItemGroup>
@@ -166,16 +163,16 @@
     <Resource Include="Resources\Light\Chat\blank-square-button.png" />
     <Resource Include="Resources\Light\Chat\canvas.png" />
     <Resource Include="Resources\Light\Chat\check-wifi-button.png" />
-    <Resource Include="Resources\Light\Chat\icon-facebook.png" />
-    <Resource Include="Resources\Light\Chat\icon-skype-feedback.png" />
-    <Resource Include="Resources\Light\Chat\msg-send-button.png" />
+    <Resource Include="Resources\Universal\Chat\icon-facebook.png" />
+    <Resource Include="Resources\Universal\Chat\icon-skype-feedback.png" />
+    <Resource Include="Resources\Universal\Chat\msg-send-button.png" />
     <Resource Include="Resources\Light\Chat\orange-right-button.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Profile Pictures\default.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Sidebar\ms_SkypeStatus_Small.png" />
+    <Resource Include="Resources\Universal\Icon Bitmap\skype-status-small.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Chat\btn_pill_small_network_bad.png" />
@@ -184,13 +181,13 @@
     <Resource Include="Resources\Light\Chat\btn_pill_small_network_med.png" />
     <Resource Include="Resources\Light\Chat\btn_pill_small_network_med2.png" />
     <Resource Include="Resources\Light\Chat\btn_pill_small_network_unavailable.png" />
-    <Resource Include="Resources\Light\Chat\icon-bag.png" />
-    <Resource Include="Resources\Light\Chat\icon-phone.png" />
-    <Resource Include="Resources\Light\Chat\icon-search.png" />
-    <Resource Include="Resources\Light\Chat\settings_skype.png" />
+    <Resource Include="Resources\Universal\Chat\icon-bag.png" />
+    <Resource Include="Resources\Universal\Chat\icon-phone.png" />
+    <Resource Include="Resources\Universal\Chat\icon-search.png" />
+    <Resource Include="Resources\Universal\Chat\settings_skype.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Chat\info_pressed.png" />
+    <Resource Include="Resources\Universal\Chat\info_pressed.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Sidebar\ms_ContactListBgSelected.png" />
@@ -208,16 +205,16 @@
     <Resource Include="Resources\Light\Sidebar\ms_HomeButton_Sprite.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Chat\btn_video_call.png" />
+    <Resource Include="Resources\Universal\Chat\btn_video_call.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Chat\btn_call_arrow.png" />
+    <Resource Include="Resources\Universal\Chat\btn_call_arrow.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Chat\msg-box-header.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Light\Chat\msg-send-button-full.png" />
+    <Resource Include="Resources\Universal\Chat\msg-send-button-full.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

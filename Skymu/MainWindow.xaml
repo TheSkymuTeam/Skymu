@@ -92,7 +92,7 @@
                 <!-- Status Icon -->
                 <local:SliceControl
 Grid.Column="1"
-Source="/Resources/Light/Sidebar/ms_SkypeStatus_Small.png"
+Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
 ElementCount="22"
 StackDirection="Horizontal"
 DefaultIndex="{Binding PresenceStatus}"
@@ -471,7 +471,7 @@ Width="14" Grid.Row="1"/>
                             <local:SliceControl
                                 Grid.Row="0"
                                 x:Name="StatusIcon"
-                                Source="/Resources/Light/Sidebar/ms_SkypeStatus.png"
+                                Source="/Resources/Universal/Icon Bitmap/skype-status.png"
                                 ElementCount="22"
                                 StackDirection="Horizontal"
                                 DefaultIndex="0"
@@ -518,7 +518,7 @@ Cursor="Hand"
                                 TextSize="11"
                                 TextColor="#333333"
                                 HorizontalAlignment="Stretch" />
-                            <Image Grid.Row="1" Source="Resources/Light/Sidebar/ms_Credit.png"
+                            <Image Grid.Row="1" Source="Resources/Universal/Sidebar/credit.png"
                                    Width="16"
                                    Height="16"
                                    HorizontalAlignment="Left"
@@ -773,7 +773,7 @@ TextWeight="Bold"
 TextSize="13"
 TextColor="#333333"
 HorizontalAlignment="Stretch" />
-                            <Image Grid.Column="0" Source="/Resources/Light/Chat/settings_skype.png"
+                            <Image Grid.Column="0" Source="/Resources/Universal/Chat/settings_skype.png"
        Width="16"
                                    IsHitTestVisible="False"
        Height="16"
@@ -819,7 +819,7 @@ TextWeight="Bold"
 TextSize="13"
 TextColor="#333333"
 HorizontalAlignment="Stretch" />
-                            <Image Grid.Column="2" Source="/Resources/Light/Chat/icon-skype-feedback.png"
+                            <Image Grid.Column="2" Source="/Resources/Universal/Chat/icon-skype-feedback.png"
        Width="16"
                                    IsHitTestVisible="False"
        Height="16"
@@ -861,7 +861,7 @@ Direction="270"
                                 <StackPanel HorizontalAlignment="Left" Margin="125,0,0,0" Grid.Row="1" Orientation="Horizontal">
                                     <local:SliceControl Grid.Row="1"
 x:Name="CPAStatusIcon"
-Source="/Resources/Light/Sidebar/ms_SkypeStatus_Small.png"
+Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
 ElementCount="22"
 StackDirection="Horizontal"
 DefaultIndex="{Binding PresenceStatus}"
@@ -897,15 +897,12 @@ CornerRadius="4,4,4,4">
             Margin="7,1,0,0">
 
                                     <local:SliceControl
-Source="/Resources/Light/Chat/btn_video_call.png"
+Source="/Resources/Universal/Chat/btn_video_call.png"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-
-
-
 Text="Video call"
 TextStartPositionX="25"
 TextFont="Arial"
@@ -916,7 +913,7 @@ TextColor="White"
 Width="98"/>
 
                                     <local:SliceControl
-        Source="/Resources/Light/Chat/btn_call_arrow.png"
+        Source="/Resources/Universal/Chat/btn_call_arrow.png"
         ElementCount="5"
         StackDirection="Vertical"
         DefaultIndex="0"
@@ -1032,7 +1029,7 @@ mc:Ignorable="d"
 
 
                                         <local:SliceControl
-Source="/Resources/Light/Chat/msg-send-button-full.png"
+Source="/Resources/Universal/Chat/msg-send-button-full.png"
 ElementCount="5"
                                             IsEnabled="False"
 StackDirection="Vertical"

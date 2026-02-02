@@ -297,7 +297,10 @@ namespace Discord.Classes
                 string authorId = GetString(messageData["author"], "id", "0");
                 string authorName = GetString(messageData["author"], "global_name", GetString(messageData["author"], "username", "Unknown"));
                 string content = GetString(messageData, "content");
-
+                if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0) // img placeholder
+                {
+                    content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
+                }
                 DateTime timestamp = DateTime.UtcNow;
                 string timestampStr = GetString(messageData, "timestamp");
                 if (!string.IsNullOrEmpty(timestampStr))
