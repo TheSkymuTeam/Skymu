@@ -120,13 +120,9 @@ namespace Skymu
                         BlurRadius = 20
                     };
 
-                    // Finds all of the title shadow elements and makes them visible
-                    foreach (var shadow in LogicalTreeHelper.GetChildren(this)
-                                 .OfType<FrameworkElement>()
-                                 .Where(e => e.Name.StartsWith("TitleShadow")))
-                    {
-                        shadow.Visibility = Visibility.Visible;
-                    }
+                    TitleShadow.Visibility = Visibility.Visible;
+                    TitleShadow2.Visibility = Visibility.Visible;
+                    TitleShadow3.Visibility = Visibility.Visible;
                 }
             }
             else if (border == WindowFrame.Native)
@@ -934,7 +930,7 @@ namespace Skymu
         {
             if (value is not string text)
                 return DependencyProperty.UnsetValue;
-            var tb = MessageTools.MarkdownFormat(text);
+            var tb = MessageTools.FormTextblock(text);
 
             if (TextBlockStyle != null)
                 tb.Style = TextBlockStyle;
