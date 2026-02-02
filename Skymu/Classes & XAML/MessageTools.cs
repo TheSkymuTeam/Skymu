@@ -197,7 +197,6 @@ namespace Skymu
                         currentRun = new Run();
                     }
 
-                    // Build emoji key from runes
                     string emojiKey = string.Join("-",
                         element.EnumerateRunes()
                                .Select(r => r.Value.ToString("X")));
@@ -238,7 +237,6 @@ namespace Skymu
                     }
                     else
                     {
-                        // fallback: keep Unicode emoji
                         currentRun.Text += element;
                     }
                 }
