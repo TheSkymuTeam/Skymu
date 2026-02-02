@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -50,15 +51,13 @@ namespace Matrix
 
         // Track the active room ID for real-time updates
         private string _activeRoomId;
+        private string[] credData;
 
         // Cache display names to avoid repeated API calls
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
 
         // Track recent rooms for message handling
         public readonly Dictionary<string, string> _recentRoomMap = new();
-
-        // File for storing credentials
-        private const string credFile = "matrix.smcred";
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
@@ -109,8 +108,7 @@ namespace Matrix
                 _userId = loginResponse.GetProperty("user_id").GetString();
 
                 // Save credentials
-                var credData = new { homeserver = _homeserver, access_token = _accessToken, user_id = _userId };
-                File.WriteAllText(credFile, JsonSerializer.Serialize(credData));
+                credData = new string[] { _homeserver, _accessToken, _userId };
 
                 return await StartClient();
             }
@@ -380,19 +378,18 @@ namespace Matrix
             }
         }
 
-        public async Task<LoginResult> TryAutoLogin()
+        public async Task<string[]> SaveAutoLoginCredential()
         {
-            if (!File.Exists(credFile))
-                return LoginResult.OptStepRequired;
+            return credData;
+        }
 
+        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        {
             try
             {
-                string credJson = File.ReadAllText(credFile);
-                var credData = JsonSerializer.Deserialize<JsonElement>(credJson);
-
-                _homeserver = credData.GetProperty("homeserver").GetString();
-                _accessToken = credData.GetProperty("access_token").GetString();
-                _userId = credData.GetProperty("user_id").GetString();
+                _homeserver = autoLoginCredentials[0];
+                _accessToken = autoLoginCredentials[1];
+                _userId = autoLoginCredentials[2];
 
                 if (string.IsNullOrWhiteSpace(_accessToken))
                 {

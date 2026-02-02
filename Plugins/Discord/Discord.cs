@@ -49,13 +49,12 @@ namespace Discord
         private SynchronizationContext _uiContext;
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public readonly Dictionary<string, string?> _recentChannelMap = new();
-        // This is the file Skymu uses to find the Discord token
-        private const string credFile = "discord.smcred";
+
+
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             DscToken = username;
-            File.WriteAllText(credFile, DscToken);
 
             return await StartClient();
         }
@@ -248,7 +247,7 @@ namespace Discord
 
                 if (!WebSocket.CanCheckData)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("WebSocket failed to initialize in time."));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("The WebSocket failed to initialize in time. This could be because of slow internet speeds, or Discord forcibly closing the connection."));
                     return false;
                 }
 
@@ -442,11 +441,14 @@ namespace Discord
             );
         }
 
-        public async Task<LoginResult> TryAutoLogin()
+        public async Task<string[]> SaveAutoLoginCredential()
         {
-            if (!File.Exists(credFile))
-                return LoginResult.OptStepRequired;           
-            DscToken = File.ReadAllText(credFile);          
+            return new string[] { DscToken };
+        }
+
+        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        {
+            DscToken = autoLoginCredentials[0];          
             if (string.IsNullOrWhiteSpace(DscToken))
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid or has expired. Please log in again."));
@@ -461,10 +463,9 @@ namespace Discord
             string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
             if (userCheckTkn.Contains("username"))
             {
-                File.WriteAllText("discord.smcred", DscToken);
                 if (_webSocket is null)
                 {
-                    _webSocket = new WebSocket();
+                    _webSocket = new WebSocket(DscToken);
                     SubscribeToWebSocketEvents();
                 }
 

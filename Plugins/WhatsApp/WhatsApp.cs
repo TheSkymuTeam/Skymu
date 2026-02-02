@@ -96,7 +96,12 @@ namespace WhatsApp
             return true;
         }
 
-        public async Task<LoginResult> TryAutoLogin()
+        public async Task<string[]> SaveAutoLoginCredential()
+        {
+            return new string[] { "my token here" };
+        }
+
+        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
         {
             return LoginResult.Failure;
         }
