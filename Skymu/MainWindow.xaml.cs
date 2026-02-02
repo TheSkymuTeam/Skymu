@@ -95,8 +95,7 @@ namespace Skymu
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += MainWindow_SizeChanged;
             this.Closed += MainWindow_Closed;
-
-            Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
+           
             SetWindow(WindowType.Home);
         }
 
@@ -357,6 +356,7 @@ typeof(MainWindow));
             return null;
         }
 
+        private NotifyCollectionChangedEventHandler _activeConversationChangedHandler;
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Universal.Plugin.ActiveConversation.Clear();
@@ -371,12 +371,9 @@ typeof(MainWindow));
             PlaceholderTextMTB = "Type a message to " + selectedContact.DisplayName + " here";
             MessageTextBox.Text = PlaceholderTextMTB;
 
-            // Get the ListBoxItem container
             var container = (ListBoxItem)listBox.ItemContainerGenerator
                 .ContainerFromItem(selectedContact);
 
-
-            // Find the Image inside the ListBoxItem
             Image sourceImage = FindVisualChild<Image>(container);
 
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
@@ -400,10 +397,31 @@ typeof(MainWindow));
                     }
                 }
 
+                if (_activeConversationChangedHandler != null)
+                    collection.CollectionChanged -= _activeConversationChangedHandler;
+
+                _activeConversationChangedHandler = new NotifyCollectionChangedEventHandler((s, args) =>
+                {
+                    if (args.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        foreach (var newItem in args.NewItems)
+                        {
+                            if (newItem is MessageItem msg)
+                            {
+                                if (msg.SentByID != MainWindow.Identifier)
+                                {
+                                    Sounds.Play("message-recieved"); 
+                                }
+                            }
+                        }
+                    }
+                });
+                collection.CollectionChanged += _activeConversationChangedHandler;
+
                 ConversationItemsList.ItemsSource = collection;
             }
-
         }
+
 
 
         private void Chat_Close(object sender, MouseButtonEventArgs e)
@@ -609,10 +627,18 @@ typeof(MainWindow));
         }
 
         private async Task SendMessage()
-        {
+        {            
             string body = MessageTextBox.Text;
             MessageTextBox.Clear();
             bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, body);
+            if (didSend)
+            {
+                Sounds.Play("message-sent");
+            }
+            else
+            {
+                Sounds.Play("error");
+            }
         }
 
         public static string GetDisplayName(string identifier)

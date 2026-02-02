@@ -44,6 +44,7 @@ namespace Skymu
             this.ContentRendered += Login_ContentRendered;
 
             UI.themeSetterLogin();
+            Sounds.Init();
             Tray.PushIcon("offline", Properties.Settings.Default.BrandingName + " (Not signed in)");
         }
 
@@ -94,6 +95,8 @@ namespace Skymu
         private void MainWindow_Ready(object sender, EventArgs e)
         {
             _mainWindow.Ready -= MainWindow_Ready;
+            Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
+            Sounds.Play("login");
             _mainWindow.Show();
             noCloseEvent = true;
             Close();
