@@ -95,7 +95,27 @@ namespace WhatsApp
             RecentsList.Add(new ProfileData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
             return true;
         }
-
+        public ClickableConfiguration[] ClickableConfigurations
+        {
+            get
+            {
+                return new ClickableConfiguration[]
+                {
+            new ClickableDelimitationConfiguration
+            {
+                DelimiterLeft  = '<',
+                DelimiterRight = '>',
+                ClickableItems = new[]
+                {
+                    new ClickableItemConfiguration(ClickableItemType.User, "@!"),
+                    new ClickableItemConfiguration(ClickableItemType.User, "@"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
+                }
+            }
+                };
+            }
+        }
         public async Task<string[]> SaveAutoLoginCredential()
         {
             return new string[] { "my token here" };

@@ -914,6 +914,7 @@
     <None Remove="Sounds\VC_BEEP_1.WAV" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Emoji.Wpf" Version="0.3.4" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />

@@ -293,12 +293,20 @@ namespace Discord.Classes
                 string channelId = GetString(messageData, "channel_id");
                 string messageId = GetString(messageData, "id");
                 string authorId = GetString(messageData["author"], "id", "0");
-                string authorName = GetString(messageData["author"], "global_name", GetString(messageData["author"], "username", "Unknown"));
+                string authorName = GetString(
+    messageData["author"]["member"], "nick",
+    GetString(
+        messageData["author"], "global_name",
+        GetString(messageData["author"], "username", "Unknown")
+    )
+);
                 string content = GetString(messageData, "content");
                 if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0) // img placeholder
                 {
                     content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
                 }
+                var mentions = messageData["mentions"] as JsonArray;
+                content = Discord.Core.MentionsReplaceIDWithUsername(mentions, content);
                 DateTime timestamp = DateTime.UtcNow;
                 string timestampStr = GetString(messageData, "timestamp");
                 if (!string.IsNullOrEmpty(timestampStr))
@@ -313,9 +321,13 @@ namespace Discord.Classes
                 if (referencedMessage is not null)
                 {
                     replyToId = GetString(referencedMessage["author"], "id");
-                    replyToName = GetString(referencedMessage["author"], "global_name",
-                                  GetString(referencedMessage["author"], "username", "Unknown"));
+                    replyToName = referencedMessage["member"]?["nick"]?.GetValue<string>()
+              ?? referencedMessage["author"]?["global_name"]?.GetValue<string>()
+              ?? referencedMessage["author"]?["username"]?.GetValue<string>()
+              ?? "Unknown";
                     replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? string.Empty;
+                    var refMentions = referencedMessage["mentions"] as JsonArray;
+                    replyMsgContent = Discord.Core.MentionsReplaceIDWithUsername(refMentions, replyMsgContent);
                 }
 
                 var args = new MessageReceivedEventArgs

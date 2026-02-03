@@ -4,6 +4,7 @@
         xmlns:local="clr-namespace:Skymu"
         xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
+        xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         WindowStyle="None"
         Background="#8cbeff"
         AllowsTransparency="False"
@@ -31,6 +32,7 @@
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <local:MsgIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
+        <local:StripNewlinesConverter x:Key="StripNewlinesConverter"/>
         <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <local:FormatFullTextConverter x:Key="FormatFullTextConverter"
                                TextBlockStyle="{StaticResource MessageTextBlockStyle}" />
@@ -143,19 +145,19 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Visibility="{Binding ReplyToID,
+                <VirtualizingStackPanel Visibility="{Binding ReplyToID,
                         Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
                     <Image Source="/Resources/Light/Chat/reply-arrow.png" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center" />
-                    <TextBlock TextWrapping="NoWrap"
+                    <TextBlock LineHeight="1" TextWrapping="NoWrap"
     TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
                         <TextBlock.Text>
                             <MultiBinding StringFormat='Replying to {0} - “{1}”'>
                                 <Binding Path="ReplyToDN" />
-                                <Binding Path="ReplyBody"/>
+                                <Binding Path="ReplyBody" Converter="{StaticResource StripNewlinesConverter}"/>
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                </StackPanel>
+                </VirtualizingStackPanel>
 
                 <TextBlock Grid.Row="1" Grid.Column="0"
                    HorizontalAlignment="Right"

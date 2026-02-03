@@ -48,7 +48,27 @@ namespace Matrix
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
         private readonly MatrixOOTBStuff _ootb = new MatrixOOTBStuff();
-
+        public ClickableConfiguration[] ClickableConfigurations
+        {
+            get
+            {
+                return new ClickableConfiguration[]
+                {
+            new ClickableDelimitationConfiguration
+            {
+                DelimiterLeft  = '<',
+                DelimiterRight = '>',
+                ClickableItems = new[]
+                {
+                    new ClickableItemConfiguration(ClickableItemType.User, "@!"),
+                    new ClickableItemConfiguration(ClickableItemType.User, "@"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
+                }
+            }
+                };
+            }
+        }
         // Track the active room ID for real-time updates
         private string _activeRoomId;
         private string[] credData;
