@@ -36,11 +36,17 @@
         <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <local:FormatFullTextConverter x:Key="FormatFullTextConverter"
                                TextBlockStyle="{StaticResource MessageTextBlockStyle}" />
-        <Style x:Key="WindowButtonStyle" TargetType="Image">
+        <Style x:Key="WindowButtonStyle" TargetType="local:SliceControl">
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Height" Value="18" />
             <Setter Property="Margin" Value="-1,0,0,0" />
+            <Setter Property="Slice" Value="false" />
+            <Setter Property="ElementCount" Value="4" />
+            <Setter Property="StackDirection" Value="Vertical" />
+            <Setter Property="DefaultIndex" Value="0"/>
+            <Setter Property="HoverIndex" Value="2"/>
+            <Setter Property="PressedIndex" Value="3"/>
         </Style>
         <Style x:Key="LongIconStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -240,16 +246,16 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="121" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
-                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="split" Margin="0" Width="26"
+                    <local:SliceControl  Source="/Resources/Universal/Window Frame/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24"
+                <local:SliceControl Source="/Resources/Universal/Window Frame/minimize.png"  Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24"
+                <local:SliceControl Source="/Resources/Universal/Window Frame/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                    <Image Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
+                    <local:SliceControl Source="/Resources/Universal/Window Frame/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
                 </StackPanel>

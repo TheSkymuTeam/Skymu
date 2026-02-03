@@ -80,7 +80,8 @@ namespace Skymu
             this.MinHeight = 450;
             this.MinWidth = 800;
 
-            SetClickable(close, minimize, maximize, split, tbli);
+            SetClickable(close, minimize, maximize, split);
+            WindowChrome.SetIsHitTestVisibleInChrome(tbli, true);
 
             if (border != WindowFrame.Native)
             {
@@ -147,51 +148,28 @@ namespace Skymu
             Opacity = 0.8
         };
 
-        private static void SetClickable(params Image[] buttons)
+        private static void SetClickable(params SliceControl[] buttons)
         {
             foreach (var b in buttons)
                 WindowChrome.SetIsHitTestVisibleInChrome(b, true);
         }
 
-        private void WindowActivationToggle(byte span, byte activeMargin, byte inactiveMargin, byte position, byte closePosition)
-        {
-            // Legacy code, should be removed!
-            UI.ImageCropper(new[] { close }, close.Name, 42, 18, closePosition, UI.CropType.VerticalStack);
-            UI.ImageCropper(new[] { split }, split.Name, 26, span, position, UI.CropType.VerticalStack);
-            UI.ImageCropper(new[] { minimize }, minimize.Name, 24, span, position, UI.CropType.VerticalStack);
-            UI.ImageCropper(new[] { maximize }, maximize.Name, 24, span, position, UI.CropType.VerticalStack);
-
-            SetTopMargin(minimize, activeMargin);
-            SetTopMargin(maximize, activeMargin);
-            SetTopMargin(split, activeMargin);
-            SetTopMargin(close, inactiveMargin);
-        }
-
-        private void SetTopMargin(FrameworkElement element, double topMargin)
-        {
-            element.Margin = new Thickness(
-                element.Margin.Left,
-                topMargin,
-                element.Margin.Right,
-                element.Margin.Bottom
-            );
-        }
-
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            close.Effect = null;
-            Image[] buttons = { close, minimize, maximize, split };
-            foreach (Image img in buttons)
+            foreach (SliceControl button in new[] { close, minimize, maximize, split })
             {
-                img.Effect = null;
+                button.DefaultIndex = 1;
+                button.Effect = null;
             }
-            WindowActivationToggle(17, 2, 1, 19, 18);
             deactivatedWindow = true;
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
-            WindowActivationToggle(18, 1, 0, 0, 0);
+            foreach (SliceControl button in new[] { close, minimize, maximize, split })
+            {
+                button.DefaultIndex = 0;
+            }
             deactivatedWindow = false;
         }
 
@@ -233,102 +211,53 @@ namespace Skymu
         }
 
 
-        private void TitleButton_MouseEnter(object sender, RoutedEventArgs e)
+        private void TitleButton_MouseEnter(object sender, MouseEventArgs e)
         {
-            var img = sender as Image;
-            int width = 0;
-            int height;
-            int span;
+            var button = sender as SliceControl;
 
-            if (deactivatedWindow)
+            if (button is not null)
             {
-                height = 38;
-                span = 16;
-            }
-
-            else
-            {
-                height = 37;
-                span = 17;
-            }
-
-            if (img is not null)
-            {
-                img.Effect = CreateDropShadow(Colors.Cyan);
-                switch (img.Name)
+                if (button.Name == "close")
                 {
-                    case "close": img.Effect = CreateDropShadow(Colors.Red); width = 42; height--; span++; break;
-                    case "split": width = 26; break;
-                    case "minimize": width = 24; break;
-                    case "maximize": width = 24; break;
-                    case "titleBarLongIcon": img.Effect = CreateDropShadow(Colors.Cyan); break;
+                    button.Effect = CreateDropShadow(Colors.Red);
                 }
-                UI.ImageCropper(new Image[] { img }, img.Name, width, span, height, UI.CropType.VerticalStack);
+                else
+                {
+                    button.Effect = CreateDropShadow(Colors.Cyan);
+                }
             }
         }
 
-        private void TitleButton_MouseLeave(object sender, RoutedEventArgs e)
+        private void TitleButton_MouseLeave(object sender, MouseEventArgs e)
         {
-            var img = sender as Image;
-            int width = 0;
-            int height = 0;
+            var button = sender as SliceControl;
+            
             if (!deactivatedWindow)
             {
-                if (img is not null)
+                if (button is not null)
                 {
-                    img.Effect = null;
-                    switch (img.Name)
-                    {
-                        case "close": width = 42; break;
-                        case "split": width = 26; break;
-                        case "minimize": width = 24; break;
-                        case "maximize": width = 24; break;
-                        case "titleBarLongIcon": img.Effect = null; break;
-                    }
-
-                    UI.ImageCropper(new Image[] { img }, img.Name, width, 18, height, UI.CropType.VerticalStack);
+                    button.Effect = null;
+                    
                 }
             }
             else if (deactivatedWindow)
             {
-                img.Effect = null;
-                WindowActivationToggle(17, 2, 1, 19, 18);
+                button.Effect = null;
             }
 
         }
 
-        private void TitleButton_Pressed(object sender, RoutedEventArgs e)
+        private void TitleButton_Pressed(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Image img) return;
-
-            int width = 0;
-            int height = 55;
-            int span = 17;
-
-            switch (img.Name)
-            {
-                case "close":
-                    width = 42;
-                    height--;
-                    break;
-                case "split":
-                    width = 26;
-                    break;
-                case "minimize":
-                case "maximize":
-                    width = 24;
-                    break;
-            }
-
-            UI.ImageCropper(new Image[] { img }, img.Name, width, span, height, UI.CropType.VerticalStack);
+            if (sender is not SliceControl button) return;
         }
 
-        private void TitleButton_Click(object sender, RoutedEventArgs e)
+        private void TitleButton_Click(object sender, MouseButtonEventArgs e)
         {
-            var img = sender as Image;
-            if (img is not null)
+            var button = sender as SliceControl;
+            if (button is not null)
             {
-                switch (img.Name)
+                switch (button.Name)
                 {
                     case "close": Close(); break;
                     case "split": Universal.NotImplemented("Split Window"); break;
@@ -339,7 +268,7 @@ namespace Skymu
             }
         }
 
-        private void tbli_Click(object sender, RoutedEventArgs e)
+        private void tbli_Click(object sender, MouseEventArgs e)
         {
             Process.Start(new ProcessStartInfo
             {
