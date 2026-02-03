@@ -65,11 +65,7 @@ namespace Skymu
 
             var imgPaths = new[]{
                 //Tuple.Create("File Name", "Subpath", "Use theme resource root", "XML x.Name", crop width, crop height, crop type)
-                Tuple.Create("close", "Window Frame", false, new[] { MainWindow.Instance.close }, 42, 18, CropType.VerticalStack),
-                Tuple.Create("maximize", "Window Frame", false, new[] { MainWindow.Instance.maximize }, 24, 18, CropType.VerticalStack),
-                Tuple.Create("minimize", "Window Frame", false, new[] { MainWindow.Instance.minimize }, 24, 18, CropType.VerticalStack),
-                Tuple.Create("longIcon", "Window Frame", false, new[] { MainWindow.Instance.tbli }, 36, 16, CropType.None),
-                Tuple.Create("split", "Window Frame", false, new[] { MainWindow.Instance.split }, 26, 18, CropType.VerticalStack),
+                Tuple.Create("longIcon", "Window Frame", false, new[] { MainWindow.Instance.tbli }, 36, 16, CropType.None)
                 };
 
 
