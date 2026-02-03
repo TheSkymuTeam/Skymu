@@ -46,9 +46,6 @@ namespace Skymu
             InitializeComponent();
             Instance = this;
 
-            // Legacy code, should be removed!
-            UI.themeSetterMain();
-
             InitializeWindow();
 
             this.MouseLeftButtonUp += MouseRelease;

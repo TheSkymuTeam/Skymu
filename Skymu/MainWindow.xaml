@@ -316,7 +316,7 @@ Width="14" Grid.Row="1"/>
                            Panel.ZIndex="2">
                        
                     </TextBlock>
-                    <Image Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
+                    <Image Source="/Resources/Universal/Window Frame/longIcon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
                        Margin="8,0,0,0" />
                 </Grid>
             </Grid>
