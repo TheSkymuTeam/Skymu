@@ -441,7 +441,7 @@ namespace Skymu
 
                 conversation.CollectionChanged += _activeConversationChangedHandler;
                 ConversationItemsList.ItemsSource = conversation;
-                _isLoadingConversation = false;
+                _isLoadingConversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
             }
         }
 

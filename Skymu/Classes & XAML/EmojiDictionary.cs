@@ -24,7 +24,7 @@ public static class EmojiDictionary
             { "1F622", "cry" },
             { "1F62D", "cry" },
             { "1F608", "devil" },
-            { "1F922", "disgust" },
+            { "1F922", "puke" },
             { "1F610", "dull" },
             { "1F614", "emo" },
             { "1F612", "envy" },

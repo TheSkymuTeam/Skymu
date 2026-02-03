@@ -303,7 +303,7 @@ namespace Discord.Classes
                 string content = GetString(messageData, "content");
                 if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0) // img placeholder
                 {
-                    content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
+                    content = string.IsNullOrEmpty(content) ? "[image]" : "[image] " + content;
                 }
                 var mentions = messageData["mentions"] as JsonArray;
                 content = Discord.Core.MentionsReplaceIDWithUsername(mentions, content);

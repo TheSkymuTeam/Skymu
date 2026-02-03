@@ -190,7 +190,7 @@ namespace Discord
                     content = MentionsReplaceIDWithUsername(mentions, content);
                     if (message["attachments"] is JsonArray attachments && attachments.Count > 0) // image placeholder
                     {
-                        content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
+                        content = string.IsNullOrEmpty(content) ? "[image]" : "[image] " + content;
                     }
                     string timestampStr = message["timestamp"]?.GetValue<string>();
 
