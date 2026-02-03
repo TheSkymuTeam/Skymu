@@ -1,6 +1,7 @@
 ﻿<Application x:Class="Skymu.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
              StartupUri="Login.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -18,7 +19,13 @@
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
                 <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
             </Style>
- 
+
+            <Style TargetType="emoji:TextBlock">
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
+            </Style>
+
 
             <Style TargetType="Menu">
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />

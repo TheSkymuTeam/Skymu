@@ -955,6 +955,21 @@ namespace Skymu
         }
     }
 
+    public class StripNewlinesConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return string.Empty;
+            string s = value.ToString();
+            return s.Replace("\r", " ").Replace("\n", " ");
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MsgIDMultiToVisibilityConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

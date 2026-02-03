@@ -18,7 +18,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +34,7 @@ namespace Discord
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
         public string TextUsername { get { return "Token"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[]{ AuthenticationMethod.Token }; } }
+        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Token }; } }
 
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
@@ -50,7 +52,27 @@ namespace Discord
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public readonly Dictionary<string, string?> _recentChannelMap = new();
 
-
+        public ClickableConfiguration[] ClickableConfigurations
+        {
+            get
+            {
+                return new ClickableConfiguration[]
+                {
+            new ClickableDelimitationConfiguration
+            {
+                DelimiterLeft  = '<',
+                DelimiterRight = '>',
+                ClickableItems = new[]
+                {
+                    new ClickableItemConfiguration(ClickableItemType.User, "@!"),
+                    new ClickableItemConfiguration(ClickableItemType.User, "@"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
+                    new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
+                }
+            }
+                };
+            }
+        }
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
@@ -158,11 +180,14 @@ namespace Discord
                 foreach (var message in sortedMessages)
                 {
                     string messageId = message["id"]?.GetValue<string>() ?? "0";
-                    string authorName = message["author"]["global_name"]?.GetValue<string>()
-                        ?? message["author"]["username"]?.GetValue<string>()
-                        ?? "Unknown";
+                    string authorName = message["member"]?["nick"]?.GetValue<string>()
+                       ?? message["author"]["global_name"]?.GetValue<string>()
+                       ?? message["author"]["username"]?.GetValue<string>()
+                       ?? "[unknown user]";
                     string authorId = message["author"]["id"]?.GetValue<string>() ?? "0";
                     string content = message["content"]?.GetValue<string>() ?? "";
+                    var mentions = message["mentions"] as JsonArray;
+                    content = MentionsReplaceIDWithUsername(mentions, content);
                     if (message["attachments"] is JsonArray attachments && attachments.Count > 0) // image placeholder
                     {
                         content = string.IsNullOrEmpty(content) ? "**[image]**" : "**[image]** " + content;
@@ -184,10 +209,13 @@ namespace Discord
                     if (referencedMessage is not null)
                     {
                         replyToId = referencedMessage["author"]?["id"]?.GetValue<string>();
-                        replyToName = referencedMessage["author"]?["global_name"]?.GetValue<string>()
-                            ?? referencedMessage["author"]?["username"]?.GetValue<string>()
-                            ?? "[unknown user]";
+                        replyToName = referencedMessage["member"]?["nick"]?.GetValue<string>()
+                       ?? referencedMessage["author"]["global_name"]?.GetValue<string>()
+                       ?? referencedMessage["author"]["username"]?.GetValue<string>()
+                       ?? "[unknown user]";
                         replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? "[unavailable]";
+                        var refMentions = referencedMessage["mentions"] as JsonArray;
+                        replyMsgContent = MentionsReplaceIDWithUsername(refMentions, replyMsgContent);
                     }
 
                     ActiveConversation.Add(new MessageItem(
@@ -211,6 +239,30 @@ namespace Discord
                 _activeChannelId = null;
                 return false;
             }
+        }
+
+        internal static string MentionsReplaceIDWithUsername(JsonArray mentions, string content)
+        {
+            if (mentions != null)
+            {
+                foreach (var mention in mentions)
+                {
+                    string id = mention["id"]?.GetValue<string>();
+                    if (id == null) continue;
+
+                    string displayName = mention["member"]?["nick"]?.GetValue<string>()
+                                         ?? mention["global_name"]?.GetValue<string>()
+                                         ?? mention["username"]?.GetValue<string>()
+                                         ?? "Unknown";
+
+                    content = Regex.Replace(
+                        content,
+                        $@"<@!?{Regex.Escape(id)}>",
+                        $"<@{displayName}>"
+                    );
+                }
+            }
+            return content;
         }
 
         public SidebarData SidebarInformation { get; private set; }
@@ -412,9 +464,9 @@ namespace Discord
                 }
             }
 
-        
-                _uiContext?.Post(_ => MoveToTop(), null);
-            
+
+            _uiContext?.Post(_ => MoveToTop(), null);
+
         }
 
         private async Task<ProfileData> CreateProfileDataAsync(pluginOOTBStuff ootb, string userId, string skymuId, string globalName, string username, string avatarHash, bool isGC = false, string manualStatus = null)
@@ -448,7 +500,7 @@ namespace Discord
 
         public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
         {
-            DscToken = autoLoginCredentials[0];          
+            DscToken = autoLoginCredentials[0];
             if (string.IsNullOrWhiteSpace(DscToken))
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid or has expired. Please log in again."));
@@ -490,7 +542,7 @@ namespace Discord
                     OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again."));
                 }
                 return LoginResult.Failure;
-            }          
+            }
         }
 
         // This is used for any custom stuff needed by the Discord plugin.

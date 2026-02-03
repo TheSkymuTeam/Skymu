@@ -165,6 +165,40 @@ namespace MiddleMan
         }
     }
 
+    public enum ClickableItemType
+    {
+        User,
+        Server,
+        ServerRole,
+        ServerChannel,
+        GroupChat
+    }
+
+
+    public abstract class ClickableConfiguration
+    {
+        
+        
+    }
+
+    public class ClickableDelimitationConfiguration : ClickableConfiguration
+    {
+        public char? DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'. 
+        public char? DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
+        public ClickableItemConfiguration[] ClickableItems { get; set; }
+    }
+
+    public class ClickableItemConfiguration : ClickableConfiguration
+    {
+        public string StartString { get; set; }
+        public ClickableItemType Type { get; set; } // items that are clickable within the clickability delimiter range
+        public ClickableItemConfiguration(ClickableItemType type, string startString)
+        {
+            StartString = startString;
+            Type = type;
+        }
+    }
+
     public enum DialogType
     {
         Error,
@@ -202,6 +236,7 @@ namespace MiddleMan
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
+        ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
