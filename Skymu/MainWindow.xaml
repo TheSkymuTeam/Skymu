@@ -687,7 +687,8 @@ Cursor="Hand"
                                        Foreground="#999999"
                                        HorizontalAlignment="Stretch"
                                        VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"/>
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="The amount of people on Skymu at the moment, no matter what platform they are currently on."/>
                         </Border>
 
                     </Grid>
