@@ -66,39 +66,16 @@ namespace Skymu
             var imgPaths = new[]{
                 //Tuple.Create("File Name", "Subpath", "Use theme resource root", "XML x.Name", crop width, crop height, crop type)
                 Tuple.Create("close", "Window Frame", false, new[] { MainWindow.Instance.close }, 42, 18, CropType.VerticalStack),
-                //Tuple.Create("join", "Window Frame", false, new[] { MainWindow.Instance.join, 42, 18), ADD LATER!!
                 Tuple.Create("maximize", "Window Frame", false, new[] { MainWindow.Instance.maximize }, 24, 18, CropType.VerticalStack),
                 Tuple.Create("minimize", "Window Frame", false, new[] { MainWindow.Instance.minimize }, 24, 18, CropType.VerticalStack),
                 Tuple.Create("longIcon", "Window Frame", false, new[] { MainWindow.Instance.tbli }, 36, 16, CropType.None),
                 Tuple.Create("split", "Window Frame", false, new[] { MainWindow.Instance.split }, 26, 18, CropType.VerticalStack),
-               // Tuple.Create("mainGradient", "Backgrounds", true, new[] { MainWindow.Instance.backgroundImg }, 1400, 883, CropType.None),
-                //Tuple.Create("unmaximize", "Window Frame", false, MainWindow.Instance.close, 42, 18) ADD LATER!!
                 };
 
 
             foreach (var item in imgPaths)
             {
                 themeSetterLogic(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7);
-            }
-
-        }
-
-        public static void themeSetterDialog(int dialogImage)
-        {
-            if (darkTheme) // checks if Dark theme is enabled
-            {
-
-            }
-
-            var imgPaths = new[]{
-                //Tuple.Create("File Name", "Subpath", "Use theme resource root", "XML x.Name in array", crop width, crop height, crop type)
-                Tuple.Create("skypeStandard", "Dialog", false, new[] { Dialog.Instance.DialogImage }, 48, 96, CropType.HorizontalStack),
-                };
-
-
-            foreach (var item in imgPaths)
-            {
-                themeSetterLogic(item.Item1, item.Item2, item.Item3, item.Item4, item.Item5, item.Item6, item.Item7, dialogImage);
             }
 
         }

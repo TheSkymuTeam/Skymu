@@ -46,7 +46,7 @@ namespace Skymu
                     TextOptions.SetTextHintingMode(btn, TextHintingMode.Fixed);
                 }
 
-                UI.themeSetterDialog((TypeChooser(dialogType, content, header)) * 48); // 48 is the width spacing of the images. 48*1 will have an X-start of 48, which is Image #2, etc.
+                DialogImage.DefaultIndex = TypeChooser(dialogType, content, header);
 
                 try
                 {
