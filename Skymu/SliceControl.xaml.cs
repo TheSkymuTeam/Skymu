@@ -379,6 +379,7 @@ namespace Skymu
                 : bmp.PixelHeight;
         }
 
+
         private void UpdateSlices()
         {
             var bmp = Source as BitmapSource;
@@ -395,6 +396,7 @@ namespace Skymu
                 _middleBrush.ImageSource = Source;
                 _middleBrush.Viewbox = GetStateViewbox();
                 MiddleSlice.Fill = _middleBrush;
+
                 return;
             }
 

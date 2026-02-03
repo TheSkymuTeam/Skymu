@@ -217,16 +217,14 @@ namespace Skymu
                         {
                             Source = sourceImg,
                             IsHitTestVisible = false,
-                            Width = 20,
+                            Width = 22,
                             Height = 20,
                             ElementCount = (sourceImg.PixelHeight / 20), 
                             StackDirection = SpriteStackDirection.Vertical,
                             DefaultIndex = 0,
                             Slice = false, 
                             IsAnimation = true, 
-                            AnimationFps = 45.0, 
-                            UseLayoutRounding = true,
-                            SnapsToDevicePixels = true
+                            AnimationFps = 45.0
                         };
 
                         RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
