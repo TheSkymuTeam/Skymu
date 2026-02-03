@@ -538,7 +538,7 @@ namespace Skymu
             {
                 Dispatcher.Invoke(() =>
                 {
-                    GlobalUserCount.Text = $"{usrCount} people on Skymu";
+                    GlobalUserCount.Text = $"{usrCount} online users";
                 });
             };
 
