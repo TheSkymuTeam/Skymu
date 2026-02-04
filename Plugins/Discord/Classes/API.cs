@@ -24,8 +24,8 @@ namespace Discord.Classes
     {
         private static readonly ConfigMgr configMgr = new ConfigMgr();
 
-        // Re-used client (Less memory usage)
-        private static readonly HttpClient client = new HttpClient();
+       
+        private static readonly HttpClient client;
 
         // Configuration (Firefox 115 ESR on Windows 10)
         public static string XSuperProperties = null;
@@ -33,9 +33,27 @@ namespace Discord.Classes
 
         static API()
         {
-            // Forcefully use TLS 1.2 (Adds back Windows 7 support)
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+            // Use SocketsHttpHandler for better performance and HTTP/2
+            var handler = new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
+                MaxConnectionsPerServer = 10
+            };
+            // Re-used client (Less memory usage)
+            client = new HttpClient(handler);
+
+            // Set default headers once
+            client.DefaultRequestHeaders.Add("Accept", "*/*");
+            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
             XSuperProperties = configMgr.GetXSPJson();
+            client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
+
+            // Forcefully use TLS 1.2+ (supports 1.2 and 1.3)
+            System.Net.ServicePointManager.SecurityProtocol =
+                System.Net.SecurityProtocolType.Tls12 |
+                System.Net.SecurityProtocolType.Tls13;
         }
 
         public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null)
@@ -75,10 +93,6 @@ namespace Discord.Classes
                 string jsonData = JsonSerializer.Serialize(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
             }
-
-            request.Headers.Add("Accept", "*/*");
-            request.Headers.Add("User-Agent", UserAgent);
-            request.Headers.Add("X-Super-Properties", XSuperProperties);
 
             try
             {

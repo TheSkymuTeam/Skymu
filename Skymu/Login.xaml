@@ -10,6 +10,7 @@
         WindowStartupLocation="CenterScreen"
         Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
     <Window.Resources>
+        <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
             <Setter Property="Foreground" Value="{StaticResource Sk5Link}" />
             <Setter Property="TextDecorations" Value="{x:Null}" />
@@ -21,7 +22,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="pack://application:,,,/Resources/Light/Backgrounds/loginBackground.png" Stretch="Fill"/>
+        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},Path=ThemeRoot,Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/loginBackground.png'}" Stretch="Fill"/>
     </Window.Background>
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill" />
@@ -109,7 +110,7 @@ Foreground="#FF393A48" />
                     x:Name="LoginButton"
                     Grid.Row="0"
                     Cursor="Hand"
-                    Source="/Resources/Light/Buttons/plain.png"
+                    Source="{Binding Source={x:Static properties:Settings.Default},Path=ThemeRoot,Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plain.png'}"
                     ElementCount="5"
                     StackDirection="Vertical"
                     DefaultIndex="0"

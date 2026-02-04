@@ -14,5 +14,8 @@
     <Setting Name="ListDelimiterCharacter" Type="System.String" Scope="User">
       <Value Profile="(Default)">•</Value>
     </Setting>
+    <Setting Name="ThemeRoot" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/Resources/Light</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

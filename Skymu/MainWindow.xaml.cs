@@ -28,6 +28,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
 
+# pragma warning disable CS4014
 namespace Skymu
 {
     public partial class MainWindow : Window
@@ -35,7 +36,6 @@ namespace Skymu
         private static WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private SkymuApi api;
 
-        public static MainWindow Instance;
         private bool deactivatedWindow;
         public event EventHandler Ready;
 
@@ -44,7 +44,6 @@ namespace Skymu
             api = new SkymuApi();
 
             InitializeComponent();
-            Instance = this;
 
             InitializeWindow();
 
@@ -172,7 +171,7 @@ namespace Skymu
 
         private static BitmapImage LoadAvatar()
         {
-            const string AvatarPath = "pack://application:,,,/Resources/Light/Profile Pictures/profile_anonymous.png";
+            string AvatarPath = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_anonymous.png";
 
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
@@ -325,7 +324,7 @@ namespace Skymu
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = $"Type a message to {selectedContact.DisplayName} here";
             MessageTextBox.Text = PlaceholderTextMTB;
-
+            throbber.Visibility = Visibility.Visible;
             _isLoadingConversation = true;
 
             if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
@@ -366,9 +365,10 @@ namespace Skymu
                 };
 
                 conversation.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = conversation;
-                _isLoadingConversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
+                ConversationItemsList.ItemsSource = conversation;               
             }
+            throbber.Visibility = Visibility.Collapsed;
+            _isLoadingConversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
         }
 
         private void Chat_Close(object sender, MouseButtonEventArgs e)
@@ -530,7 +530,7 @@ namespace Skymu
             SidebarData data = Universal.Plugin.SidebarInformation;
             GlobalUserCount.Text = "Loading online user count...";
 
-            await SkymuApiStatusHandler();
+            SkymuApiStatusHandler();
             api.OnUserCountUpdate += usrCount =>
             {
                 Dispatcher.Invoke(() =>
@@ -548,14 +548,14 @@ namespace Skymu
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
-            await SpeedTester();
+            SpeedTester();
 
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
         {
-            await SendMessage();
+            SendMessage();
         }
 
         private async Task SendMessage()
@@ -603,7 +603,7 @@ namespace Skymu
                 iconFileName = "btn_pill_small_network_unavailable.png";
             }
 
-            var iconUri = $"pack://application:,,,/Skymu;component/Resources/Light/Chat/{iconFileName}";
+            var iconUri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + iconFileName;
             var bmp = new BitmapImage();
             bmp.BeginInit();
             bmp.UriSource = new Uri(iconUri, UriKind.Absolute);
@@ -910,6 +910,29 @@ namespace Skymu
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
+        }
+    }
+
+    public class ThemeImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null || parameter == null) return null;
+
+            string themeRoot = value.ToString();
+            string imagePath = parameter.ToString();
+
+            string fullPath = $"{themeRoot}/{imagePath}".Replace("//", "/");
+
+            string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            string packUri = $"pack://application:,,,/{assemblyName};component{fullPath}";
+
+            return new BitmapImage(new Uri(packUri));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

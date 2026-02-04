@@ -6,11 +6,15 @@
         xmlns:local="clr-namespace:Skymu"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
+        xmlns:properties="clr-namespace:Skymu.Properties"
         WindowStyle="None"
         AllowsTransparency="True"
         Title="About" Height="454" Width="501">
+    <Window.Resources>
+        <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
+    </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="/Resources/Light/Backgrounds/aboutBackground.png" Stretch="Uniform" /> 
+        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},Path=ThemeRoot,Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/aboutBackground.png'}" Stretch="Uniform" /> 
     </Window.Background>
     <StackPanel>
         <Image Source="/Resources/Universal/Branding/skymu-about-logo.png" Height="108" Margin="0,115,0,3" />

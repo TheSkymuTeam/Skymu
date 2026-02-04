@@ -31,7 +31,6 @@ namespace Skymu
     /// </summary>
     public partial class Login : Window
     {
-        public static Login Instance;
         private static PluginListing selectedListing;
         private MainWindow _mainWindow;
         public static bool noCloseEvent;
@@ -40,7 +39,6 @@ namespace Skymu
         public Login()
         {
             InitializeComponent();
-            Instance = this;
 
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
@@ -48,7 +46,6 @@ namespace Skymu
 
             this.ContentRendered += Login_ContentRendered;
 
-            UI.themeSetterLogin();
             Sounds.Init();
             Tray.PushIcon("offline", Properties.Settings.Default.BrandingName + " (Not signed in)");
         }
@@ -343,7 +340,6 @@ namespace Skymu
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            Instance = null;
         }
 
         private void Login_Closing(object sender, CancelEventArgs ev)

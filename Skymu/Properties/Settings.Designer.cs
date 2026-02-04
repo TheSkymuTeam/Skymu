@@ -70,5 +70,17 @@ namespace Skymu.Properties {
                 this["ListDelimiterCharacter"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("/Resources/Light")]
+        public string ThemeRoot {
+            get {
+                return ((string)(this["ThemeRoot"]));
+            }
+            set {
+                this["ThemeRoot"] = value;
+            }
+        }
     }
 }

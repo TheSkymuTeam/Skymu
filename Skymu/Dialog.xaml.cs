@@ -27,7 +27,6 @@ namespace Skymu
 
     public partial class Dialog : Window
     {
-        public static Dialog Instance;
         private Action bLAction;
         private Action bRAction;
         public string TextBoxText { get; private set; }
@@ -37,7 +36,6 @@ namespace Skymu
             try
             {
                 InitializeComponent();
-                Instance = this;
 
                 foreach (var btn in new[] { buttonLeft, buttonRight })
                 {
