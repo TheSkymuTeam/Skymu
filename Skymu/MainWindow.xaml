@@ -4,7 +4,6 @@
         xmlns:local="clr-namespace:Skymu"
         xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
-        xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         WindowStyle="None"
         Background="#8cbeff"
@@ -503,7 +502,9 @@ Width="14" Grid.Row="1"/>
                             <local:SliceControl
     Grid.Row="0"
     x:Name="SBHomeButton"
-    Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_HomeButton_Sprite.png'}"
+    Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_HomeButton_Sprite.png'}"
     ElementCount="3"
     StackDirection="Horizontal"
     DefaultIndex="0"
@@ -515,7 +516,9 @@ Width="14" Grid.Row="1"/>
     PressedIndex="2"
     Slice="false"
     Width="16"/>
-                            <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}"
+                            <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}"
                                    Width="12"
                                    Height="16"
                                    IsHitTestVisible="True"
@@ -525,7 +528,9 @@ Cursor="Hand"
                             <local:SliceControl
                                 x:Name="SkypeCreditBox"
                                 Grid.Row="1"
-                                Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Bottom.png'}"
+                                Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Bottom.png'}"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
@@ -552,7 +557,9 @@ Cursor="Hand"
                                 x:Name="btnContacts"
                                 Grid.Column="0"
                                 IsRadioButton="True"
-                                Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Contacts.png'}"
+                                Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Contacts.png'}"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
@@ -571,7 +578,9 @@ Cursor="Hand"
                                 Grid.Column="1"
                                 IsRadioButton="True"
                                 ButtonStateOnInit="Pressed"
-                                Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Recents.png'}"
+                                Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Recents.png'}"
                                 ElementCount="5"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
@@ -602,7 +611,9 @@ Cursor="Hand"
                                     Grid.Row="0"
                                     Cursor="IBeam"
                                     x:Name="PseudoSearchBox"
-                                    Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_SearchBox.png'}"
+                                    Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_SearchBox.png'}"
                                     ElementCount="2"
                                     StackDirection="Vertical"
                                     DefaultIndex="1"
@@ -659,7 +670,9 @@ Cursor="Hand"
                                                             <Trigger Property="IsSelected" Value="True">
                                                                 <Setter TargetName="ItemBorder" Property="Background">
                                                                     <Setter.Value>
-                                                                        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_ContactListBgSelected.png'}" Stretch="Fill"/>
+                                                                        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_ContactListBgSelected.png'}" Stretch="Fill"/>
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </Trigger>
@@ -673,7 +686,9 @@ Cursor="Hand"
                                 <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
                                 <local:SliceControl
                                     Grid.Row="5"
-                                    Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}"
+                                    Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}"
                                     ElementCount="5"
                                     StackDirection="Vertical"
                                     DefaultIndex="0"
@@ -724,7 +739,9 @@ Cursor="Hand"
                             </Grid.ColumnDefinitions>
                             <local:SliceControl
                             Grid.Column="0"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}"
 ElementCount="5"
  x:Name="chatHeader"                               
 StackDirection="Vertical"
@@ -742,7 +759,9 @@ HorizontalAlignment="Stretch" />
 
                             <local:SliceControl
                             Grid.Column="1"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}"
 ElementCount="5"
  x:Name="ChatCloseButton"
 MouseLeftButtonUp="Chat_Close"
@@ -759,7 +778,9 @@ TextSize="13"
 TextColor="#333333"
 HorizontalAlignment="Stretch" />
 
-                            <Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-close.png'}"
+                            <Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-close.png'}"
 Width="16"
 Height="16"
 IsHitTestVisible="False"
@@ -776,7 +797,9 @@ Margin="8,0,0,0"/>
                             </Grid.ColumnDefinitions>
                             <local:SliceControl
                             Grid.Column="0"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}"
 ElementCount="5"
  x:Name="MainPageButton"                               
 StackDirection="Vertical"
@@ -802,7 +825,9 @@ HorizontalAlignment="Stretch" />
        Margin="8,0,0,0"/>
                             <local:SliceControl
                             Grid.Column="1"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}"
 ElementCount="5"
  x:Name="ProfileButton"                               
 StackDirection="Vertical"
@@ -825,7 +850,9 @@ HorizontalAlignment="Stretch" />
        Margin="8,0,0,0"/>
                             <local:SliceControl
                             Grid.Column="2"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}"
 ElementCount="5"
  x:Name="FeedbackButton"                               
 StackDirection="Vertical"
@@ -848,7 +875,9 @@ HorizontalAlignment="Stretch" />
        Margin="8,0,0,0"/>
                             <local:SliceControl
                                 Grid.Column="3"
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}"
     ElementCount="5"
     StackDirection="Vertical"
     DefaultIndex="0"
@@ -955,7 +984,9 @@ Width="98"/>
         LeftRightWidth="22"
         Margin="10,0,0,0" />
                                     <local:SliceControl
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_add.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_add.png'}"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
@@ -967,7 +998,9 @@ Width="44"
 Slice="false"
 Margin="10,0,0,0" />
                                     <local:SliceControl
-Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_network_unavailable.png'}"
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_network_unavailable.png'}"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
@@ -1060,7 +1093,9 @@ mc:Ignorable="d"
                     Orientation="Vertical" 
                     HorizontalAlignment="Center"
                     Width="430">
-                                            <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-header.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
+                                            <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-header.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
                                            
                                             <Border BorderBrush="#CCCCCC"
                     BorderThickness="1 0 1 1"
