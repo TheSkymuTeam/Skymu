@@ -22,7 +22,9 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},Path=ThemeRoot,Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/loginBackground.png'}" Stretch="Fill"/>
+        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/loginBackground.png'}" Stretch="Fill"/>
     </Window.Background>
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill" />
@@ -110,7 +112,9 @@ Foreground="#FF393A48" />
                     x:Name="LoginButton"
                     Grid.Row="0"
                     Cursor="Hand"
-                    Source="{Binding Source={x:Static properties:Settings.Default},Path=ThemeRoot,Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plain.png'}"
+                    Source="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plain.png'}"
                     ElementCount="5"
                     StackDirection="Vertical"
                     DefaultIndex="0"

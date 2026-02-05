@@ -19,7 +19,7 @@
     <StackPanel>
         <Image Source="/Resources/Universal/Branding/skymu-about-logo.png" Height="108" Margin="0,115,0,3" />
         <TextBlock Text="Take another breath" HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" Foreground="#333333" FontSize="18" Margin="0,1,9,0"/>
-        <TextBlock Text="Build Alverstone Brioche" HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" Foreground="#555555" FontSize="11" Margin="0,3,9,-4"/>
+        <TextBlock Text="Build Alverstone Apple Pie" HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" Foreground="#555555" FontSize="11" Margin="0,3,9,-4"/>
         <TextBlock Text="Open-source software, licensed under the Skymu License&#x0a;You can find our repository over at GitHub listed under the Skymu name.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and utilized under the doctrine of fair use." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,23,10,0" FontFamily="Tahoma" FontSize="11" />
         <TextBlock Text="Warning: If you have paid for this software with real money, request a chargeback from your bank. Skymu is free software today, tomorrow, and forevermore, so if you come across a paid listing please send and report it to skymu@hubaxe.fr. We will handle the situation and take it down." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,16,10,0" FontFamily="Tahoma" FontSize="11"/>
     </StackPanel>

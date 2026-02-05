@@ -282,7 +282,7 @@ namespace Skymu
         private void mn_Accessibility(object sender, RoutedEventArgs e) { }
         private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
-        private void mn_Options(object sender, RoutedEventArgs e) { }
+        private void mn_Options(object sender, RoutedEventArgs e) { new Options().Show(); }
         private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
 
         private ProfileData selectedContact;

@@ -26,13 +26,22 @@
     <ApplicationIcon>skype.ico</ApplicationIcon>
     <StartupObject />
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <OutputPath>bin\x64\Debug\</OutputPath>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <OutputPath>bin\x64\Release\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
@@ -85,6 +94,11 @@
     <Resource Include="Resources\Dark\Sidebar\ms_Status_Bottom.png" />
     <Resource Include="Resources\Dark\Sidebar\ms_Status_DropArrow.png" />
     <Resource Include="Resources\Dark\Sidebar\ms_Status_Top.png" />
+    <Resource Include="Resources\Light\Notifications\img_32700584.png" />
+    <Resource Include="Resources\Light\Notifications\img_32701188.png" />
+    <Resource Include="Resources\Light\Notifications\img_32703764.png" />
+    <Resource Include="Resources\Light\Notifications\img_32704312.png" />
+    <Resource Include="Resources\Light\Options\header.png" />
     <Resource Include="Resources\Universal\Animations\loading_throbber.png" />
     <Resource Include="Resources\Universal\Emoji\abe\views\default_20\index.png" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
     <Resource Include="Resources\Universal\Emoji\abe\views\default_20_anim\index.png" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
@@ -970,6 +984,11 @@
     <None Remove="Resources\Dark\Sidebar\ms_Status_DropArrow.png" />
     <None Remove="Resources\Dark\Sidebar\ms_Status_Top.png" />
     <None Remove="Resources\Light\Chat\reply-arrow.png" />
+    <None Remove="Resources\Light\Notifications\img_32700584.png" />
+    <None Remove="Resources\Light\Notifications\img_32701188.png" />
+    <None Remove="Resources\Light\Notifications\img_32703764.png" />
+    <None Remove="Resources\Light\Notifications\img_32704312.png" />
+    <None Remove="Resources\Light\Options\header.png" />
     <None Remove="Resources\Universal\Animations\loading_fat_active.png" />
     <None Remove="Resources\Universal\Animations\loading_throbber.png" />
     <None Remove="Resources\Universal\Branding\skymu-about-logo.png" />
