@@ -1,6 +1,6 @@
 ﻿/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
-// You may contact The Skymu Team at contact@skymu.app.
+// You may contact The Skymu Team: contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
 // on your agreement to be bound by the terms of our License.
@@ -14,6 +14,7 @@ using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -48,6 +49,20 @@ namespace Matrix
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
         private readonly MatrixOOTBStuff _ootb = new MatrixOOTBStuff();
+
+        private bool _isTyping;
+        public bool IsTyping
+        {
+            get => _isTyping;
+            private set
+            {
+                if (_isTyping == value) return;
+                _isTyping = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTyping)));
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
         public ClickableConfiguration[] ClickableConfigurations
         {
             get

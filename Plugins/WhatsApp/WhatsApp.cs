@@ -1,6 +1,6 @@
 ﻿/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
-// You may contact The Skymu Team at contact@skymu.app.
+// You may contact The Skymu Team: contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
 // on your agreement to be bound by the terms of our License.
@@ -12,11 +12,12 @@
 using MiddleMan;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace WhatsApp
 {
-    public class Core : ICore
+    public class Core : ICore, INotifyPropertyChanged
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -29,6 +30,20 @@ namespace WhatsApp
             return LoginResult.Success;
         }
 
+        private bool _isTyping;
+        public bool IsTyping
+        {
+            get => _isTyping;
+            private set
+            {
+                if (_isTyping == value) return;
+                _isTyping = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTyping)));
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public async Task<LoginResult> LoginOptStep(string code)
         {
             return LoginResult.Success;
@@ -36,6 +51,7 @@ namespace WhatsApp
 
         public async Task<bool> SendMessage(string identifier, string text)
         {
+            IsTyping = true;
             return true;
         }
 

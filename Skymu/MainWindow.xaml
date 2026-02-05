@@ -6,6 +6,8 @@
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         WindowStyle="None"
+        FontFamily="Tahoma"
+        FontSize="11"
         Background="#8cbeff"
         AllowsTransparency="False"
         ResizeMode="CanResize"
@@ -31,6 +33,7 @@
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <local:MsgIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <local:StripNewlinesConverter x:Key="StripNewlinesConverter"/>
@@ -236,11 +239,11 @@ Width="14" Grid.Row="1"/>
     </Window.Resources>
 
     <Grid>
-  
-            <Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
-                <Grid.Background>
 
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+        <Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
+            <Grid.Background>
+
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#FF6B9DE0" Offset="0.0"/>
 
                     <GradientStop Color="#f0f6fe" Offset="0.0634"/>
@@ -249,13 +252,13 @@ Width="14" Grid.Row="1"/>
                     <GradientStop Color="#8cbeff" Offset="1"/>
                 </LinearGradientBrush>
 
-                </Grid.Background>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="121" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
-                    <local:SliceControl  Source="/Resources/Universal/Window Frame/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26"
+            </Grid.Background>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="121" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
+                <local:SliceControl  Source="/Resources/Universal/Window Frame/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
                 <local:SliceControl Source="/Resources/Universal/Window Frame/minimize.png"  Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24"
@@ -264,12 +267,12 @@ Width="14" Grid.Row="1"/>
                 <local:SliceControl Source="/Resources/Universal/Window Frame/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                    <local:SliceControl Source="/Resources/Universal/Window Frame/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
+                <local:SliceControl Source="/Resources/Universal/Window Frame/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42"
                        MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave"
                        MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click" />
-                </StackPanel>
-                <Grid Grid.Column="0" x:Name="IconText">
-                    <TextBlock
+            </StackPanel>
+            <Grid Grid.Column="0" x:Name="IconText">
+                <TextBlock
                     x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                         Visibility="Hidden"
@@ -278,13 +281,13 @@ Width="14" Grid.Row="1"/>
                     VerticalAlignment="Top"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                        <TextBlock.Effect>
-                            <BlurEffect
+                    <TextBlock.Effect>
+                        <BlurEffect
                             Radius="15.0"
                             KernelType="Gaussian" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock
                     x:Name="TitleShadow2" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                         Visibility="Hidden"
@@ -293,13 +296,13 @@ Width="14" Grid.Row="1"/>
                     VerticalAlignment="Top"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                        <TextBlock.Effect>
-                            <BlurEffect
+                    <TextBlock.Effect>
+                        <BlurEffect
                             Radius="20.0"
                             KernelType="Gaussian" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock
+                    </TextBlock.Effect>
+                </TextBlock>
+                <TextBlock
                     x:Name="TitleShadow3" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                     FontFamily="Segoe UI"
                     FontSize="12"
@@ -308,12 +311,12 @@ Width="14" Grid.Row="1"/>
                         Visibility="Hidden"
                     Margin="50,7,0,0"
                     Panel.ZIndex="2">
-                        <TextBlock.Effect>
-                            <BlurEffect
+                    <TextBlock.Effect>
+                        <BlurEffect
                             Radius="17.0"
                             KernelType="Gaussian" />
-                        </TextBlock.Effect>
-                    </TextBlock>
+                    </TextBlock.Effect>
+                </TextBlock>
 
                 <TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
                            FontFamily="Arial"
@@ -323,13 +326,13 @@ Width="14" Grid.Row="1"/>
                            VerticalAlignment="Top"
                            Margin="50,7,0,0"
                            Panel.ZIndex="2">
-                       
-                    </TextBlock>
-                    <Image Source="/Resources/Universal/Window Frame/longIcon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
+
+                </TextBlock>
+                <Image Source="/Resources/Universal/Window Frame/longIcon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
                        Margin="8,0,0,0" />
-                </Grid>
             </Grid>
-  
+        </Grid>
+
         <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="4,30,4,4">
             <Grid.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -1086,25 +1089,46 @@ mc:Ignorable="d"
                                         </Style>
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
-                                
+
                                 <Grid Grid.Row="4">
-                                   
+
                                     <Grid VerticalAlignment="Bottom" Margin="0,0,0,5">
 
                                         <StackPanel x:Name="MessageBoxPanel" 
                     Orientation="Vertical" 
                     HorizontalAlignment="Center"
                     Width="430">
-                                            <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
+                                            <Grid>
+                                                <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-header.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
-                                           
+                                                <StackPanel Visibility="{Binding IsTyping,
+             Source={x:Static local:Universal.Plugin},
+             Converter={StaticResource BooleanToVisibilityConverter}}" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,0">
+                                                    <local:SliceControl 
+x:Name="TypingIndicator"
+Source="/Resources/Universal/Chat/pencil-write.png"
+ElementCount="37"
+IsAnimation="True"
+StackDirection="Vertical"
+DefaultIndex="{Binding PresenceStatus}"
+HoverIndex="-1"
+PressedIndex="-1"
+
+Slice="false"
+Width="23"/>
+ <TextBlock VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#666666" x:Name="TypingIndicatorText" Text="thegamingkart is typing..."/>
+
+
+                                                </StackPanel>
+                                            </Grid>
+
                                             <Border BorderBrush="#CCCCCC"
                     BorderThickness="1 0 1 1"
                     CornerRadius="0,0,4,4"
                     Background="White" 
                     MinHeight="35">
-                                                
+
                                                 <TextBox
     x:Name="MessageTextBox"
     BorderThickness="0"

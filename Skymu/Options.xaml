@@ -70,7 +70,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-            <local:SliceControl                            Grid.ColumnSpan="2"Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Options/header.png'}"ElementCount="5"                             StackDirection="Vertical"DefaultIndex="1"Margin="0,9,9,0"      HoverIndex="-1"PressedIndex="-1"IsHitTestVisible="False"TextStartPositionX="13"Text="Giga Chad 67"                                TextFont="Tahoma"TextWeight="Bold"TextSize="11"TextColor="#666666"HorizontalAlignment="Stretch" />
+            <local:SliceControl                            Grid.ColumnSpan="2"Source="{Binding Source={x:Static properties:Settings.Default},                 Path=ThemeRoot,                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Options/header.png'}"ElementCount="5"                             StackDirection="Vertical"DefaultIndex="1"Margin="0,9,9,0"      HoverIndex="-1"PressedIndex="-1"IsHitTestVisible="False"TextStartPositionX="13"Text="Skymu Customization"                                TextFont="Tahoma"TextWeight="Bold"TextSize="11"TextColor="#666666"HorizontalAlignment="Stretch" />
 
 
 
@@ -111,7 +111,7 @@
                     </StackPanel>-->
 
                     <WrapPanel MouseLeftButtonDown="CarouselGrid_MouseLeftButtonDown">
-                        <Label Content="Choose a Theme preset..." FontFamily="Tahoma" FontWeight="Bold" Margin="8,8,0,0" FontSize="11"/>
+                        <Label Content="This options menu provides you with an easy way to modify your Skymu-specific preferences." FontFamily="Tahoma"  Margin="8,8,0,0" FontSize="11"/>
                         <Grid x:Name="CarouselGrid">
                             <Canvas x:Name="CarouselCanvas" ClipToBounds="True" Height="300" Width="579" />
                     </Grid>

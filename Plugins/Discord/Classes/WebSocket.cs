@@ -1,18 +1,20 @@
-﻿// This is a very early implementation of the Websockets.
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team: contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+// This is a very early implementation of the Websockets.
 // This was made with the help of the documentation from discord.sex
 // Without them, I never would've gotten the right implementation of it.
 
 // Copied from an older Naticord commit that was more finished than before.
 // This is done by, and with permission from, the original creator (patricktbp).
-
-/*================================================================*/
-// IMPORTANT INFORMATION FOR DEVELOPERS, PROJECT MAINTAINERS
-// AND CONTRIBUTORS TO SKYMU, CONCERNING THIS PARTICULAR FILE
-/*================================================================*/
-// Portions of this code were modified to use System.Net.WebSockets
-// with the help of a large language model. If you find any issues
-// as a result of the conversion process, please fix them.
-/*================================================================*/
 
 #pragma warning disable 4014
 
