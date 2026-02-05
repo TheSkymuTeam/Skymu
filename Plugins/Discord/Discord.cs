@@ -53,11 +53,11 @@ namespace Discord
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public readonly Dictionary<string, string?> _recentChannelMap = new();
 
-        private bool _isTyping;
+        internal bool _isTyping;
         public bool IsTyping
         {
             get => _isTyping;
-            private set
+            internal set
             {
                 if (_isTyping == value) return;
                 _isTyping = value;

@@ -261,7 +261,6 @@ namespace Discord.Classes
 
                                 CanCheckData = true;
                                 break;
-
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
                                 break;

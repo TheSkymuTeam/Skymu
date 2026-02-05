@@ -1110,6 +1110,7 @@ x:Name="TypingIndicator"
 Source="/Resources/Universal/Chat/pencil-write.png"
 ElementCount="37"
 IsAnimation="True"
+                                                        AnimationFps="30"
 StackDirection="Vertical"
 DefaultIndex="{Binding PresenceStatus}"
 HoverIndex="-1"
@@ -1117,7 +1118,7 @@ PressedIndex="-1"
 
 Slice="false"
 Width="23"/>
- <TextBlock VerticalAlignment="Center" Margin="5,0,0,0" Foreground="#666666" x:Name="TypingIndicatorText" Text="thegamingkart is typing..."/>
+                                                    <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" Foreground="#666666" x:Name="TypingIndicatorText" Text="{Binding DisplayName, StringFormat={}{0} is typing...}"/>
 
 
                                                 </StackPanel>
