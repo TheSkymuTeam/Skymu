@@ -32,8 +32,7 @@
         </Style>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
-        <local:MsgIDToVisibilityConverter x:Key="ReplyCheckConverter"/>
-
+        <local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <local:StripNewlinesConverter x:Key="StripNewlinesConverter"/>
@@ -156,7 +155,7 @@ Width="14" Grid.Row="1"/>
                 </Grid.ColumnDefinitions>
 
                 <VirtualizingStackPanel Visibility="{Binding ReplyToID,
-                        Converter={StaticResource ReplyCheckConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
+                        Converter={StaticResource NullDependentVisibilityConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
                     <Image Source="{Binding Source={x:Static properties:Settings.Default},
                         Path=ThemeRoot,
                         Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/reply-arrow.png'}"
@@ -192,18 +191,26 @@ Width="14" Grid.Row="1"/>
                     </TextBlock.Visibility>
                 </TextBlock>
 
-                <ContentControl
-    Grid.Row="1"
-    Grid.Column="2"
-    Content="{Binding Body,
-                      Converter={StaticResource FormatFullTextConverter}}" />
+               
+                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
+
+                    <ContentControl
+
+Content="{Binding Body,
+                  Converter={StaticResource FormatFullTextConverter}}" />
+
+                    <Image MaxWidth="300" MaxHeight="300" Stretch="None" Visibility="{Binding Media,
+                       Converter={StaticResource NullDependentVisibilityConverter}}"
+Grid.Column="2" Source="{Binding Media,
+                       Converter={StaticResource ByteArrayToImageConverter}}"/>
+                </StackPanel>
 
                 <TextBlock Grid.Row="1" Grid.Column="2"
-                   Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
-                   FontSize="11"
-                   FontFamily="Tahoma"
-                   Foreground="#999999"/>
-
+      Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
+      FontSize="11"
+      FontFamily="Tahoma"
+      Foreground="#999999"/>
+                
                 <TextBlock Grid.Row="1" Grid.Column="2"
                    Text="{Binding StartedBy, StringFormat='Call started by: {0}'}"
                    FontSize="11"

@@ -258,14 +258,15 @@ namespace Matrix
                     }
 
                     ActiveConversation.Add(new MessageItem(
-                        messageID: eventId,
-                        sentByIdentifier: sender,
-                        sentByDisplayName: displayName,
-                        body: body,
-                        time: timestamp,
-                        replyToIdentifier: replyToId,
-                        replyToDisplayName: replyToName,
-                        replyToBody: replyToBody
+                        eventId,
+                        sender,
+                        displayName,
+                        timestamp,
+                        body,
+                        null,
+                        replyToId,
+                        replyToName,
+                        replyToBody
                     ));
                 }
 
@@ -561,8 +562,9 @@ namespace Matrix
                         eventId,
                         sender,
                         displayName,
-                        body,
                         timestamp,
+                        body,
+                        null,
                         null,
                         null,
                         null
