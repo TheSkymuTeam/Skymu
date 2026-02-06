@@ -108,7 +108,7 @@ namespace Discord
             {
                 try
                 {
-                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Content, e.Timestamp, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
+                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Timestamp, e.Content, null, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
 
                     _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
 
@@ -222,14 +222,15 @@ namespace Discord
                     }
 
                     ActiveConversation.Add(new MessageItem(
-                        messageID: messageId,
-                        sentByIdentifier: authorId,
-                        sentByDisplayName: authorName,
-                        body: content,
-                        time: timestamp,
-                        replyToIdentifier: replyToId,
-                        replyToDisplayName: replyToName,
-                        replyToBody: replyMsgContent
+                        messageId,
+                        authorId,
+                        authorName,
+                        timestamp,
+                        content,
+                        null,
+                        replyToId,
+                        replyToName,
+                        replyMsgContent
                     ));
                 }
 

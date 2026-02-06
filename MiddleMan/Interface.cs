@@ -126,8 +126,9 @@ namespace MiddleMan
         public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
         public string ReplyBody { get; set; } // Body of the message being replied to
         public string Body { get; set; } // Message body
+        public byte[] Media { get; set; } // Raw image data for the message's image, if it has one.
         public string PreviousMessageIdentifier { get; set; } // This is not set by you
-        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, string body, DateTime time, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
+        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, DateTime time, string body = null, byte[] image = null, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
         {
             MessageID = messageID;
             SentByID = sentByIdentifier;
@@ -137,6 +138,7 @@ namespace MiddleMan
             ReplyToID = replyToIdentifier;
             ReplyToDN = replyToDisplayName;
             ReplyBody = replyToBody;
+            Media = image;
         }
     }
 
