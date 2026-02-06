@@ -355,6 +355,7 @@ namespace Skymu
                 return;
 
             Universal.Plugin.ActiveConversation.Clear();
+            Universal.Plugin.TypingUsersList.Clear();
             selectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
