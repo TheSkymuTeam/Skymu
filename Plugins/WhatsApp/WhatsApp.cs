@@ -41,6 +41,10 @@ namespace WhatsApp
         {
             TypingUsersList.Clear();
             TypingUsersList.Add(new ProfileData("Nova", "20202"));
+            TypingUsersList.Add(new ProfileData("omega", "20203"));
+            TypingUsersList.Add(new ProfileData("patricktbp", "20204"));
+            TypingUsersList.Add(new ProfileData("Mixin", "20200"));
+            TypingUsersList.Add(new ProfileData("HUBAXE", "20205"));
             return true;
         }
 

@@ -11,6 +11,7 @@
 
 using MiddleMan;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 
@@ -36,6 +37,15 @@ namespace Skymu
             {
                 Tray.DisposeIcon();
             };
+        }
+
+        public static void Restart()
+        {
+            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            Process.Start(exePath);
+
+            Application.Current.Shutdown();
         }
 
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)

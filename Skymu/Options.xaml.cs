@@ -50,5 +50,17 @@ namespace Skymu
             Properties.Settings.Default.Save();
             this.Close();
         }
+
+        private void RestartButtonClick(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Save();
+            Universal.Restart();
+        }
+
+        private void ResetButtonClick(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+            Properties.Settings.Default.Save();
+        }
     }
 }

@@ -184,8 +184,10 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                 </Border>
 
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right" Width="156" Height="23" VerticalAlignment="Bottom">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right"  Height="23" VerticalAlignment="Bottom">
                     <Button Click="SaveButtonClick" Content="Save" Height="23" Width="73" Margin="0,0,10,0" FontSize="11"/>
+                <Button Click="RestartButtonClick" Content="Save and restart" Height="23" Width="100" Margin="0,0,10,0" FontSize="11"/>
+                <Button Click="ResetButtonClick" Content="Reset to defaults" Height="23" Width="100" Margin="0,0,10,0" FontSize="11"/>
                 <Button Click="CancelButtonClick" Content="Cancel" Height="23" Width="73" FontSize="11"/>
                 </StackPanel>
             </Grid>
