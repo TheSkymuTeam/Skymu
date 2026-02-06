@@ -30,6 +30,14 @@ namespace Skymu
             });
         }
 
+        static Universal()
+        {
+            AppDomain.CurrentDomain.ProcessExit += (_, __) =>
+            {
+                Tray.DisposeIcon();
+            };
+        }
+
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>

@@ -25,7 +25,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int WindowFrame {
             get {
                 return ((int)(this["WindowFrame"]));
@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -62,12 +62,12 @@ namespace Skymu.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("☛")]
-        public string ListDelimiterCharacter {
+        public string ListDelimiter {
             get {
-                return ((string)(this["ListDelimiterCharacter"]));
+                return ((string)(this["ListDelimiter"]));
             }
             set {
-                this["ListDelimiterCharacter"] = value;
+                this["ListDelimiter"] = value;
             }
         }
         

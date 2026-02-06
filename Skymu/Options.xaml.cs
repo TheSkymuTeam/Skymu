@@ -37,7 +37,18 @@ namespace Skymu
 
         private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            
+        }
 
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void SaveButtonClick(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Save();
+            this.Close();
         }
     }
 }

@@ -50,19 +50,7 @@ namespace Matrix
         private SynchronizationContext _uiContext;
         private readonly MatrixOOTBStuff _ootb = new MatrixOOTBStuff();
 
-        private bool _isTyping;
-        public bool IsTyping
-        {
-            get => _isTyping;
-            private set
-            {
-                if (_isTyping == value) return;
-                _isTyping = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTyping)));
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
         public ClickableConfiguration[] ClickableConfigurations
         {
             get
@@ -196,6 +184,7 @@ namespace Matrix
 
         public async Task<bool> SetActiveConversation(string identifier)
         {
+            TypingUsersList.Clear();
             ActiveConversation.Clear();
             if (string.IsNullOrEmpty(identifier))
             {

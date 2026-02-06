@@ -14,6 +14,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Winforms = System.Windows.Forms;
 
+# pragma warning disable CA1416
+
 namespace Skymu
 {
     class Tray
@@ -56,7 +58,6 @@ namespace Skymu
 
         #endregion
 
-        // Message-only window to handle menu commands
         private class NativeWindow : Winforms.NativeWindow
         {
             private Action<uint> commandHandler;
@@ -83,16 +84,25 @@ namespace Skymu
 
         public static void DisposeIcon()
         {
+            if (Icon != null)
+            {
+                Icon.Visible = false;
+                Icon.Icon = null;
+                Icon.Dispose();
+                Icon = null;
+            }
+
             if (hMenu != IntPtr.Zero)
             {
                 DestroyMenu(hMenu);
                 hMenu = IntPtr.Zero;
             }
 
-            messageWindow?.DestroyHandle();
-            messageWindow = null;
-
-            Icon?.Dispose();
+            if (messageWindow != null)
+            {
+                messageWindow.DestroyHandle();
+                messageWindow = null;
+            }
         }
 
         private static void HandleMenuCommand(uint commandId)
@@ -153,7 +163,6 @@ namespace Skymu
                 IntPtr.Zero
             );
 
-            // Process command if one was selected
             if (command != 0)
             {
                 HandleMenuCommand(command);

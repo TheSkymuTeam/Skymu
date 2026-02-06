@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace WhatsApp
 {
-    public class Core : ICore, INotifyPropertyChanged
+    public class Core : ICore
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -30,19 +30,7 @@ namespace WhatsApp
             return LoginResult.Success;
         }
 
-        private bool _isTyping;
-        public bool IsTyping
-        {
-            get => _isTyping;
-            private set
-            {
-                if (_isTyping == value) return;
-                _isTyping = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTyping)));
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
@@ -51,7 +39,8 @@ namespace WhatsApp
 
         public async Task<bool> SendMessage(string identifier, string text)
         {
-            IsTyping = true;
+            TypingUsersList.Clear();
+            TypingUsersList.Add(new ProfileData("Nova", "20202"));
             return true;
         }
 
@@ -59,7 +48,7 @@ namespace WhatsApp
 
         public async Task<bool> SetActiveConversation(string identifier) // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
         {                                                                // DO NOT USE THIS FORMAT AS A REFERENCE FOR YOUR PLUGIN. HAVE THIS METHOD SET THE ACTIVE CONV. IDENTIFIER
-                                                                         // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
+            TypingUsersList.Clear();                                                             // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
             ActiveConversation.Clear();
 
             // Conversation stub from your chat

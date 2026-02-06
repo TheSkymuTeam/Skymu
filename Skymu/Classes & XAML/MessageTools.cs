@@ -149,7 +149,7 @@ namespace Skymu
                 else if (m.Groups[14].Success) // list item (delimiter: *)
                 {
                     var span = new Span();
-                    AddTextOrLinkOrClickable(span.Inlines, Properties.Settings.Default.ListDelimiterCharacter + " " + m.Groups[14].Value);
+                    AddTextOrLinkOrClickable(span.Inlines, Properties.Settings.Default.ListDelimiter + " " + m.Groups[14].Value);
                     inlines.Add(span);
                 }
                 else if (m.Groups[15].Success) // quote (delimiter: >)

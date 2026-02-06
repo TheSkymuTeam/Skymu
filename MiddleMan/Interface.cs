@@ -59,7 +59,6 @@ namespace MiddleMan
         }
     }
 
-
     public class ProfileData : INotifyPropertyChanged
     {
         string _displayName, _status;
@@ -91,8 +90,8 @@ namespace MiddleMan
             set => Set(ref _profilePicture, value, nameof(ProfilePicture));
         }
 
-        public ProfileData(string displayName, string identifier, string status,
-                           int presenceStatus, byte[] profilePicture)
+        public ProfileData(string displayName, string identifier, string status = null,
+                           int presenceStatus = 0, byte[] profilePicture = null)
         {
             _displayName = displayName;
             Identifier = identifier;
@@ -237,7 +236,7 @@ namespace MiddleMan
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
-        bool IsTyping { get; } // whether the user is currently typing in the active conversation. This is used to show/hide the "Typing..." indicator in the UI.
+        ObservableCollection<ProfileData> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.

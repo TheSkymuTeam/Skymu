@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Discord
 {
-    public class Core : ICore, INotifyPropertyChanged
+    public class Core : ICore
     {
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
@@ -53,19 +53,7 @@ namespace Discord
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public readonly Dictionary<string, string?> _recentChannelMap = new();
 
-        internal bool _isTyping;
-        public bool IsTyping
-        {
-            get => _isTyping;
-            internal set
-            {
-                if (_isTyping == value) return;
-                _isTyping = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsTyping)));
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
 
         public ClickableConfiguration[] ClickableConfigurations
         {
@@ -92,7 +80,6 @@ namespace Discord
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             DscToken = username;
-
             return await StartClient();
         }
 
@@ -162,6 +149,7 @@ namespace Discord
 
         public async Task<bool> SetActiveConversation(string identifier)
         {
+            TypingUsersList.Clear();
             ActiveConversation.Clear();
             if (string.IsNullOrEmpty(identifier))
             {

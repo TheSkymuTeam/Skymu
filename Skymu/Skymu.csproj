@@ -998,6 +998,11 @@
     <None Remove="Resources\Universal\Branding\skymu-about-logo.png" />
     <None Remove="Resources\Universal\Chat\pencil-break.png" />
     <None Remove="Resources\Universal\Chat\pencil-write.png" />
+    <None Remove="Resources\Universal\Window Frame\Legacy\close.png" />
+    <None Remove="Resources\Universal\Window Frame\Legacy\join.png" />
+    <None Remove="Resources\Universal\Window Frame\Legacy\maximize.png" />
+    <None Remove="Resources\Universal\Window Frame\Legacy\minimize.png" />
+    <None Remove="Resources\Universal\Window Frame\Legacy\split.png" />
     <None Remove="Sounds\BUSY.WAV" />
     <None Remove="Sounds\CALL_ERROR1.WAV" />
     <None Remove="Sounds\CALL_ERROR2.WAV" />
@@ -1043,15 +1048,20 @@
   <ItemGroup>
     <Resource Include="Resources\Light\Chat\reply-arrow.png" />
     <Resource Include="Resources\Universal\Branding\skymu-about-logo.png" />
-    <Resource Include="Resources\Universal\Window Frame\close.png" />
-    <Resource Include="Resources\Universal\Window Frame\join.png" />
-    <Resource Include="Resources\Universal\Window Frame\maximize.png" />
-    <Resource Include="Resources\Universal\Window Frame\minimize.png" />
-    <Resource Include="Resources\Universal\Window Frame\split.png" />
-    <Resource Include="Resources\Universal\Window Frame\unmaximize.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\close.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\join.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\maximize.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\minimize.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\split.png" />
+    <Resource Include="Resources\Universal\Window Frame\Aero\restore.png" />
+    <Resource Include="Resources\Universal\Window Frame\Legacy\close.png" />
+    <Resource Include="Resources\Universal\Window Frame\Legacy\join.png" />
+    <Resource Include="Resources\Universal\Window Frame\Legacy\maximize.png" />
+    <Resource Include="Resources\Universal\Window Frame\Legacy\minimize.png" />
+    <Resource Include="Resources\Universal\Window Frame\Legacy\split.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Universal\Window Frame\longIcon.png" />
+    <Resource Include="Resources\Universal\Window Frame\long-icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Light\Backgrounds\loginBackground.png" />

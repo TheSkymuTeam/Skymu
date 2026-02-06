@@ -153,7 +153,9 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plai
                           Content="{Binding Source={x:Static properties:Settings.Default},
                       Path=BrandingName}"
     ContentStringFormat="{}Sign me in when {0} starts"
-                          IsChecked="True"
+                          IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                        Path=AutoLoginEnabled,
+                        Mode=TwoWay}"
                           FontFamily="Tahoma"
                           FontSize="11"
                           Height="16"

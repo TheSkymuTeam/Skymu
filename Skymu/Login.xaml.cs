@@ -148,6 +148,7 @@ namespace Skymu
             _mainWindow.Show();
             noCloseEvent = true;
             Close();
+            
         }
 
         private void BoxKeyUp(object sender, RoutedEventArgs e)
@@ -272,7 +273,7 @@ namespace Skymu
             header.Text = "Loading user data";
             _mainWindow = new MainWindow();
             _mainWindow.Ready += MainWindow_Ready;
-            _ = _mainWindow.InitializeData();
+            _ = _mainWindow.InitSidebar();
         }
 
         private void LoginToggleAnimation(bool anim)
@@ -303,7 +304,7 @@ namespace Skymu
                 passwordTokenBox.IsEnabled = false;
                 Password.Text = "field not required";
                 Password.FontStyle = FontStyles.Italic;
-                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
+                Password.Foreground = new SolidColorBrush(System.Windows.Media.Colors.DarkGray);
                 switch (selectedListing.AuthenticationType)
                 {
                     case AuthenticationMethod.QRCode:
@@ -322,7 +323,7 @@ namespace Skymu
             }
             else
             {
-                Password.Foreground = new SolidColorBrush(Colors.Black);
+                Password.Foreground = new SolidColorBrush(System.Windows.Media.Colors.Black);
                 passwordTokenBox.IsEnabled = true;
                 Password.Text = "Password";
                 Password.FontStyle = FontStyles.Normal;

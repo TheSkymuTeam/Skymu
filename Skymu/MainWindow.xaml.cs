@@ -11,6 +11,7 @@
 
 using MiddleMan;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -66,9 +67,9 @@ namespace Skymu
 
         private enum WindowFrame
         {
-            Native,
             SkypeAero,
-            SkypeBasic
+            SkypeBasic,
+            Native
         };
 
         public void InitializeWindow()
@@ -112,7 +113,7 @@ namespace Skymu
                     {
                         ShadowDepth = 0,
                         Direction = 330,
-                        Color = Colors.White,
+                        Color = System.Windows.Media.Colors.White,
                         Opacity = 1,
                         BlurRadius = 20
                     };
@@ -128,12 +129,46 @@ namespace Skymu
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(); // 0, 0, 0, 0
             }
+
+            Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
+            {
+                UpdateTypingIndicator();
+            };
         }
 
-        public async Task InitializeData()
+        private void UpdateTypingIndicator()
         {
-            // Initializes the sidebar data used by Skymu and it's respective plugins
-            await InitSidebar();
+            int count = Universal.Plugin.TypingUsersList.Count;
+            if (count == 0)
+            {
+                TypingIndicator.Visibility = Visibility.Collapsed;
+                return;
+            }
+            else
+            {
+                string typingText = String.Empty;
+                ProfileData[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
+                switch (count)
+                {
+                    case 1:
+                        typingText = $"{profiles.First().DisplayName} is typing..."; break;
+
+                    case 2:
+                        typingText = string.Join(" and ",
+                            profiles.Take(2).Select(p => p.DisplayName)) + " are typing..."; break;
+
+                    case 3:
+                        {
+                            var names = profiles.Take(3).Select(p => p.DisplayName).ToArray();
+                            typingText = $"{names[0]}, {names[1]}, and {names[2]} are typing..."; break;
+                        }
+
+                    default:
+                        typingText = "Multiple people are typing..."; break;
+                }
+                TypingIndicatorText.Text = typingText;
+                TypingIndicator.Visibility = Visibility.Visible;
+            }          
         }
 
         private static DropShadowEffect CreateDropShadow(Color color) => new()
@@ -215,11 +250,11 @@ namespace Skymu
             {
                 if (button.Name == "close")
                 {
-                    button.Effect = CreateDropShadow(Colors.Red);
+                    button.Effect = CreateDropShadow(System.Windows.Media.Colors.Red);
                 }
                 else
                 {
-                    button.Effect = CreateDropShadow(Colors.Cyan);
+                    button.Effect = CreateDropShadow(System.Windows.Media.Colors.Cyan);
                 }
             }
         }
@@ -227,13 +262,13 @@ namespace Skymu
         private void TitleButton_MouseLeave(object sender, MouseEventArgs e)
         {
             var button = sender as SliceControl;
-            
+
             if (!deactivatedWindow)
             {
                 if (button is not null)
                 {
                     button.Effect = null;
-                    
+
                 }
             }
             else if (deactivatedWindow)
@@ -286,6 +321,7 @@ namespace Skymu
         private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
 
         private ProfileData selectedContact;
+
 
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
@@ -365,7 +401,7 @@ namespace Skymu
                 };
 
                 conversation.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = conversation;               
+                ConversationItemsList.ItemsSource = conversation;
             }
             throbber.Visibility = Visibility.Collapsed;
             _isLoadingConversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
@@ -522,7 +558,7 @@ namespace Skymu
             if (index == 5 || index == 2 || index == 3 || index == 19) { return true; } else { return false; }
         }
 
-        private async Task InitSidebar()
+        internal async Task InitSidebar()
         {
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
@@ -881,19 +917,9 @@ namespace Skymu
         }
     }
 
-    public class BooleanToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((bool)value) return Visibility.Visible;
-            else return Visibility.Collapsed;
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
+
+
 
     public class StripNewlinesConverter : IValueConverter
     {
