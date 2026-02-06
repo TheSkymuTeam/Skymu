@@ -850,6 +850,32 @@ namespace Skymu
         }
     }
 
+    public class MsgByteArrayToImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not byte[] bytes || bytes.Length == 0)
+                return null;
+
+            var bmp = new BitmapImage();
+            using (var stream = new MemoryStream(bytes))
+            {
+                bmp.BeginInit();
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.StreamSource = stream;
+                bmp.EndInit();
+            }
+            bmp.Freeze();
+
+            return bmp;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
     public class IdentifierToColorConverter : IValueConverter
     {
         private static readonly SolidColorBrush ActiveBrush =
