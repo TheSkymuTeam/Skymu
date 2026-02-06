@@ -994,7 +994,8 @@ namespace Skymu
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return Visibility.Collapsed;
+            if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
+            else if (value == null) return Visibility.Collapsed;
             else return Visibility.Visible;
         }
 

@@ -25,6 +25,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Security.Authentication;
@@ -302,9 +303,22 @@ namespace Discord.Classes
     )
 );
                 string content = GetString(messageData, "content");
-                if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0) // img placeholder
+
+                byte[] media = null;
+
+                if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0)
                 {
-                    content = string.IsNullOrEmpty(content) ? "[image]" : "[image] " + content;
+                    // take first attachment
+                    JsonNode firstAttachment = attachments[0];
+
+                    // cast to JsonObject to access properties
+                    if (firstAttachment is JsonObject obj && obj["url"] is JsonNode urlNode)
+                    {
+                        string url = urlNode.GetValue<string>();
+
+                        // download bytes from URL
+                        media = await Discord.Core.pluginOOTBStuff._httpClient.GetByteArrayAsync(url);
+                    }
                 }
                 var mentions = messageData["mentions"] as JsonArray;
                 content = Discord.Core.MentionsReplaceIDWithUsername(mentions, content);
@@ -338,6 +352,7 @@ namespace Discord.Classes
                     AuthorId = authorId,
                     AuthorName = authorName,
                     Content = content,
+                    Media = media,
                     Timestamp = timestamp,
                     ReplyToId = replyToId,
                     ReplyToName = replyToName,
@@ -480,6 +495,7 @@ namespace Discord.Classes
         public string AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string Content { get; set; }
+        public byte[] Media { get; set; }
         public DateTime Timestamp { get; set; }
         public string ReplyToId { get; set; }
         public string ReplyToName { get; set; }

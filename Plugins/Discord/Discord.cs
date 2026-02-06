@@ -188,12 +188,24 @@ namespace Discord
                        ?? message["author"]["username"]?.GetValue<string>()
                        ?? "[unknown user]";
                     string authorId = message["author"]["id"]?.GetValue<string>() ?? "0";
-                    string content = message["content"]?.GetValue<string>() ?? "";
+                    string content = message["content"]?.GetValue<string>() ?? String.Empty;
                     var mentions = message["mentions"] as JsonArray;
                     content = MentionsReplaceIDWithUsername(mentions, content);
-                    if (message["attachments"] is JsonArray attachments && attachments.Count > 0) // image placeholder
+                    byte[] media = null;
+
+                    if (message["attachments"] is JsonArray attachments && attachments.Count > 0)
                     {
-                        content = string.IsNullOrEmpty(content) ? "[image]" : "[image] " + content;
+                        // take first attachment
+                        JsonNode firstAttachment = attachments[0];
+
+                        // cast to JsonObject to access properties
+                        if (firstAttachment is JsonObject obj && obj["url"] is JsonNode urlNode)
+                        {
+                            string url = urlNode.GetValue<string>();
+
+                            // download bytes from URL
+                            media = await Discord.Core.pluginOOTBStuff._httpClient.GetByteArrayAsync(url);
+                        }
                     }
                     string timestampStr = message["timestamp"]?.GetValue<string>();
 
@@ -227,7 +239,7 @@ namespace Discord
                         authorName,
                         timestamp,
                         content,
-                        null,
+                        media,
                         replyToId,
                         replyToName,
                         replyMsgContent
@@ -553,7 +565,7 @@ namespace Discord
         public class pluginOOTBStuff
         {
             private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
-            private static readonly HttpClient _httpClient = new HttpClient();
+            internal static readonly HttpClient _httpClient = new HttpClient();
 
             public pluginOOTBStuff()
             {

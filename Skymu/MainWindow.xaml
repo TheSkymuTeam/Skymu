@@ -177,7 +177,7 @@ Width="14" Grid.Row="1"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0"
                    HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
+                   VerticalAlignment="Top"
                    Margin="-1000,0,0,0"
                    FontSize="11"
                            Text="{Binding SentByDN}"
@@ -196,11 +196,12 @@ Width="14" Grid.Row="1"/>
                 <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
 
                     <ContentControl
-
+   Visibility="{Binding Body,
+                  Converter={StaticResource NullDependentVisibilityConverter}}"                      
 Content="{Binding Body,
                   Converter={StaticResource FormatFullTextConverter}}" />
 
-                    <Image HorizontalAlignment="Left" MaxWidth="300" MaxHeight="300" Stretch="None" 
+                    <Image HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
 Grid.Column="2" Source="{Binding Media,
                        Converter={StaticResource MsgByteArrayToImageConverter}}"
                            Visibility="{Binding Media,
@@ -221,7 +222,7 @@ Grid.Column="2" Source="{Binding Media,
 
                 <TextBlock Grid.Row="1" Grid.Column="3"
                    Text="{Binding Time, StringFormat=h:mm tt}"
-                   VerticalAlignment="Bottom"
+                   VerticalAlignment="Top"
                    FontSize="11"
                    FontFamily="Tahoma"
                    Foreground="#999999"
