@@ -4,23 +4,21 @@
   <Settings>
     <Setting Name="WindowFrame" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
-		<Provider>Skymu.RegistrySettingsProvider</Provider>
     </Setting>
     <Setting Name="AutoLoginEnabled" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
-		<Provider>Skymu.RegistrySettingsProvider</Provider>
     </Setting>
     <Setting Name="BrandingName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skype</Value>
-		<Provider>Skymu.RegistrySettingsProvider</Provider>
     </Setting>
     <Setting Name="ListDelimiter" Type="System.String" Scope="User">
       <Value Profile="(Default)">☛</Value>
-		<Provider>Skymu.RegistrySettingsProvider</Provider>
     </Setting>
     <Setting Name="ThemeRoot" Type="System.String" Scope="User">
       <Value Profile="(Default)">/Resources/Light</Value>
-		<Provider>Skymu.RegistrySettingsProvider</Provider>
+    </Setting>
+    <Setting Name="BuildName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Alverstone Crème Brûlée</Value>
     </Setting>
   </Settings>
 </SettingsFile>

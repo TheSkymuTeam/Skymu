@@ -168,7 +168,7 @@ namespace Skymu
                 }
                 TypingIndicatorText.Text = typingText;
                 TypingIndicator.Visibility = Visibility.Visible;
-            }          
+            }
         }
 
         private static DropShadowEffect CreateDropShadow(Color color) => new()
@@ -597,14 +597,17 @@ namespace Skymu
 
         private async Task SendMessage()
         {
-            string messageBody = MessageTextBox.Text;
-            MessageTextBox.Clear();
-
-            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
-
-            if (didSend)
+            if (SendMsgButton.IsEnabled)
             {
-                Sounds.Play("message-sent");
+                string messageBody = MessageTextBox.Text;
+                MessageTextBox.Clear();
+
+                bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
+
+                if (didSend)
+                {
+                    Sounds.Play("message-sent");
+                }
             }
         }
 
@@ -724,29 +727,31 @@ namespace Skymu
 
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
-        private bool isPlaceholderActive;
+        private bool IsMsgBoxPlaceholderActive = true;
 
-        private void ApplyPlaceholder(TextBox textBox, string placeholderText)
+        private void ApplyPlaceholder(TextBox textBox, string placeholderText, bool isMTB = false)
         {
             if (!string.IsNullOrEmpty(textBox.Text))
                 return;
 
             textBox.Text = placeholderText;
             textBox.Foreground = PlaceholderBrush;
+            IsMsgBoxPlaceholderActive = isMTB;
             UpdateSendButtonState();
         }
 
-        private void RemovePlaceholder(TextBox textBox)
+        private void RemovePlaceholder(TextBox textBox, bool isMTB = false)
         {
             textBox.Text = string.Empty;
             textBox.Foreground = Brushes.Black;
-            isPlaceholderActive = false;
+            IsMsgBoxPlaceholderActive = !isMTB;
             UpdateSendButtonState();
         }
 
         private void UpdateSendButtonState()
-        {
-            SendMsgButton.IsEnabled = !isPlaceholderActive;
+        {          
+            if ((String.IsNullOrWhiteSpace(MessageTextBox.Text) || IsMsgBoxPlaceholderActive)) SendMsgButton.IsEnabled = false;
+            else SendMsgButton.IsEnabled = true;
         }
 
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
@@ -765,17 +770,22 @@ namespace Skymu
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            RemovePlaceholder(MessageTextBox);
+            RemovePlaceholder(MessageTextBox, true);           
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
         }
 
         private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Keyboard.ClearFocus();
+        }
+
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateSendButtonState();
         }
 
         private async void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)

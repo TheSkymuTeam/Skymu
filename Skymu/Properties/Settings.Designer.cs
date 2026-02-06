@@ -82,5 +82,14 @@ namespace Skymu.Properties {
                 this["ThemeRoot"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Crème Brûlée")]
+        public string BuildName {
+            get {
+                return ((string)(this["BuildName"]));
+            }
+        }
     }
 }

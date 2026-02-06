@@ -1147,6 +1147,7 @@ Width="23"/>
     FontFamily="Tahoma"
     FontSize="11"
     UseLayoutRounding="True"
+                                                    TextChanged="MessageTextBox_TextChanged"
     PreviewKeyDown="MessageTextBox_PreviewKeyDown" />
                                             </Border>
                                         </StackPanel>
