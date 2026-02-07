@@ -99,7 +99,7 @@ HoverIndex="-1"
 PressedIndex="-1"
 IsHitTestVisible="False"
 HorizontalAlignment="Stretch" />
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="13,0,0,0" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="9,0,0,0" VerticalAlignment="Center">
                 <TextBlock Grid.Row="0"  Text="Skymu Customization:" 
                        FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
                        Foreground="#666666" />
