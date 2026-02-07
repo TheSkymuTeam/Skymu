@@ -24,8 +24,8 @@ namespace Skymu
         public enum Type
         {
             Skype,
-            Information,
             Error,
+            Information,
             Question,
             Picture
         }
@@ -75,6 +75,7 @@ namespace Skymu
                 Description.Text = content;
                 BRAction = brAction;
                 BLAction = blAction;
+                DialogImage.DefaultIndex = (int)type;
                 if (blText is not null) ButtonLeft.Content = blText;
                 if (brText is not null) ButtonRight.Content = brText;
 
