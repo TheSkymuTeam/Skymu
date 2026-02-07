@@ -1121,11 +1121,12 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-                                                    HorizontalAlignment="Left"
+HorizontalAlignment="Left"
 x:Name="EmojiButton"
 MouseLeftButtonUp="EmojiButton_Click"
 PressedIndex="2"
 Width="18"
+Height="18"
 Slice="false"/>
                                                 </StackPanel>
                                                 <StackPanel x:Name="TypingIndicator" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">

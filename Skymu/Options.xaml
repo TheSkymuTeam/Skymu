@@ -76,10 +76,9 @@ HorizontalAlignment="Stretch" />
                 </ListBox>
 
             </StackPanel>
-            <Grid Grid.Column="1" Margin="-4,0,0,0">
+        <Grid Grid.Column="1" Margin="-4,9,9,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="59*"/>
+                 
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -87,25 +86,27 @@ HorizontalAlignment="Stretch" />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-            <local:SliceControl
-                            Grid.ColumnSpan="2"
+
+            <local:SliceControl     Grid.Row="0"                   
 Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Options/header.png'}"
 ElementCount="5"                             
 StackDirection="Vertical"
 DefaultIndex="1"
-Margin="0,9,9,0"      
+Margin="0,0,0,0"      
 HoverIndex="-1"
 PressedIndex="-1"
 IsHitTestVisible="False"
-TextStartPositionX="13"
-Text="Skymu Customization"                                
-TextFont="Tahoma"
-TextWeight="Bold"
-TextSize="11"
-TextColor="#666666"
 HorizontalAlignment="Stretch" />
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="13,0,0,0" VerticalAlignment="Center">
+                <TextBlock Grid.Row="0"  Text="Skymu Customization:" 
+                       FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
+                       Foreground="#666666" />
+                <TextBlock Grid.Row="0" Margin="7,0" Text="Modify the way Skymu looks, feels, and behaves" 
+       FontFamily="Tahoma"  FontSize="11"
+       Foreground="#666666" />
+            </StackPanel>
 
 
 
