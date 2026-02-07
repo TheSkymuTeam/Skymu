@@ -13,6 +13,7 @@
 // This is done by, and with permission from, the original creator (patricktbp).
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -24,7 +25,7 @@ namespace Discord.Classes
     {
         private static readonly ConfigMgr configMgr = new ConfigMgr();
 
-       
+
         private static readonly HttpClient client;
 
         // Configuration (Firefox 115 ESR on Windows 10)
@@ -40,6 +41,7 @@ namespace Discord.Classes
                 PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
                 MaxConnectionsPerServer = 10
             };
+
             // Re-used client (Less memory usage)
             client = new HttpClient(handler);
 
@@ -56,7 +58,7 @@ namespace Discord.Classes
                 System.Net.SecurityProtocolType.Tls13;
         }
 
-        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null)
+        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
         {
             string url = $"https://discord.com/api/v9/{endpoint}";
             var request = new HttpRequestMessage(httpMethod, url);
@@ -70,6 +72,14 @@ namespace Discord.Classes
                 catch (Exception ex)
                 {
                     return $"[API/ParseError] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
+                }
+            }
+
+            if (headers != null)
+            {
+                foreach (var kvp in headers)
+                {
+                    request.Headers.TryAddWithoutValidation(kvp.Key, kvp.Value);
                 }
             }
 

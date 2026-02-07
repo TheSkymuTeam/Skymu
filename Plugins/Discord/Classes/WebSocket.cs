@@ -18,16 +18,15 @@
 
 #pragma warning disable 4014
 
-using Discord;
+using MiddleMan;
 using System;
 using System.Buffers;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.WebSockets;
-using System.Runtime.CompilerServices;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -46,8 +45,8 @@ namespace Discord.Classes
         // Discord's WebSocket / Gateway URL
         private string gatewayUrl;
 
-        // Discord token, quite obvious
-        private string token;
+        // The Discord token used by the user
+        private string DscToken;
 
         // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not.
         public bool CanCheckData = false;
@@ -69,9 +68,8 @@ namespace Discord.Classes
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
-        // This is the file Skymu uses to find the Discord token
-
         public ClientWebSocket WSClient { get; private set; }
+        private readonly Core _core;
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
@@ -81,13 +79,20 @@ namespace Discord.Classes
         private CancellationTokenSource _receiveCts;
 
         // Event for new messages
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<HelperClasses.MessageReceivedEventArgs> MessageReceived;
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
-        private readonly Channel<MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<MessageReceivedEventArgs>();
+        private readonly Channel<HelperClasses.MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.MessageReceivedEventArgs>();
 
-        public WebSocket(string token)
+        public WebSocket(string token, Core core)
         {
-            gatewayUrl = "wss://gateway.discord.gg/?v=9&encoding=json";
+            _core = core;
+            DscToken = token;
+            var config = new ConfigMgr();
+
+            // Discord adds "&compress=zlib-stream" at the end of this URL
+            // However, I could not figure out how to decompress the stream it sends
+            // I'll look into this a bit more, however no success so far :(
+            gatewayUrl = "wss://gateway.discord.gg/?encoding=json&v=9";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             identifyPayloadJson = JsonSerializer.Serialize(new
@@ -98,12 +103,28 @@ namespace Discord.Classes
                     token = token,
                     properties = new
                     {
-                        os = "Windows",
-                        browser = "Firefox",
-                        device = string.Empty
+                        os = config.OperatingSystem,
+                        browser = config.BrowserName,
+                        device = string.Empty,
+                        system_locale = config.SystemLocale,
+                        has_client_mods = config.HasClientMods,
+                        browser_user_agent = config.BrowserUA,
+                        browser_version = config.BrowserVer,
+                        os_version = config.OSVersion,
+                        referrer = config.DCReferrer,
+                        referring_domain = config.DCReferringDomain,
+                        referrer_current = config.DCReferringCurrent,
+                        referring_domain_current = config.DCReferringCurrentDomain,
+                        release_channel = config.DCClientState,
+                        client_event_source = config.DCClientEvtSrc,
+                        client_launch_id = config.ClientLaunchId,
+                        is_fast_connect = true
                     }
-                }
+                },
+                client_state = new { guild_versions = new { } }
             });
+
+            Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
 
             _heartbeatBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(heartbeatPayloadJson));
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
@@ -117,28 +138,6 @@ namespace Discord.Classes
             await InitWS();
         }
 
-        public class StatusData
-        {
-            public string Status { get; set; }
-            public string CustomStatus { get; set; }
-        }
-
-        public static class UserStatusStore
-        {
-            private static readonly ConcurrentDictionary<string, StatusData> _statuses = new();
-            public static void UpdateStatus(string userId, string status, string customStatus = null)
-            {
-                _statuses[userId] = new StatusData { Status = status, CustomStatus = customStatus };
-            }
-            public static string GetStatus(string userId) =>
-                _statuses.TryGetValue(userId, out var data) ? data.Status : "Offline";
-            public static string GetCustomStatus(string userId) =>
-                _statuses.TryGetValue(userId, out var data) ? data.CustomStatus : null;
-            public static bool ContainsUser(string userId) => _statuses.ContainsKey(userId);
-            public static void Clear() => _statuses.Clear();
-        }
-
-
         private async Task InitWS()
         {
             WSClient = new ClientWebSocket();
@@ -151,22 +150,6 @@ namespace Discord.Classes
 
             _receiveCts = new CancellationTokenSource();
             _ = Task.Run(() => ReceiveLoop(_receiveCts.Token));
-        }
-
-        private void StartHeartbeat()
-        {
-            StopHeartbeat();
-            heartbeatCts = new CancellationTokenSource();
-            heartbeatTask = Task.Run(async () =>
-            {
-                var token = heartbeatCts.Token;
-                while (!token.IsCancellationRequested && WSClient.State == WebSocketState.Open)
-                {
-                    await Task.Delay(heartbeatInterval, token);
-                    if (WSClient.State == WebSocketState.Open)
-                        await WSClient.SendAsync(_heartbeatBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
-                }
-            });
         }
 
         private async Task SendPayload(string payload = null)
@@ -254,7 +237,7 @@ namespace Discord.Classes
                             case "READY":
                                 // Only uncomment this if you need to debug the READY event from Discord.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
-                                HandleUserStatus(json["d"]);
+                                UserStatusMgr.HandleUserStatus(json["d"]);
 
                                 var readyData = json["d"];
                                 recipientsData = readyData["relationships"] ?? new JsonArray();
@@ -264,6 +247,9 @@ namespace Discord.Classes
                                 break;
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
+                                break;
+                            case "TYPING_START":
+                                HandleTypingEvent(json["d"]);
                                 break;
                             default:
                                 // Debug.WriteLine($"Unhandled event type: {eventType}");
@@ -275,9 +261,7 @@ namespace Discord.Classes
                         heartbeatInterval = json["d"]?["heartbeat_interval"]?.GetValue<int>() ?? 41250;
                         StartHeartbeat();
                         break;
-                    case 11:
-                        Debug.WriteLine("Heartbeat acknowledged");
-                        break;
+
                     default:
                         break;
                 }
@@ -290,82 +274,30 @@ namespace Discord.Classes
 
         private async Task HandleMessageCreate(JsonNode messageData)
         {
-            try
+            if (messageData is null) return;
+
+            var messageItem = await MessageParser.ParseMessage(messageData);
+            if (messageItem is null) return;
+
+            string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
+
+            var args = new HelperClasses.MessageReceivedEventArgs
             {
-                string channelId = GetString(messageData, "channel_id");
-                string messageId = GetString(messageData, "id");
-                string authorId = GetString(messageData["author"], "id", "0");
-                string authorName = GetString(
-    messageData["author"]["member"], "nick",
-    GetString(
-        messageData["author"], "global_name",
-        GetString(messageData["author"], "username", "Unknown")
-    )
-);
-                string content = GetString(messageData, "content");
+                ChannelId = channelId,
+                MessageId = messageItem.MessageID,
+                AuthorId = messageItem.SentByID,
+                AuthorName = messageItem.SentByDN,
+                Content = messageItem.Body,
+                Media = messageItem.Media,
+                Timestamp = messageItem.Time,
+                ReplyToId = messageItem.ReplyToID,
+                ReplyToName = messageItem.ReplyToDN,
+                ReplyMsgContent = messageItem.ReplyBody
+            };
 
-                byte[] media = null;
-
-                if (messageData["attachments"] is JsonArray attachments && attachments.Count > 0)
-                {
-                    // take first attachment
-                    JsonNode firstAttachment = attachments[0];
-
-                    // cast to JsonObject to access properties
-                    if (firstAttachment is JsonObject obj && obj["url"] is JsonNode urlNode)
-                    {
-                        string url = urlNode.GetValue<string>();
-
-                        // download bytes from URL
-                        media = await Discord.Core.pluginOOTBStuff._httpClient.GetByteArrayAsync(url);
-                    }
-                }
-                var mentions = messageData["mentions"] as JsonArray;
-                content = Discord.Core.MentionsReplaceIDWithUsername(mentions, content);
-                DateTime timestamp = DateTime.UtcNow;
-                string timestampStr = GetString(messageData, "timestamp");
-                if (!string.IsNullOrEmpty(timestampStr))
-                    DateTime.TryParse(timestampStr, out timestamp);
-
-                // Handle reply/reference information
-                string replyToId = null;
-                string replyToName = null;
-                string replyMsgContent = null;
-
-                var referencedMessage = messageData["referenced_message"];
-                if (referencedMessage is not null)
-                {
-                    replyToId = GetString(referencedMessage["author"], "id");
-                    replyToName = referencedMessage["member"]?["nick"]?.GetValue<string>()
-              ?? referencedMessage["author"]?["global_name"]?.GetValue<string>()
-              ?? referencedMessage["author"]?["username"]?.GetValue<string>()
-              ?? "Unknown";
-                    replyMsgContent = referencedMessage["content"]?.GetValue<string>() ?? string.Empty;
-                    var refMentions = referencedMessage["mentions"] as JsonArray;
-                    replyMsgContent = Discord.Core.MentionsReplaceIDWithUsername(refMentions, replyMsgContent);
-                }
-
-                var args = new MessageReceivedEventArgs
-                {
-                    ChannelId = channelId,
-                    MessageId = messageId,
-                    AuthorId = authorId,
-                    AuthorName = authorName,
-                    Content = content,
-                    Media = media,
-                    Timestamp = timestamp,
-                    ReplyToId = replyToId,
-                    ReplyToName = replyToName,
-                    ReplyMsgContent = replyMsgContent
-                };
-
-                _ = _messageQueue.Writer.WriteAsync(args);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error handling MESSAGE_CREATE: {ex.Message}");
-            }
+            _ = _messageQueue.Writer.WriteAsync(args);
         }
+
 
         private void StartMessageProcessor()
         {
@@ -379,71 +311,61 @@ namespace Discord.Classes
             });
         }
 
-        private void HandleUserStatus(JsonNode messageData)
+        private void HandleTypingEvent(JsonNode typingData)
         {
-            if (messageData["user_settings"] is JsonObject userSettings)
+            string userId = typingData["user_id"]?.GetValue<string>();
+            string channelId = typingData["channel_id"]?.GetValue<string>();
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(channelId)) return;
+
+            _ = Task.Run(async () =>
             {
-                string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "Unknown";
-                string rawCustomStatus = string.Empty;
+                string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
 
-                if (userSettings["custom_status"] is JsonObject customStatusObj)
+                var typingUser = new ProfileData(
+                    displayName: globalName,
+                    identifier: userId,
+                    status: "Typing...",
+                    presenceStatus: UserConnectionStatus.Online,
+                    profilePicture: null
+                );
+
+                _core?._uiContext?.Post(_ =>
                 {
-                    rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
-                }
-                UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
-            }
+                    if (!_core.TypingUsersList.Any(u => u.Identifier == typingUser.Identifier))
+                        _core.TypingUsersList.Add(typingUser);
 
-            foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
-            {
-                string userId = presence["user"]?["id"]?.GetValue<string>();
-                if (userId is null) continue;
-
-                string status = presence["status"]?.GetValue<string>() ?? "offline";
-                string customStatus = string.Empty;
-
-                var activities = presence["activities"] as JsonArray;
-                if (activities is not null && activities.Count > 0)
-                {
-                    foreach (var activity in activities)
+                    if (!_core._typingUsersPerChannel.TryGetValue(channelId, out var users))
                     {
-                        int type = activity["type"]?.GetValue<int>() ?? -1;
-                        if (type == 0)
-                        {
-                            string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName is not null)
-                            {
-                                customStatus = $"Playing {activityName}";
-                                break;
-                            }
-                        }
-                        else if (type == 1)
-                        {
-                            string details = activity["details"]?.GetValue<string>();
-                            if (details is not null)
-                            {
-                                customStatus = $"Streaming {details}";
-                                break;
-                            }
-                        }
-                        else if (type == 2)
-                        {
-                            string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName is not null)
-                            {
-                                customStatus = $"Listening to {activityName}";
-                                break;
-                            }
-                        }
-                        else if (type == 4)
-                        {
-                            customStatus = activity["state"]?.GetValue<string>() ?? string.Empty;
-                            break;
-                        }
+                        users = new HashSet<string>();
+                        _core._typingUsersPerChannel[channelId] = users;
                     }
-                }
+                    users.Add(userId);
+                }, null);
+            });
+        }
 
-                UserStatusStore.UpdateStatus(userId, status, customStatus);
-            }
+        private void StartHeartbeat()
+        {
+            StopHeartbeat();
+            heartbeatCts = new CancellationTokenSource();
+            heartbeatTask = Task.Run(async () =>
+            {
+                var token = heartbeatCts.Token;
+                while (!token.IsCancellationRequested && WSClient.State == WebSocketState.Open)
+                {
+                    await Task.Delay(heartbeatInterval, token);
+                    if (WSClient.State == WebSocketState.Open)
+                        await WSClient.SendAsync(_heartbeatBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+            });
+        }
+
+        private void StopHeartbeat()
+        {
+            heartbeatCts?.Cancel();
+            heartbeatCts?.Dispose();
+            heartbeatCts = null;
         }
 
         private async Task ReconnectWithDelay(int attempt = 1)
@@ -475,30 +397,5 @@ namespace Discord.Classes
             catch { /* This ignores any abort errors */ }
             WSClient?.Dispose();
         }
-
-        private void StopHeartbeat()
-        {
-            heartbeatCts?.Cancel();
-            heartbeatCts?.Dispose();
-            heartbeatCts = null;
-        }
-        private static string GetString(JsonNode node, string key, string defaultValue = "")
-        {
-            return node?[key]?.GetValue<string>() ?? defaultValue;
-        }
-    }
-
-    public class MessageReceivedEventArgs : EventArgs
-    {
-        public string ChannelId { get; set; }
-        public string MessageId { get; set; }
-        public string AuthorId { get; set; }
-        public string AuthorName { get; set; }
-        public string Content { get; set; }
-        public byte[] Media { get; set; }
-        public DateTime Timestamp { get; set; }
-        public string ReplyToId { get; set; }
-        public string ReplyToName { get; set; }
-        public string ReplyMsgContent { get; set; }
     }
 }

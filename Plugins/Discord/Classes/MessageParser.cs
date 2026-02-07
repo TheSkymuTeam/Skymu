@@ -1,0 +1,93 @@
+﻿using MiddleMan;
+using System;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
+
+namespace Discord.Classes
+{
+    internal class MessageParser
+    {
+        public static async Task<MessageItem> ParseMessage(JsonNode message)
+        {
+            if (message is null) return null;
+
+            string messageId = message["id"]?.GetValue<string>() ?? "0";
+
+            string authorId = message["author"]?["id"]?.GetValue<string>() ?? "0";
+            string authorName = GetAuthorName(message);
+
+            var content = HelperMethods.ReplaceIDWithName(
+                message["mentions"] as JsonArray,
+                message["content"]?.GetValue<string>() ?? string.Empty);
+
+            DateTime timestamp = ParseTimestamp(message["timestamp"]?.GetValue<string>());
+
+            byte[] media = await ParseMessageMedia(message);
+
+            var reply = ParseReply(message["referenced_message"]);
+
+            return new MessageItem(
+                messageId,
+                authorId,
+                authorName,
+                timestamp,
+                content,
+                media,
+                reply.replyToId,
+                reply.replyToName,
+                reply.replyContent
+            );
+        }
+
+        public static (string replyToId, string replyToName, string replyContent) ParseReply(JsonNode refMsg)
+        {
+            if (refMsg is null)
+                return (null, null, null);
+
+            string replyToId = refMsg["author"]?["id"]?.GetValue<string>();
+
+            string replyToName = GetAuthorName(refMsg);
+
+            string replyContent = refMsg["content"]?.GetValue<string>() ?? "[unavailable]";
+            replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, replyContent);
+
+            return (replyToId, replyToName, replyContent);
+        }
+
+        public static string GetAuthorName(JsonNode node)
+        {
+            var member = node?["member"];
+            var author = node?["author"];
+
+            return member?["nick"]?.GetValue<string>()
+                ?? author?["global_name"]?.GetValue<string>()
+                ?? author?["username"]?.GetValue<string>()
+                ?? "[unknown user]";
+        }
+
+        public static async Task<byte[]> ParseMessageMedia(JsonNode message)
+        {
+            if (message["attachments"] is not JsonArray attachments || attachments.Count == 0)
+                return null;
+
+            if (attachments[0] is not JsonObject obj)
+                return null;
+
+            string url = obj["url"]?.GetValue<string>();
+            if (string.IsNullOrEmpty(url))
+                return null;
+
+            try
+            {
+                return await Discord.Classes.HelperMethods._httpClient.GetByteArrayAsync(url);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static DateTime ParseTimestamp(string ts)
+            => DateTime.TryParse(ts, out var dt) ? dt : DateTime.UtcNow;
+    }
+}

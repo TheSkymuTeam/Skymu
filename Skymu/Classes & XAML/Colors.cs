@@ -9,12 +9,7 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Skymu
 {
@@ -22,6 +17,6 @@ namespace Skymu
     {
         // Brushes I'm mostly using for dark theme right now, but later the whole program will rely on
         public static SolidColorBrush darkBlue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1d3a55"));
-        public static SolidColorBrush white = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f4f4f4"));          
+        public static SolidColorBrush white = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f4f4f4"));
     }
 }

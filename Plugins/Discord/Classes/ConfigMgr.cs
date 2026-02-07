@@ -19,8 +19,31 @@ namespace Discord.Classes
     internal class ConfigMgr
     {
         private static readonly Random _rng = new Random();
+        // Launch info
         public string LaunchSignature { get; private set; }
         public string ClientLaunchId { get; private set; }
+
+        // System related options
+        public string OperatingSystem { get; set; } = "Windows";
+        public string BrowserName { get; set; } = "Firefox";
+        public string DeviceName { get; set; } = string.Empty; // Discord leaves this empty for some reason?
+        public string SystemLocale { get; set; } = "en-US"; // Leave it as en-US for now, later we will make it dynamic.
+        public string OSVersion { get; set; } = "10";
+
+        // Discord related options
+        public bool HasClientMods { get; set; } = false; // Discord uses this in the XSP, don't know why they need this.
+        public string DCReferrer { get; set; } = string.Empty;
+        public string DCReferringDomain { get; set; } = string.Empty;
+        public string DCReferringCurrent { get; set; } = "https://discord.com/";
+        public string DCReferringCurrentDomain { get; set; } = "discord.com";
+        public string DCReleaseChannel { get; set; } = "canary";
+        public int DCClientBuild { get; set; } = 494673; // Latest build as of 7/2/26
+        public string DCClientEvtSrc { get; set; } = null;
+        public string DCClientState { get; set; } = "unfocused";
+
+        // Browser related options
+        public string BrowserUA { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
+        public string BrowserVer { get; set; } = "115.0";
 
         public string GetXSPJson()
         {
@@ -31,51 +54,29 @@ namespace Discord.Classes
 
         private string GenerateXSP()
         {
-            // System related options
-            string operatingSystem = "Windows";
-            string browserName = "Firefox";
-            string deviceName = string.Empty; // Discord leaves this empty for some reason?
-            string systemLocale = "en-US"; // Leave it as en-US for now, later we will make it dynamic.
-            string osVersion = "10";
-
-            // Discord related options
-            bool hasClientMods = false; // Discord uses this in the XSP, don't know why they need this.
-            string dcReferrer = string.Empty;
-            string dcReferringDomain = string.Empty;
-            string dcReferringCurrent = "https://discord.com/";
-            string dcReferringCurrentDomain = "discord.com";
-            string dcReleaseChannel = "canary";
-            int dcClientBuild = 488579; // Latest build as of 25/1/26
-            string dcClientEvtSrc = null;
-            string dcClientState = "unfocused";
-
-            // Browser related options
-            string browserUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
-            string browserVer = "115.0";
-
             // Build the JSON required for XSP
             GenerateLaunchSignature();
 
             var dict = new Dictionary<string, object>
             {
-                { "os", operatingSystem },
-                { "browser", browserName },
-                { "device", deviceName },
-                { "system_locale", systemLocale },
-                { "has_client_mods", hasClientMods },
-                { "browser_user_agent", browserUA },
-                { "browser_version", browserVer },
-                { "os_version", osVersion },
-                { "referrer", dcReferrer },
-                { "referring_domain", dcReferringDomain },
-                { "referrer_current", dcReferringCurrent },
-                { "referring_domain_current", dcReferringCurrentDomain },
-                { "release_channel", dcReleaseChannel },
-                { "client_build_number", dcClientBuild },
-                { "client_event_source", dcClientEvtSrc },
+                { "os", OperatingSystem },
+                { "browser", BrowserName },
+                { "device", DeviceName },
+                { "system_locale", SystemLocale },
+                { "has_client_mods", HasClientMods },
+                { "browser_user_agent", BrowserUA },
+                { "browser_version", BrowserVer },
+                { "os_version", OSVersion },
+                { "referrer", DCReferrer },
+                { "referring_domain", DCReferringDomain },
+                { "referrer_current", DCReferringCurrent },
+                { "referring_domain_current", DCReferringCurrentDomain },
+                { "release_channel", DCReleaseChannel },
+                { "client_build_number", DCClientBuild },
+                { "client_event_source", DCClientEvtSrc },
                 { "client_launch_id", ClientLaunchId },
                 { "launch_signature", LaunchSignature },
-                { "client_app_state", dcClientState }
+                { "client_app_state", DCClientState }
             };
 
             // Returns the finished XSP!

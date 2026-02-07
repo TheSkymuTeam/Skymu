@@ -11,7 +11,6 @@
 
 using MiddleMan;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -749,7 +748,7 @@ namespace Skymu
         }
 
         private void UpdateSendButtonState()
-        {          
+        {
             if ((String.IsNullOrWhiteSpace(MessageTextBox.Text) || IsMsgBoxPlaceholderActive)) SendMsgButton.IsEnabled = false;
             else SendMsgButton.IsEnabled = true;
         }
@@ -770,7 +769,7 @@ namespace Skymu
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            RemovePlaceholder(MessageTextBox, true);           
+            RemovePlaceholder(MessageTextBox, true);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)

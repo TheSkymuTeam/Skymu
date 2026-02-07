@@ -51,8 +51,8 @@ namespace Skymu
                     DialogTextBox.Visibility = Visibility.Visible;
                     brAction ??= () =>
                     {
-                       TextBoxText = DialogTextBox.Text;
-                       DialogResult = true;
+                        TextBoxText = DialogTextBox.Text;
+                        DialogResult = true;
                     };
                     brText ??= "Save";
 
@@ -84,7 +84,7 @@ namespace Skymu
 
             catch { Application.Current.Shutdown(); }
         }
-            
+
         private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
         private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }
     }

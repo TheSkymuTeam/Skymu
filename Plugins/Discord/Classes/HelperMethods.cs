@@ -1,0 +1,152 @@
+﻿using MiddleMan;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
+namespace Discord.Classes
+{
+    internal class HelperMethods
+    {
+        private readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
+        internal static readonly HttpClient _httpClient = new HttpClient();
+        internal static readonly API api = new API();
+
+        // Global avatar size used for fetching the profile pictures
+        private const int AVATAR_SIZE = 128;
+
+        public HelperMethods()
+        {
+            // Make sure the cache directory exists
+            Directory.CreateDirectory(cacheDir);
+        }
+
+        // So we don't have to fetch the data everytime
+        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
+        {
+            string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
+
+            if (File.Exists(cachedFile))
+                return await File.ReadAllBytesAsync(cachedFile).ConfigureAwait(false);
+
+            string pattern = $"*-{userId}.png";
+            foreach (var file in Directory.GetFiles(cacheDir, pattern))
+            {
+                if (file != cachedFile)
+                    File.Delete(file);
+            }
+
+            string url = GetAvatarUrl(userId, hash, false, isGC);
+            byte[] data = await _httpClient.GetByteArrayAsync(url).ConfigureAwait(false);
+            await File.WriteAllBytesAsync(cachedFile, data).ConfigureAwait(false);
+            return data;
+        }
+
+        public static string ReplaceIDWithName(JsonArray idArray, string content)
+        {
+            if (idArray is null || string.IsNullOrEmpty(content))
+                return content;
+
+            foreach (var array in idArray)
+            {
+                string id = array["id"]?.GetValue<string>();
+                if (id == null) continue;
+
+                string displayName = array["member"]?["nick"]?.GetValue<string>()
+                                     ?? array["global_name"]?.GetValue<string>()
+                                     ?? array["username"]?.GetValue<string>()
+                                     ?? "Unknown";
+
+                content = Regex.Replace(
+                    content,
+                    $@"<@!?{Regex.Escape(id)}>",
+                    $"<@{displayName}>"
+                );
+            }
+            return content;
+        }
+
+        public async static Task<string> ReplaceIDWithNameForTyping(string id, string token)
+        {
+            string apiUri = $"/users/{id}/profile";
+            Debug.WriteLine($"The API endpoint used is {apiUri}");
+
+            string userData = await api.SendAPI(apiUri, HttpMethod.Get, token, null, null, null, null);
+            Debug.WriteLine($"The response sent back from the API is: {userData}");
+
+            try
+            {
+                using JsonDocument doc = JsonDocument.Parse(userData);
+                string displayName = doc.RootElement
+                                       .GetProperty("user")
+                                       .GetProperty("global_name")
+                                       .GetString();
+                return displayName ?? string.Empty;
+            }
+            finally { }
+        }
+
+        public int MapStatus(string statusStr)
+        {
+            return statusStr switch
+            {
+                "online" => UserConnectionStatus.Online,
+                "idle" => UserConnectionStatus.Away,
+                "dnd" => UserConnectionStatus.DoNotDisturb,
+                "offline" => UserConnectionStatus.Invisible,
+                _ => UserConnectionStatus.Invisible
+            };
+        }
+
+        public static bool TryToGetChannelId(string identifier, out string channelId)
+        {
+            channelId = null;
+            if (string.IsNullOrWhiteSpace(identifier)) return false;
+
+            var parts = identifier.Split(';');
+            if (parts.Length < 2) return false;
+
+            channelId = parts[1];
+            return true;
+        }
+
+        public static IEnumerable<JsonObject> GetUserChannels(bool orderByRecent)
+        {
+            var privateChannels = WebSocketMgr.GetPrivateChannels() ?? new JsonArray();
+            var channels = privateChannels
+                .OfType<JsonObject>()
+                .Where(c =>
+                    c["type"]?.GetValue<int>() == 1 ||
+                    c["type"]?.GetValue<int>() == 3);
+
+            if (orderByRecent)
+            {
+                channels = channels
+                    .OrderByDescending(c =>
+                        c["last_message_id"]?.GetValue<string>() ?? "0");
+            }
+
+            return channels;
+        }
+
+        public static string GetDisplayName(string globalName, string username)
+            => string.IsNullOrEmpty(globalName) ? username : globalName;
+
+        public string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
+        {
+            if (isServer)
+                return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size={AVATAR_SIZE}";
+
+            if (isGC)
+                return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size={AVATAR_SIZE}";
+
+            return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size={AVATAR_SIZE}";
+        }
+    }
+}

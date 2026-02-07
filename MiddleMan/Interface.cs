@@ -178,8 +178,8 @@ namespace MiddleMan
 
     public abstract class ClickableConfiguration
     {
-        
-        
+
+
     }
 
     public class ClickableDelimitationConfiguration : ClickableConfiguration

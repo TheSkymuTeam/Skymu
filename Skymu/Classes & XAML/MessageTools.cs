@@ -203,9 +203,10 @@ namespace Skymu
 
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
         // the main method, and the span, containg formatted text, is added to the global inline list. This, and the emoji-processing function only update the inline collection, and as such, return void.
-        private static void AddTextOrLinkOrClickable(ICollection<Inline> inlines, string text) { 
-            if (string.IsNullOrEmpty(text)) return;                                           
-                                                                                               
+        private static void AddTextOrLinkOrClickable(ICollection<Inline> inlines, string text)
+        {
+            if (string.IsNullOrEmpty(text)) return;
+
             int position = 0;
 
             string linkPattern = @"\[(.+?)\]\((https?://[^\s)]+)\)|((?:https?|ftp|gopher)://[^\s]+)"; // Regex for weblinks 
@@ -276,7 +277,7 @@ namespace Skymu
                         string url = nextLink.Groups[2].Value.TrimEnd(punctuation);
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            var hyperlink = new Hyperlink(new Run(display)) { NavigateUri = uri};
+                            var hyperlink = new Hyperlink(new Run(display)) { NavigateUri = uri };
                             hyperlink.RequestNavigate += (s, e) =>
                             {
                                 Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
@@ -392,11 +393,11 @@ namespace Skymu
                             IsHitTestVisible = false,
                             Width = 22, // 2px padding to fix image render clip bug
                             Height = 20,
-                            ElementCount = (sourceImg.PixelHeight / 20), 
+                            ElementCount = (sourceImg.PixelHeight / 20),
                             StackDirection = SpriteStackDirection.Vertical,
                             DefaultIndex = 0,
-                            Slice = false, 
-                            IsAnimation = true, 
+                            Slice = false,
+                            IsAnimation = true,
                             AnimationFps = 45.0 // change to speed up or slow down animation
                         };
 
