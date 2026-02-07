@@ -30,7 +30,7 @@ Margin="11,10,0,0"  />
                 </Border.Background>
             </Border>
             
-            <TextBlock Height="23" x:Name="header" Text="DEVELOPER: Fallback Dialog" Margin="70,3,0,0"
+            <TextBlock Height="23" x:Name="Header" Text="DEVELOPER: Fallback Dialog" Margin="70,3,0,0"
                        FontFamily="Arial" FontWeight="Bold" Foreground="#333333" FontSize="13" />
         </Grid>
 
@@ -43,7 +43,7 @@ Margin="11,10,0,0"  />
                          Margin="77,7,10,7">
                 <TextBlock LineHeight="16" 
                           TextWrapping="Wrap" 
-                          Name="sub"
+                          Name="Description"
                           Text="Dialog window called but null or invalid dialog type&#x0a;specified. This is a fallback dialog specified in XAML."
                           FontFamily="Tahoma" 
                           FontSize="11" />
@@ -76,12 +76,13 @@ Margin="11,10,0,0"  />
                          TextOptions.TextHintingMode="Fixed" 
                          Margin="10,0,0,0"
                          Width="250" />
-                <Button Content="Exit" Click="bLClick" x:Name="buttonLeft" 
+                <Button Content="Exit" Click="bLClick" x:Name="ButtonLeft" 
                         Width="73" VerticalAlignment="Center"
+                        Visibility="Collapsed"
                         HorizontalAlignment="Right" Margin="0,0,95,0" 
                         Height="23" FontFamily="Tahoma" FontSize="11" />
-                <Button Content="Return" Click="bRClick" IsDefault="True" 
-                        x:Name="buttonRight" Width="73"
+                <Button Content="Ignore" Click="bRClick" IsDefault="True" 
+                        x:Name="ButtonRight" Width="73"
                         VerticalAlignment="Center" HorizontalAlignment="Right" 
                         Margin="0,0,10,0" Height="23"
                         FontSize="11" FontFamily="Tahoma" />

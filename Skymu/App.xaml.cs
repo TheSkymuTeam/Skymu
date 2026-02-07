@@ -27,7 +27,14 @@ namespace Skymu
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                new Dialog(1, e.Message, "Error in plugin " + ((ICore)sender).Name);
+                new Dialog(Dialog.Type.Error, e.Message, "Error in plugin " + ((ICore)sender).Name).ShowDialog();
+            });
+        }
+        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
+        {
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                new Dialog(Dialog.Type.Information, e.Message, "Warning from plugin " + ((ICore)sender).Name).ShowDialog();
             });
         }
 
@@ -48,13 +55,6 @@ namespace Skymu
             Application.Current.Shutdown();
         }
 
-        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
-        {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                new Dialog(1, e.Message, "Warning from plugin " + ((ICore)sender).Name);
-            });
-        }
         internal static readonly HttpClient HttpClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(10)
@@ -86,23 +86,24 @@ namespace Skymu
             {
                 ev.Cancel = true;
             }
-
-            new Dialog(3);
+            string brand = Skymu.Properties.Settings.Default.BrandingName;
+            new Dialog(Dialog.Type.Question, "You won't be able to send or recieve instant\nmessages and calls if you do.", "Sure you want to quit " + brand + "?", "Quit " + brand + "?", null, "Cancel", true, null, "Quit").ShowDialog();
         }
 
         public static void ExceptionHandler(Exception ex)
         {
-            new Dialog(5, ex.Message);
+            string brand = Skymu.Properties.Settings.Default.BrandingName;
+            new Dialog(Dialog.Type.Error, ex.Message + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
         }
 
         public static void ShowMsg(string content, string title = "Message")
         {
-            new Dialog(0, content, title);
+            new Dialog(Dialog.Type.Information, content, title).ShowDialog();
         }
 
         public static void NotImplemented(string feature)
         {
-            new Dialog(6, feature);
+            new Dialog(Dialog.Type.Information, feature + " hasn't been added to " + Skymu.Properties.Settings.Default.BrandingName + " yet.", "Feature not implemented", null, null, "OK").ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs ev)

@@ -108,7 +108,7 @@ namespace Discord
             {
                 try
                 {
-                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Timestamp, e.Content, null, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
+                    var messageItem = new MessageItem(e.MessageId, e.AuthorId, e.AuthorName, e.Timestamp, e.Content, e.Media, e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
 
                     _uiContext.Post(_ => ActiveConversation.Add(messageItem), null);
 

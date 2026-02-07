@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows7.0</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -94,6 +94,9 @@
     <Resource Include="Resources\Dark\Sidebar\ms_Status_Bottom.png" />
     <Resource Include="Resources\Dark\Sidebar\ms_Status_DropArrow.png" />
     <Resource Include="Resources\Dark\Sidebar\ms_Status_Top.png" />
+    <Resource Include="Resources\Light\Chat\btn_emoji.png" />
+    <Resource Include="Resources\Light\Chat\btn_file_upload.png" />
+    <Resource Include="Resources\Light\Chat\msg-box-top.png" />
     <Resource Include="Resources\Light\Notifications\img_32700584.png" />
     <Resource Include="Resources\Light\Notifications\img_32701188.png" />
     <Resource Include="Resources\Light\Notifications\img_32703764.png" />
@@ -985,6 +988,10 @@
     <None Remove="Resources\Dark\Sidebar\ms_Status_Bottom.png" />
     <None Remove="Resources\Dark\Sidebar\ms_Status_DropArrow.png" />
     <None Remove="Resources\Dark\Sidebar\ms_Status_Top.png" />
+    <None Remove="Resources\Light\Chat\btn_emoji.png" />
+    <None Remove="Resources\Light\Chat\btn_file_upload.png" />
+    <None Remove="Resources\Light\Chat\msg-box-header.png" />
+    <None Remove="Resources\Light\Chat\msg-box-top.png" />
     <None Remove="Resources\Light\Chat\pencil-break.png" />
     <None Remove="Resources\Light\Chat\pencil-write.png" />
     <None Remove="Resources\Light\Chat\reply-arrow.png" />
@@ -1158,7 +1165,6 @@
     <Resource Include="Resources\Light\Chat\blank-right-button.png" />
     <Resource Include="Resources\Light\Chat\blank-square-button.png" />
     <Resource Include="Resources\Light\Chat\canvas.png" />
-    <Resource Include="Resources\Light\Chat\check-wifi-button.png" />
     <Resource Include="Resources\Universal\Chat\icon-facebook.png" />
     <Resource Include="Resources\Universal\Chat\icon-skype-feedback.png" />
     <Resource Include="Resources\Universal\Chat\msg-send-button.png" />
@@ -1205,9 +1211,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Universal\Chat\btn_call_arrow.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Light\Chat\msg-box-header.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Universal\Chat\msg-send-button-full.png" />

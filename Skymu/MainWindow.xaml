@@ -192,7 +192,7 @@ Width="14" Grid.Row="1"/>
                     </TextBlock.Visibility>
                 </TextBlock>
 
-               
+
                 <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
 
                     <ContentControl
@@ -213,7 +213,7 @@ Grid.Column="2" Source="{Binding Media,
       FontSize="11"
       FontFamily="Tahoma"
       Foreground="#999999"/>
-                
+
                 <TextBlock Grid.Row="1" Grid.Column="2"
                    Text="{Binding StartedBy, StringFormat='Call started by: {0}'}"
                    FontSize="11"
@@ -1111,7 +1111,23 @@ mc:Ignorable="d"
                                             <Grid>
                                                 <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-header.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-top.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
+                                                    <local:SliceControl
+Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_emoji.png'}"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+                                                    HorizontalAlignment="Left"
+x:Name="EmojiButton"
+MouseLeftButtonUp="EmojiButton_Click"
+PressedIndex="2"
+Width="18"
+Slice="false"/>
+                                                </StackPanel>
                                                 <StackPanel x:Name="TypingIndicator" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">
                                                     <local:SliceControl 
 x:Name="TypingIndicatorIcon"

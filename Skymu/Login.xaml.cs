@@ -108,7 +108,8 @@ namespace Skymu
                 }
                 else if (result == LoginResult.OptStepRequired)
                 {
-                    var dlg = new Dialog(7, Universal.Plugin.Name, null, false);
+                    var dlg = new Dialog(Dialog.Type.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.", 
+                        "Two-factor authentication required", Properties.Settings.Default.BrandingName + " - Login", null, "Log in", false, null, null, true);
                     var dlgResult = dlg.ShowDialog();
 
                     if (dlgResult == true)

@@ -821,6 +821,11 @@ namespace Skymu
         {
             Universal.NotImplemented("Video calling");
         }
+
+        private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
 
     // Converters used in the MainWindow XAML
@@ -857,17 +862,21 @@ namespace Skymu
             if (value is not byte[] bytes || bytes.Length == 0)
                 return null;
 
-            var bmp = new BitmapImage();
-            using (var stream = new MemoryStream(bytes))
+            try
             {
-                bmp.BeginInit();
-                bmp.CacheOption = BitmapCacheOption.OnLoad;
-                bmp.StreamSource = stream;
-                bmp.EndInit();
-            }
-            bmp.Freeze();
+                var bmp = new BitmapImage();
+                using (var stream = new MemoryStream(bytes))
+                {
+                    bmp.BeginInit();
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.StreamSource = stream;
+                    bmp.EndInit();
+                }
+                bmp.Freeze();
 
-            return bmp;
+                return bmp;
+            }
+            catch { return null; }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
