@@ -76,7 +76,7 @@ HorizontalAlignment="Stretch" />
                 </ListBox>
 
             </StackPanel>
-        <Grid Grid.Column="1" Margin="-4,9,9,0">
+        <Grid Grid.Column="1" Margin="-4,9,0,0">
                 <Grid.ColumnDefinitions>
                  
                 </Grid.ColumnDefinitions>
@@ -94,7 +94,7 @@ Source="{Binding Source={x:Static properties:Settings.Default},
 ElementCount="5"                             
 StackDirection="Vertical"
 DefaultIndex="1"
-Margin="0,0,0,0"      
+Margin="0,0,9,0"      
 HoverIndex="-1"
 PressedIndex="-1"
 IsHitTestVisible="False"
