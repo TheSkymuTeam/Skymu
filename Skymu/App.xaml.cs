@@ -96,9 +96,9 @@ namespace Skymu
             new Dialog(Dialog.Type.Error, ex.Message + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
         }
 
-        public static void ShowMsg(string content, string title = "Message")
+        public static void ShowMsg(string content, string title = "Information")
         {
-            new Dialog(Dialog.Type.Information, content, title).ShowDialog();
+            new Dialog(Dialog.Type.Information, content, title, null, null, "OK").ShowDialog();
         }
 
         public static void NotImplemented(string feature)

@@ -23,10 +23,10 @@ namespace Skymu
 
         public static void Init()
         {
-            Load("message-sent", "Sounds/IM_SENT.WAV");
-            Load("message-recieved", "Sounds/IM.WAV");
-            Load("call-error", "Sounds/CALL_ERROR1.WAV");
-            Load("login", "Sounds/LOGIN.WAV");
+            Load("message-sent", "sounds/IM_SENT.WAV");
+            Load("message-recieved", "sounds/IM.WAV");
+            Load("call-error", "sounds/CALL_ERROR1.WAV");
+            Load("login", "sounds/LOGIN.WAV");
         }
 
         static void Load(string key, string path)

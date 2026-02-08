@@ -1,0 +1,98 @@
+Metadata-Version: 2.1
+Name: magic-wormhole
+Version: 0.17.0
+Summary: Securely transfer data between computers
+Home-page: https://github.com/warner/magic-wormhole
+Author: Brian Warner
+Author-email: warner-magic-wormhole@lothar.com
+License: MIT
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Topic :: Security :: Cryptography
+Classifier: Topic :: System :: Networking
+Classifier: Topic :: System :: Systems Administration
+Classifier: Topic :: Utilities
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: spake2==0.9
+Requires-Dist: pynacl
+Requires-Dist: attrs>=19.2.0
+Requires-Dist: twisted[tls]>=17.5.0
+Requires-Dist: autobahn[twisted]>=0.14.1
+Requires-Dist: automat
+Requires-Dist: cryptography
+Requires-Dist: tqdm>=4.13.0
+Requires-Dist: click
+Requires-Dist: humanize
+Requires-Dist: txtorcon>=18.0.2
+Requires-Dist: zipstream-ng<2.0.0,>=1.7.1
+Requires-Dist: iterable-io<2.0.0,>=1.0.0
+Requires-Dist: pywin32; sys_platform == "win32"
+Provides-Extra: build
+Requires-Dist: twine; extra == "build"
+Requires-Dist: dulwich; extra == "build"
+Requires-Dist: readme-renderer; extra == "build"
+Requires-Dist: gpg; extra == "build"
+Requires-Dist: wheel; extra == "build"
+Provides-Extra: dev
+Requires-Dist: tox; extra == "dev"
+Requires-Dist: pyflakes; extra == "dev"
+Requires-Dist: magic-wormhole-transit-relay==0.3.1; extra == "dev"
+Requires-Dist: magic-wormhole-mailbox-server==0.3.1; extra == "dev"
+Provides-Extra: dilate
+Requires-Dist: noiseprotocol; extra == "dilate"
+
+# Magic Wormhole
+[![PyPI](http://img.shields.io/pypi/v/magic-wormhole.svg)](https://pypi.python.org/pypi/magic-wormhole)
+![Tests](https://github.com/magic-wormhole/magic-wormhole/workflows/Tests/badge.svg)
+[![Windows Build Status](https://ci.appveyor.com/api/projects/status/w1bdniovwm4egfyg/branch/master?svg=true)](https://ci.appveyor.com/project/warner/magic-wormhole)
+[![codecov.io](https://codecov.io/github/magic-wormhole/magic-wormhole/coverage.svg?branch=master)](https://codecov.io/github/magic-wormhole/magic-wormhole?branch=master)
+[![Docs](https://readthedocs.org/projects/magic-wormhole/badge/?version=latest)](https://magic-wormhole.readthedocs.io)
+[![Irc](https://img.shields.io/badge/irc.libera.chat-%23magic--wormhole-brightgreen)](https://web.libera.chat/)
+[![Matrix](https://img.shields.io/badge/matrix.org-%23magic--wormhole-brightgreen)](https://matrix.to/#/#magic-wormhole:matrix.org)
+
+
+Get things from one computer to another, safely.
+
+This package provides a library and a command-line tool named `wormhole`,
+which makes it possible to get arbitrary-sized files and directories
+(or short pieces of text) from one computer to another. The two endpoints are
+identified by using identical "wormhole codes": in general, the sending
+machine generates and displays the code, which must then be typed into the
+receiving machine.
+
+The codes are short and human-pronounceable, using a phonetically-distinct
+wordlist. The receiving side offers tab-completion on the codewords, so
+usually only a few characters must be typed. Wormhole codes are single-use
+and do not need to be memorized.
+
+* PyCon 2016 presentation: [Slides](http://www.lothar.com/~warner/MagicWormhole-PyCon2016.pdf), [Video](https://youtu.be/oFrTqQw0_3c)
+
+For complete documentation, please see https://magic-wormhole.readthedocs.io
+or the docs/ subdirectory.
+
+This program uses two servers, whose source code is kept in separate
+repositories: the
+[mailbox server](https://github.com/magic-wormhole/magic-wormhole-mailbox-server),
+and the
+[transit relay](https://github.com/magic-wormhole/magic-wormhole-transit-relay).
+
+## License, Compatibility
+
+Magic-Wormhole is released under the MIT license, see the `LICENSE` file for details.
+
+This library is compatible with Python 3.8 and higher (tested against
+versions up to 3.12).
+
+## Packaging, Installation
+
+Magic Wormhole packages are included in many operating systems.
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/magic-wormhole.svg)](https://repology.org/project/magic-wormhole/versions)
+
+To install it without an OS package, follow the [Installation docs](https://magic-wormhole.readthedocs.io/en/latest/welcome.html#installation).

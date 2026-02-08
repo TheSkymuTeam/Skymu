@@ -9,6 +9,7 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using Microsoft.Win32;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -594,20 +596,22 @@ namespace Skymu
             SendMessage();
         }
 
-        private async Task SendMessage()
+        private async Task SendMessage(string message = null)
         {
-            if (SendMsgButton.IsEnabled)
+            if (!SendMsgButton.IsEnabled && message is null) return;
+
+            string messageBody;
+            if (message is null) messageBody = MessageTextBox.Text;
+            else messageBody = message;
+
+            MessageTextBox.Clear();
+            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
+
+            if (didSend)
             {
-                string messageBody = MessageTextBox.Text;
-                MessageTextBox.Clear();
-
-                bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
-
-                if (didSend)
-                {
-                    Sounds.Play("message-sent");
-                }
+                Sounds.Play("message-sent");
             }
+
         }
 
         private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
@@ -741,10 +745,13 @@ namespace Skymu
 
         private void RemovePlaceholder(TextBox textBox, bool isMTB = false)
         {
-            textBox.Text = string.Empty;
-            textBox.Foreground = Brushes.Black;
-            IsMsgBoxPlaceholderActive = !isMTB;
-            UpdateSendButtonState();
+            if (IsMsgBoxPlaceholderActive || !isMTB)
+            {
+                textBox.Text = string.Empty;
+                textBox.Foreground = Brushes.Black;
+                IsMsgBoxPlaceholderActive = !isMTB;
+                UpdateSendButtonState();
+            }
         }
 
         private void UpdateSendButtonState()
@@ -803,12 +810,72 @@ namespace Skymu
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
             Sounds.Play("call-error");
-            Universal.ShowMsg("Hahahahaha... nice try. Get a damn Vonage.");
+            Universal.ShowMsg("Hahahahaha... nice try. Get a damn Vonage.", "Can't you just use your smartphone?");
         }
 
         private void AddButtonClick(object sender, MouseButtonEventArgs e)
         {
             Universal.NotImplemented("Adding contacts to conversations");
+
+            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
+                "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
+
+            var dlg = new OpenFileDialog
+            {
+                Title = "Select a file to send",
+                CheckFileExists = true
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                RunWormholeSendAsync(dlg.FileName);
+            }*/
+
+        }
+
+        private async Task RunWormholeSendAsync(string filePath)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "python", "python.exe"),
+                Arguments = $"-u -m wormhole send \"{filePath}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            var process = new Process { StartInfo = psi };
+            const string prefix = "wormhole receive ";
+            StringBuilder output = new StringBuilder();
+
+            process.ErrorDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
+                    output.AppendLine(e.Data);
+                    if (e.Data.StartsWith(prefix))
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            SendMessage("&SKYMU-START&TransferWormhole," + e.Data.Substring(prefix.Length) + "&SKYMU-END&");
+                        });
+                    }
+                    else if (e.Data.Contains("TransferError"))
+                    {
+                        Dispatcher.Invoke(() => { Universal.ShowMsg(e.Data, "File transfer error"); });                      
+                    }
+                    else if (e.Data.Contains("Transfer complete"))
+                    {
+                        Dispatcher.Invoke(() => { Universal.ShowMsg("The file was transferred successfully.", "File transfer complete"); });
+                    }
+                }
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            await process.WaitForExitAsync();
         }
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)

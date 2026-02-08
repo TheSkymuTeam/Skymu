@@ -1010,44 +1010,44 @@
     <None Remove="Resources\Universal\Window Frame\Legacy\maximize.png" />
     <None Remove="Resources\Universal\Window Frame\Legacy\minimize.png" />
     <None Remove="Resources\Universal\Window Frame\Legacy\split.png" />
-    <None Remove="Sounds\BUSY.WAV" />
-    <None Remove="Sounds\CALL_ERROR1.WAV" />
-    <None Remove="Sounds\CALL_ERROR2.WAV" />
-    <None Remove="Sounds\CALL_IN.WAV" />
-    <None Remove="Sounds\CALL_INIT.WAV" />
-    <None Remove="Sounds\CALL_OUT.WAV" />
-    <None Remove="Sounds\CALL_RECONNECT_CONTINUOUS.WAV" />
-    <None Remove="Sounds\CALL_RECONNECT_FRONT.WAV" />
-    <None Remove="Sounds\ERROR.WAV" />
-    <None Remove="Sounds\FORWARDED.WAV" />
-    <None Remove="Sounds\FT_COMPLETE.WAV" />
-    <None Remove="Sounds\FT_FAILED.WAV" />
-    <None Remove="Sounds\HANGUP.WAV" />
-    <None Remove="Sounds\HOLD.WAV" />
-    <None Remove="Sounds\IM.WAV" />
-    <None Remove="Sounds\IM_ACC.WAV" />
-    <None Remove="Sounds\IM_SENT.WAV" />
-    <None Remove="Sounds\INCOMING_AUTH.WAV" />
-    <None Remove="Sounds\INCOMING_CONTACTS.WAV" />
-    <None Remove="Sounds\INCOMING_FILE.WAV" />
-    <None Remove="Sounds\INCOMING_VOICEMAIL.WAV" />
-    <None Remove="Sounds\KNOCKING.WAV" />
-    <None Remove="Sounds\LOGIN.WAV" />
-    <None Remove="Sounds\LOGOUT.WAV" />
-    <None Remove="Sounds\OFFLINE.WAV" />
-    <None Remove="Sounds\ONLINE.WAV" />
-    <None Remove="Sounds\RESUME.WAV" />
-    <None Remove="Sounds\SEND_VM.WAV" />
-    <None Remove="Sounds\USER_ADDED.WAV" />
-    <None Remove="Sounds\USER_LEFT.WAV" />
-    <None Remove="Sounds\USER_LEFT_ORG.WAV" />
-    <None Remove="Sounds\VC_BEEP_1.WAV" />
+    <None Remove="sounds\BUSY.WAV" />
+    <None Remove="sounds\CALL_ERROR1.WAV" />
+    <None Remove="sounds\CALL_ERROR2.WAV" />
+    <None Remove="sounds\CALL_IN.WAV" />
+    <None Remove="sounds\CALL_INIT.WAV" />
+    <None Remove="sounds\CALL_OUT.WAV" />
+    <None Remove="sounds\CALL_RECONNECT_CONTINUOUS.WAV" />
+    <None Remove="sounds\CALL_RECONNECT_FRONT.WAV" />
+    <None Remove="sounds\ERROR.WAV" />
+    <None Remove="sounds\FORWARDED.WAV" />
+    <None Remove="sounds\FT_COMPLETE.WAV" />
+    <None Remove="sounds\FT_FAILED.WAV" />
+    <None Remove="sounds\HANGUP.WAV" />
+    <None Remove="sounds\HOLD.WAV" />
+    <None Remove="sounds\IM.WAV" />
+    <None Remove="sounds\IM_ACC.WAV" />
+    <None Remove="sounds\IM_SENT.WAV" />
+    <None Remove="sounds\INCOMING_AUTH.WAV" />
+    <None Remove="sounds\INCOMING_CONTACTS.WAV" />
+    <None Remove="sounds\INCOMING_FILE.WAV" />
+    <None Remove="sounds\INCOMING_VOICEMAIL.WAV" />
+    <None Remove="sounds\KNOCKING.WAV" />
+    <None Remove="sounds\LOGIN.WAV" />
+    <None Remove="sounds\LOGOUT.WAV" />
+    <None Remove="sounds\OFFLINE.WAV" />
+    <None Remove="sounds\ONLINE.WAV" />
+    <None Remove="sounds\RESUME.WAV" />
+    <None Remove="sounds\SEND_VM.WAV" />
+    <None Remove="sounds\USER_ADDED.WAV" />
+    <None Remove="sounds\USER_LEFT.WAV" />
+    <None Remove="sounds\USER_LEFT_ORG.WAV" />
+    <None Remove="sounds\VC_BEEP_1.WAV" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="10.0.2" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
@@ -1223,97 +1223,97 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sounds\BUSY.WAV">
+    <Content Include="sounds\BUSY.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_ERROR1.WAV">
+    <Content Include="sounds\CALL_ERROR1.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_IN.WAV">
+    <Content Include="sounds\CALL_IN.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_INIT.WAV">
+    <Content Include="sounds\CALL_INIT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_OUT.WAV">
+    <Content Include="sounds\CALL_OUT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_RECONNECT_CONTINUOUS.WAV">
+    <Content Include="sounds\CALL_RECONNECT_CONTINUOUS.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\CALL_RECONNECT_FRONT.WAV">
+    <Content Include="sounds\CALL_RECONNECT_FRONT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\ERROR.WAV">
+    <Content Include="sounds\ERROR.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\FORWARDED.WAV">
+    <Content Include="sounds\FORWARDED.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\FT_COMPLETE.WAV">
+    <Content Include="sounds\FT_COMPLETE.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\FT_FAILED.WAV">
+    <Content Include="sounds\FT_FAILED.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\HANGUP.WAV">
+    <Content Include="sounds\HANGUP.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\HOLD.WAV">
+    <Content Include="sounds\HOLD.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\IM.WAV">
+    <Content Include="sounds\IM.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\IM_ACC.WAV">
+    <Content Include="sounds\IM_ACC.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\IM_SENT.WAV">
+    <Content Include="sounds\IM_SENT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\INCOMING_AUTH.WAV">
+    <Content Include="sounds\INCOMING_AUTH.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\INCOMING_CONTACTS.WAV">
+    <Content Include="sounds\INCOMING_CONTACTS.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\INCOMING_FILE.WAV">
+    <Content Include="sounds\INCOMING_FILE.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\INCOMING_VOICEMAIL.WAV">
+    <Content Include="sounds\INCOMING_VOICEMAIL.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\KNOCKING.WAV">
+    <Content Include="sounds\KNOCKING.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\LOGIN.WAV">
+    <Content Include="sounds\LOGIN.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\LOGOUT.WAV">
+    <Content Include="sounds\LOGOUT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\OFFLINE.WAV">
+    <Content Include="sounds\OFFLINE.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\ONLINE.WAV">
+    <Content Include="sounds\ONLINE.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\RESUME.WAV">
+    <Content Include="sounds\RESUME.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\SEND_VM.WAV">
+    <Content Include="sounds\SEND_VM.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\USER_ADDED.WAV">
+    <Content Include="sounds\USER_ADDED.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\USER_LEFT.WAV">
+    <Content Include="sounds\USER_LEFT.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\USER_LEFT_ORG.WAV">
+    <Content Include="sounds\USER_LEFT_ORG.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Sounds\VC_BEEP_1.WAV">
+    <Content Include="sounds\VC_BEEP_1.WAV">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -1329,5 +1329,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
+
+	  </ItemGroup>
+	<!--<ItemGroup>
+		<Content Include="python\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>-->
+
 </Project>

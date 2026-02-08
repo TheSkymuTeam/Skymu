@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: spake2
+Version: 0.9
+Summary: SPAKE2 password-authenticated key exchange (pure python)
+Home-page: https://github.com/warner/python-spake2
+Author: Brian Warner
+Author-email: warner-pyspake2@lothar.com
+License: MIT
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Security :: Cryptography
+License-File: LICENSE
+Requires-Dist: cryptography
+
