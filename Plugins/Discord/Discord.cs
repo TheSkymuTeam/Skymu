@@ -105,7 +105,6 @@ namespace Discord
             DscToken = autoLoginCredentials[0];
             if (string.IsNullOrWhiteSpace(DscToken))
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Your saved Discord token appears to be invalid or has expired. Please log in again."));
                 return LoginResult.Failure;
             }
 
