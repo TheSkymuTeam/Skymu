@@ -1,4 +1,15 @@
-﻿using MiddleMan;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team: contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/license.txt
+/*==========================================================*/
+
+using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,6 +41,7 @@ namespace Discord.Classes
         // So we don't have to fetch the data everytime
         public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
         {
+            if (String.IsNullOrEmpty(userId)) return null;
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
             if (File.Exists(cachedFile))
@@ -43,8 +55,13 @@ namespace Discord.Classes
             }
 
             string url = GetAvatarUrl(userId, hash, false, isGC);
-            byte[] data = await _httpClient.GetByteArrayAsync(url).ConfigureAwait(false);
-            await File.WriteAllBytesAsync(cachedFile, data).ConfigureAwait(false);
+            byte[] data = null;
+            try
+            {
+                data = await _httpClient.GetByteArrayAsync(url).ConfigureAwait(false);
+                await File.WriteAllBytesAsync(cachedFile, data).ConfigureAwait(false);
+            }
+            catch { Debug.WriteLine("Unable to fetch avatar from URL - GetCachedAvatarAsync(). The URL in question is: " + url);  }
             return data;
         }
 
@@ -56,7 +73,7 @@ namespace Discord.Classes
             foreach (var array in idArray)
             {
                 string id = array["id"]?.GetValue<string>();
-                if (id == null) continue;
+                if (id is null) continue;
 
                 string displayName = array["member"]?["nick"]?.GetValue<string>()
                                      ?? array["global_name"]?.GetValue<string>()
@@ -92,27 +109,24 @@ namespace Discord.Classes
             finally { }
         }
 
-        public int MapStatus(string statusStr)
+        public UserConnectionStatus MapStatus(string statusStr)
         {
-            return statusStr switch
+            return statusStr.ToLower() switch
             {
                 "online" => UserConnectionStatus.Online,
                 "idle" => UserConnectionStatus.Away,
                 "dnd" => UserConnectionStatus.DoNotDisturb,
-                "offline" => UserConnectionStatus.Invisible,
-                _ => UserConnectionStatus.Invisible
+                "offline" => UserConnectionStatus.Offline,
+                _ => UserConnectionStatus.Unknown
             };
         }
 
         public static bool TryToGetChannelId(string identifier, out string channelId)
         {
             channelId = null;
-            if (string.IsNullOrWhiteSpace(identifier)) return false;
-
-            var parts = identifier.Split(';');
-            if (parts.Length < 2) return false;
-
-            channelId = parts[1];
+            string dictChannelId = Discord.Core.UserIdToChannelId.TryGetValue(identifier, out string mappedChannelId) ? mappedChannelId : null;
+            if (dictChannelId is not null) channelId = dictChannelId;
+            else channelId = identifier;
             return true;
         }
 

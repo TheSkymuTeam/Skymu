@@ -18,7 +18,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -135,6 +138,16 @@ namespace Skymu
             {
                 UpdateTypingIndicator();
             };
+
+            this.Activated += (s, e) =>
+            {
+                IsWindowActive = true;
+            };
+
+            this.Deactivated += (s, e) =>
+            {
+                IsWindowActive = false;
+            };
         }
 
         private void UpdateTypingIndicator()
@@ -148,7 +161,7 @@ namespace Skymu
             else
             {
                 string typingText = String.Empty;
-                ProfileData[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
+                UserData[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
                 switch (count)
                 {
                     case 1:
@@ -321,12 +334,13 @@ namespace Skymu
         private void mn_Options(object sender, RoutedEventArgs e) { new Options().Show(); }
         private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
 
-        private ProfileData selectedContact;
+        internal static ProfileData SelectedContact = null;
 
+        internal static bool IsWindowActive = false;
 
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
-            if (parent == null)
+            if (parent is null)
                 return null;
 
             int childCount = VisualTreeHelper.GetChildrenCount(parent);
@@ -339,7 +353,7 @@ namespace Skymu
                     return matchedChild;
 
                 var result = FindVisualChild<T>(child);
-                if (result != null)
+                if (result is not null)
                     return result;
             }
 
@@ -352,20 +366,19 @@ namespace Skymu
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listBox = (ListBox)sender;
-            if (listBox.SelectedItem is null)
-                return;
+            if (listBox.SelectedItem is null) return;
 
             Universal.Plugin.ActiveConversation.Clear();
             Universal.Plugin.TypingUsersList.Clear();
-            selectedContact = (ProfileData)listBox.SelectedItem;
+            SelectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
-            PlaceholderTextMTB = $"Type a message to {selectedContact.DisplayName} here";
+            PlaceholderTextMTB = $"Type a message to {SelectedContact.DisplayName} here";
             MessageTextBox.Text = PlaceholderTextMTB;
             throbber.Visibility = Visibility.Visible;
             _isLoadingConversation = true;
 
-            if (await Universal.Plugin.SetActiveConversation(selectedContact.Identifier))
+            if (await Universal.Plugin.SetActiveConversation(SelectedContact.Identifier))
             {
                 var conversation = Universal.Plugin.ActiveConversation;
 
@@ -384,7 +397,7 @@ namespace Skymu
                     }
                 }
 
-                if (_activeConversationChangedHandler != null)
+                if (_activeConversationChangedHandler is not null)
                     conversation.CollectionChanged -= _activeConversationChangedHandler;
 
                 _activeConversationChangedHandler = (s, args) =>
@@ -394,7 +407,7 @@ namespace Skymu
 
                     foreach (var item in args.NewItems)
                     {
-                        if (item is MessageItem message && message.SentByID != MainWindow.Identifier)
+                        if (item is MessageItem message && message.SentByID != MainWindow.Identifier && IsWindowActive)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -582,7 +595,7 @@ namespace Skymu
             Identifier = data.Identifier;
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
-            StatusIcon.DefaultIndex = data.ConnectionStatus;
+            StatusIcon.DefaultIndex = MapStatusToInt(data.ConnectionStatus);
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
@@ -605,7 +618,7 @@ namespace Skymu
             else messageBody = message;
 
             MessageTextBox.Clear();
-            bool didSend = await Universal.Plugin.SendMessage(selectedContact.Identifier, messageBody);
+            bool didSend = await Universal.Plugin.SendMessage(SelectedContact.Identifier, messageBody);
 
             if (didSend)
             {
@@ -621,9 +634,46 @@ namespace Skymu
 
         private async Task SpeedTester()
         {
-            const string TestFileUrl = "https://speed.cloudflare.com/__down?bytes=5242880";
+            const string TestFileUrl = "https://speed.cloudflare.com/__down?bytes=10485760";
 
-            string iconFileName;
+            string[] speedButtonIcons = new[]
+            {
+        "btn_pill_small_network_bad.png",
+        "btn_pill_small_network_med2.png",
+        "btn_pill_small_network_med.png",
+        "btn_pill_small_network_best.png",
+        "btn_pill_small_network_good.png"
+    };
+
+            var cts = new CancellationTokenSource();
+            var token = cts.Token;
+
+            var animTask = Task.Run(async () =>
+            {
+                int index = 0;
+                while (!token.IsCancellationRequested)
+                {
+                    string iconFileName = speedButtonIcons[index % speedButtonIcons.Length];
+                    string iconUri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + iconFileName;
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var bmp = new BitmapImage();
+                        bmp.BeginInit();
+                        bmp.UriSource = new Uri(iconUri, UriKind.Absolute);
+                        bmp.CacheOption = BitmapCacheOption.OnLoad;
+                        bmp.EndInit();
+                        bmp.Freeze();
+
+                        WifiButton.Source = bmp;
+                    });
+
+                    index++;
+                    await Task.Delay(100); // 100ms per frame
+                }
+            }, token);
+
+            string finalIcon;
             try
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -632,30 +682,36 @@ namespace Skymu
 
                 double speedMbps = (data.Length * 8.0) / 1_000_000 / stopwatch.Elapsed.TotalSeconds;
 
-                iconFileName = speedMbps switch
+                finalIcon = speedMbps switch
                 {
-                    >= 50 => "btn_pill_small_network_good.png",
-                    >= 20 => "btn_pill_small_network_best.png",
-                    >= 10 => "btn_pill_small_network_med.png",
-                    >= 5 => "btn_pill_small_network_med2.png",
-                    _ => "btn_pill_small_network_bad.png"
+                    >= 50 => speedButtonIcons[4],
+                    >= 20 => speedButtonIcons[3],
+                    >= 10 => speedButtonIcons[2],
+                    >= 5 => speedButtonIcons[1],
+                    _ => speedButtonIcons[0]
                 };
             }
             catch
             {
-                iconFileName = "btn_pill_small_network_unavailable.png";
+                finalIcon = "btn_pill_small_network_unavailable.png";
+            }
+            finally
+            {
+                cts.Cancel(); 
+                await animTask;
             }
 
-            var iconUri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + iconFileName;
-            var bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.UriSource = new Uri(iconUri, UriKind.Absolute);
-            bmp.CacheOption = BitmapCacheOption.OnLoad;
-            bmp.EndInit();
-            bmp.Freeze();
+            string finalUri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + finalIcon;
+            var finalBmp = new BitmapImage();
+            finalBmp.BeginInit();
+            finalBmp.UriSource = new Uri(finalUri, UriKind.Absolute);
+            finalBmp.CacheOption = BitmapCacheOption.OnLoad;
+            finalBmp.EndInit();
+            finalBmp.Freeze();
 
-            WifiButton.Source = bmp;
+            WifiButton.Source = finalBmp;
         }
+
 
         private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
         {
@@ -697,7 +753,7 @@ namespace Skymu
             if (listBox?.Items.Count > 0)
             {
                 var scrollViewer = FindScrollViewer(listBox);
-                if (scrollViewer != null)
+                if (scrollViewer is not null)
                 {
                     scrollViewer.ScrollToEnd();
                 }
@@ -710,7 +766,7 @@ namespace Skymu
 
         private static ScrollViewer FindScrollViewer(DependencyObject element)
         {
-            if (element == null)
+            if (element is null)
                 return null;
 
             if (element is ScrollViewer scrollViewer)
@@ -721,7 +777,7 @@ namespace Skymu
             {
                 var child = VisualTreeHelper.GetChild(element, i);
                 var result = FindScrollViewer(child);
-                if (result != null)
+                if (result is not null)
                     return result;
             }
 
@@ -863,7 +919,7 @@ namespace Skymu
                     }
                     else if (e.Data.Contains("TransferError"))
                     {
-                        Dispatcher.Invoke(() => { Universal.ShowMsg(e.Data, "File transfer error"); });                      
+                        Dispatcher.Invoke(() => { Universal.ShowMsg(e.Data, "File transfer error"); });
                     }
                     else if (e.Data.Contains("Transfer complete"))
                     {
@@ -891,6 +947,37 @@ namespace Skymu
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
         {
 
+        }
+        internal static int MapStatusToInt (UserConnectionStatus status)
+        {
+            switch (status)
+            {
+                case UserConnectionStatus.DoNotDisturb: return 5;
+                case UserConnectionStatus.Away: return 3;
+                case UserConnectionStatus.Invisible: 
+                case UserConnectionStatus.Offline: return 19;
+                case UserConnectionStatus.Online: return 2;
+                default:
+                case UserConnectionStatus.Unknown: return 0;
+            }
+        }
+
+        private async void Contacts_BtnDown(object sender, MouseButtonEventArgs e)
+        {
+            btnRecents.SetState(ButtonVisualState.Default);
+            SetWindow(WindowType.Home);
+            ContactsList.ItemsSource = null;
+            if (Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
+            ContactsList.ItemsSource = Universal.Plugin.ContactsList;
+        }
+
+        private async void Recents_BtnDown(object sender, MouseButtonEventArgs e)
+        {
+            btnContacts.SetState(ButtonVisualState.Default);
+            SetWindow(WindowType.Home);
+            ContactsList.ItemsSource = null;
+            if (Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
+            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
         }
     }
 
@@ -1006,7 +1093,7 @@ namespace Skymu
                 return DependencyProperty.UnsetValue;
             var tb = MessageTools.FormTextblock(text);
 
-            if (TextBlockStyle != null)
+            if (TextBlockStyle is not null)
                 tb.Style = TextBlockStyle;
 
             return tb;
@@ -1020,7 +1107,23 @@ namespace Skymu
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value == null ? Visibility.Collapsed : Visibility.Visible;
+            return value is null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+    public class PresenceStatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is UserConnectionStatus stat)
+            {
+                return MainWindow.MapStatusToInt(stat);
+            }
+            return 21;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1029,15 +1132,28 @@ namespace Skymu
         }
     }
 
+    public class TextStatusConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values[1] is int count)
+            {
+                return count.ToString() + " members";
+            }
+            else return values[0] ?? String.Empty;
+        }
 
-
-
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
 
     public class StripNewlinesConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return string.Empty;
+            if (value is null) return string.Empty;
             string s = value.ToString();
             return s.Replace("\r", " ").Replace("\n", " ");
         }
@@ -1070,7 +1186,7 @@ namespace Skymu
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
-            else if (value == null) return Visibility.Collapsed;
+            else if (value is null) return Visibility.Collapsed;
             else return Visibility.Visible;
         }
 
@@ -1084,7 +1200,7 @@ namespace Skymu
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null || parameter == null) return null;
+            if (value is null || parameter is null) return null;
 
             string themeRoot = value.ToString();
             string imagePath = parameter.ToString();

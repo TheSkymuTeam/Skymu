@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace MiddleMan
         UnsupportedAuthType
     }
 
-    public static class UserConnectionStatus
+    /*public static class UserConnectionStatus
     {
         public const int Group = 21;
         public const int Invisible = 19;
@@ -42,6 +43,16 @@ namespace MiddleMan
         public const int Away = 3;
         public const int Offline = 19;
         public const int Unknown = 0;
+    }*/
+
+    public enum UserConnectionStatus
+    {
+        Online,
+        DoNotDisturb,
+        Away,
+        Invisible,
+        Offline,
+        Unknown
     }
 
     public class SidebarData
@@ -49,8 +60,8 @@ namespace MiddleMan
         public string DisplayName { get; set; } // The current user's display name.
         public string Identifier { get; set; } // The current user's unique identifier.
         public string SkypeCreditText { get; set; } // The text you want to put in place of Skype Credit.
-        public int ConnectionStatus { get; set; } // Icon status (e.g. "Online")
-        public SidebarData(string username, string identifier, string skypeCreditText, int connectionStatus)
+        public UserConnectionStatus ConnectionStatus { get; set; } // Icon status (e.g. "Online")
+        public SidebarData(string username, string identifier, string skypeCreditText, UserConnectionStatus connectionStatus)
         {
             DisplayName = username;
             Identifier = identifier;
@@ -59,18 +70,45 @@ namespace MiddleMan
         }
     }
 
-    public class ProfileData : INotifyPropertyChanged
+    public abstract class ProfileData : INotifyPropertyChanged
     {
-        string _displayName, _status;
-        int _presenceStatus;
-        byte[] _profilePicture;
+        private string _displayName;
+        private byte[] _profilePicture;
 
         public string DisplayName
         {
-            get => _displayName; // Display name. Prefer nickname over username or general name where it applies.
+            get => _displayName;
             set => Set(ref _displayName, value, nameof(DisplayName));
         }
-        public string Identifier { get; set; } // Unique identifier of the user. The end user is not going to see this. It is used internally.
+
+        public string Identifier { get; set; } // Unique identifier. Internal use only.
+        public byte[] ProfilePicture
+        {
+            get => _profilePicture;
+            set => Set(ref _profilePicture, value, nameof(ProfilePicture));
+        }
+
+        protected ProfileData(string displayName, string identifier, byte[] profilePicture = null)
+        {
+            _displayName = displayName;
+            Identifier = identifier;
+            _profilePicture = profilePicture;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void Set<T>(ref T field, T value, string name)
+        {
+            if (Equals(field, value)) return;
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+
+    public class UserData : ProfileData
+    {
+        private string _status;
+        private UserConnectionStatus _presenceStatus;
 
         public string Status // Textual status (e.g. "I'm doing good today.")
         {
@@ -78,35 +116,44 @@ namespace MiddleMan
             set => Set(ref _status, value, nameof(Status));
         }
 
-        public int PresenceStatus // Icon status (e.g. "Online")
+        public UserConnectionStatus PresenceStatus // Icon status (e.g. "Online")
         {
             get => _presenceStatus;
             set => Set(ref _presenceStatus, value, nameof(PresenceStatus));
         }
 
-        public byte[] ProfilePicture // Raw image data for profile picture. Reasonable resolutions (not too low/high) preferred.
+        public UserData(string displayName, string identifier, string status = null,
+                        UserConnectionStatus presenceStatus = UserConnectionStatus.Unknown, byte[] profilePicture = null)
+            : base(displayName, identifier, profilePicture)
         {
-            get => _profilePicture;
-            set => Set(ref _profilePicture, value, nameof(ProfilePicture));
-        }
-
-        public ProfileData(string displayName, string identifier, string status = null,
-                           int presenceStatus = 0, byte[] profilePicture = null)
-        {
-            _displayName = displayName;
-            Identifier = identifier;
             _status = status;
             _presenceStatus = presenceStatus;
-            _profilePicture = profilePicture;
+        }
+    }
+
+    public class GroupData : ProfileData
+    {
+        private int _memberCount;
+        private UserData[] _members;
+
+        public int MemberCount
+        {
+            get => _memberCount;
+            set => Set(ref _memberCount, value, nameof(MemberCount));
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        void Set<T>(ref T field, T value, string name)
+        public UserData[] Members 
         {
-            if (Equals(field, value)) return;
-            field = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            get => _members;
+            set => Set(ref _members, value, nameof(Members));
+        }
+
+        public GroupData(string displayName, string identifier, int memberCount = 0,
+                         UserData[] members = null, byte[] profilePicture = null)
+            : base(displayName, identifier, profilePicture)
+        {
+            _memberCount = memberCount;
+            _members = members ?? new UserData[0];
         }
     }
 
@@ -125,10 +172,11 @@ namespace MiddleMan
         public string ReplyToDN { get; set; } // Who the message is replying to (Display Name)
         public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
         public string ReplyBody { get; set; } // Body of the message being replied to
+        public string ChannelID { get; set; } // Unique identifier for the conversation/channel this message belongs to. This is not set by you, but it is required for the MessageItem to be properly processed by Skymu, so that it can be used in notifications and other places where the conversation/channel identifier is needed.
         public string Body { get; set; } // Message body
         public byte[] Media { get; set; } // Raw image data for the message's image, if it has one.
         public string PreviousMessageIdentifier { get; set; } // This is not set by you
-        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, DateTime time, string body = null, byte[] image = null, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null)
+        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, DateTime time, string body = null, byte[] image = null, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null, string channelID = null)
         {
             MessageID = messageID;
             SentByID = sentByIdentifier;
@@ -139,6 +187,7 @@ namespace MiddleMan
             ReplyToDN = replyToDisplayName;
             ReplyBody = replyToBody;
             Media = image;
+            ChannelID = channelID;
         }
     }
 
@@ -176,28 +225,18 @@ namespace MiddleMan
     }
 
 
-    public abstract class ClickableConfiguration
+    public class ClickableConfiguration
     {
-
-
-    }
-
-    public class ClickableDelimitationConfiguration : ClickableConfiguration
-    {
-        public char? DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'. 
-        public char? DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
-        public ClickableItemConfiguration[] ClickableItems { get; set; }
-    }
-
-    public class ClickableItemConfiguration : ClickableConfiguration
-    {
-        public string StartString { get; set; }
+        public string DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'. 
+        public string DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
         public ClickableItemType Type { get; set; } // items that are clickable within the clickability delimiter range
-        public ClickableItemConfiguration(ClickableItemType type, string startString)
+        public ClickableConfiguration(ClickableItemType type, string delimiterLeft, string delimiterRight)
         {
-            StartString = startString;
+            DelimiterLeft = delimiterLeft;
+            DelimiterRight = delimiterRight;
             Type = type;
         }
+
     }
 
     public enum DialogType
@@ -215,10 +254,22 @@ namespace MiddleMan
         }
     }
 
+    public class NotificationEventArgs : EventArgs
+    {
+        public ConversationItem Item { get; }
+        public UserConnectionStatus Status { get; }
+        public NotificationEventArgs(ConversationItem item, UserConnectionStatus status)
+        {
+            Item = item;
+            Status = status;
+        }
+    }
+
     public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
+        event EventHandler<NotificationEventArgs> Notification;
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
@@ -238,7 +289,7 @@ namespace MiddleMan
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
-        ObservableCollection<ProfileData> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
+        ObservableCollection<UserData> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.

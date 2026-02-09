@@ -279,6 +279,11 @@ namespace Skymu
             UpdateTextOffset();
         }
 
+        public ButtonVisualState GetState()
+        {
+            return _visualState;
+        }
+
 
         private void UpdateTextOffset()
         {

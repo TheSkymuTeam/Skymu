@@ -75,7 +75,7 @@ namespace Discord.Classes
                 }
             }
 
-            if (headers != null)
+            if (headers is not null)
             {
                 foreach (var kvp in headers)
                 {

@@ -55,7 +55,7 @@ namespace Skymu
             string[] credentials = await Universal.Plugin.SaveAutoLoginCredential();
             using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
             {
-                if (key != null)
+                if (key is not null)
                 {
                     for (int i = 0; i < credentials.Length; i++)
                     {
@@ -71,7 +71,7 @@ namespace Skymu
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
        @"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
             {
-                if (key != null)
+                if (key is not null)
                 {
                     string[] valueNames = key.GetValueNames();
                     credentials = new string[valueNames.Length];
@@ -233,7 +233,7 @@ namespace Skymu
 
         public static string DecryptFromString(string encryptedString)
         {
-            if (encryptedString != null)
+            if (encryptedString is not null)
             {
                 byte[] encryptedData = Convert.FromBase64String(encryptedString);
                 byte[] decrypted = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);

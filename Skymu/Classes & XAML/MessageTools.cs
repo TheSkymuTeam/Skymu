@@ -216,10 +216,8 @@ namespace Skymu
             {
                 int nextIndex = text.Length;
                 Match nextLink = null;
-                ClickableDelimitationConfiguration nextClickableConfig = null;
+                ClickableConfiguration nextClickableConfig = null;
                 int clickableStartIndex = -1;
-                string clickableMatch = null;
-                ClickableItemConfiguration clickableItem = null;
 
                 // preparation
 
@@ -236,25 +234,17 @@ namespace Skymu
 
                 // find and set the next clickable to be parsed in the text (clickables defined in plugin)
                 // this loop only checks for clickables in delimiters, not standalone clickables
-                foreach (var config in Universal.Plugin.ClickableConfigurations.OfType<ClickableDelimitationConfiguration>())
+                foreach (var config in Universal.Plugin.ClickableConfigurations)
                 {
-                    if (!config.DelimiterLeft.HasValue) continue;
-                    int idx = text.IndexOf(config.DelimiterLeft.Value, position);
+                    if (string.IsNullOrEmpty(config.DelimiterLeft)) continue;
+
+                    int idx = text.IndexOf(config.DelimiterLeft, position, StringComparison.Ordinal);
                     if (idx >= 0 && idx < nextIndex)
                     {
-                        foreach (var item in config.ClickableItems)
-                        {
-                            if (text.Length >= idx + 1 + item.StartString.Length &&
-                                text.Substring(idx + 1, item.StartString.Length) == item.StartString)
-                            {
-                                nextIndex = idx;
-                                nextClickableConfig = config;
-                                clickableStartIndex = idx;
-                                clickableItem = item;
-                                clickableMatch = item.StartString;
-                                break;
-                            }
-                        }
+                        nextIndex = idx;
+                        nextClickableConfig = config;
+                        clickableStartIndex = idx;
+                        break; 
                     }
                 }
 
@@ -269,7 +259,7 @@ namespace Skymu
                 }
 
                 // if the next match is a link, process it like so
-                if (nextLink != null && nextLink.Index + position == nextIndex)
+                if (nextLink is not null && nextLink.Index + position == nextIndex)
                 {
                     if (nextLink.Groups[1].Success && nextLink.Groups[2].Success) // Markdown-formatted links e.g. [text](link)
                     {
@@ -312,36 +302,38 @@ namespace Skymu
                 }
 
                 // if the next match is a Clickable, process it like so
-                if (nextClickableConfig != null && clickableItem != null)
+                if (nextClickableConfig is not null)
                 {
                     int start = clickableStartIndex;
-                    int end = start + clickableMatch.Length + 1;
+                    int end = start + nextClickableConfig.DelimiterLeft.Length;
 
                     string clickableText;
 
-                    if (nextClickableConfig.DelimiterRight.HasValue)
+                    if (!string.IsNullOrEmpty(nextClickableConfig.DelimiterRight))
                     {
-                        int closeIdx = text.IndexOf(nextClickableConfig.DelimiterRight.Value, end);
+                        int closeIdx = text.IndexOf(nextClickableConfig.DelimiterRight, end, StringComparison.Ordinal);
                         if (closeIdx >= end)
                         {
-                            // remove delimiters from displayed text, keep StartString
-                            clickableText = text.Substring(start + 1, closeIdx - start - 1);
-                            end = closeIdx + 1;
+                            // remove delimiters from displayed text
+                            clickableText = text.Substring(end, closeIdx - end);
+                            end = closeIdx + nextClickableConfig.DelimiterRight.Length;
                         }
                         else
                         {
-                            // if there is no closing delimiter, fallback
-                            clickableText = text.Substring(start + 1, clickableMatch.Length);
+                            // if there is no closing delimiter, fallback to text after left delimiter
+                            clickableText = text.Substring(end, Math.Min(20, text.Length - end)); // or any fallback length
+                            end = text.Length;
                         }
                     }
                     else
                     {
-                        // left-only delimiter
-                        clickableText = text.Substring(start + 1, clickableMatch.Length);
+                        // left-only delimiter, take text immediately after delimiter
+                        clickableText = text.Substring(end, Math.Min(20, text.Length - end)); // fallback length
+                        end = text.Length;
                     }
 
                     var hyperlink = new Hyperlink(new Run(clickableText));
-                    // For now, ignore clickable type actions. TODO add type actions.
+                    // TODO: handle clickable type actions if needed
                     inlines.Add(hyperlink);
 
                     position = end;

@@ -49,7 +49,7 @@ namespace Skymu
 
                 var registryValue = key.GetValue(prop.Name);
 
-                if (registryValue != null)
+                if (registryValue is not null)
                 {
                     spv.SerializedValue = registryValue;
                 }
@@ -68,7 +68,7 @@ namespace Skymu
 
             foreach (SettingsPropertyValue value in values)
             {
-                if (value.SerializedValue != null)
+                if (value.SerializedValue is not null)
                 {
                     key.SetValue(value.Property.Name, value.SerializedValue);
                 }

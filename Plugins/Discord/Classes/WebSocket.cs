@@ -318,11 +318,14 @@ namespace Discord.Classes
 
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(channelId)) return;
 
+            if (channelId != _core.GetActiveChannelID())
+                return;
+
             _ = Task.Run(async () =>
             {
                 string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
 
-                var typingUser = new ProfileData(
+                var typingUser = new UserData(
                     displayName: globalName,
                     identifier: userId,
                     status: "Typing...",

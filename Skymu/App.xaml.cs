@@ -30,11 +30,19 @@ namespace Skymu
                 new Dialog(Dialog.Type.Error, e.Message, "Error in plugin " + ((ICore)sender).Name).ShowDialog();
             });
         }
+
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 new Dialog(Dialog.Type.Information, e.Message, "Warning from plugin " + ((ICore)sender).Name).ShowDialog();
+            });
+        }
+        public static void PluginNotificationHandler(object sender, NotificationEventArgs e)
+        {
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                new Notification(e);
             });
         }
 

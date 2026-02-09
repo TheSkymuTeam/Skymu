@@ -84,7 +84,7 @@ namespace Skymu
 
         public static void DisposeIcon()
         {
-            if (Icon != null)
+            if (Icon is not null)
             {
                 Icon.Visible = false;
                 Icon.Icon = null;
@@ -98,7 +98,7 @@ namespace Skymu
                 hMenu = IntPtr.Zero;
             }
 
-            if (messageWindow != null)
+            if (messageWindow is not null)
             {
                 messageWindow.DestroyHandle();
                 messageWindow = null;

@@ -23,6 +23,7 @@ namespace Matrix
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Matrix"; } }
         public string InternalName { get { return "skymu-matrix-plugin"; } }
         public string TextUsername { get { return "Matrix ID (username@homeserver.com)"; } }
@@ -38,28 +39,21 @@ namespace Matrix
         private SynchronizationContext _uiContext;
         private readonly MatrixOOTBStuff _ootb = new MatrixOOTBStuff();
 
-        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
         public ClickableConfiguration[] ClickableConfigurations
         {
             get
             {
                 return new ClickableConfiguration[]
                 {
-            new ClickableDelimitationConfiguration
-            {
-                DelimiterLeft  = '<',
-                DelimiterRight = '>',
-                ClickableItems = new[]
-                {
-                    new ClickableItemConfiguration(ClickableItemType.User, "@!"),
-                    new ClickableItemConfiguration(ClickableItemType.User, "@"),
-                    new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
-                    new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
-                }
-            }
+                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
+                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">")
                 };
             }
         }
+
         // Track the active room ID for real-time updates
         private string _activeRoomId;
         private string[] credData;
@@ -359,22 +353,34 @@ namespace Matrix
                     var roomAvatar = await GetRoomAvatar(roomIdStr);
                     var isDirect = await IsDirectMessage(roomIdStr);
                     var memberCount = await GetRoomMemberCount(roomIdStr);
+                    UserData[] members = await GetRoomMembers(roomIdStr);
 
                     if (lType == ListType.Recents)
                     {
                         _recentRoomMap[roomIdStr] = roomIdStr;
                     }
 
-                    int presenceStatus = isDirect ? UserConnectionStatus.Online : UserConnectionStatus.Group;
-                    string statusText = isDirect ? null : $"{memberCount} members";
-
-                    var profileData = new ProfileData(
-                        roomName,
-                        roomIdStr,
-                        statusText,
-                        presenceStatus,
-                        roomAvatar
-                    );
+                    ProfileData profileData;
+                    if (isDirect)
+                    {
+                        profileData = new UserData(
+                           roomName,
+                           roomIdStr,
+                           String.Empty,
+                           UserConnectionStatus.Online,
+                           roomAvatar
+                       );
+                    }
+                    else
+                    {
+                        profileData = new GroupData(
+                            roomName,
+                            roomIdStr,
+                            memberCount,
+                            members,
+                            roomAvatar
+                            );
+                    }
 
                     if (lType == ListType.Recents)
                         RecentsList.Add(profileData);
@@ -722,6 +728,47 @@ namespace Matrix
             catch
             {
                 return 0;
+            }
+        }
+
+        private async Task<UserData[]> GetRoomMembers(string roomId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(
+                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var membersData = JsonSerializer.Deserialize<JsonElement>(responseBody);
+
+                    if (membersData.TryGetProperty("joined", out var joined))
+                    {
+                        var membersList = new List<UserData>();
+
+                        foreach (var member in joined.EnumerateObject())
+                        {
+                            string identifier = member.Name; // Matrix user ID (e.g., "@user:server.com")
+                            string displayName = "Unknown";
+
+                            if (member.Value.TryGetProperty("display_name", out var nameElement))
+                            {
+                                displayName = nameElement.GetString() ?? identifier;
+                            }
+
+                            membersList.Add(new UserData(displayName, identifier));
+                        }
+
+                        return membersList.ToArray();
+                    }
+                }
+
+                return new UserData[0];
+            }
+            catch
+            {
+                return new UserData[0];
             }
         }
 

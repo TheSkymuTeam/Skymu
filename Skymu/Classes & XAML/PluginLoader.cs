@@ -44,6 +44,7 @@ namespace Skymu
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;
                             instance.OnWarning += Universal.PluginWarningHandler;
+                            instance.Notification += Universal.PluginNotificationHandler;
                             PluginList.Add(instance);
                             pluginCount++;
                         }

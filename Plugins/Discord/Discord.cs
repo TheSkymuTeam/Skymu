@@ -30,6 +30,7 @@ namespace Discord
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
         public string TextUsername { get { return "Token"; } }
@@ -47,6 +48,8 @@ namespace Discord
         public SynchronizationContext _uiContext;
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public readonly Dictionary<string, string> _recentChannelMap = new();
+        // The current user's identifier
+        private string _currentUserId;
 
         // Magic numbers used for some stuff...
         private const int MAX_MESSAGES_LIMIT = 30;
@@ -55,7 +58,7 @@ namespace Discord
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
 
-        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
         public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -64,18 +67,10 @@ namespace Discord
             {
                 return new ClickableConfiguration[]
                 {
-                    new ClickableDelimitationConfiguration
-                    {
-                        DelimiterLeft  = '<',
-                        DelimiterRight = '>',
-                        ClickableItems = new[]
-                        {
-                            new ClickableItemConfiguration(ClickableItemType.User, "@!"),
-                            new ClickableItemConfiguration(ClickableItemType.User, "@"),
-                            new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
-                            new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
-                        }
-                    }
+                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
+                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">")
                 };
             }
         }
@@ -95,6 +90,11 @@ namespace Discord
         {
             DscToken = username;
             return await StartClient();
+        }
+
+        public string GetActiveChannelID()
+        {
+            return _activeChannelId;
         }
 
         public Task<LoginResult> LoginOptStep(string code)
@@ -160,6 +160,7 @@ namespace Discord
                 parsedDetails = JsonNode.Parse(userDetails).AsObject();
 
                 string userId = parsedDetails["id"]?.GetValue<string>() ?? string.Empty;
+                _currentUserId = userId;
                 string displayName = parsedDetails["global_name"]?.GetValue<string>() ?? string.Empty;
                 string dscUserName = parsedDetails["username"]?.GetValue<string>() ?? string.Empty;
 
@@ -173,7 +174,7 @@ namespace Discord
                 }
 
                 string mainUsrStatus = WebSocketMgr.GetUserStatus("0");
-                int mainStatusMapped = helperMethods.MapStatus(mainUsrStatus);
+                UserConnectionStatus mainStatusMapped = helperMethods.MapStatus(mainUsrStatus);
 
                 SidebarInformation = new SidebarData(
                     HelperMethods.GetDisplayName(displayName, dscUserName), userId, "$0.00 - No subscription", mainStatusMapped);
@@ -193,6 +194,8 @@ namespace Discord
 
         public Task<bool> PopulateRecentsList()
             => PopulateListsBackend(ListType.Recents);
+
+        internal static Dictionary<string, string> UserIdToChannelId = new Dictionary<string, string>();
 
         private async Task<bool> PopulateListsBackend(ListType lType)
         {
@@ -215,7 +218,7 @@ namespace Discord
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
-                        string combinedId = $"{userId};{channelId}";
+                        UserIdToChannelId.Add(userId, channelId);
                         string displayName = recipient["global_name"]?.GetValue<string>();
                         string dscUserName = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
@@ -225,7 +228,10 @@ namespace Discord
                             _recentChannelMap[channelId] = userId;
                         }
 
-                        var profileData = await CreateProfileData(helperMethods, userId, combinedId, displayName, dscUserName, avatarHash);
+                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(userId, avatarHash, false).ConfigureAwait(false);
+                        string status = WebSocketMgr.GetUserStatus(userId);
+                        string customStatus = WebSocketMgr.GetCustomStatus(userId);
+                        var profileData = new UserData(displayName ?? dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -237,6 +243,18 @@ namespace Discord
                         var recipients = channel["recipients"] as JsonArray;
                         int recipientCount = recipients?.Count ?? 0;
                         int memberCount = recipientCount + 1;
+
+                        UserData[] members = null;
+                        if (recipients != null && recipients.Count > 0)
+                        {
+                            members = recipients
+                                .OfType<JsonObject>()
+                                .Select(r => new UserData(
+                                    r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
+                                    r["id"]?.GetValue<string>() ?? "0"
+                                ))
+                                .ToArray();
+                        }
 
                         string channelId = channel["id"]?.GetValue<string>();
                         string groupName = channel["name"]?.GetValue<string>();
@@ -261,10 +279,8 @@ namespace Discord
                                         : "N/A";
                         }
 
-                        string combinedId = $"group;{channelId}";
-
-                        var profileData = await CreateProfileData(
-                            helperMethods, channelId, combinedId, groupName, null, avatarHash, true, $"{memberCount} members");
+                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(channelId, avatarHash, true).ConfigureAwait(false);
+                        var profileData = new GroupData(groupName, channelId, memberCount, members, avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -310,7 +326,7 @@ namespace Discord
                 foreach (var node in messages.Reverse())
                 {
                     var item = await MessageParser.ParseMessage(node);
-                    if (item != null)
+                    if (item is not null)
                         ActiveConversation.Add(item);
                 }
 
@@ -322,30 +338,6 @@ namespace Discord
                 _activeChannelId = null;
                 return false;
             }
-        }
-
-        private async Task<ProfileData> CreateProfileData(HelperMethods helperMtds, string userId, string combinedId, string displayName, string username, string avatarHash, bool isGC = false, string setStatus = null)
-        {
-            byte[] avatarImage = null;
-
-            string userStatusString = WebSocketMgr.GetUserStatus(userId);
-            int userStatus = isGC
-                ? UserConnectionStatus.Group
-                : helperMtds.MapStatus(userStatusString);
-            string customStatusString = WebSocketMgr.GetCustomStatus(userId);
-
-            if (!string.IsNullOrEmpty(avatarHash))
-            {
-                avatarImage = await helperMtds.GetCachedAvatarAsync(userId, avatarHash, isGC).ConfigureAwait(false);
-            }
-
-            return new ProfileData(
-                string.IsNullOrEmpty(displayName) ? username : displayName,
-                combinedId,
-                customStatusString ?? setStatus,
-                userStatus,
-                avatarImage
-            );
         }
 
         public async Task<bool> SendMessage(string identifier, string text)
@@ -379,15 +371,65 @@ namespace Discord
             }
         }
 
+        private bool ShouldNotify(HelperClasses.MessageReceivedEventArgs e)
+        {
+            // Get the channel info to check its type
+            var privateChannels = WebSocketMgr.GetPrivateChannels();
+            var channel = privateChannels
+                .OfType<JsonObject>()
+                .FirstOrDefault(c => c["id"]?.GetValue<string>() == e.ChannelId);
+
+            if (channel != null)
+            {
+                int channelType = channel["type"]?.GetValue<int>() ?? -1;
+
+                // Always notify for DMs (type 1) and Group DMs (type 3)
+                if (channelType == 1 || channelType == 3)
+                    return true;
+            }
+
+            // For server channels (guild channels), only notify if:
+            // 1. User is mentioned in the content
+            // 2. User is replied to
+
+            string currentUserId = _currentUserId;
+
+            // Check if replied to current user
+            if (e.ReplyToId == currentUserId)
+                return true;
+
+            // Check if current user is mentioned in the message
+            if (!string.IsNullOrEmpty(e.Content) && e.Content.Contains($"<@{currentUserId}>"))
+                return true;
+
+            return false;
+        }
+
         private void OnWebSocketMessageReceived(object sender, HelperClasses.MessageReceivedEventArgs e)
         {
+            // Fire notification for all messages (before filtering by active channel)
+            if (ShouldNotify(e))
+            {
+                UserConnectionStatus status = helperMethods.MapStatus(
+                    WebSocketMgr.GetUserStatus(e.AuthorId)
+                );
+
+                var messageItem = new MessageItem(
+                    e.MessageId, e.AuthorId, e.AuthorName,
+                    e.Timestamp, e.Content, e.Media,
+                    e.ReplyToId, e.ReplyToName, e.ReplyMsgContent, e.ChannelId
+                );
+
+                Notification?.Invoke(this, new NotificationEventArgs(messageItem, status));
+            }
+
             // Only add messages if they're for the currently active channel
             if (e.ChannelId != _activeChannelId) return;
 
             _uiContext?.Post(_ =>
             {
                 var typingUser = TypingUsersList.FirstOrDefault(u => u.Identifier == e.AuthorId);
-                if (typingUser != null)
+                if (typingUser is not null)
                     TypingUsersList.Remove(typingUser);
 
                 if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))

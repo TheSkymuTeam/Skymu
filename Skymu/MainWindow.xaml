@@ -37,6 +37,8 @@
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <local:StripNewlinesConverter x:Key="StripNewlinesConverter"/>
+        <local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
+        <local:TextStatusConverter x:Key="TextStatusConverter"/>
         <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <local:FormatFullTextConverter x:Key="FormatFullTextConverter"
                                TextBlockStyle="{StaticResource MessageTextBlockStyle}" />
@@ -107,7 +109,9 @@ Grid.Column="1"
 Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
 ElementCount="22"
 StackDirection="Horizontal"
-DefaultIndex="{Binding PresenceStatus}"
+DefaultIndex="{Binding PresenceStatus,
+                Converter={StaticResource PresenceStatusConverter},
+                FallbackValue=21}"
 Margin="10,0,0,0"
 HorizontalAlignment="Left"
 HoverIndex="-1"
@@ -122,13 +126,20 @@ Width="14" Grid.Row="1"/>
                            FontSize="11"
                                FontFamily="Tahoma"
                            TextTrimming="CharacterEllipsis"/>
-                <TextBlock x:Name="statusText" Text="{Binding Status}" 
+                <TextBlock x:Name="statusText" 
                                Grid.Column="2" Grid.Row="2" Margin="10,1,0,0"
                            FontSize="11"
     FontFamily="Tahoma"
                            Background="Transparent"
                            Foreground="#999999"
-                           TextTrimming="CharacterEllipsis"/>
+                           TextTrimming="CharacterEllipsis">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource TextStatusConverter}">
+                            <Binding Path="Status" />
+                            <Binding Path="MemberCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
 
 
 
@@ -579,14 +590,14 @@ Cursor="Hand"
                                 StackDirection="Vertical"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
-                                PressedIndex="-1"
+                                PressedIndex="2"
                                 Text="Contacts"
                                 TextStartPositionX="30"
                                 TextFont="Arial"
                                 TextWeight="Bold"
                                 TextSize="13"
                                 TextColor="#333333"
-
+MouseLeftButtonDown="Contacts_BtnDown"
                                 HorizontalAlignment="Stretch" />
                             <local:SliceControl
                                 x:Name="btnRecents"
@@ -603,6 +614,7 @@ Cursor="Hand"
                                 PressedIndex="2"
                                 Text="Recent"
                                 TextStartPositionX="30"
+                                MouseLeftButtonDown="Recents_BtnDown"
                                 TextFont="Arial"
                                 TextWeight="Bold"
                                 TextSize="13"
@@ -929,13 +941,15 @@ x:Name="CPAStatusIcon"
 Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
 ElementCount="22"
 StackDirection="Horizontal"
-DefaultIndex="{Binding PresenceStatus}"
+DefaultIndex="{Binding PresenceStatus,
+                Converter={StaticResource PresenceStatusConverter},
+                FallbackValue=21}"
 HoverIndex="-1"
 PressedIndex="-1"
 Slice="false"
 Width="14"/>
                                     <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="{Binding PresenceStatus,
-                        Converter={StaticResource StatIntToText}}" 
+                        Converter={StaticResource StatIntToText}, FallbackValue=Group chat}" 
            FontSize="11"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
@@ -1126,7 +1140,7 @@ x:Name="EmojiButton"
 MouseLeftButtonUp="EmojiButton_Click"
 PressedIndex="2"
 Width="18"
-Height="18"
+Height="17"
 Slice="false"/>
                                                 </StackPanel>
                                                 <StackPanel x:Name="TypingIndicator" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">

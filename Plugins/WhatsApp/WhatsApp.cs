@@ -20,16 +20,18 @@ namespace WhatsApp
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "WhatsApp"; } }
         public string InternalName { get { return "skymu-whatsapp-plugin"; } }
         public string TextUsername { get { return "Phone number"; } }
         public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.QRCode }; } }
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
+            Notification.Invoke(this, new NotificationEventArgs(new MessageItem("0101", "1", "Bob", DateTime.Now, "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people"), UserConnectionStatus.Online));
             return LoginResult.Success;
         }
 
-        public ObservableCollection<ProfileData> TypingUsersList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
@@ -39,11 +41,11 @@ namespace WhatsApp
         public async Task<bool> SendMessage(string identifier, string text)
         {
             TypingUsersList.Clear();
-            TypingUsersList.Add(new ProfileData("Nova", "20202"));
-            TypingUsersList.Add(new ProfileData("omega", "20203"));
-            TypingUsersList.Add(new ProfileData("patricktbp", "20204"));
-            TypingUsersList.Add(new ProfileData("Mixin", "20200"));
-            TypingUsersList.Add(new ProfileData("HUBAXE", "20205"));
+            TypingUsersList.Add(new UserData("Nova", "20202"));
+            TypingUsersList.Add(new UserData("omega", "20203"));
+            TypingUsersList.Add(new UserData("patricktbp", "20204"));
+            TypingUsersList.Add(new UserData("Mixin", "20200"));
+            TypingUsersList.Add(new UserData("HUBAXE", "20205"));
             return true;
         }
 
@@ -93,15 +95,15 @@ namespace WhatsApp
 
         public async Task<bool> PopulateContactsList()
         {
-            ContactsList.Add(new ProfileData("Alice", "alice@s.whatsapp.net", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online, null));
-            ContactsList.Add(new ProfileData("Bob", "bob@s.whatsapp.net", "HELLO", UserConnectionStatus.Away, null));
+            ContactsList.Add(new UserData("Alice", "alice@s.whatsapp.net", "Hey there! I am using WhatsApp.", UserConnectionStatus.Online));
+            ContactsList.Add(new UserData("Bob", "bob@s.whatsapp.net", "HELLO", UserConnectionStatus.Away));
             return true;
         }
 
         public async Task<bool> PopulateRecentsList()
         {
-            RecentsList.Add(new ProfileData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
-            RecentsList.Add(new ProfileData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
+            RecentsList.Add(new UserData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
+            RecentsList.Add(new UserData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
             return true;
         }
         public ClickableConfiguration[] ClickableConfigurations
@@ -110,18 +112,10 @@ namespace WhatsApp
             {
                 return new ClickableConfiguration[]
                 {
-            new ClickableDelimitationConfiguration
-            {
-                DelimiterLeft  = '<',
-                DelimiterRight = '>',
-                ClickableItems = new[]
-                {
-                    new ClickableItemConfiguration(ClickableItemType.User, "@!"),
-                    new ClickableItemConfiguration(ClickableItemType.User, "@"),
-                    new ClickableItemConfiguration(ClickableItemType.ServerRole, "@&"),
-                    new ClickableItemConfiguration(ClickableItemType.ServerChannel, "#")
-                }
-            }
+                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
+                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">")
                 };
             }
         }
