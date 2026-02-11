@@ -1,11 +1,12 @@
 ﻿<Application x:Class="Skymu.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:properties="clr-namespace:Skymu.Properties"
              StartupUri="Login.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
+                <ResourceDictionary Source="/PresentationFramework.Royale;component/themes/Royale.NormalColor.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
 
