@@ -24,7 +24,7 @@ namespace Discord.Classes
                 _statuses[userId] = new StatusData { Status = status, CustomStatus = customStatus };
             }
             public static string GetStatus(string userId) =>
-                _statuses.TryGetValue(userId, out var data) ? data.Status : "unknown";
+                _statuses.TryGetValue(userId, out var data) ? data.Status : "offline"; // TODO idk what this should be bruh
             public static string GetCustomStatus(string userId) =>
                 _statuses.TryGetValue(userId, out var data) ? data.CustomStatus : null;
             public static bool ContainsUser(string userId) => _statuses.ContainsKey(userId);

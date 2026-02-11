@@ -1061,18 +1061,17 @@ namespace Skymu
 
     public class StatusToTextConverter : IValueConverter
     {
-        private static readonly Dictionary<int, string> StatusMap = new()
+        private static readonly Dictionary<UserConnectionStatus, string> StatusMap = new()
         {
-            { 2, "Online" },
-            { 3, "Away" },
-            { 19, "Offline" },
-            { 5, "Do not disturb" },
-            { 21, "Group chat" }
+            { UserConnectionStatus.Online, "Online" },
+            { UserConnectionStatus.Away, "Away" },
+            { UserConnectionStatus.Offline, "Offline" },
+            { UserConnectionStatus.DoNotDisturb, "Do not disturb" }
         };
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not int statInt)
+            if (value is not UserConnectionStatus statInt)
                 return "Unknown";
 
             return StatusMap.TryGetValue(statInt, out var statusText) ? statusText : "Unknown";

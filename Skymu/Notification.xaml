@@ -12,14 +12,22 @@
         ShowActivated="False"
         FontFamily="Tahoma">
     <Grid>
-    <local:SliceControl Source="/Resources/Light/Notifications/bubble-blue.png" HorizontalAlignment="Stretch" StackDirection="Vertical" ElementCount="1" DefaultIndex="0"/>
+    <local:SliceControl Source="/Resources/Light/Notifications/bubble-orange.png" HorizontalAlignment="Stretch" StackDirection="Vertical" ElementCount="1" DefaultIndex="0"/>
     
             <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="26"/>
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Source="/Resources/Universal/Branding/skype-white-small.png" HorizontalAlignment="Left"/> 
+            <Image Grid.Row="0"
+       Margin="7,0,0,0"
+       Stretch="None"
+       Source="/Resources/Universal/Branding/skype-notif.png"
+       HorizontalAlignment="Left">
+                <Image.LayoutTransform>
+                    <ScaleTransform ScaleX="0.75" ScaleY="0.75"/>
+                </Image.LayoutTransform>
+            </Image>
             <Border Grid.Row="1" Padding="10">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,3">

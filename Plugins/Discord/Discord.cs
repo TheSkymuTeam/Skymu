@@ -53,8 +53,7 @@ namespace Discord
 
         // Magic numbers used for some stuff...
         private const int MAX_MESSAGES_LIMIT = 30;
-        private const int WEBSOCKET_TIMEOUT_RETRIES = 75;
-        private const int RETRY_DELAY_MS = 75;
+        private const int WARNING_WS_MS = 5000;
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
 
@@ -163,14 +162,25 @@ namespace Discord
                 _currentUserId = userId;
                 string displayName = parsedDetails["global_name"]?.GetValue<string>() ?? string.Empty;
                 string dscUserName = parsedDetails["username"]?.GetValue<string>() ?? string.Empty;
+                Stopwatch sw = Stopwatch.StartNew();
 
-                if (!await WebSocketMgr.WaitUntilReady(
-                        WEBSOCKET_TIMEOUT_RETRIES,
-                        RETRY_DELAY_MS).ConfigureAwait(false))
+                var waitTask = WebSocketMgr.WaitUntilReady();
+
+                _ = Task.Run(async () =>
                 {
+                    await Task.Delay(WARNING_WS_MS);  // wait X seconds
+                    if (!waitTask.IsCompleted)        // still waiting?
+                    {
+                        OnWarning?.Invoke(this, new PluginMessageEventArgs(
+                            "The WebSocket is taking an unusually long time to initialize. " +
+                            "This could be due to slow internet speeds, an outdated network stack, or Discord forcibly closing the connection."));
+                    }
+                });
+
+                if (!(await waitTask)) 
+                { 
                     OnError?.Invoke(this, new PluginMessageEventArgs(
-                        "The WebSocket failed to initialize in time. This could be because of slow internet speeds, or Discord forcibly closing the connection."));
-                    return false;
+                        "The WebSocket failed to initialize. This could be due to network errors or Discord forcibly closing the connection."));
                 }
 
                 string mainUsrStatus = WebSocketMgr.GetUserStatus("0");
@@ -218,7 +228,12 @@ namespace Discord
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
-                        UserIdToChannelId.Add(userId, channelId);
+
+                        if (!UserIdToChannelId.ContainsKey(userId))
+                        {
+                            UserIdToChannelId.Add(userId, channelId);
+                        }
+
                         string displayName = recipient["global_name"]?.GetValue<string>();
                         string dscUserName = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
@@ -228,7 +243,7 @@ namespace Discord
                             _recentChannelMap[channelId] = userId;
                         }
 
-                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(userId, avatarHash, false).ConfigureAwait(false);
+                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
                         string status = WebSocketMgr.GetUserStatus(userId);
                         string customStatus = WebSocketMgr.GetCustomStatus(userId);
                         var profileData = new UserData(displayName ?? dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);

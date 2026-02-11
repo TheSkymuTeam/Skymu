@@ -85,7 +85,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Hot Fudge Sundae")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Lacabòn")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

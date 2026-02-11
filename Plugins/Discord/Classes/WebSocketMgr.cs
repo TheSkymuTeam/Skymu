@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using System;
+using System.Net.Sockets;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
@@ -30,12 +31,22 @@ namespace Discord.Classes
             SubscribeMessageReceived(handler);
         }
 
-        public static async Task<bool> WaitUntilReady(int retries, int delayMs)
-        {
-            while (Socket is not null && !Socket.CanCheckData && retries-- > 0)
-                await Task.Delay(delayMs).ConfigureAwait(false);
 
-            return Socket is not null && Socket.CanCheckData;
+
+        public static Task<bool> WaitUntilReady()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+
+            EventHandler readyHandler = null;
+            readyHandler = (s, e) =>
+            {
+                Socket.Ready -= readyHandler; 
+                tcs.TrySetResult(true);       
+            };
+
+            Socket.Ready += readyHandler;
+
+            return tcs.Task; 
         }
 
         public static void SubscribeMessageReceived(EventHandler<HelperClasses.MessageReceivedEventArgs> handler)

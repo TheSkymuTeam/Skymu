@@ -48,8 +48,8 @@ namespace Discord.Classes
         // The Discord token used by the user
         private string DscToken;
 
-        // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not.
-        public bool CanCheckData = false;
+        // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not. (Changed to event OmegaAOL)
+        internal event EventHandler Ready;
 
         // Used in functions outside and inside WebSocket.cs to parse data - now stores JToken instead of string to avoid ToString() allocation
         public JsonNode recipientsData;
@@ -242,8 +242,7 @@ namespace Discord.Classes
                                 var readyData = json["d"];
                                 recipientsData = readyData["relationships"] ?? new JsonArray();
                                 privateChannelsData = readyData["private_channels"] ?? new JsonArray();
-
-                                CanCheckData = true;
+                                Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
