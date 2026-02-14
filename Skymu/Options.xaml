@@ -12,6 +12,7 @@
                       Path=BrandingName,
                       StringFormat={}{0}™ - Options}" ResizeMode="CanMinimize" Height="610" Width="718" WindowStartupLocation="CenterScreen" HorizontalAlignment="Left" VerticalAlignment="Top">
     <Window.Resources>
+        <local:StringToDoubleConverter x:Key="StringToDoubleConverter"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
     </Window.Resources>
 
@@ -133,22 +134,55 @@ HorizontalAlignment="Stretch" />
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Application theme root" VerticalAlignment="Center" Padding="0,0,10,0"/>
-                        <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" Text="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Mode=TwoWay,
-UpdateSourceTrigger=PropertyChanged}" Width="250"/>
+                        <TextBlock Text="Application theme (expiremental)" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <ComboBox Width="250"
+          SelectedValue="{Binding Source={x:Static properties:Settings.Default}, Path=ThemeRoot, Mode=TwoWay}"
+          SelectedValuePath="Tag">
+                            <ComboBoxItem Content="Light" Tag="/Resources/Light"/>
+                            <ComboBoxItem Content="Dark" Tag="/Resources/Dark"/>
+                        </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="List delimiter" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <TextBlock Text="Bullet point for Markdown lists" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" Text="{Binding Source={x:Static properties:Settings.Default},
 Path=ListDelimiter,
 Mode=TwoWay,
 UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     </StackPanel>
-                    <CheckBox Content="Enable Skymu auto-login for the first selected plugin" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                        
+                    <CheckBox Content="Enable Skymu auto-login for plugins with saved credentials" IsChecked="{Binding Source={x:Static properties:Settings.Default},
                         Path=AutoLoginEnabled,
                         Mode=TwoWay}" Margin="0,5"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Emoji animation speed (FPS)" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <TextBox FontFamily="Tahoma" 
+             TextOptions.TextRenderingMode="ClearType" 
+             TextOptions.TextFormattingMode="Display" 
+             Text="{Binding Source={x:Static properties:Settings.Default},
+                    Path=EmojiFps,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged,
+                    Converter={StaticResource StringToDoubleConverter}}" 
+             Width="40"/>
+                    </StackPanel>
+                    <CheckBox Content="Display a notification when you recieve a message" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+    Path=EnableNotifications,
+    Mode=TwoWay}" Margin="0,5"/>
+                    <CheckBox Content="Force notifications to always be orange (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+    Path=AccurateNotificationBubble,
+    Mode=TwoWay}" Margin="0,5"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Skype Home website" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" Text="{Binding Source={x:Static properties:Settings.Default},
+Path=Homepage,
+Mode=TwoWay,
+UpdateSourceTrigger=PropertyChanged}" Width="250"/>
+                        
+                    </StackPanel>
+                    <CheckBox Content="Enable scrolling on the Skype Home website" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=HomepageScroll,
+Mode=TwoWay}" Margin="0,5"/>
+
                     <!--<StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Use port" VerticalAlignment="Center" Width="80"/>
                             <TextBox Width="80"/>
@@ -180,6 +214,7 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                         </StackPanel>-->
 
                     </StackPanel>
+                
 
                     
                 </Border>

@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -85,10 +85,70 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Napoleon Cake")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Rosca de Reyes")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("45")]
+        public double EmojiFps {
+            get {
+                return ((double)(this["EmojiFps"]));
+            }
+            set {
+                this["EmojiFps"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableNotifications {
+            get {
+                return ((bool)(this["EnableNotifications"]));
+            }
+            set {
+                this["EnableNotifications"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AccurateNotifications {
+            get {
+                return ((bool)(this["AccurateNotifications"]));
+            }
+            set {
+                this["AccurateNotifications"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://silentspacemarine.com/")]
+        public string Homepage {
+            get {
+                return ((string)(this["Homepage"]));
+            }
+            set {
+                this["Homepage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HomepageScroll {
+            get {
+                return ((bool)(this["HomepageScroll"]));
+            }
+            set {
+                this["HomepageScroll"] = value;
             }
         }
     }

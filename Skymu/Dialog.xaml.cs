@@ -12,6 +12,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Skymu
 {
@@ -30,7 +31,7 @@ namespace Skymu
             Picture
         }
 
-        public Dialog(Type type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false)
+        public Dialog(Type type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null)
         {
             try
             {
@@ -41,6 +42,13 @@ namespace Skymu
                     TextOptions.SetTextRenderingMode(btn, TextRenderingMode.ClearType);
                     TextOptions.SetTextFormattingMode(btn, TextFormattingMode.Display);
                     TextOptions.SetTextHintingMode(btn, TextHintingMode.Fixed);
+                }
+
+                if (img is not null)
+                {
+                    tb.Visibility = Visibility.Collapsed;
+                    BodyImg.Source = img;
+                    BodyImg.Visibility = Visibility.Visible;
                 }
 
                 if (brAction is null) brAction = () => Close();

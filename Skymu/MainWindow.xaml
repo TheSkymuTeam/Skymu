@@ -4,7 +4,8 @@
         xmlns:local="clr-namespace:Skymu"
         xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
-        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"  
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         WindowStyle="None"
         FontFamily="Tahoma"
         FontSize="11"
@@ -758,6 +759,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
                             <RowDefinition x:Name="TopbarWindowRow" Height="120" />
                             <RowDefinition x:Name="MessageWindowRow" Height="*" />
                         </Grid.RowDefinitions>
+                        
                         <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -911,13 +913,15 @@ Source="{Binding Source={x:Static properties:Settings.Default},
     PressedIndex="-1"
     HorizontalAlignment="Stretch" />
                         </Grid>
+                        
                         <Border Grid.Row="1"
-    Background="#FFF"
-    BorderBrush="#26000000"
-    BorderThickness="1,0,1,1"
-    CornerRadius="0,0,4,4">
-
-                            <Grid x:Name="ChatProfileArea">
+Background="#FFF"
+BorderBrush="#26000000"
+BorderThickness="1,0,1,1"
+CornerRadius="0,0,4,4">
+                            <Grid>
+                                <wv2:WebView2 x:Name="Browser" Grid.Row="1" Visibility="Collapsed" />
+                                <Grid x:Name="ChatProfileArea">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="18"></RowDefinition>
                                     <RowDefinition Height="14"></RowDefinition>
@@ -953,6 +957,7 @@ Width="14"/>
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
+                            </Grid>
                             </Grid>
                         </Border>
                         <Border x:Name="MessageWindow" MinWidth="710" Grid.Row="2"

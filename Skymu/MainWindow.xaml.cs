@@ -380,7 +380,7 @@ namespace Skymu
 
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = $"Type a message to {SelectedContact.DisplayName} here";
-            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
             UpdateSendButtonState();
             throbber.Visibility = Visibility.Visible;
             _isLoadingConversation = true;
@@ -452,44 +452,64 @@ namespace Skymu
             switch (type)
             {
                 case WindowType.Home:
-                    SetHomeWindow();
+                    ToggleStBSelection(true);
+
+                    HomeTopbar.Visibility = Visibility.Visible;
+                    ChatTopbar.Visibility = Visibility.Collapsed;
+                    ChatProfileArea.Visibility = Visibility.Collapsed;
+                    MessageWindow.Visibility = Visibility.Collapsed;
+
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    Browser.Visibility = Visibility.Visible;
+                    InitiateWebview();
+                    MainPageButton.SetState(ButtonVisualState.Pressed);
+                    ContactsList.SelectedItem = null;
                     break;
 
                 case WindowType.Chat:
-                    SetChatWindow();
+                    ToggleStBSelection(false);
+                    StatusBox.SetState(ButtonVisualState.Default);
+
+                    HomeTopbar.Visibility = Visibility.Collapsed;
+                    ChatTopbar.Visibility = Visibility.Visible;
+                    ChatProfileArea.Visibility = Visibility.Visible;
+                    MessageWindow.Visibility = Visibility.Visible;
+                    Browser.Visibility = Visibility.Collapsed;
+
+                    TopbarWindowRow.Height = new GridLength(120);
+                    MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     break;
             }
         }
 
-        private void SetHomeWindow()
+
+        private async Task InitiateWebview()
         {
-            ToggleStBSelection(true);
+            await Browser.EnsureCoreWebView2Async();
 
-            HomeTopbar.Visibility = Visibility.Visible;
-            ChatTopbar.Visibility = Visibility.Collapsed;
-            ChatProfileArea.Visibility = Visibility.Collapsed;
-            MessageWindow.Visibility = Visibility.Collapsed;
+            Browser.CoreWebView2.NewWindowRequested += (sender, args) =>
+            {
+                args.Handled = true;
+                Browser.CoreWebView2.Navigate(args.Uri);
+            };
 
-            TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-            MessageWindowRow.Height = new GridLength(0);
+            Browser.CoreWebView2.NavigationCompleted += async (s, e) =>
+            {
+                if (!Properties.Settings.Default.HomepageScroll)
+                {
+                    await Browser.CoreWebView2.ExecuteScriptAsync(@"
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+        ");
+                }
+            };
 
-            MainPageButton.SetState(ButtonVisualState.Pressed);
-            ContactsList.SelectedItem = null;
+            Browser.CoreWebView2.Navigate(Properties.Settings.Default.Homepage);
         }
 
-        private void SetChatWindow()
-        {
-            ToggleStBSelection(false);
-            StatusBox.SetState(ButtonVisualState.Default);
 
-            HomeTopbar.Visibility = Visibility.Collapsed;
-            ChatTopbar.Visibility = Visibility.Visible;
-            ChatProfileArea.Visibility = Visibility.Visible;
-            MessageWindow.Visibility = Visibility.Visible;
 
-            TopbarWindowRow.Height = new GridLength(120);
-            MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-        }
 
         private static readonly Brush DefaultTextBrush =
             (Brush)new BrushConverter().ConvertFromString("#333333");
@@ -868,9 +888,9 @@ namespace Skymu
             return false;
         }
 
-        private void ApplyPlaceholder(RichTextBox rtb, string text)
+        private void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
-            if (rtb.Tag as string == "PLACEHOLDER")
+            if (rtb.Tag as string == "PLACEHOLDER" && !force)
                 return;
 
             var flowDoc = rtb.Document;
@@ -952,23 +972,34 @@ namespace Skymu
             var sb = new StringBuilder();
             var flowDoc = MessageTextBox.Document;
 
+            bool firstParagraph = true;
+
             foreach (var block in flowDoc.Blocks)
             {
                 if (block is Paragraph para)
                 {
+                    if (!firstParagraph)
+                        sb.Append(Environment.NewLine);
+
+                    firstParagraph = false;
+
                     foreach (var inline in para.Inlines)
                     {
                         if (inline is Run run)
                         {
                             sb.Append(run.Text);
                         }
+                        else if (inline is LineBreak)
+                        {
+                            sb.Append(Environment.NewLine);
+                        }
                         else if (inline is InlineUIContainer container)
                         {
-                            // Extract emoji filename from Tag and do reverse lookup
                             if (container.Tag is string emojiFilename)
                             {
-                                // Find the hex key that maps to this filename
-                                var emojiKey = EmojiDictionary.Map.FirstOrDefault(kvp => kvp.Value == emojiFilename).Key;
+                                var emojiKey = EmojiDictionary.Map
+                                    .FirstOrDefault(kvp => kvp.Value == emojiFilename).Key;
+
                                 if (!string.IsNullOrEmpty(emojiKey))
                                 {
                                     string unicodeEmoji = ConvertHexKeyToUnicode(emojiKey);
@@ -982,6 +1013,7 @@ namespace Skymu
 
             return sb.ToString();
         }
+
 
         private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -1166,50 +1198,56 @@ namespace Skymu
             }
         }
 
-      
 
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
             var sliceControlInside = border?.Child as SliceControl;
-            if (sliceControlInside == null) return;
+            if (sliceControlInside == null)
+                return;
 
-            // close the flyout
             EmojiFlyout.IsOpen = false;
 
-            // remove placeholder if active
             RemovePlaceholder(MessageTextBox);
 
-            // get the emoji filename from the SliceControl's tag
             string emojiFilename = sliceControlInside.Tag as string;
+            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);          
 
-            // create the animated emoji using the same method as MessageTools
-            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
-
-            // create the inline container with the SliceControl
-            var container = new InlineUIContainer(sliceControl)
+            // Replace selected text if any
+            if (!MessageTextBox.Selection.IsEmpty)
             {
-                BaselineAlignment = BaselineAlignment.Baseline,
-                Tag = emojiFilename  // store the filename for extraction
-            };
-
-            // get the current paragraph
-            var paragraph = MessageTextBox.CaretPosition.Paragraph;
-            if (paragraph == null)
-            {
-                paragraph = new Paragraph { Margin = new Thickness(0) };
-                MessageTextBox.Document.Blocks.Add(paragraph);
+                MessageTextBox.Selection.Text = string.Empty;
             }
 
-            // insert at caret position
-            paragraph.Inlines.Add(container);
+            TextPointer caret = MessageTextBox.CaretPosition;
 
-            // move caret after the emoji
-            MessageTextBox.CaretPosition = container.ElementEnd;
+            // Normalize insertion position
+            if (!caret.IsAtInsertionPosition)
+            {
+                caret = caret.GetInsertionPosition(LogicalDirection.Forward);
+            }
+
+            // Insert emoji at caret 
+            var container = new InlineUIContainer(sliceControl, caret)
+            {
+                BaselineAlignment = BaselineAlignment.Center,
+                Tag = emojiFilename // store FILENAME for later extraction
+            };
+
+            // Move caret after emoji
+            TextPointer afterEmoji = container.ElementEnd;
+
+            // Insert trailing space safely
+            var spaceRun = new Run(" ");
+            container.SiblingInlines.InsertAfter(container, spaceRun);
+
+            // Move caret after space
+            MessageTextBox.CaretPosition = spaceRun.ElementEnd;
+
             MessageTextBox.Focus();
-
             UpdateSendButtonState();
         }
+
 
         internal static int MapStatusToInt (UserConnectionStatus status)
         {

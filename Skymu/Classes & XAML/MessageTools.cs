@@ -368,7 +368,7 @@ namespace Skymu
                 DefaultIndex = 0,
                 Slice = false,
                 IsAnimation = true,
-                AnimationFps = 45.0 // change to speed up or slow down animation
+                AnimationFps = Properties.Settings.Default.EmojiFps 
             };
 
             RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
@@ -403,7 +403,7 @@ namespace Skymu
                     {
                         inlines.Add(new InlineUIContainer(FormAnimatedEmoji(emojiFilename))
                         {
-                            BaselineAlignment = BaselineAlignment.Baseline
+                            BaselineAlignment = BaselineAlignment.Center
                         });
                     }
                     else

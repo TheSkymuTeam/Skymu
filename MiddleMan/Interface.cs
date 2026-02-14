@@ -275,6 +275,7 @@ namespace MiddleMan
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
         AuthenticationMethod[] AuthenticationType { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         Task<string[]> SaveAutoLoginCredential();
+        Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.

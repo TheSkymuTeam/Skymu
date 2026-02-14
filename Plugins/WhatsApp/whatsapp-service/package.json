@@ -1,0 +1,16 @@
+{
+  "name": "whatsapp-middleman-service",
+  "version": "1.0.0",
+  "description": "WhatsApp service for MiddleMan integration",
+  "main": "whatsapp-service.js",
+  "scripts": {
+    "start": "node whatsapp-service.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "whatsapp-web.js": "^1.23.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -33,4 +33,17 @@
     </ProjectReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="whatsapp-service\" />
+  </ItemGroup>
+	<ItemGroup>
+		<None Remove="whatsapp-service\**\*" />
+		<Page Remove="whatsapp-service\**\*" />
+		<EmbeddedResource Remove="whatsapp-service\**\*" />
+		<Compile Remove="whatsapp-service\**\*" />
+
+		<Content Include="whatsapp-service\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

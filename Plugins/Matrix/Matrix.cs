@@ -55,6 +55,10 @@ namespace Matrix
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
         public readonly Dictionary<string, string> _recentRoomMap = new();
 
+        public async Task<string> GetQRCode()
+        {
+            return String.Empty;
+        }
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

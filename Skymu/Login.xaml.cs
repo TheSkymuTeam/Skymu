@@ -11,9 +11,11 @@
 
 using Microsoft.Win32;
 using MiddleMan;
+using QRCoder;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,6 +23,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 # pragma warning disable CA1416
@@ -65,27 +68,75 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    CredentialsHelper.Write(await Universal.Plugin.SaveAutoLoginCredential());
+                    string[] cred = await Universal.Plugin.SaveAutoLoginCredential();
+                    if (cred is not null && cred.Length > 0) CredentialsHelper.Write(cred);
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
                 {
-                    var dlg = new Dialog(Dialog.Type.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
-                        "Two-factor authentication required", Properties.Settings.Default.BrandingName + " - Login", null, "Log in", false, null, null, true);
-                    var dlgResult = dlg.ShowDialog();
-
-                    if (dlgResult == true)
+                    string totp = null;
+                    if (selectedListing.AuthenticationType == AuthenticationMethod.QRCode)
                     {
-                        var totp = dlg.TextBoxText;
-                        var optResult = await Universal.Plugin.LoginOptStep(totp);
+                        string qr = await Universal.Plugin.GetQRCode();
 
-                        if (optResult == LoginResult.Success) InitiateMainWindow();
-                        else
+                        if (!string.IsNullOrEmpty(qr))
                         {
-                            LoginToggleAnimation(false);
-                            SetHeaderToFail();
+                            Debug.WriteLine($"[QR Code] Length: {qr.Length}");
+                            Debug.WriteLine($"[QR Code] First 50 chars: {qr.Substring(0, Math.Min(50, qr.Length))}");
+                            Debug.WriteLine($"[QR Code] Starts with number: {char.IsDigit(qr[0])}");
 
+                            // WhatsApp QR codes typically start with a digit and contain commas
+                            bool looksValid = qr.Length > 100 && qr.Contains(",");
+                            Debug.WriteLine($"[QR Code] Looks valid: {looksValid}");
+
+                            // Full QR code (check Debug Output window)
+                            Debug.WriteLine($"[QR Code] Full: {qr}");
+                            // Generate QR code image
+                            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                            QRCodeData qrCodeData = qrGenerator.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
+                            PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                            byte[] qrCodeImage = qrCode.GetGraphic(20);
+
+                            // Convert to BitmapImage for WPF
+                            BitmapImage bitmap = new BitmapImage();
+                            using (var mem = new MemoryStream(qrCodeImage))
+                            {
+                                mem.Position = 0;
+                                bitmap.BeginInit();
+                                bitmap.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.UriSource = null;
+                                bitmap.StreamSource = mem;
+                                bitmap.EndInit();
+                            }
+                            bitmap.Freeze();
+
+                            new Dialog(Dialog.Type.Information, null,
+                            "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap).ShowDialog();
+
+                            LoginResult fresult = await Universal.Plugin.LoginOptStep(null);
                         }
+                    }
+                    else
+                    {
+                        var dlg = new Dialog(Dialog.Type.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
+                            "Two-factor authentication required", Properties.Settings.Default.BrandingName + " - Login", null, "Log in", false, null, null, true);
+                        var dlgResult = dlg.ShowDialog();
+
+                        if (dlgResult == true)
+                        {
+                            totp = dlg.TextBoxText;
+                            
+                        }
+                    }
+                    var optResult = await Universal.Plugin.LoginOptStep(totp);
+
+                    if (optResult == LoginResult.Success) InitiateMainWindow();
+                    else
+                    {
+                        LoginToggleAnimation(false);
+                        SetHeaderToFail();
+
                     }
                 }
                 else
@@ -179,11 +230,9 @@ namespace Skymu
                 }
                 pluginIndex++;
             }    
-            if (Universal.Plugin is null) { useAutoLogin = false; comboProtocolBox.SelectedIndex = 0; }
-            if (useAutoLogin)
-            {
-                LoginToggleAnimation(true);
-            }
+            if (Universal.Plugin is null) { useAutoLogin = false; }            
+            if (useAutoLogin) LoginToggleAnimation(true);
+            else comboProtocolBox.SelectedIndex = 0;
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -243,8 +292,8 @@ namespace Skymu
                     if (lr == LoginResult.Failure)
                     {
                         SetHeaderToFail();
-                        comboProtocolBox.SelectedIndex = 0;
-                    }
+                        CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                  
+                   }
                 }
             }
         }

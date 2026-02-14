@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Skymu
@@ -16,6 +18,7 @@ namespace Skymu
 
         public Notification(NotificationEventArgs e, int durationSeconds = 5)
         {
+            if (!Properties.Settings.Default.EnableNotifications) return;
             if (e.Item is MessageItem message)
             {
                 // 1. message sent by me → never notify
@@ -52,9 +55,22 @@ namespace Skymu
                     }
                 }
                 InitializeComponent();
+
+                if (Properties.Settings.Default.AccurateNotifications)
+                {
+                    string packUri = "pack://application:,,,/Resources/light/notifications/bubble-orange.png";
+                    bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
+                }
+
                 StatusIcon.DefaultIndex = MainWindow.MapStatusToInt(e.Status);
                 TitleText.Text = message.SentByDN;
-                MessageText.Text = message.Body;
+                TextBlock tb = MessageTools.FormTextblock(message.Body);
+                tb.MaxHeight = 30;
+                tb.TextTrimming = TextTrimming.CharacterEllipsis;
+                tb.TextWrapping = TextWrapping.Wrap;
+                tb.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#666666");
+                tb.FontSize = 11;
+                Message.Content = tb;
 
                 var timer = new DispatcherTimer
                 {

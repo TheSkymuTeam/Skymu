@@ -102,6 +102,11 @@ namespace Discord
             return _activeChannelId;
         }
 
+        public async Task<string> GetQRCode()
+        {
+            return String.Empty;
+        }
+
         public Task<LoginResult> LoginOptStep(string code)
             => Task.FromResult(LoginResult.Success);
 
@@ -179,7 +184,7 @@ namespace Discord
                     {
                         OnWarning?.Invoke(this, new PluginMessageEventArgs(
                             "The WebSocket is taking an unusually long time to initialize. " +
-                            "This could be due to slow internet speeds, an outdated network stack, or Discord forcibly closing the connection."));
+                            "This could be due to slow internet speeds, an outdated network stack (Windows 7, or Discord forcibly closing the connection."));
                     }
                 });
 

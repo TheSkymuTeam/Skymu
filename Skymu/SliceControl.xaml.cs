@@ -10,6 +10,8 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -25,8 +27,10 @@ namespace Skymu
     {
         #region Constructor
         private ButtonVisualState _visualState = ButtonVisualState.Default;
-        private DispatcherTimer _animationTimer;
+        private static DispatcherTimer _sharedAnimationTimer;
+        private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
         private int _currentAnimationFrame = 0;
+        private double _frameAccumulator = 0;
         private readonly ImageBrush _leftBrush = new ImageBrush();
         private readonly ImageBrush _middleBrush = new ImageBrush();
         private readonly ImageBrush _rightBrush = new ImageBrush();
@@ -82,7 +86,9 @@ namespace Skymu
 
                 if (!IsEnabled)
                 {
-                    _animationTimer.Stop();
+                    _animatingControls.Remove(this);
+                    if (_animatingControls.Count == 0)
+                        _sharedAnimationTimer?.Stop();
                     SetStateInternal(ButtonVisualState.Disabled);
                 }
                 else
@@ -92,17 +98,35 @@ namespace Skymu
                 }
             };
 
-
             // Animation timer
-            _animationTimer = new DispatcherTimer();
-            _animationTimer.Tick += (s, e) =>
+            if (_sharedAnimationTimer == null)
             {
-                _currentAnimationFrame++;
-                if (_currentAnimationFrame >= ElementCount)
-                    _currentAnimationFrame = 0;
+                _sharedAnimationTimer = new DispatcherTimer();
+                _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // ~60 FPS base tick rate
+                _sharedAnimationTimer.Tick += (s, e) =>
+                {
+                    double deltaTime = 16.67 / 1000.0; // Time per tick in seconds
 
-                UpdateSlices();
-            };
+                    foreach (var control in _animatingControls.ToList())
+                    {
+                        if (control.AnimationFps <= 0) continue;
+
+                        control._frameAccumulator += deltaTime * control.AnimationFps;
+
+                        if (control._frameAccumulator >= 1.0)
+                        {
+                            int framesToAdvance = (int)control._frameAccumulator;
+                            control._frameAccumulator -= framesToAdvance;
+
+                            control._currentAnimationFrame += framesToAdvance;
+                            if (control._currentAnimationFrame >= control.ElementCount)
+                                control._currentAnimationFrame %= control.ElementCount;
+
+                            control.UpdateSlices();
+                        }
+                    }
+                };
+            }
 
             // Brush defaults
             _leftBrush.Stretch = Stretch.Fill;
@@ -118,6 +142,14 @@ namespace Skymu
             {
                 UpdateTextOffset();
                 SetStateInternal(IsEnabled ? ButtonStateOnInit : ButtonVisualState.Disabled);
+                UpdateAnimation();
+            };
+
+            Unloaded += (s, e) =>
+            {
+                _animatingControls.Remove(this);
+                if (_animatingControls.Count == 0)
+                    _sharedAnimationTimer?.Stop();
             };
         }
         #endregion
@@ -300,13 +332,20 @@ namespace Skymu
 
         private void UpdateAnimation()
         {
-            _animationTimer.Stop();
+            _animatingControls.Remove(this);
 
             if (IsEnabled && IsAnimation && AnimationFps > 0)
             {
                 _currentAnimationFrame = 0;
-                _animationTimer.Interval = TimeSpan.FromSeconds(1.0 / AnimationFps);
-                _animationTimer.Start();
+                _frameAccumulator = 0;
+                _animatingControls.Add(this);
+
+                if (!_sharedAnimationTimer.IsEnabled)
+                    _sharedAnimationTimer.Start();
+            }
+            else if (_animatingControls.Count == 0)
+            {
+                _sharedAnimationTimer?.Stop();
             }
 
             UpdateSlices();
