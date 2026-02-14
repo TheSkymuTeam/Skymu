@@ -12,7 +12,7 @@
         ShowActivated="False"
         FontFamily="Tahoma">
     <Grid>
-    <local:SliceControl Source="/Resources/Light/Notifications/bubble-orange.png" HorizontalAlignment="Stretch" StackDirection="Vertical" ElementCount="1" DefaultIndex="0"/>
+    <local:SliceControl Source="/Resources/Light/Notifications/bubble-blue.png" HorizontalAlignment="Stretch" StackDirection="Vertical" ElementCount="1" DefaultIndex="0"/>
     
             <Grid>
             <Grid.RowDefinitions>

@@ -31,8 +31,6 @@ namespace Discord.Classes
             SubscribeMessageReceived(handler);
         }
 
-
-
         public static Task<bool> WaitUntilReady()
         {
             var tcs = new TaskCompletionSource<bool>();

@@ -84,6 +84,12 @@ namespace Discord
             Contacts,
             Recents
         }
+        public void Dispose() 
+        {
+            WebSocketMgr._webSocket = null;
+            UserStatusMgr.UserStatusStore.Clear();
+            UserIdToChannelId = new Dictionary<string, string>(); 
+        }
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {

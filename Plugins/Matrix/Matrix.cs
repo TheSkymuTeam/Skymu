@@ -20,7 +20,6 @@ namespace Matrix
 {
     public class Core : ICore
     {
-        // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<NotificationEventArgs> Notification;
@@ -29,10 +28,9 @@ namespace Matrix
         public string TextUsername { get { return "Matrix ID (username@homeserver.com)"; } }
         public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
 
-        // Matrix-specific data
         private string _accessToken;
         private string _userId;
-        private string _homeserver = "https://matrix.org"; // Default homeserver
+        private string _homeserver = "https://matrix.org";
         private string _nextBatch;
         private static readonly HttpClient _httpClient = new HttpClient();
         private CancellationTokenSource _syncCancellationTokenSource;
@@ -46,22 +44,15 @@ namespace Matrix
             {
                 return new ClickableConfiguration[]
                 {
-                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
-                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
-                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
-                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">")
+                    new ClickableConfiguration(ClickableItemType.User, "@", " "),
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "#", " ")
                 };
             }
         }
 
-        // Track the active room ID for real-time updates
         private string _activeRoomId;
         private string[] credData;
-
-        // Cache display names to avoid repeated API calls
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
-
-        // Track recent rooms for message handling
         public readonly Dictionary<string, string> _recentRoomMap = new();
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
@@ -74,7 +65,6 @@ namespace Matrix
 
             try
             {
-                // Detect homeserver from username if it contains a colon (e.g., @user:matrix.org)
                 if (username.Contains(":"))
                 {
                     string[] parts = username.Split(':');
@@ -84,7 +74,6 @@ namespace Matrix
                     }
                 }
 
-                // Perform Matrix login
                 var loginData = new
                 {
                     type = "m.login.password",
@@ -112,7 +101,6 @@ namespace Matrix
                 _accessToken = loginResponse.GetProperty("access_token").GetString();
                 _userId = loginResponse.GetProperty("user_id").GetString();
 
-                // Save credentials
                 credData = new string[] { _homeserver, _accessToken, _userId };
 
                 return await StartClient();
@@ -126,7 +114,6 @@ namespace Matrix
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
-            // Matrix doesn't use 2FA in the same way, so we return success
             return LoginResult.Success;
         }
 
@@ -162,6 +149,131 @@ namespace Matrix
             }
         }
 
+        public async Task<bool> SendImageMessage(string identifier, byte[] imageData, string filename = "image.jpg")
+        {
+            if (string.IsNullOrEmpty(identifier) || imageData == null || imageData.Length == 0)
+                return false;
+
+            try
+            {
+                string roomId = identifier;
+
+                var imageContent = new ByteArrayContent(imageData);
+                imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+
+                var uploadResponse = await _httpClient.PostAsync(
+                    $"{_homeserver}/_matrix/media/r0/upload?filename={filename}&access_token={_accessToken}",
+                    imageContent);
+
+                if (!uploadResponse.IsSuccessStatusCode)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Failed to upload image."));
+                    return false;
+                }
+
+                string uploadResponseBody = await uploadResponse.Content.ReadAsStringAsync();
+                var uploadData = JsonSerializer.Deserialize<JsonElement>(uploadResponseBody);
+                string contentUri = uploadData.GetProperty("content_uri").GetString();
+
+                var messageData = new
+                {
+                    msgtype = "m.image",
+                    body = filename,
+                    url = contentUri,
+                    info = new
+                    {
+                        mimetype = "image/jpeg",
+                        size = imageData.Length
+                    }
+                };
+
+                string messageJson = JsonSerializer.Serialize(messageData);
+                var content = new StringContent(messageJson, Encoding.UTF8, "application/json");
+
+                string txnId = Guid.NewGuid().ToString();
+                var response = await _httpClient.PutAsync(
+                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/send/m.room.message/{txnId}?access_token={_accessToken}",
+                    content);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send image: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> SendReplyMessage(string identifier, string text, string replyToEventId)
+        {
+            if (string.IsNullOrEmpty(identifier) || string.IsNullOrEmpty(text) || string.IsNullOrEmpty(replyToEventId))
+                return false;
+
+            try
+            {
+                string roomId = identifier;
+
+                var replyData = new Dictionary<string, object>
+                {
+                    ["msgtype"] = "m.text",
+                    ["body"] = text,
+                    ["m.relates_to"] = new Dictionary<string, object>
+                    {
+                        ["m.in_reply_to"] = new Dictionary<string, object>
+                        {
+                            ["event_id"] = replyToEventId
+                        }
+                    }
+                };
+
+                string messageJson = JsonSerializer.Serialize(replyData);
+                var content = new StringContent(messageJson, Encoding.UTF8, "application/json");
+
+                string txnId = Guid.NewGuid().ToString();
+                var response = await _httpClient.PutAsync(
+                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/send/m.room.message/{txnId}?access_token={_accessToken}",
+                    content);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send reply: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> SendTypingIndicator(string identifier, bool isTyping)
+        {
+            if (string.IsNullOrEmpty(identifier))
+                return false;
+
+            try
+            {
+                string roomId = identifier;
+
+                var typingData = new
+                {
+                    typing = isTyping,
+                    timeout = 30000
+                };
+
+                string typingJson = JsonSerializer.Serialize(typingData);
+                var content = new StringContent(typingJson, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PutAsync(
+                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/typing/{_userId}?access_token={_accessToken}",
+                    content);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to send typing indicator: {ex.Message}");
+                return false;
+            }
+        }
+
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
 
         public async Task<bool> SetActiveConversation(string identifier)
@@ -179,7 +291,6 @@ namespace Matrix
 
             try
             {
-                // Fetch room messages
                 var response = await _httpClient.GetAsync(
                     $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/messages?access_token={_accessToken}&dir=b&limit=100");
 
@@ -200,30 +311,45 @@ namespace Matrix
                     messagesList.Add(item);
                 }
 
-                // Reverse to show oldest first
                 messagesList.Reverse();
 
-                // Batch-fetch all display names at once and cache them
                 _displayNameCache = await GetRoomMemberDisplayNames(roomId);
 
                 foreach (var message in messagesList)
                 {
-                    if (message.GetProperty("type").GetString() != "m.room.message")
+                    string eventType = message.GetProperty("type").GetString();
+
+                    if (eventType != "m.room.message")
                         continue;
 
                     string eventId = message.GetProperty("event_id").GetString();
                     string sender = message.GetProperty("sender").GetString();
 
                     var content = message.GetProperty("content");
-                    string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                    string msgtype = content.TryGetProperty("msgtype", out var msgtypeProp)
+                        ? msgtypeProp.GetString()
+                        : "m.text";
+
+                    string body = content.TryGetProperty("body", out var bodyProp)
+                        ? bodyProp.GetString()
+                        : "";
 
                     long originServerTs = message.GetProperty("origin_server_ts").GetInt64();
                     DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
 
-                    // Use cached display name instead of individual HTTP request
                     string displayName = _displayNameCache.TryGetValue(sender, out var name) ? name : sender;
 
-                    // Handle replies
+                    byte[] imageData = null;
+                    if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
+                    {
+                        string mxcUrl = urlProp.GetString();
+                        imageData = await _ootb.DownloadMatrixContent(mxcUrl, _homeserver);
+                        if (imageData != null)
+                        {
+                            body = null;
+                        }
+                    }
+
                     string replyToId = null;
                     string replyToName = null;
                     string replyToBody = null;
@@ -233,9 +359,18 @@ namespace Matrix
                         if (relatesTo.TryGetProperty("m.in_reply_to", out var inReplyTo))
                         {
                             replyToId = inReplyTo.GetProperty("event_id").GetString();
-                            // We would need to fetch the original event to get the body, skipping for now
-                            replyToName = "[user]";
-                            replyToBody = "[reply]";
+
+                            var replyInfo = await GetMessageById(roomId, replyToId);
+                            if (replyInfo.HasValue)
+                            {
+                                replyToName = replyInfo.Value.displayName;
+                                replyToBody = replyInfo.Value.body;
+                            }
+                            else
+                            {
+                                replyToName = "[user]";
+                                replyToBody = "[reply]";
+                            }
                         }
                     }
 
@@ -245,7 +380,7 @@ namespace Matrix
                         displayName,
                         timestamp,
                         body,
-                        null,
+                        imageData,
                         replyToId,
                         replyToName,
                         replyToBody
@@ -262,6 +397,28 @@ namespace Matrix
             }
         }
 
+        public void Dispose()
+        {
+            _syncCancellationTokenSource?.Cancel();
+            _syncCancellationTokenSource?.Dispose();
+            _syncCancellationTokenSource = null;
+
+            ActiveConversation?.Clear();
+            ContactsList?.Clear();
+            RecentsList?.Clear();
+            TypingUsersList?.Clear();
+
+            _displayNameCache?.Clear();
+            _recentRoomMap?.Clear();
+
+            _accessToken = null;
+            _userId = null;
+            _homeserver = "https://matrix.org";
+            _nextBatch = null;
+            _activeRoomId = null;
+            credData = null;
+        }
+
         public SidebarData SidebarInformation { get; private set; }
 
         public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
@@ -274,7 +431,6 @@ namespace Matrix
 
             try
             {
-                // Get user profile
                 var response = await _httpClient.GetAsync(
                     $"{_homeserver}/_matrix/client/r0/profile/{_userId}?access_token={_accessToken}");
 
@@ -309,8 +465,6 @@ namespace Matrix
 
         public async Task<bool> PopulateContactsList()
         {
-            // Matrix doesn't have a traditional contacts list, so we'll leave this empty
-            // or populate it with joined rooms that are direct messages
             return await PopulateListsBackend(ListType.Contacts);
         }
 
@@ -329,7 +483,6 @@ namespace Matrix
         {
             try
             {
-                // Get joined rooms
                 var response = await _httpClient.GetAsync(
                     $"{_homeserver}/_matrix/client/r0/joined_rooms?access_token={_accessToken}");
 
@@ -348,7 +501,6 @@ namespace Matrix
                 {
                     string roomIdStr = roomId.GetString();
 
-                    // Get room details
                     var roomName = await GetRoomName(roomIdStr);
                     var roomAvatar = await GetRoomAvatar(roomIdStr);
                     var isDirect = await IsDirectMessage(roomIdStr);
@@ -429,7 +581,6 @@ namespace Matrix
         {
             try
             {
-                // Verify token by making a simple API call
                 var response = await _httpClient.GetAsync(
                     $"{_homeserver}/_matrix/client/r0/account/whoami?access_token={_accessToken}");
 
@@ -439,7 +590,6 @@ namespace Matrix
                     return LoginResult.Failure;
                 }
 
-                // Start the sync loop
                 StartSyncLoop();
 
                 return LoginResult.Success;
@@ -485,7 +635,6 @@ namespace Matrix
 
                     _nextBatch = syncData.GetProperty("next_batch").GetString();
 
-                    // Process timeline events
                     if (syncData.TryGetProperty("rooms", out var rooms))
                     {
                         if (rooms.TryGetProperty("join", out var joinedRooms))
@@ -501,6 +650,17 @@ namespace Matrix
                                         foreach (var evt in events.EnumerateArray())
                                         {
                                             await ProcessTimelineEvent(roomId, evt);
+                                        }
+                                    }
+                                }
+
+                                if (room.Value.TryGetProperty("ephemeral", out var ephemeral))
+                                {
+                                    if (ephemeral.TryGetProperty("events", out var ephemeralEvents))
+                                    {
+                                        foreach (var ephEvent in ephemeralEvents.EnumerateArray())
+                                        {
+                                            await ProcessEphemeralEvent(roomId, ephEvent);
                                         }
                                     }
                                 }
@@ -533,24 +693,37 @@ namespace Matrix
                 string sender = evt.GetProperty("sender").GetString();
 
                 var content = evt.GetProperty("content");
-                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                string msgtype = content.TryGetProperty("msgtype", out var msgtypeProp)
+                    ? msgtypeProp.GetString()
+                    : "m.text";
+
+                string body = content.TryGetProperty("body", out var bodyProp)
+                    ? bodyProp.GetString()
+                    : "";
 
                 long originServerTs = evt.GetProperty("origin_server_ts").GetInt64();
                 DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
 
-                // Touch recents
                 if (_recentRoomMap.ContainsKey(roomId))
                 {
-                    // Could implement TouchRecent here
                 }
 
-                // Add to active conversation if this is the active room
                 if (roomId == _activeRoomId)
                 {
-                    // Use cached display name, fallback to fetching if not in cache
                     string displayName = _displayNameCache.TryGetValue(sender, out var name)
                         ? name
                         : await GetDisplayNameForUser(sender, roomId);
+
+                    byte[] imageData = null;
+                    if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
+                    {
+                        string mxcUrl = urlProp.GetString();
+                        imageData = await _ootb.DownloadMatrixContent(mxcUrl, _homeserver);
+                        if (imageData != null)
+                        {
+                            body = null;
+                        }
+                    }
 
                     var messageItem = new MessageItem(
                         eventId,
@@ -558,7 +731,7 @@ namespace Matrix
                         displayName,
                         timestamp,
                         body,
-                        null,
+                        imageData,
                         null,
                         null,
                         null
@@ -573,7 +746,85 @@ namespace Matrix
             }
         }
 
-        // Helper methods
+        private async Task ProcessEphemeralEvent(string roomId, JsonElement evt)
+        {
+            try
+            {
+                string eventType = evt.GetProperty("type").GetString();
+
+                if (eventType == "m.typing")
+                {
+                    if (roomId != _activeRoomId)
+                        return;
+
+                    var content = evt.GetProperty("content");
+
+                    if (content.TryGetProperty("user_ids", out var userIds))
+                    {
+                        var typingUsers = new List<UserData>();
+
+                        foreach (var userId in userIds.EnumerateArray())
+                        {
+                            string userIdStr = userId.GetString();
+
+                            if (userIdStr == _userId)
+                                continue;
+
+                            string displayName = _displayNameCache.TryGetValue(userIdStr, out var name)
+                                ? name
+                                : await GetDisplayNameForUser(userIdStr, roomId);
+
+                            typingUsers.Add(new UserData(displayName, userIdStr));
+                        }
+
+                        _uiContext?.Post(_ =>
+                        {
+                            TypingUsersList.Clear();
+                            foreach (var user in typingUsers)
+                            {
+                                TypingUsersList.Add(user);
+                            }
+                        }, null);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error processing ephemeral event: {ex.Message}");
+            }
+        }
+
+        private async Task<(string displayName, string body)?> GetMessageById(string roomId, string eventId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(
+                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/event/{eventId}?access_token={_accessToken}");
+
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                string responseBody = await response.Content.ReadAsStringAsync();
+                var eventData = JsonSerializer.Deserialize<JsonElement>(responseBody);
+
+                string sender = eventData.GetProperty("sender").GetString();
+                var content = eventData.GetProperty("content");
+                string body = content.TryGetProperty("body", out var bodyProp)
+                    ? bodyProp.GetString()
+                    : "";
+
+                string displayName = _displayNameCache.TryGetValue(sender, out var name)
+                    ? name
+                    : sender;
+
+                return (displayName, body);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         private async Task<Dictionary<string, string>> GetRoomMemberDisplayNames(string roomId)
         {
             var displayNames = new Dictionary<string, string>();
@@ -593,7 +844,7 @@ namespace Matrix
                         foreach (var member in joined.EnumerateObject())
                         {
                             string userId = member.Name;
-                            string displayName = userId; // fallback
+                            string displayName = userId;
 
                             if (member.Value.TryGetProperty("display_name", out var dnProp))
                             {
@@ -609,7 +860,6 @@ namespace Matrix
             }
             catch
             {
-                // Return empty dictionary on error
             }
 
             return displayNames;
@@ -633,7 +883,6 @@ namespace Matrix
                     }
                 }
 
-                // Fallback: use room ID
                 return roomId;
             }
             catch
@@ -749,7 +998,7 @@ namespace Matrix
 
                         foreach (var member in joined.EnumerateObject())
                         {
-                            string identifier = member.Name; // Matrix user ID (e.g., "@user:server.com")
+                            string identifier = member.Name;
                             string displayName = "Unknown";
 
                             if (member.Value.TryGetProperty("display_name", out var nameElement))
@@ -793,7 +1042,6 @@ namespace Matrix
                     }
                 }
 
-                // Fallback to user ID
                 return userId;
             }
             catch
@@ -810,7 +1058,6 @@ namespace Matrix
             {
                 try
                 {
-                    // Convert mxc://server/mediaId to HTTP URL
                     if (!mxcUrl.StartsWith("mxc://"))
                         return null;
 

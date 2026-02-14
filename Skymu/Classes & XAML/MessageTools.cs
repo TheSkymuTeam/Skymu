@@ -347,6 +347,35 @@ namespace Skymu
         }
 
 
+        internal static SliceControl FormAnimatedEmoji(string emojiName)
+        {
+            var uri = new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiName}/views/default_20_anim/index.png", UriKind.Absolute);
+            var sourceImg = new BitmapImage();
+            sourceImg.BeginInit();
+            sourceImg.UriSource = uri;
+            sourceImg.CacheOption = BitmapCacheOption.OnLoad;
+            sourceImg.EndInit();
+            sourceImg.Freeze();
+            var sliceControl = new SliceControl
+            {
+                Source = sourceImg,
+                IsHitTestVisible = false,
+                Width = 22, // 2px padding to fix image render clip bug
+                Height = 20,
+                Tag = emojiName, 
+                ElementCount = (sourceImg.PixelHeight / 20),
+                StackDirection = SpriteStackDirection.Vertical,
+                DefaultIndex = 0,
+                Slice = false,
+                IsAnimation = true,
+                AnimationFps = 45.0 // change to speed up or slow down animation
+            };
+
+            RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
+            RenderOptions.SetEdgeMode(sliceControl, EdgeMode.Aliased);
+            return sliceControl;
+        }
+
 
         private static void ProcessTextWithEmoji(ICollection<Inline> inlines, string text) // This function replaces Unicode emojis in the text with inline animated emoticons.
         {
@@ -372,31 +401,7 @@ namespace Skymu
 
                     if (EmojiDictionary.Map.TryGetValue(emojiKey, out var emojiFilename))
                     {
-                        var uri = new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiFilename}/views/default_20_anim/index.png", UriKind.Absolute);
-                        var sourceImg = new BitmapImage();
-                        sourceImg.BeginInit();
-                        sourceImg.UriSource = uri;
-                        sourceImg.CacheOption = BitmapCacheOption.OnLoad;
-                        sourceImg.EndInit();
-                        sourceImg.Freeze();
-                        var sliceControl = new SliceControl
-                        {
-                            Source = sourceImg,
-                            IsHitTestVisible = false,
-                            Width = 22, // 2px padding to fix image render clip bug
-                            Height = 20,
-                            ElementCount = (sourceImg.PixelHeight / 20),
-                            StackDirection = SpriteStackDirection.Vertical,
-                            DefaultIndex = 0,
-                            Slice = false,
-                            IsAnimation = true,
-                            AnimationFps = 45.0 // change to speed up or slow down animation
-                        };
-
-                        RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
-                        RenderOptions.SetEdgeMode(sliceControl, EdgeMode.Aliased);
-
-                        inlines.Add(new InlineUIContainer(sliceControl)
+                        inlines.Add(new InlineUIContainer(FormAnimatedEmoji(emojiFilename))
                         {
                             BaselineAlignment = BaselineAlignment.Baseline
                         });

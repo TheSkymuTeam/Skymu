@@ -18,7 +18,7 @@
       <Value Profile="(Default)">/Resources/Light</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Alverstone Licorice</Value>
+      <Value Profile="(Default)">Alverstone Napoleon Cake</Value>
     </Setting>
   </Settings>
 </SettingsFile>

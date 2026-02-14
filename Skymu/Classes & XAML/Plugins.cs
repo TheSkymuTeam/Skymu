@@ -17,9 +17,9 @@ using System.Reflection;
 
 namespace Skymu
 {
-    internal class PluginLoader
+    internal class Plugins
     {
-        public static ICore[] LoadPlugins(string path)
+        public static ICore[] Load(string path)
         {
             var PluginList = new List<ICore>();
 
@@ -60,6 +60,33 @@ namespace Skymu
                 );
             }
             return PluginList.ToArray();
+        }
+
+        public static void DisposeAll()
+        {
+            if (Universal.Plugin is not null) Universal.Plugin.Dispose();
+            if (Universal.PluginList is null) return;
+
+            foreach (var plugin in Universal.PluginList)
+            {
+                try
+                {
+                    plugin.OnError -= Universal.PluginErrorHandler;
+                    plugin.OnWarning -= Universal.PluginWarningHandler;
+                    plugin.Notification -= Universal.PluginNotificationHandler;
+
+                    if (plugin is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
+                }
+                catch
+                {
+                    
+                }
+            }
+            Universal.PluginList = null;
+            Universal.Plugin = null;
         }
     }
 }

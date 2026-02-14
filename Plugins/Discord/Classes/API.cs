@@ -19,9 +19,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Discord.Classes
+namespace Discord.Classes 
 {
-    internal class API
+    internal class API 
     {
         private static readonly ConfigMgr configMgr = new ConfigMgr();
 

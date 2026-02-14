@@ -31,6 +31,7 @@ namespace WhatsApp
             return LoginResult.Success;
         }
 
+        public void Dispose() { }
         public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
 
         public async Task<LoginResult> LoginOptStep(string code)

@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -46,6 +47,7 @@ namespace Skymu
 
         public MainWindow()
         {
+            noCloseEvent = false;
             api = new SkymuApi();
 
             InitializeComponent();
@@ -134,6 +136,9 @@ namespace Skymu
                 WindowArea.Margin = new Thickness(); // 0, 0, 0, 0
             }
 
+            ApplyPlaceholderTb(SearchBox, "Search");
+            InitializeEmojiPicker();
+
             Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
             {
                 UpdateTypingIndicator();
@@ -149,6 +154,7 @@ namespace Skymu
                 IsWindowActive = false;
             };
         }
+
 
         private void UpdateTypingIndicator()
         {
@@ -321,7 +327,7 @@ namespace Skymu
                 UseShellExecute = true
             });
         }
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { Universal.Shutdown(ev); }
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Shutdown(ev); }
         // For the menu bar at the top of the Skymu window
         private void mn_New(object sender, RoutedEventArgs e) { }
         private void mn_Open(object sender, RoutedEventArgs e) { }
@@ -374,7 +380,8 @@ namespace Skymu
 
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = $"Type a message to {SelectedContact.DisplayName} here";
-            MessageTextBox.Text = PlaceholderTextMTB;
+            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+            UpdateSendButtonState();
             throbber.Visibility = Visibility.Visible;
             _isLoadingConversation = true;
 
@@ -614,17 +621,25 @@ namespace Skymu
             if (!SendMsgButton.IsEnabled && message is null) return;
 
             string messageBody;
-            if (message is null) messageBody = MessageTextBox.Text;
-            else messageBody = message;
+            if (message is null)
+            {
+                messageBody = ExtractMessageFromRichTextBox();
+            }
+            else
+            {
+                messageBody = message;
+            }
 
-            MessageTextBox.Clear();
+            MessageTextBox.Document.Blocks.Clear();
+            MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
+
+            CheckIfMTBUnfocused();
             bool didSend = await Universal.Plugin.SendMessage(SelectedContact.Identifier, messageBody);
 
             if (didSend)
             {
                 Sounds.Play("message-sent");
             }
-
         }
 
         private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
@@ -788,56 +803,184 @@ namespace Skymu
         private string PlaceholderTextMTB = String.Empty;
         private bool IsMsgBoxPlaceholderActive = true;
 
-        private void ApplyPlaceholder(TextBox textBox, string placeholderText, bool isMTB = false)
-        {
-            if (!string.IsNullOrEmpty(textBox.Text))
-                return;
+     
 
-            textBox.Text = placeholderText;
-            textBox.Foreground = PlaceholderBrush;
-            IsMsgBoxPlaceholderActive = isMTB;
-            UpdateSendButtonState();
+
+        private void UpdateSendButtonState()
+        {
+            if (SendMsgButton is null) return;
+
+
+            if (MessageTextBox.Tag as string == "PLACEHOLDER")
+            {
+                SendMsgButton.IsEnabled = false;
+                return;
+            }
+
+   
+            bool hasContent = HasAnyContent(MessageTextBox);
+            SendMsgButton.IsEnabled = hasContent;
         }
 
-        private void RemovePlaceholder(TextBox textBox, bool isMTB = false)
+        private void CheckIfMTBUnfocused(bool force = false)
         {
-            if (IsMsgBoxPlaceholderActive || !isMTB)
+            if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                textBox.Text = string.Empty;
-                textBox.Foreground = Brushes.Black;
-                IsMsgBoxPlaceholderActive = !isMTB;
+
+                bool hasContent = HasAnyContent(MessageTextBox);
+
+                if (!hasContent)
+                {
+                    ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                }
                 UpdateSendButtonState();
             }
         }
 
-        private void UpdateSendButtonState()
+        private bool HasAnyContent(RichTextBox rtb)
         {
-            if ((String.IsNullOrWhiteSpace(MessageTextBox.Text) || IsMsgBoxPlaceholderActive)) SendMsgButton.IsEnabled = false;
-            else SendMsgButton.IsEnabled = true;
+            if (rtb?.Document == null)
+                return false;
+
+            if (rtb.Tag as string == "PLACEHOLDER")
+                return false;
+
+            var flowDoc = rtb.Document;
+
+            foreach (var block in flowDoc.Blocks)
+            {
+                if (block is Paragraph para)
+                {
+                    foreach (var inline in para.Inlines)
+                    {
+                        if (inline is Run run && !string.IsNullOrWhiteSpace(run.Text))
+                        {
+                            return true;
+                        }
+                        else if (inline is InlineUIContainer)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void ApplyPlaceholder(RichTextBox rtb, string text)
+        {
+            if (rtb.Tag as string == "PLACEHOLDER")
+                return;
+
+            var flowDoc = rtb.Document;
+            flowDoc.Blocks.Clear();
+
+            var para = new Paragraph(new Run(text))
+            {
+                Margin = new Thickness(0),
+                Foreground = PlaceholderBrush
+            };
+
+            flowDoc.Blocks.Add(para);
+            rtb.Tag = "PLACEHOLDER";
+        }
+
+        private void RemovePlaceholder(RichTextBox rtb)
+        {
+            if (rtb.Tag as string == "PLACEHOLDER")
+            {
+                var flowDoc = rtb.Document;
+                flowDoc.Blocks.Clear();
+                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
+                rtb.Tag = null;
+            }
+        }
+
+        private void ApplyPlaceholderTb(TextBox tb, string text)
+        {
+            if (tb.Tag as string == "PLACEHOLDER")
+                return;
+
+            if (!string.IsNullOrEmpty(tb.Text))
+                return;
+
+            tb.Text = text;
+            tb.Foreground = PlaceholderBrush;
+            tb.Tag = "PLACEHOLDER";
+        }
+
+        private void RemovePlaceholderTb(TextBox tb)
+        {
+            if (tb.Tag as string == "PLACEHOLDER")
+            {
+                tb.Text = string.Empty;
+                tb.Foreground = Brushes.Black;
+                tb.Tag = null;
+            }
         }
 
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
 
-            RemovePlaceholder(SearchBox);
+            RemovePlaceholderTb(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
 
-            ApplyPlaceholder(SearchBox, "Search");
+            ApplyPlaceholderTb(SearchBox, "Search");
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            RemovePlaceholder(MessageTextBox, true);
+            RemovePlaceholder(MessageTextBox);
+            UpdateSendButtonState();
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            CheckIfMTBUnfocused(true);
+        }
+
+
+
+        private string ExtractMessageFromRichTextBox()
+        {
+            var sb = new StringBuilder();
+            var flowDoc = MessageTextBox.Document;
+
+            foreach (var block in flowDoc.Blocks)
+            {
+                if (block is Paragraph para)
+                {
+                    foreach (var inline in para.Inlines)
+                    {
+                        if (inline is Run run)
+                        {
+                            sb.Append(run.Text);
+                        }
+                        else if (inline is InlineUIContainer container)
+                        {
+                            // Extract emoji filename from Tag and do reverse lookup
+                            if (container.Tag is string emojiFilename)
+                            {
+                                // Find the hex key that maps to this filename
+                                var emojiKey = EmojiDictionary.Map.FirstOrDefault(kvp => kvp.Value == emojiFilename).Key;
+                                if (!string.IsNullOrEmpty(emojiKey))
+                                {
+                                    string unicodeEmoji = ConvertHexKeyToUnicode(emojiKey);
+                                    sb.Append(unicodeEmoji);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
@@ -946,8 +1089,128 @@ namespace Skymu
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
         {
-
+            EmojiFlyout.IsOpen = true;
         }
+
+        private string ConvertHexKeyToUnicode(string hexKey)
+        {
+            try
+            {
+                var parts = hexKey.Split('-');
+                var sb = new StringBuilder();
+                foreach (var part in parts)
+                {
+                    int codePoint = Convert.ToInt32(part, 16);
+                    sb.Append(char.ConvertFromUtf32(codePoint));
+                }
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to convert hex key to unicode: {hexKey} - {ex.Message}");
+                return string.Empty;
+            }
+        }
+
+        private void InitializeEmojiPicker()
+        {
+            // Get unique emoji filenames only (skip duplicates)
+            var uniqueEmojis = EmojiDictionary.Map
+                .GroupBy(kvp => kvp.Value)
+                .Select(g => g.First()) // Take only the first occurrence
+                .ToList();
+
+            foreach (var kvp in uniqueEmojis)
+            {
+                string emojiKey = kvp.Key;
+                string emojiFilename = kvp.Value;
+
+                // create border container for each emoji
+                var border = new Border
+                {
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(2),
+                    Background = Brushes.Transparent,
+                    Cursor = Cursors.Hand,
+                    ToolTip = ConvertHexKeyToUnicode(emojiKey)
+                };
+
+                try
+                {
+                    // ceate emoji using the shared method
+                    var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+                    sliceControl.Tag = emojiFilename;  // store FILENAME
+
+                    border.Child = sliceControl;
+                    border.MouseLeftButtonUp += EmojiBox_Click;
+
+                    // ooh,fancy hover effect
+                    border.MouseEnter += (s, ev) =>
+                    {
+                        ((Border)s).Background = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
+                    };
+                    border.MouseLeave += (s, ev) =>
+                    {
+                        ((Border)s).Background = Brushes.Transparent;
+                    };
+
+                    EmojiWrapPanel.Children.Add(border);
+                }
+                catch (Exception ex)
+                {
+                    // Skip emojis that fail to load
+                    System.Diagnostics.Debug.WriteLine($"Failed to load emoji: {emojiFilename} - {ex.Message}");
+                    continue;
+                }
+            }
+        }
+
+      
+
+        private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            var sliceControlInside = border?.Child as SliceControl;
+            if (sliceControlInside == null) return;
+
+            // close the flyout
+            EmojiFlyout.IsOpen = false;
+
+            // remove placeholder if active
+            RemovePlaceholder(MessageTextBox);
+
+            // get the emoji filename from the SliceControl's tag
+            string emojiFilename = sliceControlInside.Tag as string;
+
+            // create the animated emoji using the same method as MessageTools
+            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+
+            // create the inline container with the SliceControl
+            var container = new InlineUIContainer(sliceControl)
+            {
+                BaselineAlignment = BaselineAlignment.Baseline,
+                Tag = emojiFilename  // store the filename for extraction
+            };
+
+            // get the current paragraph
+            var paragraph = MessageTextBox.CaretPosition.Paragraph;
+            if (paragraph == null)
+            {
+                paragraph = new Paragraph { Margin = new Thickness(0) };
+                MessageTextBox.Document.Blocks.Add(paragraph);
+            }
+
+            // insert at caret position
+            paragraph.Inlines.Add(container);
+
+            // move caret after the emoji
+            MessageTextBox.CaretPosition = container.ElementEnd;
+            MessageTextBox.Focus();
+
+            UpdateSendButtonState();
+        }
+
         internal static int MapStatusToInt (UserConnectionStatus status)
         {
             switch (status)
@@ -978,6 +1241,16 @@ namespace Skymu
             ContactsList.ItemsSource = null;
             if (Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+        }
+
+        private static bool noCloseEvent;
+
+        private void mn_SignOut(object sender, RoutedEventArgs e)
+        {
+            CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
+            new Login(true).Show();
+            noCloseEvent = true;
+            this.Close();          
         }
     }
 

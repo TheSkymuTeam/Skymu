@@ -388,7 +388,7 @@ Grid.Column="2" Source="{Binding Media,
                     </MenuItem>
                     <Separator />
                     <MenuItem Header="Change Password..." />
-                    <MenuItem Header="Sign Out" />
+                    <MenuItem Header="Sign Out" Click="mn_SignOut"/>
                     <MenuItem Header="Switch User" />
                     <MenuItem Header="Close" Click="mn_Close"/>
                 </MenuItem>
@@ -654,13 +654,12 @@ MouseLeftButtonDown="Contacts_BtnDown"
     x:Name="SearchBox"
     GotKeyboardFocus="SearchBox_Focused"
     LostKeyboardFocus="SearchBox_Unfocused"
-    Text="Search"
+
                                     BorderThickness="0"
     Padding="33,0,0,0"
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"
-    Foreground="#999999"
     TextOptions.TextFormattingMode="Display"
     TextOptions.TextRenderingMode="ClearType"
     TextOptions.TextHintingMode="Fixed"
@@ -1143,6 +1142,26 @@ Width="18"
 Height="17"
 Slice="false"/>
                                                 </StackPanel>
+                                                <Popup x:Name="EmojiFlyout" 
+       PlacementTarget="{Binding ElementName=EmojiButton}"
+       Placement="Top"
+       StaysOpen="False"
+       AllowsTransparency="True">
+                                                    <Border Background="#CC333333" 
+            BorderBrush="#666666"
+            BorderThickness="1"
+            CornerRadius="4"
+            Padding="8">
+                                                        <ScrollViewer MaxHeight="300" 
+                     MaxWidth="250"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Disabled">
+                                                            <WrapPanel x:Name="EmojiWrapPanel" 
+                      Orientation="Horizontal"
+                      Width="234"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
                                                 <StackPanel x:Name="TypingIndicator" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">
                                                     <local:SliceControl 
 x:Name="TypingIndicatorIcon"
@@ -1169,17 +1188,14 @@ Width="23"/>
                     Background="White" 
                     MinHeight="35">
 
-                                                <TextBox
+                                                <RichTextBox
     x:Name="MessageTextBox"
     BorderThickness="0"
     Background="Transparent"
     Padding="4,5,4,4"
     AcceptsReturn="True"
     VerticalScrollBarVisibility="Auto"
-    MaxLines="10"
-    TextWrapping="Wrap"
     SnapsToDevicePixels="True"
-    Foreground="#999999"
     GotKeyboardFocus="MessageTextBox_Focused"
     LostKeyboardFocus="MessageTextBox_Unfocused"
     TextOptions.TextRenderingMode="ClearType"
@@ -1188,8 +1204,14 @@ Width="23"/>
     FontFamily="Tahoma"
     FontSize="11"
     UseLayoutRounding="True"
-                                                    TextChanged="MessageTextBox_TextChanged"
-    PreviewKeyDown="MessageTextBox_PreviewKeyDown" />
+    TextChanged="MessageTextBox_TextChanged"
+    PreviewKeyDown="MessageTextBox_PreviewKeyDown">
+                                                    <RichTextBox.Document>
+                                                        <FlowDocument>
+                                                            <Paragraph Margin="0"/>
+                                                        </FlowDocument>
+                                                    </RichTextBox.Document>
+                                                </RichTextBox>
                                             </Border>
                                         </StackPanel>
 

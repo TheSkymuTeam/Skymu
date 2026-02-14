@@ -14,6 +14,7 @@ using MiddleMan;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,10 +34,14 @@ namespace Skymu
     {
         private static PluginListing selectedListing;
         private MainWindow _mainWindow;
-        public static bool noCloseEvent;
-        public static bool useAutoLogin = Properties.Settings.Default.AutoLoginEnabled;
+        public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLoginEnabled;
 
-        public Login()
+        public Login() : this(false)
+        {
+        }
+
+
+        public Login(bool forceManualLogin = false)
         {
             InitializeComponent();
 
@@ -47,53 +52,10 @@ namespace Skymu
             this.ContentRendered += Login_ContentRendered;
 
             Sounds.Init();
+            
+            if (forceManualLogin) useAutoLogin = false;
             Tray.PushIcon("offline", Properties.Settings.Default.BrandingName + " (Not signed in)");
         }
-
-        private async Task WriteCredentials()
-        {
-            string[] credentials = await Universal.Plugin.SaveAutoLoginCredential();
-            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
-            {
-                if (key is not null)
-                {
-                    for (int i = 0; i < credentials.Length; i++)
-                    {
-                        key.SetValue(i.ToString(), EncryptToString(credentials[i]));
-                    }
-                }
-            }
-        }
-
-        private string[] ReadCredentials()
-        {
-            string[] credentials;
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
-       @"Software\Skymu\Credentials\" + Universal.Plugin.InternalName))
-            {
-                if (key is not null)
-                {
-                    string[] valueNames = key.GetValueNames();
-                    credentials = new string[valueNames.Length];
-
-                    for (int i = 0; i < valueNames.Length; i++)
-                    {
-                        credentials[i] = DecryptFromString(key.GetValue(valueNames[i])?.ToString());
-                    }
-
-                    if (credentials.Length <= 0)
-                    {
-                        credentials = new string[1];
-                    }
-                }
-                else
-                {
-                    credentials = new string[1];
-                }
-            }
-            return credentials;
-        }
-
 
         private async void buttonLaunch(object state, RoutedEventArgs e)
         {
@@ -103,7 +65,7 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    await WriteCredentials();
+                    CredentialsHelper.Write(await Universal.Plugin.SaveAutoLoginCredential());
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
@@ -149,7 +111,6 @@ namespace Skymu
             _mainWindow.Show();
             noCloseEvent = true;
             Close();
-
         }
 
         private void BoxKeyUp(object sender, RoutedEventArgs e)
@@ -180,11 +141,13 @@ namespace Skymu
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
-
-            Universal.PluginList = PluginLoader.LoadPlugins("plugins");
+            Plugins.DisposeAll();
+            Universal.PluginList = Plugins.Load("plugins");
             int pluginIndex = 0;
+            string[] autoLoginCandidates = CredentialsHelper.GetSavedCredentialPlugins();
             foreach (var plugin in Universal.PluginList)
             {
+                if (autoLoginCandidates.Contains(plugin.InternalName)) { Universal.Plugin = plugin; }
                 if (plugin.AuthenticationType.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationType[0]));
                 else
                 {
@@ -215,82 +178,11 @@ namespace Skymu
                     }
                 }
                 pluginIndex++;
-            }
-            comboProtocolBox.SelectedIndex = 0; // selects first loaded plugin (otherwise it would be blank)
-            Universal.Plugin = Universal.PluginList[comboProtocolBox.SelectedIndex];
+            }    
+            if (Universal.Plugin is null) { useAutoLogin = false; comboProtocolBox.SelectedIndex = 0; }
             if (useAutoLogin)
             {
                 LoginToggleAnimation(true);
-            }
-        }
-
-        public static string EncryptToString(string plaintext)
-        {
-            byte[] data = Encoding.UTF8.GetBytes(plaintext);
-            byte[] encrypted = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
-            return Convert.ToBase64String(encrypted);
-        }
-
-        public static string DecryptFromString(string encryptedString)
-        {
-            if (encryptedString is not null)
-            {
-                byte[] encryptedData = Convert.FromBase64String(encryptedString);
-                byte[] decrypted = ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser);
-                return Encoding.UTF8.GetString(decrypted);
-            }
-            else
-            {
-                return String.Empty;
-            }
-        }
-
-        private async void Login_ContentRendered(object sender, EventArgs e)
-        {
-            if (useAutoLogin)
-            {
-                string[] credentials = ReadCredentials();
-                LoginResult lr = await Task.Run(async () =>
-             await Universal.Plugin.TryAutoLogin(credentials)
-         );
-                if (lr == LoginResult.Success)
-                {
-                    InitiateMainWindow();
-                    return;
-                }
-                else
-                {
-                    LoginToggleAnimation(false);
-                    if (lr == LoginResult.Failure)
-                    {
-                        SetHeaderToFail();
-                    }
-                }
-            }
-        }
-
-        private void InitiateMainWindow()
-        {
-            header.Text = "Loading user data";
-            _mainWindow = new MainWindow();
-            _mainWindow.Ready += MainWindow_Ready;
-            _ = _mainWindow.InitSidebar();
-        }
-
-        private void LoginToggleAnimation(bool anim)
-        {
-            if (anim)
-            {
-                signInControls.Visibility = Visibility.Collapsed;
-                throbber.Visibility = Visibility.Visible;
-                header.Foreground = new BrushConverter().ConvertFromString("#00AFF0") as SolidColorBrush;
-                header.Text = "Signing in";
-            }
-            else
-            {
-                signInControls.Visibility = Visibility.Visible;
-                throbber.Visibility = Visibility.Collapsed;
-                header.Text = "Welcome to " + Properties.Settings.Default.BrandingName + ".";
             }
         }
 
@@ -299,7 +191,6 @@ namespace Skymu
             selectedListing = (PluginListing)comboProtocolBox.SelectedItem;
             Universal.Plugin = Universal.PluginList[selectedListing.PluginIndex];
             SkypeName.Text = Universal.Plugin.TextUsername;
-
             if (selectedListing.AuthenticationType != AuthenticationMethod.Password)
             {
                 passwordTokenBox.IsEnabled = false;
@@ -331,6 +222,56 @@ namespace Skymu
                 SignIn.Text = "Sign in";
             }
             CheckEnableLoginButton();
+        }
+
+        private async void Login_ContentRendered(object sender, EventArgs e)
+        {
+            if (useAutoLogin)
+            {
+                string[] credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
+                LoginResult lr = await Task.Run(async () =>
+             await Universal.Plugin.TryAutoLogin(credentials)
+         );
+                if (lr == LoginResult.Success)
+                {
+                    InitiateMainWindow();
+                    return;
+                }
+                else
+                {
+                    LoginToggleAnimation(false);
+                    if (lr == LoginResult.Failure)
+                    {
+                        SetHeaderToFail();
+                        comboProtocolBox.SelectedIndex = 0;
+                    }
+                }
+            }
+        }
+
+        private void InitiateMainWindow()
+        {
+            header.Text = "Loading user data";
+            _mainWindow = new MainWindow();
+            _mainWindow.Ready += MainWindow_Ready;
+            _ = _mainWindow.InitSidebar();
+        }
+
+        private void LoginToggleAnimation(bool anim)
+        {
+            if (anim)
+            {
+                signInControls.Visibility = Visibility.Collapsed;
+                throbber.Visibility = Visibility.Visible;
+                header.Foreground = new BrushConverter().ConvertFromString("#00AFF0") as SolidColorBrush;
+                header.Text = "Signing in";
+            }
+            else
+            {
+                signInControls.Visibility = Visibility.Visible;
+                throbber.Visibility = Visibility.Collapsed;
+                header.Text = "Welcome to " + Properties.Settings.Default.BrandingName + ".";
+            }
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

@@ -288,6 +288,7 @@ namespace MiddleMan
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
+        void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
         ObservableCollection<UserData> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
     }
