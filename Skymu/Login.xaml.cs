@@ -155,7 +155,7 @@ namespace Skymu
         private void MainWindow_Ready(object sender, EventArgs e)
         {
             _mainWindow.Ready -= MainWindow_Ready;
-            Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
+            Tray.PushIcon(MainWindow.StatIconName, Properties.Settings.Default.BrandingName + " (Online)");
             Sounds.Play("login");
             Universal.HasLoggedIn = true;
             _mainWindow.Show();

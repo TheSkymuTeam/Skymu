@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Windows.Themes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -46,10 +47,10 @@ namespace Skymu
 
         public async void UpdateHandler(bool manual)
         {
-            updateInfo = await GetUpdateInfo();           
+            updateInfo = await GetUpdateInfo();
             if (updateInfo.Length > 0)
             {
-                Header.Text = "Update to Skymu " + updateInfo[0] + "?";
+                Header.Text = "Update available: " + updateInfo[0];
                 string changelog = updateInfo[1];
                 if (!string.IsNullOrEmpty(changelog))
                 {
@@ -62,14 +63,14 @@ namespace Skymu
                 {
                     Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements.";
                 }
-                Show();
+                ShowDialog();
             }
-            else 
+            else
             {
                 if (manual) new Dialog(Dialog.Type.PackageCheckmark, "You already have the latest version of " + brand + " installed.", "Update checker").ShowDialog();
                 this.Close();
             }
-            
+
         }
 
         public void SetErrorDialog(string error)
@@ -203,24 +204,23 @@ namespace Skymu
 
             if (string.IsNullOrWhiteSpace(latestTag))
                 return new string[0];
+            string currentVerStr = Properties.Settings.Default.BuildVersion;
+            currentVerStr = currentVerStr.Replace("v", "");
+            Version.TryParse(currentVerStr, out Version currentVer);
+            latestTag = latestTag.Replace("v", "");
+            if (!Version.TryParse(latestTag, out Version updateVer)) return new string[0];
+            if (currentVer >= updateVer) return new string[0];
 
-            if (!int.TryParse(latestTag, out int value))
-                return new string[0];
-
-            if (value <= Properties.Settings.Default.BuildNumber)
-                return new string[0];
-
-            // Extract release name
             string releaseName = doc.RootElement
                                     .GetProperty("name")
                                     .GetString() ?? string.Empty;
 
-            // Extract changelog/body
             string changelog = doc.RootElement
                                   .GetProperty("body")
                                   .GetString() ?? string.Empty;
 
-            // Collect asset URLs
+            string buildName = "v" + updateVer.ToString() + " " + releaseName;
+
             JsonElement assets = doc.RootElement.GetProperty("assets");
             List<string> urls = new List<string>();
             foreach (JsonElement asset in assets.EnumerateArray())
@@ -233,8 +233,7 @@ namespace Skymu
                 }
             }
 
-            // Return array: buildName, changelog, url1, url2, ...
-            List<string> result = new List<string> { releaseName, changelog };
+            List<string> result = new List<string> { buildName, changelog };
             result.AddRange(urls);
             return result.ToArray();
         }

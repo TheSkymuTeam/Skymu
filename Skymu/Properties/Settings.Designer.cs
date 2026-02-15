@@ -169,19 +169,19 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("7")]
-        public int BuildNumber {
+        [global::System.Configuration.DefaultSettingValueAttribute("v0.1.6")]
+        public string BuildVersion {
             get {
-                return ((int)(this["BuildNumber"]));
+                return ((string)(this["BuildVersion"]));
             }
             set {
-                this["BuildNumber"] = value;
+                this["BuildVersion"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Ganache")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Happy Cake")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

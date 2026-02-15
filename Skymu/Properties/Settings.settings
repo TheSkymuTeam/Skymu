@@ -38,11 +38,11 @@
     <Setting Name="PresFrame" Type="System.String" Scope="User">
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
-    <Setting Name="BuildNumber" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">7</Value>
+    <Setting Name="BuildVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">v0.1.6</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Breithorn Ganache</Value>
+      <Value Profile="(Default)">Breithorn Happy Cake</Value>
     </Setting>
   </Settings>
 </SettingsFile>
