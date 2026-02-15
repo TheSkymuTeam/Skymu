@@ -243,6 +243,7 @@ namespace Skymu
         internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
 
         internal static string Identifier = String.Empty;
+        internal static string StatIconName = String.Empty;
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -624,6 +625,20 @@ namespace Skymu
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = MapStatusToInt(data.ConnectionStatus);
+            switch (data.ConnectionStatus)
+            {
+                case UserConnectionStatus.Online:
+                    StatIconName = "online"; break;
+                case UserConnectionStatus.Away:
+                    StatIconName = "away"; break;
+                case UserConnectionStatus.DoNotDisturb:
+                    StatIconName = "dnd"; break;                  
+                case UserConnectionStatus.Invisible:
+                case UserConnectionStatus.Offline:
+                    StatIconName = "offline"; break;
+                default:
+                    StatIconName = "unknown"; break;
+            }
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
