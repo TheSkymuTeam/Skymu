@@ -39,10 +39,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildNumber" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">6</Value>
+      <Value Profile="(Default)">7</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Breithorn Fried Ice Cream</Value>
+      <Value Profile="(Default)">Breithorn Ganache</Value>
     </Setting>
   </Settings>
 </SettingsFile>
