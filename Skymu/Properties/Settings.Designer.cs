@@ -61,7 +61,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("☛")]
+        [global::System.Configuration.DefaultSettingValueAttribute("•")]
         public string ListDelimiter {
             get {
                 return ((string)(this["ListDelimiter"]));
@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("v0.1.6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.7")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));

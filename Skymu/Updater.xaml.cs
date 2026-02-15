@@ -155,7 +155,7 @@ namespace Skymu
                 }
 
                 Header.Text = "Download complete";
-                Description.Text = "Skymu " + updateInfo[0] + " has been saved to the Downloads folder.";
+                Description.Text = "The release package has been saved to the Downloads folder.";
                 UpdateStatusText.Text = "100% done, 00:00:00 remaining";
                 ButtonLeft.Content = "Open file";
                 ButtonRight.Content = "Close";

@@ -184,7 +184,7 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
     Path=EnableNotifications,
     Mode=TwoWay}" Margin="0,5"/>
                     <CheckBox Content="Force notifications to always be orange (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
-    Path=AccurateNotificationBubble,
+    Path=AccurateNotifications,
     Mode=TwoWay}" Margin="0,5"/>
                     <CheckBox Content="Attempt to render text in ClearType (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=UseClearType,

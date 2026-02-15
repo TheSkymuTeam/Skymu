@@ -12,7 +12,7 @@
       <Value Profile="(Default)">Skype</Value>
     </Setting>
     <Setting Name="ListDelimiter" Type="System.String" Scope="User">
-      <Value Profile="(Default)">☛</Value>
+      <Value Profile="(Default)">•</Value>
     </Setting>
     <Setting Name="ThemeRoot" Type="System.String" Scope="User">
       <Value Profile="(Default)">/Resources/Light</Value>
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">v0.1.6</Value>
+      <Value Profile="(Default)">0.1.7</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Breithorn Happy Cake</Value>
