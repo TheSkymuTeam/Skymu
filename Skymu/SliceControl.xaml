@@ -4,6 +4,7 @@
              x:Name="Root"
              SnapsToDevicePixels="True"
              UseLayoutRounding="True"
+             RenderOptions.BitmapScalingMode="NearestNeighbor"
              Background="Transparent">
 
     <Grid>

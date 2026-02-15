@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>plug-whatsapp</AssemblyName>
-    <AssemblyTitle>WhatsApp</AssemblyTitle>
+    <AssemblyName>plug-xmpp</AssemblyName>
+    <AssemblyTitle>XMPP</AssemblyTitle>
     <Product>WhatsApp</Product>
     <Copyright>Copyright ©  2026</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -33,17 +33,4 @@
     </ProjectReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="whatsapp-service\" />
-  </ItemGroup>
-	<ItemGroup>
-		<None Remove="whatsapp-service\**\*" />
-		<Page Remove="whatsapp-service\**\*" />
-		<EmbeddedResource Remove="whatsapp-service\**\*" />
-		<Compile Remove="whatsapp-service\**\*" />
-
-		<Content Include="whatsapp-service\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
 </Project>

@@ -61,8 +61,6 @@ namespace Skymu
                 TextWrapping = TextWrapping.Wrap, // otherwise text wouldn't go to a newline unless explicitly told to
             };
 
-            TextOptions.SetTextFormattingMode(textBlock, TextFormattingMode.Display);
-
             if (doNotFormat) // Just return a plain unformatted TextBlock
             {
                 textBlock.Text = input;
@@ -165,13 +163,13 @@ namespace Skymu
                     var headerSpan = new Span();
                     AddTextOrLinkOrClickable(headerSpan.Inlines, m.Groups[17].Value.Trim());
                     headerSpan.FontWeight = FontWeights.Bold;
-                    switch (m.Groups[16].Value.Length)
+                    headerSpan.FontSize = m.Groups[16].Value.Length switch
                     {
-                        case 1: headerSpan.FontSize = 24; break;
-                        case 2: headerSpan.FontSize = 20; break;
-                        case 3: headerSpan.FontSize = 16; break;
-                        default: headerSpan.FontSize = 16; break;
-                    }
+                        1 => 24,
+                        2 => 20,
+                        3 => 16,
+                        _ => 16,
+                    };
                     inlines.Add(headerSpan);
                     inlines.Add(new LineBreak());
                 }

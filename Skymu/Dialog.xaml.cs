@@ -28,21 +28,38 @@ namespace Skymu
             Error,
             Information,
             Question,
-            Picture
+            Picture,
+            ContactAdd,
+            ContactSearch,
+            ContactBlocked,
+            Chat,
+            NewChat,
+            Video,
+            VideoWarning,
+            SkypeWifi,
+            SkypeWifiWarning,
+            GroupChat,
+            PackageCheckmark,
+            PackageStar,
+            PackageWarning,
+            MultipleContactCall,
+            ContactRequest,
+            ContactFlat,
+            UploadFile,
+            SkypeOut,
+            PayPal,
+            SkypeCredit,
+            eBay,
+            Facebook,
+            MultipleContactVideoCall,
+            TelephoneFlat
         }
 
-        public Dialog(Type type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null)
+        public Dialog(Type type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
         {
             try
             {
                 InitializeComponent();
-
-                foreach (var btn in new[] { ButtonLeft, ButtonRight })
-                {
-                    TextOptions.SetTextRenderingMode(btn, TextRenderingMode.ClearType);
-                    TextOptions.SetTextFormattingMode(btn, TextFormattingMode.Display);
-                    TextOptions.SetTextHintingMode(btn, TextHintingMode.Fixed);
-                }
 
                 if (img is not null)
                 {
@@ -51,8 +68,14 @@ namespace Skymu
                     BodyImg.Visibility = Visibility.Visible;
                 }
 
-                if (brAction is null) brAction = () => Close();
-                if (blAction is null) blAction = () => { Close(); Application.Current.Shutdown(); };
+                if (customDimensions is not null)
+                {
+                    this.Width = customDimensions.Value.Width;
+                    this.Height = customDimensions.Value.Height;
+                }
+
+                brAction ??= () => Close();
+                blAction ??= () => { Close(); Application.Current.Shutdown(); };
                 if (blEnabled) ButtonLeft.Visibility = Visibility.Visible;
                 if (enableTextBox)
                 {
@@ -74,7 +97,8 @@ namespace Skymu
                         case Type.Error: title += " - Error"; break;
                         case Type.Question: title += " - Confirm action"; break;
                         case Type.Picture: title += " - Media"; break;
-                        case Type.Skype: break;
+                        case Type.PackageCheckmark: case Type.PackageStar: case Type.PackageWarning: title += "™ - Update"; break;
+                        default: case Type.Skype: break;
                     }
                 }
 

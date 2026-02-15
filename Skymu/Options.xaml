@@ -6,6 +6,7 @@
         xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:local="clr-namespace:Skymu"
         mc:Ignorable="d"
+        Style="{StaticResource Window}"
         FontFamily="Tahoma"
         FontSize="11"
         Title="{Binding Source={x:Static properties:Settings.Default},
@@ -117,7 +118,7 @@ HorizontalAlignment="Stretch" />
 
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Universal branding name" VerticalAlignment="Center" Padding="0,0,10,0"/>
-                        <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" x:Name="SC_BrandingNameBox" Text="{Binding Source={x:Static properties:Settings.Default},
+                        <TextBox FontFamily="Tahoma"   x:Name="SC_BrandingNameBox" Text="{Binding Source={x:Static properties:Settings.Default},
                    Path=BrandingName,
                    Mode=TwoWay,
                    UpdateSourceTrigger=PropertyChanged}" Width="250"/>
@@ -143,8 +144,23 @@ HorizontalAlignment="Stretch" />
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Era theme" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <ComboBox Width="250"
+              SelectedValue="{Binding Source={x:Static properties:Settings.Default}, Path=PresFrame, Mode=TwoWay}"
+              SelectedValuePath="Tag">
+                            <ComboBoxItem Content="Windows XP" Tag="Luna.NormalColor"/>
+                            <ComboBoxItem Content="Windows XP (Olive)" Tag="Luna.Homestead"/>
+                            <ComboBoxItem Content="Windows XP (Silver)" Tag="Luna.Metallic"/>
+                            <ComboBoxItem Content="Windows XP Media Center" Tag="Royale.NormalColor"/>
+                            <ComboBoxItem Content="Windows Vista/7" Tag="Aero.NormalColor"/>
+                            <ComboBoxItem Content="Windows 8" Tag="Aero2.NormalColor"/>
+                            <ComboBoxItem Content="Windows 8 Basic" Tag="AeroLite.NormalColor"/>
+                            <ComboBoxItem Content="Windows Classic" Tag="Classic"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Bullet point for Markdown lists" VerticalAlignment="Center" Padding="0,0,10,0"/>
-                        <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" Text="{Binding Source={x:Static properties:Settings.Default},
+                        <TextBox FontFamily="Tahoma" Text="{Binding Source={x:Static properties:Settings.Default},
 Path=ListDelimiter,
 Mode=TwoWay,
 UpdateSourceTrigger=PropertyChanged}" Width="40"/>
@@ -156,8 +172,7 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Emoji animation speed (FPS)" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <TextBox FontFamily="Tahoma" 
-             TextOptions.TextRenderingMode="ClearType" 
-             TextOptions.TextFormattingMode="Display" 
+
              Text="{Binding Source={x:Static properties:Settings.Default},
                     Path=EmojiFps,
                     Mode=TwoWay,
@@ -171,9 +186,12 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     <CheckBox Content="Force notifications to always be orange (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
     Path=AccurateNotificationBubble,
     Mode=TwoWay}" Margin="0,5"/>
+                    <CheckBox Content="Attempt to render text in ClearType (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=UseClearType,
+Mode=TwoWay}" Margin="0,5"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Skype Home website" VerticalAlignment="Center" Padding="0,0,10,0"/>
-                        <TextBox FontFamily="Tahoma" TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" Text="{Binding Source={x:Static properties:Settings.Default},
+                        <TextBox FontFamily="Tahoma"  Text="{Binding Source={x:Static properties:Settings.Default},
 Path=Homepage,
 Mode=TwoWay,
 UpdateSourceTrigger=PropertyChanged}" Width="250"/>

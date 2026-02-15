@@ -31,6 +31,50 @@ namespace Skymu
             return DwmIsCompositionEnabled(out enabled) == 0 && enabled;
         }
     }
+
+    public class Taskbar
+    {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct FLASHWINFO
+        {
+            public uint cbSize;
+            public IntPtr hwnd;
+            public uint dwFlags;
+            public uint uCount;
+            public uint dwTimeout;
+        }
+
+        private const uint FLASHW_STOP = 0;
+        private const uint FLASHW_CAPTION = 1;
+        private const uint FLASHW_TRAY = 2;
+        private const uint FLASHW_ALL = 3;
+        private const uint FLASHW_TIMER = 4;
+        private const uint FLASHW_TIMERNOFG = 12;
+
+        public static void Flash(Window window)
+        {
+            if (window == null) return;
+
+            WindowInteropHelper wih = new WindowInteropHelper(window);
+
+            FLASHWINFO fw = new FLASHWINFO
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
+                hwnd = wih.Handle,
+                dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG, // flash until focused
+                uCount = uint.MaxValue,                  // repeat indefinitely
+                dwTimeout = 0
+            };
+
+            FlashWindowEx(ref fw);
+        }
+
+    }
+
     public class MenuBar
     {
         [DllImport("user32.dll")]

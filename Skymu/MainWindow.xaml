@@ -9,6 +9,7 @@
         WindowStyle="None"
         FontFamily="Tahoma"
         FontSize="11"
+Style="{StaticResource Window}"
         Background="#8cbeff"
         AllowsTransparency="False"
         ResizeMode="CanResize"
@@ -27,9 +28,6 @@
             <Setter Property="TextWrapping" Value="Wrap"/>
             <Setter Property="FontFamily" Value="Tahoma"/>
             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
-            <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
-            <Setter Property="TextOptions.TextHintingMode" Value="Fixed"/>
         </Style>
         <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
         <local:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
@@ -48,6 +46,7 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Height" Value="18" />
             <Setter Property="Margin" Value="-1,0,0,0" />
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
             <Setter Property="Slice" Value="false" />
             <Setter Property="ElementCount" Value="4" />
             <Setter Property="StackDirection" Value="Vertical" />
@@ -58,6 +57,7 @@
         <Style x:Key="LongIconStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
             <Setter Property="Height" Value="16" />
             <Setter Property="Width" Value="36" />
         </Style>
@@ -350,7 +350,7 @@ Grid.Column="2" Source="{Binding Media,
                            Panel.ZIndex="2">
 
                 </TextBlock>
-                <Image Source="/Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
+                <Image  Source="/Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click"
                        Margin="8,0,0,0" />
             </Grid>
         </Grid>
@@ -456,7 +456,7 @@ Grid.Column="2" Source="{Binding Media,
                     <MenuItem Header="Welcome Screen" />
                     <Separator />
                     <MenuItem Header="Call Quality Guide" />
-                    <MenuItem Header="Check for Updates" />
+                    <MenuItem Header="Check for Updates" Click="mn_CheckUpdates" />
                     <MenuItem Header="Give feedback" />
                     <Separator />
                     <MenuItem Click="mn_About">
@@ -631,6 +631,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                     <RowDefinition Height="1" />
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="0" />
+                                    <RowDefinition Height="34" />
                                     <RowDefinition Height="1" />
                                     <RowDefinition Height="32" />
                                     <RowDefinition Height="1" />
@@ -661,9 +662,8 @@ MouseLeftButtonDown="Contacts_BtnDown"
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextRenderingMode="ClearType"
-    TextOptions.TextHintingMode="Fixed"
+
+
     HorizontalAlignment="Stretch"
     VerticalContentAlignment="Center"/>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce" />
@@ -710,9 +710,54 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                         </Style>
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
-                                <Rectangle Grid.Row="4" Height="1" Fill="#b4c0ce" />
+                                <Grid x:Name="SidebarAddButtons" Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <local:SliceControl
+                                x:Name="AddContactButton"
+                                Grid.Column="0"
+                                Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddFriend.png'}"
+                                ElementCount="3"
+                                StackDirection="Vertical"
+                                DefaultIndex="0"
+                                        
+                                HoverIndex="-1"
+                                PressedIndex="2"
+                                Text="Add a contact"
+                                TextStartPositionX="41"
+                                TextFont="Tahoma"
+                                TextSize="11"
+                                TextColor="#333333"
+MouseLeftButtonUp="AddContact_Click"
+                                HorizontalAlignment="Stretch" />
+
+                                    <local:SliceControl
+                                x:Name="MakeGroupButton"
+                                Grid.Column="1"
+                                Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddGroup.png'}"
+                                ElementCount="4"
+                                StackDirection="Vertical"
+                                DefaultIndex="0"
+                                HoverIndex="-1"
+                                PressedIndex="2"
+                                Text="Create a group"
+                                TextStartPositionX="41"
+                                TextFont="Tahoma"
+                                TextSize="11"
+                                TextColor="#333333"
+MouseLeftButtonUp="MakeGroup_Click"
+                                HorizontalAlignment="Stretch" />
+
+                                </Grid>
+                                <Rectangle Grid.Row="5" Height="1" Fill="#c8cbcd" />
                                 <local:SliceControl
-                                    Grid.Row="5"
+                                    Grid.Row="6"
                                     Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}"
@@ -729,7 +774,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                     TextSize="13"
                                     TextColor="#333333"
                                     HorizontalAlignment="Stretch" />
-                                <Rectangle Grid.Row="6" Height="1" Fill="#b4c0ce" />
+                                <Rectangle Grid.Row="7" Height="1" Fill="#c8cbcd" />
                             </Grid>
                         </Border>
                         <Border
@@ -1203,9 +1248,8 @@ Width="23"/>
     SnapsToDevicePixels="True"
     GotKeyboardFocus="MessageTextBox_Focused"
     LostKeyboardFocus="MessageTextBox_Unfocused"
-    TextOptions.TextRenderingMode="ClearType"
-    TextOptions.TextFormattingMode="Display"
-    TextOptions.TextHintingMode="Fixed"
+
+
     FontFamily="Tahoma"
     FontSize="11"
     UseLayoutRounding="True"

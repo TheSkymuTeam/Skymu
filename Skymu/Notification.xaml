@@ -1,4 +1,4 @@
-﻿<Window x:Class="Skymu.Notification" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" Title="Notification" xmlns:properties="clr-namespace:Skymu.Properties" Height="100" Width="300" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" ShowActivated="False" FontFamily="Tahoma">
+﻿<Window Style="{StaticResource Window}" x:Class="Skymu.Notification" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" Title="Notification" xmlns:properties="clr-namespace:Skymu.Properties" Height="100" Width="300" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" ShowActivated="False" FontFamily="Tahoma">
     <Window.Resources>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
     </Window.Resources>

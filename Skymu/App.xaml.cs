@@ -118,7 +118,63 @@ namespace Skymu
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            
+            ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
             base.OnStartup(ev);
+            // Listen for changes
+            Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == "PresFrame")
+                {
+                    ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
+                }
+            };
+           
+        }
+
+        private void ApplyPresentationFramework(string frameworkName)
+        {
+            if (string.IsNullOrEmpty(frameworkName))
+                frameworkName = "Aero.NormalColor";
+
+            string assemblyName = frameworkName switch
+            {
+                string s when s.StartsWith("Luna") => "PresentationFramework.Luna",
+                string s when s.StartsWith("Royale") => "PresentationFramework.Royale",
+                string s when s.StartsWith("Aero2") => "PresentationFramework.Aero2",
+                string s when s.StartsWith("AeroLite") => "PresentationFramework.AeroLite",
+                string s when s.StartsWith("Aero") => "PresentationFramework.Aero",
+                "Classic" => "PresentationFramework.Classic",
+                _ => "PresentationFramework.Aero2"
+            };
+
+            try
+            {
+                var themeUri = new Uri($"/{assemblyName};component/themes/{frameworkName}.xaml", UriKind.Relative);
+                var theme = new ResourceDictionary { Source = themeUri };
+
+                // Keep custom resources (SkBlue, Sk5Link, styles)
+                var customResources = new ResourceDictionary();
+                foreach (var key in Resources.Keys)
+                {
+                    if (key.ToString() != "")
+                        customResources[key] = Resources[key];
+                }
+
+                // Clear and add theme first
+                Resources.MergedDictionaries.Clear();
+                Resources.MergedDictionaries.Add(theme);
+
+                // Re-add custom resources
+                foreach (var key in customResources.Keys)
+                {
+                    Resources[key] = customResources[key];
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to apply presentation framework: {ex.Message}");
+            }
         }
 
         protected override void OnExit(ExitEventArgs ev)

@@ -38,20 +38,23 @@ namespace Skymu
                     // window IS active
 
                     // 3. selected contact exists and is a GROUP chat, and message is from that channel
-                    if (MainWindow.SelectedContact != null &&
-                        !(MainWindow.SelectedContact is UserData) &&
-                        MainWindow.SelectedContact.Identifier == message.ChannelID)
+                    if (MainWindow.SelectedContact is not null)
                     {
-                        Debug.WriteLine("Return: active group chat");
-                        return;
-                    }
 
-                    // 4. selected contact exists and is a DM, and message is from that user
-                    if (MainWindow.SelectedContact is UserData &&
-                        message.SentByID == MainWindow.SelectedContact.Identifier)
-                    {
-                        Debug.WriteLine("Return: active DM");
-                        return;
+                        if (!(MainWindow.SelectedContact is UserData) &&
+                            MainWindow.SelectedContact.Identifier == message.ChannelID)
+                        {
+                            Debug.WriteLine("Return: active group chat");
+                            return;
+                        }
+
+                        // 4. selected contact exists and is a DM, and message is from that user
+                        if (MainWindow.SelectedContact is UserData &&
+                            message?.SentByID == MainWindow.SelectedContact.Identifier)
+                        {
+                            Debug.WriteLine("Return: active DM");
+                            return;
+                        }
                     }
                 }
                 InitializeComponent();
@@ -110,6 +113,7 @@ namespace Skymu
                     RemoveNotification(this);
                 };
 
+                Taskbar.Flash(Application.Current.MainWindow);
                 this.Show();
                 Sounds.Play("message-recieved");
             }

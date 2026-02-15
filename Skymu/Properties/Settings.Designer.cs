@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -80,15 +80,6 @@ namespace Skymu.Properties {
             }
             set {
                 this["ThemeRoot"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Alverstone Rosca de Reyes")]
-        public string BuildName {
-            get {
-                return ((string)(this["BuildName"]));
             }
         }
         
@@ -149,6 +140,54 @@ namespace Skymu.Properties {
             }
             set {
                 this["HomepageScroll"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseClearType {
+            get {
+                return ((bool)(this["UseClearType"]));
+            }
+            set {
+                this["UseClearType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Aero.NormalColor")]
+        public string PresFrame {
+            get {
+                return ((string)(this["PresFrame"]));
+            }
+            set {
+                this["PresFrame"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int BuildNumber {
+            get {
+                return ((int)(this["BuildNumber"]));
+            }
+            set {
+                this["BuildNumber"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Fried Ice Cream")]
+        public string BuildName {
+            get {
+                return ((string)(this["BuildName"]));
+            }
+            set {
+                this["BuildName"] = value;
             }
         }
     }

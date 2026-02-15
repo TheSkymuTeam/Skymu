@@ -45,7 +45,7 @@ namespace Skymu
                 {
                     string[] subKeyNames = key.GetSubKeyNames();
 
-                    if (subKeyNames != null && subKeyNames.Length > 0)
+                    if (subKeyNames is not null && subKeyNames.Length > 0)
                     {
                         return subKeyNames;
                     }

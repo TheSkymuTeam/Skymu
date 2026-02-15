@@ -2,11 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Skymu"
-        Title="Fallback Dialog" 
+        Title="Dialog" 
         ResizeMode="NoResize" 
         WindowStyle="SingleBorderWindow" 
         SizeToContent="Height"
         MinHeight="235"
+        Style="{StaticResource Window}"
         MaxHeight="800"
         Width="383"
         Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
@@ -16,8 +17,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:SliceControl Slice="False" x:Name="DialogImage" Source="/Resources/Universal/Dialog/skypeStandard.png"
-HorizontalAlignment="Left" Width="48" DefaultIndex="0" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="5" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" 
+        <local:SliceControl Slice="False" x:Name="DialogImage" Source="/Resources/Universal/Dialog/icons.png"
+HorizontalAlignment="Left" Width="48" DefaultIndex="0" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="29" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" 
 Margin="11,10,0,0"  />
         <!-- Top Header Section -->
         <Grid Grid.Row="0"  Panel.ZIndex="0" Height="45">
@@ -30,7 +31,7 @@ Margin="11,10,0,0"  />
                 </Border.Background>
             </Border>
             
-            <TextBlock Height="23" x:Name="Header" Text="DEVELOPER: Fallback Dialog" Margin="70,3,0,0"
+            <TextBlock Height="23" x:Name="Header" Text="Title goes here" Margin="70,3,0,0"
                        FontFamily="Arial" FontWeight="Bold" Foreground="#333333" FontSize="13" />
         </Grid>
 
@@ -44,7 +45,7 @@ Margin="11,10,0,0"  />
                 <TextBlock LineHeight="16" 
                           TextWrapping="Wrap" 
                           Name="Description"
-                          Text="Dialog window called but null or invalid dialog type&#x0a;specified. This is a fallback dialog specified in XAML."
+                          Text="Message goes here"
                           FontFamily="Tahoma" 
                           FontSize="11" />
             </ScrollViewer>
@@ -69,8 +70,6 @@ Margin="11,10,0,0"  />
                          Height="23"
                          VerticalAlignment="Center" 
                          HorizontalAlignment="Left"
-                         TextOptions.TextRenderingMode="ClearType" 
-                         TextOptions.TextFormattingMode="Display"
                          FontFamily="Tahoma" 
                          FontSize="11" 
                          TextOptions.TextHintingMode="Fixed" 
@@ -81,7 +80,7 @@ Margin="11,10,0,0"  />
                         Visibility="Collapsed"
                         HorizontalAlignment="Right" Margin="0,0,95,0" 
                         Height="23" FontFamily="Tahoma" FontSize="11" />
-                <Button Content="Ignore" Click="bRClick" IsDefault="True" 
+                <Button Content="OK" Click="bRClick" IsDefault="True" 
                         x:Name="ButtonRight" Width="73"
                         VerticalAlignment="Center" HorizontalAlignment="Right" 
                         Margin="0,0,10,0" Height="23"

@@ -80,24 +80,12 @@ namespace Skymu
                         string qr = await Universal.Plugin.GetQRCode();
 
                         if (!string.IsNullOrEmpty(qr))
-                        {
-                            Debug.WriteLine($"[QR Code] Length: {qr.Length}");
-                            Debug.WriteLine($"[QR Code] First 50 chars: {qr.Substring(0, Math.Min(50, qr.Length))}");
-                            Debug.WriteLine($"[QR Code] Starts with number: {char.IsDigit(qr[0])}");
-
-                            // WhatsApp QR codes typically start with a digit and contain commas
-                            bool looksValid = qr.Length > 100 && qr.Contains(",");
-                            Debug.WriteLine($"[QR Code] Looks valid: {looksValid}");
-
-                            // Full QR code (check Debug Output window)
-                            Debug.WriteLine($"[QR Code] Full: {qr}");
-                            // Generate QR code image
+                        {                           
                             QRCodeGenerator qrGenerator = new QRCodeGenerator();
                             QRCodeData qrCodeData = qrGenerator.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
                             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                             byte[] qrCodeImage = qrCode.GetGraphic(20);
 
-                            // Convert to BitmapImage for WPF
                             BitmapImage bitmap = new BitmapImage();
                             using (var mem = new MemoryStream(qrCodeImage))
                             {
@@ -111,10 +99,20 @@ namespace Skymu
                             }
                             bitmap.Freeze();
 
-                            new Dialog(Dialog.Type.Information, null,
-                            "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap).ShowDialog();
+                            Dialog qrDialog = new Dialog(Dialog.Type.Information, null,
+                            "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap);
+                            qrDialog.ShowDialog();
 
-                            LoginResult fresult = await Universal.Plugin.LoginOptStep(null);
+                            if (await Universal.Plugin.LoginOptStep(null) == LoginResult.Success)
+                            {
+                                qrDialog.Close();
+                            }
+                            
+                        }
+                        else
+                        {
+                            LoginToggleAnimation(false);
+                            SetHeaderToFail();
                         }
                     }
                     else
@@ -160,6 +158,7 @@ namespace Skymu
             Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
             Sounds.Play("login");
             _mainWindow.Show();
+            new Updater();
             noCloseEvent = true;
             Close();
         }
@@ -198,7 +197,8 @@ namespace Skymu
             string[] autoLoginCandidates = CredentialsHelper.GetSavedCredentialPlugins();
             foreach (var plugin in Universal.PluginList)
             {
-                if (autoLoginCandidates.Contains(plugin.InternalName)) { Universal.Plugin = plugin; }
+                if (autoLoginCandidates.Contains(plugin.InternalName)) { 
+                    Universal.Plugin = plugin; }
                 if (plugin.AuthenticationType.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationType[0]));
                 else
                 {
@@ -278,6 +278,7 @@ namespace Skymu
             if (useAutoLogin)
             {
                 string[] credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
+                
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin(credentials)
          );

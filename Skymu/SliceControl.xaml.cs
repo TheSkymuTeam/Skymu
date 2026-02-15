@@ -99,7 +99,7 @@ namespace Skymu
             };
 
             // Animation timer
-            if (_sharedAnimationTimer == null)
+            if (_sharedAnimationTimer is null)
             {
                 _sharedAnimationTimer = new DispatcherTimer();
                 _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // ~60 FPS base tick rate

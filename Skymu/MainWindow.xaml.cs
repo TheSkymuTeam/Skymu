@@ -35,11 +35,13 @@ using System.Windows.Shell;
 using System.Windows.Threading;
 
 # pragma warning disable CS4014
+# pragma warning disable CA1416
+
 namespace Skymu
 {
     public partial class MainWindow : Window
     {
-        private static WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
+        private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private SkymuApi api;
 
         private bool deactivatedWindow;
@@ -300,7 +302,6 @@ namespace Skymu
 
         private void TitleButton_Pressed(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not SliceControl button) return;
         }
 
         private void TitleButton_Click(object sender, MouseButtonEventArgs e)
@@ -821,11 +822,7 @@ namespace Skymu
 
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
-        private bool IsMsgBoxPlaceholderActive = true;
-
-     
-
-
+  
         private void UpdateSendButtonState()
         {
             if (SendMsgButton is null) return;
@@ -857,9 +854,9 @@ namespace Skymu
             }
         }
 
-        private bool HasAnyContent(RichTextBox rtb)
+        private static bool HasAnyContent(RichTextBox rtb)
         {
-            if (rtb?.Document == null)
+            if (rtb?.Document is null)
                 return false;
 
             if (rtb.Tag as string == "PLACEHOLDER")
@@ -888,7 +885,7 @@ namespace Skymu
             return false;
         }
 
-        private void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
+        private static void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
             if (rtb.Tag as string == "PLACEHOLDER" && !force)
                 return;
@@ -917,7 +914,7 @@ namespace Skymu
             }
         }
 
-        private void ApplyPlaceholderTb(TextBox tb, string text)
+        private static void ApplyPlaceholderTb(TextBox tb, string text)
         {
             if (tb.Tag as string == "PLACEHOLDER")
                 return;
@@ -1124,7 +1121,7 @@ namespace Skymu
             EmojiFlyout.IsOpen = true;
         }
 
-        private string ConvertHexKeyToUnicode(string hexKey)
+        private static string ConvertHexKeyToUnicode(string hexKey)
         {
             try
             {
@@ -1202,8 +1199,7 @@ namespace Skymu
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
-            var sliceControlInside = border?.Child as SliceControl;
-            if (sliceControlInside == null)
+            if (border?.Child is not SliceControl sliceControlInside)
                 return;
 
             EmojiFlyout.IsOpen = false;
@@ -1234,9 +1230,6 @@ namespace Skymu
                 Tag = emojiFilename // store FILENAME for later extraction
             };
 
-            // Move caret after emoji
-            TextPointer afterEmoji = container.ElementEnd;
-
             // Insert trailing space safely
             var spaceRun = new Run(" ");
             container.SiblingInlines.InsertAfter(container, spaceRun);
@@ -1251,16 +1244,14 @@ namespace Skymu
 
         internal static int MapStatusToInt (UserConnectionStatus status)
         {
-            switch (status)
+            return status switch
             {
-                case UserConnectionStatus.DoNotDisturb: return 5;
-                case UserConnectionStatus.Away: return 3;
-                case UserConnectionStatus.Invisible: 
-                case UserConnectionStatus.Offline: return 19;
-                case UserConnectionStatus.Online: return 2;
-                default:
-                case UserConnectionStatus.Unknown: return 0;
-            }
+                UserConnectionStatus.DoNotDisturb => 5,
+                UserConnectionStatus.Away => 3,
+                UserConnectionStatus.Invisible or UserConnectionStatus.Offline => 19,
+                UserConnectionStatus.Online => 2,
+                _ => 0,
+            };
         }
 
         private async void Contacts_BtnDown(object sender, MouseButtonEventArgs e)
@@ -1289,6 +1280,21 @@ namespace Skymu
             new Login(true).Show();
             noCloseEvent = true;
             this.Close();          
+        }
+
+        private void MakeGroup_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void mn_CheckUpdates(object sender, RoutedEventArgs e)
+        {
+            new Updater(true);
         }
     }
 

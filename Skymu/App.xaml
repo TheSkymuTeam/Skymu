@@ -1,4 +1,4 @@
-﻿<Application x:Class="Skymu.App"
+﻿<Application x:Class="Skymu.Universal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:properties="clr-namespace:Skymu.Properties"
@@ -13,27 +13,26 @@
             <SolidColorBrush x:Key="SkBlue" Color="#00AFF0" />
             <SolidColorBrush x:Key="Sk5Link" Color="#3399FF" />
 
-
             <Style x:Key="Window" TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
-                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-                <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
                 <Setter Property="UseLayoutRounding" Value="True" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
-            </Style>
-            
-            <Style TargetType="TextBlock">
-                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-                <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
+                <Setter Property="TextOptions.TextRenderingMode" Value="Grayscale"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+                <Setter Property="TextOptions.TextHintingMode" Value="Auto"/>
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default},
+                   Path=UseClearType}"
+ Value="True">
+                        <Setter Property="TextOptions.TextRenderingMode"
+Value="ClearType"/>
+                        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                        <Setter Property="TextOptions.TextHintingMode" Value="Fixed"/>
+                    </DataTrigger>
+                </Style.Triggers>
             </Style>
 
 
-            <Style TargetType="Menu">
-                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-                <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
-            </Style>
 
             <Style TargetType="Image">
                 <Setter Property="UseLayoutRounding" Value="True" />
