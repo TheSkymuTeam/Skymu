@@ -155,7 +155,7 @@ namespace Skymu
                         handled = true;
                         break;
                     case 3:
-                        Application.Current.Shutdown();
+                        Universal.Close();
                         handled = true;
                         break;
                 }*/

@@ -50,7 +50,18 @@ namespace Skymu
             if (updateInfo.Length > 0)
             {
                 Header.Text = "Update to Skymu " + updateInfo[0] + "?";
-                Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements.";
+                string changelog = updateInfo[1];
+                if (!string.IsNullOrEmpty(changelog))
+                {
+                    changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
+                    Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements. Changelog:"
+                                       + Environment.NewLine + Environment.NewLine
+                                       + changelog;
+                }
+                else
+                {
+                    Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements.";
+                }
                 Show();
             }
             else 
@@ -85,7 +96,7 @@ namespace Skymu
 
             try
             {
-                string downloadUrl = updateInfo[1];
+                string downloadUrl = updateInfo[2];
 
                 if (string.IsNullOrWhiteSpace(downloadUrl))
                     return;
@@ -143,7 +154,7 @@ namespace Skymu
                 }
 
                 Header.Text = "Download complete";
-                Description.Text = "Skymu " + updateInfo[0] + " has been saved to your downloads folder.";
+                Description.Text = "Skymu " + updateInfo[0] + " has been saved to the Downloads folder.";
                 UpdateStatusText.Text = "100% done, 00:00:00 remaining";
                 ButtonLeft.Content = "Open file";
                 ButtonRight.Content = "Close";
@@ -199,30 +210,35 @@ namespace Skymu
             if (value <= Properties.Settings.Default.BuildNumber)
                 return new string[0];
 
-            // Update available → collect release name + asset URLs
-
+            // Extract release name
             string releaseName = doc.RootElement
                                     .GetProperty("name")
                                     .GetString() ?? string.Empty;
 
+            // Extract changelog/body
+            string changelog = doc.RootElement
+                                  .GetProperty("body")
+                                  .GetString() ?? string.Empty;
+
+            // Collect asset URLs
             JsonElement assets = doc.RootElement.GetProperty("assets");
-
-            List<string> result = new List<string>();
-            result.Add(releaseName);
-
+            List<string> urls = new List<string>();
             foreach (JsonElement asset in assets.EnumerateArray())
             {
                 if (asset.TryGetProperty("browser_download_url", out JsonElement urlElement))
                 {
                     string downloadUrl = urlElement.GetString();
                     if (!string.IsNullOrEmpty(downloadUrl))
-                        result.Add(downloadUrl);
+                        urls.Add(downloadUrl);
                 }
             }
 
+            // Return array: buildName, changelog, url1, url2, ...
+            List<string> result = new List<string> { releaseName, changelog };
+            result.AddRange(urls);
             return result.ToArray();
-
         }
+
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {

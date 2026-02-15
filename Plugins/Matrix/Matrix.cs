@@ -25,7 +25,7 @@ namespace Matrix
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Matrix"; } }
         public string InternalName { get { return "skymu-matrix-plugin"; } }
-        public string TextUsername { get { return "Matrix ID (username@homeserver.com)"; } }
+        public string TextUsername { get { return "Identifier (@username:homeserver.com)"; } }
         public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
 
         private string _accessToken;

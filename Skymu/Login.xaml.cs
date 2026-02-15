@@ -157,6 +157,7 @@ namespace Skymu
             _mainWindow.Ready -= MainWindow_Ready;
             Tray.PushIcon("online", Properties.Settings.Default.BrandingName + " (Online)");
             Sounds.Play("login");
+            Universal.HasLoggedIn = true;
             _mainWindow.Show();
             new Updater();
             noCloseEvent = true;
@@ -337,7 +338,7 @@ namespace Skymu
 
         private void Login_Closing(object sender, CancelEventArgs ev)
         {
-            if (!noCloseEvent) Universal.Shutdown(ev);
+            if (!noCloseEvent) Universal.Close(ev);
         }
 
         public class PluginListing

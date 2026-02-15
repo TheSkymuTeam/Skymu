@@ -23,6 +23,7 @@ namespace Skymu
     {
         public static ICore Plugin;
         public static ICore[] PluginList;
+        public static bool HasLoggedIn = false;
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
@@ -60,7 +61,7 @@ namespace Skymu
 
             Process.Start(exePath);
 
-            Application.Current.Shutdown();
+            Universal.Terminate();
         }
 
         internal static readonly HttpClient HttpClient = new HttpClient
@@ -88,7 +89,7 @@ namespace Skymu
             }
         }
 
-        public static void Shutdown(System.ComponentModel.CancelEventArgs ev = null)
+        public static void Close(System.ComponentModel.CancelEventArgs ev = null)
         {
             if (ev is not null)
             {
@@ -96,6 +97,12 @@ namespace Skymu
             }
             string brand = Skymu.Properties.Settings.Default.BrandingName;
             new Dialog(Dialog.Type.Question, "You won't be able to send or recieve instant\nmessages and calls if you do.", "Sure you want to quit " + brand + "?", "Quit " + brand + "?", null, "Cancel", true, null, "Quit").ShowDialog();
+        }
+
+        public static void Terminate()
+        {
+            Tray.DisposeIcon();
+            Application.Current.Shutdown();
         }
 
         public static void ExceptionHandler(Exception ex)
@@ -179,7 +186,7 @@ namespace Skymu
 
         protected override void OnExit(ExitEventArgs ev)
         {
-            Tray.DisposeIcon();
+            if (HasLoggedIn) Sounds.PlaySynchronous("logout");
             base.OnExit(ev);
         }
     }

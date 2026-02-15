@@ -128,7 +128,7 @@ namespace Skymu
                     break;
 
                 case MENU_QUIT:
-                    Universal.Shutdown(null);
+                    Universal.Close(null);
                     break;
             }
         }

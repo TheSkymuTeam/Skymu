@@ -36,7 +36,7 @@ Margin="11,10,0,0"  />
 
         <Grid  Grid.Row="1" Margin="0,23,0,0">
             <StackPanel Margin="77,0,35,7" Orientation="Vertical">
-            <TextBlock Height="46"
+            <TextBlock VerticalAlignment="Stretch"
                           TextWrapping="Wrap" 
                        
                           Name="Description"

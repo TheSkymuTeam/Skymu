@@ -27,6 +27,7 @@ namespace Skymu
             Load("message-recieved", "sounds/IM.WAV");
             Load("call-error", "sounds/CALL_ERROR1.WAV");
             Load("login", "sounds/LOGIN.WAV");
+            Load("logout", "sounds/LOGOUT.WAV");
         }
 
         static void Load(string key, string path)
@@ -41,6 +42,12 @@ namespace Skymu
         {
             if (players.TryGetValue(key, out var sp))
                 sp.Play();       // async, non-blocking
+        }
+
+        public static void PlaySynchronous(string key)
+        {
+            if (players.TryGetValue(key, out var sp))
+                sp.PlaySync();       
         }
     }
 

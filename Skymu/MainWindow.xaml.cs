@@ -328,11 +328,11 @@ namespace Skymu
                 UseShellExecute = true
             });
         }
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Shutdown(ev); }
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Close(ev); }
         // For the menu bar at the top of the Skymu window
         private void mn_New(object sender, RoutedEventArgs e) { }
         private void mn_Open(object sender, RoutedEventArgs e) { }
-        private void mn_Close(object sender, RoutedEventArgs e) { Universal.Shutdown(); }
+        private void mn_Close(object sender, RoutedEventArgs e) { Universal.Close(); }
         private void mn_Apps(object sender, RoutedEventArgs e) { }
         private void mn_Language(object sender, RoutedEventArgs e) { }
         private void mn_Accessibility(object sender, RoutedEventArgs e) { }
@@ -1143,10 +1143,10 @@ namespace Skymu
 
         private void InitializeEmojiPicker()
         {
-            // Get unique emoji filenames only (skip duplicates)
+            // get unique emoji filenames only (skip duplicates)
             var uniqueEmojis = EmojiDictionary.Map
                 .GroupBy(kvp => kvp.Value)
-                .Select(g => g.First()) // Take only the first occurrence
+                .Select(g => g.First()) // take only the first occurrence
                 .ToList();
 
             foreach (var kvp in uniqueEmojis)
@@ -1277,6 +1277,8 @@ namespace Skymu
         private void mn_SignOut(object sender, RoutedEventArgs e)
         {
             CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
+            Sounds.Play("logout");
+            Universal.HasLoggedIn = false;
             new Login(true).Show();
             noCloseEvent = true;
             this.Close();          

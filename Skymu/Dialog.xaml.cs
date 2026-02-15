@@ -75,7 +75,7 @@ namespace Skymu
                 }
 
                 brAction ??= () => Close();
-                blAction ??= () => { Close(); Application.Current.Shutdown(); };
+                blAction ??= () => { Close(); Universal.Terminate(); };
                 if (blEnabled) ButtonLeft.Visibility = Visibility.Visible;
                 if (enableTextBox)
                 {
@@ -114,7 +114,7 @@ namespace Skymu
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
 
-            catch { Application.Current.Shutdown(); }
+            catch { Universal.Terminate(); }
         }
 
         private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
