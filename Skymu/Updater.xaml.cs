@@ -50,24 +50,26 @@ namespace Skymu
             updateInfo = await GetUpdateInfo();
             if (updateInfo.Length > 0)
             {
-                Header.Text = "Update available: " + updateInfo[0];
+                Header.Text = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + updateInfo[0];
+                ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
+                ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                 string changelog = updateInfo[1];
                 if (!string.IsNullOrEmpty(changelog))
                 {
                     changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
-                    Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements. Changelog:"
+                    Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"] + " Changelog:"
                                        + Environment.NewLine + Environment.NewLine
                                        + changelog;
                 }
                 else
                 {
-                    Description.Text = "There's a new version of " + brand + " available. Update now to get the latest features and improvements.";
+                    Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
                 }
                 ShowDialog();
             }
             else
             {
-                if (manual) new Dialog(Dialog.Type.PackageCheckmark, "You already have the latest version of " + brand + " installed.", "Update checker").ShowDialog();
+                if (manual) new Dialog(Dialog.Type.PackageCheckmark, Universal.Lang["sF_UPGRADE_UPTODATE"], Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]).ShowDialog();
                 this.Close();
             }
 
@@ -75,24 +77,24 @@ namespace Skymu
 
         public void SetErrorDialog(string error)
         {
-            Header.Text = "Error while downloading update";
+            Header.Text = Universal.Lang["sF_UPGRADE_FAILED_CAPTION"];
             DialogImage.DefaultIndex = 17;
-            Description.Text = Properties.Settings.Default.BrandingName + " failed to download the update. Error: " + error;
+            Description.Text = Universal.Lang["sF_UPGRADE_FAILED_TEXT1"] + "\n\n" + error;
             ProgressGrid.Visibility = Visibility.Collapsed;
             BLAction = () => InitiateUpdate();
-            ButtonLeft.Content = "Retry";
-            ButtonRight.Content = "Close";
+            ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
+            ButtonRight.Content = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"];
         }
 
         public async void InitiateUpdate()
         {
             BLAction = () => Hide();
-            ButtonLeft.Content = "Hide";
-            ButtonRight.Content = "Cancel";
+            ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
+            ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
             DialogImage.DefaultIndex = 16;
-            Header.Text = "Downloading...";
-            Description.Text = "Please wait while an update for " + brand + " is being downloaded.";
-            UpdateStatusText.Text = "Initializing...";
+            Header.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_CAPTION"];
+            Description.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_TEXT"];
+            UpdateStatusText.Text = Universal.Lang["sF_UPGRADE_INIT"];
             ProgressGrid.Visibility = Visibility.Visible;
 
             try
@@ -158,7 +160,7 @@ namespace Skymu
                 Description.Text = "The release package has been saved to the Downloads folder.";
                 UpdateStatusText.Text = "100% done, 00:00:00 remaining";
                 ButtonLeft.Content = "Open file";
-                ButtonRight.Content = "Close";
+                ButtonRight.Content = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"]; 
                 ProcessStartInfo psi = new ProcessStartInfo(filePath)
                 {
                     UseShellExecute = true
@@ -185,57 +187,65 @@ namespace Skymu
 
         internal static async Task<string[]> GetUpdateInfo()
         {
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
-
-            string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
-            using HttpResponseMessage response = await _httpClient.GetAsync(url);
-
-            if (!response.IsSuccessStatusCode)
-                return new string[0];
-
-            string json = await response.Content.ReadAsStringAsync();
-
-            using JsonDocument doc = JsonDocument.Parse(json);
-
-            string latestTag = doc.RootElement
-                                  .GetProperty("tag_name")
-                                  .GetString()
-                                  ?.TrimStart('v');
-
-            if (string.IsNullOrWhiteSpace(latestTag))
-                return new string[0];
-            string currentVerStr = Properties.Settings.Default.BuildVersion;
-            currentVerStr = currentVerStr.Replace("v", "");
-            Version.TryParse(currentVerStr, out Version currentVer);
-            latestTag = latestTag.Replace("v", "");
-            if (!Version.TryParse(latestTag, out Version updateVer)) return new string[0];
-            if (currentVer >= updateVer) return new string[0];
-
-            string releaseName = doc.RootElement
-                                    .GetProperty("name")
-                                    .GetString() ?? string.Empty;
-
-            string changelog = doc.RootElement
-                                  .GetProperty("body")
-                                  .GetString() ?? string.Empty;
-
-            string buildName = "v" + updateVer.ToString() + " " + releaseName;
-
-            JsonElement assets = doc.RootElement.GetProperty("assets");
-            List<string> urls = new List<string>();
-            foreach (JsonElement asset in assets.EnumerateArray())
+            try
             {
-                if (asset.TryGetProperty("browser_download_url", out JsonElement urlElement))
-                {
-                    string downloadUrl = urlElement.GetString();
-                    if (!string.IsNullOrEmpty(downloadUrl))
-                        urls.Add(downloadUrl);
-                }
-            }
+                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
 
-            List<string> result = new List<string> { buildName, changelog };
-            result.AddRange(urls);
-            return result.ToArray();
+                string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
+                using HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                    return new string[0];
+
+                string json = await response.Content.ReadAsStringAsync();
+
+                using JsonDocument doc = JsonDocument.Parse(json);
+
+                string latestTag = doc.RootElement
+                                      .GetProperty("tag_name")
+                                      .GetString()
+                                      ?.TrimStart('v');
+
+                if (string.IsNullOrWhiteSpace(latestTag))
+                    return new string[0];
+                string currentVerStr = Properties.Settings.Default.BuildVersion;
+                currentVerStr = currentVerStr.Replace("v", "");
+                Version.TryParse(currentVerStr, out Version currentVer);
+                latestTag = latestTag.Replace("v", "");
+                if (!Version.TryParse(latestTag, out Version updateVer)) return new string[0];
+                if (currentVer >= updateVer) return new string[0];
+
+                string releaseName = doc.RootElement
+                                        .GetProperty("name")
+                                        .GetString() ?? string.Empty;
+
+                string changelog = doc.RootElement
+                                      .GetProperty("body")
+                                      .GetString() ?? string.Empty;
+
+                string buildName = "v" + updateVer.ToString() + " " + releaseName;
+
+                JsonElement assets = doc.RootElement.GetProperty("assets");
+                List<string> urls = new List<string>();
+                foreach (JsonElement asset in assets.EnumerateArray())
+                {
+                    if (asset.TryGetProperty("browser_download_url", out JsonElement urlElement))
+                    {
+                        string downloadUrl = urlElement.GetString();
+                        if (!string.IsNullOrEmpty(downloadUrl))
+                            urls.Add(downloadUrl);
+                    }
+                }
+
+                List<string> result = new List<string> { buildName, changelog };
+                result.AddRange(urls);
+                return result.ToArray();
+            }
+            catch (Exception ex) 
+            { 
+                new Dialog(Dialog.Type.PackageWarning, Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + ex.Message, Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"]).ShowDialog(); 
+                return new string[0];
+            }
         }
 
 

@@ -9,7 +9,7 @@
         Style="{StaticResource Window}"
         Height="390"
         Width="515"
-        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
+        >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -117,7 +117,7 @@ namespace Discord.Classes
                 "idle" => UserConnectionStatus.Away,
                 "dnd" => UserConnectionStatus.DoNotDisturb,
                 "offline" => UserConnectionStatus.Offline,
-                _ => UserConnectionStatus.Unknown
+                _ => UserConnectionStatus.Offline
             };
         }
 

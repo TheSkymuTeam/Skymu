@@ -1,6 +1,12 @@
 ﻿/*==========================================================*/
-// Skymu XMPP Plugin
-// Implements XMPP (Jabber) protocol support for Skymu
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team: contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/license.txt
 /*==========================================================*/
 
 using XMPP.Classes;
@@ -28,7 +34,7 @@ namespace XMPP
         public string Name { get { return "XMPP"; } }
         public string InternalName { get { return "skymu-xmpp-plugin"; } }
         public string TextUsername { get { return "JID (e.g., user@server.com)"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password, AuthenticationMethod.Token }; } }
+        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password}; } }
 
         // Initialize XMPP client and helper classes
         private XMPPClient _xmppClient;
@@ -269,7 +275,7 @@ namespace XMPP
                         
                         string displayName = contact?.Name ?? _helperMethods.ExtractUsernameFromJid(jid);
                         string status = contact?.StatusMessage ?? string.Empty;
-                        UserConnectionStatus presence = contact?.Presence ?? UserConnectionStatus.Unknown;
+                        UserConnectionStatus presence = contact?.Presence ?? UserConnectionStatus.Offline;
                         byte[] avatarImage = await _helperMethods.GetDefaultAvatarAsync(jid);
 
                         var userData = new UserData(
@@ -395,7 +401,7 @@ namespace XMPP
 
                     // Fire notification for all incoming messages
                     var contact = _xmppClient.GetRoster().FirstOrDefault(c => c.Jid == e.FromJid);
-                    UserConnectionStatus status = contact?.Presence ?? UserConnectionStatus.Unknown;
+                    UserConnectionStatus status = contact?.Presence ?? UserConnectionStatus.Offline;
                     Notification?.Invoke(this, new NotificationEventArgs(messageItem, status));
 
                     // Add to active conversation if it matches

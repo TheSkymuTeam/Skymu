@@ -9,7 +9,9 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Winforms = System.Windows.Forms;
@@ -20,6 +22,24 @@ namespace Skymu
 {
     class Tray
     {
+        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new()
+        {
+            { UserConnectionStatus.Online, Universal.Lang["sTRAYHINT_USER_ONLINE"] },
+            { UserConnectionStatus.Away, Universal.Lang["sTRAYHINT_USER_AWAY"] },
+            { UserConnectionStatus.Offline, Universal.Lang["sTRAYHINT_USER_OFFLINE"] },
+            { UserConnectionStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
+            { UserConnectionStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
+        };
+
+        public static readonly Dictionary<UserConnectionStatus, string> SIconTextMap = new()
+        {
+            { UserConnectionStatus.Online, "online" },
+            { UserConnectionStatus.Away, "away" },
+            { UserConnectionStatus.Offline, "offline" },
+            { UserConnectionStatus.DoNotDisturb, "dnd" },
+            { UserConnectionStatus.Invisible, "offline" }
+        };
+
         private static Winforms.NotifyIcon Icon;
         private static IntPtr hMenu = IntPtr.Zero;
         private static NativeWindow messageWindow;
@@ -143,10 +163,10 @@ namespace Skymu
             {
                 hMenu = CreatePopupMenu();
 
-                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_OPEN_SKYPE, "Open " + Properties.Settings.Default.BrandingName);
-                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_SIGN_IN, "Sign in");
+                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_OPEN_SKYPE, Universal.Lang["sTRAYMENU_SHOWFRIENDS"]);
+                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_SIGN_IN, Universal.Lang["sTRAYMENU_LOGIN"]);
                 AppendMenu(hMenu, MF_SEPARATOR, UIntPtr.Zero, null);
-                AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_QUIT, "Quit");
+                AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_QUIT, Universal.Lang["sTRAYMENU_QUIT"]);
             }
 
             // Required for context menu to work properly
@@ -172,13 +192,11 @@ namespace Skymu
             PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
         }
 
-        public static void PushIcon(string icon, string iconText = "")
+        public static void PushIcon(UserConnectionStatus icon)
         {
-            if (iconText == String.Empty)
-            {
-                iconText = Properties.Settings.Default.BrandingName;
-            }
-            var resourceUri = new Uri("pack://application:,,,/Resources/Universal/Icon/skype-" + icon + ".ico", UriKind.Absolute);
+            string iconName = SIconTextMap.GetValueOrDefault(icon, "offline");
+            string iconToolTip = Properties.Settings.Default.BrandingName + " (" + StatusMap.GetValueOrDefault(icon, Universal.Lang["sTRAYHINT_USER_OFFLINE"]) + ")";
+            var resourceUri = new Uri("pack://application:,,,/Resources/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
             if (Icon is not null)
@@ -202,7 +220,7 @@ namespace Skymu
                 Icon.Visible = true;
             }
 
-            Icon.Text = iconText;
+            Icon.Text = iconToolTip;
         }
     }
 }

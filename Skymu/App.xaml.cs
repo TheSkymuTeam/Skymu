@@ -24,6 +24,10 @@ namespace Skymu
         public static ICore Plugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
+
+        public static LanguageManager Lang =>
+        (LanguageManager)Current.Resources["Lang"];
+
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
@@ -96,7 +100,7 @@ namespace Skymu
                 ev.Cancel = true;
             }
             string brand = Skymu.Properties.Settings.Default.BrandingName;
-            new Dialog(Dialog.Type.Question, "You won't be able to send or recieve instant\nmessages and calls if you do.", "Sure you want to quit " + brand + "?", "Quit " + brand + "?", null, "Cancel", true, null, "Quit").ShowDialog();
+            new Dialog(Dialog.Type.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
         }
 
         public static void Terminate()

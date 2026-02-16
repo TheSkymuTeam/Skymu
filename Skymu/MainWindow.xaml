@@ -14,10 +14,9 @@ Style="{StaticResource Window}"
         AllowsTransparency="False"
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
-        Title="{Binding Source={x:Static properties:Settings.Default},
-                      Path=BrandingName}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
+        Title="{Binding [sMAINMENU_SKYPE]}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated"
         StateChanged="Window_StateChanged" Activated="Window_Activated"
-        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
+        DataContext="{StaticResource Lang}">
 
     <Window.Resources>
         <Style x:Key="MessageTextBlockStyle" TargetType="TextBlock">
@@ -372,30 +371,21 @@ Grid.Column="2" Source="{Binding Media,
 
             <Menu Grid.Row="0" Height="20" Background="Transparent" FontFamily="Tahoma" Name="menu1"
                   VerticalAlignment="Top" FontSize="11">
-                <MenuItem Header="{Binding Source={x:Static properties:Settings.Default},
-                      Path=BrandingName,
-                      StringFormat={}_{0})}">
-                    <MenuItem Header="Online Status" />
+                <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}" />
                     <Separator />
-                    <MenuItem Header="Privacy..." />
-                    <MenuItem Header="Account..." />
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat=Buy {0} Credit...}" />
-                        </MenuItem.Header>
-                    </MenuItem>
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT]}"/>
                     <Separator />
-                    <MenuItem Header="Change Password..." />
-                    <MenuItem Header="Sign Out" Click="mn_SignOut"/>
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT]}" Click="mn_SignOut"/>
                     <MenuItem Header="Switch User" />
-                    <MenuItem Header="Close" Click="mn_Close"/>
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_CLOSE]}" Click="mn_Close"/>
                 </MenuItem>
-                <MenuItem Header="C_ontacts">
+                <MenuItem Header="{Binding [sMAINMENU_CONTACTS]}">
                     <MenuItem Header="Add a Contact..." />
-                    <MenuItem Header="New Contact..." />
+                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT]}" />
                     <MenuItem>
                         <MenuItem.Header>
                             <TextBlock
@@ -405,68 +395,37 @@ Grid.Column="2" Source="{Binding Media,
                         </MenuItem.Header>
                     </MenuItem>
                     <MenuItem Header="Import Contacts..." />
-                    <MenuItem Header="Create New Group..." />
+                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP]}" />
                     <Separator />
-                    <MenuItem Header="Contact Categories" />
-                    <MenuItem Header="Show Outlook Contacts" />
+                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK]}" />
                     <Separator />
                     <MenuItem Header="Remove from Contacts" />
                 </MenuItem>
-                <MenuItem Header="Co_nversation" />
-                <MenuItem Header="_Call" />
-                <MenuItem Header="_View" />
-                <MenuItem Header="_Tools">
-                    <MenuItem Header="Apps" Click="mn_Apps" />
+                <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}" />
+                <MenuItem Header="{Binding [sMAINMENU_CALL]}" />
+                <MenuItem Header="{Binding [sMAINMENU_VIEW]}" />
+                <MenuItem Header="{Binding [sMAINMENU_TOOLS]}">
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_EXTRAS]}" Click="mn_Apps" />
                     <Separator />
-                    <MenuItem Header="Change Language" Click="mn_Language" />
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE]}" Click="mn_Language" />
                     <Separator />
-                    <MenuItem Header="Accessibility" Click="mn_Accessibility" />
-                    <MenuItem Click="mn_ShareWithFriend">
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat=Share {0} with a Friend...}" />
-                        </MenuItem.Header>
-                    </MenuItem>
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY]}" Click="mn_Accessibility" />
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE]}" Click="mn_ShareWithFriend" /> 
                     <Separator />
-                    <MenuItem Click="mn_SkypeWifi">
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat={}{0} Wi-Fi Access...}" />
-                        </MenuItem.Header>
-                    </MenuItem>
-
-                    <Separator />
-                    <MenuItem Header="Options..." Click="mn_Options" />
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_OPTIONS]}" Click="mn_Options" />
                 </MenuItem>
-                <MenuItem Header="_Help">
-                    <MenuItem Header="Get Help: Answers and Support" />
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat=Heartbeat ({0} Status)}" />
-                        </MenuItem.Header>
-                    </MenuItem>
+                <MenuItem Header="{Binding [sMAINMENU_HELP]}">
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_HELP]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT]}" />
 
-                    <MenuItem Header="Welcome Screen" />
                     <Separator />
-                    <MenuItem Header="Call Quality Guide" />
-                    <MenuItem Header="Check for Updates" Click="mn_CheckUpdates" />
-                    <MenuItem Header="Give feedback" />
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_UPDATES]}" Click="mn_CheckUpdates" />
+                    <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK]}" />
                     <Separator />
-                    <MenuItem Click="mn_About">
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat=About {0}}" />
-                        </MenuItem.Header>
-                    </MenuItem>
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_ABOUT]}" Click="mn_About"/>
+                    <MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY]}" />
 
                 </MenuItem>
             </Menu>
@@ -563,7 +522,8 @@ Cursor="Hand"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="-1"
-                                Text="$ 0.00 - No subscription"
+                                Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION],
+                          StringFormat=$ 0.00 - {0}}"
                                 TextStartPositionX="34"
                                 TextFont="Tahoma"
                                 TextSize="11"
@@ -592,7 +552,7 @@ Cursor="Hand"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
-                                Text="Contacts"
+                                Text="{Binding [sMAINMENU_VIEW_CONTACTS]}"
                                 TextStartPositionX="30"
                                 TextFont="Arial"
                                 TextWeight="Bold"
@@ -613,7 +573,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
-                                Text="Recent"
+                                Text="{Binding [sMAINMENU_VIEW_CONVERSATIONS]}"
                                 TextStartPositionX="30"
                                 MouseLeftButtonDown="Recents_BtnDown"
                                 TextFont="Arial"
@@ -656,7 +616,6 @@ MouseLeftButtonDown="Contacts_BtnDown"
     x:Name="SearchBox"
     GotKeyboardFocus="SearchBox_Focused"
     LostKeyboardFocus="SearchBox_Unfocused"
-
                                     BorderThickness="0"
     Padding="33,0,0,0"
     Background="Transparent"
@@ -727,7 +686,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                         
                                 HoverIndex="-1"
                                 PressedIndex="2"
-                                Text="Add a contact"
+                                Text="{Binding [sADD_CONTACT_LONG]}"
                                 TextStartPositionX="41"
                                 TextFont="Tahoma"
                                 TextSize="11"
@@ -746,7 +705,7 @@ MouseLeftButtonUp="AddContact_Click"
                                 DefaultIndex="0"
                                 HoverIndex="-1"
                                 PressedIndex="2"
-                                Text="Create a group"
+                                Text="{Binding [sCREATE_GROUP_LONG]}"
                                 TextStartPositionX="41"
                                 TextFont="Tahoma"
                                 TextSize="11"
@@ -767,7 +726,7 @@ MouseLeftButtonUp="MakeGroup_Click"
                                     HoverIndex="1"
                                     PressedIndex="2"
                                     MouseLeftButtonUp="CallPhones_Click"
-                                    Text="Call phones"
+                                    Text="{Binding [sZAPBUTTON_SKYPEOUT]}"
                                     TextStartPositionX="32"
                                     TextFont="Arial"
                                     TextWeight="Bold"
@@ -844,7 +803,7 @@ DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="30"                          
-Text="Close"                                
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"                         
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
@@ -882,9 +841,7 @@ DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="2"
 TextStartPositionX="31"
-Text="{Binding Source={x:Static properties:Settings.Default},
-                      Path=BrandingName,
-                      StringFormat={}{0} Home}"                                
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"                               
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
@@ -909,7 +866,7 @@ DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="-1"
 TextStartPositionX="31"
-Text="Profile"                                
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"                              
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
@@ -934,7 +891,7 @@ HoverIndex="-1"
  IsRadioButton="True"                          
 PressedIndex="-1"
 TextStartPositionX="31"
-Text="Give feedback"                                
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}"                                 
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
@@ -1033,7 +990,7 @@ DefaultIndex="0"
 HoverIndex="1"
                                         MouseLeftButtonUp="VideoCallButtonClick"
 PressedIndex="2"
-Text="Video call"
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
 TextStartPositionX="25"
 TextFont="Arial"
 TextWeight="Bold"
@@ -1050,7 +1007,7 @@ Width="98"/>
         HoverIndex="1"
                                         MouseLeftButtonUp="CallButtonClick"
         PressedIndex="2"
-        Text="Call"
+        Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
 
 
         TextStartPositionX="26"
@@ -1279,7 +1236,7 @@ VerticalAlignment="Top"
 HorizontalAlignment="Center"
  MouseLeftButtonUp="OnMsgSendClickButton"                                                                     
 Margin="574,0,0,0"
-Text="Send message"
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}"
 TextStartPositionX="26"
 TextFont="Arial"
 TextWeight="Bold"

@@ -10,7 +10,7 @@
         Style="{StaticResource Window}"
         MaxHeight="800"
         Width="383"
-        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
+        >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,6 +41,8 @@ Margin="11,10,0,0"  />
 
             <ScrollViewer x:Name="tb" VerticalScrollBarVisibility="Auto" 
                          MaxHeight="600"
+                          HorizontalAlignment="Left"
+                          Width="260"
                          Margin="77,7,10,7">
                 <TextBlock LineHeight="16" 
                           TextWrapping="Wrap" 

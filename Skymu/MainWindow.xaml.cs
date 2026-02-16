@@ -138,7 +138,7 @@ namespace Skymu
                 WindowArea.Margin = new Thickness(); // 0, 0, 0, 0
             }
 
-            ApplyPlaceholderTb(SearchBox, "Search");
+            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
@@ -243,14 +243,11 @@ namespace Skymu
         internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
 
         internal static string Identifier = String.Empty;
-        internal static string StatIconName = String.Empty;
+        internal static UserConnectionStatus Status = UserConnectionStatus.Offline;
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                this.WindowState = WindowState.Normal;
-            }
+
 
             /*if (this.WindowState != WindowState.Maximized)
             {
@@ -381,7 +378,7 @@ namespace Skymu
             SelectedContact = (ProfileData)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
-            PlaceholderTextMTB = $"Type a message to {SelectedContact.DisplayName} here";
+            PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedContact.DisplayName);
             ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
             UpdateSendButtonState();
             throbber.Visibility = Visibility.Visible;
@@ -608,14 +605,14 @@ namespace Skymu
             await Universal.Plugin.PopulateRecentsList();
 
             SidebarData data = Universal.Plugin.SidebarInformation;
-            GlobalUserCount.Text = "Loading online user count...";
+            GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
             SkymuApiStatusHandler();
             api.OnUserCountUpdate += usrCount =>
             {
                 Dispatcher.Invoke(() =>
                 {
-                    GlobalUserCount.Text = $"{usrCount} online users";
+                    GlobalUserCount.Text = Universal.Lang.Format("sTOTAL_USERS_ONLINE", usrCount);
                 });
             };
 
@@ -625,20 +622,7 @@ namespace Skymu
             StatusBox.Text = data.DisplayName;
             SkypeCreditBox.Text = data.SkypeCreditText;
             StatusIcon.DefaultIndex = MapStatusToInt(data.ConnectionStatus);
-            switch (data.ConnectionStatus)
-            {
-                case UserConnectionStatus.Online:
-                    StatIconName = "online"; break;
-                case UserConnectionStatus.Away:
-                    StatIconName = "away"; break;
-                case UserConnectionStatus.DoNotDisturb:
-                    StatIconName = "dnd"; break;                  
-                case UserConnectionStatus.Invisible:
-                case UserConnectionStatus.Offline:
-                    StatIconName = "offline"; break;
-                default:
-                    StatIconName = "unknown"; break;
-            }
+            Status = data.ConnectionStatus;
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
@@ -963,7 +947,7 @@ namespace Skymu
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
 
-            ApplyPlaceholderTb(SearchBox, "Search");
+            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1395,20 +1379,14 @@ namespace Skymu
 
     public class StatusToTextConverter : IValueConverter
     {
-        private static readonly Dictionary<UserConnectionStatus, string> StatusMap = new()
-        {
-            { UserConnectionStatus.Online, "Online" },
-            { UserConnectionStatus.Away, "Away" },
-            { UserConnectionStatus.Offline, "Offline" },
-            { UserConnectionStatus.DoNotDisturb, "Do not disturb" }
-        };
+        
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not UserConnectionStatus statInt)
-                return "Unknown";
+                return Universal.Lang["sTRAYHINT_USER_OFFLINE"];
 
-            return StatusMap.TryGetValue(statInt, out var statusText) ? statusText : "Unknown";
+            return Tray.StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sTRAYHINT_USER_OFFLINE"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -5,11 +5,11 @@
         Style="{StaticResource Window}"
         xmlns:properties="clr-namespace:Skymu.Properties"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
-        Title="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName}" Closing="Login_Closing" Height="429" Width="526" ResizeMode="NoResize"
+        Title="{Binding [sMAINMENU_SKYPE]}" Closing="Login_Closing" Height="429" Width="526" ResizeMode="NoResize"
         WindowStyle="SingleBorderWindow" Loaded="Login_Loaded"
         WindowStartupLocation="CenterScreen"
-        Icon="/Skymu;component/Resources/Universal/Icon/skype.ico">
+        DataContext="{StaticResource Lang}"
+        >
     <Window.Resources>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
@@ -30,9 +30,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill" />
 
-        <TextBlock x:Name="header" Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat={}Welcome to {0}.}" Foreground="{StaticResource SkBlue}"
+        <TextBlock x:Name="header" Text="{Binding [sF_LOGIN_WELCOME]}" Foreground="{StaticResource SkBlue}"
                    Height="32" HorizontalAlignment="Center" Margin="0,44,0,0"
                    VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20" />
         <Image x:Name="throbber" Source="/Resources/Universal/Animations/login-throbber.png"
@@ -72,7 +70,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
 
         </Image>
         <Grid x:Name="signInControls">
-            <TextBlock x:Name="SkypeName" Text="Username" Height="28" HorizontalAlignment="Left"
+            <TextBlock x:Name="SkypeName" Text="{Binding [sF_USERENTRY_LABEL_USERNAME]}" Height="28" HorizontalAlignment="Left"
                    Margin="136,140,0,0" VerticalAlignment="Top"
                    FontFamily="Tahoma" FontSize="11" FontWeight="Normal" />
 
@@ -87,7 +85,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
 
             <TextBlock x:Name="Password" FontFamily="Tahoma" FontSize="11" FontWeight="Normal"
                    Height="28" HorizontalAlignment="Left" Margin="136,183,0,0"
-                   Text="Password" VerticalAlignment="Top" />
+                   Text="{Binding [sF_USERENTRY_LABEL_PASSWORD]}" VerticalAlignment="Top" />
             <ComboBox x:Name="comboProtocolBox" IsEditable="False"  Height="20"
                   HorizontalAlignment="Center" Margin="0,112,0,0" VerticalAlignment="Top" Width="240"
                   FontFamily="Tahoma" FontSize="11" SelectionChanged="ProtocolSelectionChanged" />
@@ -103,7 +101,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
                   Canvas.Top="-4" Width="240">
                     <TextBlock x:Name="SignIn" Grid.Column="1" IsHitTestVisible="False" Height="13" HorizontalAlignment="Center"
 Margin="-1,6,0,0" 
- Text="Sign in"
+ Text="{Binding [sZAPBUTTON_SIGNIN]}"
 VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11"
 Foreground="#FF393A48" />
                     
@@ -149,9 +147,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plai
                         VerticalAlignment="Bottom">
 
                     <CheckBox x:Name="autoSignInCheck"
-                          Content="{Binding Source={x:Static properties:Settings.Default},
-                      Path=BrandingName}"
-    ContentStringFormat="{}Sign me in when {0} starts"
+                          Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
                           IsChecked="{Binding Source={x:Static properties:Settings.Default},
                         Path=AutoLoginEnabled,
                         Mode=TwoWay}"
@@ -162,9 +158,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plai
                          />
 
                     <CheckBox x:Name="startupSeanKypeCheck"
-                                                Content="{Binding Source={x:Static properties:Settings.Default},
-                  Path=BrandingName}"
-ContentStringFormat="{}Start {0} when computer starts"
+                                                Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
                           FontFamily="Tahoma"
                           FontSize="11"
                           Height="16"

@@ -9,9 +9,16 @@
         Style="{StaticResource Window}"
         FontFamily="Tahoma"
         FontSize="11"
-        Title="{Binding Source={x:Static properties:Settings.Default},
-                      Path=BrandingName,
-                      StringFormat={}{0}™ - Options}" ResizeMode="CanMinimize" Height="610" Width="718" WindowStartupLocation="CenterScreen" HorizontalAlignment="Left" VerticalAlignment="Top">
+        DataContext="{StaticResource Lang}"
+        ResizeMode="CanMinimize" Height="610" Width="718" WindowStartupLocation="CenterScreen" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Window.Title>
+        <MultiBinding StringFormat="{}{0}™ {1}">
+            <Binding Source="{StaticResource Lang}"
+                 Path="[sMAINMENU_SKYPE]"/>
+            <Binding Source="{StaticResource Lang}"
+                 Path="[sF_OPTIONS_CAPTION]"/>
+        </MultiBinding>
+    </Window.Title>
     <Window.Resources>
         <local:StringToDoubleConverter x:Key="StringToDoubleConverter"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
@@ -24,6 +31,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0">
+            <Grid Margin="9,9,9,0">
             <local:SliceControl
 Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
@@ -31,35 +39,41 @@ Source="{Binding Source={x:Static properties:Settings.Default},
 ElementCount="5"                          
 StackDirection="Vertical"
 DefaultIndex="1"
-Margin="9,9,9,0"   
+  
 HoverIndex="-1"
 PressedIndex="-1"
 IsHitTestVisible="False"
-TextStartPositionX="13"
-Text="Advanced"                                
+TextStartPositionX="38"
+Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}"                                
 TextFont="Tahoma"
 TextSize="11"
 TextColor="#666666"
 HorizontalAlignment="Stretch" />
-
+                <Image  Margin="8,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24" Source="/Resources/Universal/Options/Action_24x24.png"/>
+            </Grid>
 
             <ListBox Margin="9,0,9,0" BorderThickness="1,0,1,1" BorderBrush="#26000000">
-                    <ListBox.Resources>
-                        <Style TargetType="ListBoxItem">
+                <ListBox.Resources>
+                    <Style TargetType="ListBoxItem">
                         <Setter Property="FontSize" Value="11"/>
                         <Setter Property="Foreground" Value="#FF6E6E73"/>
                             <Setter Property="Height" Value="38"/>
-                            <Setter Property="Padding" Value="8,1,8,1"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
+                            <Setter Property="Padding" Value="10,1,8,1"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
                                     <ControlTemplate TargetType="ListBoxItem">
+                                        
                                         <Border Name="Border"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 Padding="{TemplateBinding Padding}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding Tag, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" HorizontalAlignment="Left" VerticalAlignment="Center" Height="24"/>
                                             <ContentPresenter
+                                                Margin="6,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Left"/>
+                                            </StackPanel>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsSelected" Value="True">
@@ -73,7 +87,7 @@ HorizontalAlignment="Stretch" />
                         </Style>
                     </ListBox.Resources>
 
-                    <ListBoxItem Content="Skymu Customization" IsSelected="True"/>
+                <ListBoxItem Content="Skymu Customization" Tag="/Resources/Universal/Options/PersonalizeSkype_24x24.png" IsSelected="True"/>
                 
                 </ListBox>
 
@@ -123,7 +137,16 @@ HorizontalAlignment="Stretch" />
                    Mode=TwoWay,
                    UpdateSourceTrigger=PropertyChanged}" Width="250"/>
                     </StackPanel>
-                    
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Language file" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <ComboBox Width="250"
+          ItemsSource="{Binding Languages}"
+          DisplayMemberPath="Key"
+          SelectedValuePath="Key"
+          SelectedValue="{Binding Source={x:Static properties:Settings.Default}, 
+                                  Path=Language, 
+                                  Mode=TwoWay}" />
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Main window frame" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <ComboBox SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
@@ -238,11 +261,11 @@ Mode=TwoWay}" Margin="0,5"/>
                 </Border>
 
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right"  Height="23" VerticalAlignment="Bottom">
-                    <Button Click="SaveButtonClick" Content="Save" Height="23" Width="73" Margin="0,0,10,0" FontSize="11"/>
-                <Button Click="RestartButtonClick" Content="Save and restart" Height="23" Width="100" Margin="0,0,10,0" FontSize="11"/>
-                <Button Click="ResetButtonClick" Content="Reset to defaults" Height="23" Width="100" Margin="0,0,10,0" FontSize="11"/>
-                <Button Click="CancelButtonClick" Content="Cancel" Height="23" Width="73" FontSize="11"/>
+                <StackPanel Panel.ZIndex="4" Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right"  Height="23" VerticalAlignment="Bottom">
+                <Button MinWidth="75" Click="SaveButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}" Height="23" Padding="7,0" Margin="0,0,10,0" FontSize="11"/>
+                <Button  MinWidth="75" Click="RestartButtonClick" Content="Save and restart" Height="23" Padding="7,0" Margin="0,0,10,0" FontSize="11"/>
+                <Button MinWidth="75"  Click="ResetButtonClick" Content="{Binding [sF_OPTIONS_BTN_RESET]}" Height="23" Padding="7,0"  Margin="0,0,10,0" FontSize="11"/>
+                <Button MinWidth="75" Click="CancelButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}" Height="23" Padding="7,0" FontSize="11"/>
                 </StackPanel>
             </Grid>
         </Grid>

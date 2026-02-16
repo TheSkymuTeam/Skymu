@@ -34,25 +34,13 @@ namespace MiddleMan
         UnsupportedAuthType
     }
 
-    /*public static class UserConnectionStatus
-    {
-        public const int Group = 21;
-        public const int Invisible = 19;
-        public const int DoNotDisturb = 5;
-        public const int Online = 2;
-        public const int Away = 3;
-        public const int Offline = 19;
-        public const int Unknown = 0;
-    }*/
-
     public enum UserConnectionStatus
     {
         Online,
         DoNotDisturb,
         Away,
         Invisible,
-        Offline,
-        Unknown
+        Offline
     }
 
     public class SidebarData
@@ -123,7 +111,7 @@ namespace MiddleMan
         }
 
         public UserData(string displayName, string identifier, string status = null,
-                        UserConnectionStatus presenceStatus = UserConnectionStatus.Unknown, byte[] profilePicture = null)
+                        UserConnectionStatus presenceStatus = UserConnectionStatus.Offline, byte[] profilePicture = null)
             : base(displayName, identifier, profilePicture)
         {
             _status = status;

@@ -95,7 +95,7 @@ namespace Stub
 
         public async Task<bool> PopulateSidebarInformation()
         {
-            SidebarInformation = new SidebarData("thegamingkart", "00001", "Stub plugin", UserConnectionStatus.Unknown);
+            SidebarInformation = new SidebarData("thegamingkart", "00001", "Stub plugin", UserConnectionStatus.Offline);
             return true;
         }
 

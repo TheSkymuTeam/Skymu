@@ -23,10 +23,10 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-		<ApplicationIcon>skype.ico</ApplicationIcon>
 		<StartupObject />
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>AnyCPU;x86</Platforms>
+		<ApplicationIcon>Skype.ico</ApplicationIcon>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
 		<OutputPath>bin\x64\Debug\</OutputPath>
@@ -52,15 +52,23 @@
 		<Compile Remove="Resources\**\*" />
 		<Resource Include="Resources\**\*" />
 
-		<!-- Sounds → Content -->
+		<!-- Sounds, Languages → Content -->
 		<None Remove="Sounds\**\*" />
 		<Page Remove="Sounds\**\*" />
 		<EmbeddedResource Remove="Sounds\**\*" />
 		<Compile Remove="Sounds\**\*" />
+		<None Remove="Languages\**\*" />
+		<Page Remove="Languages\**\*" />
+		<EmbeddedResource Remove="Languages\**\*" />
+		<Compile Remove="Languages\**\*" />
 
 		<Content Include="Sounds\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Languages\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		
 	</ItemGroup>
 
 
@@ -82,6 +90,10 @@
 			<ProductName>.NET Framework 3.5 SP1</ProductName>
 			<Install>false</Install>
 		</BootstrapperPackage>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Skype.ico" />
 	</ItemGroup>
 
 	<ItemGroup>

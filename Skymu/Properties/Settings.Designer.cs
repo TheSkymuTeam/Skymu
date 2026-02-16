@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.7")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.8")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -181,13 +181,25 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Happy Cake")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Ice Cream Soda")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
             }
             set {
                 this["BuildName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("English")]
+        public string Language {
+            get {
+                return ((string)(this["Language"]));
+            }
+            set {
+                this["Language"] = value;
             }
         }
     }

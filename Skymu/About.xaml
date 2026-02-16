@@ -24,7 +24,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
         <TextBlock Text="Take another breath" HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" Foreground="#333333" FontSize="18" Margin="0,1,9,0"/>
         <TextBlock HorizontalAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" Foreground="#555555" FontSize="11" Margin="0,3,9,-4">
             <TextBlock.Text>
-                <MultiBinding StringFormat="Build v{0} {1}">
+                <MultiBinding StringFormat="v{0} {1}">
                     <Binding Source="{x:Static properties:Settings.Default}" Path="BuildVersion"/>
                     <Binding Source="{x:Static properties:Settings.Default}" Path="BuildName"/>
                 </MultiBinding>
