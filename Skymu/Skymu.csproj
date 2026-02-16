@@ -53,18 +53,11 @@
 		<Resource Include="Resources\**\*" />
 
 		<!-- Sounds, Languages → Content -->
-		<None Remove="Sounds\**\*" />
-		<Page Remove="Sounds\**\*" />
-		<EmbeddedResource Remove="Sounds\**\*" />
-		<Compile Remove="Sounds\**\*" />
 		<None Remove="Languages\**\*" />
 		<Page Remove="Languages\**\*" />
 		<EmbeddedResource Remove="Languages\**\*" />
 		<Compile Remove="Languages\**\*" />
 
-		<Content Include="Sounds\**\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
 		<Content Include="Languages\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>

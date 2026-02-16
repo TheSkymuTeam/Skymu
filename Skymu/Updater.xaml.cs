@@ -55,16 +55,11 @@ namespace Skymu
                 ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                 ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                 string changelog = updateInfo[1];
+                Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
                 if (!string.IsNullOrEmpty(changelog))
                 {
                     changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
-                    Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"] + " Changelog:"
-                                       + Environment.NewLine + Environment.NewLine
-                                       + changelog;
-                }
-                else
-                {
-                    Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
+                    Description.Text += Environment.NewLine + Environment.NewLine + changelog;
                 }
                 ShowDialog();
             }

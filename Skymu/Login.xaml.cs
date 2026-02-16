@@ -157,9 +157,9 @@ namespace Skymu
         {
             _mainWindow.Ready -= MainWindow_Ready;
             Tray.PushIcon(UserConnectionStatus.Online);
-            Sounds.Play("login");
             Universal.HasLoggedIn = true;
             _mainWindow.Show();
+            Sounds.Play("login", true);
             new Updater();
             noCloseEvent = true;
             Close();

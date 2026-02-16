@@ -61,7 +61,7 @@ namespace Skymu
 
         public static void Restart()
         {
-            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string exePath = Process.GetCurrentProcess().MainModule.FileName;
 
             Process.Start(exePath);
 

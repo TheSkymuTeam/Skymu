@@ -61,7 +61,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("•")]
+        [global::System.Configuration.DefaultSettingValueAttribute("☛")]
         public string ListDelimiter {
             get {
                 return ((string)(this["ListDelimiter"]));
@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.9")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Ice Cream Soda")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Jean Kevin")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

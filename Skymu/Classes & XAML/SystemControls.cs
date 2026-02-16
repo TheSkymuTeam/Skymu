@@ -19,7 +19,7 @@ namespace Skymu
 
     public class DwmHelper
     {
-        [DllImport("dwmapi.dll")]
+        [DllImport("dwmapi.dll", CharSet = CharSet.Unicode)]
         private static extern int DwmIsCompositionEnabled(out bool enabled);
 
         public static bool IsDwmEnabled()
@@ -34,7 +34,7 @@ namespace Skymu
 
     public class Taskbar
     {
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
@@ -77,19 +77,19 @@ namespace Skymu
 
     public class MenuBar
     {
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern IntPtr CreateMenu();
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern IntPtr CreatePopupMenu();
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern bool AppendMenu(IntPtr hMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern IntPtr SetMenu(IntPtr hWnd, IntPtr hMenu);
 
         const uint MF_STRING = 0x0000;
@@ -170,10 +170,10 @@ namespace Skymu
     public class SystemComboBox
     {
         // PInvoke declarations
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr CreateWindowEx(
             uint dwExStyle,
             string lpClassName,
@@ -188,16 +188,16 @@ namespace Skymu
             IntPtr hInstance,
             IntPtr lpParam);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool UpdateWindow(IntPtr hWnd);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern bool DestroyWindow(IntPtr hWnd);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         // Define constants

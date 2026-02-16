@@ -9,8 +9,11 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Media;
+using System.Windows;
 
 # pragma warning disable CA1416
 
@@ -23,32 +26,57 @@ namespace Skymu
 
         public static void Init()
         {
-            Load("message-sent", "sounds/IM_SENT.WAV");
-            Load("message-recieved", "sounds/IM.WAV");
-            Load("call-error", "sounds/CALL_ERROR1.WAV");
-            Load("login", "sounds/LOGIN.WAV");
-            Load("logout", "sounds/LOGOUT.WAV");
+            Load("message-sent", "IM_SENT.WAV");
+            Load("message-recieved", "IM.WAV");
+            Load("call-error", "CALL_ERROR1.WAV");
+            Load("login", "LOGIN.WAV");
+            Load("logout", "LOGOUT.WAV");
         }
 
-        static void Load(string key, string path)
+        static void Load(string key, string relativePath)
         {
+            var uri = new Uri($"pack://application:,,,/Resources/Universal/Sounds/{relativePath}", UriKind.Absolute);
+            var streamInfo = Application.GetResourceStream(uri);
+            if (streamInfo?.Stream != null)
+            {
+                var ms = new MemoryStream();
+                streamInfo.Stream.CopyTo(ms);
+                ms.Position = 0;
 
-            var sp = new SoundPlayer(path);
-            sp.Load();   // preload from disk
-            players[key] = sp;
+                var sp = new SoundPlayer(ms);
+                sp.Load(); // preload into memory
+                players[key] = sp;
+            }
         }
 
-        public static void Play(string key)
+        public static bool forcelock = false;
+        public static void Play(string key, bool force = false)
         {
-            if (players.TryGetValue(key, out var sp))
-                sp.Play();       // async, non-blocking
+            if (!players.TryGetValue(key, out var sp))
+                return;
+
+            if (force)
+            {
+                forcelock = true;
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    sp.PlaySync(); 
+                    forcelock = false;
+                });
+            }
+            else
+            {
+                if (!forcelock)
+                {
+                    sp.Play();          
+                }
+            }
         }
 
         public static void PlaySynchronous(string key)
         {
             if (players.TryGetValue(key, out var sp))
-                sp.PlaySync();       
+                sp.PlaySync(); // blocking
         }
     }
-
 }
