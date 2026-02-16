@@ -50,6 +50,7 @@ namespace Skymu
             updateInfo = await GetUpdateInfo();
             if (updateInfo.Length > 0)
             {
+                if (updateInfo[0] == "UPDATE_CHECK_ERROR") { new Dialog(Dialog.Type.PackageWarning, Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + updateInfo[1], Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"]).ShowDialog(); return; }
                 Header.Text = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + updateInfo[0];
                 ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                 ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
@@ -243,8 +244,7 @@ namespace Skymu
             }
             catch (Exception ex) 
             { 
-                new Dialog(Dialog.Type.PackageWarning, Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + ex.Message, Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"]).ShowDialog(); 
-                return new string[0];
+                return new string[2] {"UPDATE_CHECK_ERROR", ex.Message};
             }
         }
 

@@ -380,27 +380,17 @@ Grid.Column="2" Source="{Binding Media,
                     <Separator />
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD]}" />
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT]}" Click="mn_SignOut"/>
-                    <MenuItem Header="Switch User" />
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER]}" />
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE_CLOSE]}" Click="mn_Close"/>
                 </MenuItem>
                 <MenuItem Header="{Binding [sMAINMENU_CONTACTS]}">
-                    <MenuItem Header="Add a Contact..." />
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT]}" />
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <TextBlock
-            Text="{Binding Source={x:Static properties:Settings.Default},
-                           Path=BrandingName,
-                           StringFormat=Search for {0} Users...}" />
-                        </MenuItem.Header>
-                    </MenuItem>
-                    <MenuItem Header="Import Contacts..." />
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP]}" />
                     <Separator />
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS]}" />
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK]}" />
                     <Separator />
-                    <MenuItem Header="Remove from Contacts" />
+                    <MenuItem Header="{Binding [sBUDDYMENU_REMOVE]}" />
                 </MenuItem>
                 <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}" />
                 <MenuItem Header="{Binding [sMAINMENU_CALL]}" />
