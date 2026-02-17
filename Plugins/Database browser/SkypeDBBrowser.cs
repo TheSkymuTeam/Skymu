@@ -40,11 +40,11 @@ namespace SkypeDBBrowser
         public string InternalName => "skymu-skypedb-plugin";
         public AuthenticationMethod[] AuthenticationType => new[] { AuthenticationMethod.Token };
 
-        public UserData MyInformation { get; private set; }
+        public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
-        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
-        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
+        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations => new ClickableConfiguration[0];
 
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
@@ -141,7 +141,7 @@ namespace SkypeDBBrowser
 
                         command.Parameters.AddWithValue("@identifier", identifier);
 
-                        var messageList = new System.Collections.Generic.List<MessageItem>();
+                        var messageList = new System.Collections.Generic.List<Message>();
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -165,9 +165,9 @@ namespace SkypeDBBrowser
                                     // clean up XML-formatted body text (Skype stores messages with XML tags)
                                     body = CleanSkypeMessageBody(body);
 
-                                    var messageItem = new MessageItem(
+                                    var messageItem = new Message(
                                         messageId,
-                                        new UserData(displayName, author, author),
+                                        new User(displayName, author, author),
                                         dateTime,
                                         body
                                     );
@@ -222,7 +222,7 @@ namespace SkypeDBBrowser
                         }
                     }
 
-                    MyInformation = new UserData(
+                    MyInformation = new User(
                         displayName,
                         _currentUserId,
                         _currentUserId,
@@ -280,7 +280,7 @@ namespace SkypeDBBrowser
 
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
-                                ContactsList.Add(new UserData(
+                                ContactsList.Add(new User(
                                     displayName,
                                     skypename,
                                     skypename,
@@ -374,7 +374,7 @@ namespace SkypeDBBrowser
                                     // group conversation — look up participants and hydrate member data
                                     var members = await GetGroupMembersAsync(connection, identity, contactInfo);
 
-                                    RecentsList.Add(new GroupData(
+                                    RecentsList.Add(new Group(
                                         displayName,
                                         identity,
                                         members.Length,
@@ -386,7 +386,7 @@ namespace SkypeDBBrowser
                                     // individual conversation — enrich with contact data if available
                                     contactInfo.TryGetValue(identity, out var info);
 
-                                    RecentsList.Add(new UserData(
+                                    RecentsList.Add(new User(
                                         displayName,
                                         identity,
                                         identity,
@@ -440,12 +440,12 @@ namespace SkypeDBBrowser
         /// then hydrates each into a UserData using the pre-built contactInfo lookup.
         /// Members not found in contacts get a minimal UserData with no avatar or mood.
         /// </summary>
-        private async Task<UserData[]> GetGroupMembersAsync(
+        private async Task<User[]> GetGroupMembersAsync(
             SqliteConnection connection,
             string conversationIdentity,
             System.Collections.Generic.Dictionary<string, (string Mood, byte[] Avatar, UserConnectionStatus Status)> contactInfo)
         {
-            var members = new System.Collections.Generic.List<UserData>();
+            var members = new System.Collections.Generic.List<User>();
 
             using (var cmd = connection.CreateCommand())
             {
@@ -475,7 +475,7 @@ namespace SkypeDBBrowser
                         // enrich with avatar + mood if we have this person in contacts
                         contactInfo.TryGetValue(skypename, out var info);
 
-                        members.Add(new UserData(
+                        members.Add(new User(
                             displayName,
                             skypename,
                             skypename,

@@ -54,7 +54,7 @@ namespace XMPP
         private const int MAX_MESSAGES_LIMIT = 50;
         private const int CONNECTION_TIMEOUT_MS = 10000;
 
-        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         private readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -69,10 +69,10 @@ namespace XMPP
             }
         }
 
-        public UserData MyInformation { get; private set; }
+        public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
-        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
 
         private enum ListType
         {
@@ -204,7 +204,7 @@ namespace XMPP
                 string displayName = _helperMethods.ExtractUsernameFromJid(_currentUserJid);
                 UserConnectionStatus status = _xmppClient.CurrentPresence;
 
-                MyInformation = new UserData(
+                MyInformation = new User(
                     displayName,
                     _helperMethods.ExtractUsernameFromJid(_currentUserJid),
                     _currentUserJid,
@@ -251,7 +251,7 @@ namespace XMPP
                         UserConnectionStatus presence = contact.Presence;
                         byte[] avatarImage = await _helperMethods.GetDefaultAvatarAsync(contact.Jid);
 
-                        var userData = new UserData(
+                        var userData = new User(
                             displayName,
                             username,
                             contact.Jid,
@@ -282,7 +282,7 @@ namespace XMPP
                         UserConnectionStatus presence = contact?.Presence ?? UserConnectionStatus.Offline;
                         byte[] avatarImage = await _helperMethods.GetDefaultAvatarAsync(jid);
 
-                        var userData = new UserData(
+                        var userData = new User(
                             displayName,
                             username,
                             jid,
@@ -390,22 +390,22 @@ namespace XMPP
                         users.Remove(e.FromJid);
                     }
 
-                    var senderData = new UserData(
+                    var senderData = new User(
                         e.FromDisplayName,
                         _helperMethods.ExtractUsernameFromJid(e.FromJid),
                         e.FromJid
                     );
 
-                    AttachmentItem[] attachments = null;
+                    Attachment[] attachments = null;
                     if (e.Media != null && e.Media.Length > 0)
                     {
                         attachments = new[]
                         {
-                            new AttachmentItem(e.Media, "attachment", AttachmentType.File)
+                            new Attachment(e.Media, "attachment", AttachmentType.File)
                         };
                     }
 
-                    var messageItem = new MessageItem(
+                    var messageItem = new Message(
                         e.MessageId,
                         senderData,
                         e.Timestamp,
@@ -442,7 +442,7 @@ namespace XMPP
                 try
                 {
                     // update presence in contacts list
-                    var contact = ContactsList.OfType<UserData>().FirstOrDefault(c => c.Identifier == e.FromJid);
+                    var contact = ContactsList.OfType<User>().FirstOrDefault(c => c.Identifier == e.FromJid);
                     if (contact != null)
                     {
                         contact.PresenceStatus = e.Status;
@@ -450,7 +450,7 @@ namespace XMPP
                     }
 
                     // update presence in recents list
-                    var recent = RecentsList.OfType<UserData>().FirstOrDefault(c => c.Identifier == e.FromJid);
+                    var recent = RecentsList.OfType<User>().FirstOrDefault(c => c.Identifier == e.FromJid);
                     if (recent != null)
                     {
                         recent.PresenceStatus = e.Status;
@@ -485,7 +485,7 @@ namespace XMPP
                     {
                         if (existingUser == null)
                         {
-                            var userData = new UserData(
+                            var userData = new User(
                                 e.DisplayName,
                                 _helperMethods.ExtractUsernameFromJid(e.FromJid),
                                 e.FromJid

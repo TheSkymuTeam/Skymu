@@ -19,7 +19,7 @@ namespace Discord.Classes
 {
     internal class MessageParser
     {
-        public static async Task<MessageItem> ParseMessage(JsonNode message)
+        public static async Task<Message> ParseMessage(JsonNode message)
         {
             if (message is null) return null;
 
@@ -36,27 +36,27 @@ namespace Discord.Classes
 
             byte[] media = await ParseMessageMedia(message);
 
-            MessageItem parent = ParseReply(message["referenced_message"]);
+            Message parent = ParseReply(message["referenced_message"]);
 
-            return new MessageItem(
+            return new Message(
                 messageId,
-                new UserData(authorNames[0], authorNames[1], authorId),
+                new User(authorNames[0], authorNames[1], authorId),
                 timestamp,
                 content,
-                new AttachmentItem[1] { new AttachmentItem(media, "discord-image", AttachmentType.Image) },
+                new Attachment[1] { new Attachment(media, "discord-image", AttachmentType.Image) },
                 parent
             );
         }
 
-        public static MessageItem ParseReply(JsonNode refMsg)
+        public static Message ParseReply(JsonNode refMsg)
         {
             if (refMsg is null) return null;
 
             string replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, refMsg["content"]?.GetValue<string>() ?? "[unavailable]");
             string[] usernames = GetAuthorNames(refMsg);
-            return new MessageItem(
+            return new Message(
                 refMsg["id"]?.GetValue<string>() ?? "0",
-                new UserData(usernames[0], usernames[1], refMsg["author"]?["id"]?.GetValue<string>()),
+                new User(usernames[0], usernames[1], refMsg["author"]?["id"]?.GetValue<string>()),
                 ParseTimestamp(refMsg["timestamp"]?.GetValue<string>()),
                 replyContent
             );

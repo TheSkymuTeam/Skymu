@@ -321,7 +321,7 @@ namespace Discord.Classes
             {
                 string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
 
-                var typingUser = new UserData(
+                var typingUser = new User(
                     display_name: globalName,
                     username: globalName,
                     identifier: userId

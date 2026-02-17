@@ -44,7 +44,7 @@ namespace MiddleMan
         Offline
     }
 
-    public abstract class ProfileData : INotifyPropertyChanged
+    public abstract class Participant : INotifyPropertyChanged
     {
         private string _display_name;
         private byte[] _profile_picture;
@@ -62,13 +62,13 @@ namespace MiddleMan
             set => Set(ref _profile_picture, value, nameof(ProfilePicture));
         }
 
-        protected ProfileData(string display_name, string identifier)
+        protected Participant(string display_name, string identifier)
         {
             _display_name = display_name;
             Identifier = identifier;
         }
 
-        protected ProfileData(string display_name, string identifier, byte[] profile_picture)
+        protected Participant(string display_name, string identifier, byte[] profile_picture)
         {
             _display_name = display_name;
             Identifier = identifier;
@@ -85,7 +85,7 @@ namespace MiddleMan
         }
     }
 
-    public class UserData : ProfileData
+    public class User : Participant
     {
         private string _status;
         private string _username;
@@ -109,12 +109,12 @@ namespace MiddleMan
             set => Set(ref _presence_status, value, nameof(PresenceStatus));
         }
 
-        public UserData(string display_name, string username, string identifier) : base(display_name, identifier)
+        public User(string display_name, string username, string identifier) : base(display_name, identifier)
         {
             _username = username;
         }
 
-        public UserData(string display_name, string username, string identifier, string status = null,
+        public User(string display_name, string username, string identifier, string status = null,
                         UserConnectionStatus presence_status = UserConnectionStatus.Offline, byte[] profile_picture = null)
             : base(display_name, identifier, profile_picture)
         {
@@ -124,10 +124,10 @@ namespace MiddleMan
         }
     }
 
-    public class GroupData : ProfileData
+    public class Group : Participant
     {
         private int _member_count;
-        private UserData[] _members;
+        private User[] _members;
 
         public int MemberCount
         {
@@ -135,18 +135,18 @@ namespace MiddleMan
             set => Set(ref _member_count, value, nameof(MemberCount));
         }
 
-        public UserData[] Members 
+        public User[] Members 
         {
             get => _members;
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public GroupData(string name, string identifier, int member_count,
-                         UserData[] members, byte[] profile_picture = null)
+        public Group(string name, string identifier, int member_count,
+                         User[] members, byte[] profile_picture = null)
             : base(name, identifier, profile_picture)
         {
             _member_count = member_count;
-            _members = members ?? new UserData[0];
+            _members = members ?? new User[0];
         }
     }
 
@@ -158,19 +158,19 @@ namespace MiddleMan
         File
     }
 
-    public class AttachmentItem
+    public class Attachment
     {
         public string Name { get; set; }
         public AttachmentType Type { get; set; }
         public byte[] File { get; set; }
         public string Url { get; set; }
-        public AttachmentItem(byte[] file, string name, AttachmentType type)
+        public Attachment(byte[] file, string name, AttachmentType type)
         {
             File = file;
             Name = name;   
             Type = type;
         }
-        public AttachmentItem(string location_url, string name)
+        public Attachment(string location_url, string name)
         {
             Url = location_url;
             Name = name;
@@ -182,15 +182,15 @@ namespace MiddleMan
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
     }
 
-    public class MessageItem : ConversationItem
+    public class Message : ConversationItem
     { 
         public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
         public string Identifier { get; set; } // Unique identifier for the message
-        public UserData Sender { get; set; } // Who sent the message 
+        public User Sender { get; set; } // Who sent the message 
         public string Text { get; set; } // Message body
-        public AttachmentItem[] Attachments { get; set; } // Media or files attached to the message
-        public MessageItem ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
-        public MessageItem(string identifier, UserData sender, DateTime time, string text = null, AttachmentItem[] attachments = null, MessageItem parent_message = null)
+        public Attachment[] Attachments { get; set; } // Media or files attached to the message
+        public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
+        public Message(string identifier, User sender, DateTime time, string text = null, Attachment[] attachments = null, Message parent_message = null)
         {
             Identifier = identifier;
             Sender = sender;
@@ -201,11 +201,11 @@ namespace MiddleMan
         }
     }
 
-    public class CallStartedItem : ConversationItem
+    public class CallStartedNotice : ConversationItem
     {
         public string StartedBy { get; set; } // Return the user's display name (NOT identifier)
         public bool IsVideoCall { get; set; } // Set to true if the call is video
-        public CallStartedItem(string started_by_display_name, bool is_video_call, DateTime time)
+        public CallStartedNotice(string started_by_display_name, bool is_video_call, DateTime time)
         {
             StartedBy = started_by_display_name;
             Time = time;
@@ -213,11 +213,11 @@ namespace MiddleMan
         }
     }
 
-    public class CallEndedItem : ConversationItem
+    public class CallEndedNotice : ConversationItem
     {
         public TimeSpan Duration { get; set; } // Length of call
         public bool IsVideoCall { get; set; } // Set to true if the call was video
-        public CallEndedItem(TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+        public CallEndedNotice(TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
         {
             Duration = duration;
             Time = time;
@@ -274,7 +274,7 @@ namespace MiddleMan
             Item = item;
             Status = user_status;           
         }
-        public NotificationEventArgs(MessageItem message, UserConnectionStatus user_status, string sent_in_channel_id)
+        public NotificationEventArgs(Message message, UserConnectionStatus user_status, string sent_in_channel_id)
         {
             Item = message;
             Status = user_status;
@@ -297,18 +297,18 @@ namespace MiddleMan
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
         Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.
-        UserData MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
+        User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials); // Tries to log in with saved tokens/credentials
         ObservableCollection<ConversationItem> ActiveConversation { get; } // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.
-        ObservableCollection<ProfileData> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
-        ObservableCollection<ProfileData> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
+        ObservableCollection<Participant> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
+        ObservableCollection<Participant> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> SetActiveConversation(string identifier); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
-        ObservableCollection<UserData> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
+        ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.

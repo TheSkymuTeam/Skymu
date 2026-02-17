@@ -169,7 +169,7 @@ namespace Skymu
             else
             {
                 string typingText = String.Empty;
-                UserData[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
+                User[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
                 switch (count)
                 {
                     case 1:
@@ -340,7 +340,7 @@ namespace Skymu
         private void mn_Options(object sender, RoutedEventArgs e) { new Options().Show(); }
         private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
 
-        internal static ProfileData SelectedContact = null;
+        internal static Participant SelectedContact = null;
 
         internal static bool IsWindowActive = false;
 
@@ -376,7 +376,7 @@ namespace Skymu
 
             Universal.Plugin.ActiveConversation.Clear();
             Universal.Plugin.TypingUsersList.Clear();
-            SelectedContact = (ProfileData)listBox.SelectedItem;
+            SelectedContact = (Participant)listBox.SelectedItem;
 
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedContact.DisplayName);
@@ -391,11 +391,11 @@ namespace Skymu
 
                 for (int i = 0; i < conversation.Count; i++)
                 {
-                    if (conversation[i] is MessageItem message)
+                    if (conversation[i] is Message message)
                     {
                         for (int j = i - 1; j >= 0; j--)
                         {
-                            if (conversation[j] is MessageItem previousMessage)
+                            if (conversation[j] is Message previousMessage)
                             {
                                 message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                 break;
@@ -414,7 +414,7 @@ namespace Skymu
 
                     foreach (var item in args.NewItems)
                     {
-                        if (item is MessageItem message && message.Sender.Identifier != MainWindow.Identifier && IsWindowActive)
+                        if (item is Message message && message.Sender.Identifier != MainWindow.Identifier && IsWindowActive)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -605,7 +605,7 @@ namespace Skymu
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
 
-            UserData data = Universal.Plugin.MyInformation;
+            User data = Universal.Plugin.MyInformation;
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
             SkymuApiStatusHandler();
@@ -733,7 +733,7 @@ namespace Skymu
             }
             finally
             {
-                cts.Cancel(); 
+                cts.Cancel();
                 await animTask;
             }
 
@@ -762,13 +762,13 @@ namespace Skymu
                     {
                         foreach (var item in args.NewItems)
                         {
-                            if (item is MessageItem message)
+                            if (item is Message message)
                             {
                                 int currentIndex = listBox.Items.IndexOf(message);
 
                                 for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-                                    if (listBox.Items[i] is MessageItem previousMessage)
+                                    if (listBox.Items[i] is Message previousMessage)
                                     {
                                         message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                         break;
@@ -822,7 +822,7 @@ namespace Skymu
 
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
-  
+
         private void UpdateSendButtonState()
         {
             if (SendMsgButton is null) return;
@@ -834,7 +834,7 @@ namespace Skymu
                 return;
             }
 
-   
+
             bool hasContent = HasAnyContent(MessageTextBox);
             SendMsgButton.IsEnabled = hasContent;
         }
@@ -1207,7 +1207,7 @@ namespace Skymu
             RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
-            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);          
+            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
 
             // Replace selected text if any
             if (!MessageTextBox.Selection.IsEmpty)
@@ -1242,7 +1242,7 @@ namespace Skymu
         }
 
 
-        internal static int MapStatusToInt (UserConnectionStatus status)
+        internal static int MapStatusToInt(UserConnectionStatus status)
         {
             return status switch
             {
@@ -1281,7 +1281,7 @@ namespace Skymu
             Universal.HasLoggedIn = false;
             new Login(true).Show();
             noCloseEvent = true;
-            this.Close();          
+            this.Close();
         }
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e)
@@ -1305,8 +1305,8 @@ namespace Skymu
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var bytes = values.Length > 0 ? values[0] as byte[] : null;
-            var members = values.Length > 1 ? values[1] as int? : null;
+            var bytes = values[0] as byte[];
+            var type = values[1] as string;
 
             if (bytes != null && bytes.Length > 0)
             {
@@ -1322,10 +1322,8 @@ namespace Skymu
                 return bmp;
             }
 
-            if (members != null || members > 1)
-                return MainWindow.GroupAvatar;
-
-            return MainWindow.AnonymousAvatar;
+            if (type == "group") return MainWindow.GroupAvatar;
+            else return MainWindow.AnonymousAvatar;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -1387,7 +1385,7 @@ namespace Skymu
 
     public class StatusToTextConverter : IValueConverter
     {
-        
+
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -1410,7 +1408,7 @@ namespace Skymu
         {
             if (value is not string text)
                 return DependencyProperty.UnsetValue;
-            var tb = MessageTools.FormTextblock(text, true);
+            var tb = MessageTools.FormTextblock(text);
 
             if (TextBlockStyle is not null)
                 tb.Style = TextBlockStyle;

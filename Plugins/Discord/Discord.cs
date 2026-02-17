@@ -57,7 +57,7 @@ namespace Discord
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
 
-        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -74,10 +74,10 @@ namespace Discord
             }
         }
 
-        public UserData MyInformation { get; private set; }
+        public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
-        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
 
         private enum ListType
         {
@@ -197,7 +197,7 @@ namespace Discord
                 string mainUsrStatus = WebSocketMgr.GetUserStatus("0");
                 UserConnectionStatus mainStatusMapped = helperMethods.MapStatus(mainUsrStatus);
 
-                MyInformation = new UserData(
+                MyInformation = new User(
                     HelperMethods.GetDisplayName(displayName, dscUserName), dscUserName, userId, WebSocketMgr.GetCustomStatus(userId), mainStatusMapped);
 
                 return true;
@@ -257,7 +257,7 @@ namespace Discord
                         byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
                         string status = WebSocketMgr.GetUserStatus(userId);
                         string customStatus = WebSocketMgr.GetCustomStatus(userId);
-                        var profileData = new UserData(displayName ?? dscUserName, dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
+                        var profileData = new User(displayName ?? dscUserName, dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -270,12 +270,12 @@ namespace Discord
                         int recipientCount = recipients?.Count ?? 0;
                         int memberCount = recipientCount + 1;
 
-                        UserData[] members = null;
+                        User[] members = null;
                         if (recipients != null && recipients.Count > 0)
                         {
                             members = recipients
                                 .OfType<JsonObject>()
-                                .Select(r => new UserData(
+                                .Select(r => new User(
                                     r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
                                     r["username"]?.GetValue<string>() ?? "Unknown",
                                     r["id"]?.GetValue<string>() ?? "0"
@@ -307,7 +307,7 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(channelId, avatarHash, true);
-                        var profileData = new GroupData(groupName, channelId, memberCount, members, avatarImage);
+                        var profileData = new Group(groupName, channelId, memberCount, members, avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -441,7 +441,7 @@ namespace Discord
                     WebSocketMgr.GetUserStatus(e.Sender.Identifier)
                 );
 
-                MessageItem message = new MessageItem(
+                Message message = new Message(
                         e.Identifier,
                         e.Sender,
                         e.Timestamp,
@@ -467,7 +467,7 @@ namespace Discord
 
                 try
                 {
-                    MessageItem message = new MessageItem(
+                    Message message = new Message(
                         e.Identifier,
                         e.Sender,
                         e.Timestamp,

@@ -19,7 +19,7 @@ namespace Skymu
         public Notification(NotificationEventArgs e, int durationSeconds = 5)
         {
             if (!Properties.Settings.Default.EnableNotifications) return;
-            if (e.Item is MessageItem message)
+            if (e.Item is Message message)
             {
                 // 1. message sent by me → never notify
                 if (MainWindow.Identifier == message.Sender.Identifier)
@@ -41,7 +41,7 @@ namespace Skymu
                     if (MainWindow.SelectedContact is not null)
                     {
 
-                        if (!(MainWindow.SelectedContact is UserData) &&
+                        if (!(MainWindow.SelectedContact is User) &&
                             MainWindow.SelectedContact.Identifier == e.SentInChannelID)
                         {
                             Debug.WriteLine("Return: active group chat");
@@ -49,7 +49,7 @@ namespace Skymu
                         }
 
                         // 4. selected contact exists and is a DM, and message is from that user
-                        if (MainWindow.SelectedContact is UserData &&
+                        if (MainWindow.SelectedContact is User &&
                             message?.Sender.Identifier == MainWindow.SelectedContact.Identifier)
                         {
                             Debug.WriteLine("Return: active DM");

@@ -37,7 +37,7 @@ namespace Matrix
         private SynchronizationContext _uiContext;
         private readonly MatrixOOTBStuff _ootb = new MatrixOOTBStuff();
 
-        public ObservableCollection<UserData> TypingUsersList { get; private set; } = new ObservableCollection<UserData>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations
         {
             get
@@ -320,7 +320,7 @@ namespace Matrix
                 _displayNameCache = await GetRoomMemberDisplayNames(roomId);
 
                 // first pass: build a lookup of eventId -> MessageItem so reply parents can be resolved
-                var eventItemCache = new Dictionary<string, MessageItem>();
+                var eventItemCache = new Dictionary<string, Message>();
 
                 foreach (var message in messagesList)
                 {
@@ -345,9 +345,9 @@ namespace Matrix
                     DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
 
                     string displayName = _displayNameCache.TryGetValue(sender, out var name) ? name : sender;
-                    var senderData = new UserData(displayName, sender, sender);
+                    var senderData = new User(displayName, sender, sender);
 
-                    AttachmentItem[] attachments = null;
+                    Attachment[] attachments = null;
                     if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
                     {
                         string mxcUrl = urlProp.GetString();
@@ -357,12 +357,12 @@ namespace Matrix
                             body = null;
                             attachments = new[]
                             {
-                                new AttachmentItem(imageBytes, body ?? "image.jpg", AttachmentType.Image)
+                                new Attachment(imageBytes, body ?? "image.jpg", AttachmentType.Image)
                             };
                         }
                     }
 
-                    MessageItem parentMessage = null;
+                    Message parentMessage = null;
                     if (content.TryGetProperty("m.relates_to", out var relatesTo))
                     {
                         if (relatesTo.TryGetProperty("m.in_reply_to", out var inReplyTo))
@@ -381,7 +381,7 @@ namespace Matrix
                         }
                     }
 
-                    var messageItem = new MessageItem(eventId, senderData, timestamp, body, attachments, parentMessage);
+                    var messageItem = new Message(eventId, senderData, timestamp, body, attachments, parentMessage);
                     eventItemCache[eventId] = messageItem;
                     ActiveConversation.Add(messageItem);
                 }
@@ -418,11 +418,11 @@ namespace Matrix
             credData = null;
         }
 
-        public UserData MyInformation { get; private set; }
+        public User MyInformation { get; private set; }
 
-        public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
 
-        public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
+        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
 
         public async Task<bool> PopulateSidebarInformation()
         {
@@ -446,7 +446,7 @@ namespace Matrix
                     ? dnProp.GetString()
                     : _userId;
 
-                MyInformation = new UserData(
+                MyInformation = new User(
                     displayName,
                     _userId,
                     _userId,
@@ -506,17 +506,17 @@ namespace Matrix
                     var roomAvatar = await GetRoomAvatar(roomIdStr);
                     var isDirect = await IsDirectMessage(roomIdStr);
                     var memberCount = await GetRoomMemberCount(roomIdStr);
-                    UserData[] members = await GetRoomMembers(roomIdStr);
+                    User[] members = await GetRoomMembers(roomIdStr);
 
                     if (lType == ListType.Recents)
                     {
                         _recentRoomMap[roomIdStr] = roomIdStr;
                     }
 
-                    ProfileData profileData;
+                    Participant profileData;
                     if (isDirect)
                     {
-                        profileData = new UserData(
+                        profileData = new User(
                            roomName,
                            roomIdStr,
                            roomIdStr,
@@ -527,7 +527,7 @@ namespace Matrix
                     }
                     else
                     {
-                        profileData = new GroupData(
+                        profileData = new Group(
                             roomName,
                             roomIdStr,
                             memberCount,
@@ -716,9 +716,9 @@ namespace Matrix
                         ? name
                         : await GetDisplayNameForUser(sender, roomId);
 
-                    var senderData = new UserData(displayName, sender, sender);
+                    var senderData = new User(displayName, sender, sender);
 
-                    AttachmentItem[] attachments = null;
+                    Attachment[] attachments = null;
                     if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
                     {
                         string mxcUrl = urlProp.GetString();
@@ -728,12 +728,12 @@ namespace Matrix
                             body = null;
                             attachments = new[]
                             {
-                                new AttachmentItem(imageBytes, "image.jpg", AttachmentType.Image)
+                                new Attachment(imageBytes, "image.jpg", AttachmentType.Image)
                             };
                         }
                     }
 
-                    var messageItem = new MessageItem(eventId, senderData, timestamp, body, attachments, null);
+                    var messageItem = new Message(eventId, senderData, timestamp, body, attachments, null);
 
                     _uiContext?.Post(_ => ActiveConversation.Add(messageItem), null);
                 }
@@ -759,7 +759,7 @@ namespace Matrix
 
                     if (content.TryGetProperty("user_ids", out var userIds))
                     {
-                        var typingUsers = new List<UserData>();
+                        var typingUsers = new List<User>();
 
                         foreach (var userId in userIds.EnumerateArray())
                         {
@@ -772,7 +772,7 @@ namespace Matrix
                                 ? name
                                 : await GetDisplayNameForUser(userIdStr, roomId);
 
-                            typingUsers.Add(new UserData(displayName, userIdStr, userIdStr));
+                            typingUsers.Add(new User(displayName, userIdStr, userIdStr));
                         }
 
                         _uiContext?.Post(_ =>
@@ -793,7 +793,7 @@ namespace Matrix
         }
 
         // fetches a single event and wraps it in a MessageItem for use as a reply parent
-        private async Task<MessageItem> GetMessageById(string roomId, string eventId)
+        private async Task<Message> GetMessageById(string roomId, string eventId)
         {
             try
             {
@@ -819,9 +819,9 @@ namespace Matrix
                     ? name
                     : sender;
 
-                var senderData = new UserData(displayName, sender, sender);
+                var senderData = new User(displayName, sender, sender);
 
-                return new MessageItem(eventId, senderData, timestamp, body, null, null);
+                return new Message(eventId, senderData, timestamp, body, null, null);
             }
             catch
             {
@@ -984,7 +984,7 @@ namespace Matrix
             }
         }
 
-        private async Task<UserData[]> GetRoomMembers(string roomId)
+        private async Task<User[]> GetRoomMembers(string roomId)
         {
             try
             {
@@ -998,7 +998,7 @@ namespace Matrix
 
                     if (membersData.TryGetProperty("joined", out var joined))
                     {
-                        var membersList = new List<UserData>();
+                        var membersList = new List<User>();
 
                         foreach (var member in joined.EnumerateObject())
                         {
@@ -1010,18 +1010,18 @@ namespace Matrix
                                 displayName = nameElement.GetString() ?? identifier;
                             }
 
-                            membersList.Add(new UserData(displayName, identifier, identifier));
+                            membersList.Add(new User(displayName, identifier, identifier));
                         }
 
                         return membersList.ToArray();
                     }
                 }
 
-                return new UserData[0];
+                return new User[0];
             }
             catch
             {
-                return new UserData[0];
+                return new User[0];
             }
         }
 

@@ -38,7 +38,7 @@ namespace XMPP.Classes
 
         // storage
         private readonly List<RosterItem> _roster = new List<RosterItem>();
-        private readonly List<MessageItem> _messageHistory = new List<MessageItem>();
+        private readonly List<Message> _messageHistory = new List<Message>();
         private readonly HashSet<string> _recentConversations = new HashSet<string>();
         private readonly Dictionary<string, UserConnectionStatus> _presenceCache = new Dictionary<string, UserConnectionStatus>();
 
@@ -211,9 +211,9 @@ namespace XMPP.Classes
                 await SendAsync(messageStanza);
 
                 string username = ExtractUsername(_jid);
-                var senderData = new UserData(username, username, _jid);
+                var senderData = new User(username, username, _jid);
 
-                var messageItem = new MessageItem(
+                var messageItem = new Message(
                     messageId,
                     senderData,
                     DateTime.Now,
@@ -254,7 +254,7 @@ namespace XMPP.Classes
             return _recentConversations.ToList();
         }
 
-        public async Task<List<MessageItem>> GetMessageHistoryAsync(string jid, int limit)
+        public async Task<List<Message>> GetMessageHistoryAsync(string jid, int limit)
         {
             // return stored messages that belong to this conversation, using the jid map for
             // outgoing messages and the sender identifier for incoming ones
@@ -417,9 +417,9 @@ namespace XMPP.Classes
 
                 string messageBody = body.Value;
                 string displayName = ExtractUsername(bareJid);
-                var senderData = new UserData(displayName, displayName, bareJid);
+                var senderData = new User(displayName, displayName, bareJid);
 
-                var messageItem = new MessageItem(
+                var messageItem = new Message(
                     id,
                     senderData,
                     DateTime.Now,

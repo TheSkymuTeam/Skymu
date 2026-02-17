@@ -25,11 +25,11 @@ namespace Skymu
         {
             switch (item)
             {
-                case MessageItem _:
+                case Message _:
                     return MessageTemplate;
-                case CallStartedItem _:
+                case CallStartedNotice _:
                     return CallStartedTemplate;
-                case CallEndedItem _:
+                case CallEndedNotice _:
                     return CallEndedTemplate;
                 default:
                     return base.SelectTemplate(item, container);

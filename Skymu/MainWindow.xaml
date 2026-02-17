@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Skymu"
         xmlns:properties="clr-namespace:Skymu.Properties"
-        xmlns:data="clr-namespace:MiddleMan;assembly=MiddleMan"
+        xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"  
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         WindowStyle="None"
@@ -61,7 +61,25 @@ Style="{StaticResource Window}"
             <Setter Property="Height" Value="16" />
             <Setter Property="Width" Value="36" />
         </Style>
-        <DataTemplate x:Key="ContactItemTemplate">
+
+        <!-- CONTACT ITEM TEMPLATE START -->
+
+        <!-- Shared style for both targeted templates -->
+        <Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontFamily" Value="Tahoma"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+        <Style x:Key="ContactStatusStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontFamily" Value="Tahoma"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#999999"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <!-- User template -->
+        <DataTemplate DataType="{x:Type plugin:User}">
             <Grid Margin="2,4,0,4" Height="32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
@@ -75,98 +93,144 @@ Style="{StaticResource Window}"
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-
+                <!-- Profile picture -->
                 <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
-
-                    <Border
-        Background="Transparent"
-        CornerRadius="0">
+                    <Border Background="Transparent" CornerRadius="0">
                         <Border.Effect>
-                            <DropShadowEffect
-                Color="#000000"
-                BlurRadius="2"
-                ShadowDepth="1"
-    Direction="270"
-                Opacity="0.50"/>
+                            <DropShadowEffect Color="#000000" BlurRadius="2"
+                        ShadowDepth="1" Direction="270" Opacity="0.50"/>
                         </Border.Effect>
-
                         <Grid>
-
-                            <Image Stretch="UniformToFill"
-                                   RenderOptions.BitmapScalingMode="HighQuality"
->
+                            <Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
                                 <Image.Source>
                                     <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                        <Binding Path="ProfilePicture" />
-                                        <Binding Path="MemberCount" />
+                                        <Binding Path="ProfilePicture"/>
+                                        <Binding Source="user"/>
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                                <!-- Inner border overlay -->
-                            <Border
-                BorderBrush="#80BBBBBB"
-                BorderThickness="1"
-                CornerRadius="0"/>
+                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
                         </Grid>
                     </Border>
                 </Grid>
 
-                <!-- Status Icon -->
+            
                 <local:SliceControl
-Grid.Column="1"
-Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
-ElementCount="22"
-StackDirection="Horizontal"
-DefaultIndex="{Binding PresenceStatus,
-                Converter={StaticResource PresenceStatusConverter},
-                FallbackValue=21}"
-Margin="10,0,0,0"
-HorizontalAlignment="Left"
-HoverIndex="-1"
-PressedIndex="-1"
-Slice="false"
-Width="14" Grid.Row="1"/>
+            Grid.Column="1" Grid.Row="1"
+            Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
+            ElementCount="22"
+            StackDirection="Horizontal"
+            DefaultIndex="{Binding PresenceStatus,
+                Converter={StaticResource PresenceStatusConverter}}"
+            Margin="10,0,0,0"
+            HorizontalAlignment="Left"
+            HoverIndex="-1" PressedIndex="-1"
+            Slice="false" Width="14"/>
 
-
-                <!-- Contact Info -->
-
-                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" 
-                           FontSize="11"
-                               FontFamily="Tahoma"
-                           TextTrimming="CharacterEllipsis"/>
-                <TextBlock x:Name="statusText" 
-                               Grid.Column="2" Grid.Row="2" Margin="10,1,0,0"
-                           FontSize="11"
-    FontFamily="Tahoma"
-                           Background="Transparent"
-                           Foreground="#999999"
-                           TextTrimming="CharacterEllipsis">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource TextStatusConverter}">
-                            <Binding Path="Status" />
-                            <Binding Path="MemberCount" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-
-
-
+                <!-- Name + status text -->
+                <TextBlock x:Name="usernameText"
+            Grid.Column="2" Grid.Row="1" Margin="10,0,0,0"
+            Text="{Binding DisplayName}"
+            Style="{StaticResource ContactUsernameStyle}"/>
+                <TextBlock x:Name="statusText"
+            Grid.Column="2" Grid.Row="2" Margin="10,1,0,0"
+            Style="{StaticResource ContactStatusStyle}"
+            Text="{Binding Status, TargetNullValue=''}"/>
             </Grid>
             <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" 
-                     Value="True">
+                <DataTrigger Binding="{Binding IsSelected,
+            RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+            Value="True">
                     <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
                     <Setter TargetName="statusText" Property="Foreground" Value="White"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-        <DataTemplate x:Key="ConversationItemTemplate">
+
+        <!-- Group template -->
+        <DataTemplate DataType="{x:Type plugin:Group}">
+            <Grid Margin="2,4,0,4" Height="32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="34"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Profile picture -->
+                <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
+                    <Border Background="Transparent" CornerRadius="0">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" BlurRadius="2"
+                        ShadowDepth="1" Direction="270" Opacity="0.50"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                        <Binding Path="ProfilePicture"/>
+                                        <Binding Source="group"/>
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <local:SliceControl
+Grid.Column="1" Grid.Row="1"
+Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
+ElementCount="22"
+StackDirection="Horizontal"
+DefaultIndex="21"
+Margin="10,0,0,0"
+HorizontalAlignment="Left"
+HoverIndex="-1" PressedIndex="-1"
+Slice="false" Width="14"/>
+                
+                <!-- Name + member count -->
+                <TextBlock x:Name="usernameText"
+            Grid.Column="2" Grid.Row="1" Margin="10,0,0,0"
+            Text="{Binding DisplayName}"
+            Style="{StaticResource ContactUsernameStyle}"/>
+                <TextBlock x:Name="statusText"
+            Grid.Column="2" Grid.Row="2" Margin="10,1,0,0"
+            Style="{StaticResource ContactStatusStyle}">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource TextStatusConverter}">
+                            <Binding Path="Status"/>
+                            <Binding Path="MemberCount"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected,
+            RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+            Value="True">
+                    <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
+                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+
+        <!-- CONTACT ITEM TEMPLATE END -->
+
+        <!-- CONVERSATION ITEM TEMPLATES START -->
+
+        <!-- MessageItem Template -->
+        <DataTemplate DataType="{x:Type plugin:Message}">
             <Grid x:Name="ConversationGrid" Margin="0,9.5,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="98"/>
                     <ColumnDefinition Width="16"/>
@@ -174,80 +238,115 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Reply header -->
                 <VirtualizingStackPanel Visibility="{Binding ParentMessage,
-                        Converter={StaticResource NullDependentVisibilityConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
+                Converter={StaticResource NullDependentVisibilityConverter}}"
+                Grid.Row="0" Grid.ColumnSpan="4"
+                Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
                     <Image Source="{Binding Source={x:Static properties:Settings.Default},
-                        Path=ThemeRoot,
-                        Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/reply-arrow.png'}"
-       Width="12"
-       Margin="0,0,6,0"
-       SnapsToDevicePixels="True"
-       VerticalAlignment="Center" />
+                    Path=ThemeRoot,
+                    Converter={StaticResource ThemeImageConverter},
+                    ConverterParameter='Chat/reply-arrow.png'}"
+                   Width="12" Margin="0,0,6,0"
+                   SnapsToDevicePixels="True" VerticalAlignment="Center"/>
                     <TextBlock LineHeight="1" TextWrapping="NoWrap"
-    TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
+                       TextTrimming="CharacterEllipsis" Width="400"
+                       FontSize="11" FontFamily="Tahoma" Foreground="#999999">
                         <TextBlock.Text>
-                            <MultiBinding StringFormat='Replying to {0} - “{1}”'>
-                                <Binding Path="ParentMessage.Sender.DisplayName" />
-                                <Binding Path="ParentMessage.Text" Converter="{StaticResource ReplyBodyConverter}"/>
+                            <MultiBinding StringFormat='Replying to {0} - "{1}"'>
+                                <Binding Path="ParentMessage.Sender.DisplayName"/>
+                                <Binding Path="ParentMessage.Text"
+                                 Converter="{StaticResource ReplyBodyConverter}"/>
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
                 </VirtualizingStackPanel>
 
+                <!-- Sender name -->
                 <TextBlock Grid.Row="1" Grid.Column="0"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Top"
-                   Margin="-1000,0,0,0"
-                   FontSize="11"
-                           Text="{Binding Sender.DisplayName}"
+                   HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Margin="-1000,0,0,0" FontSize="11"
+                   Text="{Binding Sender.DisplayName}"
                    FontFamily="Tahoma"
                    Foreground="{Binding Sender.Identifier,
-                        Converter={StaticResource IdToColorConverter}}">
+                       Converter={StaticResource IdToColorConverter}}">
                     <TextBlock.Visibility>
                         <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
-                            <Binding Path="PreviousMessageIdentifier" />
-                            <Binding Path="Sender.Identifier" />
+                            <Binding Path="PreviousMessageIdentifier"/>
+                            <Binding Path="Sender.Identifier"/>
                         </MultiBinding>
                     </TextBlock.Visibility>
                 </TextBlock>
 
-
+                <!-- Message body + attachment -->
                 <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
-
                     <ContentControl
-   Visibility="{Binding Text,
-                  Converter={StaticResource NullDependentVisibilityConverter}}"                      
-Content="{Binding Text,
-                  Converter={StaticResource FormatFullTextConverter}}" />
-
-                    <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
-Grid.Column="2" Source="{Binding Attachments[0].File,
+                Visibility="{Binding Text,
+                    Converter={StaticResource NullDependentVisibilityConverter}}"
+                Content="{Binding Text,
+                    Converter={StaticResource FormatFullTextConverter}}"/>
+                    <Image RenderOptions.BitmapScalingMode="HighQuality"
+                   HorizontalAlignment="Left" Margin="0,5,0,5"
+                   MaxWidth="300" MaxHeight="300" Stretch="Uniform"
+                   Source="{Binding Attachments[0].File,
                        Converter={StaticResource MsgByteArrayToImageConverter}}"
-                           Visibility="{Binding Attachments,
+                   Visibility="{Binding Attachments,
                        Converter={StaticResource NullDependentVisibilityConverter}}"/>
                 </StackPanel>
 
-                <TextBlock Grid.Row="1" Grid.Column="2"
-      Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
-      FontSize="11"
-      FontFamily="Tahoma"
-      Foreground="#999999"/>
-
-                <TextBlock Grid.Row="1" Grid.Column="2"
-                   Text="{Binding StartedBy, StringFormat='Call started by: {0}'}"
-                   FontSize="11"
-                   FontFamily="Tahoma"
-                   Foreground="#999999"/>
-
+                <!-- Timestamp -->
                 <TextBlock Grid.Row="1" Grid.Column="3"
                    Text="{Binding Time, StringFormat=h:mm tt}"
-                   VerticalAlignment="Top"
-                   FontSize="11"
-                   FontFamily="Tahoma"
-                   Foreground="#999999"
-                           HorizontalAlignment="Left"/>
+                   VerticalAlignment="Top" FontSize="11"
+                   FontFamily="Tahoma" Foreground="#999999"
+                   HorizontalAlignment="Left"/>
             </Grid>
         </DataTemplate>
+
+        <!-- CallStartedItem Template -->
+        <DataTemplate DataType="{x:Type plugin:CallStartedNotice}">
+            <Grid Margin="0,9.5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="114"/>
+                    <ColumnDefinition Width="430"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1"
+                   Text="{Binding StartedBy, StringFormat='Call started by: {0}'}"
+                   FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
+
+                <TextBlock Grid.Column="2"
+                   Text="{Binding Time, StringFormat=h:mm tt}"
+                   VerticalAlignment="Top" FontSize="11"
+                   FontFamily="Tahoma" Foreground="#999999"
+                   HorizontalAlignment="Left"/>
+            </Grid>
+        </DataTemplate>
+
+        <!-- CallEndedItem Template -->
+        <DataTemplate DataType="{x:Type plugin:CallEndedNotice}">
+            <Grid Margin="0,9.5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="114"/>
+                    <ColumnDefinition Width="430"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1"
+                   Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}"
+                   FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
+
+                <TextBlock Grid.Column="2"
+                   Text="{Binding Time, StringFormat=h:mm tt}"
+                   VerticalAlignment="Top" FontSize="11"
+                   FontFamily="Tahoma" Foreground="#999999"
+                   HorizontalAlignment="Left"/>
+            </Grid>
+        </DataTemplate>
+
+        <!-- CONVERSATION ITEM TEMPLATE END -->
+        
         <Style x:Key="NoInsetListBox" TargetType="ListBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -628,7 +727,7 @@ MouseLeftButtonDown="Contacts_BtnDown"
     Grid.Row="2"        
     BorderThickness="0"
     Style="{StaticResource NoInsetListBox}"
-    ItemTemplate="{StaticResource ContactItemTemplate}"
+
     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          ScrollViewer.CanContentScroll="True"
     SelectionChanged="ContactList_SelectionChanged"
@@ -724,7 +823,7 @@ MouseLeftButtonUp="MakeGroup_Click"
                                     HoverIndex="1"
                                     PressedIndex="2"
                                     MouseLeftButtonUp="CallPhones_Click"
-                                    Text="{Binding [sZAPBUTTON_CALLPHONES]}"
+                                    Text="{Binding [sZAPBUTTON_SKYPEOUT]}"
                                     TextStartPositionX="32"
                                     TextFont="Arial"
                                     TextWeight="Bold"
@@ -931,7 +1030,7 @@ CornerRadius="0,0,4,4">
                                         <Image.Source>
                                             <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
                                                 <Binding Path="ProfilePicture" />
-                                                <Binding Path="Members" />
+                                                <Binding Path="MemberCount" />
                                             </MultiBinding>
                                         </Image.Source>
                                         <Image.Effect>
@@ -951,13 +1050,13 @@ ElementCount="22"
 StackDirection="Horizontal"
 DefaultIndex="{Binding PresenceStatus,
                 Converter={StaticResource PresenceStatusConverter},
-                FallbackValue=21}"
+                FallbackValue=0}"
 HoverIndex="-1"
 PressedIndex="-1"
 Slice="false"
 Width="14"/>
                                     <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="{Binding PresenceStatus,
-                        Converter={StaticResource StatIntToText}, FallbackValue=Group chat}" 
+                        Converter={StaticResource StatIntToText}, FallbackValue=Unknown}" 
            FontSize="11"
                FontFamily="Tahoma"
            TextTrimming="CharacterEllipsis"/>
@@ -1106,7 +1205,6 @@ BorderThickness="0"
                                         VerticalAlignment="Bottom"
                                         Margin="0,0,0,0"
 Style="{StaticResource NoInsetListBox}"
-ItemTemplate="{StaticResource ConversationItemTemplate}"
 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                          Loaded="ConversationItemsList_Loaded"
                                          ScrollViewer.CanContentScroll="False"
@@ -1235,7 +1333,7 @@ ElementCount="37"
 IsAnimation="True"
                                                         AnimationFps="30"
 StackDirection="Vertical"
-DefaultIndex="{Binding PresenceStatus}"
+DefaultIndex="0"
 HoverIndex="-1"
 PressedIndex="-1"
 

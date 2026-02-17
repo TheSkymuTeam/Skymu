@@ -20,6 +20,7 @@ using System.Windows;
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
 using System.Windows.Controls; // Standard Textblock with Tahoma-rendered emoji
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -419,4 +420,5 @@ namespace Skymu
                 inlines.Add(currentRun);
         }
     }
+   
 }

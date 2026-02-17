@@ -20,11 +20,11 @@ namespace Discord.Classes
         {
             public string ChannelId { get; set; }
             public string Identifier { get; set; } 
-            public UserData Sender { get; set; } 
+            public User Sender { get; set; } 
             public DateTime Timestamp { get; set; }
             public string Text { get; set; } 
-            public AttachmentItem[] Attachments { get; set; } 
-            public MessageItem ParentMessage { get; set; } = null;
+            public Attachment[] Attachments { get; set; } 
+            public Message ParentMessage { get; set; } = null;
         }
     }
 }
