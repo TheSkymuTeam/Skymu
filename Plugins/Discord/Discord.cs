@@ -422,7 +422,7 @@ namespace Discord
             string currentUserId = _currentUserId;
 
             // Check if replied to current user
-            if (e.ParentMessage.Sender.Identifier == currentUserId)
+            if (e.ParentMessage is not null && e.ParentMessage.Sender.Identifier == currentUserId)
                 return true;
 
             // Check if current user is mentioned in the message

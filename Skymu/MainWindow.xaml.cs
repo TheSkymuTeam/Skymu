@@ -226,9 +226,9 @@ namespace Skymu
             deactivatedWindow = false;
         }
 
-        private static BitmapImage LoadAvatar()
+        private static BitmapImage LoadAvatar(string avatar)
         {
-            string AvatarPath = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_anonymous.png";
+            string AvatarPath = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
 
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
@@ -240,7 +240,8 @@ namespace Skymu
             return bitmap;
         }
 
-        internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
+        internal static readonly BitmapImage AnonymousAvatar = LoadAvatar("anonymous");
+        internal static readonly BitmapImage GroupAvatar = LoadAvatar("group");
 
         internal static string Username, Identifier = String.Empty;
         internal static UserConnectionStatus Status = UserConnectionStatus.Offline;
@@ -1158,7 +1159,7 @@ namespace Skymu
                 {
                     Width = 28,
                     Height = 28,
-                    Margin = new Thickness(2),
+                    Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
                     ToolTip = ConvertHexKeyToUnicode(emojiKey)
@@ -1300,29 +1301,36 @@ namespace Skymu
     }
 
     // Converters used in the MainWindow XAML
-    public class ByteArrayToImageSourceConverter : IValueConverter
+    public class ByteArrayToImageSourceConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not byte[] bytes || bytes.Length == 0)
-                return MainWindow.AnonymousAvatar;
+            var bytes = values.Length > 0 ? values[0] as byte[] : null;
+            var members = values.Length > 1 ? values[1] as int? : null;
 
-            var bmp = new BitmapImage();
-            using (var stream = new MemoryStream(bytes))
+            if (bytes != null && bytes.Length > 0)
             {
-                bmp.BeginInit();
-                bmp.CacheOption = BitmapCacheOption.OnLoad;
-                bmp.StreamSource = stream;
-                bmp.EndInit();
+                var bmp = new BitmapImage();
+                using (var stream = new MemoryStream(bytes))
+                {
+                    bmp.BeginInit();
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.StreamSource = stream;
+                    bmp.EndInit();
+                }
+                bmp.Freeze();
+                return bmp;
             }
-            bmp.Freeze();
 
-            return bmp;
+            if (members != null || members > 1)
+                return MainWindow.GroupAvatar;
+
+            return MainWindow.AnonymousAvatar;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return Binding.DoNothing;
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
 
@@ -1330,7 +1338,7 @@ namespace Skymu
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not byte[] bytes || bytes.Length == 0)
+            if (value is not byte[] bytes || bytes.Length == 0 || value is null)
                 return null;
 
             try
@@ -1402,7 +1410,7 @@ namespace Skymu
         {
             if (value is not string text)
                 return DependencyProperty.UnsetValue;
-            var tb = MessageTools.FormTextblock(text);
+            var tb = MessageTools.FormTextblock(text, true);
 
             if (TextBlockStyle is not null)
                 tb.Style = TextBlockStyle;
@@ -1499,6 +1507,21 @@ namespace Skymu
             if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
             else if (value is null) return Visibility.Collapsed;
             else return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NullDependentBoolean : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string s && String.IsNullOrEmpty(s)) return false;
+            else if (value is null) return false;
+            else return true;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

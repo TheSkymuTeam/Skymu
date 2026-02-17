@@ -26,7 +26,10 @@ namespace SkypeDBBrowser
         private string _currentUserId;
 
         // configurable message limit 
-        private const int MESSAGE_LIMIT = 1000; 
+        private const int MESSAGE_LIMIT = 1000;
+
+        // JPEG SOI magic bytes that the real image data starts with
+        private static readonly byte[] JpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
 
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -249,13 +252,14 @@ namespace SkypeDBBrowser
 
                     using (var command = connection.CreateCommand())
                     {
-                        // query contacts from Contacts table
+                        // query contacts from Contacts table, including avatar_image
                         command.CommandText = @"
                             SELECT 
                                 skypename,
                                 displayname,
                                 mood_text,
-                                availability
+                                availability,
+                                avatar_image
                             FROM Contacts 
                             WHERE is_permanent = 1 
                             AND skypename != @currentUser
@@ -272,6 +276,7 @@ namespace SkypeDBBrowser
                                 var displayName = reader.IsDBNull(1) ? skypename : reader.GetString(1);
                                 var mood = reader.IsDBNull(2) ? "" : reader.GetString(2);
                                 var availability = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
+                                var avatarBytes = reader.IsDBNull(4) ? null : ExtractJpegFromAvatarBlob((byte[])reader.GetValue(4));
 
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
@@ -280,7 +285,8 @@ namespace SkypeDBBrowser
                                     skypename,
                                     skypename,
                                     mood,
-                                    status
+                                    status,
+                                    avatarBytes
                                 ));
                             }
                         }
@@ -302,13 +308,45 @@ namespace SkypeDBBrowser
             {
                 RecentsList.Clear();
 
+                // build a lookup of contact data (avatar + mood) keyed by skypename so we
+                // can enrich individual conversations that belong to a known contact
+                var contactInfo = new System.Collections.Generic.Dictionary<string, (string Mood, byte[] Avatar, UserConnectionStatus Status)>(StringComparer.OrdinalIgnoreCase);
+
                 using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
                 {
                     await connection.OpenAsync();
 
+                    using (var contactCmd = connection.CreateCommand())
+                    {
+                        contactCmd.CommandText = @"
+                            SELECT 
+                                skypename,
+                                mood_text,
+                                availability,
+                                avatar_image
+                            FROM Contacts
+                            WHERE skypename IS NOT NULL";
+
+                        using (var reader = await contactCmd.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var skypename = reader.IsDBNull(0) ? null : reader.GetString(0);
+                                if (string.IsNullOrEmpty(skypename)) continue;
+
+                                var mood = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                                var availability = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
+                                var avatarBytes = reader.IsDBNull(3) ? null : ExtractJpegFromAvatarBlob((byte[])reader.GetValue(3));
+                                var status = ConvertSkypeAvailabilityToStatus(availability);
+
+                                contactInfo[skypename] = (mood, avatarBytes, status);
+                            }
+                        }
+                    }
+
                     using (var command = connection.CreateCommand())
                     {
-                        // gset recent conversations
+                        // get recent conversations
                         command.CommandText = @"
                             SELECT 
                                 c.identity,
@@ -333,21 +371,28 @@ namespace SkypeDBBrowser
                                 // type 1 = one-on-one, 2 = group chat, 4 = ???
                                 if (type == 2)
                                 {
-                                    // group conversation
+                                    // group conversation — look up participants and hydrate member data
+                                    var members = await GetGroupMembersAsync(connection, identity, contactInfo);
+
                                     RecentsList.Add(new GroupData(
                                         displayName,
-                                        identity
+                                        identity,
+                                        members.Length,
+                                        members
                                     ));
                                 }
                                 else
                                 {
-                                    // individual conversation
+                                    // individual conversation — enrich with contact data if available
+                                    contactInfo.TryGetValue(identity, out var info);
+
                                     RecentsList.Add(new UserData(
                                         displayName,
                                         identity,
                                         identity,
-                                        null,
-                                        UserConnectionStatus.Offline
+                                        info.Mood,
+                                        info.Status == default ? UserConnectionStatus.Offline : info.Status,
+                                        info.Avatar
                                     ));
                                 }
                             }
@@ -389,6 +434,91 @@ namespace SkypeDBBrowser
         }
 
         // helper methods
+
+        /// <summary>
+        /// Queries the Participants table for all members of a group conversation,
+        /// then hydrates each into a UserData using the pre-built contactInfo lookup.
+        /// Members not found in contacts get a minimal UserData with no avatar or mood.
+        /// </summary>
+        private async Task<UserData[]> GetGroupMembersAsync(
+            SqliteConnection connection,
+            string conversationIdentity,
+            System.Collections.Generic.Dictionary<string, (string Mood, byte[] Avatar, UserConnectionStatus Status)> contactInfo)
+        {
+            var members = new System.Collections.Generic.List<UserData>();
+
+            using (var cmd = connection.CreateCommand())
+            {
+                // Participants links to Conversations by convo_id; identity holds the skypename
+                cmd.CommandText = @"
+                    SELECT 
+                        p.identity,
+                        COALESCE(ct.displayname, p.identity) AS displayname
+                    FROM Participants p
+                    INNER JOIN Conversations c ON c.id = p.convo_id
+                    LEFT JOIN Contacts ct ON ct.skypename = p.identity
+                    WHERE c.identity = @conversationIdentity
+                      AND p.identity != @currentUser";
+
+                cmd.Parameters.AddWithValue("@conversationIdentity", conversationIdentity);
+                cmd.Parameters.AddWithValue("@currentUser", _currentUserId);
+
+                using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        var skypename = reader.IsDBNull(0) ? null : reader.GetString(0);
+                        if (string.IsNullOrEmpty(skypename)) continue;
+
+                        var displayName = reader.IsDBNull(1) ? skypename : reader.GetString(1);
+
+                        // enrich with avatar + mood if we have this person in contacts
+                        contactInfo.TryGetValue(skypename, out var info);
+
+                        members.Add(new UserData(
+                            displayName,
+                            skypename,
+                            skypename,
+                            info.Mood,
+                            info.Status == default ? UserConnectionStatus.Offline : info.Status,
+                            info.Avatar
+                        ));
+                    }
+                }
+            }
+
+            return members.ToArray();
+        }
+
+        /// <summary>
+        /// Skype stores avatars as a raw blob that begins with a proprietary 1-byte
+        /// null sentinel followed immediately by a full JPEG file (SOI = 0xFF 0xD8 0xFF ...).
+        /// This method scans the blob for the first occurrence of the JPEG SOI magic bytes
+        /// and returns everything from that offset onward, giving a clean JPEG that any
+        /// standard image decoder can consume.  Returns null when no JPEG is found or the
+        /// input is null/empty.
+        /// </summary>
+        private static byte[] ExtractJpegFromAvatarBlob(byte[] blob)
+        {
+            if (blob == null || blob.Length < JpegMagic.Length)
+                return null;
+
+            // scan for 0xFF 0xD8 0xFF (JPEG SOI + first marker byte)
+            for (int i = 0; i <= blob.Length - JpegMagic.Length; i++)
+            {
+                if (blob[i] == JpegMagic[0] &&
+                    blob[i + 1] == JpegMagic[1] &&
+                    blob[i + 2] == JpegMagic[2])
+                {
+                    // found the JPEG header — slice from here to end
+                    var jpeg = new byte[blob.Length - i];
+                    Array.Copy(blob, i, jpeg, 0, jpeg.Length);
+                    return jpeg;
+                }
+            }
+
+            return null; // no valid JPEG found in blob
+        }
 
         private string CleanSkypeMessageBody(string body)
         {

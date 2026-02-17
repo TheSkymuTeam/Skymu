@@ -7,8 +7,8 @@
         WindowStyle="SingleBorderWindow" 
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource Window}"
-        Height="390"
-        Width="515"
+        Height="394"
+        Width="518"
         >
     <Grid>
         <Grid.RowDefinitions>

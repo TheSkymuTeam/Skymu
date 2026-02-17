@@ -141,8 +141,8 @@ namespace MiddleMan
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public GroupData(string name, string identifier, int member_count = 0,
-                         UserData[] members = null, byte[] profile_picture = null)
+        public GroupData(string name, string identifier, int member_count,
+                         UserData[] members, byte[] profile_picture = null)
             : base(name, identifier, profile_picture)
         {
             _member_count = member_count;

@@ -23,7 +23,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
+        <ImageBrush  ImageSource="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/loginBackground.png'}" Stretch="Fill"/>
     </Window.Background>
@@ -33,7 +33,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
         <TextBlock x:Name="header" Text="{Binding [sF_LOGIN_WELCOME]}" Foreground="{StaticResource SkBlue}"
                    Height="32" HorizontalAlignment="Center" Margin="0,44,0,0"
                    VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20" />
-        <Image x:Name="throbber" Source="/Resources/Universal/Animations/login-throbber.png"
+        <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="throbber" Source="/Resources/Universal/Animations/login-throbber.png"
            Width="128"
            Height="128"
            Margin="0,0,0,48"

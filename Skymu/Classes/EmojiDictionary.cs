@@ -97,7 +97,10 @@ public static class EmojiDictionary
             { "1F44A", "fistbump" },
             { "1F44B", "hi" },
             { "1F44C", "ok" },
-            { "1F44D", "like" },
+            { "1F44E", "no" },
+            { "1F44D", "yes" },
+            { "274C", "no" },
+            { "2705", "yes" },
             { "1F44F", "clap" },
             { "1F449", "poke" },
             { "1F595", "finger" },
@@ -292,8 +295,6 @@ public static class EmojiDictionary
             { "1F49D", "lovegift" },
             
             // Symbols - Checkmarks/Symbols
-            { "274C", "no" },
-            { "2705", "yes" },
             { "1F480", "skull" },
             { "1F4A9", "poop" },
             { "1F534", "red" },

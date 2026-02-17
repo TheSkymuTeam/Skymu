@@ -28,10 +28,11 @@ Style="{StaticResource Window}"
             <Setter Property="FontFamily" Value="Tahoma"/>
             <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
         </Style>
-        <local:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageConverter"/>
+        <local:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
         <local:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
         <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
         <local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
+        <local:NullDependentBoolean x:Key="NullDependentBoolean"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <local:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
@@ -92,9 +93,16 @@ Style="{StaticResource Window}"
                         <Grid>
 
                             <Image Stretch="UniformToFill"
-       Source="{Binding ProfilePicture,
-                        Converter={StaticResource ByteArrayToImageConverter}}" />
-                            <!-- Inner border overlay -->
+                                   RenderOptions.BitmapScalingMode="HighQuality"
+>
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                        <Binding Path="ProfilePicture" />
+                                        <Binding Path="MemberCount" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                                <!-- Inner border overlay -->
                             <Border
                 BorderBrush="#80BBBBBB"
                 BorderThickness="1"
@@ -148,7 +156,7 @@ Width="14" Grid.Row="1"/>
                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" 
                      Value="True">
                     <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="#BABABA"/>
+                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -215,7 +223,7 @@ Content="{Binding Text,
                     <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
 Grid.Column="2" Source="{Binding Attachments[0].File,
                        Converter={StaticResource MsgByteArrayToImageConverter}}"
-                           Visibility="{Binding Attachments[0].File,
+                           Visibility="{Binding Attachments,
                        Converter={StaticResource NullDependentVisibilityConverter}}"/>
                 </StackPanel>
 
@@ -716,7 +724,7 @@ MouseLeftButtonUp="MakeGroup_Click"
                                     HoverIndex="1"
                                     PressedIndex="2"
                                     MouseLeftButtonUp="CallPhones_Click"
-                                    Text="{Binding [sZAPBUTTON_SKYPEOUT]}"
+                                    Text="{Binding [sZAPBUTTON_CALLPHONES]}"
                                     TextStartPositionX="32"
                                     TextFont="Arial"
                                     TextWeight="Bold"
@@ -919,9 +927,14 @@ CornerRadius="0,0,4,4">
                                     <RowDefinition Height="14"></RowDefinition>
                                     <RowDefinition Height="*"></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Image Grid.RowSpan="6" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" Source="{Binding ProfilePicture,
-                        Converter={StaticResource ByteArrayToImageConverter}}">
-                                    <Image.Effect>
+                                    <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                                <Binding Path="ProfilePicture" />
+                                                <Binding Path="Members" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                        <Image.Effect>
                                         <DropShadowEffect
                        Color="#FFA0A0A0"
             BlurRadius="4"
@@ -990,7 +1003,7 @@ TextColor="White"
 Width="98"/>
 
                                     <local:SliceControl
-        Source="/Resources/Universal/Chat/btn_call_arrow.png"
+        Source="/Resources/Universal/Chat/btn_call_left.png"
         ElementCount="5"
         StackDirection="Vertical"
         DefaultIndex="0"
@@ -1005,9 +1018,22 @@ Width="98"/>
         TextWeight="Bold"
         TextSize="13"
         TextColor="White"
-        Width="81"
+        Width="59"
         LeftRightWidth="22"
         Margin="10,0,0,0" />
+                                    <local:SliceControl
+Source="/Resources/Universal/Chat/btn_call_right.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+                                MouseLeftButtonUp="CallButtonClick"
+PressedIndex="2"
+
+
+
+Width="24"
+LeftRightWidth="1"/>
                                     <local:SliceControl
 Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
@@ -1038,7 +1064,7 @@ Slice="false"
 Margin="10,0,0,0" />
                                 </StackPanel>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8" />
-                                <Image Grid.Row="2" x:Name="throbber" Source="/Resources/Universal/Animations/loading_throbber.png"
+                                <Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="/Resources/Universal/Animations/loading_throbber.png"
        Width="90"
        Height="90"
 
@@ -1142,20 +1168,62 @@ Slice="false"/>
                                                 <Popup x:Name="EmojiFlyout" 
        PlacementTarget="{Binding ElementName=EmojiButton}"
        Placement="Top"
+                                                       HorizontalOffset="-20"
        StaysOpen="False"
        AllowsTransparency="True">
-                                                    <Border Background="#CC333333" 
+                                                    <Border Background="#CC202020" 
             BorderBrush="#666666"
             BorderThickness="1"
             CornerRadius="4"
-            Padding="8">
-                                                        <ScrollViewer MaxHeight="300" 
-                     MaxWidth="250"
-                     VerticalScrollBarVisibility="Auto"
+            Padding="2">
+                                                        <ScrollViewer MaxHeight="278" 
+                     MaxWidth="257"
+                     VerticalScrollBarVisibility="Visible"
                      HorizontalScrollBarVisibility="Disabled">
+                                                         
+                                                            <ScrollViewer.Resources>
+
+                                                                <Style TargetType="ScrollBar">
+                                                                    <Setter Property="Width" Value="8"/>
+                                                                    <Setter Property="Background" Value="Transparent"/>
+                                                                    <Setter Property="Template">
+                                                                        <Setter.Value>
+                                                                            <ControlTemplate TargetType="ScrollBar">
+                                                                                <Grid Background="Transparent"
+                              HorizontalAlignment="Right"
+                              Width="8">
+
+                                                                                    <Track Name="PART_Track"
+                                   IsDirectionReversed="True">
+
+                                                                                        <Track.Thumb>
+                                                                                            <Thumb Width="6"
+                                           HorizontalAlignment="Center">
+                                                                                                <Thumb.Template>
+                                                                                                    <ControlTemplate TargetType="Thumb">
+                                                                                                        <Border
+                                                    Background="White"
+                                                    CornerRadius="3"
+                                                    Width="6"
+                                                    HorizontalAlignment="Center"
+                                                    Opacity="0.9"/>
+                                                                                                    </ControlTemplate>
+                                                                                                </Thumb.Template>
+                                                                                            </Thumb>
+                                                                                        </Track.Thumb>
+
+                                                                                    </Track>
+
+                                                                                </Grid>
+                                                                            </ControlTemplate>
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Style>
+
+                                                            </ScrollViewer.Resources>
                                                             <WrapPanel x:Name="EmojiWrapPanel" 
                       Orientation="Horizontal"
-                      Width="234"/>
+/>
                                                         </ScrollViewer>
                                                     </Border>
                                                 </Popup>

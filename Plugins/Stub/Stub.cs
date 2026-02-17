@@ -62,22 +62,22 @@ namespace Stub
             TypingUsersList.Clear();                                                             // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
             ActiveConversation.Clear();
 
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 0), "i play genshin impact on the steam deck it doesnt ban you tho 💀", null, null));
-            ActiveConversation.Add(new MessageItem("20203", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 10), "no commen", null, null));
-            ActiveConversation.Add(new MessageItem("20204", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 20), "bro\nits a fucking game", null, null));
-            ActiveConversation.Add(new MessageItem("20205", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 30), "ok no comment", null, null));
-            ActiveConversation.Add(new MessageItem("20206", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 40), "stop hating on people for playing a game", null, null));
-            ActiveConversation.Add(new MessageItem("20207", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 50), "i didnt say anything", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 0), "nah but you fucking implied it", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 11, 10), "no?", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 20), "fucking hate people like you unironically dude \"... no comment\" its a fucking game. i dont spend money on it and i like doing the quests. its the same as ZZZ\nyou have no fucking excuse to hate on a game\nunless its shit like concord\ngenshin impact genuinely is a decent game gameplay wise", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 12, 40), "holy shit stfu both of you", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 13, 30), "@Mixin do u wanna js go to dms\nto do this shit", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 15, 0), "nah i dont wanna collab on this project anymore while this piece of shit is in here unironically.", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 15, 20), "bro i just said no comment on genshin impact...\nanyways", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 15, 30), "ggwp", null, null));
-            ActiveConversation.Add(new MessageItem("20202", new UserData("Mixin", "Mixin", "Mixin"), new DateTime(2025, 4, 30, 8, 15, 40), "man wtf", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 0), "i play genshin impact on the steam deck it doesnt ban you tho 💀"));
+            ActiveConversation.Add(new MessageItem("20203", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 10), "no commen"));
+            ActiveConversation.Add(new MessageItem("20204", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 20), "bro\nits a fucking game"));
+            ActiveConversation.Add(new MessageItem("20205", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 30), "ok no comment"));
+            ActiveConversation.Add(new MessageItem("20206", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 40), "stop hating on people for playing a game"));
+            ActiveConversation.Add(new MessageItem("20207", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 50), "i didnt say anything"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 0), "nah but you fucking implied it"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 11, 10), "no?"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 20), "fucking hate people like you unironically dude \"... no comment\" its a fucking game. i dont spend money on it and i like doing the quests. its the same as ZZZ\nyou have no fucking excuse to hate on a game\nunless its shit like concord\ngenshin impact genuinely is a decent game gameplay wise"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 12, 40), "holy shit stfu both of you"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 13, 30), "@Mixin do u wanna js go to dms\nto do this shit"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 15, 0), "nah i dont wanna collab on this project anymore while this piece of shit is in here unironically."));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 15, 20), "bro i just said no comment on genshin impact...\nanyways"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 15, 30), "ggwp"));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Mixin", "Mixin", "Mixin"), new DateTime(2025, 4, 30, 8, 15, 40), "man wtf"));
 
 
 

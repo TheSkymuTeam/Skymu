@@ -159,7 +159,7 @@ namespace Skymu
         private void MainWindow_Ready(object sender, EventArgs e)
         {
             _mainWindow.Ready -= MainWindow_Ready;
-            Tray.PushIcon(UserConnectionStatus.Online);
+            Tray.PushIcon(MainWindow.Status);
             Universal.HasLoggedIn = true;
             _mainWindow.Show();
             Sounds.Play("login", true);
@@ -301,7 +301,7 @@ namespace Skymu
             }
         }
 
-        private void InitiateMainWindow()
+        private async void InitiateMainWindow()
         {
             header.Text = "Loading user data";
             _mainWindow = new MainWindow();

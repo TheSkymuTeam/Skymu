@@ -73,7 +73,7 @@ namespace Skymu
             // This Regular Expressions pattern determines what syntax corresponds to what group. It scans the input for these symbols and matches the associated text to the groups.
             string pattern = @"(```)(.+?)\1|(`)(.+?)\3|(\*\*\*)(.+?)\5|(\*\*)(.+?)\7|(__)(.+?)\9|(\*|_)(.+?)\11|~~(.+?)~~|(?m)^(?:\*|-)\s+(.+)|(?m)^>\s+(.+)|(?m)^(#{1,6})\s+(.+)|(?m)^\-#\s+(.+)";
 
-            foreach (Match m in Regex.Matches(input, pattern, RegexOptions.Singleline))
+            foreach (Match m in Regex.Matches(input, pattern)) // add RegexOptions.Singleline here to make message parsing only consider single lines, breaks multiline parsing  but allows for multiline code blocks
             {
                 if (m.Index > position)
                     AddTextOrLinkOrClickable(inlines, input.Substring(position, m.Index - position));
