@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.9")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.10")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Jean Kevin")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Kim Kardashian")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -200,6 +200,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["Language"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool StartOnStartup {
+            get {
+                return ((bool)(this["StartOnStartup"]));
+            }
+            set {
+                this["StartOnStartup"] = value;
             }
         }
     }

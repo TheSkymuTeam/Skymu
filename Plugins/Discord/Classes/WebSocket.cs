@@ -283,7 +283,7 @@ namespace Discord.Classes
             var args = new HelperClasses.MessageReceivedEventArgs
             {
                 ChannelId = channelId,
-                MessageId = messageItem.MessageID,
+                MessageId = messageItem.Identifier,
                 AuthorId = messageItem.SentByID,
                 AuthorName = messageItem.SentByDN,
                 Content = messageItem.Body,
@@ -325,11 +325,11 @@ namespace Discord.Classes
                 string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
 
                 var typingUser = new UserData(
-                    displayName: globalName,
+                    display_name: globalName,
                     identifier: userId,
                     status: "Typing...",
-                    presenceStatus: UserConnectionStatus.Online,
-                    profilePicture: null
+                    presence_status: UserConnectionStatus.Online,
+                    profile_picture: null
                 );
 
                 _core?._uiContext?.Post(_ =>

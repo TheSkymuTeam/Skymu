@@ -34,7 +34,7 @@ Style="{StaticResource Window}"
         <local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
         <local:StatusToTextConverter x:Key="StatIntToText"/>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
-        <local:StripNewlinesConverter x:Key="StripNewlinesConverter"/>
+        <local:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
         <local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
         <local:TextStatusConverter x:Key="TextStatusConverter"/>
         <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
@@ -180,7 +180,7 @@ Width="14" Grid.Row="1"/>
                         <TextBlock.Text>
                             <MultiBinding StringFormat='Replying to {0} - “{1}”'>
                                 <Binding Path="ReplyToDN" />
-                                <Binding Path="ReplyBody" Converter="{StaticResource StripNewlinesConverter}"/>
+                                <Binding Path="ReplyBody" Converter="{StaticResource ReplyBodyConverter}"/>
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
@@ -212,7 +212,7 @@ Width="14" Grid.Row="1"/>
 Content="{Binding Body,
                   Converter={StaticResource FormatFullTextConverter}}" />
 
-                    <Image HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
+                    <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
 Grid.Column="2" Source="{Binding Media,
                        Converter={StaticResource MsgByteArrayToImageConverter}}"
                            Visibility="{Binding Media,

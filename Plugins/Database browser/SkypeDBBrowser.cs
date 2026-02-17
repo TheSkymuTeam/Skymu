@@ -163,9 +163,9 @@ namespace SkypeDBBrowser
                                     body = CleanSkypeMessageBody(body);
 
                                     var messageItem = new MessageItem(
-                                        messageID: messageId,
-                                        sentByIdentifier: author,
-                                        sentByDisplayName: displayName,
+                                        message_id: messageId,
+                                        sender_id: author,
+                                        sender_display_name: displayName,
                                         time: dateTime,
                                         body: body
                                     );

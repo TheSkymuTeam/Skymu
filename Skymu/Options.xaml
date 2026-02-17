@@ -138,7 +138,7 @@ HorizontalAlignment="Stretch" />
                    UpdateSourceTrigger=PropertyChanged}" Width="250"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Language file" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <TextBlock Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <ComboBox Width="250"
           ItemsSource="{Binding Languages}"
           DisplayMemberPath="Key"
@@ -189,7 +189,7 @@ Mode=TwoWay,
 UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     </StackPanel>
                         
-                    <CheckBox Content="Enable Skymu auto-login for plugins with saved credentials" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                    <CheckBox Content="Enable auto-login for accounts with valid credentials saved" IsChecked="{Binding Source={x:Static properties:Settings.Default},
                         Path=AutoLoginEnabled,
                         Mode=TwoWay}" Margin="0,5"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
@@ -222,6 +222,9 @@ UpdateSourceTrigger=PropertyChanged}" Width="250"/>
                     </StackPanel>
                     <CheckBox Content="Enable scrolling on the Skype Home website" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=HomepageScroll,
+Mode=TwoWay}" Margin="0,5"/>
+                    <CheckBox Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=StartOnStartup,
 Mode=TwoWay}" Margin="0,5"/>
 
                     <!--<StackPanel Orientation="Horizontal" Margin="0,5">

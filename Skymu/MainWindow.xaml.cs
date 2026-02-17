@@ -524,7 +524,7 @@ namespace Skymu
         private Point dragStart;
         private UIElement capturedElement = null; // Store reference to the captured element
 
-        private void SkypeSplitter_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
         {
             if (isDragging)
             {
@@ -544,7 +544,7 @@ namespace Skymu
             }
         }
 
-        private void SkypeSplitter_Press(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void SkypeSplitter_Press(object sender, MouseButtonEventArgs e)
         {
             isDragging = true;
             dragStart = e.GetPosition(this);
@@ -557,7 +557,7 @@ namespace Skymu
             }
         }
 
-        private void MouseRelease(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void MouseRelease(object sender, MouseButtonEventArgs e)
         {
             if (isDragging)
             {
@@ -1460,11 +1460,11 @@ namespace Skymu
         }
     }
 
-    public class StripNewlinesConverter : IValueConverter
+    public class ReplyBodyConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is null) return string.Empty;
+            if (String.IsNullOrEmpty(value as string)) return "[media]";
             string s = value.ToString();
             return s.Replace("\r", " ").Replace("\n", " ");
         }

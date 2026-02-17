@@ -305,7 +305,7 @@ namespace Discord
                                         : "N/A";
                         }
 
-                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(channelId, avatarHash, true).ConfigureAwait(false);
+                        byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(channelId, avatarHash, true);
                         var profileData = new GroupData(groupName, channelId, memberCount, members, avatarImage);
 
                         if (lType == ListType.Recents)
@@ -443,7 +443,7 @@ namespace Discord
                 var messageItem = new MessageItem(
                     e.MessageId, e.AuthorId, e.AuthorName,
                     e.Timestamp, e.Content, e.Media,
-                    e.ReplyToId, e.ReplyToName, e.ReplyMsgContent, e.ChannelId
+                    e.ReplyToId, e.ReplyToName, e.ReplyMsgContent
                 );
 
                 Notification?.Invoke(this, new NotificationEventArgs(messageItem, status));

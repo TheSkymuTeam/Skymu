@@ -46,41 +46,48 @@ namespace MiddleMan
     public class SidebarData
     {
         public string DisplayName { get; set; } // The current user's display name.
+        public string Username { get; set; } // The current user's username.
         public string Identifier { get; set; } // The current user's unique identifier.
         public string SkypeCreditText { get; set; } // The text you want to put in place of Skype Credit.
         public UserConnectionStatus ConnectionStatus { get; set; } // Icon status (e.g. "Online")
-        public SidebarData(string username, string identifier, string skypeCreditText, UserConnectionStatus connectionStatus)
+        public SidebarData(string username, string identifier, string skype_credit_text, UserConnectionStatus connection_status)
         {
             DisplayName = username;
             Identifier = identifier;
-            SkypeCreditText = skypeCreditText;
-            ConnectionStatus = connectionStatus;
+            SkypeCreditText = skype_credit_text;
+            ConnectionStatus = connection_status;
         }
     }
 
     public abstract class ProfileData : INotifyPropertyChanged
     {
-        private string _displayName;
-        private byte[] _profilePicture;
+        private string _display_name;
+        private byte[] _profile_picture;
 
         public string DisplayName
         {
-            get => _displayName;
-            set => Set(ref _displayName, value, nameof(DisplayName));
+            get => _display_name;
+            set => Set(ref _display_name, value, nameof(DisplayName));
         }
 
         public string Identifier { get; set; } // Unique identifier. Internal use only.
         public byte[] ProfilePicture
         {
-            get => _profilePicture;
-            set => Set(ref _profilePicture, value, nameof(ProfilePicture));
+            get => _profile_picture;
+            set => Set(ref _profile_picture, value, nameof(ProfilePicture));
         }
 
-        protected ProfileData(string displayName, string identifier, byte[] profilePicture = null)
+        protected ProfileData(string display_name, string identifier)
         {
-            _displayName = displayName;
+            _display_name = display_name;
             Identifier = identifier;
-            _profilePicture = profilePicture;
+        }
+
+        protected ProfileData(string display_name, string identifier, byte[] profile_picture)
+        {
+            _display_name = display_name;
+            Identifier = identifier;
+            _profile_picture = profile_picture;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -96,7 +103,7 @@ namespace MiddleMan
     public class UserData : ProfileData
     {
         private string _status;
-        private UserConnectionStatus _presenceStatus;
+        private UserConnectionStatus _presence_status;
 
         public string Status // Textual status (e.g. "I'm doing good today.")
         {
@@ -106,28 +113,28 @@ namespace MiddleMan
 
         public UserConnectionStatus PresenceStatus // Icon status (e.g. "Online")
         {
-            get => _presenceStatus;
-            set => Set(ref _presenceStatus, value, nameof(PresenceStatus));
+            get => _presence_status;
+            set => Set(ref _presence_status, value, nameof(PresenceStatus));
         }
 
-        public UserData(string displayName, string identifier, string status = null,
-                        UserConnectionStatus presenceStatus = UserConnectionStatus.Offline, byte[] profilePicture = null)
-            : base(displayName, identifier, profilePicture)
+        public UserData(string display_name, string identifier, string status = null,
+                        UserConnectionStatus presence_status = UserConnectionStatus.Offline, byte[] profile_picture = null)
+            : base(display_name, identifier, profile_picture)
         {
             _status = status;
-            _presenceStatus = presenceStatus;
+            _presence_status = presence_status;
         }
     }
 
     public class GroupData : ProfileData
     {
-        private int _memberCount;
+        private int _member_count;
         private UserData[] _members;
 
         public int MemberCount
         {
-            get => _memberCount;
-            set => Set(ref _memberCount, value, nameof(MemberCount));
+            get => _member_count;
+            set => Set(ref _member_count, value, nameof(MemberCount));
         }
 
         public UserData[] Members 
@@ -136,15 +143,25 @@ namespace MiddleMan
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public GroupData(string displayName, string identifier, int memberCount = 0,
-                         UserData[] members = null, byte[] profilePicture = null)
-            : base(displayName, identifier, profilePicture)
+        public GroupData(string name, string identifier, int member_count = 0,
+                         UserData[] members = null, byte[] profile_picture = null)
+            : base(name, identifier, profile_picture)
         {
-            _memberCount = memberCount;
+            _member_count = member_count;
             _members = members ?? new UserData[0];
         }
     }
 
+    public class MediaItem
+    {
+        public string Text { get; set; }
+        public byte[] Media { get; set; } 
+        public MediaItem(string text = null, byte[] image = null)
+        {
+            Text = text;
+            Media = image;
+        }
+    }
 
     public abstract class ConversationItem
     {
@@ -152,30 +169,20 @@ namespace MiddleMan
     }
 
     public class MessageItem : ConversationItem
-    { // The reason this class asks for both Display Name and Identifier for SentBy and ReplyTo is because identifier => display name mapping in the UI
-      // becomes very complex in servers with large amounts of people, as well as other possible complications. To simplify everything, just provide both.
-        public string MessageID { get; set; } // Unique identifier for the message
-        public string SentByDN { get; set; } // Who sent the message (Display Name)
-        public string SentByID { get; set; } // Who sent the message (Identifier)
-        public string ReplyToDN { get; set; } // Who the message is replying to (Display Name)
-        public string ReplyToID { get; set; } // Who the message is replying to (Identifier)
-        public string ReplyBody { get; set; } // Body of the message being replied to
-        public string ChannelID { get; set; } // Unique identifier for the conversation/channel this message belongs to. This is not set by you, but it is required for the MessageItem to be properly processed by Skymu, so that it can be used in notifications and other places where the conversation/channel identifier is needed.
-        public string Body { get; set; } // Message body
-        public byte[] Media { get; set; } // Raw image data for the message's image, if it has one.
-        public string PreviousMessageIdentifier { get; set; } // This is not set by you
-        public MessageItem(string messageID, string sentByIdentifier, string sentByDisplayName, DateTime time, string body = null, byte[] image = null, string replyToIdentifier = null, string replyToDisplayName = null, string replyToBody = null, string channelID = null)
+    { 
+        public string Identifier { get; set; } // Unique identifier for the message
+        public ProfileData Sender { get; set; } // Who sent the message 
+        public string Text { get; set; } // Message body
+        public MediaItem[] Media { get; set; } // Raw image data for the message's image, if it has one.
+        public MessageItem ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
+        public MessageItem(string identifier, ProfileData sender, DateTime time, string text = null, MediaItem[] attachments = null, MessageItem parent_message = null)
         {
-            MessageID = messageID;
-            SentByID = sentByIdentifier;
-            SentByDN = sentByDisplayName;
-            Body = body;
+            Identifier = identifier;
+            Sender = sender;
+            Text = text;
             Time = time;
-            ReplyToID = replyToIdentifier;
-            ReplyToDN = replyToDisplayName;
-            ReplyBody = replyToBody;
-            Media = image;
-            ChannelID = channelID;
+            Media = attachments;
+            ParentMessage = parent_message;
         }
     }
 
@@ -183,11 +190,11 @@ namespace MiddleMan
     {
         public string StartedBy { get; set; } // Return the user's display name (NOT identifier)
         public bool IsVideoCall { get; set; } // Set to true if the call is video
-        public CallStartedItem(string startedByDisplayName, bool isVideoCall, DateTime time)
+        public CallStartedItem(string started_by_display_name, bool is_video_call, DateTime time)
         {
-            StartedBy = startedByDisplayName;
+            StartedBy = started_by_display_name;
             Time = time;
-            IsVideoCall = isVideoCall;
+            IsVideoCall = is_video_call;
         }
     }
 
@@ -195,11 +202,11 @@ namespace MiddleMan
     {
         public TimeSpan Duration { get; set; } // Length of call
         public bool IsVideoCall { get; set; } // Set to true if the call was video
-        public CallEndedItem(TimeSpan duration, bool isVideoCall, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+        public CallEndedItem(TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
         {
             Duration = duration;
             Time = time;
-            IsVideoCall = isVideoCall;
+            IsVideoCall = is_video_call;
         }
     }
 
@@ -218,10 +225,10 @@ namespace MiddleMan
         public string DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'. 
         public string DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
         public ClickableItemType Type { get; set; } // items that are clickable within the clickability delimiter range
-        public ClickableConfiguration(ClickableItemType type, string delimiterLeft, string delimiterRight)
+        public ClickableConfiguration(ClickableItemType type, string delimiter_left, string delimiter_right)
         {
-            DelimiterLeft = delimiterLeft;
-            DelimiterRight = delimiterRight;
+            DelimiterLeft = delimiter_left;
+            DelimiterRight = delimiter_right;
             Type = type;
         }
 
@@ -246,10 +253,17 @@ namespace MiddleMan
     {
         public ConversationItem Item { get; }
         public UserConnectionStatus Status { get; }
-        public NotificationEventArgs(ConversationItem item, UserConnectionStatus status)
+        public string SentInChannelID { get; } 
+        public NotificationEventArgs(ConversationItem item, UserConnectionStatus user_status)
         {
             Item = item;
-            Status = status;
+            Status = user_status;           
+        }
+        public NotificationEventArgs(MessageItem message, UserConnectionStatus user_status, string sent_in_channel_id)
+        {
+            Item = message;
+            Status = user_status;
+            SentInChannelID = sent_in_channel_id;
         }
     }
 

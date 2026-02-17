@@ -56,7 +56,7 @@ namespace Skymu
             this.ContentRendered += Login_ContentRendered;
 
             Sounds.Init();
-            
+
             if (forceManualLogin) useAutoLogin = false;
             Tray.PushIcon(UserConnectionStatus.Offline);
         }
@@ -69,8 +69,11 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    string[] cred = await Universal.Plugin.SaveAutoLoginCredential();
-                    if (cred is not null && cred.Length > 0) CredentialsHelper.Write(cred);
+                    if (SaveCredentials.IsChecked == true)
+                    {
+                        string[] cred = await Universal.Plugin.SaveAutoLoginCredential();
+                        if (cred is not null && cred.Length > 0) CredentialsHelper.Write(cred);
+                    }
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
@@ -81,7 +84,7 @@ namespace Skymu
                         string qr = await Universal.Plugin.GetQRCode();
 
                         if (!string.IsNullOrEmpty(qr))
-                        {                           
+                        {
                             QRCodeGenerator qrGenerator = new QRCodeGenerator();
                             QRCodeData qrCodeData = qrGenerator.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
                             PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
@@ -108,7 +111,7 @@ namespace Skymu
                             {
                                 qrDialog.Close();
                             }
-                            
+
                         }
                         else
                         {
@@ -125,7 +128,7 @@ namespace Skymu
                         if (dlgResult == true)
                         {
                             totp = dlg.TextBoxText;
-                            
+
                         }
                     }
                     var optResult = await Universal.Plugin.LoginOptStep(totp);
@@ -149,7 +152,7 @@ namespace Skymu
 
         private void SetHeaderToFail()
         {
-            header.Text = Universal.Lang["sF_USERENTRY_ERROR_1101"]; 
+            header.Text = Universal.Lang["sF_USERENTRY_ERROR_1101"];
             header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D10000"));
         }
 
@@ -199,8 +202,10 @@ namespace Skymu
             string[] autoLoginCandidates = CredentialsHelper.GetSavedCredentialPlugins();
             foreach (var plugin in Universal.PluginList)
             {
-                if (autoLoginCandidates.Contains(plugin.InternalName)) { 
-                    Universal.Plugin = plugin; }
+                if (autoLoginCandidates.Contains(plugin.InternalName))
+                {
+                    Universal.Plugin = plugin;
+                }
                 if (plugin.AuthenticationType.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationType[0]));
                 else
                 {
@@ -231,8 +236,8 @@ namespace Skymu
                     }
                 }
                 pluginIndex++;
-            }    
-            if (Universal.Plugin is null) { useAutoLogin = false; }            
+            }
+            if (Universal.Plugin is null) { useAutoLogin = false; }
             if (useAutoLogin) LoginToggleAnimation(true);
             else comboProtocolBox.SelectedIndex = 0;
         }
@@ -275,7 +280,7 @@ namespace Skymu
             if (useAutoLogin)
             {
                 string[] credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
-                
+
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin(credentials)
          );
@@ -290,8 +295,8 @@ namespace Skymu
                     if (lr == LoginResult.Failure)
                     {
                         SetHeaderToFail();
-                        CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                  
-                   }
+                        CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
+                    }
                 }
             }
         }

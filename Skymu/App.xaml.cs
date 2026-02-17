@@ -24,6 +24,7 @@ namespace Skymu
         public static ICore Plugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
+        public const string Name = "Skymu";
 
         public static LanguageManager Lang =>
         (LanguageManager)Current.Resources["Lang"];
@@ -131,6 +132,7 @@ namespace Skymu
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             
             ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
+            OS.Initialize();
             base.OnStartup(ev);
             // Listen for changes
             Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>
