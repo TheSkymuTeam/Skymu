@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace MiddleMan
@@ -117,6 +118,11 @@ namespace MiddleMan
             set => Set(ref _presence_status, value, nameof(PresenceStatus));
         }
 
+        public UserData(string display_name, string identifier) : base(display_name, identifier)
+        {
+
+        }
+
         public UserData(string display_name, string identifier, string status = null,
                         UserConnectionStatus presence_status = UserConnectionStatus.Offline, byte[] profile_picture = null)
             : base(display_name, identifier, profile_picture)
@@ -152,20 +158,36 @@ namespace MiddleMan
         }
     }
 
-    public class MediaItem
+    public enum AttachmentType
     {
-        public string Text { get; set; }
-        public byte[] Media { get; set; } 
-        public MediaItem(string text = null, byte[] image = null)
+        Image,
+        Video,
+        Audio,
+        File
+    }
+
+    public class AttachmentItem
+    {
+        public string Name { get; set; }
+        public AttachmentType Type { get; set; }
+        public byte[] File { get; set; }
+        public string Url { get; set; }
+        public AttachmentItem(byte[] file, string name, AttachmentType type)
         {
-            Text = text;
-            Media = image;
+            File = file;
+            Name = name;   
+            Type = type;
+        }
+        public AttachmentItem(string location_url, string name)
+        {
+            Url = location_url;
+            Name = name;
         }
     }
 
     public abstract class ConversationItem
     {
-        public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) prefer send_completed.
+        public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
     }
 
     public class MessageItem : ConversationItem
@@ -173,15 +195,15 @@ namespace MiddleMan
         public string Identifier { get; set; } // Unique identifier for the message
         public ProfileData Sender { get; set; } // Who sent the message 
         public string Text { get; set; } // Message body
-        public MediaItem[] Media { get; set; } // Raw image data for the message's image, if it has one.
+        public AttachmentItem[] Attachments { get; set; } // Media or files attached to the message
         public MessageItem ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
-        public MessageItem(string identifier, ProfileData sender, DateTime time, string text = null, MediaItem[] attachments = null, MessageItem parent_message = null)
+        public MessageItem(string identifier, ProfileData sender, DateTime time, string text = null, AttachmentItem[] attachments = null, MessageItem parent_message = null)
         {
             Identifier = identifier;
             Sender = sender;
             Text = text;
             Time = time;
-            Media = attachments;
+            Attachments = attachments;
             ParentMessage = parent_message;
         }
     }

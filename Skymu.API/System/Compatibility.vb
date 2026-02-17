@@ -1,4 +1,6 @@
-﻿''' <summary>
+﻿Imports Skymu.API.Extras
+
+''' <summary>
 ''' Here is the compatibility settings, if GUI support themes, then Themes should be True, if client support Groups, Groups will be True and client can check that and enable it's Groups features .
 ''' </summary>
 ''' <remarks>This is an unfinished prototype that is subject to changes ! This applies to both GUI and clients, clients could have their own compatibility settings in the future ! (Will be easy to port, don't worry .)</remarks>

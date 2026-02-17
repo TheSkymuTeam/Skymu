@@ -440,13 +440,28 @@ namespace Discord
                     WebSocketMgr.GetUserStatus(e.AuthorId)
                 );
 
-                var messageItem = new MessageItem(
-                    e.MessageId, e.AuthorId, e.AuthorName,
-                    e.Timestamp, e.Content, e.Media,
-                    e.ReplyToId, e.ReplyToName, e.ReplyMsgContent
-                );
+                MessageItem replyN = null;
 
-                Notification?.Invoke(this, new NotificationEventArgs(messageItem, status));
+                if (!String.IsNullOrEmpty(e.ReplyToId))
+                {
+                    replyN = new MessageItem(
+                        e.MessageId, // TODO replace with actual reply message ID 
+                        new UserData(e.ReplyToName, e.ReplyToId),
+                        e.Timestamp, // TODO replace with actual reply message timestamp 
+                        e.ReplyMsgContent
+                        );
+                }
+
+                MessageItem messageN = new MessageItem(
+                        e.MessageId,
+                        new UserData(e.AuthorName, e.AuthorId),
+                        e.Timestamp,
+                        e.Content,
+                        [new AttachmentItem(e.Media, "discord-image", AttachmentType.Image)],
+                        replyN
+                        );
+
+                Notification?.Invoke(this, new NotificationEventArgs(messageN, status));
             }
 
             // Only add messages if they're for the currently active channel
@@ -463,12 +478,28 @@ namespace Discord
 
                 try
                 {
-                    var messageItem = new MessageItem(
-                        e.MessageId, e.AuthorId, e.AuthorName,
-                        e.Timestamp, e.Content, e.Media,
-                        e.ReplyToId, e.ReplyToName, e.ReplyMsgContent);
+                    MessageItem reply = null;
 
-                    ActiveConversation.Add(messageItem);
+                    if (!String.IsNullOrEmpty(e.ReplyToId))
+                    {
+                        reply = new MessageItem(
+                            e.MessageId, // TODO replace with actual reply message ID 
+                            new UserData(e.ReplyToName, e.ReplyToId),
+                            e.Timestamp, // TODO replace with actual reply message timestamp 
+                            e.ReplyMsgContent
+                            );
+                    }
+
+                    MessageItem message = new MessageItem(
+                            e.MessageId,
+                            new UserData(e.AuthorName, e.AuthorId),
+                            e.Timestamp,
+                            e.Content,
+                            [new AttachmentItem(e.Media, "discord-image", AttachmentType.Image)],
+                            reply
+                            );
+
+                    ActiveConversation.Add(message);
                 }
                 catch (Exception ex)
                 {
