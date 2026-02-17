@@ -1020,48 +1020,94 @@ BorderThickness="1,0,1,1"
 CornerRadius="0,0,4,4">
                             <Grid>
                                 <wv2:WebView2 x:Name="Browser" Grid.Row="1" Visibility="Collapsed" />
-                                <Grid x:Name="ChatProfileArea">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="18"></RowDefinition>
-                                    <RowDefinition Height="14"></RowDefinition>
-                                    <RowDefinition Height="*"></RowDefinition>
-                                </Grid.RowDefinitions>
-                                    <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" >
-                                        <Image.Source>
-                                            <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                                <Binding Path="ProfilePicture" />
-                                                <Binding Path="MemberCount" />
-                                            </MultiBinding>
-                                        </Image.Source>
-                                        <Image.Effect>
-                                        <DropShadowEffect
+                                <ContentControl x:Name="ChatProfileArea" Content="{Binding SelectedItem, ElementName=ContactsList}">
+                                    <ContentControl.Resources>
+
+                                        <DataTemplate DataType="{x:Type plugin:User}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="18"/>
+                                                    <RowDefinition Height="14"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                                                    <Image.Source>
+                                                        <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                                            <Binding Path="ProfilePicture" />
+                                                            <Binding Source="user" />
+                                                        </MultiBinding>
+                                                    </Image.Source>
+                                                    <Image.Effect>
+                                                        <DropShadowEffect
                        Color="#FFA0A0A0"
             BlurRadius="4"
             ShadowDepth="1"
 Direction="270"
             Opacity="0.5"/>
-                                    </Image.Effect>
-                                </Image>
-                                <StackPanel HorizontalAlignment="Left" Margin="125,0,0,0" Grid.Row="1" Orientation="Horizontal">
-                                    <local:SliceControl Grid.Row="1"
-x:Name="CPAStatusIcon"
-Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
-ElementCount="22"
-StackDirection="Horizontal"
-DefaultIndex="{Binding PresenceStatus,
-                Converter={StaticResource PresenceStatusConverter},
-                FallbackValue=0}"
-HoverIndex="-1"
-PressedIndex="-1"
-Slice="false"
-Width="14"/>
-                                    <TextBlock x:Name="CPAStatusText" Grid.Row="1"  Margin="9,0,0,0" Text="{Binding PresenceStatus,
-                        Converter={StaticResource StatIntToText}, FallbackValue=Unknown}" 
-           FontSize="11"
-               FontFamily="Tahoma"
-           TextTrimming="CharacterEllipsis"/>
-                                </StackPanel>
-                            </Grid>
+                                                    </Image.Effect>
+                                                </Image>
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal"
+                            HorizontalAlignment="Left" Margin="125,0,0,0">
+                                                    <local:SliceControl
+                        Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
+                        ElementCount="22" StackDirection="Horizontal"
+                        DefaultIndex="{Binding PresenceStatus,
+                            Converter={StaticResource PresenceStatusConverter}}"
+                        HoverIndex="-1" PressedIndex="-1"
+                        Slice="false" Width="14"/>
+                                                    <TextBlock Margin="9,0,0,0"
+                               Text="{Binding PresenceStatus,
+                                   Converter={StaticResource StatIntToText}}"
+                               FontSize="11" FontFamily="Tahoma"
+                               TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+
+                                        <DataTemplate DataType="{x:Type plugin:Group}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="18"/>
+                                                    <RowDefinition Height="14"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                                                    <Image.Source>
+                                                        <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                                            <Binding Path="ProfilePicture" />
+                                                            <Binding Source="group" />
+                                                        </MultiBinding>
+                                                    </Image.Source>
+                                                    <Image.Effect>
+                                                        <DropShadowEffect
+                       Color="#FFA0A0A0"
+            BlurRadius="4"
+            ShadowDepth="1"
+Direction="270"
+            Opacity="0.5"/>
+                                                    </Image.Effect>
+                                                </Image>
+
+                                                <StackPanel Grid.Row="1" Orientation="Horizontal"
+                            HorizontalAlignment="Left" Margin="125,0,0,0">
+                                                    <local:SliceControl
+                        Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
+                        ElementCount="22" StackDirection="Horizontal"
+                        DefaultIndex="24"
+                        HoverIndex="-1" PressedIndex="-1"
+                        Slice="false" Width="14"/>
+                                                    <TextBlock Margin="9,0,0,0"
+                               Text="{Binding MemberCount, StringFormat='{}{0} members'}"
+                               FontSize="11" FontFamily="Tahoma"
+                               TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+
+                                    </ContentControl.Resources>
+                                </ContentControl>
                             </Grid>
                         </Border>
                         <Border x:Name="MessageWindow" MinWidth="710" Grid.Row="2"

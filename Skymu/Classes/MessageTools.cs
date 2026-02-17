@@ -402,7 +402,7 @@ namespace Skymu
                     {
                         inlines.Add(new InlineUIContainer(FormAnimatedEmoji(emojiFilename))
                         {
-                            BaselineAlignment = BaselineAlignment.Center
+                            BaselineAlignment = BaselineAlignment.TextBottom
                         });
                     }
                     else
