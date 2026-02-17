@@ -28,21 +28,24 @@ namespace XMPP.Classes
         private readonly string _jid;
         private readonly string _password;
         private string _server;
-        private int _port = 5222; // Default XMPP port
+        private int _port = 5222; // default XMPP port
         private string _resource = "Skymu";
-        
+
         private bool _isConnected;
         private bool _isAuthenticated;
         private CancellationTokenSource _readCancellationTokenSource;
         private Task _readTask;
 
-        // Storage
+        // storage
         private readonly List<RosterItem> _roster = new List<RosterItem>();
         private readonly List<MessageItem> _messageHistory = new List<MessageItem>();
         private readonly HashSet<string> _recentConversations = new HashSet<string>();
         private readonly Dictionary<string, UserConnectionStatus> _presenceCache = new Dictionary<string, UserConnectionStatus>();
 
-        // Events
+        // per-message metadata needed for history filtering, keyed by message identifier
+        private readonly Dictionary<string, string> _messageJidMap = new Dictionary<string, string>();
+
+        // events
         public event EventHandler<bool> OnConnectionStateChanged;
         public event EventHandler<XMPPMessageEventArgs> OnMessageReceived;
         public event EventHandler<XMPPPresenceEventArgs> OnPresenceReceived;
@@ -50,7 +53,7 @@ namespace XMPP.Classes
         public event EventHandler<XMPPComposingEventArgs> OnComposingStateChanged;
         public event EventHandler<string> OnError;
 
-        // Properties
+        // properties
         public bool IsConnected => _isConnected;
         public bool IsAuthenticated => _isAuthenticated;
         public string CurrentJID { get; private set; }
@@ -60,8 +63,8 @@ namespace XMPP.Classes
         {
             _jid = jid;
             _password = password;
-            
-            // Parse JID to get server
+
+            // parse JID to extract the server component
             var parts = jid.Split('@');
             if (parts.Length == 2)
             {
@@ -78,7 +81,7 @@ namespace XMPP.Classes
             try
             {
                 _tcpClient = new TcpClient();
-                
+
                 var connectTask = _tcpClient.ConnectAsync(_server, _port);
                 var timeoutTask = Task.Delay(timeoutMs);
 
@@ -94,11 +97,11 @@ namespace XMPP.Classes
                 _isConnected = true;
                 OnConnectionStateChanged?.Invoke(this, true);
 
-                // Start reading stream
+                // start reading the stream
                 _readCancellationTokenSource = new CancellationTokenSource();
                 _readTask = Task.Run(() => ReadStreamAsync(_readCancellationTokenSource.Token));
 
-                // Send initial stream header
+                // send initial stream header
                 await SendStreamHeaderAsync();
 
                 return true;
@@ -121,10 +124,10 @@ namespace XMPP.Classes
                 string authStanza = $"<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>{base64Auth}</auth>";
                 await SendAsync(authStanza);
 
-                // Wait for authentication response (simplified - in real implementation, would parse response)
+                // wait for authentication response (simplified; a real implementation would parse it)
                 await Task.Delay(500);
 
-                // After successful auth, bind resource and establish session
+                // after successful auth, bind resource and establish session
                 await BindResourceAsync();
                 await EstablishSessionAsync();
 
@@ -171,12 +174,12 @@ namespace XMPP.Classes
             };
 
             string presenceStanza = "<presence>";
-            
+
             if (!string.IsNullOrEmpty(show))
             {
                 presenceStanza += $"<show>{show}</show>";
             }
-            
+
             if (!string.IsNullOrEmpty(statusMessage))
             {
                 presenceStanza += $"<status>{EscapeXml(statusMessage)}</status>";
@@ -192,7 +195,7 @@ namespace XMPP.Classes
         {
             string rosterRequest = "<iq type='get' id='roster_1'><query xmlns='jabber:iq:roster'/></iq>";
             await SendAsync(rosterRequest);
-            await Task.Delay(500); // Wait for roster response
+            await Task.Delay(500); // wait for roster response
         }
 
         public async Task<bool> SendMessageAsync(string toJid, string body)
@@ -207,21 +210,20 @@ namespace XMPP.Classes
 
                 await SendAsync(messageStanza);
 
-                // Add to message history
+                string username = ExtractUsername(_jid);
+                var senderData = new UserData(username, username, _jid);
+
                 var messageItem = new MessageItem(
                     messageId,
-                    _jid,
-                    ExtractUsername(_jid),
+                    senderData,
                     DateTime.Now,
                     body,
                     null,
-                    null,
-                    null,
-                    null,
-                    toJid
+                    null
                 );
 
                 _messageHistory.Add(messageItem);
+                _messageJidMap[messageId] = toJid; // record which conversation this belongs to
                 _recentConversations.Add(toJid);
 
                 return true;
@@ -254,9 +256,12 @@ namespace XMPP.Classes
 
         public async Task<List<MessageItem>> GetMessageHistoryAsync(string jid, int limit)
         {
-            // Return stored message history for this JID
+            // return stored messages that belong to this conversation, using the jid map for
+            // outgoing messages and the sender identifier for incoming ones
             return _messageHistory
-                .Where(m => m.SentByID == jid || m.ChannelID == jid)
+                .Where(m =>
+                    m.Sender?.Identifier == jid ||
+                    (_messageJidMap.TryGetValue(m.Identifier, out var dest) && dest == jid))
                 .OrderBy(m => m.Time)
                 .Take(limit)
                 .ToList();
@@ -274,13 +279,13 @@ namespace XMPP.Classes
                     if (_stream.DataAvailable)
                     {
                         int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
-                        
+
                         if (bytesRead > 0)
                         {
                             string data = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                             xmlBuffer.Append(data);
 
-                            // Try to parse complete stanzas
+                            // try to parse complete stanzas from the buffer
                             ProcessXmlBuffer(xmlBuffer);
                         }
                     }
@@ -292,7 +297,7 @@ namespace XMPP.Classes
             }
             catch (OperationCanceledException)
             {
-                // Expected when cancellation is requested
+                // expected when cancellation is requested
             }
             catch (Exception ex)
             {
@@ -308,17 +313,16 @@ namespace XMPP.Classes
 
             try
             {
-                // Look for complete stanzas (simplified parsing)
                 if (xmlString.Contains("<message") && xmlString.Contains("</message>"))
                 {
                     int startIndex = xmlString.IndexOf("<message");
                     int endIndex = xmlString.IndexOf("</message>") + "</message>".Length;
-                    
+
                     if (startIndex >= 0 && endIndex > startIndex)
                     {
                         string messageStanza = xmlString.Substring(startIndex, endIndex - startIndex);
                         ProcessMessageStanza(messageStanza);
-                        
+
                         xmlBuffer.Remove(startIndex, endIndex - startIndex);
                     }
                 }
@@ -327,12 +331,12 @@ namespace XMPP.Classes
                 {
                     int startIndex = xmlString.IndexOf("<presence");
                     int endIndex = xmlString.IndexOf("</presence>") + "</presence>".Length;
-                    
+
                     if (startIndex >= 0 && endIndex > startIndex)
                     {
                         string presenceStanza = xmlString.Substring(startIndex, endIndex - startIndex);
                         ProcessPresenceStanza(presenceStanza);
-                        
+
                         xmlBuffer.Remove(startIndex, endIndex - startIndex);
                     }
                 }
@@ -341,17 +345,17 @@ namespace XMPP.Classes
                 {
                     int startIndex = xmlString.IndexOf("<iq");
                     int endIndex = xmlString.IndexOf("</iq>") + "</iq>".Length;
-                    
+
                     if (startIndex >= 0 && endIndex > startIndex)
                     {
                         string iqStanza = xmlString.Substring(startIndex, endIndex - startIndex);
                         ProcessIqStanza(iqStanza);
-                        
+
                         xmlBuffer.Remove(startIndex, endIndex - startIndex);
                     }
                 }
 
-                // Clear very old data to prevent buffer overflow
+                // clear very old data to prevent buffer overflow
                 if (xmlBuffer.Length > 50000)
                 {
                     xmlBuffer.Clear();
@@ -377,10 +381,10 @@ namespace XMPP.Classes
                 if (string.IsNullOrEmpty(from) || type == "error")
                     return;
 
-                // Extract bare JID (without resource)
+                // extract bare JID (without resource)
                 string bareJid = ExtractBareJid(from);
 
-                // Check for composing state
+                // check for composing state notifications
                 var composing = message.Element(XName.Get("composing", "http://jabber.org/protocol/chatstates"));
                 var active = message.Element(XName.Get("active", "http://jabber.org/protocol/chatstates"));
                 var paused = message.Element(XName.Get("paused", "http://jabber.org/protocol/chatstates"));
@@ -406,25 +410,22 @@ namespace XMPP.Classes
                     });
                 }
 
-                // Check for message body
+                // check for a message body
                 XElement body = message.Element("body");
                 if (body == null || string.IsNullOrEmpty(body.Value))
                     return;
 
                 string messageBody = body.Value;
                 string displayName = ExtractUsername(bareJid);
+                var senderData = new UserData(displayName, displayName, bareJid);
 
                 var messageItem = new MessageItem(
                     id,
-                    bareJid,
-                    displayName,
+                    senderData,
                     DateTime.Now,
                     messageBody,
                     null,
-                    null,
-                    null,
-                    null,
-                    bareJid
+                    null
                 );
 
                 _messageHistory.Add(messageItem);
@@ -482,7 +483,7 @@ namespace XMPP.Classes
 
                 _presenceCache[bareJid] = status;
 
-                // Update roster item
+                // update the matching roster entry if present
                 var rosterItem = _roster.FirstOrDefault(r => r.Jid == bareJid);
                 if (rosterItem != null)
                 {
@@ -511,8 +512,8 @@ namespace XMPP.Classes
                 XElement iq = doc.Root;
 
                 string type = iq.Attribute("type")?.Value;
-                
-                // Check if this is a roster response
+
+                // check if this is a roster response
                 XElement query = iq.Element(XName.Get("query", "jabber:iq:roster"));
                 if (query != null && type == "result")
                 {
@@ -587,7 +588,7 @@ namespace XMPP.Classes
             }
             catch
             {
-                // Ignore errors during disconnect
+                // ignore errors during disconnect
             }
         }
 
@@ -626,7 +627,7 @@ namespace XMPP.Classes
         }
     }
 
-    // Supporting classes
+    // supporting classes
 
     public class RosterItem
     {

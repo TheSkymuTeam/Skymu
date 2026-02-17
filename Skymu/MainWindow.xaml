@@ -166,7 +166,7 @@ Width="14" Grid.Row="1"/>
                     <ColumnDefinition Width="80"/>
                 </Grid.ColumnDefinitions>
 
-                <VirtualizingStackPanel Visibility="{Binding ReplyToID,
+                <VirtualizingStackPanel Visibility="{Binding ParentMessage,
                         Converter={StaticResource NullDependentVisibilityConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
                     <Image Source="{Binding Source={x:Static properties:Settings.Default},
                         Path=ThemeRoot,
@@ -179,8 +179,8 @@ Width="14" Grid.Row="1"/>
     TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
                         <TextBlock.Text>
                             <MultiBinding StringFormat='Replying to {0} - “{1}”'>
-                                <Binding Path="ReplyToDN" />
-                                <Binding Path="ReplyBody" Converter="{StaticResource ReplyBodyConverter}"/>
+                                <Binding Path="ParentMessage.Sender.DisplayName" />
+                                <Binding Path="ParentMessage.Text" Converter="{StaticResource ReplyBodyConverter}"/>
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
@@ -191,14 +191,14 @@ Width="14" Grid.Row="1"/>
                    VerticalAlignment="Top"
                    Margin="-1000,0,0,0"
                    FontSize="11"
-                           Text="{Binding SentByDN}"
+                           Text="{Binding Sender.DisplayName}"
                    FontFamily="Tahoma"
-                   Foreground="{Binding SentByID,
+                   Foreground="{Binding Sender.Identifier,
                         Converter={StaticResource IdToColorConverter}}">
                     <TextBlock.Visibility>
                         <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
                             <Binding Path="PreviousMessageIdentifier" />
-                            <Binding Path="SentByID" />
+                            <Binding Path="Sender.Identifier" />
                         </MultiBinding>
                     </TextBlock.Visibility>
                 </TextBlock>
@@ -207,15 +207,15 @@ Width="14" Grid.Row="1"/>
                 <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
 
                     <ContentControl
-   Visibility="{Binding Body,
+   Visibility="{Binding Text,
                   Converter={StaticResource NullDependentVisibilityConverter}}"                      
-Content="{Binding Body,
+Content="{Binding Text,
                   Converter={StaticResource FormatFullTextConverter}}" />
 
                     <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,5,0,5" MaxWidth="300" MaxHeight="300" Stretch="Uniform" 
-Grid.Column="2" Source="{Binding Media,
+Grid.Column="2" Source="{Binding Attachments[0].File,
                        Converter={StaticResource MsgByteArrayToImageConverter}}"
-                           Visibility="{Binding Media,
+                           Visibility="{Binding Attachments[0].File,
                        Converter={StaticResource NullDependentVisibilityConverter}}"/>
                 </StackPanel>
 

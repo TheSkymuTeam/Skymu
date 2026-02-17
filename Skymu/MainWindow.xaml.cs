@@ -242,7 +242,7 @@ namespace Skymu
 
         internal static readonly BitmapImage AnonymousAvatar = LoadAvatar();
 
-        internal static string Identifier = String.Empty;
+        internal static string Username, Identifier = String.Empty;
         internal static UserConnectionStatus Status = UserConnectionStatus.Offline;
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -396,7 +396,7 @@ namespace Skymu
                         {
                             if (conversation[j] is MessageItem previousMessage)
                             {
-                                message.PreviousMessageIdentifier = previousMessage.SentByID;
+                                message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                 break;
                             }
                         }
@@ -413,7 +413,7 @@ namespace Skymu
 
                     foreach (var item in args.NewItems)
                     {
-                        if (item is MessageItem message && message.SentByID != MainWindow.Identifier && IsWindowActive)
+                        if (item is MessageItem message && message.Sender.Identifier != MainWindow.Identifier && IsWindowActive)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -604,7 +604,7 @@ namespace Skymu
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
 
-            SidebarData data = Universal.Plugin.SidebarInformation;
+            UserData data = Universal.Plugin.MyInformation;
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
             SkymuApiStatusHandler();
@@ -616,13 +616,13 @@ namespace Skymu
                 });
             };
 
-            WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.DisplayName;
+            WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.Username;
 
+            Username = data.Username;
             Identifier = data.Identifier;
             StatusBox.Text = data.DisplayName;
-            SkypeCreditBox.Text = data.SkypeCreditText;
-            StatusIcon.DefaultIndex = MapStatusToInt(data.ConnectionStatus);
-            Status = data.ConnectionStatus;
+            StatusIcon.DefaultIndex = MapStatusToInt(data.PresenceStatus);
+            Status = data.PresenceStatus;
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
 
@@ -769,7 +769,7 @@ namespace Skymu
                                 {
                                     if (listBox.Items[i] is MessageItem previousMessage)
                                     {
-                                        message.PreviousMessageIdentifier = previousMessage.SentByID;
+                                        message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                         break;
                                     }
                                 }

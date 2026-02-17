@@ -22,7 +22,7 @@ namespace Skymu
             if (e.Item is MessageItem message)
             {
                 // 1. message sent by me → never notify
-                if (MainWindow.Identifier == message.SentByID)
+                if (MainWindow.Identifier == message.Sender.Identifier)
                 {
                     Debug.WriteLine("Return: message sent by me");
                     return;
@@ -42,7 +42,7 @@ namespace Skymu
                     {
 
                         if (!(MainWindow.SelectedContact is UserData) &&
-                            MainWindow.SelectedContact.Identifier == message.ChannelID)
+                            MainWindow.SelectedContact.Identifier == e.SentInChannelID)
                         {
                             Debug.WriteLine("Return: active group chat");
                             return;
@@ -50,7 +50,7 @@ namespace Skymu
 
                         // 4. selected contact exists and is a DM, and message is from that user
                         if (MainWindow.SelectedContact is UserData &&
-                            message?.SentByID == MainWindow.SelectedContact.Identifier)
+                            message?.Sender.Identifier == MainWindow.SelectedContact.Identifier)
                         {
                             Debug.WriteLine("Return: active DM");
                             return;
@@ -66,8 +66,8 @@ namespace Skymu
                 }
 
                 StatusIcon.DefaultIndex = MainWindow.MapStatusToInt(e.Status);
-                TitleText.Text = message.SentByDN;
-                TextBlock tb = MessageTools.FormTextblock(message.Body);
+                TitleText.Text = message.Sender.DisplayName;
+                TextBlock tb = MessageTools.FormTextblock(message.Text);
                 tb.MaxHeight = 30;
                 tb.TextTrimming = TextTrimming.CharacterEllipsis;
                 tb.TextWrapping = TextWrapping.Wrap;

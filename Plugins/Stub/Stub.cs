@@ -28,7 +28,7 @@ namespace Stub
         public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Token }; } }
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
-            Notification.Invoke(this, new NotificationEventArgs(new MessageItem("0101", "1", "Bob", DateTime.Now, "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people"), UserConnectionStatus.Online));
+            Notification.Invoke(this, new NotificationEventArgs(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null), UserConnectionStatus.Online));
             return LoginResult.Success;
         }
         public async Task<string> GetQRCode()
@@ -47,11 +47,11 @@ namespace Stub
         public async Task<bool> SendMessage(string identifier, string text)
         {
             TypingUsersList.Clear();
-            TypingUsersList.Add(new UserData("Nova", "20202"));
-            TypingUsersList.Add(new UserData("omega", "20203"));
-            TypingUsersList.Add(new UserData("patricktbp", "20204"));
-            TypingUsersList.Add(new UserData("Mixin", "20200"));
-            TypingUsersList.Add(new UserData("HUBAXE", "20205"));
+            TypingUsersList.Add(new UserData("Nova", "20202", "20202"));
+            TypingUsersList.Add(new UserData("omega", "20203", "20203"));
+            TypingUsersList.Add(new UserData("patricktbp", "20204", "20204"));
+            TypingUsersList.Add(new UserData("WGP", "20200", "20200"));
+            TypingUsersList.Add(new UserData("HUBAXE", "20205", "20205"));
             return true;
         }
 
@@ -62,32 +62,29 @@ namespace Stub
             TypingUsersList.Clear();                                                             // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
             ActiveConversation.Clear();
 
-            // Conversation stub from your chat
-            ActiveConversation.Add(new MessageItem("20202", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 10, 0), "i play genshin impact on the steam deck it doesnt ban you tho 💀", null));
-            ActiveConversation.Add(new MessageItem("20203", "omega", "omega", new DateTime(2025, 4, 30, 8, 10, 10), "no commen", null));
-            ActiveConversation.Add(new MessageItem("20204", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 10, 20), "bro\nits a fucking game", null));
-            ActiveConversation.Add(new MessageItem("20205", "omega", "omega", new DateTime(2025, 4, 30, 8, 10, 30), "ok no comment", null));
-            ActiveConversation.Add(new MessageItem("20206", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 10, 40), "stop hating on people for playing a game", null));
-            ActiveConversation.Add(new MessageItem("20207", "omega", "omega", new DateTime(2025, 4, 30, 8, 10, 50), "i didnt say anything", null));
-            ActiveConversation.Add(new MessageItem("20202", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 11, 0), "nah but you fucking implied it", null));
-            ActiveConversation.Add(new MessageItem("20202", "omega", "omega", new DateTime(2025, 4, 30, 8, 11, 10), "no?", null));
-            ActiveConversation.Add(new MessageItem("20202", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 11, 20), "fucking hate people like you unironically dude \"... no comment\" its a fucking game. i dont spend money on it and i like doing the quests. its the same as ZZZ\nyou have no fucking excuse to hate on a game\nunless its shit like concord\ngenshin impact genuinely is a decent game gameplay wise", null));
-
-            ActiveConversation.Add(new MessageItem("20202", "patricktbp", "patricktbp", new DateTime(2025, 4, 30, 8, 12, 40), "holy shit stfu both of you", null));
-
-            ActiveConversation.Add(new MessageItem("20202", "patricktbp", "patricktbp", new DateTime(2025, 4, 30, 8, 13, 30), "@Mixin do u wanna js go to dms\nto do this shit", null));
-            ActiveConversation.Add(new MessageItem("20202", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null));
-            ActiveConversation.Add(new MessageItem("20202", "Nova", "Nova", new DateTime(2025, 4, 30, 8, 15, 0), "nah i dont wanna collab on this project anymore while this piece of shit is in here unironically.", null));
-            ActiveConversation.Add(new MessageItem("20202", "omega", "omega", new DateTime(2025, 4, 30, 8, 15, 20), "bro i just said no comment on genshin impact...\nanyways", null));
-            ActiveConversation.Add(new MessageItem("20202", "patricktbp", "patricktbp", new DateTime(2025, 4, 30, 8, 15, 30), "ggwp", null));
-            ActiveConversation.Add(new MessageItem("20202", "Mixin", "Mixin", new DateTime(2025, 4, 30, 8, 15, 40), "man wtf", null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 0), "i play genshin impact on the steam deck it doesnt ban you tho 💀", null, null));
+            ActiveConversation.Add(new MessageItem("20203", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 10), "no commen", null, null));
+            ActiveConversation.Add(new MessageItem("20204", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 20), "bro\nits a fucking game", null, null));
+            ActiveConversation.Add(new MessageItem("20205", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 30), "ok no comment", null, null));
+            ActiveConversation.Add(new MessageItem("20206", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 40), "stop hating on people for playing a game", null, null));
+            ActiveConversation.Add(new MessageItem("20207", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 50), "i didnt say anything", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 0), "nah but you fucking implied it", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 11, 10), "no?", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 20), "fucking hate people like you unironically dude \"... no comment\" its a fucking game. i dont spend money on it and i like doing the quests. its the same as ZZZ\nyou have no fucking excuse to hate on a game\nunless its shit like concord\ngenshin impact genuinely is a decent game gameplay wise", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 12, 40), "holy shit stfu both of you", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 13, 30), "@Mixin do u wanna js go to dms\nto do this shit", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 15, 0), "nah i dont wanna collab on this project anymore while this piece of shit is in here unironically.", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 15, 20), "bro i just said no comment on genshin impact...\nanyways", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 15, 30), "ggwp", null, null));
+            ActiveConversation.Add(new MessageItem("20202", new UserData("Mixin", "Mixin", "Mixin"), new DateTime(2025, 4, 30, 8, 15, 40), "man wtf", null, null));
 
 
 
             return true;
         }
 
-        public SidebarData SidebarInformation { get; private set; }
+        public UserData MyInformation { get; private set; }
 
         public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
 
@@ -95,21 +92,21 @@ namespace Stub
 
         public async Task<bool> PopulateSidebarInformation()
         {
-            SidebarInformation = new SidebarData("thegamingkart", "00001", "Stub plugin", UserConnectionStatus.Offline);
+            MyInformation = new UserData("Sensei Wu", "thegamingkart", "00001", "Hello test", UserConnectionStatus.Online);
             return true;
         }
 
         public async Task<bool> PopulateContactsList()
         {
-            ContactsList.Add(new UserData("Skymu user 1", "u1", "hi skmuuymu", UserConnectionStatus.Online));
-            ContactsList.Add(new UserData("Skymu user 2", "u2", "HELLO", UserConnectionStatus.Away));
+            ContactsList.Add(new UserData("Skymu user 1", "u1", "u1", "hi skmuuymu", UserConnectionStatus.Online));
+            ContactsList.Add(new UserData("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away));
             return true;
         }
 
         public async Task<bool> PopulateRecentsList()
         {
-            RecentsList.Add(new UserData("Sensei Wu", "sensei@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
-            RecentsList.Add(new UserData("thegamingkart", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
+            RecentsList.Add(new UserData("Luigi", "luigi@s.whatsapp.net", "luigi@s.whatsapp.net", "NO", UserConnectionStatus.DoNotDisturb, null));
+            RecentsList.Add(new UserData("Mario", "mario@s.whatsapp.net", "mario@s.whatsapp.net", "SAY SOMETHING", UserConnectionStatus.Offline, null));
             return true;
         }
         public ClickableConfiguration[] ClickableConfigurations

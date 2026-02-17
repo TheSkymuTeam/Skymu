@@ -11,6 +11,7 @@
 
 using MiddleMan;
 using System;
+using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace Discord.Classes
             string messageId = message["id"]?.GetValue<string>() ?? "0";
 
             string authorId = message["author"]?["id"]?.GetValue<string>() ?? "0";
-            string authorName = GetAuthorName(message);
+            string[] authorNames = GetAuthorNames(message);
 
             var content = HelperMethods.ReplaceIDWithName(
                 message["mentions"] as JsonArray,
@@ -35,45 +36,44 @@ namespace Discord.Classes
 
             byte[] media = await ParseMessageMedia(message);
 
-            var reply = ParseReply(message["referenced_message"]);
+            MessageItem parent = ParseReply(message["referenced_message"]);
 
             return new MessageItem(
                 messageId,
-                authorId,
-                authorName,
+                new UserData(authorNames[0], authorNames[1], authorId),
                 timestamp,
                 content,
-                media,
-                reply.replyToId,
-                reply.replyToName,
-                reply.replyContent
+                new AttachmentItem[1] { new AttachmentItem(media, "discord-image", AttachmentType.Image) },
+                parent
             );
         }
 
-        public static (string replyToId, string replyToName, string replyContent) ParseReply(JsonNode refMsg)
+        public static MessageItem ParseReply(JsonNode refMsg)
         {
-            if (refMsg is null)
-                return (null, null, null);
+            if (refMsg is null) return null;
 
-            string replyToId = refMsg["author"]?["id"]?.GetValue<string>();
-
-            string replyToName = GetAuthorName(refMsg);
-
-            string replyContent = refMsg["content"]?.GetValue<string>() ?? "[unavailable]";
-            replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, replyContent);
-
-            return (replyToId, replyToName, replyContent);
+            string replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, refMsg["content"]?.GetValue<string>() ?? "[unavailable]");
+            string[] usernames = GetAuthorNames(refMsg);
+            return new MessageItem(
+                refMsg["id"]?.GetValue<string>() ?? "0",
+                new UserData(usernames[0], usernames[1], refMsg["author"]?["id"]?.GetValue<string>()),
+                ParseTimestamp(refMsg["timestamp"]?.GetValue<string>()),
+                replyContent
+            );
         }
 
-        public static string GetAuthorName(JsonNode node)
+        public static string[] GetAuthorNames(JsonNode node)
         {
             var member = node?["member"];
             var author = node?["author"];
 
-            return member?["nick"]?.GetValue<string>()
+            string displayname = member?["nick"]?.GetValue<string>()
                 ?? author?["global_name"]?.GetValue<string>()
                 ?? author?["username"]?.GetValue<string>()
                 ?? "[unknown user]";
+            string username = author?["username"]?.GetValue<string>()
+                ?? "[unknown user]";
+            return new string[] { displayname, username };
         }
 
         public static async Task<byte[]> ParseMessageMedia(JsonNode message)

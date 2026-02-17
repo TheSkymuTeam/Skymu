@@ -37,7 +37,7 @@ namespace SkypeDBBrowser
         public string InternalName => "skymu-skypedb-plugin";
         public AuthenticationMethod[] AuthenticationType => new[] { AuthenticationMethod.Token };
 
-        public SidebarData SidebarInformation { get; private set; }
+        public UserData MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
         public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
@@ -163,11 +163,10 @@ namespace SkypeDBBrowser
                                     body = CleanSkypeMessageBody(body);
 
                                     var messageItem = new MessageItem(
-                                        message_id: messageId,
-                                        sender_id: author,
-                                        sender_display_name: displayName,
-                                        time: dateTime,
-                                        body: body
+                                        messageId,
+                                        new UserData(displayName, author, author),
+                                        dateTime,
+                                        body
                                     );
 
                                     messageList.Add(messageItem);
@@ -220,10 +219,11 @@ namespace SkypeDBBrowser
                         }
                     }
 
-                    SidebarInformation = new SidebarData(
+                    MyInformation = new UserData(
                         displayName,
                         _currentUserId,
-                        "Skype DB Browser (Read-Only)",
+                        _currentUserId,
+                        null,
                         UserConnectionStatus.Offline
                     );
                 }
@@ -277,6 +277,7 @@ namespace SkypeDBBrowser
 
                                 ContactsList.Add(new UserData(
                                     displayName,
+                                    skypename,
                                     skypename,
                                     mood,
                                     status
@@ -343,6 +344,7 @@ namespace SkypeDBBrowser
                                     // individual conversation
                                     RecentsList.Add(new UserData(
                                         displayName,
+                                        identity,
                                         identity,
                                         null,
                                         UserConnectionStatus.Offline

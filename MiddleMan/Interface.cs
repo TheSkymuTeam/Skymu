@@ -44,22 +44,6 @@ namespace MiddleMan
         Offline
     }
 
-    public class SidebarData
-    {
-        public string DisplayName { get; set; } // The current user's display name.
-        public string Username { get; set; } // The current user's username.
-        public string Identifier { get; set; } // The current user's unique identifier.
-        public string SkypeCreditText { get; set; } // The text you want to put in place of Skype Credit.
-        public UserConnectionStatus ConnectionStatus { get; set; } // Icon status (e.g. "Online")
-        public SidebarData(string username, string identifier, string skype_credit_text, UserConnectionStatus connection_status)
-        {
-            DisplayName = username;
-            Identifier = identifier;
-            SkypeCreditText = skype_credit_text;
-            ConnectionStatus = connection_status;
-        }
-    }
-
     public abstract class ProfileData : INotifyPropertyChanged
     {
         private string _display_name;
@@ -104,6 +88,7 @@ namespace MiddleMan
     public class UserData : ProfileData
     {
         private string _status;
+        private string _username;
         private UserConnectionStatus _presence_status;
 
         public string Status // Textual status (e.g. "I'm doing good today.")
@@ -112,21 +97,28 @@ namespace MiddleMan
             set => Set(ref _status, value, nameof(Status));
         }
 
+        public string Username // Username or handle (not identifier, not display name (unless that doesnt exist))
+        {
+            get => _username;
+            set => Set(ref _username, value, nameof(Username));
+        }
+
         public UserConnectionStatus PresenceStatus // Icon status (e.g. "Online")
         {
             get => _presence_status;
             set => Set(ref _presence_status, value, nameof(PresenceStatus));
         }
 
-        public UserData(string display_name, string identifier) : base(display_name, identifier)
+        public UserData(string display_name, string username, string identifier) : base(display_name, identifier)
         {
-
+            _username = username;
         }
 
-        public UserData(string display_name, string identifier, string status = null,
+        public UserData(string display_name, string username, string identifier, string status = null,
                         UserConnectionStatus presence_status = UserConnectionStatus.Offline, byte[] profile_picture = null)
             : base(display_name, identifier, profile_picture)
         {
+            _username = username;
             _status = status;
             _presence_status = presence_status;
         }
@@ -192,12 +184,13 @@ namespace MiddleMan
 
     public class MessageItem : ConversationItem
     { 
+        public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
         public string Identifier { get; set; } // Unique identifier for the message
-        public ProfileData Sender { get; set; } // Who sent the message 
+        public UserData Sender { get; set; } // Who sent the message 
         public string Text { get; set; } // Message body
         public AttachmentItem[] Attachments { get; set; } // Media or files attached to the message
         public MessageItem ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
-        public MessageItem(string identifier, ProfileData sender, DateTime time, string text = null, AttachmentItem[] attachments = null, MessageItem parent_message = null)
+        public MessageItem(string identifier, UserData sender, DateTime time, string text = null, AttachmentItem[] attachments = null, MessageItem parent_message = null)
         {
             Identifier = identifier;
             Sender = sender;
@@ -304,7 +297,7 @@ namespace MiddleMan
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
         Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.
-        SidebarData SidebarInformation { get; } // field for sidebar data, ideally bound to a WebSocket or similar for real-time updates.
+        UserData MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials); // Tries to log in with saved tokens/credentials
         ObservableCollection<ConversationItem> ActiveConversation { get; } // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.

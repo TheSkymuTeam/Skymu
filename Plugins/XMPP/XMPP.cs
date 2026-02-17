@@ -27,30 +27,30 @@ namespace XMPP
 {
     public class Core : ICore
     {
-        // Plugin details
+        // plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "XMPP"; } }
         public string InternalName { get { return "skymu-xmpp-plugin"; } }
         public string TextUsername { get { return "JID (e.g., user@server.com)"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password}; } }
+        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
 
-        // Initialize XMPP client and helper classes
+        // initialize XMPP client and helper classes
         private XMPPClient _xmppClient;
         private readonly HelperMethods _helperMethods = new HelperMethods();
         private string _activeConversationJid;
         public SynchronizationContext _uiContext;
-        
-        // Track recent conversations
+
+        // track recent conversations
         private readonly Dictionary<string, string> _recentJidMap = new();
-        
-        // Current user's JID
+
+        // current user's JID
         private string _currentUserJid;
         private string _currentUsername;
         private string _currentPassword;
 
-        // Constants
+        // constants
         private const int MAX_MESSAGES_LIMIT = 50;
         private const int CONNECTION_TIMEOUT_MS = 10000;
 
@@ -63,14 +63,13 @@ namespace XMPP
             {
                 return new ClickableConfiguration[]
                 {
-                    // XMPP typically doesn't use special mention syntax in messages
-                    // But we can support basic @ mentions
+                    // xmpp doesn't use special mention syntax, but @ mentions are supported here
                     new ClickableConfiguration(ClickableItemType.User, "@", " ")
                 };
             }
         }
 
-        public SidebarData SidebarInformation { get; private set; }
+        public UserData MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
         public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
@@ -146,8 +145,8 @@ namespace XMPP
             try
             {
                 _xmppClient = new XMPPClient(jid, password);
-                
-                // Set up event handlers
+
+                // set up event handlers
                 _xmppClient.OnConnectionStateChanged += OnConnectionStateChanged;
                 _xmppClient.OnMessageReceived += OnMessageReceived;
                 _xmppClient.OnPresenceReceived += OnPresenceReceived;
@@ -155,7 +154,7 @@ namespace XMPP
                 _xmppClient.OnComposingStateChanged += OnComposingStateChanged;
                 _xmppClient.OnError += OnClientError;
 
-                // Attempt to connect
+                // attempt to connect
                 bool connected = await _xmppClient.ConnectAsync(CONNECTION_TIMEOUT_MS);
 
                 if (!connected)
@@ -164,7 +163,7 @@ namespace XMPP
                     return LoginResult.Failure;
                 }
 
-                // Authenticate
+                // authenticate
                 bool authenticated = await _xmppClient.AuthenticateAsync();
 
                 if (!authenticated)
@@ -173,13 +172,13 @@ namespace XMPP
                     return LoginResult.Failure;
                 }
 
-                // Store current user JID
+                // store current user JID
                 _currentUserJid = _xmppClient.CurrentJID;
 
-                // Send initial presence
+                // send initial presence
                 await _xmppClient.SendPresenceAsync(UserConnectionStatus.Online);
 
-                // Request roster
+                // request roster
                 await _xmppClient.RequestRosterAsync();
 
                 return LoginResult.Success;
@@ -205,11 +204,13 @@ namespace XMPP
                 string displayName = _helperMethods.ExtractUsernameFromJid(_currentUserJid);
                 UserConnectionStatus status = _xmppClient.CurrentPresence;
 
-                SidebarInformation = new SidebarData(
-                    displayName, 
-                    _currentUserJid, 
-                    "XMPP Protocol", 
-                    status
+                MyInformation = new UserData(
+                    displayName,
+                    _helperMethods.ExtractUsernameFromJid(_currentUserJid),
+                    _currentUserJid,
+                    null,
+                    status,
+                    null
                 );
 
                 return true;
@@ -241,18 +242,20 @@ namespace XMPP
                 if (listType == ListType.Contacts)
                 {
                     ContactsList.Clear();
-                    
+
                     foreach (var contact in roster)
                     {
                         string displayName = contact.Name ?? _helperMethods.ExtractUsernameFromJid(contact.Jid);
-                        string status = contact.StatusMessage ?? string.Empty;
+                        string username = _helperMethods.ExtractUsernameFromJid(contact.Jid);
+                        string statusText = contact.StatusMessage ?? string.Empty;
                         UserConnectionStatus presence = contact.Presence;
                         byte[] avatarImage = await _helperMethods.GetDefaultAvatarAsync(contact.Jid);
 
                         var userData = new UserData(
                             displayName,
+                            username,
                             contact.Jid,
-                            status,
+                            statusText,
                             presence,
                             avatarImage
                         );
@@ -263,8 +266,8 @@ namespace XMPP
                 else if (listType == ListType.Recents)
                 {
                     RecentsList.Clear();
-                    
-                    // Get recent conversations from message archive
+
+                    // get recent conversations from message archive
                     var recentConversations = _xmppClient.GetRecentConversations();
 
                     foreach (var jid in recentConversations)
@@ -272,16 +275,18 @@ namespace XMPP
                         _recentJidMap[jid] = jid;
 
                         var contact = roster.FirstOrDefault(c => c.Jid == jid);
-                        
+
                         string displayName = contact?.Name ?? _helperMethods.ExtractUsernameFromJid(jid);
-                        string status = contact?.StatusMessage ?? string.Empty;
+                        string username = _helperMethods.ExtractUsernameFromJid(jid);
+                        string statusText = contact?.StatusMessage ?? string.Empty;
                         UserConnectionStatus presence = contact?.Presence ?? UserConnectionStatus.Offline;
                         byte[] avatarImage = await _helperMethods.GetDefaultAvatarAsync(jid);
 
                         var userData = new UserData(
                             displayName,
+                            username,
                             jid,
-                            status,
+                            statusText,
                             presence,
                             avatarImage
                         );
@@ -313,7 +318,7 @@ namespace XMPP
 
             try
             {
-                // Retrieve message history for this JID
+                // retrieve message history for this JID
                 var messages = await _xmppClient.GetMessageHistoryAsync(identifier, MAX_MESSAGES_LIMIT);
 
                 foreach (var msg in messages)
@@ -357,7 +362,7 @@ namespace XMPP
             }
         }
 
-        // Event handlers
+        // event handlers
 
         private void OnConnectionStateChanged(object sender, bool isConnected)
         {
@@ -373,7 +378,7 @@ namespace XMPP
             {
                 try
                 {
-                    // Remove typing indicator for this user
+                    // remove typing indicator for this user when a message arrives
                     var typingUser = TypingUsersList.FirstOrDefault(u => u.Identifier == e.FromJid);
                     if (typingUser != null)
                     {
@@ -385,32 +390,42 @@ namespace XMPP
                         users.Remove(e.FromJid);
                     }
 
-                    // Create message item
-                    var messageItem = new MessageItem(
-                        e.MessageId,
-                        e.FromJid,
+                    var senderData = new UserData(
                         e.FromDisplayName,
-                        e.Timestamp,
-                        e.Body,
-                        e.Media,
-                        null, // XMPP doesn't have built-in reply threading like Discord
-                        null,
-                        null,
+                        _helperMethods.ExtractUsernameFromJid(e.FromJid),
                         e.FromJid
                     );
 
-                    // Fire notification for all incoming messages
+                    AttachmentItem[] attachments = null;
+                    if (e.Media != null && e.Media.Length > 0)
+                    {
+                        attachments = new[]
+                        {
+                            new AttachmentItem(e.Media, "attachment", AttachmentType.File)
+                        };
+                    }
+
+                    var messageItem = new MessageItem(
+                        e.MessageId,
+                        senderData,
+                        e.Timestamp,
+                        e.Body,
+                        attachments,
+                        null // xmpp doesn't have built-in reply threading
+                    );
+
+                    // fire notification for all incoming messages
                     var contact = _xmppClient.GetRoster().FirstOrDefault(c => c.Jid == e.FromJid);
                     UserConnectionStatus status = contact?.Presence ?? UserConnectionStatus.Offline;
                     Notification?.Invoke(this, new NotificationEventArgs(messageItem, status));
 
-                    // Add to active conversation if it matches
+                    // add to active conversation if this JID matches
                     if (e.FromJid == _activeConversationJid)
                     {
                         ActiveConversation.Add(messageItem);
                     }
 
-                    // Update recents list
+                    // update recents list
                     UpdateRecentsList(e.FromJid);
                 }
                 catch (Exception ex)
@@ -426,7 +441,7 @@ namespace XMPP
             {
                 try
                 {
-                    // Update the user's presence in ContactsList
+                    // update presence in contacts list
                     var contact = ContactsList.OfType<UserData>().FirstOrDefault(c => c.Identifier == e.FromJid);
                     if (contact != null)
                     {
@@ -434,7 +449,7 @@ namespace XMPP
                         contact.Status = e.StatusMessage ?? string.Empty;
                     }
 
-                    // Update in RecentsList as well
+                    // update presence in recents list
                     var recent = RecentsList.OfType<UserData>().FirstOrDefault(c => c.Identifier == e.FromJid);
                     if (recent != null)
                     {
@@ -451,7 +466,7 @@ namespace XMPP
 
         private void OnRosterReceived(object sender, EventArgs e)
         {
-            // Roster has been updated, refresh the contacts list
+            // roster has been updated; refresh the contacts list
             Task.Run(async () => await PopulateContactsList());
         }
 
@@ -470,7 +485,11 @@ namespace XMPP
                     {
                         if (existingUser == null)
                         {
-                            var userData = new UserData(e.DisplayName, e.FromJid);
+                            var userData = new UserData(
+                                e.DisplayName,
+                                _helperMethods.ExtractUsernameFromJid(e.FromJid),
+                                e.FromJid
+                            );
                             TypingUsersList.Add(userData);
                         }
 
@@ -510,8 +529,8 @@ namespace XMPP
             if (!_recentJidMap.ContainsKey(jid))
             {
                 _recentJidMap[jid] = jid;
-                
-                // Refresh recents list
+
+                // refresh recents list to include this new entry
                 Task.Run(async () => await PopulateRecentsList());
             }
         }

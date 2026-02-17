@@ -283,15 +283,12 @@ namespace Discord.Classes
             var args = new HelperClasses.MessageReceivedEventArgs
             {
                 ChannelId = channelId,
-                MessageId = messageItem.Identifier,
-                AuthorId = messageItem.Sender.Identifier,
-                AuthorName = messageItem.Sender.DisplayName,
-                Content = messageItem.Text,
-                Media = messageItem.Attachments[0].File,
+                Identifier = messageItem.Identifier,
+                Sender = messageItem.Sender,
                 Timestamp = messageItem.Time,
-                ReplyToId = messageItem.ReplyToID,
-                ReplyToName = messageItem.ReplyToDN,
-                ReplyMsgContent = messageItem.ReplyBody
+                Text = messageItem.Text,
+                Attachments = messageItem.Attachments,
+                ParentMessage = messageItem.ParentMessage
             };
 
             _ = _messageQueue.Writer.WriteAsync(args);
@@ -326,10 +323,8 @@ namespace Discord.Classes
 
                 var typingUser = new UserData(
                     display_name: globalName,
-                    identifier: userId,
-                    status: "Typing...",
-                    presence_status: UserConnectionStatus.Online,
-                    profile_picture: null
+                    username: globalName,
+                    identifier: userId
                 );
 
                 _core?._uiContext?.Post(_ =>

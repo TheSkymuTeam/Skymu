@@ -74,7 +74,7 @@ namespace Discord
             }
         }
 
-        public SidebarData SidebarInformation { get; private set; }
+        public UserData MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
         public ObservableCollection<ProfileData> ContactsList { get; private set; } = new ObservableCollection<ProfileData>();
         public ObservableCollection<ProfileData> RecentsList { get; private set; } = new ObservableCollection<ProfileData>();
@@ -197,8 +197,8 @@ namespace Discord
                 string mainUsrStatus = WebSocketMgr.GetUserStatus("0");
                 UserConnectionStatus mainStatusMapped = helperMethods.MapStatus(mainUsrStatus);
 
-                SidebarInformation = new SidebarData(
-                    HelperMethods.GetDisplayName(displayName, dscUserName), userId, "$0.00 - No subscription", mainStatusMapped);
+                MyInformation = new UserData(
+                    HelperMethods.GetDisplayName(displayName, dscUserName), dscUserName, userId, WebSocketMgr.GetCustomStatus(userId), mainStatusMapped);
 
                 return true;
             }
@@ -257,7 +257,7 @@ namespace Discord
                         byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
                         string status = WebSocketMgr.GetUserStatus(userId);
                         string customStatus = WebSocketMgr.GetCustomStatus(userId);
-                        var profileData = new UserData(displayName ?? dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
+                        var profileData = new UserData(displayName ?? dscUserName, dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -277,6 +277,7 @@ namespace Discord
                                 .OfType<JsonObject>()
                                 .Select(r => new UserData(
                                     r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
+                                    r["username"]?.GetValue<string>() ?? "Unknown",
                                     r["id"]?.GetValue<string>() ?? "0"
                                 ))
                                 .ToArray();
@@ -421,11 +422,11 @@ namespace Discord
             string currentUserId = _currentUserId;
 
             // Check if replied to current user
-            if (e.ReplyToId == currentUserId)
+            if (e.ParentMessage.Sender.Identifier == currentUserId)
                 return true;
 
             // Check if current user is mentioned in the message
-            if (!string.IsNullOrEmpty(e.Content) && e.Content.Contains($"<@{currentUserId}>"))
+            if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{currentUserId}>"))
                 return true;
 
             return false;
@@ -437,31 +438,19 @@ namespace Discord
             if (ShouldNotify(e))
             {
                 UserConnectionStatus status = helperMethods.MapStatus(
-                    WebSocketMgr.GetUserStatus(e.AuthorId)
+                    WebSocketMgr.GetUserStatus(e.Sender.Identifier)
                 );
 
-                MessageItem replyN = null;
-
-                if (!String.IsNullOrEmpty(e.ReplyToId))
-                {
-                    replyN = new MessageItem(
-                        e.MessageId, // TODO replace with actual reply message ID 
-                        new UserData(e.ReplyToName, e.ReplyToId),
-                        e.Timestamp, // TODO replace with actual reply message timestamp 
-                        e.ReplyMsgContent
-                        );
-                }
-
-                MessageItem messageN = new MessageItem(
-                        e.MessageId,
-                        new UserData(e.AuthorName, e.AuthorId),
+                MessageItem message = new MessageItem(
+                        e.Identifier,
+                        e.Sender,
                         e.Timestamp,
-                        e.Content,
-                        [new AttachmentItem(e.Media, "discord-image", AttachmentType.Image)],
-                        replyN
+                        e.Text,
+                        e.Attachments,
+                        e.ParentMessage
                         );
 
-                Notification?.Invoke(this, new NotificationEventArgs(messageN, status));
+                Notification?.Invoke(this, new NotificationEventArgs(message, status, e.ChannelId));
             }
 
             // Only add messages if they're for the currently active channel
@@ -469,35 +458,23 @@ namespace Discord
 
             _uiContext?.Post(_ =>
             {
-                var typingUser = TypingUsersList.FirstOrDefault(u => u.Identifier == e.AuthorId);
+                var typingUser = TypingUsersList.FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
                 if (typingUser is not null)
                     TypingUsersList.Remove(typingUser);
 
                 if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
-                    users.Remove(e.AuthorId);
+                    users.Remove(e.Sender.Identifier);
 
                 try
                 {
-                    MessageItem reply = null;
-
-                    if (!String.IsNullOrEmpty(e.ReplyToId))
-                    {
-                        reply = new MessageItem(
-                            e.MessageId, // TODO replace with actual reply message ID 
-                            new UserData(e.ReplyToName, e.ReplyToId),
-                            e.Timestamp, // TODO replace with actual reply message timestamp 
-                            e.ReplyMsgContent
-                            );
-                    }
-
                     MessageItem message = new MessageItem(
-                            e.MessageId,
-                            new UserData(e.AuthorName, e.AuthorId),
-                            e.Timestamp,
-                            e.Content,
-                            [new AttachmentItem(e.Media, "discord-image", AttachmentType.Image)],
-                            reply
-                            );
+                        e.Identifier,
+                        e.Sender,
+                        e.Timestamp,
+                        e.Text,
+                        e.Attachments,
+                        e.ParentMessage
+                        );
 
                     ActiveConversation.Add(message);
                 }
