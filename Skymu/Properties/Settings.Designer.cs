@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Kim Kardashian")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Lemon Meringue Pie")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
