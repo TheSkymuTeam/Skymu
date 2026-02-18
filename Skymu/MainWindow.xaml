@@ -114,7 +114,7 @@ Style="{StaticResource Window}"
                     </Border>
                 </Grid>
 
-            
+
                 <local:SliceControl
             Grid.Column="1" Grid.Row="1"
             Source="/Resources/Universal/Icon Bitmap/skype-status-small.png"
@@ -193,7 +193,7 @@ Margin="10,0,0,0"
 HorizontalAlignment="Left"
 HoverIndex="-1" PressedIndex="-1"
 Slice="false" Width="14"/>
-                
+
                 <!-- Name + member count -->
                 <TextBlock x:Name="usernameText"
             Grid.Column="2" Grid.Row="1" Margin="10,0,0,0"
@@ -346,7 +346,7 @@ Slice="false" Width="14"/>
         </DataTemplate>
 
         <!-- CONVERSATION ITEM TEMPLATE END -->
-        
+
         <Style x:Key="NoInsetListBox" TargetType="ListBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="0"/>
@@ -473,11 +473,12 @@ Slice="false" Width="14"/>
             </Grid.Background>
             <Grid.RowDefinitions>
                 <RowDefinition Height="21" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="31*" />
+                <RowDefinition Height="770*"/>
             </Grid.RowDefinitions>
 
-            <Menu Grid.Row="0" Height="20" Background="Transparent" FontFamily="Tahoma" Name="menu1"
-                  VerticalAlignment="Top" FontSize="11">
+            <Menu Height="20" Background="Transparent" FontFamily="Tahoma" x:Name="menu1"
+                  VerticalAlignment="Center" FontSize="11">
                 <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}" />
                     <Separator />
@@ -508,7 +509,7 @@ Slice="false" Width="14"/>
                     <MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE]}" Click="mn_Language" />
                     <Separator />
                     <MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY]}" Click="mn_Accessibility" />
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE]}" Click="mn_ShareWithFriend" /> 
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE]}" Click="mn_ShareWithFriend" />
                     <Separator />
                     <MenuItem Header="{Binding [sMAINMENU_TOOLS_OPTIONS]}" Click="mn_Options" />
                 </MenuItem>
@@ -526,8 +527,8 @@ Slice="false" Width="14"/>
 
                 </MenuItem>
             </Menu>
-            <Rectangle Grid.Row="0" Height="1" VerticalAlignment="Bottom" Fill="#8cbeff" />
-            <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4">
+            <Rectangle x:Name="MBDivider" Grid.Row="0" Height="1" VerticalAlignment="Top" Fill="#8cbeff" Margin="0,20,0,0" />
+            <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4" Grid.RowSpan="2">
                 <Grid x:Name="ContentArea">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition x:Name="SidebarColumn" MinWidth="190" Width="300" />
@@ -691,7 +692,6 @@ MouseLeftButtonDown="Contacts_BtnDown"
                                     <RowDefinition Height="34" />
                                     <RowDefinition Height="1" />
                                     <RowDefinition Height="32" />
-                                    <RowDefinition Height="1" />
                                 </Grid.RowDefinitions>
                                 <local:SliceControl
                                     Grid.Row="0"
@@ -830,26 +830,27 @@ MouseLeftButtonUp="MakeGroup_Click"
                                     TextSize="13"
                                     TextColor="#333333"
                                     HorizontalAlignment="Stretch" />
-                                <Rectangle Grid.Row="7" Height="1" Fill="#c8cbcd" />
+
                             </Grid>
                         </Border>
-                        <Border
-                            Grid.Row="4"
-                            Background="#dce6f4"
-                            BorderBrush="#26000000"
-                            BorderThickness="1,0,1,1"
-                            CornerRadius="0,0,4,4">
-                            <TextBlock Text="Skymu Beta. All rights reserved."
-                                       x:Name="GlobalUserCount"
-                                       Margin="6,0,0,0"
-                                       FontFamily="Tahoma"
-                                       FontSize="11"
-                                       Foreground="#999999"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"
-                                       ToolTip="The amount of people on Skymu at the moment, no matter what platform they are currently on."/>
-                        </Border>
+                        <local:SliceControl
+                            x:Name="GlobalUserCount"
+                   Grid.Row="4"
+                   Source="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user-count-tab.png'}"
+                   ElementCount="1"
+                   StackDirection="Vertical"
+                   DefaultIndex="0"
+                   HoverIndex="1"
+                   PressedIndex="2"
+                   MouseLeftButtonUp="CallPhones_Click"
+                   Text="Skymu Beta. All rights reserved."
+                   TextStartPositionX="7"
+                   TextFont="Tahoma"
+                   TextSize="11"
+                   TextColor="#999999"
+                   HorizontalAlignment="Stretch" />
 
                     </Grid>
                     <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press"
@@ -860,7 +861,7 @@ MouseLeftButtonUp="MakeGroup_Click"
                             <RowDefinition x:Name="TopbarWindowRow" Height="120" />
                             <RowDefinition x:Name="MessageWindowRow" Height="*" />
                         </Grid.RowDefinitions>
-                        
+
                         <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -1012,7 +1013,7 @@ Source="{Binding Source={x:Static properties:Settings.Default},
     PressedIndex="-1"
     HorizontalAlignment="Stretch" />
                         </Grid>
-                        
+
                         <Border Grid.Row="1"
 Background="#FFF"
 BorderBrush="#26000000"
@@ -1324,7 +1325,7 @@ Slice="false"/>
                      MaxWidth="257"
                      VerticalScrollBarVisibility="Visible"
                      HorizontalScrollBarVisibility="Disabled">
-                                                         
+
                                                             <ScrollViewer.Resources>
 
                                                                 <Style TargetType="ScrollBar">

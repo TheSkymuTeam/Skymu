@@ -409,18 +409,18 @@ namespace SkypeDBBrowser
             }
         }
 
-        public async Task<string[]> SaveAutoLoginCredential()
+        public async Task<SavedCredential> StoreCredential()
         {
             // save the database path for auto-login
-            return new[] { _databasePath };
+            return new SavedCredential(_currentUserId, _databasePath, AuthenticationMethod.Token);
         }
 
-        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        public async Task<LoginResult> TryAutoLogin(SavedCredential credential)
         {
-            if (autoLoginCredentials == null || autoLoginCredentials.Length == 0)
+            if (credential == null)
                 return LoginResult.Failure;
 
-            return await LoginMainStep(AuthenticationMethod.Token, autoLoginCredentials[0]);
+            return await LoginMainStep(AuthenticationMethod.Token, credential.PasswordOrToken);
         }
 
         public void Dispose()

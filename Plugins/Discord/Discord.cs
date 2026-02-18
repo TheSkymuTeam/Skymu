@@ -50,9 +50,11 @@ namespace Discord
         public readonly Dictionary<string, string> _recentChannelMap = new();
         // The current user's identifier
         private string _currentUserId;
+        // The current user's username
+		private string _currentGlobalName;
 
-        // Magic numbers used for some stuff...
-        private const int MAX_MESSAGES_LIMIT = 30;
+		// Magic numbers used for some stuff...
+		private const int MAX_MESSAGES_LIMIT = 30;
         private const int WARNING_WS_MS = 5000;
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
@@ -110,9 +112,9 @@ namespace Discord
         public Task<LoginResult> LoginOptStep(string code)
             => Task.FromResult(LoginResult.Success);
 
-        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        public async Task<LoginResult> TryAutoLogin(SavedCredential credential)
         {
-            DscToken = autoLoginCredentials[0];
+            DscToken = credential.PasswordOrToken;
             if (string.IsNullOrWhiteSpace(DscToken))
             {
                 return LoginResult.Failure;
@@ -121,18 +123,22 @@ namespace Discord
             return await StartClient().ConfigureAwait(false);
         }
 
-        public Task<string[]> SaveAutoLoginCredential()
-            => Task.FromResult(new[] { DscToken });
+        public Task<SavedCredential> StoreCredential()
+            => Task.FromResult(new SavedCredential(_currentGlobalName, DscToken, AuthenticationMethod.Token));
 
         public async Task<LoginResult> StartClient()
         {
             string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
-            if (userCheckTkn.Contains("username"))
-            {
-                WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this);
-                return LoginResult.Success;
-            }
-            else
+			if (userCheckTkn.Contains("username"))
+			{
+				// Parse and store username
+				var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
+				_currentGlobalName = parsedUser["global_name"]?.GetValue<string>() ?? parsedUser["username"]?.GetValue<string>() ?? "discord_user#0000";
+
+				WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this);
+				return LoginResult.Success;
+			}
+			else
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {

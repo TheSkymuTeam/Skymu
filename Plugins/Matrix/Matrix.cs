@@ -51,7 +51,7 @@ namespace Matrix
         }
 
         private string _activeRoomId;
-        private string[] credData;
+        private SavedCredential credData;
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
         public readonly Dictionary<string, string> _recentRoomMap = new();
 
@@ -71,7 +71,7 @@ namespace Matrix
             {
                 if (username.Contains(":"))
                 {
-                    string[] parts = username.Split(':');
+                    string[] parts = username.Split(':', 2);
                     if (parts.Length == 2)
                     {
                         _homeserver = $"https://{parts[1]}";
@@ -105,9 +105,9 @@ namespace Matrix
                 _accessToken = loginResponse.GetProperty("access_token").GetString();
                 _userId = loginResponse.GetProperty("user_id").GetString();
 
-                credData = new string[] { _homeserver, _accessToken, _userId };
+                credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
 
-                return await StartClient();
+				return await StartClient();
             }
             catch (Exception ex)
             {
@@ -551,20 +551,27 @@ namespace Matrix
             }
         }
 
-        public async Task<string[]> SaveAutoLoginCredential()
+        public async Task<SavedCredential> StoreCredential()
         {
             return credData;
         }
 
-        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        public async Task<LoginResult> TryAutoLogin(SavedCredential credential)
         {
             try
             {
-                _homeserver = autoLoginCredentials[0];
-                _accessToken = autoLoginCredentials[1];
-                _userId = autoLoginCredentials[2];
+                _accessToken = credential.PasswordOrToken;
+                _userId = credential.Username;
+				if (_userId.Contains(":"))
+				{
+					string[] parts = _userId.Split(':', 2);
+					if (parts.Length == 2)
+					{
+						_homeserver = $"https://{parts[1]}";
+					}
+				}
 
-                if (string.IsNullOrWhiteSpace(_accessToken))
+				if (string.IsNullOrWhiteSpace(_accessToken))
                 {
                     OnError?.Invoke(this, new PluginMessageEventArgs("Saved credentials are invalid. Please log in again."));
                     return LoginResult.Failure;

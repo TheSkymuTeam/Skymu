@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Lemon Meringue Pie")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Marshmallow Pie")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -212,6 +212,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["StartOnStartup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FallbackFillColors {
+            get {
+                return ((bool)(this["FallbackFillColors"]));
+            }
+            set {
+                this["FallbackFillColors"] = value;
             }
         }
     }

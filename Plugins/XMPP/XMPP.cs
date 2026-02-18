@@ -116,15 +116,15 @@ namespace XMPP
         public Task<LoginResult> LoginOptStep(string code)
             => Task.FromResult(LoginResult.Success);
 
-        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        public async Task<LoginResult> TryAutoLogin(SavedCredential autoLoginCredentials)
         {
-            if (autoLoginCredentials == null || autoLoginCredentials.Length < 2)
+            if (autoLoginCredentials == null || String.IsNullOrEmpty(autoLoginCredentials.Username))
             {
                 return LoginResult.Failure;
             }
 
-            string username = autoLoginCredentials[0];
-            string password = autoLoginCredentials[1];
+            string username = autoLoginCredentials.Username;
+            string password = autoLoginCredentials.PasswordOrToken;
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -137,8 +137,8 @@ namespace XMPP
             return await StartClient(username, password);
         }
 
-        public Task<string[]> SaveAutoLoginCredential()
-            => Task.FromResult(new[] { _currentUsername, _currentPassword });
+        public Task<SavedCredential> StoreCredential()
+            => Task.FromResult(new SavedCredential(_currentUsername, _currentPassword, AuthenticationMethod.Password));
 
         private async Task<LoginResult> StartClient(string jid, string password)
         {

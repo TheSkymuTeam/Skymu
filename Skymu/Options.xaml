@@ -209,6 +209,16 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     <CheckBox Content="Force notifications to always be orange (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
     Path=AccurateNotifications,
     Mode=TwoWay}" Margin="0,5"/>
+                    <CheckBox  IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=FallbackFillColors,
+Mode=TwoWay}" Margin="0,5">
+                        <CheckBox.Content>
+                            <TextBlock TextWrapping="Wrap">
+            Use Skype fallback window colors, and do not switch the color scheme based on window activation state.
+            Useful for users with visual motion sickness or if you think the colors are ugly.
+                            </TextBlock>
+                        </CheckBox.Content>
+                    </CheckBox>
                     <CheckBox Content="Attempt to render text in ClearType (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=UseClearType,
 Mode=TwoWay}" Margin="0,5"/>
