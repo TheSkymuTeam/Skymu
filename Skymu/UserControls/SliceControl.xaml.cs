@@ -269,15 +269,15 @@ namespace Skymu
             DependencyProperty.Register(nameof(TextVerticalAlignment), typeof(VerticalAlignment), typeof(SliceControl),
                 new PropertyMetadata(VerticalAlignment.Center, OnTextChanged));
 
-        public double TextStartPositionX { get { return (double)GetValue(TextStartPositionXProperty); } set { SetValue(TextStartPositionXProperty, value); } }
+        public int TextStartPositionX { get { return (int)GetValue(TextStartPositionXProperty); } set { SetValue(TextStartPositionXProperty, value); } }
         public static readonly DependencyProperty TextStartPositionXProperty =
-            DependencyProperty.Register(nameof(TextStartPositionX), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(0.0, OnTextChanged));
+            DependencyProperty.Register(nameof(TextStartPositionX), typeof(int), typeof(SliceControl),
+                new PropertyMetadata(0, OnTextChanged));
 
-        public double TextRightMargin { get { return (double)GetValue(TextRightMarginProperty); } set { SetValue(TextRightMarginProperty, value); } }
+        public int TextRightMargin { get { return (int)GetValue(TextRightMarginProperty); } set { SetValue(TextRightMarginProperty, value); } }
         public static readonly DependencyProperty TextRightMarginProperty =
-            DependencyProperty.Register(nameof(TextRightMargin), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(0.0, OnTextChanged));
+            DependencyProperty.Register(nameof(TextRightMargin), typeof(int), typeof(SliceControl),
+                new PropertyMetadata(8, OnTextChanged));
 
         public bool Slice { get { return (bool)GetValue(SliceProperty); } set { SetValue(SliceProperty, value); } }
         public static readonly DependencyProperty SliceProperty =

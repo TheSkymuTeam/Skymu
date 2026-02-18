@@ -1308,6 +1308,16 @@ namespace Skymu
 
         }
 
+        private void StatusArea_Click(object sender, MouseButtonEventArgs e)
+        {
+            var menu = (ContextMenu)StatusArea.Resources["StatusMenu"];
+
+            menu.PlacementTarget = StatusArea;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+
+            menu.IsOpen = true;
+        }
+
         private void mn_CheckUpdates(object sender, RoutedEventArgs e)
         {
             new Updater(true);

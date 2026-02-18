@@ -579,7 +579,7 @@ Slice="false" Width="14"/>
                                 TextSize="13"
                                 TextColor="#FFFFFF"/>
 
-                            <StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True" >
+                            <StackPanel x:Name="StatusArea"  Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True" >
                                 <StackPanel.Resources>
                                     <ContextMenu x:Key="StatusMenu">
                                         <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
@@ -1193,7 +1193,6 @@ TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
-TextRightMargin="6"
 TextColor="White"
 Width="Auto"/>
                                     <local:SliceControl
@@ -1210,10 +1209,9 @@ TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 TextColor="White"
-TextRightMargin="6"
 Width="Auto"
 LeftRightWidth="22"
-Margin="10,0,0,0" Loaded="SliceControl_Loaded" />
+Margin="10,0,0,0"/>
                                     <local:SliceControl
 Source="/Resources/Universal/Chat/btn_call_right.png"
 ElementCount="5"
@@ -1489,7 +1487,6 @@ TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
-TextRightMargin="6"
 TextColor="White"
 Width="Auto"/>
                                     </Grid>

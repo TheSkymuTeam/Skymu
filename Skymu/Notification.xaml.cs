@@ -21,17 +21,16 @@ namespace Skymu
             if (!Properties.Settings.Default.EnableNotifications) return;
             if (e.Item is Message message)
             {
-                // 1. message sent by me → never notify
                 if (MainWindow.Identifier == message.Sender.Identifier)
                 {
-                    Debug.WriteLine("Return: message sent by me");
+                    Debug.WriteLine("Notification: message is from me, suppress");
                     return;
                 }
 
                 // 2. window not active → allow notification
                 if (!MainWindow.IsWindowActive)
                 {
-                    Debug.WriteLine("Continue: window not active");
+                    Debug.WriteLine("Notification: window is inactive, show");
                 }
                 else
                 {
@@ -44,7 +43,7 @@ namespace Skymu
                         if (!(MainWindow.SelectedContact is User) &&
                             MainWindow.SelectedContact.Identifier == e.SentInChannelID)
                         {
-                            Debug.WriteLine("Return: active group chat");
+                            Debug.WriteLine("Notification: message is from the active group chat, suppress");
                             return;
                         }
 
@@ -52,7 +51,7 @@ namespace Skymu
                         if (MainWindow.SelectedContact is User &&
                             message?.Sender.Identifier == MainWindow.SelectedContact.Identifier)
                         {
-                            Debug.WriteLine("Return: active DM");
+                            Debug.WriteLine("Notification: message is from the active direct message, suppress");
                             return;
                         }
                     }
