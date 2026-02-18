@@ -1,688 +1,692 @@
 ﻿<Window x:Class="Skymu.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" xmlns:properties="clr-namespace:Skymu.Properties" xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan" xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase" xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" WindowStyle="None" FontFamily="Tahoma" FontSize="11" Style="{StaticResource Window}" Background="#8cbeff" AllowsTransparency="False" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Title="{Binding [sMAINMENU_SKYPE]}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated" StateChanged="Window_StateChanged" Activated="Window_Activated" DataContext="{StaticResource Lang}">
-    <Window.Resources>
-        <Style x:Key="MessageTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="Width" Value="430"/>
-            <Setter Property="Padding" Value="0,0,15,0"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        </Style>
-        <local:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
-        <local:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
-        <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
-        <local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
-        <local:NullDependentBoolean x:Key="NullDependentBoolean"/>
-        <local:StatusToTextConverter x:Key="StatIntToText"/>
-        <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
-        <local:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
-        <local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
-        <local:TextStatusConverter x:Key="TextStatusConverter"/>
-        <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
-        <local:FormatFullTextConverter x:Key="FormatFullTextConverter" TextBlockStyle="{StaticResource MessageTextBlockStyle}"/>
-        <Style x:Key="WindowButtonStyle" TargetType="local:SliceControl">
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="Height" Value="18"/>
-            <Setter Property="Margin" Value="-1,0,0,0"/>
-            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
-            <Setter Property="Slice" Value="false"/>
-            <Setter Property="ElementCount" Value="4"/>
-            <Setter Property="StackDirection" Value="Vertical"/>
-            <Setter Property="DefaultIndex" Value="0"/>
-            <Setter Property="HoverIndex" Value="2"/>
-            <Setter Property="PressedIndex" Value="3"/>
-        </Style>
-        <Style x:Key="LongIconStyle" TargetType="Image">
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
-            <Setter Property="Height" Value="16"/>
-            <Setter Property="Width" Value="36"/>
-        </Style>
-        <!-- CONTACT ITEM TEMPLATE START -->
-        <!-- Shared style for both targeted templates -->
-        <Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        </Style>
-        <Style x:Key="ContactStatusStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#999999"/>
-            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-        </Style>
-        <!-- User template -->
-        <DataTemplate DataType="{x:Type plugin:User}">
-            <Grid Margin="2,4,0,4" Height="32">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2"/>
-                    <RowDefinition Height="14"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="34"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <!-- Profile picture -->
-                <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
-                    <Border Background="Transparent" CornerRadius="0">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#000000" BlurRadius="2" ShadowDepth="1" Direction="270" Opacity="0.50"/>
-                        </Border.Effect>
-                        <Grid>
-                            <Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
-                                <Image.Source>
-                                    <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                        <Binding Path="ProfilePicture"/>
-                                        <Binding Source="user"/>
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
-                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
-                        </Grid>
-                    </Border>
-                </Grid>
-                <local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding PresenceStatus,
+	<Window.Resources>
+		<Style x:Key="MessageTextBlockStyle" TargetType="TextBlock">
+			<Setter Property="Width" Value="430"/>
+			<Setter Property="Padding" Value="0,0,15,0"/>
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="FontFamily" Value="Tahoma"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		</Style>
+		<local:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
+		<local:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
+		<local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
+		<local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
+		<local:NullDependentBoolean x:Key="NullDependentBoolean"/>
+		<local:StatusToTextConverter x:Key="StatIntToText"/>
+		<local:ThemeImageConverter x:Key="ThemeImageConverter"/>
+		<local:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
+		<local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
+		<local:TextStatusConverter x:Key="TextStatusConverter"/>
+		<local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
+		<local:FormatFullTextConverter x:Key="FormatFullTextConverter" TextBlockStyle="{StaticResource MessageTextBlockStyle}"/>
+		<Style x:Key="WindowButtonStyle" TargetType="local:SliceControl">
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="Height" Value="18"/>
+			<Setter Property="Margin" Value="-1,0,0,0"/>
+			<Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
+			<Setter Property="Slice" Value="false"/>
+			<Setter Property="ElementCount" Value="4"/>
+			<Setter Property="StackDirection" Value="Vertical"/>
+			<Setter Property="DefaultIndex" Value="0"/>
+			<Setter Property="HoverIndex" Value="2"/>
+			<Setter Property="PressedIndex" Value="3"/>
+		</Style>
+		<Style x:Key="LongIconStyle" TargetType="Image">
+			<Setter Property="HorizontalAlignment" Value="Left"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
+			<Setter Property="Height" Value="16"/>
+			<Setter Property="Width" Value="36"/>
+		</Style>
+		<!-- CONTACT ITEM TEMPLATE START -->
+		<!-- Shared style for both targeted templates -->
+		<Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="FontFamily" Value="Tahoma"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		</Style>
+		<Style x:Key="ContactStatusStyle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="FontFamily" Value="Tahoma"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="#999999"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+		</Style>
+		<!-- User template -->
+		<DataTemplate DataType="{x:Type plugin:User}">
+			<Grid Margin="2,4,0,4" Height="32">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="2"/>
+					<RowDefinition Height="14"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="34"/>
+					<ColumnDefinition Width="24"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<!-- Profile picture -->
+				<Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
+					<Border Background="Transparent" CornerRadius="0">
+						<Border.Effect>
+							<DropShadowEffect Color="#000000" BlurRadius="2" ShadowDepth="1" Direction="270" Opacity="0.50"/>
+						</Border.Effect>
+						<Grid>
+							<Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
+								<Image.Source>
+									<MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+										<Binding Path="ProfilePicture"/>
+										<Binding Source="user"/>
+									</MultiBinding>
+								</Image.Source>
+							</Image>
+							<Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
+						</Grid>
+					</Border>
+				</Grid>
+				<local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding PresenceStatus,
                 Converter={StaticResource PresenceStatusConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                <!-- Name + status text -->
-                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
-                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding Status, TargetNullValue=''}"/>
-            </Grid>
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding IsSelected,
+				<!-- Name + status text -->
+				<TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
+				<TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding Status, TargetNullValue=''}"/>
+			</Grid>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsSelected,
             RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                    <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-        <!-- Group template -->
-        <DataTemplate DataType="{x:Type plugin:Group}">
-            <Grid Margin="2,4,0,4" Height="32">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2"/>
-                    <RowDefinition Height="14"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="34"/>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <!-- Profile picture -->
-                <Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
-                    <Border Background="Transparent" CornerRadius="0">
-                        <Border.Effect>
-                            <DropShadowEffect Color="#000000" BlurRadius="2" ShadowDepth="1" Direction="270" Opacity="0.50"/>
-                        </Border.Effect>
-                        <Grid>
-                            <Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
-                                <Image.Source>
-                                    <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                        <Binding Path="ProfilePicture"/>
-                                        <Binding Source="group"/>
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
-                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
-                        </Grid>
-                    </Border>
-                </Grid>
-                <local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                <!-- Name + member count -->
-                <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
-                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource TextStatusConverter}">
-                            <Binding Path="Status"/>
-                            <Binding Path="MemberCount"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-            </Grid>
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding IsSelected,
+					<Setter TargetName="usernameText" Property="Foreground" Value="White"/>
+					<Setter TargetName="statusText" Property="Foreground" Value="White"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+		<!-- Group template -->
+		<DataTemplate DataType="{x:Type plugin:Group}">
+			<Grid Margin="2,4,0,4" Height="32">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="2"/>
+					<RowDefinition Height="14"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="34"/>
+					<ColumnDefinition Width="24"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+				<!-- Profile picture -->
+				<Grid Grid.Column="0" Grid.RowSpan="3" Width="32" Height="32" Margin="2,0,0,0">
+					<Border Background="Transparent" CornerRadius="0">
+						<Border.Effect>
+							<DropShadowEffect Color="#000000" BlurRadius="2" ShadowDepth="1" Direction="270" Opacity="0.50"/>
+						</Border.Effect>
+						<Grid>
+							<Image Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
+								<Image.Source>
+									<MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+										<Binding Path="ProfilePicture"/>
+										<Binding Source="group"/>
+									</MultiBinding>
+								</Image.Source>
+							</Image>
+							<Border BorderBrush="#80BBBBBB" BorderThickness="1" CornerRadius="0"/>
+						</Grid>
+					</Border>
+				</Grid>
+				<local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+				<!-- Name + member count -->
+				<TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
+				<TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}">
+					<TextBlock.Text>
+						<MultiBinding Converter="{StaticResource TextStatusConverter}">
+							<Binding Path="Status"/>
+							<Binding Path="MemberCount"/>
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</Grid>
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsSelected,
             RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                    <Setter TargetName="usernameText" Property="Foreground" Value="White"/>
-                    <Setter TargetName="statusText" Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
-        <!-- CONTACT ITEM TEMPLATE END -->
-        <!-- CONVERSATION ITEM TEMPLATES START -->
-        <!-- MessageItem Template -->
-        <DataTemplate DataType="{x:Type plugin:Message}">
-            <Grid x:Name="ConversationGrid" Margin="0,9.5,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="98"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="430"/>
-                    <ColumnDefinition Width="80"/>
-                </Grid.ColumnDefinitions>
-                <!-- Reply header -->
-                <VirtualizingStackPanel Visibility="{Binding ParentMessage,
+					<Setter TargetName="usernameText" Property="Foreground" Value="White"/>
+					<Setter TargetName="statusText" Property="Foreground" Value="White"/>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
+		<!-- CONTACT ITEM TEMPLATE END -->
+		<!-- CONVERSATION ITEM TEMPLATES START -->
+		<!-- MessageItem Template -->
+		<DataTemplate DataType="{x:Type plugin:Message}">
+			<Grid x:Name="ConversationGrid" Margin="0,9.5,0,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="98"/>
+					<ColumnDefinition Width="16"/>
+					<ColumnDefinition Width="430"/>
+					<ColumnDefinition Width="80"/>
+				</Grid.ColumnDefinitions>
+				<!-- Reply header -->
+				<VirtualizingStackPanel Visibility="{Binding ParentMessage,
                 Converter={StaticResource NullDependentVisibilityConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
-                    <Image Source="{Binding Source={x:Static properties:Settings.Default},
+					<Image Source="{Binding Source={x:Static properties:Settings.Default},
                     Path=ThemeRoot,
                     Converter={StaticResource ThemeImageConverter},
                     ConverterParameter='Chat/reply-arrow.png'}" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
-                    <TextBlock LineHeight="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat='Replying to {0} - "{1}"'>
-                                <Binding Path="ParentMessage.Sender.DisplayName"/>
-                                <Binding Path="ParentMessage.Text" Converter="{StaticResource ReplyBodyConverter}"/>
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                </VirtualizingStackPanel>
-                <!-- Sender name -->
-                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-1000,0,0,0" FontSize="11" Text="{Binding Sender.DisplayName}" FontFamily="Tahoma" Foreground="{Binding Sender.Identifier,
+					<TextBlock LineHeight="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
+						<TextBlock.Text>
+							<MultiBinding StringFormat='Replying to {0} - "{1}"'>
+								<Binding Path="ParentMessage.Sender.DisplayName"/>
+								<Binding Path="ParentMessage.Text" Converter="{StaticResource ReplyBodyConverter}"/>
+							</MultiBinding>
+						</TextBlock.Text>
+					</TextBlock>
+				</VirtualizingStackPanel>
+				<!-- Sender name -->
+				<TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-1000,0,0,0" FontSize="11" Text="{Binding Sender.DisplayName}" FontFamily="Tahoma" Foreground="{Binding Sender.Identifier,
                        Converter={StaticResource IdToColorConverter}}">
-                    <TextBlock.Visibility>
-                        <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
-                            <Binding Path="PreviousMessageIdentifier"/>
-                            <Binding Path="Sender.Identifier"/>
-                        </MultiBinding>
-                    </TextBlock.Visibility>
-                </TextBlock>
-                <!-- Message body + attachment -->
-                <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
-                    <ContentControl Visibility="{Binding Text,
+					<TextBlock.Visibility>
+						<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
+							<Binding Path="PreviousMessageIdentifier"/>
+							<Binding Path="Sender.Identifier"/>
+						</MultiBinding>
+					</TextBlock.Visibility>
+				</TextBlock>
+				<!-- Message body + attachment -->
+				<StackPanel Grid.Row="1" Grid.Column="2" Orientation="Vertical">
+					<ContentControl Visibility="{Binding Text,
                     Converter={StaticResource NullDependentVisibilityConverter}}" Content="{Binding Text,
                     Converter={StaticResource FormatFullTextConverter}}"/>
-                    <Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,0,0,0" MaxWidth="300" MaxHeight="300" Stretch="Uniform" Source="{Binding Attachments[0].File,
+					<Image RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Left" Margin="0,0,0,0" MaxWidth="300" MaxHeight="300" Stretch="Uniform" Source="{Binding Attachments[0].File,
                        Converter={StaticResource MsgByteArrayToImageConverter}}" Visibility="{Binding Attachments,
                        Converter={StaticResource NullDependentVisibilityConverter}}"/>
-                </StackPanel>
-                <!-- Timestamp -->
-                <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
-            </Grid>
-        </DataTemplate>
-        <!-- CallStartedItem Template -->
-        <DataTemplate DataType="{x:Type plugin:CallStartedNotice}">
-            <Grid Margin="0,9.5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="114"/>
-                    <ColumnDefinition Width="430"/>
-                    <ColumnDefinition Width="80"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1" Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
-                <TextBlock Grid.Column="2" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
-            </Grid>
-        </DataTemplate>
-        <!-- CallEndedItem Template -->
-        <DataTemplate DataType="{x:Type plugin:CallEndedNotice}">
-            <Grid Margin="0,9.5,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="114"/>
-                    <ColumnDefinition Width="430"/>
-                    <ColumnDefinition Width="80"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1" Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
-                <TextBlock Grid.Column="2" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
-            </Grid>
-        </DataTemplate>
-        <!-- CONVERSATION ITEM TEMPLATE END -->
-        <Style x:Key="NoInsetListBox" TargetType="ListBox">
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBox">
-                        <ScrollViewer x:Name="ScrollViewer" Focusable="false" Padding="0" Margin="0" VerticalContentAlignment="Bottom">
-                            <ItemsPresenter/>
-                        </ScrollViewer>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-    <Grid>
-        <Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#FF6B9DE0" Offset="0.0"/>
-                    <GradientStop Color="#f0f6fe" Offset="0.0634"/>
-                    <GradientStop Color="#d2e5fe" Offset="0.0667"/>
-                    <GradientStop Color="#8cbeff" Offset="1"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="121"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/minimize.png" Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-            </StackPanel>
-            <Grid Grid.Column="0" x:Name="IconText">
-                <TextBlock x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" Visibility="Hidden" FontSize="12" Foreground="White" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect Radius="15.0" KernelType="Gaussian"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock x:Name="TitleShadow2" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" Visibility="Hidden" FontSize="12" Foreground="White" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect Radius="20.0" KernelType="Gaussian"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock x:Name="TitleShadow3" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" FontSize="12" Foreground="White" VerticalAlignment="Top" Visibility="Hidden" Margin="50,7,0,0" Panel.ZIndex="2">
-                    <TextBlock.Effect>
-                        <BlurEffect Radius="17.0" KernelType="Gaussian"/>
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Arial" FontSize="13" FontWeight="Bold" Foreground="#333333" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
+				</StackPanel>
+				<!-- Timestamp -->
+				<TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
+			</Grid>
+		</DataTemplate>
+		<!-- CallStartedItem Template -->
+		<DataTemplate DataType="{x:Type plugin:CallStartedNotice}">
+			<Grid Margin="0,9.5,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="114"/>
+					<ColumnDefinition Width="430"/>
+					<ColumnDefinition Width="80"/>
+				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="1" Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
+				<TextBlock Grid.Column="2" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
+			</Grid>
+		</DataTemplate>
+		<!-- CallEndedItem Template -->
+		<DataTemplate DataType="{x:Type plugin:CallEndedNotice}">
+			<Grid Margin="0,9.5,0,0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="114"/>
+					<ColumnDefinition Width="430"/>
+					<ColumnDefinition Width="80"/>
+				</Grid.ColumnDefinitions>
+				<TextBlock Grid.Column="1" Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" FontSize="11" FontFamily="Tahoma" Foreground="#999999"/>
+				<TextBlock Grid.Column="2" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
+			</Grid>
+		</DataTemplate>
+		<!-- CONVERSATION ITEM TEMPLATE END -->
+		<Style x:Key="NoInsetListBox" TargetType="ListBox">
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBox">
+						<ScrollViewer x:Name="ScrollViewer" Focusable="false" Padding="0" Margin="0" VerticalContentAlignment="Bottom">
+							<ItemsPresenter/>
+						</ScrollViewer>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+	<Grid>
+		<Grid x:Name="TitleBar" Height="30" VerticalAlignment="Top">
+			<Grid.Background>
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+					<GradientStop Color="#FF6B9DE0" Offset="0.0"/>
+					<GradientStop Color="#f0f6fe" Offset="0.0634"/>
+					<GradientStop Color="#d2e5fe" Offset="0.0667"/>
+					<GradientStop Color="#8cbeff" Offset="1"/>
+				</LinearGradientBrush>
+			</Grid.Background>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="121"/>
+			</Grid.ColumnDefinitions>
+			<StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
+				<local:SliceControl Source="/Resources/Universal/Window Frame/Aero/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+				<local:SliceControl Source="/Resources/Universal/Window Frame/Aero/minimize.png" Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+				<local:SliceControl Source="/Resources/Universal/Window Frame/Aero/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+				<local:SliceControl Source="/Resources/Universal/Window Frame/Aero/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+			</StackPanel>
+			<Grid Grid.Column="0" x:Name="IconText">
+				<TextBlock x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" Visibility="Hidden" FontSize="12" Foreground="White" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
+					<TextBlock.Effect>
+						<BlurEffect Radius="15.0" KernelType="Gaussian"/>
+					</TextBlock.Effect>
+				</TextBlock>
+				<TextBlock x:Name="TitleShadow2" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" Visibility="Hidden" FontSize="12" Foreground="White" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
+					<TextBlock.Effect>
+						<BlurEffect Radius="20.0" KernelType="Gaussian"/>
+					</TextBlock.Effect>
+				</TextBlock>
+				<TextBlock x:Name="TitleShadow3" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" FontSize="12" Foreground="White" VerticalAlignment="Top" Visibility="Hidden" Margin="50,7,0,0" Panel.ZIndex="2">
+					<TextBlock.Effect>
+						<BlurEffect Radius="17.0" KernelType="Gaussian"/>
+					</TextBlock.Effect>
+				</TextBlock>
+				<TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Arial" FontSize="13" FontWeight="Bold" Foreground="#333333" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
 
                 </TextBlock>
-                <Image Source="/Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click" Margin="8,0,0,0"/>
-            </Grid>
-        </Grid>
-        <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="4,30,4,4">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#c5defe" Offset="0.0"/>
-                    <GradientStop Color="#8cbeff" Offset="0.12"/>
-                    <GradientStop Color="#8cbeff" Offset="1.0"/>
-                </LinearGradientBrush>
-            </Grid.Background>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="21"/>
-                <RowDefinition Height="31*"/>
-                <RowDefinition Height="770*"/>
-            </Grid.RowDefinitions>
-            <Menu Height="20" Padding="0" Margin="0" Background="Transparent" FontFamily="Tahoma" x:Name="menu1" FontSize="11">
-                <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT]}" Click="mn_SignOut"/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE_CLOSE]}" Click="mn_Close"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_CONTACTS]}">
-                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sBUDDYMENU_REMOVE]}"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}">
-                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_CALL]}">
-                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_VIEW]}">
-                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_TOOLS]}">
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_EXTRAS]}" Click="mn_Apps"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE]}" Click="mn_Language"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY]}" Click="mn_Accessibility"/>
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE]}" Click="mn_ShareWithFriend"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS_OPTIONS]}" Click="mn_Options"/>
-                </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_HELP]}">
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_HELP]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY]}"/>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_UPDATES]}" Click="mn_CheckUpdates"/>
-                    <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK]}"/>
-                    <Separator/>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_ABOUT]}" Click="mn_About"/>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY]}"/>
-                </MenuItem>
-            </Menu>
-            <Rectangle x:Name="MBDivider" Grid.Row="0" Height="1" VerticalAlignment="Top" Fill="#8cbeff" Margin="0,20,0,0"/>
-            <Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4" Grid.RowSpan="2">
-                <Grid x:Name="ContentArea">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition x:Name="SidebarColumn" MinWidth="190" Width="300"/>
-                        <ColumnDefinition Width="4"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" x:Name="Sidebar">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="64"/>
-                            <RowDefinition Height="4"/>
-                            <RowDefinition Height="32"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="22"/>
-                        </Grid.RowDefinitions>
-                        <Grid x:Name="SidebarStatus" Grid.Row="0" VerticalAlignment="Top">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="32"/>
-                                <RowDefinition Height="32"/>
-                            </Grid.RowDefinitions>
-                            <local:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Source={x:Static properties:Settings.Default},
+				<Image Source="/Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click" Margin="8,0,0,0"/>
+			</Grid>
+		</Grid>
+		<Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="4,30,4,4">
+			<Grid.Background>
+				<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+					<GradientStop Color="#c5defe" Offset="0.0"/>
+					<GradientStop Color="#8cbeff" Offset="0.12"/>
+					<GradientStop Color="#8cbeff" Offset="1.0"/>
+				</LinearGradientBrush>
+			</Grid.Background>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="21"/>
+				<RowDefinition Height="31*"/>
+				<RowDefinition Height="770*"/>
+			</Grid.RowDefinitions>
+			<Menu Height="20" Padding="0" Margin="0" Background="Transparent" FontFamily="Tahoma" x:Name="menu1" FontSize="11">
+				<MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT]}" Click="mn_SignOut"/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_SKYPE_CLOSE]}" Click="mn_Close"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_CONTACTS]}">
+					<MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sBUDDYMENU_REMOVE]}"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}">
+					<MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_CALL]}">
+					<MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_VIEW]}">
+					<MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_TOOLS]}">
+					<MenuItem Header="{Binding [sMAINMENU_TOOLS_EXTRAS]}" Click="mn_Apps"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE]}" Click="mn_Language"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY]}" Click="mn_Accessibility"/>
+					<MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE]}" Click="mn_ShareWithFriend"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_TOOLS_OPTIONS]}" Click="mn_Options"/>
+				</MenuItem>
+				<MenuItem Header="{Binding [sMAINMENU_HELP]}">
+					<MenuItem Header="{Binding [sMAINMENU_HELP_HELP]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY]}"/>
+					<MenuItem Header="{Binding [sMAINMENU_HELP_UPDATES]}" Click="mn_CheckUpdates"/>
+					<MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK]}"/>
+					<Separator/>
+					<MenuItem Header="{Binding [sMAINMENU_HELP_ABOUT]}" Click="mn_About"/>
+					<MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY]}"/>
+				</MenuItem>
+			</Menu>
+			<Rectangle x:Name="MBDivider" Grid.Row="0" Height="1" VerticalAlignment="Top" Fill="#8cbeff" Margin="0,20,0,0"/>
+			<Border Grid.Row="1" BorderBrush="Transparent" BorderThickness="4" Grid.RowSpan="2">
+				<Grid x:Name="ContentArea">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition x:Name="SidebarColumn" MinWidth="190" Width="300"/>
+						<ColumnDefinition Width="4"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<Grid Grid.Column="0" x:Name="Sidebar">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="64"/>
+							<RowDefinition Height="4"/>
+							<RowDefinition Height="32"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="22"/>
+						</Grid.RowDefinitions>
+						<Grid x:Name="SidebarStatus" Grid.Row="0" VerticalAlignment="Top">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="32"/>
+								<RowDefinition Height="32"/>
+							</Grid.RowDefinitions>
+							<local:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Source={x:Static properties:Settings.Default},
                      Path=ThemeRoot,
                      Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Top.png',
                      diag:PresentationTraceSources.TraceLevel=High}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" ButtonStateOnInit="Pressed" IsRadioButton="True" HoverIndex="-1" PressedIndex="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" TextStartPositionX="43" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#FFFFFF"/>
-                            <StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True">
-                                <StackPanel.Resources>
-                                    <ContextMenu x:Key="StatusMenu">
-                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_DND]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}">
-                                            <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </StackPanel.Resources>
-                                <local:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="/Resources/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
-                                <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
+							<StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True">
+								<StackPanel.Resources>
+									<ContextMenu x:Key="StatusMenu">
+										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_DND]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<MenuItem IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+										<Separator/>
+										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}">
+											<MenuItem.Icon>
+												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+											</MenuItem.Icon>
+										</MenuItem>
+									</ContextMenu>
+								</StackPanel.Resources>
+								<local:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="/Resources/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
+								<Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}" Width="12" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            </StackPanel>
-                            <local:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Source={x:Static properties:Settings.Default},
+							</StackPanel>
+							<local:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_HomeButton_Sprite.png'}" ElementCount="3" StackDirection="Horizontal" DefaultIndex="0" ButtonStateOnInit="Pressed" HorizontalAlignment="Right" Margin="0,0,11,0" IsHitTestVisible="False" HoverIndex="1" PressedIndex="2" Slice="false" Width="16"/>
-                            <local:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Source={x:Static properties:Settings.Default},
+							<local:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Bottom.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION],
                           StringFormat=$ 0.00 - {0}}" TextStartPositionX="34" TextFont="Tahoma" TextSize="11" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Row="1" Source="Resources/Universal/Sidebar/credit.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="9,0,0,0"/>
-                        </Grid>
-                        <Grid x:Name="SidebarTabs" Grid.Row="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <local:SliceControl x:Name="btnContacts" Grid.Column="0" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
+							<Image Grid.Row="1" Source="Resources/Universal/Sidebar/credit.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="9,0,0,0"/>
+						</Grid>
+						<Grid x:Name="SidebarTabs" Grid.Row="2">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<local:SliceControl x:Name="btnContacts" Grid.Column="0" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Contacts.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sMAINMENU_VIEW_CONTACTS]}" TextStartPositionX="30" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Contacts_BtnDown" HorizontalAlignment="Stretch"/>
-                            <local:SliceControl x:Name="btnRecents" Grid.Column="1" IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Source={x:Static properties:Settings.Default},
+							<local:SliceControl x:Name="btnRecents" Grid.Column="1" IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Recents.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sMAINMENU_VIEW_CONVERSATIONS]}" TextStartPositionX="30" MouseLeftButtonDown="Recents_BtnDown" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                        </Grid>
-                        <Border Grid.Row="3" Background="White" BorderBrush="#26000000" BorderThickness="1,0,1,0">
-                            <Grid x:Name="ContactsArea">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="31"/>
-                                    <RowDefinition Height="1"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="0"/>
-                                    <RowDefinition Height="34"/>
-                                    <RowDefinition Height="1"/>
-                                    <RowDefinition Height="32"/>
-                                </Grid.RowDefinitions>
-                                <local:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Source={x:Static properties:Settings.Default},
+						</Grid>
+						<Border Grid.Row="3" Background="White" BorderBrush="#26000000" BorderThickness="1,0,1,0">
+							<Grid x:Name="ContactsArea">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="31"/>
+									<RowDefinition Height="1"/>
+									<RowDefinition Height="*"/>
+									<RowDefinition Height="0"/>
+									<RowDefinition Height="34"/>
+									<RowDefinition Height="1"/>
+									<RowDefinition Height="32"/>
+								</Grid.RowDefinitions>
+								<local:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_SearchBox.png'}" ElementCount="2" StackDirection="Vertical" DefaultIndex="1" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="0" HorizontalAlignment="Stretch"/>
-                                <TextBox Grid.Row="0" Cursor="IBeam" x:Name="SearchBox" GotKeyboardFocus="SearchBox_Focused" LostKeyboardFocus="SearchBox_Unfocused" BorderThickness="0" Padding="33,0,0,0" Background="Transparent" FontFamily="Tahoma" FontSize="11" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
-                                <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce"/>
-                                <ListBox x:Name="ContactsList" Grid.Row="2" BorderThickness="0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" SelectionChanged="ContactList_SelectionChanged" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListBoxItem">
-                                                        <Border x:Name="ItemBorder" Background="Transparent">
-                                                            <ContentPresenter/>
-                                                        </Border>
-                                                        <ControlTemplate.Triggers>
-                                                            <Trigger Property="IsSelected" Value="True">
-                                                                <Setter TargetName="ItemBorder" Property="Background">
-                                                                    <Setter.Value>
-                                                                        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
+								<TextBox Grid.Row="0" Cursor="IBeam" x:Name="SearchBox" GotKeyboardFocus="SearchBox_Focused" LostKeyboardFocus="SearchBox_Unfocused" BorderThickness="0" Padding="33,0,0,0" Background="Transparent" FontFamily="Tahoma" FontSize="11" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
+								<Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce"/>
+								<ListBox x:Name="ContactsList" Grid.Row="2" BorderThickness="0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" SelectionChanged="ContactList_SelectionChanged" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
+									<ListBox.ItemContainerStyle>
+										<Style TargetType="ListBoxItem">
+											<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+											<Setter Property="Padding" Value="0"/>
+											<Setter Property="Template">
+												<Setter.Value>
+													<ControlTemplate TargetType="ListBoxItem">
+														<Border x:Name="ItemBorder" Background="Transparent">
+															<ContentPresenter/>
+														</Border>
+														<ControlTemplate.Triggers>
+															<Trigger Property="IsSelected" Value="True">
+																<Setter TargetName="ItemBorder" Property="Background">
+																	<Setter.Value>
+																		<ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_ContactListBgSelected.png'}" Stretch="Fill"/>
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </Trigger>
-                                                        </ControlTemplate.Triggers>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                </ListBox>
-                                <Grid x:Name="SidebarAddButtons" Grid.Row="4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <local:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+																	</Setter.Value>
+																</Setter>
+															</Trigger>
+														</ControlTemplate.Triggers>
+													</ControlTemplate>
+												</Setter.Value>
+											</Setter>
+										</Style>
+									</ListBox.ItemContainerStyle>
+								</ListBox>
+								<Grid x:Name="SidebarAddButtons" Grid.Row="4">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<local:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddFriend.png'}" ElementCount="3" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sADD_CONTACT_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="AddContact_Click" HorizontalAlignment="Stretch"/>
-                                    <local:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+									<local:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddGroup.png'}" ElementCount="4" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sCREATE_GROUP_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="MakeGroup_Click" HorizontalAlignment="Stretch"/>
-                                </Grid>
-                                <Rectangle Grid.Row="5" Height="1" Fill="#c8cbcd"/>
-                                <local:SliceControl Grid.Row="6" Source="{Binding Source={x:Static properties:Settings.Default},
+								</Grid>
+								<Rectangle Grid.Row="5" Height="1" Fill="#c8cbcd"/>
+								<local:SliceControl Grid.Row="6" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="{Binding [sZAPBUTTON_SKYPEOUT]}" TextStartPositionX="32" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            </Grid>
-                        </Border>
-                        <local:SliceControl x:Name="GlobalUserCount" Grid.Row="4" Source="{Binding Source={x:Static properties:Settings.Default},
+							</Grid>
+						</Border>
+						<local:SliceControl x:Name="GlobalUserCount" Grid.Row="4" Source="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user-count-tab.png'}" ElementCount="1" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="Skymu Beta. All rights reserved." TextStartPositionX="7" TextFont="Tahoma" TextSize="11" TextColor="#999999" HorizontalAlignment="Stretch"/>
-                    </Grid>
-                    <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press" MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE"/>
-                    <Grid Grid.Column="2" x:Name="ChatArea" DataContext="{Binding SelectedItem, ElementName=ContactsList}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="32"/>
-                            <RowDefinition x:Name="TopbarWindowRow" Height="120"/>
-                            <RowDefinition x:Name="MessageWindowRow" Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="80"/>
-                            </Grid.ColumnDefinitions>
-                            <local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+					</Grid>
+					<Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press" MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE"/>
+					<Grid Grid.Column="2" x:Name="ChatArea" DataContext="{Binding SelectedItem, ElementName=ContactsList}">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="32"/>
+							<RowDefinition x:Name="TopbarWindowRow" Height="120"/>
+							<RowDefinition x:Name="MessageWindowRow" Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid Grid.Row="0" x:Name="ChatTopbar" Visibility="Visible">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="chatHeader" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="13" Text="{Binding DisplayName}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <local:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+							<local:SliceControl Grid.Column="1" TextRightMargin="16" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" ElementCount="5" x:Name="ChatCloseButton" MouseLeftButtonUp="Chat_Close" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" TextStartPositionX="30" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" Width="Auto" ElementCount="5" x:Name="ChatCloseButton" MouseLeftButtonUp="Chat_Close" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" TextStartPositionX="27" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+							<Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-close.png'}" Width="16" Height="16" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                        </Grid>
-                        <Grid Grid.Row="0" x:Name="HomeTopbar" Visibility="Collapsed">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="128"/>
-                                <ColumnDefinition Width="90"/>
-                                <ColumnDefinition Width="140"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-close.png'}" Width="16" Height="16" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7,0,0,0"/>
+						</Grid>
+						<Grid Grid.Row="0" x:Name="HomeTopbar" Visibility="Collapsed">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="MainPageButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" ButtonStateOnInit="Pressed" HoverIndex="-1" PressedIndex="2" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="0" Source="/Resources/Universal/Chat/settings_skype.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="MainPageButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" ButtonStateOnInit="Pressed" HoverIndex="-1" PressedIndex="2" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+							<Image Grid.Column="0" Source="/Resources/Universal/Chat/settings_skype.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+							<local:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="ProfileButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="1" Source="/Resources/Universal/Chat/info_pressed.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="2" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="ProfileButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+							<Image Grid.Column="1" Source="/Resources/Universal/Chat/info_pressed.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+							<local:SliceControl Grid.Column="2" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="FeedbackButton" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" IsRadioButton="True" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="2" Source="/Resources/Universal/Chat/icon-skype-feedback.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="3" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="FeedbackButton" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" IsRadioButton="True" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+							<Image Grid.Column="2" Source="/Resources/Universal/Chat/icon-skype-feedback.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+							<local:SliceControl Grid.Column="3" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" HorizontalAlignment="Stretch"/>
-                        </Grid>
-                        <Border Grid.Row="1" Background="#FFF" BorderBrush="#26000000" BorderThickness="1,0,1,1" CornerRadius="0,0,4,4">
-                            <Grid>
-                                <wv2:WebView2 x:Name="Browser" Grid.Row="1" Visibility="Collapsed"/>
-                                <ContentControl x:Name="ChatProfileArea" Content="{Binding SelectedItem, ElementName=ContactsList}">
-                                    <ContentControl.Resources>
-                                        <DataTemplate DataType="{x:Type plugin:User}">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="18"/>
-                                                    <RowDefinition Height="14"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                                    <Image.Source>
-                                                        <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                                            <Binding Path="ProfilePicture"/>
-                                                            <Binding Source="user"/>
-                                                        </MultiBinding>
-                                                    </Image.Source>
-                                                    <Image.Effect>
-                                                        <DropShadowEffect Color="#FFA0A0A0" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
-                                                    </Image.Effect>
-                                                </Image>
-                                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding PresenceStatus,
+						</Grid>
+						<Border Grid.Row="1" Background="#FFF" BorderBrush="#26000000" BorderThickness="1,0,1,1" CornerRadius="0,0,4,4">
+							<Grid>
+								<wv2:WebView2 x:Name="Browser" Grid.Row="1" Visibility="Collapsed"/>
+								<ContentControl x:Name="ChatProfileArea" Content="{Binding SelectedItem, ElementName=ContactsList}">
+									<ContentControl.Resources>
+										<DataTemplate DataType="{x:Type plugin:User}">
+											<Grid>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="18"/>
+													<RowDefinition Height="14"/>
+													<RowDefinition Height="*"/>
+												</Grid.RowDefinitions>
+												<Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+													<Image.Source>
+														<MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+															<Binding Path="ProfilePicture"/>
+															<Binding Source="user"/>
+														</MultiBinding>
+													</Image.Source>
+													<Image.Effect>
+														<DropShadowEffect Color="#FFA0A0A0" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
+													</Image.Effect>
+												</Image>
+												<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
+													<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding PresenceStatus,
                             Converter={StaticResource PresenceStatusConverter}}" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                                    <TextBlock Margin="9,0,0,0" Text="{Binding PresenceStatus,
+													<TextBlock Margin="9,0,0,0" Text="{Binding PresenceStatus,
                                    Converter={StaticResource StatIntToText}}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                        <DataTemplate DataType="{x:Type plugin:Group}">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="18"/>
-                                                    <RowDefinition Height="14"/>
-                                                    <RowDefinition Height="*"/>
-                                                </Grid.RowDefinitions>
-                                                <Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                                    <Image.Source>
-                                                        <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                                            <Binding Path="ProfilePicture"/>
-                                                            <Binding Source="group"/>
-                                                        </MultiBinding>
-                                                    </Image.Source>
-                                                    <Image.Effect>
-                                                        <DropShadowEffect Color="#FFA0A0A0" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
-                                                    </Image.Effect>
-                                                </Image>
-                                                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="24" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
-                                                    <TextBlock Margin="9,0,0,0" Text="{Binding MemberCount, StringFormat='{}{0} members'}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ContentControl.Resources>
-                                </ContentControl>
-                            </Grid>
-                        </Border>
-                        <Border x:Name="MessageWindow" MinWidth="710" Grid.Row="2" Background="#FFF" BorderBrush="#26000000" Margin="0,4,0,0" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="34"/>
-                                    <RowDefinition Height="1"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="23"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="7,1,0,0">
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_video_call.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="VideoCallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}" TextStartPositionX="25" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftRightWidth="22" TextColor="White" Width="Auto"/>
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_call_left.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="White" Width="Auto" LeftRightWidth="22" Margin="10,0,0,0"/>
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_call_right.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Width="24" LeftRightWidth="1"/>
-                                    <local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
+												</StackPanel>
+											</Grid>
+										</DataTemplate>
+										<DataTemplate DataType="{x:Type plugin:Group}">
+											<Grid>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="18"/>
+													<RowDefinition Height="14"/>
+													<RowDefinition Height="*"/>
+												</Grid.RowDefinitions>
+												<Image Grid.RowSpan="6" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" x:Name="CPAProfilePic" Margin="5,5,5,5" Height="100" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left">
+													<Image.Source>
+														<MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+															<Binding Path="ProfilePicture"/>
+															<Binding Source="group"/>
+														</MultiBinding>
+													</Image.Source>
+													<Image.Effect>
+														<DropShadowEffect Color="#FFA0A0A0" BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.5"/>
+													</Image.Effect>
+												</Image>
+												<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
+													<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="24" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+													<TextBlock Margin="9,0,0,0" Text="{Binding MemberCount, StringFormat='{}{0} members'}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
+												</StackPanel>
+											</Grid>
+										</DataTemplate>
+									</ContentControl.Resources>
+								</ContentControl>
+							</Grid>
+						</Border>
+						<Border x:Name="MessageWindow" MinWidth="710" Grid.Row="2" Background="#FFF" BorderBrush="#26000000" Margin="0,4,0,0" BorderThickness="1,1,1,1" CornerRadius="4,4,4,4">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="34"/>
+									<RowDefinition Height="1"/>
+									<RowDefinition Height="*"/>
+									<RowDefinition Height="23"/>
+									<RowDefinition Height="Auto"/>
+								</Grid.RowDefinitions>
+								<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="7,1,0,0">
+									<local:SliceControl Source="/Resources/Universal/Chat/btn_video_call.png" TextRightMargin="9" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="VideoCallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}" TextStartPositionX="25" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftRightWidth="22" TextColor="White" Width="Auto"/>
+									<local:SliceControl Source="/Resources/Universal/Chat/btn_call_left.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="White" Width="Auto" LeftRightWidth="22" Margin="10,0,0,0"/>
+									<local:SliceControl Source="/Resources/Universal/Chat/btn_call_right.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Width="24" LeftRightWidth="1"/>
+									<local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_add.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="AddButtonClick" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
-                                    <local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
+									<local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_network_unavailable.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" x:Name="WifiButton" MouseLeftButtonUp="WifiButton_Click" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
-                                </StackPanel>
-                                <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8"/>
-                                <Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="/Resources/Universal/Animations/loading_throbber.png" Width="90" Height="90" RenderTransformOrigin="0.5,0.5" Visibility="Visible">
-                                    <Image.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform x:Name="SpinnerRotate" Angle="0"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </Image.RenderTransform>
-                                    <Image.Triggers>
-                                        <EventTrigger RoutedEvent="Loaded">
-                                            <BeginStoryboard>
-                                                <Storyboard RepeatBehavior="Forever">
-                                                    <DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:2.133333" RepeatBehavior="Forever"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Image.Triggers>
-                                </Image>
-                                <ListBox x:Name="ConversationItemsList" Grid.Row="2" BorderThickness="0" VerticalAlignment="Bottom" Margin="0,0,0,0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ConversationItemsList_Loaded" ScrollViewer.CanContentScroll="False" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
-                                    <ListBox.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
-                                        </ItemsPanelTemplate>
-                                    </ListBox.ItemsPanel>
-                                    <ListBox.ItemContainerStyle>
-                                        <Style TargetType="ListBoxItem">
-                                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListBoxItem">
-                                                        <Border x:Name="ItemBorder" Background="Transparent">
-                                                            <ContentPresenter/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ListBox.ItemContainerStyle>
-                                </ListBox>
-                                <Grid Grid.Row="4">
-                                    <Grid VerticalAlignment="Bottom" Margin="0,0,0,5">
-                                        <StackPanel x:Name="MessageBoxPanel" Orientation="Vertical" HorizontalAlignment="Center" Width="430">
+								</StackPanel>
+								<Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8"/>
+								<Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="/Resources/Universal/Animations/loading_throbber.png" Width="90" Height="90" RenderTransformOrigin="0.5,0.5" Visibility="Visible">
+									<Image.RenderTransform>
+										<TransformGroup>
+											<ScaleTransform/>
+											<SkewTransform/>
+											<RotateTransform x:Name="SpinnerRotate" Angle="0"/>
+											<TranslateTransform/>
+										</TransformGroup>
+									</Image.RenderTransform>
+									<Image.Triggers>
+										<EventTrigger RoutedEvent="Loaded">
+											<BeginStoryboard>
+												<Storyboard RepeatBehavior="Forever">
+													<DoubleAnimation Storyboard.TargetName="SpinnerRotate" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:2.133333" RepeatBehavior="Forever"/>
+												</Storyboard>
+											</BeginStoryboard>
+										</EventTrigger>
+									</Image.Triggers>
+								</Image>
+								<ListBox x:Name="ConversationItemsList" Grid.Row="2" BorderThickness="0" VerticalAlignment="Bottom" Margin="0,0,0,0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ConversationItemsList_Loaded" ScrollViewer.CanContentScroll="False" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+									<ListBox.ItemsPanel>
+										<ItemsPanelTemplate>
+											<VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+										</ItemsPanelTemplate>
+									</ListBox.ItemsPanel>
+									<ListBox.ItemContainerStyle>
+										<Style TargetType="ListBoxItem">
+											<Setter Property="HorizontalAlignment" Value="Center"/>
+											<Setter Property="Padding" Value="0"/>
+											<Setter Property="Template">
+												<Setter.Value>
+													<ControlTemplate TargetType="ListBoxItem">
+														<Border x:Name="ItemBorder" Background="Transparent">
+															<ContentPresenter/>
+														</Border>
+													</ControlTemplate>
+												</Setter.Value>
+											</Setter>
+										</Style>
+									</ListBox.ItemContainerStyle>
+								</ListBox>
+                                <Grid Grid.Row="4" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="1" x:Name="MessageBoxPanel" Orientation="Vertical" HorizontalAlignment="Center" Width="430">
                                             <Grid>
                                                 <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
@@ -739,14 +743,13 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user
                                                 </RichTextBox>
                                             </Border>
                                         </StackPanel>
-                                        <local:SliceControl Source="/Resources/Universal/Chat/msg-send-button-full.png" ElementCount="5" IsEnabled="False" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" Focusable="False" x:Name="SendMsgButton" VerticalAlignment="Top" HorizontalAlignment="Left" MouseLeftButtonUp="OnMsgSendClickButton" Margin="786,0,0,0" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftRightWidth="22" TextColor="White" Width="Auto"/>
-                                    </Grid>
+                                    <local:SliceControl HorizontalAlignment="Left" Grid.Column="2" Margin="8,0,0,0" Source="/Resources/Universal/Chat/msg-send-button-full.png" ElementCount="5" IsEnabled="False" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" Focusable="False" x:Name="SendMsgButton" VerticalAlignment="Top"  MouseLeftButtonUp="OnMsgSendClickButton"  Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftRightWidth="22" TextColor="White" Width="Auto"/>
                                 </Grid>
                             </Grid>
-                        </Border>
-                    </Grid>
-                </Grid>
-            </Border>
-        </Grid>
-    </Grid>
+						</Border>
+					</Grid>
+				</Grid>
+			</Border>
+		</Grid>
+	</Grid>
 </Window>
