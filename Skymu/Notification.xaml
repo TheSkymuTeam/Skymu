@@ -20,7 +20,7 @@
                         <local:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="/Resources/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" Margin="0,0,5,0" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
                         <TextBlock x:Name="TitleText" FontWeight="Bold" Foreground="Black" FontSize="14" Text="Title"/>
                     </StackPanel>
-                    <ContentControl x:Name="Message" />
+                    <ContentControl x:Name="Message"/>
                 </StackPanel>
             </Border>
         </Grid>

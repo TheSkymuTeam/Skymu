@@ -1,52 +1,29 @@
-﻿<Window x:Class="Skymu.Updater"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Skymu"
-        Title="Skype™ - Update" 
-        ResizeMode="NoResize" 
-        WindowStyle="SingleBorderWindow" 
-        WindowStartupLocation="CenterScreen"
-        Style="{StaticResource Window}"
-        Height="394"
-        Width="518"
-        >
+﻿<Window x:Class="Skymu.Updater" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" Title="Skype™ - Update" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" WindowStartupLocation="CenterScreen" Style="{StaticResource Window}" Height="394" Width="518">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:SliceControl Slice="False" x:Name="DialogImage" Source="/Resources/Universal/Dialog/icons.png"
-HorizontalAlignment="Left" Width="48" DefaultIndex="15" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="29" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" 
-Margin="11,10,0,0"  />
+        <local:SliceControl Slice="False" x:Name="DialogImage" Source="/Resources/Universal/Dialog/icons.png" HorizontalAlignment="Left" Width="48" DefaultIndex="15" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="29" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" Margin="11,10,0,0"/>
         <!-- Top Header Section -->
-        <Grid Grid.Row="0"  Panel.ZIndex="0" Height="45">
+        <Grid Grid.Row="0" Panel.ZIndex="0" Height="45">
             <Border Name="GradientTop" BorderThickness="0,0,0,1" BorderBrush="#DADADA">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#F2F2F2" Offset="0" />
-                        <GradientStop Color="#E6E6E6" Offset="1" />
+                        <GradientStop Color="#F2F2F2" Offset="0"/>
+                        <GradientStop Color="#E6E6E6" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
-
-            <TextBlock Height="23" x:Name="Header" Text="Skymu Updater" Margin="70,3,0,0"
-                       FontFamily="Arial" FontWeight="Bold" Foreground="#333333" FontSize="13" />
+            <TextBlock Height="23" x:Name="Header" Text="Skymu Updater" Margin="70,3,0,0" FontFamily="Arial" FontWeight="Bold" Foreground="#333333" FontSize="13"/>
         </Grid>
-
-        <Grid  Grid.Row="1" Margin="0,23,0,0">
+        <Grid Grid.Row="1" Margin="0,23,0,0">
             <StackPanel Margin="77,0,35,7" Orientation="Vertical" VerticalAlignment="Top" Height="210">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="210">
-                    <TextBlock VerticalAlignment="Stretch"
-                          TextWrapping="Wrap" 
-                       
-                          Name="Description"
-                          Text="There's a new version of Skype available. Update now to get the latest features and improvements."
-                       LineHeight="16"
-                          FontFamily="Tahoma" 
-                          FontSize="11" />
+                    <TextBlock VerticalAlignment="Stretch" TextWrapping="Wrap" Name="Description" Text="There's a new version of Skype available. Update now to get the latest features and improvements." LineHeight="16" FontFamily="Tahoma" FontSize="11"/>
                 </ScrollViewer>
-                <Grid Name="ProgressGrid" HorizontalAlignment="Left" Visibility="Collapsed" Width="370"  Margin="0,30,0,0">
+                <Grid Name="ProgressGrid" HorizontalAlignment="Left" Visibility="Collapsed" Width="370" Margin="0,30,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <!-- UpdateStatusText -->
@@ -55,55 +32,28 @@ Margin="11,10,0,0"  />
                         <RowDefinition Height="Auto"/>
                         <!-- FileSize -->
                     </Grid.RowDefinitions>
-
                     <!-- Download status -->
-                    <TextBlock Name="UpdateStatusText" Grid.Row="0"
-               Text="Update progress goes here"
-               FontFamily="Tahoma" FontSize="11" />
-
+                    <TextBlock Name="UpdateStatusText" Grid.Row="0" Text="Update progress goes here" FontFamily="Tahoma" FontSize="11"/>
                     <!-- Progress bar stretches to available width -->
-                    <ProgressBar x:Name="ProgBar"  Margin="0,10,0,0" Grid.Row="1" Height="15"
-                 HorizontalAlignment="Stretch" />
-
+                    <ProgressBar x:Name="ProgBar" Margin="0,10,0,0" Grid.Row="1" Height="15" HorizontalAlignment="Stretch"/>
                     <!-- File size aligned right -->
-                    <TextBlock Name="FileSize" Grid.Row="2"
-               Text="File size 3233.5 KB"
-                               Visibility="Collapsed"
-               HorizontalAlignment="Right"
-               FontFamily="Tahoma"
-               FontSize="11"
-               Margin="0,4,0,0"/>
+                    <TextBlock Name="FileSize" Grid.Row="2" Text="File size 3233.5 KB" Visibility="Collapsed" HorizontalAlignment="Right" FontFamily="Tahoma" FontSize="11" Margin="0,4,0,0"/>
                 </Grid>
-
             </StackPanel>
         </Grid>
-
         <!-- Bottom Button Section -->
         <Grid Grid.Row="2" Height="44">
             <Border Name="GradientBottom" BorderThickness="0,1,0,0" BorderBrush="#DADADA">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#F2F2F2" Offset="0" />
-                        <GradientStop Color="#E6E6E6" Offset="1" />
+                        <GradientStop Color="#F2F2F2" Offset="0"/>
+                        <GradientStop Color="#E6E6E6" Offset="1"/>
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" x:Name="BottomControlsGrid">
-
-                <Button Content="Download" Click="bLClick" x:Name="ButtonLeft" 
-                         VerticalAlignment="Center"
-                        Visibility="Visible"  Padding="12,0"
-                        HorizontalAlignment="Right" 
-                        MinWidth="75"
-                        Margin="0,0,10,0"
-                        IsDefault="True"
-                        Height="23" FontFamily="Tahoma" FontSize="11" />
-                <Button Content="Decide later" Click="bRClick"
-                        x:Name="ButtonRight" Padding="12,0"
-                        VerticalAlignment="Center" HorizontalAlignment="Right" 
-                        Margin="0,0,10,0" Height="23"
-                        MinWidth="75"
-                        FontSize="11" FontFamily="Tahoma" />
+                <Button Content="Download" Click="bLClick" x:Name="ButtonLeft" VerticalAlignment="Center" Visibility="Visible" Padding="12,0" HorizontalAlignment="Right" MinWidth="75" Margin="0,0,10,0" IsDefault="True" Height="23" FontFamily="Tahoma" FontSize="11"/>
+                <Button Content="Decide later" Click="bRClick" x:Name="ButtonRight" Padding="12,0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Height="23" MinWidth="75" FontSize="11" FontFamily="Tahoma"/>
             </StackPanel>
         </Grid>
         <ProgressBar HorizontalAlignment="Left" Height="10" Margin="649,133,0,0" Grid.Row="1" VerticalAlignment="Top" Width="100"/>
