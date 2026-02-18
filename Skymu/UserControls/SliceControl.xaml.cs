@@ -274,6 +274,11 @@ namespace Skymu
             DependencyProperty.Register(nameof(TextStartPositionX), typeof(double), typeof(SliceControl),
                 new PropertyMetadata(0.0, OnTextChanged));
 
+        public double TextRightMargin { get { return (double)GetValue(TextRightMarginProperty); } set { SetValue(TextRightMarginProperty, value); } }
+        public static readonly DependencyProperty TextRightMarginProperty =
+            DependencyProperty.Register(nameof(TextRightMargin), typeof(double), typeof(SliceControl),
+                new PropertyMetadata(0.0, OnTextChanged));
+
         public bool Slice { get { return (bool)GetValue(SliceProperty); } set { SetValue(SliceProperty, value); } }
         public static readonly DependencyProperty SliceProperty =
             DependencyProperty.Register(nameof(Slice), typeof(bool), typeof(SliceControl),
@@ -323,7 +328,7 @@ namespace Skymu
             OverlayText.Margin = new Thickness(
                 TextStartPositionX,
                 _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
-                0,
+                TextRightMargin,
                 0);
         }
 
