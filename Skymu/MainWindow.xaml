@@ -477,8 +477,7 @@ Slice="false" Width="14"/>
                 <RowDefinition Height="770*"/>
             </Grid.RowDefinitions>
 
-            <Menu Height="20" Background="Transparent" FontFamily="Tahoma" x:Name="menu1"
-                  VerticalAlignment="Center" FontSize="11">
+            <Menu Height="20" Padding="0" Margin="0" Background="Transparent" FontFamily="Tahoma" x:Name="menu1" FontSize="11">
                 <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}" />
                     <Separator />
@@ -500,9 +499,18 @@ Slice="false" Width="14"/>
                     <Separator />
                     <MenuItem Header="{Binding [sBUDDYMENU_REMOVE]}" />
                 </MenuItem>
-                <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}" />
-                <MenuItem Header="{Binding [sMAINMENU_CALL]}" />
-                <MenuItem Header="{Binding [sMAINMENU_VIEW]}" />
+                <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}">
+                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}" />
+                </MenuItem>
+
+                <MenuItem Header="{Binding [sMAINMENU_CALL]}">
+                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}" />
+                </MenuItem>
+
+                <MenuItem Header="{Binding [sMAINMENU_VIEW]}">
+                    <MenuItem Header="{Binding [sVIDEO_IMAGE_DELETE_MENUITEM]}" />
+                </MenuItem>
+                
                 <MenuItem Header="{Binding [sMAINMENU_TOOLS]}">
                     <MenuItem Header="{Binding [sMAINMENU_TOOLS_EXTRAS]}" Click="mn_Apps" />
                     <Separator />
@@ -570,7 +578,44 @@ Slice="false" Width="14"/>
                                 TextWeight="Bold"
                                 TextSize="13"
                                 TextColor="#FFFFFF"/>
-                            <local:SliceControl
+
+                            <StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True" >
+                                <StackPanel.Resources>
+                                    <ContextMenu x:Key="StatusMenu">
+                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_DND]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator/>
+                                        <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}">
+                                            <MenuItem.Icon>
+                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </StackPanel.Resources>
+                                <local:SliceControl
                                 Grid.Row="0"
                                 x:Name="StatusIcon"
                                 Source="/Resources/Universal/Icon Bitmap/skype-status.png"
@@ -578,11 +623,22 @@ Slice="false" Width="14"/>
                                 StackDirection="Horizontal"
                                 DefaultIndex="0"
                                 HorizontalAlignment="Left"
-                                Margin="9,0,0,0"
                                 HoverIndex="-1"
                                 PressedIndex="-1"
                                 Slice="false"
                                 Width="16"/>
+                                <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
+                 Path=ThemeRoot,
+                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}"
+                                   Width="12"
+                                   Height="16"
+                                   HorizontalAlignment="Left"
+                                   Margin="0,0,0,0"/>
+                            </StackPanel>
+
+
+
+
                             <local:SliceControl
     Grid.Row="0"
     x:Name="SBHomeButton"
@@ -600,15 +656,7 @@ Slice="false" Width="14"/>
     PressedIndex="2"
     Slice="false"
     Width="16"/>
-                            <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}"
-                                   Width="12"
-                                   Height="16"
-                                   IsHitTestVisible="True"
-Cursor="Hand"
-                                   HorizontalAlignment="Left"
-                                   Margin="25,0,0,0"/>
+                     
                             <local:SliceControl
                                 x:Name="SkypeCreditBox"
                                 Grid.Row="1"

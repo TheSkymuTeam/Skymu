@@ -112,6 +112,11 @@ namespace Skymu
 
                 return new SavedCredential(username, passwordOrToken, authType, profilePicture);
             }
+            catch
+            {
+                Universal.ExceptionHandler(new Exception("Failed to parse credential data from Windows Credential Manager."));
+                return null;
+            }
             finally
             {
                 CredFree(credPtr);

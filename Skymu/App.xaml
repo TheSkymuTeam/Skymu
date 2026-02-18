@@ -33,7 +33,47 @@ Value="ClearType"/>
                 </Style.Triggers>
             </Style>
 
+            <Style TargetType="{x:Type MenuItem}" BasedOn="{x:Null}"> <!-- This fixes the horrible WPF Aero PresentationFramework menu items -->
+                <Style.Triggers>
+                    <Trigger Property="Role" Value="TopLevelHeader">
+                        <Setter Property="Height" Value="20"/>
+                        <Setter Property="MinHeight" Value="20"/>
+                        <Setter Property="MaxHeight" Value="20"/>
+                        <Setter Property="Padding" Value="6,3"/>
+                        <Setter Property="Margin" Value="0"/>
+                    </Trigger>
+                    <Trigger Property="Role" Value="TopLevelItem">
+                        <Setter Property="Height" Value="20"/>
+                        <Setter Property="MinHeight" Value="20"/>
+                        <Setter Property="MaxHeight" Value="20"/>
+                        <Setter Property="Padding" Value="6,3"/>
+                        <Setter Property="Margin" Value="0"/>
+                    </Trigger>
+                    <Trigger Property="Role" Value="SubmenuHeader">
+                        <Setter Property="Padding" Value="6,3,0,0"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Height" Value="22"/>
+                        <Setter Property="FontFamily"
+        Value="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}" />
+                        <Setter Property="FontSize"
+        Value="{DynamicResource {x:Static SystemFonts.MessageFontSizeKey}}" />
+                    </Trigger>
+                    <Trigger Property="Role" Value="SubmenuItem">
+                        <Setter Property="Padding" Value="6,3,0,0"/>
+                        <Setter Property="Margin" Value="0"/>
+                        <Setter Property="Height" Value="22"/>
+                        <Setter Property="FontFamily"
+        Value="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}" />
+                        <Setter Property="FontSize"
+        Value="{DynamicResource {x:Static SystemFonts.MessageFontSizeKey}}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
 
+            <Style TargetType="{x:Type ContextMenu}">
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+            </Style>
 
             <Style TargetType="Image">
                 <Setter Property="UseLayoutRounding" Value="True" />
