@@ -1137,7 +1137,7 @@ ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-                                        MouseLeftButtonUp="VideoCallButtonClick"
+MouseLeftButtonUp="VideoCallButtonClick"
 PressedIndex="2"
 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
 TextStartPositionX="25"
@@ -1145,39 +1145,35 @@ TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
+TextRightMargin="6"
 TextColor="White"
-Width="98"/>
-
+Width="Auto"/>
                                     <local:SliceControl
-        Source="/Resources/Universal/Chat/btn_call_left.png"
-        ElementCount="5"
-        StackDirection="Vertical"
-        DefaultIndex="0"
-        HoverIndex="1"
-                                        MouseLeftButtonUp="CallButtonClick"
-        PressedIndex="2"
-        Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
-
-
-        TextStartPositionX="26"
-        TextFont="Arial"
-        TextWeight="Bold"
-        TextSize="13"
-        TextColor="White"
-        Width="59"
-        LeftRightWidth="22"
-        Margin="10,0,0,0" />
+Source="/Resources/Universal/Chat/btn_call_left.png"
+ElementCount="5"
+StackDirection="Vertical"
+DefaultIndex="0"
+HoverIndex="1"
+MouseLeftButtonUp="CallButtonClick"
+PressedIndex="2"
+Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
+TextStartPositionX="26"
+TextFont="Arial"
+TextWeight="Bold"
+TextSize="13"
+TextColor="White"
+TextRightMargin="6"
+Width="Auto"
+LeftRightWidth="22"
+Margin="10,0,0,0" Loaded="SliceControl_Loaded" />
                                     <local:SliceControl
 Source="/Resources/Universal/Chat/btn_call_right.png"
 ElementCount="5"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
-                                MouseLeftButtonUp="CallButtonClick"
+MouseLeftButtonUp="CallButtonClick"
 PressedIndex="2"
-
-
-
 Width="24"
 LeftRightWidth="1"/>
                                     <local:SliceControl
@@ -1428,25 +1424,26 @@ Width="23"/>
                                         <local:SliceControl
 Source="/Resources/Universal/Chat/msg-send-button-full.png"
 ElementCount="5"
-                                            IsEnabled="False"
+IsEnabled="False"
 StackDirection="Vertical"
 DefaultIndex="0"
 HoverIndex="1"
 PressedIndex="2"
-                                        Focusable="False"    
+Focusable="False"
 x:Name="SendMsgButton"
 VerticalAlignment="Top"
-HorizontalAlignment="Center"
- MouseLeftButtonUp="OnMsgSendClickButton"                                                                     
-Margin="574,0,0,0"
+HorizontalAlignment="Left"
+MouseLeftButtonUp="OnMsgSendClickButton"
+Margin="786,0,0,0"
 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}"
 TextStartPositionX="26"
 TextFont="Arial"
 TextWeight="Bold"
 TextSize="13"
 LeftRightWidth="22"
+TextRightMargin="6"
 TextColor="White"
-Width="127"/>
+Width="Auto"/>
                                     </Grid>
                                 </Grid>
 

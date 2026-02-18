@@ -1308,6 +1308,11 @@ namespace Skymu
 
         }
 
+        private void SliceControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void mn_CheckUpdates(object sender, RoutedEventArgs e)
         {
             new Updater(true);
