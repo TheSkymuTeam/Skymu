@@ -300,7 +300,7 @@ namespace Skymu
                     if (lr == LoginResult.Failure)
                     {
                         SetHeaderToFail();
-                        CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
+                        comboProtocolBox.SelectedIndex = 0;
                     }
                 }
             }
