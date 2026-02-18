@@ -125,12 +125,12 @@ namespace Stub
                 };
             }
         }
-        public async Task<string[]> SaveAutoLoginCredential()
+        public async Task<SavedCredential?> StoreCredential()
         {
-            return Array.Empty<string>();
+            return null;
         }
 
-        public async Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials)
+        public async Task<LoginResult> TryAutoLogin(SavedCredential autoLoginCredentials)
         {
             return LoginResult.Failure;
         }

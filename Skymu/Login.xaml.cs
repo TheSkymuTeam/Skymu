@@ -71,8 +71,8 @@ namespace Skymu
                 {
                     if (SaveCredentials.IsChecked == true)
                     {
-                        string[] cred = await Universal.Plugin.SaveAutoLoginCredential();
-                        if (cred is not null && cred.Length > 0) CredentialsHelper.Write(cred);
+                        SavedCredential cred = await Universal.Plugin.StoreCredential();
+                        if (cred is not null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
                     }
                     InitiateMainWindow();
                 }
@@ -279,7 +279,7 @@ namespace Skymu
         {
             if (useAutoLogin)
             {
-                string[] credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
+                SavedCredential credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
 
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin(credentials)

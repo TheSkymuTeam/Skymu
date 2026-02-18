@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -44,7 +45,6 @@ namespace Skymu
         private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private SkymuApi api;
 
-        private bool deactivatedWindow;
         public event EventHandler Ready;
 
         public MainWindow()
@@ -145,16 +145,6 @@ namespace Skymu
             {
                 UpdateTypingIndicator();
             };
-
-            this.Activated += (s, e) =>
-            {
-                IsWindowActive = true;
-            };
-
-            this.Deactivated += (s, e) =>
-            {
-                IsWindowActive = false;
-            };
         }
 
 
@@ -205,25 +195,6 @@ namespace Skymu
         {
             foreach (var b in buttons)
                 WindowChrome.SetIsHitTestVisibleInChrome(b, true);
-        }
-
-        private void Window_Deactivated(object sender, EventArgs e)
-        {
-            foreach (SliceControl button in new[] { close, minimize, maximize, split })
-            {
-                button.DefaultIndex = 1;
-                button.Effect = null;
-            }
-            deactivatedWindow = true;
-        }
-
-        private void Window_Activated(object sender, EventArgs e)
-        {
-            foreach (SliceControl button in new[] { close, minimize, maximize, split })
-            {
-                button.DefaultIndex = 0;
-            }
-            deactivatedWindow = false;
         }
 
         private static BitmapImage LoadAvatar(string avatar)
@@ -284,7 +255,7 @@ namespace Skymu
         {
             var button = sender as SliceControl;
 
-            if (!deactivatedWindow)
+            if (IsWindowActive)
             {
                 if (button is not null)
                 {
@@ -292,7 +263,7 @@ namespace Skymu
 
                 }
             }
-            else if (deactivatedWindow)
+            else if (!IsWindowActive)
             {
                 button.Effect = null;
             }
@@ -343,6 +314,49 @@ namespace Skymu
         internal static Participant SelectedContact = null;
 
         internal static bool IsWindowActive = false;
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            IsWindowActive = true;
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Inactive.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillSecondary : Colors.Inactive.Fill;
+            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillTertiary : new SolidColorBrush(System.Windows.Media.Colors.Transparent);
+
+            foreach (SliceControl button in new[] { close, minimize, maximize, split })
+            {
+                button.DefaultIndex = 1;
+                button.Effect = null;
+            }
+
+            if (this.Background == System.Windows.Media.Brushes.Transparent) return;
+
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Inactive.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Inactive.Fill;
+
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            IsWindowActive = true;
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillSecondary : Colors.Active.Fill;
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillTertiary : new SolidColorBrush(System.Windows.Media.Colors.Transparent);
+
+            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
+          
+            foreach (SliceControl button in new[] { close, minimize, maximize, split })
+            {
+                button.DefaultIndex = 0;
+            }
+
+            if (this.Background == Brushes.Transparent) return;
+
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Fill;                     
+        }
+
+
 
         private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {

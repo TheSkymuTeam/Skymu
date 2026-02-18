@@ -177,6 +177,21 @@ namespace MiddleMan
         }
     }
 
+    public class SavedCredential
+    {
+        public string Username { get; }
+        public byte[] ProfilePicture { get; }
+        public string PasswordOrToken { get; }
+        public AuthenticationMethod AuthenticationType { get; }
+        public SavedCredential(string username, string password_or_token, AuthenticationMethod authentication_type, byte[] profile_picture = null)
+        {
+            Username = username;
+            PasswordOrToken = password_or_token;
+            AuthenticationType = authentication_type;
+            ProfilePicture = profile_picture;
+        }
+    }
+
     public abstract class ConversationItem
     {
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
@@ -291,7 +306,7 @@ namespace MiddleMan
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
         AuthenticationMethod[] AuthenticationType { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
-        Task<string[]> SaveAutoLoginCredential();
+        Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password,
             bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
@@ -299,7 +314,7 @@ namespace MiddleMan
         Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
-        Task<LoginResult> TryAutoLogin(string[] autoLoginCredentials); // Tries to log in with saved tokens/credentials
+        Task<LoginResult> TryAutoLogin(SavedCredential credential); // Tries to log in with saved tokens/credentials
         ObservableCollection<ConversationItem> ActiveConversation { get; } // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Participant> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Participant> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
