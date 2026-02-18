@@ -167,7 +167,7 @@ HorizontalAlignment="Stretch" />
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Era theme" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                        <TextBlock Text="Base theme (scrollbar, buttons, etc)" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <ComboBox Width="250"
               SelectedValue="{Binding Source={x:Static properties:Settings.Default}, Path=PresFrame, Mode=TwoWay}"
               SelectedValuePath="Tag">
@@ -175,7 +175,7 @@ HorizontalAlignment="Stretch" />
                             <ComboBoxItem Content="Windows XP (Olive)" Tag="Luna.Homestead"/>
                             <ComboBoxItem Content="Windows XP (Silver)" Tag="Luna.Metallic"/>
                             <ComboBoxItem Content="Windows XP Media Center" Tag="Royale.NormalColor"/>
-                            <ComboBoxItem Content="Windows Vista/7" Tag="Aero.NormalColor"/>
+                            <ComboBoxItem Content="Windows Vista" Tag="Aero.NormalColor"/>
                             <ComboBoxItem Content="Windows 8" Tag="Aero2.NormalColor"/>
                             <ComboBoxItem Content="Windows 8 Basic" Tag="AeroLite.NormalColor"/>
                             <ComboBoxItem Content="Windows Classic" Tag="Classic"/>

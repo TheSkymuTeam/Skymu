@@ -280,7 +280,12 @@ namespace Skymu
             if (useAutoLogin)
             {
                 SavedCredential credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
-
+                if (credentials is null)
+                {
+                    LoginToggleAnimation(false);                    
+                    CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                   
+                    return;
+                }
                 LoginResult lr = await Task.Run(async () =>
              await Universal.Plugin.TryAutoLogin(credentials)
          );
