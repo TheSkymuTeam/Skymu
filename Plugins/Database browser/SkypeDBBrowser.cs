@@ -36,9 +36,14 @@ namespace SkypeDBBrowser
         public event EventHandler<NotificationEventArgs> Notification;
 
         public string Name => "Skype DB Browser";
-        public string TextUsername => "Database path (e.g., C:\\Skype\\main.db)";
         public string InternalName => "skymu-skypedb-plugin";
-        public AuthenticationMethod[] AuthenticationType => new[] { AuthenticationMethod.Token };
+        public AuthTypeInfo[] AuthenticationTypes
+        {
+            get
+            {
+                return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Database path (e.g., C:\\Skype\\main.db)") };
+            }
+        }
 
         public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();

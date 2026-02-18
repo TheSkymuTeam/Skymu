@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Marshmallow Pie")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Nutella Waffle")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

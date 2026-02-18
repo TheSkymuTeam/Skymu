@@ -33,8 +33,13 @@ namespace Discord
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
-        public string TextUsername { get { return "Token"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Token }; } }
+        public AuthTypeInfo[] AuthenticationTypes
+        {
+            get
+            {
+                return new[] { new AuthTypeInfo(AuthenticationMethod.Token) };
+            }
+        }
 
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin

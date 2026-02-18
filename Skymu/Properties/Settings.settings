@@ -42,7 +42,7 @@
       <Value Profile="(Default)">0.1.12</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Breithorn Marshmallow Pie</Value>
+      <Value Profile="(Default)">Breithorn Nutella Waffle</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>

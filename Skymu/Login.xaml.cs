@@ -12,6 +12,7 @@
 using Microsoft.Win32;
 using MiddleMan;
 using QRCoder;
+using Skymu.Pages;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -69,11 +70,6 @@ namespace Skymu
                 var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
                 if (result == LoginResult.Success)
                 {
-                    if (SaveCredentials.IsChecked == true)
-                    {
-                        SavedCredential cred = await Universal.Plugin.StoreCredential();
-                        if (cred is not null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
-                    }
                     InitiateMainWindow();
                 }
                 else if (result == LoginResult.OptStepRequired)
@@ -103,7 +99,7 @@ namespace Skymu
                             }
                             bitmap.Freeze();
 
-                            Dialog qrDialog = new Dialog(Dialog.Type.Information, null,
+                            Dialog qrDialog = new Dialog(SkypeWindow.IconType.Information, null,
                             "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap);
                             qrDialog.ShowDialog();
 
@@ -121,7 +117,7 @@ namespace Skymu
                     }
                     else
                     {
-                        var dlg = new Dialog(Dialog.Type.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
+                        var dlg = new Dialog(SkypeWindow.IconType.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
                             "Two-factor authentication required", Properties.Settings.Default.BrandingName + " - Login", null, Universal.Lang["sZAPBUTTON_SIGNIN"], false, null, null, true);
                         var dlgResult = dlg.ShowDialog();
 
@@ -133,7 +129,10 @@ namespace Skymu
                     }
                     var optResult = await Universal.Plugin.LoginOptStep(totp);
 
-                    if (optResult == LoginResult.Success) InitiateMainWindow();
+                    if (optResult == LoginResult.Success) {
+                       
+                        InitiateMainWindow();
+                    }
                     else
                     {
                         LoginToggleAnimation(false);
@@ -206,33 +205,37 @@ namespace Skymu
                 {
                     Universal.Plugin = plugin;
                 }
-                if (plugin.AuthenticationType.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationType[0]));
+                if (plugin.AuthenticationTypes.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationTypes[0].AuthType, plugin.AuthenticationTypes[0].CustomTextUsername));
                 else
                 {
-                    foreach (var authMethod in plugin.AuthenticationType)
+                    foreach (AuthTypeInfo ati in plugin.AuthenticationTypes)
                     {
                         string name = plugin.Name;
-                        switch (authMethod)
+                        if (ati.CustomTextAuthType is not null) name += " (" + ati.CustomTextAuthType + ")";
+                        else
                         {
-                            case AuthenticationMethod.Password:
-                                name += " (username & password)";
-                                break;
-                            case AuthenticationMethod.QRCode:
-                                name += " (QR code)";
-                                break;
-                            case AuthenticationMethod.Passwordless:
-                                name += " (passwordless)";
-                                break;
-                            case AuthenticationMethod.External:
-                                name += " (external login)";
-                                break;
-                            case AuthenticationMethod.Token:
-                                name += " (token login)";
-                                break;
-                            default:
-                                continue;
+                            switch (ati.AuthType)
+                            {
+                                case AuthenticationMethod.Password:
+                                    name += " (username & password)";
+                                    break;
+                                case AuthenticationMethod.QRCode:
+                                    name += " (QR code)";
+                                    break;
+                                case AuthenticationMethod.Passwordless:
+                                    name += " (passwordless)";
+                                    break;
+                                case AuthenticationMethod.External:
+                                    name += " (external login)";
+                                    break;
+                                case AuthenticationMethod.Token:
+                                    name += " (token login)";
+                                    break;
+                                default:
+                                    continue;
+                            }
                         }
-                        comboProtocolBox.Items.Add(new PluginListing(name, pluginIndex, authMethod));
+                        comboProtocolBox.Items.Add(new PluginListing(name, pluginIndex, ati.AuthType, ati.CustomTextUsername));
                     }
                 }
                 pluginIndex++;
@@ -246,7 +249,7 @@ namespace Skymu
         {
             selectedListing = (PluginListing)comboProtocolBox.SelectedItem;
             Universal.Plugin = Universal.PluginList[selectedListing.PluginIndex];
-            SkypeName.Text = Universal.Plugin.TextUsername;
+            SkypeName.Text = ((PluginListing)comboProtocolBox.SelectedItem).TextUsername ?? SkypeName.Text;
             if (selectedListing.AuthenticationType != AuthenticationMethod.Password)
             {
                 passwordTokenBox.IsEnabled = false;
@@ -279,15 +282,15 @@ namespace Skymu
         {
             if (useAutoLogin)
             {
-                SavedCredential credentials = CredentialsHelper.Read(Universal.Plugin.InternalName);
-                if (credentials is null)
+                SavedCredential credential = CredentialsHelper.Read(Universal.Plugin.InternalName);
+                if (credential is null)
                 {
                     LoginToggleAnimation(false);                    
                     CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                   
                     return;
                 }
                 LoginResult lr = await Task.Run(async () =>
-             await Universal.Plugin.TryAutoLogin(credentials)
+             await Universal.Plugin.TryAutoLogin(credential)
          );
                 if (lr == LoginResult.Success)
                 {
@@ -308,6 +311,11 @@ namespace Skymu
 
         private async void InitiateMainWindow()
         {
+            if (SaveCredentials.IsChecked == true)
+            {
+                SavedCredential cred = await Universal.Plugin.StoreCredential();
+                if (cred is not null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
+            }
             header.Text = "Loading user data";
             _mainWindow = new MainWindow();
             _mainWindow.Ready += MainWindow_Ready;
@@ -349,14 +357,16 @@ namespace Skymu
 
         public class PluginListing
         {
-            public PluginListing(string name, int index, AuthenticationMethod authType)
+            public PluginListing(string name, int index, AuthenticationMethod authType, string text_username)
             {
                 DisplayName = name;
                 PluginIndex = index;
                 AuthenticationType = authType;
+                TextUsername = text_username;
             }
 
             public string DisplayName { get; private set; }
+            public string TextUsername { get; private set; }
             public int PluginIndex { get; private set; }
             public AuthenticationMethod AuthenticationType { get; private set; }
         }

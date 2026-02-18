@@ -22,6 +22,21 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+            <Style x:Key="Page" TargetType="{x:Type Page}" BasedOn="{StaticResource {x:Type Page}}">
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="TextOptions.TextRenderingMode" Value="Grayscale"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+                <Setter Property="TextOptions.TextHintingMode" Value="Auto"/>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default},
+       Path=UseClearType}" Value="True">
+                        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+                        <Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+                        <Setter Property="TextOptions.TextHintingMode" Value="Fixed"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{x:Null}">
                 <!-- This fixes the horrible WPF Aero PresentationFramework menu items -->
                 <Style.Triggers>
