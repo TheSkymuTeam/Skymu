@@ -11,6 +11,7 @@
 
 using Microsoft.Win32;
 using MiddleMan;
+using Skymu.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

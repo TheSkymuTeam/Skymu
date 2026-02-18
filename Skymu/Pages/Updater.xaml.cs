@@ -1,5 +1,4 @@
-﻿using Microsoft.Windows.Themes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,20 +13,23 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 
-namespace Skymu
+namespace Skymu.Pages
 {
     /// <summary>
     /// Interaction logic for Updater.xaml
     /// </summary>
-    public partial class Updater : Window
+    public partial class Updater : Page
     {
-        private Action BLAction;
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
         private string brand = Properties.Settings.Default.BrandingName;
         private string[] updateInfo;
         private const string Repo = "Skymu-Public";
+        private SkypeWindow window;
 
         private static readonly HttpClient _httpClient = CreateClient();
 
@@ -41,57 +43,105 @@ namespace Skymu
         public Updater(bool manual = false)
         {
             InitializeComponent();
-            BLAction = () => InitiateUpdate();
             UpdateHandler(manual);
         }
 
-        public async void UpdateHandler(bool manual)
+        public async void UpdateHandler(bool manual, SkypeWindow exwin = null)
         {
             updateInfo = await GetUpdateInfo();
-            if (updateInfo.Length > 0)
+
+            if (updateInfo.Length > 0) // not up to date, must show window
             {
-                if (updateInfo[0] == "UPDATE_CHECK_ERROR") { new Dialog(Dialog.Type.PackageWarning, Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + updateInfo[1], Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"]).ShowDialog(); return; }
-                Header.Text = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + updateInfo[0];
-                ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
-                ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
-                string changelog = updateInfo[1];
-                Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
-                if (!string.IsNullOrEmpty(changelog))
+                if (exwin is not null) window = exwin;
+                else window = new SkypeWindow(this);
+                window.Title = "Skype™ - Update";
+                window.ButtonRightAction = () => window.Close();
+
+                if (updateInfo[0] == "UPDATE_CHECK_ERROR") // error when checking for update
                 {
-                    changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
-                    Description.Text += Environment.NewLine + Environment.NewLine + changelog;
+                    if (!manual) { window.Close(); return; }
+                    window.HeaderIcon = SkypeWindow.IconType.PackageWarning;
+                    window.HeaderText = Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"];
+                    window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
+                    window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
+                    window.ButtonLeftAction = () => UpdateHandler(true, window);
+                    Description.Text = Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + updateInfo[1];
                 }
-                ShowDialog();
-            }
-            else
-            {
-                if (manual) new Dialog(Dialog.Type.PackageCheckmark, Universal.Lang["sF_UPGRADE_UPTODATE"], Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]).ShowDialog();
-                this.Close();
+
+                else // update is available
+                {
+                    window.HeaderIcon = SkypeWindow.IconType.PackageCheckmark;
+                    window.HeaderText = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + updateInfo[0];
+                    window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
+                    window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
+                    window.ButtonLeftAction = () => InitiateUpdate();
+                    Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
+                    string changelog = updateInfo[1];
+                    if (!string.IsNullOrEmpty(changelog))
+                    {
+                        changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
+                        Description.Text += Environment.NewLine + Environment.NewLine + changelog;
+                    }
+                }
+
+                window.ShowDialog(); // show window as dialog
             }
 
+            else // up to date, show dialog
+            {
+                if (manual) new Dialog(SkypeWindow.IconType.PackageCheckmark, Universal.Lang["sF_UPGRADE_UPTODATE"], Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]).ShowDialog();
+            }
         }
 
-        public void SetErrorDialog(string error)
+        public void UpdateError(string error)
         {
-            Header.Text = Universal.Lang["sF_UPGRADE_FAILED_CAPTION"];
-            DialogImage.DefaultIndex = 17;
+            window.HeaderIcon = SkypeWindow.IconType.PackageWarning;
+            window.HeaderText = Universal.Lang["sF_UPGRADE_FAILED_CAPTION"];
+            window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
+            window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
+            window.ButtonLeftAction = () => InitiateUpdate();
             Description.Text = Universal.Lang["sF_UPGRADE_FAILED_TEXT1"] + "\n\n" + error;
-            ProgressGrid.Visibility = Visibility.Collapsed;
-            BLAction = () => InitiateUpdate();
-            ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
-            ButtonRight.Content = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"];
+            ProgressGrid.Visibility = Visibility.Collapsed;            
+        }
+
+        public void UpdateComplete(string file_path)
+        {
+            if (window.Visibility == Visibility.Hidden) window.Show();
+            window.HeaderText = "Download complete";
+            window.ButtonLeftText = "Open file";
+            window.ButtonRightText = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"];
+            window.ButtonLeftAction = () =>
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo(file_path) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    new Dialog(SkypeWindow.IconType.PackageWarning, ex.Message, "Cannot open file").ShowDialog();
+                }
+                window.Close(); return;
+            };
+            UpdateStatusText.Text = "100% done, 00:00:00 remaining";
+            Description.Text = "The release package has been saved to the Downloads folder.";
+            ProgBar.Value = 100;            
         }
 
         public async void InitiateUpdate()
         {
-            BLAction = () => Hide();
-            ButtonLeft.Content = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
-            ButtonRight.Content = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
-            DialogImage.DefaultIndex = 16;
-            Header.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_CAPTION"];
+            window.HeaderIcon = SkypeWindow.IconType.PackageStar;
+            window.HeaderText = Universal.Lang["sF_UPGRADE_DOWNLOAD_CAPTION"];
+            window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
+            window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
+            window.ButtonLeftAction = () => window.Hide();
             Description.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_TEXT"];
             UpdateStatusText.Text = Universal.Lang["sF_UPGRADE_INIT"];
             ProgressGrid.Visibility = Visibility.Visible;
+
+            window.Closing += (s, e) =>
+            {
+                _cts?.Cancel();
+            };
 
             try
             {
@@ -151,33 +201,12 @@ namespace Skymu
                         }
                     }
                 }
+                UpdateComplete(filePath);
 
-                Header.Text = "Download complete";
-                Description.Text = "The release package has been saved to the Downloads folder.";
-                UpdateStatusText.Text = "100% done, 00:00:00 remaining";
-                ButtonLeft.Content = "Open file";
-                ButtonRight.Content = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"]; 
-                ProcessStartInfo psi = new ProcessStartInfo(filePath)
-                {
-                    UseShellExecute = true
-                };
-                BLAction = () =>
-                {
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
-                    }
-                    catch (Exception ex)
-                    {
-                        new Dialog(Dialog.Type.PackageWarning, ex.Message, "Cannot open file").ShowDialog();
-                    }
-                    Close();
-                };
-                ProgBar.Value = 100;
             }
             catch (Exception ex)
             {
-                SetErrorDialog(ex.Message);
+                UpdateError(ex.Message);
             }
         }
 
@@ -237,22 +266,10 @@ namespace Skymu
                 result.AddRange(urls);
                 return result.ToArray();
             }
-            catch (Exception ex) 
-            { 
-                return new string[2] {"UPDATE_CHECK_ERROR", ex.Message};
+            catch (Exception ex)
+            {
+                return new string[2] { "UPDATE_CHECK_ERROR", ex.Message };
             }
         }
-
-
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            _cts?.Cancel();
-            base.OnClosing(e);
-        }
-
-        private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
-        private void bRClick(object sender, RoutedEventArgs e) { this.Close(); }
-
     }
-
 }

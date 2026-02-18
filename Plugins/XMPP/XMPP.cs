@@ -33,8 +33,13 @@ namespace XMPP
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "XMPP"; } }
         public string InternalName { get { return "skymu-xmpp-plugin"; } }
-        public string TextUsername { get { return "JID (e.g., user@server.com)"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
+        public AuthTypeInfo[] AuthenticationTypes
+        {
+            get
+            {
+                return new[] { new AuthTypeInfo(AuthenticationMethod.Password, "JID (e.g., user@server.com)") };
+            }
+        }
 
         // initialize XMPP client and helper classes
         private XMPPClient _xmppClient;

@@ -25,8 +25,8 @@ namespace Matrix
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Matrix"; } }
         public string InternalName { get { return "skymu-matrix-plugin"; } }
-        public string TextUsername { get { return "Identifier (@username:homeserver.com)"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Password }; } }
+        public AuthTypeInfo[] AuthenticationTypes { get { return new[] { new AuthTypeInfo(AuthenticationMethod.Password, "Identifier (@username:homeserver.com)"),
+            new AuthTypeInfo(AuthenticationMethod.Passwordless, "Email", "Beeper") }; } }
 
         private string _accessToken;
         private string _userId;
@@ -54,6 +54,7 @@ namespace Matrix
         private SavedCredential credData;
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
         public readonly Dictionary<string, string> _recentRoomMap = new();
+        private string _beeperRequestToken;
 
         public async Task<string> GetQRCode()
         {
@@ -61,64 +62,193 @@ namespace Matrix
         }
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (authType == AuthenticationMethod.Password)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Username and password are required."));
-                return LoginResult.Failure;
-            }
-
-            try
-            {
-                if (username.Contains(":"))
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    string[] parts = username.Split(':', 2);
-                    if (parts.Length == 2)
-                    {
-                        _homeserver = $"https://{parts[1]}";
-                    }
-                }
-
-                var loginData = new
-                {
-                    type = "m.login.password",
-                    identifier = new
-                    {
-                        type = "m.id.user",
-                        user = username.TrimStart('@').Split(':')[0]
-                    },
-                    password = password
-                };
-
-                string loginJson = JsonSerializer.Serialize(loginData);
-                var content = new StringContent(loginJson, Encoding.UTF8, "application/json");
-
-                var response = await _httpClient.PostAsync($"{_homeserver}/_matrix/client/r0/login", content);
-                string responseBody = await response.Content.ReadAsStringAsync();
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Login failed: {responseBody}"));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Username and password are required."));
                     return LoginResult.Failure;
                 }
 
-                var loginResponse = JsonSerializer.Deserialize<JsonElement>(responseBody);
-                _accessToken = loginResponse.GetProperty("access_token").GetString();
-                _userId = loginResponse.GetProperty("user_id").GetString();
+                try
+                {
+                    if (username.Contains(":"))
+                    {
+                        string[] parts = username.Split(':', 2);
+                        if (parts.Length == 2)
+                        {
+                            _homeserver = $"https://{parts[1]}";
+                        }
+                    }
 
-                credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
+                    var loginData = new
+                    {
+                        type = "m.login.password",
+                        identifier = new
+                        {
+                            type = "m.id.user",
+                            user = username.TrimStart('@').Split(':')[0]
+                        },
+                        password = password
+                    };
 
-				return await StartClient();
+                    string loginJson = JsonSerializer.Serialize(loginData);
+                    var content = new StringContent(loginJson, Encoding.UTF8, "application/json");
+
+                    var response = await _httpClient.PostAsync($"{_homeserver}/_matrix/client/r0/login", content);
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        OnError?.Invoke(this, new PluginMessageEventArgs($"Login failed: {responseBody}"));
+                        return LoginResult.Failure;
+                    }
+
+                    var loginResponse = JsonSerializer.Deserialize<JsonElement>(responseBody);
+                    _accessToken = loginResponse.GetProperty("access_token").GetString();
+                    _userId = loginResponse.GetProperty("user_id").GetString();
+
+                    credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
+
+                    return await StartClient();
+                }
+                catch (Exception ex)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Login error: {ex.Message}"));
+                    return LoginResult.Failure;
+                }
             }
-            catch (Exception ex)
+            else if (authType == AuthenticationMethod.Passwordless)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Login error: {ex.Message}"));
-                return LoginResult.Failure;
+                if (string.IsNullOrEmpty(username))
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Email address is required."));
+                    return LoginResult.Failure;
+                }
+                try
+                {
+                    // Request 1 — get request token
+                    Debug.WriteLine("[Beeper] Sending request 1: POST https://api.beeper.com/user/login");
+                    var req1 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login");
+                    req1.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
+                    req1.Content = new StringContent("", Encoding.UTF8, "application/json");
+                    var res1 = await _httpClient.SendAsync(req1);
+                    string res1Body = await res1.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"[Beeper] Request 1 response: {(int)res1.StatusCode} {res1.StatusCode}");
+                    Debug.WriteLine($"[Beeper] Request 1 body: {res1Body}");
+                    if (!res1.IsSuccessStatusCode)
+                    {
+                        Debug.WriteLine("[Beeper] Request 1 failed, aborting login.");
+                        OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login failed: {res1Body}"));
+                        return LoginResult.Failure;
+                    }
+                    var res1Data = JsonSerializer.Deserialize<JsonElement>(res1Body);
+                    _beeperRequestToken = res1Data.GetProperty("request").GetString();
+                    Debug.WriteLine($"[Beeper] Got request token: {_beeperRequestToken}");
+                    // Request 2 — submit email
+                    Debug.WriteLine($"[Beeper] Sending request 2: POST https://api.beeper.com/user/login/email (email: {username})");
+                    var req2Payload = JsonSerializer.Serialize(new { request = _beeperRequestToken, email = username });
+                    var req2 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login/email");
+                    req2.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
+                    req2.Content = new StringContent(req2Payload, Encoding.UTF8, "application/json");
+                    var res2 = await _httpClient.SendAsync(req2);
+                    string res2Body = await res2.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"[Beeper] Request 2 response: {(int)res2.StatusCode} {res2.StatusCode}");
+                    Debug.WriteLine($"[Beeper] Request 2 body: {res2Body}");
+                    if (!res2.IsSuccessStatusCode)
+                    {
+                        Debug.WriteLine("[Beeper] Request 2 failed, aborting login.");
+                        OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send login email: {res2Body}"));
+                        return LoginResult.Failure;
+                    }
+                    Debug.WriteLine("[Beeper] Email sent successfully, awaiting OTP.");
+                    return LoginResult.OptStepRequired;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[Beeper] Exception during Passwordless login: {ex.Message}");
+                    Debug.WriteLine($"[Beeper] Stack trace: {ex.StackTrace}");
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                    return LoginResult.Failure;
+                }
             }
+            return LoginResult.UnsupportedAuthType;
         }
 
         public async Task<LoginResult> LoginOptStep(string code)
         {
-            return LoginResult.Success;
+            try
+            {
+                // Request 3 — submit OTP code
+                Debug.WriteLine($"[Beeper] Sending request 3: POST https://api.beeper.com/user/login/response (code: {code})");
+                var req3Payload = JsonSerializer.Serialize(new { request = _beeperRequestToken, response = code });
+                var req3 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login/response");
+                req3.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
+                req3.Content = new StringContent(req3Payload, Encoding.UTF8, "application/json");
+                var res3 = await _httpClient.SendAsync(req3);
+                string res3Body = await res3.Content.ReadAsStringAsync();
+                Debug.WriteLine($"[Beeper] Request 3 response: {(int)res3.StatusCode} {res3.StatusCode}");
+                Debug.WriteLine($"[Beeper] Request 3 body: {res3Body}");
+                if (!res3.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("[Beeper] Request 3 failed, invalid OTP.");
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Invalid code: {res3Body}"));
+                    return LoginResult.Failure;
+                }
+                var res3Data = JsonSerializer.Deserialize<JsonElement>(res3Body);
+                string jwt = res3Data.GetProperty("token").GetString();
+                Debug.WriteLine($"[Beeper] Got JWT (first 20 chars): {jwt.Substring(0, Math.Min(20, jwt.Length))}...");
+
+                // Request 4 — exchange JWT for Matrix session
+                if (res3Data.TryGetProperty("whoami", out var whoami) &&
+                    whoami.TryGetProperty("userInfo", out var userInfo) &&
+                    userInfo.TryGetProperty("hungryUrl", out var hungryUrl))
+                {
+                    _homeserver = hungryUrl.GetString();
+                    Debug.WriteLine($"[Beeper] Homeserver from whoami: {_homeserver}");
+                }
+                else
+                {
+                    _homeserver = "https://matrix.beeper.com";
+                    Debug.WriteLine($"[Beeper] Homeserver not found in whoami, using fallback: {_homeserver}");
+                }
+
+                Debug.WriteLine($"[Beeper] Sending request 4: POST {_homeserver}/_matrix/client/v3/login");
+                var req4Payload = JsonSerializer.Serialize(new
+                {
+                    type = "org.matrix.login.jwt",
+                    token = jwt,
+                    initial_device_display_name = "Skymu"
+                });
+                var res4 = await _httpClient.PostAsync(
+                    $"{_homeserver}/_matrix/client/v3/login",
+                    new StringContent(req4Payload, Encoding.UTF8, "application/json"));
+                string res4Body = await res4.Content.ReadAsStringAsync();
+                Debug.WriteLine($"[Beeper] Request 4 response: {(int)res4.StatusCode} {res4.StatusCode}");
+                Debug.WriteLine($"[Beeper] Request 4 body: {res4Body}");
+                if (!res4.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("[Beeper] Request 4 failed, Matrix login rejected.");
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Matrix login failed: {res4Body}"));
+                    return LoginResult.Failure;
+                }
+                var res4Data = JsonSerializer.Deserialize<JsonElement>(res4Body);
+               
+                _accessToken = res4Data.GetProperty("access_token").GetString();
+                _userId = res4Data.GetProperty("user_id").GetString();
+
+                Debug.WriteLine($"[Beeper] Logged in as {_userId} on {_homeserver}");
+                credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
+                Debug.WriteLine("[Beeper] Credentials stored, starting client.");
+                return await StartClient();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Beeper] Exception during LoginOptStep: {ex.Message}");
+                Debug.WriteLine($"[Beeper] Stack trace: {ex.StackTrace}");
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                return LoginResult.Failure;
+            }
         }
 
         public async Task<bool> SendMessage(string identifier, string text)
@@ -562,7 +692,8 @@ namespace Matrix
             {
                 _accessToken = credential.PasswordOrToken;
                 _userId = credential.Username;
-				if (_userId.Contains(":"))
+                if (_userId.Contains(":beeper.com")) _homeserver = "https://matrix.beeper.com";
+                else if (_userId.Contains(":"))
 				{
 					string[] parts = _userId.Split(':', 2);
 					if (parts.Length == 2)

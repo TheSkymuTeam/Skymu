@@ -23,9 +23,14 @@ namespace Stub
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Stub plugin"; } }
-        public string TextUsername { get { return "Enter random text here"; } }
         public string InternalName { get { return "skymu-pluginstub"; } }
-        public AuthenticationMethod[] AuthenticationType { get { return new[] { AuthenticationMethod.Token }; } }
+        public AuthTypeInfo[] AuthenticationTypes
+        {
+            get
+            {
+                return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Fancy a stub username?") };
+            }
+        }
         public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
         {
             Notification.Invoke(this, new NotificationEventArgs(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null), UserConnectionStatus.Online));

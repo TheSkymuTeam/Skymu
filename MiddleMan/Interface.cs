@@ -177,6 +177,20 @@ namespace MiddleMan
         }
     }
 
+    public class AuthTypeInfo
+    {
+        public AuthenticationMethod AuthType { get; set; }
+        public string CustomTextUsername { get; set; }
+        public string CustomTextAuthType { get; set; }
+        public string Url { get; set; }
+        public AuthTypeInfo(AuthenticationMethod type, string custom_text_username_field = null, string custom_text_auth_type = null)
+        {
+            AuthType = type;
+            CustomTextAuthType = custom_text_auth_type;
+            CustomTextUsername = custom_text_username_field;
+        }
+    }
+
     public class SavedCredential
     {
         public string Username { get; }
@@ -304,8 +318,7 @@ namespace MiddleMan
         event EventHandler<NotificationEventArgs> Notification;
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
-        string TextUsername { get; } // The text to display above the Username field (e.g. "Username", "Email", "Phone number")
-        AuthenticationMethod[] AuthenticationType { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
+        AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password,

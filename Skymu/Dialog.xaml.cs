@@ -22,40 +22,7 @@ namespace Skymu
         private Action BRAction;
         public string TextBoxText { get; private set; }
 
-        public enum Type
-        {
-            Skype,
-            Error,
-            Information,
-            Question,
-            Picture,
-            ContactAdd,
-            ContactSearch,
-            ContactBlocked,
-            Chat,
-            NewChat,
-            Video,
-            VideoWarning,
-            SkypeWifi,
-            SkypeWifiWarning,
-            GroupChat,
-            PackageCheckmark,
-            PackageStar,
-            PackageWarning,
-            MultipleContactCall,
-            ContactRequest,
-            ContactFlat,
-            UploadFile,
-            SkypeOut,
-            PayPal,
-            SkypeCredit,
-            eBay,
-            Facebook,
-            MultipleContactVideoCall,
-            TelephoneFlat
-        }
-
-        public Dialog(Type type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
+        public Dialog(SkypeWindow.IconType type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
         {
             try
             {
@@ -74,13 +41,13 @@ namespace Skymu
                     this.Height = customDimensions.Value.Height;
                 }
 
-                brAction ??= () => Close();
-                blAction ??= () => { Close(); Universal.Terminate(); };
+                brAction = () => Close();
+                blAction = () => { Close(); Universal.Terminate(); };
                 if (blEnabled) ButtonLeft.Visibility = Visibility.Visible;
                 if (enableTextBox)
                 {
                     DialogTextBox.Visibility = Visibility.Visible;
-                    brAction ??= () =>
+                    brAction = () =>
                     {
                         TextBoxText = DialogTextBox.Text;
                         DialogResult = true;
@@ -93,12 +60,12 @@ namespace Skymu
                     title = Properties.Settings.Default.BrandingName;
                     switch (type)
                     {
-                        case Type.Information: title += " - Information"; break;
-                        case Type.Error: title += " - Error"; break;
-                        case Type.Question: title += " - Confirm action"; break;
-                        case Type.Picture: title += " - Media"; break;
-                        case Type.PackageCheckmark: case Type.PackageStar: case Type.PackageWarning: title += "™ - Update"; break;
-                        default: case Type.Skype: break;
+                        case SkypeWindow.IconType.Information: title += " - Information"; break;
+                        case SkypeWindow.IconType.Error: title += " - Error"; break;
+                        case SkypeWindow.IconType.Question: title += " - Confirm action"; break;
+                        case SkypeWindow.IconType.Picture: title += " - Media"; break;
+                        case SkypeWindow.IconType.PackageCheckmark: case SkypeWindow.IconType.PackageStar: case SkypeWindow.IconType.PackageWarning: title += "™ - Update"; break;
+                        default: case SkypeWindow.IconType.Skype: break;
                     }
                 }
 
