@@ -98,7 +98,7 @@ namespace Discord.Classes
 
                 request.Content = content;
             }
-            else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put) && data is not null)
+            else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == HttpMethod.Patch) && data is not null)
             {
                 string jsonData = JsonSerializer.Serialize(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");

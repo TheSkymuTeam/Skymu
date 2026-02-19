@@ -10,6 +10,8 @@
 /*==========================================================*/
 
 using Discord.Classes;
+using DiscordProtos.DiscordUsers.V1;
+using Google.Protobuf;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord
 {
@@ -365,7 +368,7 @@ namespace Discord
 
                 foreach (var node in messages.Reverse())
                 {
-                    var item = await MessageParser.ParseMessage(node);
+                    var item = await DiscordMsgParser.ParseMessage(node);
                     if (item is not null)
                         ActiveConversation.Add(item);
                 }
@@ -428,61 +431,81 @@ namespace Discord
             }
         }
 
-        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        internal static PreloadedUserSettings proto_settings;
+        internal const string PROTO_ENDPOINT = "users/@me/settings-proto/1";
+
+        internal async Task<bool> FetchProtoSettings() // gets the latest proto settings from the server
         {
-            try
-            {
-                string statusStr = status switch
-                {
-                    UserConnectionStatus.Online => "online",
-                    UserConnectionStatus.Away => "idle",
-                    UserConnectionStatus.DoNotDisturb => "dnd",
-                    UserConnectionStatus.Invisible or UserConnectionStatus.Offline => "invisible",
-                    _ => "online"
-                };
+            // get current proto blob from Discord
+            string current = await api.SendAPI(
+                PROTO_ENDPOINT,
+                HttpMethod.Get,
+                DscToken,
+                null, null, null).ConfigureAwait(false);
 
-                var payload = new
-                {
-                    op = 3,
-                    d = new
-                    {
-                        since = (long?)null,
-                        afk = false,
-                        status = statusStr,
-                        game = new { name = (string)null, type = 0 }
-                    }
-                };
-
-                string payloadStr = JsonSerializer.Serialize(payload, new JsonSerializerOptions
-                {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.Never
-                });
-
-                Debug.WriteLine($"[SetPresenceStatus] WS state: {WebSocketMgr.Socket?.State}");
-                Debug.WriteLine($"[SetPresenceStatus] Raw payload: {payloadStr}");
-                await WebSocketMgr.SendPayload(payloadStr);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set presence: {ex.Message}"));
+            if (string.IsNullOrWhiteSpace(current))
                 return false;
-            }
+
+            var json = JsonNode.Parse(current)?.AsObject();
+            string base64 = json?["settings"]?.GetValue<string>();
+
+            if (string.IsNullOrWhiteSpace(base64))
+                return false;
+
+            // decode proto
+            byte[] bytes = Convert.FromBase64String(base64);
+            proto_settings = PreloadedUserSettings.Parser.ParseFrom(bytes);
+            return true;
         }
+
+        internal async Task<bool> UpdateProtoSettings() // updates the server proto settings blob 
+        {
+            // encode proto
+            byte[] updatedBytes = proto_settings.ToByteArray();
+            string updatedBase64 = Convert.ToBase64String(updatedBytes);
+
+            var body = new
+            {
+                settings = updatedBase64
+            };
+
+            // send updated proto
+            string response = await api.SendAPI(
+                PROTO_ENDPOINT,
+                HttpMethod.Patch,
+                DscToken,
+                body,
+                null, null, null).ConfigureAwait(false);
+
+            return !response.Contains("error", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public async Task<bool> SetPresenceStatus(UserConnectionStatus status) 
+        {
+            if (!await FetchProtoSettings()) return false; // try fetch
+
+            // map to proto enum
+            proto_settings.Status.Status = status switch // update status
+            {
+                UserConnectionStatus.Online => "online",
+                UserConnectionStatus.Away => "idle",
+                UserConnectionStatus.DoNotDisturb => "dnd",
+                UserConnectionStatus.Invisible => "invisible",
+                UserConnectionStatus.Offline => "offline",
+                _ => "offline"
+            };
+
+            return await UpdateProtoSettings(); // try push
+        }
+
 
         public async Task<bool> SetTextStatus(string status)
         {
-            try
-            {
-                var body = new { custom_status = new { text = status ?? "" } };
-                string response = await api.SendAPI("users/@me/settings", HttpMethod.Patch, DscToken, body, null, null, null).ConfigureAwait(false);
-                return !response.Contains("error", StringComparison.OrdinalIgnoreCase);
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set text status: {ex.Message}"));
-                return false;
-            }
+            if (String.IsNullOrEmpty(status)) return false;
+            if (!await FetchProtoSettings()) return false; // try fetch
+            proto_settings.Status.CustomStatus = new CustomStatus(); // reset status (remove residual emoji, expiry information)
+            proto_settings.Status.CustomStatus.Text = status; // set text of status
+            return await UpdateProtoSettings(); // try push
         }
 
         private bool ShouldNotify(HelperClasses.MessageReceivedEventArgs e)
