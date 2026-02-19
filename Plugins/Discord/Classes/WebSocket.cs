@@ -288,7 +288,7 @@ namespace Discord.Classes
         {
             if (messageData is null) return;
 
-            var messageItem = await MessageParser.ParseMessage(messageData);
+            var messageItem = await DiscordMsgParser.ParseMessage(messageData);
             if (messageItem is null) return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";

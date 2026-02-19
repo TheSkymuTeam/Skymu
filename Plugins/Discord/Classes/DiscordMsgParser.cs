@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Discord.Classes
 {
-    internal class MessageParser
+    internal class DiscordMsgParser
     {
         public static async Task<Message> ParseMessage(JsonNode message)
         {

@@ -23,6 +23,7 @@
     <OutputPath>..\..\Skymu\bin\x64\Debug\plugins\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
