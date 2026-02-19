@@ -64,7 +64,7 @@ namespace Skymu
                     bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
                 }
 
-                StatusIcon.DefaultIndex = MainWindow.MapStatusToInt(e.Status);
+                StatusIcon.DefaultIndex = MainWindow.GetIntFromStatus(e.Status);
                 TitleText.Text = message.Sender.DisplayName;
                 TextBlock tb = MessageTools.FormTextblock(message.Text);
                 tb.MaxHeight = 30;

@@ -34,6 +34,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using static Discord.Classes.HelperClasses;
 
 namespace Discord.Classes
 {
@@ -152,7 +153,7 @@ namespace Discord.Classes
             _ = Task.Run(() => ReceiveLoop(_receiveCts.Token));
         }
 
-        private async Task SendPayload(string payload = null)
+        internal async Task SendPayload(string payload = null)
         {
             if (WSClient?.State != WebSocketState.Open) return;
 
@@ -247,11 +248,23 @@ namespace Discord.Classes
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
                                 break;
+                            case "MESSAGE_DELETE":
+                                HandleMessageDelete(json["d"]);
+                                break;
+                            case "MESSAGE_DELETE_BULK":
+                                HandleMessageDeleteBulk(json["d"]);
+                                break;
                             case "TYPING_START":
                                 HandleTypingEvent(json["d"]);
                                 break;
+                            case "PRESENCE_UPDATE":
+                                Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
+                                break;
+                            case "SESSIONS_REPLACE":
+                                Debug.WriteLine($"[WS] Sessions replaced: {json["d"]?.ToJsonString()}");
+                                break;
                             default:
-                                // Debug.WriteLine($"Unhandled event type: {eventType}");
+                                Debug.WriteLine($"[WS] Unhandled event: {eventType}, data: {json["d"]?.ToJsonString()}");
                                 break;
                         }
                         break;
@@ -282,6 +295,7 @@ namespace Discord.Classes
 
             var args = new HelperClasses.MessageReceivedEventArgs
             {
+                EventType = MessageEventType.Create,
                 ChannelId = channelId,
                 Identifier = messageItem.Identifier,
                 Sender = messageItem.Sender,
@@ -293,6 +307,50 @@ namespace Discord.Classes
 
             _ = _messageQueue.Writer.WriteAsync(args);
         }
+
+        private Task HandleMessageDelete(JsonNode data) // omega
+        {
+            var messageId = data?["id"]?.GetValue<string>();
+            var channelId = data?["channel_id"]?.GetValue<string>();
+
+            if (messageId == null || channelId == null)
+                return Task.CompletedTask;
+
+            var args = new MessageReceivedEventArgs
+            {
+                EventType = MessageEventType.Delete,
+                ChannelId = channelId,
+                Identifier = messageId
+            };
+
+            _ = _messageQueue.Writer.WriteAsync(args);
+
+            return Task.CompletedTask;
+        }
+
+        private Task HandleMessageDeleteBulk(JsonNode data) // omega
+        {
+            var ids = data?["ids"]?.AsArray();
+            var channelId = data?["channel_id"]?.GetValue<string>();
+
+            if (ids == null || channelId == null)
+                return Task.CompletedTask;
+
+            var args = new MessageReceivedEventArgs
+            {
+                EventType = MessageEventType.BulkDelete,
+                ChannelId = channelId,
+                BulkIdentifiers = ids
+                    .Select(x => x?.GetValue<string>())
+                    .Where(x => x != null)!
+                    .ToList()
+            };
+
+            _ = _messageQueue.Writer.WriteAsync(args);
+
+            return Task.CompletedTask;
+        }
+
 
 
         private void StartMessageProcessor()

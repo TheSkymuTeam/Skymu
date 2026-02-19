@@ -20,6 +20,7 @@
 		<local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
 		<local:TextStatusConverter x:Key="TextStatusConverter"/>
 		<local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
+        <local:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter"/>
 		<local:FormatFullTextConverter x:Key="FormatFullTextConverter" TextBlockStyle="{StaticResource MessageTextBlockStyle}"/>
 		<Style x:Key="WindowButtonStyle" TargetType="local:SliceControl">
 			<Setter Property="HorizontalAlignment" Value="Right"/>
@@ -206,8 +207,15 @@
                        Converter={StaticResource NullDependentVisibilityConverter}}"/>
 				</StackPanel>
 				<!-- Timestamp -->
-				<TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Time, StringFormat=h:mm tt}" VerticalAlignment="Top" FontSize="11" FontFamily="Tahoma" Foreground="#999999" HorizontalAlignment="Left"/>
-			</Grid>
+                <Grid Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding Time, StringFormat=h:mm tt}" FontSize="11" FontFamily="Tahoma" Foreground="#999999"
+               Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}"/>
+                    <local:SliceControl Source="/Resources/Universal/Chat/loading.png" 
+               ElementCount="72" StackDirection="Vertical" DefaultIndex="0"
+               IsAnimation="True" AnimationFps="60" Slice="false" Width="10" Height="10"
+               Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}"/>
+                </Grid>
+            </Grid>
 		</DataTemplate>
 		<!-- CallStartedItem Template -->
 		<DataTemplate DataType="{x:Type plugin:CallStartedNotice}">
@@ -384,33 +392,33 @@
 							<StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True">
 								<StackPanel.Resources>
 									<ContextMenu x:Key="StatusMenu">
-										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
+										<MenuItem x:Name="sm_online" Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>
 										</MenuItem>
-										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}">
+                                        <MenuItem x:Name="sm_away" Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>
 										</MenuItem>
-										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_DND]}">
+                                        <MenuItem x:Name="sm_dnd" Header="{Binding [sSTATUSMENU_CAPTION_DND]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>
 										</MenuItem>
-										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}">
+                                        <MenuItem x:Name="sm_invisible" Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>
 										</MenuItem>
-										<MenuItem IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}">
+                                        <MenuItem x:Name="sm_offline" IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>
 										</MenuItem>
 										<Separator/>
-										<MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}">
+                                        <MenuItem x:Name="sm_call_forwarding" Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}" Click="StatusMenuItemClick">
 											<MenuItem.Icon>
 												<local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
 											</MenuItem.Icon>

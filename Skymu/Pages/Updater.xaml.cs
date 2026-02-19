@@ -27,7 +27,7 @@ namespace Skymu.Pages
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
         private string brand = Properties.Settings.Default.BrandingName;
-        private string[] updateInfo;
+        private string[] update_info;
         private const string Repo = "Skymu-Public";
         private SkypeWindow window;
 
@@ -48,16 +48,16 @@ namespace Skymu.Pages
 
         public async void UpdateHandler(bool manual, SkypeWindow exwin = null)
         {
-            updateInfo = await GetUpdateInfo();
+            update_info = await GetUpdateInfo();
 
-            if (updateInfo.Length > 0) // not up to date, must show window
+            if (update_info.Length > 0) // not up to date, must show window
             {
                 if (exwin is not null) window = exwin;
                 else window = new SkypeWindow(this);
-                window.Title = "Skype™ - Update";
+                window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
 
-                if (updateInfo[0] == "UPDATE_CHECK_ERROR") // error when checking for update
+                if (update_info[0] == "UPDATE_CHECK_ERROR") // error when checking for update
                 {
                     if (!manual) { window.Close(); return; }
                     window.HeaderIcon = SkypeWindow.IconType.PackageWarning;
@@ -65,18 +65,18 @@ namespace Skymu.Pages
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
                     window.ButtonLeftAction = () => UpdateHandler(true, window);
-                    Description.Text = Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + updateInfo[1];
+                    Description.Text = Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + update_info[1];
                 }
 
                 else // update is available
                 {
                     window.HeaderIcon = SkypeWindow.IconType.PackageCheckmark;
-                    window.HeaderText = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + updateInfo[0];
+                    window.HeaderText = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info[0];
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                     window.ButtonLeftAction = () => InitiateUpdate();
                     Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
-                    string changelog = updateInfo[1];
+                    string changelog = update_info[1];
                     if (!string.IsNullOrEmpty(changelog))
                     {
                         changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
@@ -145,7 +145,7 @@ namespace Skymu.Pages
 
             try
             {
-                string downloadUrl = updateInfo[2];
+                string downloadUrl = update_info[2];
 
                 if (string.IsNullOrWhiteSpace(downloadUrl))
                     return;

@@ -94,7 +94,7 @@ namespace XMPP
             _typingUsersPerChannel.Clear();
         }
 
-        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             if (authType != AuthenticationMethod.Password)
             {
@@ -118,10 +118,10 @@ namespace XMPP
             return string.Empty;
         }
 
-        public Task<LoginResult> LoginOptStep(string code)
+        public Task<LoginResult> AuthenticateTwoFA(string code)
             => Task.FromResult(LoginResult.Success);
 
-        public async Task<LoginResult> TryAutoLogin(SavedCredential autoLoginCredentials)
+        public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             if (autoLoginCredentials == null || String.IsNullOrEmpty(autoLoginCredentials.Username))
             {
@@ -341,8 +341,21 @@ namespace XMPP
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text)
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
+            if (text is null) { OnError?.Invoke(this, new PluginMessageEventArgs("Attachment sending is not yet supported by the XMPP plugin. As your message does not have text, it will not be sent.")); return false; }
+            if (attachment is not null)
+            {
+                if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File && attachment.Type != AttachmentType.Audio)
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs($"Unsupported attachment type: {attachment.Type}."));
+                    return false;
+                }
+                // XMPP doesn't have a standardized inline file transfer in this implementation.
+                // Attachments are silently dropped with a warning.
+                OnWarning?.Invoke(this, new PluginMessageEventArgs("Attachment sending is not yet supported by the XMPP plugin. The text message will be sent without the attachment."));
+            }
+
             if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(text))
             {
                 return false;
@@ -367,6 +380,23 @@ namespace XMPP
             }
         }
 
+        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        {
+            try
+            {
+                if (_xmppClient == null || !_xmppClient.IsConnected)
+                    return false;
+
+                await _xmppClient.SendPresenceAsync(status);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set presence: {ex.Message}"));
+                return false;
+            }
+        }
+
         // event handlers
 
         private void OnConnectionStateChanged(object sender, bool isConnected)
@@ -374,6 +404,23 @@ namespace XMPP
             if (!isConnected)
             {
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Connection to XMPP server lost. Attempting to reconnect..."));
+            }
+        }
+
+        public async Task<bool> SetTextStatus(string status)
+        {
+            try
+            {
+                if (_xmppClient == null || !_xmppClient.IsConnected)
+                    return false;
+
+                await _xmppClient.SendPresenceAsync(_xmppClient.CurrentPresence, status);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set text status: {ex.Message}"));
+                return false;
             }
         }
 

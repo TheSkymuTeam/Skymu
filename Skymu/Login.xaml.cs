@@ -67,12 +67,12 @@ namespace Skymu
             LoginToggleAnimation(true);
             if (comboProtocolBox.SelectedIndex != -1)
             {
-                var result = await Universal.Plugin.LoginMainStep(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password, false);
+                var result = await Universal.Plugin.Authenticate(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password);
                 if (result == LoginResult.Success)
                 {
                     InitiateMainWindow();
                 }
-                else if (result == LoginResult.OptStepRequired)
+                else if (result == LoginResult.TwoFARequired)
                 {
                     string totp = null;
                     if (selectedListing.AuthenticationType == AuthenticationMethod.QRCode)
@@ -103,7 +103,7 @@ namespace Skymu
                             "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap);
                             qrDialog.ShowDialog();
 
-                            if (await Universal.Plugin.LoginOptStep(null) == LoginResult.Success)
+                            if (await Universal.Plugin.AuthenticateTwoFA(null) == LoginResult.Success)
                             {
                                 qrDialog.Close();
                             }
@@ -127,7 +127,7 @@ namespace Skymu
 
                         }
                     }
-                    var optResult = await Universal.Plugin.LoginOptStep(totp);
+                    var optResult = await Universal.Plugin.AuthenticateTwoFA(totp);
 
                     if (optResult == LoginResult.Success) {
                        
@@ -290,7 +290,7 @@ namespace Skymu
                     return;
                 }
                 LoginResult lr = await Task.Run(async () =>
-             await Universal.Plugin.TryAutoLogin(credential)
+             await Universal.Plugin.Authenticate(credential)
          );
                 if (lr == LoginResult.Success)
                 {

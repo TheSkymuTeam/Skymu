@@ -11,15 +11,27 @@
 
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 
 namespace Discord.Classes
 {
+    public enum MessageEventType
+    {
+        Create,
+        Delete,
+        BulkDelete
+    }
+
     internal class HelperClasses
     {
         public class MessageReceivedEventArgs : EventArgs
         {
+            public MessageEventType EventType { get; set; }
+
             public string ChannelId { get; set; }
-            public string Identifier { get; set; } 
+            public string Identifier { get; set; }
+            public IEnumerable<string>? BulkIdentifiers { get; set; }
+
             public User Sender { get; set; } 
             public DateTime Timestamp { get; set; }
             public string Text { get; set; } 

@@ -47,6 +47,12 @@ namespace Discord.Classes
             return tcs.Task; 
         }
 
+        public static async Task SendPayload(string payload)
+        {
+            if (_webSocket is null) return;
+            await _webSocket.SendPayload(payload);
+        }
+
         public static void SubscribeMessageReceived(EventHandler<HelperClasses.MessageReceivedEventArgs> handler)
         {
             if (_webSocket is null)

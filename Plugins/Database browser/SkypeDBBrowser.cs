@@ -52,7 +52,7 @@ namespace SkypeDBBrowser
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations => new ClickableConfiguration[0];
 
-        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             try
             {
@@ -101,12 +101,15 @@ namespace SkypeDBBrowser
             return string.Empty;
         }
 
-        public async Task<LoginResult> LoginOptStep(string code)
+        public async Task<LoginResult> AuthenticateTwoFA(string code)
         {
             return LoginResult.Success;
         }
 
-        public async Task<bool> SendMessage(string identifier, string text) // nice try
+        public Task<bool> SetPresenceStatus(UserConnectionStatus status) { return Task.FromResult(false); }
+        public Task<bool> SetTextStatus(string status) { return Task.FromResult(false); }
+
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent) // nice try
         {
             OnWarning?.Invoke(this, new PluginMessageEventArgs("Databases are read-only."));
             return false;
@@ -420,12 +423,12 @@ namespace SkypeDBBrowser
             return new SavedCredential(_currentUserId, _databasePath, AuthenticationMethod.Token);
         }
 
-        public async Task<LoginResult> TryAutoLogin(SavedCredential credential)
+        public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
             if (credential == null)
                 return LoginResult.Failure;
 
-            return await LoginMainStep(AuthenticationMethod.Token, credential.PasswordOrToken);
+            return await Authenticate(AuthenticationMethod.Token, credential.PasswordOrToken);
         }
 
         public void Dispose()

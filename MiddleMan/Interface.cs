@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -30,7 +31,7 @@ namespace MiddleMan
     public enum LoginResult
     {
         Success,
-        OptStepRequired,
+        TwoFARequired,
         Failure,
         UnsupportedAuthType
     }
@@ -321,13 +322,12 @@ namespace MiddleMan
         AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
-        Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password,
-            bool tryLoginWithSavedCredentials); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
-        Task<LoginResult> LoginOptStep(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication.
-        Task<bool> SendMessage(string identifier, string text); // Sends a message. Returns true on success.
+        Task<LoginResult> Authenticate(AuthenticationMethod auth_type, string username, string password); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
+        Task<LoginResult> Authenticate(SavedCredential credential); // Tries to log in with saved tokens/credentials
+        Task<LoginResult> AuthenticateTwoFA(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication. (TOTP)
+        Task<bool> SendMessage(string identifier, string text = null, Attachment attachment = null, string parent_message_identifier = null); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
-        Task<LoginResult> TryAutoLogin(SavedCredential credential); // Tries to log in with saved tokens/credentials
         ObservableCollection<ConversationItem> ActiveConversation { get; } // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Participant> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Participant> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
@@ -337,6 +337,8 @@ namespace MiddleMan
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
+        Task<bool> SetPresenceStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
+        Task<bool> SetTextStatus(string status); // sets text status, sometimes referred to as "custom" status
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.

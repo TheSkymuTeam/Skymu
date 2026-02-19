@@ -31,7 +31,7 @@ namespace Stub
                 return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Fancy a stub username?") };
             }
         }
-        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             Notification.Invoke(this, new NotificationEventArgs(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null), UserConnectionStatus.Online));
             return LoginResult.Success;
@@ -44,13 +44,20 @@ namespace Stub
         public void Dispose() { }
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
 
-        public async Task<LoginResult> LoginOptStep(string code)
+        public async Task<LoginResult> AuthenticateTwoFA(string code)
         {
             return LoginResult.Success;
         }
 
-        public async Task<bool> SendMessage(string identifier, string text)
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
+            if (text is not null)
+            {
+                if (attachment is not null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message with text and attachment sent."));
+                else OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only message sent."));
+            }
+            else OnWarning?.Invoke(this, new PluginMessageEventArgs("Attachment-only message sent."));
+            if (parent_message_identifier is not null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message references a parent."));
             TypingUsersList.Clear();
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
@@ -135,7 +142,10 @@ namespace Stub
             return null;
         }
 
-        public async Task<LoginResult> TryAutoLogin(SavedCredential autoLoginCredentials)
+        public Task<bool> SetPresenceStatus(UserConnectionStatus status) { return Task.FromResult(true); }
+        public Task<bool> SetTextStatus(string status) { return Task.FromResult(true); }
+
+        public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             return LoginResult.Failure;
         }

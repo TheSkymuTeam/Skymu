@@ -345,7 +345,7 @@ namespace Skymu
             menu1.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillTertiary : new SolidColorBrush(System.Windows.Media.Colors.Transparent);
 
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-          
+
             foreach (SliceControl button in new[] { close, minimize, maximize, split })
             {
                 button.DefaultIndex = 0;
@@ -354,7 +354,7 @@ namespace Skymu
             if (this.Background == Brushes.Transparent) return;
 
             TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Fill;                     
+            this.Background = Properties.Settings.Default.FallbackFillColors ? Colors.Fallback.FillPrimary : Colors.Active.Fill;
         }
 
 
@@ -637,7 +637,7 @@ namespace Skymu
             Username = data.Username;
             Identifier = data.Identifier;
             StatusBox.Text = data.DisplayName;
-            StatusIcon.DefaultIndex = MapStatusToInt(data.PresenceStatus);
+            StatusIcon.DefaultIndex = GetIntFromStatus(data.PresenceStatus);
             Status = data.PresenceStatus;
 
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
@@ -652,31 +652,67 @@ namespace Skymu
             SendMessage();
         }
 
+        private readonly Dictionary<string, Message> _pendingPreviewMessages = new Dictionary<string, Message>();
+
         private async Task SendMessage(string message = null)
         {
-            if (!SendMsgButton.IsEnabled && message is null) return;
+            if (!SendMsgButton.IsEnabled && message is null)
+                return;
 
-            string messageBody;
-            if (message is null)
-            {
-                messageBody = ExtractMessageFromRichTextBox();
-            }
-            else
-            {
-                messageBody = message;
-            }
+            string messageBody = message ?? ExtractMessageFromRichTextBox();
 
             MessageTextBox.Document.Blocks.Clear();
             MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
-
             CheckIfMTBUnfocused();
-            bool didSend = await Universal.Plugin.SendMessage(SelectedContact.Identifier, messageBody);
+
+            string tempId = "@skymu/sending/" + Guid.NewGuid().ToString();
+
+            var previewMessage = new Message(
+                tempId,
+                Universal.Plugin.MyInformation,
+                DateTime.Now,
+                messageBody,
+                null,
+                null
+            );
+
+            _pendingPreviewMessages[tempId] = previewMessage;
+            Universal.Plugin.ActiveConversation.Add(previewMessage);
+
+            bool didSend = false;
+
+            try
+            {
+                didSend = await Universal.Plugin.SendMessage(
+                    SelectedContact.Identifier,
+                    messageBody
+                );
+            }
+            catch
+            {
+                didSend = false;
+            }
 
             if (didSend)
             {
                 Sounds.Play("message-sent");
             }
+            else
+            {
+                if (_pendingPreviewMessages.TryGetValue(tempId, out var pending))
+                {
+                    _pendingPreviewMessages.Remove(tempId);
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        Universal.Plugin.ActiveConversation.Remove(pending);
+                    });
+                }
+
+                Universal.ShowMsg("Error sending message.");
+            }
         }
+
 
         private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
         {
@@ -777,18 +813,53 @@ namespace Skymu
                     {
                         foreach (var item in args.NewItems)
                         {
+
                             if (item is Message message)
                             {
+                                if (message.Sender.Identifier == MainWindow.Identifier
+                                    && message.Identifier != null
+                                    && !message.Identifier.StartsWith("@skymu/sending"))
+                                {
+                                    // try exact text match first
+                                    var match = _pendingPreviewMessages
+                                        .Values
+                                        .LastOrDefault(p => p.Text == message.Text);
+
+                                    // fallback: remove most recent preview
+                                    if (match == null)
+                                    {
+                                        match = _pendingPreviewMessages
+                                            .Values
+                                            .LastOrDefault();
+                                    }
+
+                                    if (match != null)
+                                    {
+                                        _pendingPreviewMessages.Remove(match.Identifier);
+
+                                        Dispatcher.BeginInvoke(() =>
+                                        {
+                                            Universal.Plugin.ActiveConversation.Remove(match);
+                                        });
+
+                                    }
+                                }
                                 int currentIndex = listBox.Items.IndexOf(message);
 
                                 for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-                                    if (listBox.Items[i] is Message previousMessage)
-                                    {
-                                        message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
-                                        break;
-                                    }
+                                    if (listBox.Items[i] is not Message previousMessage)
+                                        continue;
+
+                                    // ignore preview messages
+                                    if (previousMessage.Identifier.StartsWith("@skymu/sending"))
+                                        continue;
+
+                                    // only assign a real message's identifier as prev identifier
+                                    message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
+                                    break;
                                 }
+
                             }
                         }
                     }
@@ -1257,17 +1328,21 @@ namespace Skymu
         }
 
 
-        internal static int MapStatusToInt(UserConnectionStatus status)
-        {
-            return status switch
-            {
-                UserConnectionStatus.DoNotDisturb => 5,
-                UserConnectionStatus.Away => 3,
-                UserConnectionStatus.Invisible or UserConnectionStatus.Offline => 19,
-                UserConnectionStatus.Online => 2,
-                _ => 0,
-            };
-        }
+        private static readonly Dictionary<UserConnectionStatus, int> _statusMap = new()
+{
+    { UserConnectionStatus.Online, 2 },
+    { UserConnectionStatus.Away, 3 },
+    { UserConnectionStatus.DoNotDisturb, 5 },
+    { UserConnectionStatus.Invisible, 19 },
+    { UserConnectionStatus.Offline, 19 }
+};
+
+        internal static int GetIntFromStatus(UserConnectionStatus status)
+    => _statusMap.TryGetValue(status, out int value) ? value : 0;
+
+        internal static UserConnectionStatus GetStatusFromInt(int value)
+            => _statusMap.FirstOrDefault(x => x.Value == value).Key;
+
 
         private async void Contacts_BtnDown(object sender, MouseButtonEventArgs e)
         {
@@ -1317,6 +1392,33 @@ namespace Skymu
             menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
 
             menu.IsOpen = true;
+        }
+
+        private async void StatusMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem item)
+            {
+                string name = item.Name.Substring(3);
+                int old_default_index = StatusIcon.DefaultIndex;
+                UserConnectionStatus status;
+                switch (name)
+                {
+                    case "online": status = UserConnectionStatus.Online; break;
+                    case "offline": status = UserConnectionStatus.Offline; break;
+                    case "invisible": status = UserConnectionStatus.Invisible; break;
+                    case "away": status = UserConnectionStatus.Away; break;
+                    case "dnd": status = UserConnectionStatus.DoNotDisturb; break;
+                    default: case "call_forwarding": Universal.NotImplemented(Universal.Lang["sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL"]); return;
+                }
+                if (status == GetStatusFromInt(old_default_index)) return;
+                StatusIcon.DefaultIndex = GetIntFromStatus(status);
+                Tray.PushIcon(status);
+                if (!await Universal.Plugin.SetPresenceStatus(status))
+                {
+                    StatusIcon.DefaultIndex = old_default_index;
+                    Tray.PushIcon(GetStatusFromInt(old_default_index));
+                }
+            }
         }
 
         private void mn_CheckUpdates(object sender, RoutedEventArgs e)
@@ -1387,6 +1489,18 @@ namespace Skymu
         }
     }
 
+    public class PreviewVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isPreview = value is string id && id.StartsWith("@skymu/sending");
+            bool invert = parameter as string == "invert";
+            return (isPreview ^ invert) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
     public class IdentifierToColorConverter : IValueConverter
     {
         private static readonly SolidColorBrush ActiveBrush =
@@ -1463,7 +1577,7 @@ namespace Skymu
         {
             if (value is UserConnectionStatus stat)
             {
-                return MainWindow.MapStatusToInt(stat);
+                return MainWindow.GetIntFromStatus(stat);
             }
             return 21;
         }

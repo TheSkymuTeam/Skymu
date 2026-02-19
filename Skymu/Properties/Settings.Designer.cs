@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.12")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.13")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Nutella Waffle")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Oreo Waffle Cake")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

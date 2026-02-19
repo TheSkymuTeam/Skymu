@@ -15,11 +15,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,7 +39,7 @@ namespace Discord
         {
             get
             {
-                return new[] { new AuthTypeInfo(AuthenticationMethod.Token) };
+                return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Token") };
             }
         }
 
@@ -56,10 +58,10 @@ namespace Discord
         // The current user's identifier
         private string _currentUserId;
         // The current user's username
-		private string _currentGlobalName;
+        private string _currentGlobalName;
 
-		// Magic numbers used for some stuff...
-		private const int MAX_MESSAGES_LIMIT = 30;
+        // Magic numbers used for some stuff...
+        private const int MAX_MESSAGES_LIMIT = 30;
         private const int WARNING_WS_MS = 5000;
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
@@ -91,14 +93,14 @@ namespace Discord
             Contacts,
             Recents
         }
-        public void Dispose() 
+        public void Dispose()
         {
             WebSocketMgr._webSocket = null;
             UserStatusMgr.UserStatusStore.Clear();
-            UserIdToChannelId = new Dictionary<string, string>(); 
+            UserIdToChannelId = new Dictionary<string, string>();
         }
 
-        public async Task<LoginResult> LoginMainStep(AuthenticationMethod authType, string username, string password = null, bool tryLoginWithSavedCredentials = false)
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             DscToken = username;
             return await StartClient();
@@ -114,10 +116,10 @@ namespace Discord
             return String.Empty;
         }
 
-        public Task<LoginResult> LoginOptStep(string code)
+        public Task<LoginResult> AuthenticateTwoFA(string code)
             => Task.FromResult(LoginResult.Success);
 
-        public async Task<LoginResult> TryAutoLogin(SavedCredential credential)
+        public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
             DscToken = credential.PasswordOrToken;
             if (string.IsNullOrWhiteSpace(DscToken))
@@ -134,16 +136,16 @@ namespace Discord
         public async Task<LoginResult> StartClient()
         {
             string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
-			if (userCheckTkn.Contains("username"))
-			{
-				// Parse and store username
-				var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
-				_currentGlobalName = parsedUser["global_name"]?.GetValue<string>() ?? parsedUser["username"]?.GetValue<string>() ?? "discord_user#0000";
+            if (userCheckTkn.Contains("username"))
+            {
+                // Parse and store username
+                var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
+                _currentGlobalName = parsedUser["global_name"]?.GetValue<string>() ?? parsedUser["username"]?.GetValue<string>() ?? "discord_user#0000";
 
-				WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this);
-				return LoginResult.Success;
-			}
-			else
+                WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this);
+                return LoginResult.Success;
+            }
+            else
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
@@ -199,8 +201,8 @@ namespace Discord
                     }
                 });
 
-                if (!(await waitTask)) 
-                { 
+                if (!(await waitTask))
+                {
                     OnError?.Invoke(this, new PluginMessageEventArgs(
                         "The WebSocket failed to initialize. This could be due to network errors or Discord forcibly closing the connection."));
                 }
@@ -378,9 +380,9 @@ namespace Discord
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text)
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
-            if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment is null))
                 return false;
 
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
@@ -397,14 +399,88 @@ namespace Discord
                     { "X-Context-Properties", OptEncoded },
                 };
 
-                var messageBody = new { content = text };
-                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, messageBody, null, null, discordOpts).ConfigureAwait(false);
 
+                string fileName = null;
+                object payloadJson = null;
+
+                if (parent_message_identifier != null)
+                    payloadJson = new { content = text ?? "", message_reference = new { message_id = parent_message_identifier } };
+                else
+                    payloadJson = new { content = text ?? "" };
+
+                if (attachment is not null)
+                {
+                    fileName = attachment?.Name ?? "file";
+                    if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File)
+                    {
+                        OnWarning?.Invoke(this, new PluginMessageEventArgs($"Unsupported attachment type: {attachment.Type}. Discord supports image and file attachments.\n\nSending message without attachment."));
+                        attachment = null;
+                    }
+                }
+
+                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, payloadJson, attachment is not null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
                 return !string.IsNullOrEmpty(response) && !response.Contains("error", StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception ex)
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        {
+            try
+            {
+                string statusStr = status switch
+                {
+                    UserConnectionStatus.Online => "online",
+                    UserConnectionStatus.Away => "idle",
+                    UserConnectionStatus.DoNotDisturb => "dnd",
+                    UserConnectionStatus.Invisible or UserConnectionStatus.Offline => "invisible",
+                    _ => "online"
+                };
+
+                var payload = new
+                {
+                    op = 3,
+                    d = new
+                    {
+                        since = (long?)null,
+                        afk = false,
+                        status = statusStr,
+                        game = new { name = (string)null, type = 0 }
+                    }
+                };
+
+                string payloadStr = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.Never
+                });
+
+                Debug.WriteLine($"[SetPresenceStatus] WS state: {WebSocketMgr.Socket?.State}");
+                Debug.WriteLine($"[SetPresenceStatus] Raw payload: {payloadStr}");
+                await WebSocketMgr.SendPayload(payloadStr);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set presence: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> SetTextStatus(string status)
+        {
+            try
+            {
+                var body = new { custom_status = new { text = status ?? "" } };
+                string response = await api.SendAPI("users/@me/settings", HttpMethod.Patch, DscToken, body, null, null, null).ConfigureAwait(false);
+                return !response.Contains("error", StringComparison.OrdinalIgnoreCase);
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set text status: {ex.Message}"));
                 return false;
             }
         }
@@ -445,55 +521,95 @@ namespace Discord
 
         private void OnWebSocketMessageReceived(object sender, HelperClasses.MessageReceivedEventArgs e)
         {
-            // Fire notification for all messages (before filtering by active channel)
-            if (ShouldNotify(e))
+            // Fire notification only for created messages
+            if (e.EventType == MessageEventType.Create && ShouldNotify(e))
             {
                 UserConnectionStatus status = helperMethods.MapStatus(
                     WebSocketMgr.GetUserStatus(e.Sender.Identifier)
                 );
 
                 Message message = new Message(
-                        e.Identifier,
-                        e.Sender,
-                        e.Timestamp,
-                        e.Text,
-                        e.Attachments,
-                        e.ParentMessage
-                        );
+                    e.Identifier,
+                    e.Sender,
+                    e.Timestamp,
+                    e.Text,
+                    e.Attachments,
+                    e.ParentMessage
+                );
 
                 Notification?.Invoke(this, new NotificationEventArgs(message, status, e.ChannelId));
             }
 
-            // Only add messages if they're for the currently active channel
-            if (e.ChannelId != _activeChannelId) return;
+            // Ignore other channels
+            if (e.ChannelId != _activeChannelId)
+                return;
 
             _uiContext?.Post(_ =>
             {
-                var typingUser = TypingUsersList.FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
-                if (typingUser is not null)
-                    TypingUsersList.Remove(typingUser);
-
-                if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
-                    users.Remove(e.Sender.Identifier);
-
                 try
                 {
-                    Message message = new Message(
-                        e.Identifier,
-                        e.Sender,
-                        e.Timestamp,
-                        e.Text,
-                        e.Attachments,
-                        e.ParentMessage
-                        );
+                    switch (e.EventType)
+                    {
+                        case MessageEventType.Create:
+                            {
+                                // Remove typing indicator
+                                var typingUser = TypingUsersList
+                                    .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
 
-                    ActiveConversation.Add(message);
+                                if (typingUser is not null)
+                                    TypingUsersList.Remove(typingUser);
+
+                                if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
+                                    users.Remove(e.Sender.Identifier);
+
+                                Message message = new Message(
+                                    e.Identifier,
+                                    e.Sender,
+                                    e.Timestamp,
+                                    e.Text,
+                                    e.Attachments,
+                                    e.ParentMessage
+                                );
+
+                                ActiveConversation.Add(message);
+                                break;
+                            }
+
+                        case MessageEventType.Delete:
+                            {
+                                var existing = ActiveConversation
+                                .OfType<Message>()
+                                    .FirstOrDefault(m => m.Identifier == e.Identifier);
+
+                                if (existing != null)
+                                    ActiveConversation.Remove(existing);
+
+                                break;
+                            }
+
+                        case MessageEventType.BulkDelete:
+                            {
+                                foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
+                                {
+                                    var msg = ActiveConversation
+                                    .OfType<Message>()
+                                        .FirstOrDefault(m => m.Identifier == id);
+
+                                    if (msg != null)
+                                        ActiveConversation.Remove(msg);
+                                }
+
+                                break;
+                            }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Error adding message to conversation: {ex.Message}");
+                    Debug.WriteLine($"Message event handling error: {ex.Message}");
                 }
+
             }, null);
         }
+
     }
 }
