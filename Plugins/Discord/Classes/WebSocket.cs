@@ -58,6 +58,8 @@ namespace Discord.Classes
         // Used to store all private channels (DMs and GCs)
         public JsonNode privateChannelsData;
 
+        public JsonNode guildsData;
+
         // Used for sending the first payload required
         private string identifyPayloadJson;
 
@@ -81,6 +83,8 @@ namespace Discord.Classes
 
         // Event for new messages
         public event EventHandler<HelperClasses.MessageReceivedEventArgs> MessageReceived;
+        // Event for new guilds
+        public event EventHandler<JsonNode> GuildCreated;
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
         private readonly Channel<HelperClasses.MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.MessageReceivedEventArgs>();
 
@@ -243,6 +247,7 @@ namespace Discord.Classes
                                 var readyData = json["d"];
                                 recipientsData = readyData["relationships"] ?? new JsonArray();
                                 privateChannelsData = readyData["private_channels"] ?? new JsonArray();
+                                guildsData = readyData["guilds"] ?? new JsonArray();
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "MESSAGE_CREATE":
@@ -259,9 +264,6 @@ namespace Discord.Classes
                                 break;
                             case "USER_SETTINGS_UPDATE":
                                 Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
-                                break;
-                            case "SESSIONS_REPLACE":
-                                Debug.WriteLine($"[WS] Sessions replaced: {json["d"]?.ToJsonString()}");
                                 break;
                         }
                         break;

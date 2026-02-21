@@ -76,8 +76,14 @@ namespace XMPP
 
         public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
-        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Server> ServerList { get; private set; }
+        public async Task<bool> PopulateServerList()
+        {
+            return false;
+        }
 
         private enum ListType
         {
@@ -265,7 +271,7 @@ namespace XMPP
                             avatarImage
                         );
 
-                        ContactsList.Add(userData);
+                        ContactsList.Add(new DirectMessage(userData, contact.Jid));
                     }
                 }
                 else if (listType == ListType.Recents)
@@ -296,7 +302,7 @@ namespace XMPP
                             avatarImage
                         );
 
-                        RecentsList.Add(userData);
+                        RecentsList.Add(new DirectMessage(userData, contact.Jid));
                     }
                 }
 
@@ -309,22 +315,22 @@ namespace XMPP
             }
         }
 
-        public async Task<bool> SetActiveConversation(string identifier)
+        public async Task<bool> SetActiveConversation(Conversation conversation)
         {
             TypingUsersList.Clear();
             ActiveConversation.Clear();
 
-            if (string.IsNullOrWhiteSpace(identifier))
+            if (string.IsNullOrWhiteSpace(conversation.Identifier))
             {
                 return false;
             }
 
-            _activeConversationJid = identifier;
+            _activeConversationJid = conversation.Identifier;
 
             try
             {
                 // retrieve message history for this JID
-                var messages = await _xmppClient.GetMessageHistoryAsync(identifier, MAX_MESSAGES_LIMIT);
+                var messages = await _xmppClient.GetMessageHistoryAsync(conversation.Identifier, MAX_MESSAGES_LIMIT);
 
                 foreach (var msg in messages)
                 {

@@ -24,6 +24,7 @@ namespace Stub
         public event EventHandler<NotificationEventArgs> Notification;
         public string Name { get { return "Stub plugin"; } }
         public string InternalName { get { return "skymu-pluginstub"; } }
+
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -69,7 +70,7 @@ namespace Stub
 
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
 
-        public async Task<bool> SetActiveConversation(string identifier) // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
+        public async Task<bool> SetActiveConversation(Conversation conversation) // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
         {                                                                // DO NOT USE THIS FORMAT AS A REFERENCE FOR YOUR PLUGIN. HAVE THIS METHOD SET THE ACTIVE CONV. IDENTIFIER
             TypingUsersList.Clear();                                                             // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
             ActiveConversation.Clear();
@@ -98,9 +99,21 @@ namespace Stub
 
         public User MyInformation { get; private set; }
 
-        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
+        User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
+        User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
 
-        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
+
+        public async Task<bool> PopulateServerList()
+        {
+            string id = "2132";
+            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id), new ServerChannel("channel1", "2132/2", id) }));
+            return true;
+        }
 
         public async Task<bool> PopulateSidebarInformation()
         {
@@ -110,8 +123,8 @@ namespace Stub
 
         public async Task<bool> PopulateContactsList()
         {
-            ContactsList.Add(new User("Skymu user 1", "u1", "u1", "hi skmuuymu", UserConnectionStatus.Online));
-            ContactsList.Add(new User("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away));
+            ContactsList.Add(new DirectMessage(new User("Skymu user 1", "u1", "u1", "hi skmuuymu", UserConnectionStatus.Online), "32"));
+            ContactsList.Add(new DirectMessage(new User("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away), "32"));
             return true;
         }
 
@@ -119,9 +132,9 @@ namespace Stub
         {
             User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
             User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
-            RecentsList.Add(luigi);
-            RecentsList.Add(mario);
-            RecentsList.Add(new Group("Epic gamer soyciety", "067", 2, new User[2] { luigi, mario }));
+            RecentsList.Add(new DirectMessage(luigi, "24"));
+            RecentsList.Add(new DirectMessage(mario, "3412"));
+            RecentsList.Add(new Group("Giga based coalition", "067", new User[2] { luigi, mario }));
             return true;
         }
         public ClickableConfiguration[] ClickableConfigurations

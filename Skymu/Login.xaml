@@ -2,7 +2,7 @@
     <Window.Resources>
         <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
-            <Setter Property="Foreground" Value="{StaticResource Sk5Link}"/>
+            <Setter Property="Foreground" Value="{StaticResource SkBlue}"/>
             <Setter Property="TextDecorations" Value="{x:Null}"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -41,7 +41,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
         <Grid x:Name="signInControls">
             <TextBlock x:Name="SkypeName" Text="{Binding [sF_USERENTRY_LABEL_USERNAME]}" Height="28" HorizontalAlignment="Left" Margin="136,140,0,0" VerticalAlignment="Top" FontFamily="Tahoma" FontSize="11" FontWeight="Normal"/>
             <TextBlock x:Name="protocolText" Text="Messaging service" Height="28" HorizontalAlignment="Left" Margin="136,96,0,0" VerticalAlignment="Top" FontFamily="Tahoma" FontSize="11" FontWeight="Normal"/>
-            <TextBlock x:Name="forgotPasswordLink" FontFamily="Tahoma" FontSize="11" FontWeight="Normal" Height="28" HorizontalAlignment="Left" Margin="136,225,0,0" VerticalAlignment="Top">
+            <TextBlock x:Name="forgotPasswordLink"  FontFamily="Tahoma" FontSize="11" FontWeight="Normal" Height="28" HorizontalAlignment="Left" Margin="136,225,0,0" VerticalAlignment="Top">
 				<Hyperlink Style="{StaticResource HoverUnderlineHyperlink}" NavigateUri="#" RequestNavigate="Hyperlink_RequestNavigate">
 					<Run Text="Unable to login? Ask for help here!"/>
 				</Hyperlink>
@@ -67,8 +67,8 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plai
                 <Rectangle x:Name="footerPanel" Grid.Row="1" Height="55" Width="269" Fill="#FFE5F7FD" RadiusX="5" RadiusY="5" HorizontalAlignment="Center" Margin="0,0,0,16"/>
                 <!-- Checkboxes -->
                 <StackPanel Grid.Row="1" Margin="135,0,0,24" VerticalAlignment="Bottom">
-                    <CheckBox x:Name="SaveCredentials" Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}" IsChecked="True" FontFamily="Tahoma" FontSize="11" Height="16" Margin="0,0,0,5"/>
-                    <CheckBox x:Name="StartOnWinStart" Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" FontFamily="Tahoma" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                    <CheckBox x:Name="SaveCredentials" Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}" IsChecked="True" FontFamily="Tahoma" FontSize="11" Height="16" Padding="5,0,0,0" Margin="0,0,0,5"/>
+                    <CheckBox x:Name="StartOnWinStart" Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" FontFamily="Tahoma" Padding="5,0,0,0" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=StartOnStartup,
 Mode=TwoWay}" FontSize="11" Height="16"/>
                 </StackPanel>

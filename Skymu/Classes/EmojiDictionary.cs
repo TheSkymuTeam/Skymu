@@ -59,7 +59,7 @@ public static class EmojiDictionary
             { "1F614", "emo" },
             { "1F61E", "sadness" },
             { "1F61F", "worry" },
-            { "1F621", "angry" }, // Most common angry emoji (pouting face)
+            { "1F621", "headbang" }, // Most common angry emoji (pouting face)
             { "1F620", "angry" },
             { "1F62D", "cry" }, // Most common cry emoji (loudly crying face)
             { "1F622", "cry" },

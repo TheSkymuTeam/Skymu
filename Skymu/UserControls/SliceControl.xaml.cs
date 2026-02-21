@@ -239,9 +239,14 @@ namespace Skymu
             DependencyProperty.Register(nameof(TextWeight), typeof(FontWeight), typeof(SliceControl),
                 new PropertyMetadata(FontWeights.Normal, OnTextChanged));
 
-        public double LeftRightWidth { get { return (double)GetValue(LeftRightWidthProperty); } set { SetValue(LeftRightWidthProperty, value); } }
-        public static readonly DependencyProperty LeftRightWidthProperty =
-            DependencyProperty.Register(nameof(LeftRightWidth), typeof(double), typeof(SliceControl),
+        public double LeftWidth { get { return (double)GetValue(LeftWidthProperty); } set { SetValue(LeftWidthProperty, value); } }
+        public static readonly DependencyProperty LeftWidthProperty =
+            DependencyProperty.Register(nameof(LeftWidth), typeof(double), typeof(SliceControl),
+                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+
+        public double RightWidth { get { return (double)GetValue(RightWidthProperty); } set { SetValue(RightWidthProperty, value); } }
+        public static readonly DependencyProperty RightWidthProperty =
+            DependencyProperty.Register(nameof(RightWidth), typeof(double), typeof(SliceControl),
                 new PropertyMetadata(32.0, OnAnyPropertyChanged));
 
         public FontStyle TextStyle { get { return (FontStyle)GetValue(TextStyleProperty); } set { SetValue(TextStyleProperty, value); } }
@@ -428,7 +433,6 @@ namespace Skymu
                 : bmp.PixelHeight;
         }
 
-
         private void UpdateSlices()
         {
             var bmp = Source as BitmapSource;
@@ -450,8 +454,8 @@ namespace Skymu
             }
 
             double elementHeight = GetElementHeight();
-            double leftWidth = LeftRightWidth;
-            double rightWidth = LeftRightWidth;
+            double leftWidth = LeftWidth;
+            double rightWidth = RightWidth;
             double middleWidth = Math.Max(0, Width - leftWidth - rightWidth);
 
             LeftSlice.Width = leftWidth;

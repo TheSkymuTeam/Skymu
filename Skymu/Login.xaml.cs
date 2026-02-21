@@ -39,7 +39,7 @@ namespace Skymu
         private static PluginListing selectedListing;
         private MainWindow _mainWindow;
         public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLoginEnabled;
-
+        private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
 
         public Login() : this(false)
         {
@@ -99,14 +99,13 @@ namespace Skymu
                             }
                             bitmap.Freeze();
 
-                            Dialog qrDialog = new Dialog(SkypeWindow.IconType.Information, null,
+                            Dialog qrDialog = new Dialog(SkypeWindow.IconType.ContactRequest, null,
                             "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap);
-                            qrDialog.ShowDialog();
+                            qrDialog.Show();
 
-                            if (await Universal.Plugin.AuthenticateTwoFA(null) == LoginResult.Success)
-                            {
-                                qrDialog.Close();
-                            }
+                            if (await Universal.Plugin.AuthenticateTwoFA(null) != LoginResult.Success) SetHeaderToFail();
+                            else InitiateMainWindow();
+                            qrDialog.Close();
 
                         }
                         else
@@ -152,7 +151,6 @@ namespace Skymu
         private void SetHeaderToFail()
         {
             header.Text = Universal.Lang["sF_USERENTRY_ERROR_1101"];
-            header.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#D10000"));
         }
 
         private void MainWindow_Ready(object sender, EventArgs e)
@@ -255,7 +253,7 @@ namespace Skymu
                 passwordTokenBox.IsEnabled = false;
                 Password.Text = "field not required";
                 Password.FontStyle = FontStyles.Italic;
-                Password.Foreground = new SolidColorBrush(System.Windows.Media.Colors.DarkGray);
+                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
                 switch (selectedListing.AuthenticationType)
                 {
                     case AuthenticationMethod.QRCode:
@@ -271,7 +269,7 @@ namespace Skymu
             }
             else
             {
-                Password.Foreground = new SolidColorBrush(System.Windows.Media.Colors.Black);
+                Password.Foreground = new SolidColorBrush(Colors.Black);
                 passwordTokenBox.IsEnabled = true;
                 Password.FontStyle = FontStyles.Normal;
             }
@@ -328,7 +326,6 @@ namespace Skymu
             {
                 signInControls.Visibility = Visibility.Collapsed;
                 throbber.Visibility = Visibility.Visible;
-                header.Foreground = new BrushConverter().ConvertFromString("#00AFF0") as SolidColorBrush;
                 header.Text = Universal.Lang["sSTATUSTEXT_PROFILE_LOGGING_IN"];
             }
             else
@@ -341,7 +338,11 @@ namespace Skymu
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start("https://discord.gg/VnGdqRNfSr");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = DISCORD_SERVER_INVITE,
+                UseShellExecute = true
+            });
             e.Handled = true;
         }
 

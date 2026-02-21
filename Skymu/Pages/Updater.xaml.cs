@@ -120,7 +120,8 @@ namespace Skymu.Pages
                 {
                     new Dialog(SkypeWindow.IconType.PackageWarning, ex.Message, "Cannot open file").ShowDialog();
                 }
-                window.Close(); return;
+                window.Close();
+                return;
             };
             UpdateStatusText.Text = "100% done, 00:00:00 remaining";
             Description.Text = "The release package has been saved to the Downloads folder.";
@@ -178,7 +179,7 @@ namespace Skymu.Pages
                     var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
                     FileSize.Visibility = Visibility.Visible;
-                    FileSize.Text = "File size: " + Math.Round(totalFileSize / 1048576.0, 2) + " MB";
+                    FileSize.Text = Universal.Lang.Format("sF_UPGRADE_DOWNLOAD_FILESIZE", Math.Round(totalFileSize / 1048576.0, 2));
                     while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, _cts.Token)) > 0) // perennial loop to check status of download
                     {
                         await fs.WriteAsync(buffer, 0, read);
@@ -196,8 +197,7 @@ namespace Skymu.Pages
                             // estimate of remaining time
                             double bytesRemaining = totalFileSize - totalRead;
                             TimeSpan eta = TimeSpan.FromSeconds(bytesRemaining / (totalRead / stopwatch.Elapsed.TotalSeconds));
-
-                            UpdateStatusText.Text = $"{percent:0}% done, {eta:hh\\:mm\\:ss} remaining ({kbPerSec:0} KB/s)";
+                            UpdateStatusText.Text = Universal.Lang.Format("sF_UPGRADE_DOWNLOAD_PROGRESS", percent, eta.ToString(), kbPerSec);
                         }
                     }
                 }

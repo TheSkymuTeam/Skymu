@@ -37,19 +37,19 @@ namespace Skymu
                     // window IS active
 
                     // 3. selected contact exists and is a GROUP chat, and message is from that channel
-                    if (MainWindow.SelectedContact is not null)
+                    if (MainWindow.SelectedConversation is not null)
                     {
 
-                        if (!(MainWindow.SelectedContact is User) &&
-                            MainWindow.SelectedContact.Identifier == e.SentInChannelID)
+                        if (!(MainWindow.SelectedConversation is User) &&
+                            MainWindow.SelectedConversation.Identifier == e.SentInChannelID)
                         {
                             Debug.WriteLine("Notification: message is from the active group chat, suppress");
                             return;
                         }
 
                         // 4. selected contact exists and is a DM, and message is from that user
-                        if (MainWindow.SelectedContact is User &&
-                            message?.Sender.Identifier == MainWindow.SelectedContact.Identifier)
+                        if (MainWindow.SelectedConversation is User &&
+                            message?.Sender.Identifier == MainWindow.SelectedConversation.Identifier)
                         {
                             Debug.WriteLine("Notification: message is from the active direct message, suppress");
                             return;

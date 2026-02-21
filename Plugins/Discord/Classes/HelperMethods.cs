@@ -39,7 +39,7 @@ namespace Discord.Classes
         }
 
         // So we don't have to fetch the data everytime
-        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC)
+        public async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC, bool isServer = false)
         {
             if (String.IsNullOrEmpty(hash)) return null;
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
@@ -54,7 +54,7 @@ namespace Discord.Classes
                     File.Delete(file);
             }
 
-            string url = GetAvatarUrl(userId, hash, false, isGC);
+            string url = GetAvatarUrl(userId, hash, isServer, isGC);
             byte[] data = null;
             try
             {

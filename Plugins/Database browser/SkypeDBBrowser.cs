@@ -47,8 +47,15 @@ namespace SkypeDBBrowser
 
         public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
-        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Server> ServerList { get; private set; }
+        public async Task<bool> PopulateServerList()
+        {
+            return false;
+        }
+
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations => new ClickableConfiguration[0];
 
@@ -115,7 +122,7 @@ namespace SkypeDBBrowser
             return false;
         }
 
-        public async Task<bool> SetActiveConversation(string identifier)
+        public async Task<bool> SetActiveConversation(Conversation conversation)
         {
             try
             {
@@ -147,7 +154,7 @@ namespace SkypeDBBrowser
                             )
                             ORDER BY timestamp ASC";
 
-                        command.Parameters.AddWithValue("@identifier", identifier);
+                        command.Parameters.AddWithValue("@identifier", conversation.Identifier);
 
                         var messageList = new System.Collections.Generic.List<Message>();
 
@@ -288,14 +295,14 @@ namespace SkypeDBBrowser
 
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
-                                ContactsList.Add(new User(
+                                ContactsList.Add(new DirectMessage(new User(
                                     displayName,
                                     skypename,
                                     skypename,
                                     mood,
                                     status,
                                     avatarBytes
-                                ));
+                                ), skypename));
                             }
                         }
                     }
@@ -385,7 +392,6 @@ namespace SkypeDBBrowser
                                     RecentsList.Add(new Group(
                                         displayName,
                                         identity,
-                                        members.Length,
                                         members
                                     ));
                                 }
@@ -394,14 +400,14 @@ namespace SkypeDBBrowser
                                     // individual conversation — enrich with contact data if available
                                     contactInfo.TryGetValue(identity, out var info);
 
-                                    RecentsList.Add(new User(
+                                    RecentsList.Add(new DirectMessage(new User(
                                         displayName,
                                         identity,
                                         identity,
                                         info.Mood,
                                         info.Status == default ? UserConnectionStatus.Offline : info.Status,
                                         info.Avatar
-                                    ));
+                                    ), identity));
                                 }
                             }
                         }

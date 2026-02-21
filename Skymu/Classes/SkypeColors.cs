@@ -14,7 +14,7 @@ using System.Windows;
 
 namespace Skymu
 {
-    public static class Colors
+    public static class SkypeColors
     {
         // Brushes I'm mostly using for dark theme right now, but later the whole program will rely on
         public static SolidColorBrush darkBlue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1d3a55"));

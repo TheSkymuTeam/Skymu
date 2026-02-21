@@ -42,7 +42,11 @@ namespace Discord
         {
             get
             {
-                return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Token") };
+                return new[]
+                {
+                    new AuthTypeInfo(AuthenticationMethod.Token, "Token"),
+                    new AuthTypeInfo(AuthenticationMethod.QRCode, "Username")
+                };
             }
         }
 
@@ -51,6 +55,7 @@ namespace Discord
         public string DscToken;
         // We reuse this to avoid creating more API instances, which is quite heavy
         internal static readonly API api = new API();
+        internal AuthSocket socket = new AuthSocket();
         // We reuse this to avoid creating more HelperMethod instances, despite being lightweight
         private readonly HelperMethods helperMethods = new HelperMethods();
         // Track the active channel ID for real-time updates
@@ -91,10 +96,54 @@ namespace Discord
             }
         }
 
+        public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
+        public async Task<bool> PopulateServerList()
+        {
+            try
+            {
+                ServerList?.Clear();
+
+                var guilds = WebSocketMgr.GetGuilds();
+
+                foreach (var guildNode in guilds.OfType<JsonObject>())
+                {
+                    string guildId = guildNode["id"]?.GetValue<string>();
+                    string guildName = guildNode["name"]?.GetValue<string>();
+                    string iconHash = guildNode["icon"]?.GetValue<string>();
+
+                    if (string.IsNullOrWhiteSpace(guildId)) continue;
+
+                    byte[] guildAvatar = await helperMethods.GetCachedAvatarAsync(guildId, iconHash, false, true);
+
+                    var channelList = new List<ServerChannel>();
+                    if (guildNode["channels"] is JsonArray channels)
+                    {
+                        foreach (var ch in channels.OfType<JsonObject>())
+                        {
+                            if ((ch["type"]?.GetValue<int>() ?? -1) != 0) continue;
+                            string channelId = ch["id"]?.GetValue<string>();
+                            string channelName = ch["name"]?.GetValue<string>();
+                            if (!string.IsNullOrWhiteSpace(channelId))
+                                channelList.Add(new ServerChannel(channelName, channelId, guildId));
+                        }
+                    }
+
+                    ServerList.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar));
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to populate servers: {ex.Message}"));
+                return false;
+            }
+        }
+
         public User MyInformation { get; private set; }
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
-        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
         private enum ListType
         {
@@ -110,7 +159,10 @@ namespace Discord
 
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            DscToken = username;
+            if (authType == AuthenticationMethod.Token) DscToken = username;
+            else if (authType == AuthenticationMethod.QRCode) return LoginResult.TwoFARequired;
+            else return LoginResult.UnsupportedAuthType;
+
             return await StartClient();
         }
 
@@ -121,11 +173,39 @@ namespace Discord
 
         public async Task<string> GetQRCode()
         {
-            return String.Empty;
+            await socket.StartSocket();
+            var tcs = new TaskCompletionSource<string>();
+
+            EventHandler<string> handler = null;
+            handler = (sender, message) =>
+            {
+                socket.QRCodeGenerated -= handler;
+                tcs.SetResult(message);
+            };
+
+            socket.QRCodeGenerated += handler;
+
+            return await tcs.Task;
         }
 
         public Task<LoginResult> AuthenticateTwoFA(string code)
-            => Task.FromResult(LoginResult.Success);
+        {
+            var tcs = new TaskCompletionSource<LoginResult>();
+
+            EventHandler<string> completedHandler = null;
+            completedHandler = async (sender, message) =>
+            {
+                // Unsubscribe both handlers
+                socket.TokenRecieved -= completedHandler;
+
+                DscToken = message;
+                var loginResult = await StartClient();
+                tcs.SetResult(loginResult);
+            };
+            socket.TokenRecieved += completedHandler;
+
+            return tcs.Task;
+        }
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
@@ -278,15 +358,14 @@ namespace Discord
                         var profileData = new User(displayName ?? dscUserName, dscUserName, userId, customStatus, helperMethods.MapStatus(status), avatarImage);
 
                         if (lType == ListType.Recents)
-                            RecentsList.Add(profileData);
+                            RecentsList.Add(new DirectMessage(profileData, channelId));
                         else
-                            ContactsList.Add(profileData);
+                            ContactsList.Add(new DirectMessage(profileData, channelId));
                     }
                     else if (type == GROUP_CHANNEL_TYPE)
                     {
                         var recipients = channel["recipients"] as JsonArray;
                         int recipientCount = recipients?.Count ?? 0;
-                        int memberCount = recipientCount + 1;
 
                         User[] members = null;
                         if (recipients != null && recipients.Count > 0)
@@ -325,7 +404,7 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await helperMethods.GetCachedAvatarAsync(channelId, avatarHash, true);
-                        var profileData = new Group(groupName, channelId, memberCount, members, avatarImage);
+                        var profileData = new Group(groupName, channelId, members, avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -342,12 +421,12 @@ namespace Discord
             return true;
         }
 
-        public async Task<bool> SetActiveConversation(string identifier)
+        public async Task<bool> SetActiveConversation(Conversation conversation)
         {
             TypingUsersList.Clear();
             ActiveConversation.Clear();
 
-            if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
+            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId))
                 return false;
 
             _activeChannelId = channelId;

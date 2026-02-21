@@ -447,23 +447,23 @@ namespace Matrix
 
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
 
-        public async Task<bool> SetActiveConversation(string identifier)
+        public async Task<bool> SetActiveConversation(Conversation conversation)
         {
             TypingUsersList.Clear();
             ActiveConversation.Clear();
 
-            if (string.IsNullOrEmpty(identifier))
+            if (string.IsNullOrEmpty(conversation.Identifier))
             {
                 _activeRoomId = null;
                 return false;
             }
 
-            _activeRoomId = identifier;
+            _activeRoomId = conversation.Identifier;
 
             try
             {
                 var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/messages?access_token={_accessToken}&dir=b&limit=100");
+                    $"{_homeserver}/_matrix/client/r0/rooms/{conversation.Identifier}/messages?access_token={_accessToken}&dir=b&limit=100");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -480,7 +480,7 @@ namespace Matrix
                     messagesList.Add(item);
                 messagesList.Reverse();
 
-                _displayNameCache = await GetRoomMemberDisplayNames(identifier);
+                _displayNameCache = await GetRoomMemberDisplayNames(conversation.Identifier);
 
                 var eventItemCache = new Dictionary<string, Message>();
 
@@ -551,7 +551,7 @@ namespace Matrix
                         string replyToId = inReplyTo.GetProperty("event_id").GetString();
                         if (!eventItemCache.TryGetValue(replyToId, out parentMessage))
                         {
-                            var replyInfo = await GetMessageById(identifier, replyToId);
+                            var replyInfo = await GetMessageById(conversation.Identifier, replyToId);
                             if (replyInfo != null)
                                 parentMessage = replyInfo;
                         }
@@ -595,8 +595,8 @@ namespace Matrix
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<Participant> ContactsList { get; private set; } = new ObservableCollection<Participant>();
-        public ObservableCollection<Participant> RecentsList { get; private set; } = new ObservableCollection<Participant>();
+        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
         public async Task<bool> PopulateSidebarInformation()
         {
@@ -633,6 +633,12 @@ namespace Matrix
         public async Task<bool> PopulateContactsList() => await PopulateListsBackend(ListType.Contacts);
         public async Task<bool> PopulateRecentsList() => await PopulateListsBackend(ListType.Recents);
 
+        public ObservableCollection<Server> ServerList { get; private set; }
+        public async Task<bool> PopulateServerList()
+        {
+            return false;
+        }
+
         private enum ListType { Contacts, Recents }
 
         private async Task<bool> PopulateListsBackend(ListType lType)
@@ -660,26 +666,25 @@ namespace Matrix
                     var roomName = await GetRoomName(roomIdStr);
                     var roomAvatar = await GetRoomAvatar(roomIdStr);
                     var isDirect = await IsDirectMessage(roomIdStr);
-                    var memberCount = await GetRoomMemberCount(roomIdStr);
                     User[] members = await GetRoomMembers(roomIdStr);
 
                     if (lType == ListType.Recents)
                         _recentRoomMap[roomIdStr] = roomIdStr;
 
-                    Participant profileData;
+                    Conversation conversation;
                     if (isDirect)
                     {
-                        profileData = new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar);
+                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), roomIdStr);
                     }
                     else
                     {
-                        profileData = new Group(roomName, roomIdStr, memberCount, members, roomAvatar);
+                        conversation = new Group(roomName, roomIdStr, members, roomAvatar);
                     }
 
                     if (lType == ListType.Recents)
-                        RecentsList.Add(profileData);
+                        RecentsList.Add(conversation);
                     else if (isDirect)
-                        ContactsList.Add(profileData);
+                        ContactsList.Add(conversation);
                 }
 
                 return true;

@@ -68,6 +68,11 @@ namespace Discord.Classes
                    ?? new JsonArray();
         }
 
+        public static JsonArray GetGuilds()
+        {
+            return Socket?.guildsData as JsonArray ?? new JsonArray();
+        }
+
         public static string GetUserStatus(string userId)
             => UserStatusMgr.UserStatusStore.GetStatus(userId);
 

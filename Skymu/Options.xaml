@@ -136,6 +136,13 @@ UpdateSourceTrigger=PropertyChanged}" Width="40"/>
                     <CheckBox Content="Force notifications to always be orange (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
     Path=AccurateNotifications,
     Mode=TwoWay}" Margin="0,5"/>
+                    <CheckBox Content="Dynamically resize sidebar tabs based on selection (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=DynamicSidebarTabs,
+Mode=TwoWay}" Margin="0,5"/>
+                
+                    <CheckBox Content="Attempt to render text in ClearType (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=UseClearType,
+Mode=TwoWay}" Margin="0,5"/>
                     <CheckBox IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=FallbackFillColors,
 Mode=TwoWay}" Margin="0,5">
@@ -146,9 +153,6 @@ Mode=TwoWay}" Margin="0,5">
                             </TextBlock>
                         </CheckBox.Content>
                     </CheckBox>
-                    <CheckBox Content="Attempt to render text in ClearType (accurate)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
-Path=UseClearType,
-Mode=TwoWay}" Margin="0,5"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                         <TextBlock Text="Skype Home website" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <TextBox FontFamily="Tahoma" Text="{Binding Source={x:Static properties:Settings.Default},
@@ -162,6 +166,7 @@ Mode=TwoWay}" Margin="0,5"/>
                     <CheckBox Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=StartOnStartup,
 Mode=TwoWay}" Margin="0,5"/>
+                   
                     <!--<StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Use port" VerticalAlignment="Center" Width="80"/>
                             <TextBox Width="80"/>

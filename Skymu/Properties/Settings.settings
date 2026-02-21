@@ -6,7 +6,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="AutoLoginEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="BrandingName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skype</Value>
@@ -51,6 +51,9 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="FallbackFillColors" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

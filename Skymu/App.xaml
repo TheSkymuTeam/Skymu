@@ -6,7 +6,7 @@
             </ResourceDictionary.MergedDictionaries>
             <local:LanguageManager x:Key="Lang"/>
             <SolidColorBrush x:Key="SkBlue" Color="#00AFF0"/>
-            <SolidColorBrush x:Key="Sk5Link" Color="#3399FF"/>
+            <SolidColorBrush x:Key="Sk5Link" Color="#0066ff"/>
             <Style x:Key="Window" TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
