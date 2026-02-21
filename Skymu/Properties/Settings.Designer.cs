@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.13")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.1.14")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
