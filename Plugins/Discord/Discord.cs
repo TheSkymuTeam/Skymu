@@ -68,6 +68,11 @@ namespace Discord
         private const int WARNING_WS_MS = 5000;
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
+        internal const int API_VERSION = 9;
+
+        // String constants
+        private const string USERS_ME = "users/@me";
+        private const string PROTO_ENDPOINT = USERS_ME + "/settings-proto/1";
 
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
         public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
@@ -138,7 +143,7 @@ namespace Discord
 
         public async Task<LoginResult> StartClient()
         {
-            string userCheckTkn = await api.SendAPI("users/@me", HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
+            string userCheckTkn = await api.SendAPI(USERS_ME, HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
             if (userCheckTkn.Contains("username"))
             {
                 // Parse and store username
@@ -164,7 +169,7 @@ namespace Discord
                 }
                 else
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again."));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
                 }
                 return LoginResult.Failure;
             }
@@ -178,7 +183,7 @@ namespace Discord
             try
             {
                 string userDetails = await api.SendAPI(
-                    "users/@me",
+                    USERS_ME,
                     HttpMethod.Get,
                     DscToken,
                     null, null, null).ConfigureAwait(false);
@@ -189,25 +194,22 @@ namespace Discord
                 _currentUserId = userId;
                 string displayName = parsedDetails["global_name"]?.GetValue<string>() ?? string.Empty;
                 string dscUserName = parsedDetails["username"]?.GetValue<string>() ?? string.Empty;
-                Stopwatch sw = Stopwatch.StartNew();
 
-                var waitTask = WebSocketMgr.WaitUntilReady();
+                var readyTask = WebSocketMgr.WaitUntilReady();
+                var delayTask = Task.Delay(WARNING_WS_MS);
 
-                _ = Task.Run(async () =>
+                if (await Task.WhenAny(readyTask, delayTask) == delayTask)
                 {
-                    await Task.Delay(WARNING_WS_MS);  // wait X seconds
-                    if (!waitTask.IsCompleted)        // still waiting?
-                    {
-                        OnWarning?.Invoke(this, new PluginMessageEventArgs(
-                            "The WebSocket is taking an unusually long time to initialize. " +
-                            "This could be due to slow internet speeds, an outdated network stack (Windows 7, or Discord forcibly closing the connection."));
-                    }
-                });
+                    OnWarning?.Invoke(this, new PluginMessageEventArgs(
+                        "The WebSocket is taking an unusually long time to initialize. " +
+                        "This could be due to slow internet speeds or Discord throttling the connection."));
+                }
 
-                if (!(await waitTask))
+                if (!await readyTask)
                 {
                     OnError?.Invoke(this, new PluginMessageEventArgs(
-                        "The WebSocket failed to initialize. This could be due to network errors or Discord forcibly closing the connection."));
+                        "The WebSocket failed to initialize. This could be due to network errors, an outdated network stack, or Discord forcibly closing the connection."));
+                    return false;
                 }
 
                 string mainUsrStatus = WebSocketMgr.GetUserStatus("0");
@@ -431,10 +433,7 @@ namespace Discord
             }
         }
 
-        internal static PreloadedUserSettings proto_settings;
-        internal const string PROTO_ENDPOINT = "users/@me/settings-proto/1";
-
-        internal async Task<bool> FetchProtoSettings() // gets the latest proto settings from the server
+        internal async Task<PreloadedUserSettings> FetchProtoSettings() // gets the latest proto settings from the server
         {
             // get current proto blob from Discord
             string current = await api.SendAPI(
@@ -444,24 +443,23 @@ namespace Discord
                 null, null, null).ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(current))
-                return false;
+                return null;
 
             var json = JsonNode.Parse(current)?.AsObject();
             string base64 = json?["settings"]?.GetValue<string>();
 
             if (string.IsNullOrWhiteSpace(base64))
-                return false;
+                return null;
 
             // decode proto
             byte[] bytes = Convert.FromBase64String(base64);
-            proto_settings = PreloadedUserSettings.Parser.ParseFrom(bytes);
-            return true;
+            return PreloadedUserSettings.Parser.ParseFrom(bytes);
         }
 
-        internal async Task<bool> UpdateProtoSettings() // updates the server proto settings blob 
+        internal async Task<bool> UpdateProtoSettings(PreloadedUserSettings settings) // updates the server proto settings blob 
         {
             // encode proto
-            byte[] updatedBytes = proto_settings.ToByteArray();
+            byte[] updatedBytes = settings.ToByteArray();
             string updatedBase64 = Convert.ToBase64String(updatedBytes);
 
             var body = new
@@ -477,15 +475,17 @@ namespace Discord
                 body,
                 null, null, null).ConfigureAwait(false);
 
-            return !response.Contains("error", StringComparison.OrdinalIgnoreCase);
+            Debug.WriteLine(response);
+            return !response.Contains("message", StringComparison.OrdinalIgnoreCase);
         }
 
         public async Task<bool> SetPresenceStatus(UserConnectionStatus status) 
         {
-            if (!await FetchProtoSettings()) return false; // try fetch
+            PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
+            settings.Status = new StatusSettings();
 
             // map to proto enum
-            proto_settings.Status.Status = status switch // update status
+            settings.Status.Status = status switch // update status
             {
                 UserConnectionStatus.Online => "online",
                 UserConnectionStatus.Away => "idle",
@@ -495,17 +495,19 @@ namespace Discord
                 _ => "offline"
             };
 
-            return await UpdateProtoSettings(); // try push
+           return await UpdateProtoSettings(settings); // try push
         }
 
 
         public async Task<bool> SetTextStatus(string status)
         {
             if (String.IsNullOrEmpty(status)) return false;
-            if (!await FetchProtoSettings()) return false; // try fetch
-            proto_settings.Status.CustomStatus = new CustomStatus(); // reset status (remove residual emoji, expiry information)
-            proto_settings.Status.CustomStatus.Text = status; // set text of status
-            return await UpdateProtoSettings(); // try push
+
+            PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
+            settings.Status = new StatusSettings();
+
+            settings.Status.CustomStatus.Text = status; // set text of status
+            return await UpdateProtoSettings(settings); // try push
         }
 
         private bool ShouldNotify(HelperClasses.MessageReceivedEventArgs e)

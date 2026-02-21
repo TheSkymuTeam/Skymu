@@ -257,14 +257,11 @@ namespace Discord.Classes
                             case "TYPING_START":
                                 HandleTypingEvent(json["d"]);
                                 break;
-                            case "PRESENCE_UPDATE":
+                            case "USER_SETTINGS_UPDATE":
                                 Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
                                 break;
                             case "SESSIONS_REPLACE":
                                 Debug.WriteLine($"[WS] Sessions replaced: {json["d"]?.ToJsonString()}");
-                                break;
-                            default:
-                                Debug.WriteLine($"[WS] Unhandled event: {eventType}, data: {json["d"]?.ToJsonString()}");
                                 break;
                         }
                         break;
