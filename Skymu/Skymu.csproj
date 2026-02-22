@@ -66,6 +66,7 @@
 
 
 	<ItemGroup>
+		<PackageReference Include="Markdig" Version="1.0.0" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />

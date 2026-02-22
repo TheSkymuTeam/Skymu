@@ -97,7 +97,7 @@ namespace Stub
             return true;
         }
 
-        public User MyInformation { get; private set; }
+        public User? MyInformation { get; private set; }
 
         User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
         User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);

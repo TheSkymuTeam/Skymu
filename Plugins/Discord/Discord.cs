@@ -443,7 +443,24 @@ namespace Discord
 
                 if (parsed is not JsonArray messages)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {json}"));
+                    if (parsed is JsonObject msg)
+                    {
+                        string text = String.Empty;
+                        switch (msg["code"].GetValue<int>())
+                        {
+                            case 50001:
+                                text = "You do not have access to this channel.";
+                                break;
+                            default:
+                                text = $"Discord says: {msg["message"].GetValue<string>()}\n\nError code {msg["code"].GetValue<string>()}";
+                                break;
+                        }
+                        OnWarning?.Invoke(this, new PluginMessageEventArgs(text));
+                    }
+                    else
+                    {
+                        OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {json}"));
+                    }
                     return false;
                 }
 
@@ -558,7 +575,7 @@ namespace Discord
             return !response.Contains("message", StringComparison.OrdinalIgnoreCase);
         }
 
-        public async Task<bool> SetPresenceStatus(UserConnectionStatus status) 
+        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
         {
             PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
             settings.Status = new StatusSettings();
@@ -574,7 +591,7 @@ namespace Discord
                 _ => "offline"
             };
 
-           return await UpdateProtoSettings(settings); // try push
+            return await UpdateProtoSettings(settings); // try push
         }
 
 

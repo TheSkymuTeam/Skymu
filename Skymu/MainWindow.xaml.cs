@@ -1155,54 +1155,9 @@ namespace Skymu
 
             if (dlg.ShowDialog() == true)
             {
-                RunWormholeSendAsync(dlg.FileName);
+                send file logic goes here
             }*/
 
-        }
-
-        private async Task RunWormholeSendAsync(string filePath)
-        {
-            var psi = new ProcessStartInfo
-            {
-                FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "python", "python.exe"),
-                Arguments = $"-u -m wormhole send \"{filePath}\"",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-
-            var process = new Process { StartInfo = psi };
-            const string prefix = "wormhole receive ";
-            StringBuilder output = new StringBuilder();
-
-            process.ErrorDataReceived += (s, e) =>
-            {
-                if (!string.IsNullOrEmpty(e.Data))
-                {
-                    output.AppendLine(e.Data);
-                    if (e.Data.StartsWith(prefix))
-                    {
-                        Dispatcher.Invoke(() =>
-                        {
-                            SendMessage("&SKYMU-START&TransferWormhole," + e.Data.Substring(prefix.Length) + "&SKYMU-END&");
-                        });
-                    }
-                    else if (e.Data.Contains("TransferError"))
-                    {
-                        Dispatcher.Invoke(() => { Universal.ShowMsg(e.Data, "File transfer error"); });
-                    }
-                    else if (e.Data.Contains("Transfer complete"))
-                    {
-                        Dispatcher.Invoke(() => { Universal.ShowMsg("The file was transferred successfully.", "File transfer complete"); });
-                    }
-                }
-            };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            await process.WaitForExitAsync();
         }
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
