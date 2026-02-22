@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLoginEnabled {
             get {
                 return ((bool)(this["AutoLoginEnabled"]));
@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.1.14")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2.0")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -181,7 +181,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Breithorn Oreo Waffle Cake")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Chamonix Applesauce")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

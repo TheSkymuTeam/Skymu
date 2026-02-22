@@ -201,11 +201,13 @@ namespace MiddleMan
     public class ServerChannel : Conversation
     {
         public string ParentServerID { get; }
+        public string Description { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id)
+        public ServerChannel(string name, string identifier, string parent_server_id, string description = null)
             : base(name, identifier, null)
         {
             ParentServerID = parent_server_id;
+            Description = description;
         }
     }
 

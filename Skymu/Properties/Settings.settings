@@ -6,7 +6,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="AutoLoginEnabled" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BrandingName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skype</Value>
@@ -39,10 +39,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.1.14</Value>
+      <Value Profile="(Default)">0.2.0</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Breithorn Oreo Waffle Cake</Value>
+      <Value Profile="(Default)">Chamonix Applesauce</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>

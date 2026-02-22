@@ -468,6 +468,7 @@ namespace Skymu
             var listBox = (ListBox)sender;
             if (listBox.SelectedItem is null) return;
 
+            ChatArea.DataContext = listBox.SelectedItem;
             SelectedConversation = (Conversation)listBox.SelectedItem;
             SetConversation();         
         }
@@ -649,6 +650,7 @@ namespace Skymu
             };
 
             WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.Username;
+            this.Title = WindowTitle;
 
             Username = data.Username;
             Identifier = data.Identifier;
@@ -1398,6 +1400,7 @@ namespace Skymu
 
         private void ServersList_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            ChatArea.DataContext = e.NewValue;
             if (e.NewValue is ServerChannel channel)
             {
                SelectedConversation = channel;
@@ -1462,6 +1465,11 @@ namespace Skymu
                     Tray.PushIcon(GetStatusFromInt(old_default_index));
                 }
             }
+        }
+
+        private void chatHeader_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void mn_CheckUpdates(object sender, RoutedEventArgs e)
