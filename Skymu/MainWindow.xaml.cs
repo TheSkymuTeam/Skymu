@@ -1548,17 +1548,14 @@ namespace Skymu
 
     public sealed class FormatFullTextConverter : IValueConverter
     {
-        public Style TextBlockStyle { get; set; }
+        public Style ViewerStyle { get; set; }
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not string text)
                 return DependencyProperty.UnsetValue;
-            var tb = MessageTools.FormTextblock(text);
 
-            if (TextBlockStyle is not null)
-                tb.Style = TextBlockStyle;
-
-            return tb;
+            return MessageTools.FormRichTextBox(text, ViewerStyle);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

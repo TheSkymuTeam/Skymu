@@ -36,24 +36,10 @@ namespace Skymu
                 {
                     // window IS active
 
-                    // 3. selected contact exists and is a GROUP chat, and message is from that channel
-                    if (MainWindow.SelectedConversation is not null)
+                    if (MainWindow.SelectedConversation is not null && MainWindow.SelectedConversation.Identifier == e.SentInChannelID)
                     {
-
-                        if (!(MainWindow.SelectedConversation is User) &&
-                            MainWindow.SelectedConversation.Identifier == e.SentInChannelID)
-                        {
-                            Debug.WriteLine("Notification: message is from the active group chat, suppress");
-                            return;
-                        }
-
-                        // 4. selected contact exists and is a DM, and message is from that user
-                        if (MainWindow.SelectedConversation is User &&
-                            message?.Sender.Identifier == MainWindow.SelectedConversation.Identifier)
-                        {
-                            Debug.WriteLine("Notification: message is from the active direct message, suppress");
-                            return;
-                        }
+                        Debug.WriteLine("Notification: message is from the active chat, suppress");
+                        return;
                     }
                 }
                 InitializeComponent();
@@ -66,13 +52,13 @@ namespace Skymu
 
                 StatusIcon.DefaultIndex = MainWindow.GetIntFromStatus(e.Status);
                 TitleText.Text = message.Sender.DisplayName;
-                TextBlock tb = MessageTools.FormTextblock(message.Text);
-                tb.MaxHeight = 30;
-                tb.TextTrimming = TextTrimming.CharacterEllipsis;
-                tb.TextWrapping = TextWrapping.Wrap;
-                tb.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#666666");
-                tb.FontSize = 11;
-                Message.Content = tb;
+
+                var viewer = MessageTools.FormRichTextBox(message.Text);
+               
+                viewer.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#666666");
+                viewer.FontSize = 11;
+
+                Message.Content = viewer;
 
                 var timer = new DispatcherTimer
                 {

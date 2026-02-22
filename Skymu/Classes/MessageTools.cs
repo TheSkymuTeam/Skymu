@@ -10,6 +10,12 @@
 /*==========================================================*/
 
 using Markdig;
+using Markdig.Extensions.TaskLists;
+using Markdig.Extensions.Tables;
+using Markdig.Extensions.Mathematics;
+using Markdig.Extensions.DefinitionLists;
+using Markdig.Extensions.Footnotes;
+using Markdig.Extensions.CustomContainers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using MiddleMan;
@@ -20,18 +26,23 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
-
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
 using System.Windows.Controls; // Standard Textblock with Tahoma-rendered emoji
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
-using WpfInline = System.Windows.Documents.Inline;
-using WpfBlock = System.Windows.Documents.Block;
 using MarkdigBlock = Markdig.Syntax.Block;
 using MarkdigInline = Markdig.Syntax.Inlines.Inline;
+using WpfBlock = System.Windows.Documents.Block;
+using WpfInline = System.Windows.Documents.Inline;
+using MdTable = Markdig.Extensions.Tables.Table;
+using MdTableRow = Markdig.Extensions.Tables.TableRow;
+using MdTableCell = Markdig.Extensions.Tables.TableCell;
+
+using WpfTable = System.Windows.Documents.Table;
+using WpfTableRow = System.Windows.Documents.TableRow;
+using WpfTableCell = System.Windows.Documents.TableCell;
+using WpfTableRowGroup = System.Windows.Documents.TableRowGroup;
 
 namespace Skymu
 {
@@ -63,203 +74,281 @@ namespace Skymu
             return hasEmojiRune;
         }
 
-
-        public static TextBlock FormTextblock(string input, bool doNotFormat = false) // The main function. You put text in, completely formatted textblock comes out. Ta da.
+        public static RichTextBox FormRichTextBox(string input, Style style = null, bool doNotFormat = false)
         {
-            var textBlock = new TextBlock
+            var document = FormDocument(input, doNotFormat);
+
+            document.FontFamily = new FontFamily("Tahoma");
+            document.FontSize = 11;
+            document.PagePadding = new Thickness(0);
+            document.TextAlignment = TextAlignment.Left;
+      
+            var rtb = new RichTextBox
             {
-                TextWrapping = TextWrapping.Wrap, // otherwise text wouldn't go to a newline unless explicitly told to
+                Document = document                  
             };
 
-            if (doNotFormat) // Just return a plain unformatted TextBlock
+            if (style is null) // standard styling for rest of app. ONLY USE AS FALLBACK!
             {
-                textBlock.Text = input;
-                return textBlock;
+                rtb.IsReadOnly = true;
+                rtb.IsDocumentEnabled = true;
+                rtb.BorderThickness = new Thickness(0);
+                rtb.Background = Brushes.Transparent;
+                rtb.Padding = new Thickness(0, 0, 15, 0);
+                rtb.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                rtb.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
+                rtb.CaretBrush = Brushes.Transparent;
+                rtb.Focusable = true;
+                rtb.Foreground = Brushes.Black;
+            }
+            else
+            {
+                rtb.Style = style;
             }
 
-            var inlines = new List<WpfInline>(); // create inline list, to store all the different Runs for formatted text and links and emojis and etc
+            return rtb;
+        }
 
-            // build a Markdig pipeline with all standard extensions enabled
-            var pipeline = new MarkdownPipelineBuilder()
-                .UseAdvancedExtensions()
+
+        public static FlowDocument FormDocument(string input, bool doNotFormat = false)
+        {
+            var document = new FlowDocument
+            {
+                PagePadding = new Thickness(0)
+            };
+
+            if (doNotFormat)
+            {
+                document.Blocks.Add(new Paragraph(new Run(input)));
+                return document;
+            }
+
+            var pipeline = new MarkdownPipelineBuilder() // everything we want
+                .UseAlertBlocks()
+                .UseAbbreviations()
+                .UseAutoIdentifiers()
+                .UseCitations()
+                .UseCustomContainers()
+                .UseDefinitionLists()
+                .UseEmphasisExtras()
+                .UseEmojiAndSmiley()
+                .UseFigures()
+                .UseFooters()
+                .UseFootnotes()
+                .UseGridTables()
+                .UseMathematics()
+                .UseMediaLinks()
+                .UsePipeTables()
+                .UseTaskLists()
+                .UseDiagrams()
+                .UseAutoLinks()
+                .UseGenericAttributes()
                 .Build();
 
-            // parse the input into a Markdig AST and walk it to produce WPF inlines
-            var document = Markdown.Parse(input, pipeline);
-            ProcessMarkdigBlocks(inlines, document);
+            var md = Markdown.Parse(input, pipeline);
 
-            // Add all the emoji-fied, linked, and markdown'ed inlines to the textblock
-            foreach (var inline in inlines)
-                textBlock.Inlines.Add(inline);
+            ProcessBlocks(document.Blocks, md);
 
-            // Return
-            return textBlock;
+            return document;
         }
 
 
         // loop for ProcessMarkdigBlock for all blocks
-        private static void ProcessMarkdigBlocks(List<WpfInline> inlines, MarkdownDocument document)
+        private static void ProcessBlocks(BlockCollection blocks, MarkdownDocument document)
         {
-            var blocks = document.ToList();
-            for (int i = 0; i < blocks.Count; i++)
+            foreach (var block in document)
+                ProcessBlock(blocks, block);
+        }
+
+        private static void RenderCodeBlock(BlockCollection blocks, CodeBlock block)
+        {
+            string code = block.Lines.ToString();
+
+            var border = new Border
             {
-                if (i > 0)
+                Background = Brushes.Black,
+                Padding = new Thickness(6),
+                Margin = new Thickness(0, 4, 0, 4),
+                Child = new TextBlock
                 {
-                    // count blank lines between previous block end and this block start
-                    int blankLines = blocks[i].Line - blocks[i - 1].Line - 1;
-                    for (int b = 0; b < Math.Max(1, blankLines); b++)
-                        inlines.Add(new LineBreak());
+                    Text = code,
+                    FontFamily = new FontFamily("Consolas"),
+                    Foreground = Brushes.Lime,
+                    TextWrapping = TextWrapping.Wrap
                 }
-                ProcessMarkdigBlock(inlines, blocks[i]);
-            }
+            };
+
+            blocks.Add(new BlockUIContainer(border));
         }
 
 
-        // converts a Markdig block node to WPF inlines
-        private static void ProcessMarkdigBlock(List<WpfInline> inlines, MarkdigBlock block)
+        // converts a Markdig block node to WPF inlines for insertion
+        private static void ProcessBlock(BlockCollection blocks, MarkdigBlock block)
         {
             switch (block)
             {
                 case HeadingBlock heading:
                     {
-                        var headerSpan = new Span();
+                        var p = new Paragraph
+                        {
+                            FontWeight = FontWeights.Bold,
+                            FontSize = heading.Level switch
+                            {
+                                1 => 24,
+                                2 => 20,
+                                3 => 16,
+                                _ => 16
+                            }
+                        };
+
                         if (heading.Inline != null)
-                            ProcessMarkdigInlines(headerSpan.Inlines, heading.Inline);
-                        headerSpan.FontWeight = FontWeights.Bold;
-                        headerSpan.FontSize = heading.Level switch
-                        {
-                            1 => 24,
-                            2 => 20,
-                            3 => 16,
-                            _ => 16,
-                        };
-                        inlines.Add(headerSpan);
-                        break;
-                    }
+                            ProcessInlines(p.Inlines, heading.Inline);
 
-                case FencedCodeBlock fenced:
-                    {
-                        string code = fenced.Lines.ToString();
-                        var codeText = new TextBlock
-                        {
-                            Text = code,
-                            FontFamily = new FontFamily("Consolas"),
-                            Foreground = Brushes.Lime,
-                            Background = Brushes.Black,
-                            TextWrapping = TextWrapping.Wrap
-                        };
-
-                        var border = new Border
-                        {
-                            Background = Brushes.Black,
-                            Padding = new Thickness(4),
-                            Child = codeText
-                        };
-
-                        inlines.Add(new InlineUIContainer(border));
-                        break;
-                    }
-
-                case CodeBlock code:
-                    {
-                        string codeContent = code.Lines.ToString();
-                        var codeText = new TextBlock
-                        {
-                            Text = codeContent,
-                            FontFamily = new FontFamily("Consolas"),
-                            Foreground = Brushes.Lime,
-                            Background = Brushes.Black,
-                            TextWrapping = TextWrapping.Wrap
-                        };
-
-                        var border = new Border
-                        {
-                            Background = Brushes.Black,
-                            Padding = new Thickness(4),
-                            Child = codeText
-                        };
-
-                        inlines.Add(new InlineUIContainer(border));
-                        break;
-                    }
-
-                case QuoteBlock quote:
-                    {
-                        var quoteInlines = new List<WpfInline>();
-                        foreach (var child in quote)
-                            ProcessMarkdigBlock(quoteInlines, child);
-                        string quoteText = string.Concat(quoteInlines.OfType<Run>().Select(r => r.Text));
-                        var span = new Span();
-                        AddTextOrLinkOrClickable(span.Inlines, "\u201C" + quoteText.Trim() + "\u201D");
-                        span.FontStyle = FontStyles.Italic;
-                        span.Foreground = Brushes.DimGray;
-                        inlines.Add(span);
-                        break;
-                    }
-
-                case ListBlock list:
-                    {
-                        var listItems = list.OfType<ListItemBlock>().ToList();
-                        for (int i = 0; i < listItems.Count; i++)
-                        {
-                            if (i > 0) inlines.Add(new LineBreak()); 
-                            var span = new Span();
-                            var itemInlines = new List<WpfInline>();
-                            foreach (var child in listItems[i])
-                                ProcessMarkdigBlock(itemInlines, child);
-                            // prefix each item with the configured list delimiter, le epic arrow
-                            AddTextOrLinkOrClickable(span.Inlines, Properties.Settings.Default.ListDelimiter + " ");
-                            foreach (var il in itemInlines)
-                                span.Inlines.Add(il);
-                            inlines.Add(span);
-                        }
+                        blocks.Add(p);
                         break;
                     }
 
                 case ParagraphBlock para:
                     {
+                        var p = new Paragraph();
+
                         if (para.Inline != null)
-                            ProcessMarkdigInlines(inlines, para.Inline);
+                            ProcessInlines(p.Inlines, para.Inline);
+
+                        blocks.Add(p);
                         break;
                     }
 
-                case ThematicBreakBlock _:
-                    inlines.Add(new LineBreak());
-                    break;
+                case QuoteBlock quote:
+                    {
+                        var section = new Section
+                        {
+                            BorderBrush = Brushes.DarkGray,
+                            BorderThickness = new Thickness(2, 0, 0, 0),
+                            Padding = new Thickness(8, 0, 0, 0),
+                            Foreground = Brushes.Gray,   
+                            Margin = new Thickness(0)
+                        };
+
+                        foreach (var child in quote)
+                            ProcessBlock(section.Blocks, child);
+
+                        blocks.Add(section);
+                        break;
+                    }
+
+                case ListBlock list:
+                    {
+                        var wpfList = new List
+                        {
+                            MarkerStyle = list.IsOrdered
+                                ? TextMarkerStyle.Decimal
+                                : TextMarkerStyle.Disc,
+                            MarkerOffset = 10,
+                            Padding = new Thickness(15, 0, 0, 0), 
+                            Margin = new Thickness(0),
+                        };
+
+                        foreach (ListItemBlock item in list)
+                        {
+                            var listItem = new ListItem();
+
+                            foreach (var child in item)
+                                ProcessBlock(listItem.Blocks, child);
+
+                            wpfList.ListItems.Add(listItem);
+                        }
+
+                        blocks.Add(wpfList);
+                        break;
+                    }
+
+                case MathBlock math:
+                    {
+                        blocks.Add(new Paragraph(new Run(math.Lines.ToString()))
+                        {
+                            FontFamily = new FontFamily("Consolas"),
+                            Foreground = Brushes.Cyan
+                        });
+                        break;
+                    }
+
+                case FencedCodeBlock fencedBlock:
+                    {
+                        RenderCodeBlock(blocks, fencedBlock);
+                        break;
+                    }
+
+                case CodeBlock codeBlock:
+                    {
+                        RenderCodeBlock(blocks, codeBlock);
+                        break;
+                    }
+
+                case ThematicBreakBlock:
+                    {
+                        blocks.Add(new Paragraph(new Run("────────────"))
+                        {
+                            Foreground = Brushes.Gray
+                        });
+                        break;
+                    }
+
+                case MdTable table:
+                    {
+                        var wpfTable = new WpfTable();
+
+                        int columnCount = table.FirstOrDefault() is MdTableRow firstRow
+                            ? firstRow.Count
+                            : 0;
+
+                        for (int i = 0; i < columnCount; i++)
+                            wpfTable.Columns.Add(new TableColumn());
+
+                        var rowGroup = new WpfTableRowGroup();
+                        wpfTable.RowGroups.Add(rowGroup);
+
+                        foreach (MdTableRow mdRow in table)
+                        {
+                            var wpfRow = new WpfTableRow();
+
+                            foreach (MdTableCell mdCell in mdRow)
+                            {
+                                var paragraph = new Paragraph();
+
+                                foreach (var cellBlock in mdCell)
+                                {
+                                    if (cellBlock is ParagraphBlock para && para.Inline != null)
+                                        ProcessInlines(paragraph.Inlines, para.Inline);
+                                }
+
+                                wpfRow.Cells.Add(new WpfTableCell(paragraph));
+                            }
+
+                            rowGroup.Rows.Add(wpfRow);
+                        }
+
+                        blocks.Add(wpfTable);
+                        break;
+                    }
+
+
 
                 default:
-                    {
-                        // fallback to raw text
-                        if (block is LeafBlock leaf && leaf.Lines.Count > 0)
-                            AddTextOrLinkOrClickable(inlines, leaf.Lines.ToString());
-                        break;
-                    }
+                    break;
             }
         }
 
 
-        // loop for ProcessMarkdigInlineNode
-        private static void ProcessMarkdigInlines(List<WpfInline> inlines, ContainerInline markdigInlines)
+        private static void ProcessInlines(InlineCollection inlines, ContainerInline container)
         {
-            foreach (var node in markdigInlines)
-            {
-                ProcessMarkdigInlineNode(inlines, node);
-            }
-        }
-
-
-        // overload that accepts InlineCollection so Span.Inlines can be passed directly
-        private static void ProcessMarkdigInlines(InlineCollection inlines, ContainerInline markdigInlines)
-        {
-            foreach (var node in markdigInlines)
-            {
-                ProcessMarkdigInlineNode(inlines, node);
-            }
+            foreach (var node in container)
+                ProcessInline(inlines, node);
         }
 
 
         // converts a Markdig inline node to WPF inlines
-        private static void ProcessMarkdigInlineNode(IList<WpfInline> inlines, MarkdigInline node)
+        private static void ProcessInline(InlineCollection inlines, MarkdigInline node)
         {
             switch (node)
             {
@@ -270,16 +359,43 @@ namespace Skymu
                 case EmphasisInline emphasis:
                     {
                         var span = new Span();
-                        ProcessMarkdigInlines(span.Inlines, emphasis);
-                        if (emphasis.DelimiterCount >= 3)
+                        ProcessInlines(span.Inlines, emphasis);
+
+                        char delimiter = emphasis.DelimiterChar;
+                        int count = emphasis.DelimiterCount;
+
+                        if (delimiter == '*')
                         {
-                            span.FontWeight = FontWeights.Bold;          
-                            span.FontStyle = FontStyles.Italic;
+                            if (count >= 3)
+                            {
+                                span.FontWeight = FontWeights.Bold;
+                                span.FontStyle = FontStyles.Italic;
+                            }
+                            else if (count == 2)
+                                span.FontWeight = FontWeights.Bold;
+                            else
+                                span.FontStyle = FontStyles.Italic;
                         }
-                        else if (emphasis.DelimiterCount == 2)
-                            span.FontWeight = FontWeights.Bold;          
-                        else if (emphasis.DelimiterCount == 1)
-                            span.FontStyle = FontStyles.Italic;          
+                        else if (delimiter == '~')
+                        {
+                            if (count == 2) // ~~strike~~
+                                span.TextDecorations = TextDecorations.Strikethrough;
+                            else if (count == 1) // ~sub~
+                                span.BaselineAlignment = BaselineAlignment.Subscript;
+                        }
+                        else if (delimiter == '^')
+                        {
+                            span.BaselineAlignment = BaselineAlignment.Superscript;
+                        }
+                        else if (delimiter == '+') // ++insert++
+                        {
+                            span.TextDecorations = TextDecorations.Underline;
+                        }
+                        else if (delimiter == '=') // ==mark==
+                        {
+                            span.Background = Brushes.Yellow;
+                        }
+
                         inlines.Add(span);
                         break;
                     }
@@ -309,7 +425,7 @@ namespace Skymu
                             };
                             inlines.Add(hyperlink);
                             if (displayLooksLikeUrl)
-                                inlines.Add(new Run($" (warning, actual destination→ {url})") { Foreground = Brushes.Red });
+                                inlines.Add(new Run($" (warning, actual destination → {url})") { Foreground = Brushes.Red });
                         }
                         else
                         {
@@ -319,7 +435,7 @@ namespace Skymu
                     }
 
                 case LineBreakInline lineBreak:
-                        inlines.Add(new LineBreak());
+                    inlines.Add(new LineBreak());
                     break;
 
                 case HtmlInline html:
@@ -330,10 +446,13 @@ namespace Skymu
                     {
                         // generic container fallback
                         var span = new Span();
-                        ProcessMarkdigInlines(span.Inlines, container);
+                        ProcessInlines(span.Inlines, container);
                         inlines.Add(span);
                         break;
                     }
+
+                
+
 
                 default:
                     // skip
@@ -342,14 +461,7 @@ namespace Skymu
         }
 
 
-        // overload that accepts InlineCollection
-        private static void ProcessMarkdigInlineNode(InlineCollection inlines, MarkdigInline node)
-        {
-            var temp = new List<WpfInline>();
-            ProcessMarkdigInlineNode(temp, node);
-            foreach (var il in temp)
-                inlines.Add(il);
-        }
+
 
 
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
@@ -360,7 +472,7 @@ namespace Skymu
 
             int position = 0;
 
-            string linkPattern = @"((?:https?|ftp|gopher)://[^\s]+)"; // Regex for weblinks (plain URLs only, markdown links handled by Markdig)
+            string linkPattern = @"((?:https?|ftp|gopher)://[^\s]+)"; // Regex for weblinks (plain URL schema only, markdown links handled by Markdig)
             char[] punctuation = new char[] { '.', ',', ';', ')', ']', '"', '\'' };
 
             while (position < text.Length)
@@ -480,7 +592,7 @@ namespace Skymu
         }
 
 
-        // Overload that accepts InlineCollection so Span.Inlines can be passed directly.
+        // overload that accepts InlineCollection so Span.Inlines can be passed directly.
         private static void AddTextOrLinkOrClickable(InlineCollection inlines, string text)
         {
             var temp = new List<WpfInline>();
@@ -520,7 +632,7 @@ namespace Skymu
         }
 
 
-        private static void ProcessTextWithEmoji(IList<WpfInline> inlines, string text) // This function replaces Unicode emojis in the text with inline animated emoticons.
+        private static void ProcessTextWithEmoji(IList<WpfInline> inlines, string text) // This function replaces Unicode emojis in the text with sexy inline animated emoticons.
         {
             StringInfo info = new StringInfo(text);
             int loopCount = info.LengthInTextElements;

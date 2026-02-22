@@ -22,7 +22,6 @@ public static class EmojiDictionary
             { "1F603", "smile" },
             { "1F604", "happy" },
             { "1F601", "happy" },
-            { "1F602", "laugh" }, // Most common laughing emoji (tears of joy)
             { "1F606", "laugh" },
             { "1F605", "whew" },
             { "1F60B", "mmm" },
@@ -34,6 +33,7 @@ public static class EmojiDictionary
             { "1F619", "kiss" },
             { "1F61A", "kiss" },
             { "1F609", "wink" },
+            { "1F602", "rofl" }, // Most common rofl emoji (tears of joy)
             { "1F923", "rofl" },
             { "1F929", "stareyes" },
             { "1F970", "inlove" },
@@ -50,6 +50,7 @@ public static class EmojiDictionary
             
             // Smileys & Emotion - Neutral/Skeptical
             { "2639", "sad" },
+            { "1F626", "sad" },
             { "1F610", "dull" },
             { "1F611", "unamused" },
             { "1F612", "envy" },

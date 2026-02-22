@@ -172,8 +172,8 @@ namespace Skymu
 
         private void CheckEnableLoginButton()
         {
-            if (usernameBox.Text.Trim() != string.Empty &&
-                (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled))
+            if ((usernameBox.Text.Trim() != string.Empty &&
+                (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled)) || !passwordTokenBox.IsEnabled && !usernameBox.IsEnabled)
             {
                 LoginButton.IsEnabled = true;
             }
@@ -247,17 +247,35 @@ namespace Skymu
         {
             selectedListing = (PluginListing)comboProtocolBox.SelectedItem;
             Universal.Plugin = Universal.PluginList[selectedListing.PluginIndex];
+
+            Password.Foreground = new SolidColorBrush(Colors.Black);
+            passwordTokenBox.IsEnabled = true;
+            Password.FontStyle = FontStyles.Normal;
+            Password.Text = Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            SignIn.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
+
+            SkypeName.Foreground = new SolidColorBrush(Colors.Black);
+            usernameBox.IsEnabled = true;
+            SkypeName.FontStyle = FontStyles.Normal;
             SkypeName.Text = ((PluginListing)comboProtocolBox.SelectedItem).TextUsername ?? SkypeName.Text;
+
             if (selectedListing.AuthenticationType != AuthenticationMethod.Password)
             {
+                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
                 passwordTokenBox.IsEnabled = false;
                 Password.Text = "field not required";
-                Password.FontStyle = FontStyles.Italic;
-                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
+                Password.FontStyle = FontStyles.Italic;              
+
                 switch (selectedListing.AuthenticationType)
                 {
                     case AuthenticationMethod.QRCode:
                         SignIn.Text = "Scan QR code";
+
+                        SkypeName.Foreground = new SolidColorBrush(Colors.DarkGray);
+                        usernameBox.IsEnabled = false;
+                        SkypeName.FontStyle = FontStyles.Italic;
+                        SkypeName.Text = "field not required";
+
                         break;
                     case AuthenticationMethod.Passwordless:
                         SignIn.Text = "Send code";
@@ -265,13 +283,10 @@ namespace Skymu
                     case AuthenticationMethod.External:
                         SignIn.Text = "External login";
                         break;
+                    default:
+                        SignIn.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
+                        break;
                 }
-            }
-            else
-            {
-                Password.Foreground = new SolidColorBrush(Colors.Black);
-                passwordTokenBox.IsEnabled = true;
-                Password.FontStyle = FontStyles.Normal;
             }
             CheckEnableLoginButton();
         }

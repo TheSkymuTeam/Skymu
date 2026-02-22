@@ -31,7 +31,7 @@ namespace XMPP
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<NotificationEventArgs> Notification;
-        public string Name { get { return "XMPP (Expiremental - use at own risk)"; } }
+        public string Name { get { return "XMPP (expiremental, use at own risk)"; } }
         public string InternalName { get { return "skymu-xmpp-plugin"; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
