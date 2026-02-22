@@ -109,10 +109,10 @@ namespace Skymu
             lock (_lock)
             {
                 var workingArea = SystemParameters.WorkArea;
-                this.Left = workingArea.Right - this.Width - 10;
+                this.Left = workingArea.Right - this.Width - 5;
 
                 // Calculate the bottom position based on existing notifications
-                double bottomOffset = 10;
+                double bottomOffset = 1;
                 foreach (var notification in _activeNotifications)
                 {
                     bottomOffset += notification.ActualHeight + 10;
@@ -141,7 +141,7 @@ namespace Skymu
                     var notif = _activeNotifications[i];
                     var workingArea = SystemParameters.WorkArea;
 
-                    double bottomOffset = 10;
+                    double bottomOffset = 1;
                     for (int j = 0; j < i; j++)
                     {
                         bottomOffset += _activeNotifications[j].ActualHeight + 10;
