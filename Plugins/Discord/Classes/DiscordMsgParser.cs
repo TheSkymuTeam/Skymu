@@ -14,12 +14,13 @@ using System;
 using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Discord.Classes
 {
     internal class DiscordMsgParser
     {
-        public static async Task<Message> ParseMessage(JsonNode message)
+        public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
         {
             if (message is null) return null;
 
@@ -28,23 +29,29 @@ namespace Discord.Classes
             string authorId = message["author"]?["id"]?.GetValue<string>() ?? "0";
             string[] authorNames = GetAuthorNames(message);
 
-            var content = HelperMethods.ReplaceIDWithName(
+            string content = HelperMethods.ReplaceIDWithName(
                 message["mentions"] as JsonArray,
                 message["content"]?.GetValue<string>() ?? string.Empty);
 
             DateTime timestamp = ParseTimestamp(message["timestamp"]?.GetValue<string>());
 
-            byte[] media = await ParseMessageMedia(message);
+            Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
+
+            if (String.IsNullOrEmpty(message["content"]?.GetValue<string>()))
+                Debug.Write(message.ToJsonString());
 
             Message parent = ParseReply(message["referenced_message"]);
+
+            if (message["message_snapshots"] is not null) return await ParseMessage(message["message_snapshots"][0]["message"], true);
 
             return new Message(
                 messageId,
                 new User(authorNames[0], authorNames[1], authorId),
                 timestamp,
                 content,
-                new Attachment[1] { new Attachment(media, "discord-image", AttachmentType.Image) },
-                parent
+                media,
+                parent,
+                isForwarded
             );
         }
 
@@ -70,9 +77,9 @@ namespace Discord.Classes
             string displayname = member?["nick"]?.GetValue<string>()
                 ?? author?["global_name"]?.GetValue<string>()
                 ?? author?["username"]?.GetValue<string>()
-                ?? "[unknown user]";
+                ?? "Anonymous";
             string username = author?["username"]?.GetValue<string>()
-                ?? "[unknown user]";
+                ?? "Anonymous";
             return new string[] { displayname, username };
         }
 

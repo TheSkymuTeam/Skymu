@@ -71,6 +71,17 @@ namespace Skymu
             { UserConnectionStatus.Offline, 19 }
         };
 
+        private static readonly Dictionary<ChannelType, int> channel_type_map = new()
+        {
+            { ChannelType.Standard, 2 },
+            { ChannelType.ReadOnly, 2 },
+            { ChannelType.Announcement, 6 },
+            { ChannelType.Voice, 1 },
+            { ChannelType.Restricted, 2 },
+            { ChannelType.Forum, 9 },
+            { ChannelType.NoAccess, 4 }
+        };
+
         private enum WindowType
         {
             Home,
@@ -503,6 +514,7 @@ namespace Skymu
                     InitiateWebview();
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ContactsList.SelectedItem = null;
+                    ClearTreeSelection(ServersList);
                     break;
 
                 case WindowType.Chat:
@@ -519,6 +531,40 @@ namespace Skymu
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     break;
             }
+        }
+
+        private void ClearTreeSelection(TreeView tree)
+        {
+            if (tree.SelectedItem == null)
+                return;
+
+            TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
+            if (container != null)
+                container.IsSelected = false;
+        }
+
+        private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
+        {
+            if (parent == null)
+                return null;
+
+            TreeViewItem container =
+                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+
+            if (container != null)
+                return container;
+
+            foreach (object child in parent.Items)
+            {
+                TreeViewItem parentContainer =
+                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+
+                TreeViewItem result = GetContainerFromItem(parentContainer, item);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
         }
 
 
@@ -1295,6 +1341,9 @@ namespace Skymu
             UpdateSendButtonState();
         }
 
+        internal static int GetIntFromChannelType(ChannelType channel)
+    => channel_type_map.TryGetValue(channel, out int value) ? value : 0;
+
         internal static int GetIntFromStatus(UserConnectionStatus status)
     => status_map.TryGetValue(status, out int value) ? value : 0;
 
@@ -1330,6 +1379,7 @@ namespace Skymu
 
             SetWindow(WindowType.Home);
             ContactsList.ItemsSource = null;
+
             if (Universal.Plugin.ContactsList is null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
             ContactsList.ItemsSource = Universal.Plugin.ContactsList;
         }
@@ -1338,7 +1388,6 @@ namespace Skymu
         {
             SelectTab(btnServers);
             SetWindow(WindowType.Home);
-            ContactsList.ItemsSource = null;
             if (Universal.Plugin.ServerList is null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
             ServersList.ItemsSource = Universal.Plugin.ServerList;
         }
@@ -1349,6 +1398,7 @@ namespace Skymu
 
             SetWindow(WindowType.Home);
             ContactsList.ItemsSource = null;
+
             if (Universal.Plugin.RecentsList is null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
         }
@@ -1530,8 +1580,6 @@ namespace Skymu
 
     public class StatusToTextConverter : IValueConverter
     {
-
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is not UserConnectionStatus statInt)
@@ -1546,6 +1594,22 @@ namespace Skymu
         }
     }
 
+    public class ForwardedChecker : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values[1] is bool isForwarded && isForwarded)
+                return values[0] + " (forwarded message)";
+
+            return values[0];
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public sealed class FormatFullTextConverter : IValueConverter
     {
         public Style ViewerStyle { get; set; }
@@ -1555,7 +1619,7 @@ namespace Skymu
             if (value is not string text)
                 return DependencyProperty.UnsetValue;
 
-            return MessageTools.FormRichTextBox(text, ViewerStyle);
+            return MessageTools.FormTextblock(text, false, ViewerStyle);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -1582,7 +1646,24 @@ namespace Skymu
             {
                 return MainWindow.GetIntFromStatus(stat);
             }
-            return 21;
+            return 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
+    public class ChannelTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ChannelType chan)
+            {
+                return MainWindow.GetIntFromChannelType(chan);
+            }
+            return 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

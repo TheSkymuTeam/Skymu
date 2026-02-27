@@ -97,6 +97,8 @@ namespace Discord
         }
 
         public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
+
+
         public async Task<bool> PopulateServerList()
         {
             try
@@ -120,11 +122,67 @@ namespace Discord
                     {
                         foreach (var ch in channels.OfType<JsonObject>())
                         {
-                            if ((ch["type"]?.GetValue<int>() ?? -1) != 0) continue;
                             string channelId = ch["id"]?.GetValue<string>();
                             string channelName = ch["name"]?.GetValue<string>();
-                            if (!string.IsNullOrWhiteSpace(channelId))
-                                channelList.Add(new ServerChannel(channelName, channelId, guildId));
+                            if (string.IsNullOrWhiteSpace(channelId)) continue;
+
+
+                            // Determine channel type
+                            int typeValue = -1;
+                            if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
+                                typeValue = -1;
+
+                            ChannelType channelType;
+
+                            switch (typeValue)
+                            {
+                                case 0: // Text channel, forum, etc
+                                    channelType = ChannelType.Standard;
+
+                                    // Only check @everyone overwrites for read-only  
+                                    bool everyoneDeniesSend = false;
+                                    if (ch["permission_overwrites"] is JsonArray perms)
+                                    {
+                                        foreach (var perm in perms.OfType<JsonObject>())
+                                        {
+                                            string permId = perm["id"]?.GetValue<string>() ?? "";
+                                            if (permId != guildId) continue; // @everyone only  
+
+                                            int deny = 0;
+                                            int.TryParse(perm["deny"]?.ToString(), out deny);
+
+                                            const int sendMessages = 0x400;
+                                            if ((deny & sendMessages) != 0)
+                                                everyoneDeniesSend = true;
+                                        }
+                                    }
+
+                                    // Mark as read-only only if @everyone denies AND no role allows it  
+                                    if (everyoneDeniesSend)
+                                        channelType = ChannelType.ReadOnly;
+                                    break;
+
+                                case 2: // voice channel  
+                                    channelType = ChannelType.Voice;
+                                    break;
+
+                                case 4: // category 
+                                    continue; // skip
+
+                                case 5: // announcement/news channel  
+                                    channelType = ChannelType.Announcement;
+                                    break;
+
+                                case 15:
+                                    channelType = ChannelType.Forum;
+                                    break;
+
+                                default:
+                                    channelType = ChannelType.NoAccess;
+                                    break;
+                            }
+
+                            channelList.Add(new ServerChannel(channelName, channelId, guildId, channelType));
                         }
                     }
 
@@ -475,7 +533,9 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                string message = $"Failed to load conversation: {ex.Message}";
+                if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
+                OnError?.Invoke(this, new PluginMessageEventArgs(message));
                 _activeChannelId = null;
                 return false;
             }

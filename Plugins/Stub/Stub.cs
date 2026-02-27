@@ -111,7 +111,7 @@ namespace Stub
         public async Task<bool> PopulateServerList()
         {
             string id = "2132";
-            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id), new ServerChannel("channel1", "2132/2", id) }));
+            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id, ChannelType.Standard), new ServerChannel("rtead only", "2132/2", id, ChannelType.ReadOnly) }));
             return true;
         }
 

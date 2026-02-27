@@ -74,122 +74,81 @@ namespace Skymu
             return hasEmojiRune;
         }
 
-        public static RichTextBox FormRichTextBox(string input, Style style = null, bool doNotFormat = false)
+        public static TextBlock FormTextblock(string input, bool doNotFormat = false, Style style = null) // The main function. You put text in, completely formatted textblock comes out. Ta da!!!!
         {
-            var document = FormDocument(input, doNotFormat);
-
-            document.FontFamily = new FontFamily("Tahoma");
-            document.FontSize = 11;
-            document.PagePadding = new Thickness(0);
-            document.TextAlignment = TextAlignment.Left;
-      
-            var rtb = new RichTextBox
+            var textBlock = new TextBlock
             {
-                Document = document                  
+                TextWrapping = TextWrapping.Wrap, // otherwise text wouldn't go to a newline unless explicitly told to
             };
 
-            if (style is null) // standard styling for rest of app. ONLY USE AS FALLBACK!
+            if (doNotFormat) // Just return a plain unformatted TextBlock
             {
-                rtb.IsReadOnly = true;
-                rtb.IsDocumentEnabled = true;
-                rtb.BorderThickness = new Thickness(0);
-                rtb.Background = Brushes.Transparent;
-                rtb.Padding = new Thickness(0, 0, 15, 0);
-                rtb.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-                rtb.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
-                rtb.CaretBrush = Brushes.Transparent;
-                rtb.Focusable = true;
-                rtb.Foreground = Brushes.Black;
-            }
-            else
-            {
-                rtb.Style = style;
+                textBlock.Text = input;
+                return textBlock;
             }
 
-            return rtb;
-        }
+            if (style is not null) textBlock.Style = style;
 
+            var pipeline = new MarkdownPipelineBuilder()
+            //.UseAdvancedExtensions()   // All standard + extended features (tables, footnotes, task lists, etc.)
+            .UseAlertBlocks()          // GitHub-style [!NOTE], [!TIP], etc.
+            .UseAbbreviations()        // *[HTML]: Hyper Text Markup Language
+            .UseAutoIdentifiers()      // Automatically generate id attributes for headings
+            .UseCitations()            // ""citation"" style references
+            .UseCustomContainers()     // ::: fenced container blocks
+            .UseDefinitionLists()      // Definition lists (<dl>, <dt>, <dd>)
+            .UseEmphasisExtras()       // Strikethrough, subscript, superscript, insert, mark
+            .UseFigures()              // ^^^ figure blocks
+            .UseFooters()              // ^^ footer blocks
+            .UseFootnotes()            // [^ref] footnotes
+            .UseGridTables()           // Pandoc-style grid tables
+            .UseMathematics()          // $inline$ and $$block$$ math
+            .UseMediaLinks()           // Embed YouTube, Vimeo, etc.
+            .UsePipeTables()           // GitHub-style pipe tables
+            //.UseListExtras()        // (intentionally excluded)
+            .UseTaskLists()            // - [x] / - [ ] task checkboxes
+            .UseDiagrams()             // Mermaid / nomnoml diagram blocks
+            .UseAutoLinks()            // Auto-detect http:// and www. links
+            .UseGenericAttributes()    // {#id .class key=value}
+            .Build();
 
-        public static FlowDocument FormDocument(string input, bool doNotFormat = false)
-        {
-            var document = new FlowDocument
-            {
-                PagePadding = new Thickness(0)
-            };
-
-            if (doNotFormat)
-            {
-                document.Blocks.Add(new Paragraph(new Run(input)));
-                return document;
-            }
-
-            var pipeline = new MarkdownPipelineBuilder() // everything we want
-                .UseAlertBlocks()
-                .UseAbbreviations()
-                .UseAutoIdentifiers()
-                .UseCitations()
-                .UseCustomContainers()
-                .UseDefinitionLists()
-                .UseEmphasisExtras()
-                .UseEmojiAndSmiley()
-                .UseFigures()
-                .UseFooters()
-                .UseFootnotes()
-                .UseGridTables()
-                .UseMathematics()
-                .UseMediaLinks()
-                .UsePipeTables()
-                .UseTaskLists()
-                .UseDiagrams()
-                .UseAutoLinks()
-                .UseGenericAttributes()
-                .Build();
-
-            var md = Markdown.Parse(input, pipeline);
-
-            ProcessBlocks(document.Blocks, md);
-
-            return document;
+            // parse the input into a Markdig AST and walk it to produce WPF inlines
+            // then add all the emoji-fied, linked, and markdown'ed inlines to the textblock
+            var document = Markdown.Parse(input, pipeline);
+            ProcessMarkdigBlocks(textBlock.Inlines, document);
+          
+            // Return
+            return textBlock;
         }
 
 
         // loop for ProcessMarkdigBlock for all blocks
-        private static void ProcessBlocks(BlockCollection blocks, MarkdownDocument document)
+        private static void ProcessMarkdigBlocks(InlineCollection inlines, MarkdownDocument document)
         {
-            foreach (var block in document)
-                ProcessBlock(blocks, block);
-        }
-
-        private static void RenderCodeBlock(BlockCollection blocks, CodeBlock block)
-        {
-            string code = block.Lines.ToString();
-
-            var border = new Border
+            var blocks = document.ToList();
+            for (int i = 0; i < blocks.Count; i++)
             {
-                Background = Brushes.Black,
-                Padding = new Thickness(6),
-                Margin = new Thickness(0, 4, 0, 4),
-                Child = new TextBlock
+                if (i > 0)
                 {
-                    Text = code,
-                    FontFamily = new FontFamily("Consolas"),
-                    Foreground = Brushes.Lime,
-                    TextWrapping = TextWrapping.Wrap
+                    // recreate blank lines between previous block end and this block start
+                    int blankLines = blocks[i].Line - blocks[i - 1].Line;
+                    for (int b = 0; b < blankLines; b++)
+                        inlines.Add(new LineBreak());
                 }
-            };
 
-            blocks.Add(new BlockUIContainer(border));
+                ProcessBlock(inlines, blocks[i]);
+            }
         }
 
 
         // converts a Markdig block node to WPF inlines for insertion
-        private static void ProcessBlock(BlockCollection blocks, MarkdigBlock block)
+        private static void ProcessBlock(InlineCollection inlines, MarkdigBlock block)
         {
             switch (block)
             {
                 case HeadingBlock heading:
                     {
-                        var p = new Paragraph
+                        var span = new Span
                         {
                             FontWeight = FontWeights.Bold,
                             FontSize = heading.Level switch
@@ -202,70 +161,76 @@ namespace Skymu
                         };
 
                         if (heading.Inline != null)
-                            ProcessInlines(p.Inlines, heading.Inline);
+                            ProcessInlines(span.Inlines, heading.Inline);
 
-                        blocks.Add(p);
+                        inlines.Add(span);
                         break;
                     }
 
                 case ParagraphBlock para:
                     {
-                        var p = new Paragraph();
-
                         if (para.Inline != null)
-                            ProcessInlines(p.Inlines, para.Inline);
+                            ProcessInlines(inlines, para.Inline);
 
-                        blocks.Add(p);
                         break;
                     }
 
                 case QuoteBlock quote:
                     {
-                        var section = new Section
+                        var stack = new StackPanel
+                        {
+                            Orientation = Orientation.Vertical
+                        };
+
+                        var border = new Border
                         {
                             BorderBrush = Brushes.DarkGray,
                             BorderThickness = new Thickness(2, 0, 0, 0),
                             Padding = new Thickness(8, 0, 0, 0),
-                            Foreground = Brushes.Gray,   
-                            Margin = new Thickness(0)
+                            Child = stack
                         };
 
                         foreach (var child in quote)
-                            ProcessBlock(section.Blocks, child);
+                        {
+                            var tb = new TextBlock
+                            {
+                                Foreground = Brushes.Gray,
+                                TextWrapping = TextWrapping.Wrap
+                            };
 
-                        blocks.Add(section);
+                            ProcessBlock(tb.Inlines, child);
+
+                            stack.Children.Add(tb);
+                        }
+
+                        inlines.Add(new InlineUIContainer(border));
                         break;
                     }
 
                 case ListBlock list:
                     {
-                        var wpfList = new List
-                        {
-                            MarkerStyle = list.IsOrdered
-                                ? TextMarkerStyle.Decimal
-                                : TextMarkerStyle.Disc,
-                            MarkerOffset = 10,
-                            Padding = new Thickness(15, 0, 0, 0), 
-                            Margin = new Thickness(0),
-                        };
+                        int index = 1;
 
                         foreach (ListItemBlock item in list)
                         {
-                            var listItem = new ListItem();
+                            if (list.IsOrdered)
+                                inlines.Add(new Run($"{index}. "));
+                            else
+                                inlines.Add(new Run("• "));
 
                             foreach (var child in item)
-                                ProcessBlock(listItem.Blocks, child);
+                                ProcessBlock(inlines, child);
 
-                            wpfList.ListItems.Add(listItem);
+                            inlines.Add(new LineBreak());
+                            index++;
                         }
 
-                        blocks.Add(wpfList);
                         break;
                     }
 
                 case MathBlock math:
                     {
-                        blocks.Add(new Paragraph(new Run(math.Lines.ToString()))
+                        inlines.Add(new Run(math.Lines.ToString())
                         {
                             FontFamily = new FontFamily("Consolas"),
                             Foreground = Brushes.Cyan
@@ -275,70 +240,120 @@ namespace Skymu
 
                 case FencedCodeBlock fencedBlock:
                     {
-                        RenderCodeBlock(blocks, fencedBlock);
+                        var border = new Border
+                        {
+                            Background = Brushes.Black,
+                            Padding = new Thickness(6),
+                            Margin = new Thickness(0, 4, 0, 4),
+                            Child = new TextBlock
+                            {
+                                Text = fencedBlock.Lines.ToString(),
+                                FontFamily = new FontFamily("Consolas"),
+                                Foreground = Brushes.Lime,
+                                TextWrapping = TextWrapping.Wrap
+                            }
+                        };
+
+                        inlines.Add(new InlineUIContainer(border));
                         break;
                     }
 
                 case CodeBlock codeBlock:
                     {
-                        RenderCodeBlock(blocks, codeBlock);
+                        var border = new Border
+                        {
+                            Background = Brushes.Black,
+                            Padding = new Thickness(6),
+                            Margin = new Thickness(0, 4, 0, 4),
+                            Child = new TextBlock
+                            {
+                                Text = codeBlock.Lines.ToString(),
+                                FontFamily = new FontFamily("Consolas"),
+                                Foreground = Brushes.Lime,
+                                TextWrapping = TextWrapping.Wrap
+                            }
+                        };
+
+                        inlines.Add(new InlineUIContainer(border));
                         break;
                     }
 
                 case ThematicBreakBlock:
                     {
-                        blocks.Add(new Paragraph(new Run("────────────"))
+                        var line = new System.Windows.Shapes.Rectangle
                         {
-                            Foreground = Brushes.Gray
+                            Height = 1,                   
+                            Fill = Brushes.Gray,          
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+
+                        inlines.Add(new InlineUIContainer(line)
+                        {
+                            BaselineAlignment = BaselineAlignment.Center
                         });
+
                         break;
                     }
 
                 case MdTable table:
                     {
-                        var wpfTable = new WpfTable();
+                        var grid = new Grid
+                        {
+                            Margin = new Thickness(0, 4, 0, 4)
+                        };
 
                         int columnCount = table.FirstOrDefault() is MdTableRow firstRow
                             ? firstRow.Count
                             : 0;
 
                         for (int i = 0; i < columnCount; i++)
-                            wpfTable.Columns.Add(new TableColumn());
+                            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-                        var rowGroup = new WpfTableRowGroup();
-                        wpfTable.RowGroups.Add(rowGroup);
+                        int rowIndex = 0;
+                        bool isHeaderRow = true;
 
                         foreach (MdTableRow mdRow in table)
                         {
-                            var wpfRow = new WpfTableRow();
+                            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                            int colIndex = 0;
 
                             foreach (MdTableCell mdCell in mdRow)
                             {
-                                var paragraph = new Paragraph();
+                                var tb = new TextBlock
+                                {
+                                    Margin = new Thickness(0, 0, 30, 0),
+                                    TextWrapping = TextWrapping.Wrap
+                                };
 
                                 foreach (var cellBlock in mdCell)
                                 {
                                     if (cellBlock is ParagraphBlock para && para.Inline != null)
-                                        ProcessInlines(paragraph.Inlines, para.Inline);
+                                        ProcessInlines(tb.Inlines, para.Inline);
                                 }
 
-                                wpfRow.Cells.Add(new WpfTableCell(paragraph));
+                                if (isHeaderRow)
+                                    tb.FontWeight = FontWeights.Bold;
+
+                                Grid.SetRow(tb, rowIndex);
+                                Grid.SetColumn(tb, colIndex);
+
+                                grid.Children.Add(tb);
+                                colIndex++;
                             }
 
-                            rowGroup.Rows.Add(wpfRow);
+                            isHeaderRow = false;
+                            rowIndex++;
                         }
 
-                        blocks.Add(wpfTable);
+                        inlines.Add(new InlineUIContainer(grid));
                         break;
                     }
-
-
 
                 default:
                     break;
             }
         }
-
 
         private static void ProcessInlines(InlineCollection inlines, ContainerInline container)
         {
@@ -450,10 +465,7 @@ namespace Skymu
                         inlines.Add(span);
                         break;
                     }
-
-                
-
-
+              
                 default:
                     // skip
                     break;

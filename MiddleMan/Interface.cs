@@ -46,6 +46,17 @@ namespace MiddleMan
         Offline
     }
 
+    public enum ChannelType
+    {
+        Standard,
+        ReadOnly,
+        Announcement,
+        Voice,
+        Restricted,
+        NoAccess,
+        Forum
+    }
+
     public abstract class Metadata : INotifyPropertyChanged
     {
         private string _displayName;
@@ -202,12 +213,14 @@ namespace MiddleMan
     {
         public string ParentServerID { get; }
         public string Description { get; }
+        public ChannelType ChannelType { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id, string description = null)
+        public ServerChannel(string name, string identifier, string parent_server_id, ChannelType channel_type, string description = null)
             : base(name, identifier, null)
         {
             ParentServerID = parent_server_id;
             Description = description;
+            ChannelType = channel_type;
         }
     }
 
@@ -280,8 +293,9 @@ namespace MiddleMan
         public User Sender { get; set; } // Who sent the message 
         public string Text { get; set; } // Message body
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
-        public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) , 
-        public Message(string identifier, User sender, DateTime time, string text = null, Attachment[] attachments = null, Message parent_message = null)
+        public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) 
+        public bool IsForwarded { get; set; }
+        public Message(string identifier, User sender, DateTime time, string text = null, Attachment[] attachments = null, Message parent_message = null, bool is_forwarded = false)
         {
             Identifier = identifier;
             Sender = sender;
@@ -289,6 +303,7 @@ namespace MiddleMan
             Time = time;
             Attachments = attachments;
             ParentMessage = parent_message;
+            IsForwarded = is_forwarded;
         }
     }
 

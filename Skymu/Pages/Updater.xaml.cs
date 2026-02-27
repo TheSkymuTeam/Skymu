@@ -79,7 +79,7 @@ namespace Skymu.Pages
                     string changelog = update_info[1];
                     if (!string.IsNullOrEmpty(changelog))
                     {
-                        changelog = changelog.Replace("*", Properties.Settings.Default.ListDelimiter);
+                        changelog = changelog.Replace("*", "•");
                         Description.Text += Environment.NewLine + Environment.NewLine + changelog;
                     }
                 }

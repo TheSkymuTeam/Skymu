@@ -53,12 +53,12 @@ namespace Skymu
                 StatusIcon.DefaultIndex = MainWindow.GetIntFromStatus(e.Status);
                 TitleText.Text = message.Sender.DisplayName;
 
-                var viewer = MessageTools.FormRichTextBox(message.Text);
-               
-                viewer.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#666666");
-                viewer.FontSize = 11;
+                TextBlock tb = MessageTools.FormTextblock("\"" + message.Text + "\"");
 
-                Message.Content = viewer;
+                tb.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#666666");
+                tb.FontSize = 11;
+
+                Message.Content = tb;
 
                 var timer = new DispatcherTimer
                 {
@@ -115,7 +115,7 @@ namespace Skymu
                 double bottomOffset = 1;
                 foreach (var notification in _activeNotifications)
                 {
-                    bottomOffset += notification.ActualHeight + 10;
+                    bottomOffset += notification.ActualHeight + 1;
                 }
 
                 this.Top = workingArea.Bottom - this.Height - bottomOffset;

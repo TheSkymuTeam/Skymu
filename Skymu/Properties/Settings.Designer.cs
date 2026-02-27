@@ -61,18 +61,6 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("☛")]
-        public string ListDelimiter {
-            get {
-                return ((string)(this["ListDelimiter"]));
-            }
-            set {
-                this["ListDelimiter"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("/Resources/Light")]
         public string ThemeRoot {
             get {
@@ -181,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Chamonix Banana Epicness")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Chamonix Fried Ice Cream")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

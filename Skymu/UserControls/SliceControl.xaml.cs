@@ -17,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Windows.Shapes;
 
 namespace Skymu
 {
@@ -31,9 +32,18 @@ namespace Skymu
         private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
         private int _currentAnimationFrame = 0;
         private double _frameAccumulator = 0;
+
         private readonly ImageBrush _leftBrush = new ImageBrush();
         private readonly ImageBrush _middleBrush = new ImageBrush();
         private readonly ImageBrush _rightBrush = new ImageBrush();
+
+        private readonly ImageBrush _topLeftBrush = new ImageBrush();
+        private readonly ImageBrush _topMidBrush = new ImageBrush();
+        private readonly ImageBrush _topRightBrush = new ImageBrush();
+
+        private readonly ImageBrush _botLeftBrush = new ImageBrush();
+        private readonly ImageBrush _botMidBrush = new ImageBrush();
+        private readonly ImageBrush _botRightBrush = new ImageBrush();
 
         private const double PressedTextOffsetY = 1.0;
 
@@ -138,6 +148,11 @@ namespace Skymu
             _rightBrush.Stretch = Stretch.Fill;
             _rightBrush.ViewboxUnits = BrushMappingMode.RelativeToBoundingBox;
 
+            _topLeftBrush.Stretch = _topMidBrush.Stretch = _topRightBrush.Stretch = Stretch.Fill;
+            _botLeftBrush.Stretch = _botMidBrush.Stretch = _botRightBrush.Stretch = Stretch.Fill;
+            _topLeftBrush.ViewboxUnits = _topMidBrush.ViewboxUnits = _topRightBrush.ViewboxUnits = BrushMappingMode.RelativeToBoundingBox;
+            _botLeftBrush.ViewboxUnits = _botMidBrush.ViewboxUnits = _botRightBrush.ViewboxUnits = BrushMappingMode.RelativeToBoundingBox;
+
             Loaded += (s, e) =>
             {
                 UpdateTextOffset();
@@ -219,6 +234,11 @@ namespace Skymu
             DependencyProperty.Register(nameof(IsAnimation), typeof(bool), typeof(SliceControl),
                 new PropertyMetadata(false, OnAnimationPropertyChanged));
 
+        public bool IsNineSlice { get { return (bool)GetValue(IsNineSliceProperty); } set { SetValue(IsNineSliceProperty, value); } }
+        public static readonly DependencyProperty IsNineSliceProperty =
+            DependencyProperty.Register(nameof(IsNineSlice), typeof(bool), typeof(SliceControl),
+                new PropertyMetadata(false, OnAnimationPropertyChanged));
+
         public double AnimationFps { get { return (double)GetValue(AnimationFpsProperty); } set { SetValue(AnimationFpsProperty, value); } }
         public static readonly DependencyProperty AnimationFpsProperty =
             DependencyProperty.Register(nameof(AnimationFps), typeof(double), typeof(SliceControl),
@@ -247,6 +267,16 @@ namespace Skymu
         public double RightWidth { get { return (double)GetValue(RightWidthProperty); } set { SetValue(RightWidthProperty, value); } }
         public static readonly DependencyProperty RightWidthProperty =
             DependencyProperty.Register(nameof(RightWidth), typeof(double), typeof(SliceControl),
+                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+
+        public double TopHeight { get { return (double)GetValue(TopHeightProperty); } set { SetValue(TopHeightProperty, value); } }
+        public static readonly DependencyProperty TopHeightProperty =
+            DependencyProperty.Register(nameof(TopHeight), typeof(double), typeof(SliceControl),
+                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+
+        public double BottomHeight { get { return (double)GetValue(BottomHeightProperty); } set { SetValue(BottomHeightProperty, value); } }
+        public static readonly DependencyProperty BottomHeightProperty =
+            DependencyProperty.Register(nameof(BottomHeight), typeof(double), typeof(SliceControl),
                 new PropertyMetadata(32.0, OnAnyPropertyChanged));
 
         public FontStyle TextStyle { get { return (FontStyle)GetValue(TextStyleProperty); } set { SetValue(TextStyleProperty, value); } }
@@ -440,6 +470,7 @@ namespace Skymu
 
             if (!Slice)
             {
+                SetNineSliceVisibility(false);
                 MiddleSlice.Visibility = Visibility.Visible;
                 LeftSlice.Visibility = RightSlice.Visibility = Visibility.Collapsed;
 
@@ -449,48 +480,92 @@ namespace Skymu
                 _middleBrush.ImageSource = Source;
                 _middleBrush.Viewbox = GetStateViewbox();
                 MiddleSlice.Fill = _middleBrush;
-
                 return;
             }
 
-            double elementHeight = GetElementHeight();
-            double leftWidth = LeftWidth;
-            double rightWidth = RightWidth;
-            double middleWidth = Math.Max(0, Width - leftWidth - rightWidth);
-
-            LeftSlice.Width = leftWidth;
-            MiddleSlice.Width = middleWidth;
-            RightSlice.Width = rightWidth;
-
-            LeftSlice.Height = MiddleSlice.Height = RightSlice.Height = elementHeight;
-
-            LeftSlice.Visibility = MiddleSlice.Visibility = RightSlice.Visibility = Visibility.Visible;
-
             var stateBox = GetStateViewbox();
+            double leftW = LeftWidth;
+            double rightW = RightWidth;
+            double midW = Math.Max(0, Width - leftW - rightW);
+            double elemH = GetElementHeight();
 
-            _leftBrush.ImageSource = Source;
-            _leftBrush.Viewbox = new Rect(
-                stateBox.X,
-                stateBox.Y,
-                Math.Min(leftWidth / bmp.PixelWidth * stateBox.Width, stateBox.Width),
-                stateBox.Height);
-            LeftSlice.Fill = _leftBrush;
+            // Relative units within stateBox
+            double leftWRel = leftW / bmp.PixelWidth * stateBox.Width;
+            double rightWRel = rightW / bmp.PixelWidth * stateBox.Width;
+            double midWRel = Math.Max(0, stateBox.Width - leftWRel - rightWRel);
 
-            _middleBrush.ImageSource = Source;
-            _middleBrush.Viewbox = new Rect(
-                stateBox.X + leftWidth / bmp.PixelWidth * stateBox.Width,
-                stateBox.Y,
-                Math.Max(0, stateBox.Width - (leftWidth + rightWidth) / bmp.PixelWidth * stateBox.Width),
-                stateBox.Height);
-            MiddleSlice.Fill = _middleBrush;
+            if (IsNineSlice)
+            {
+                double topH = TopHeight;
+                double botH = BottomHeight;
+                double midH = Math.Max(0, Height - topH - botH);
+                double topHRel = topH / bmp.PixelHeight * stateBox.Height;
+                double botHRel = botH / bmp.PixelHeight * stateBox.Height;
+                double midHRel = Math.Max(0, stateBox.Height - topHRel - botHRel);
 
-            _rightBrush.ImageSource = Source;
-            _rightBrush.Viewbox = new Rect(
-                stateBox.X + (stateBox.Width - rightWidth / bmp.PixelWidth * stateBox.Width),
-                stateBox.Y,
-                Math.Min(rightWidth / bmp.PixelWidth * stateBox.Width, stateBox.Width),
-                stateBox.Height);
-            RightSlice.Fill = _rightBrush;
+                double x0 = stateBox.X;
+                double x1 = stateBox.X + leftWRel;
+                double x2 = stateBox.X + leftWRel + midWRel;
+
+                double y0 = stateBox.Y;
+                double y1 = stateBox.Y + topHRel;
+                double y2 = stateBox.Y + topHRel + midHRel;
+
+                // Show/hide
+                SetNineSliceVisibility(true);
+                LeftSlice.Visibility = MiddleSlice.Visibility = RightSlice.Visibility = Visibility.Visible;
+
+                // Sizes
+                TopLeftSlice.Width = BotLeftSlice.Width = LeftSlice.Width = leftW;
+                TopRightSlice.Width = BotRightSlice.Width = RightSlice.Width = rightW;
+                TopMidSlice.Width = BotMidSlice.Width = MiddleSlice.Width = midW;
+
+                TopLeftSlice.Height = TopMidSlice.Height = TopRightSlice.Height = topH;
+                BotLeftSlice.Height = BotMidSlice.Height = BotRightSlice.Height = botH;
+                LeftSlice.Height = MiddleSlice.Height = RightSlice.Height = midH;
+
+                // Viewboxes
+                ApplyBrush(_topLeftBrush, TopLeftSlice, x0, y0, leftWRel, topHRel);
+                ApplyBrush(_topMidBrush, TopMidSlice, x1, y0, midWRel, topHRel);
+                ApplyBrush(_topRightBrush, TopRightSlice, x2, y0, rightWRel, topHRel);
+
+                ApplyBrush(_leftBrush, LeftSlice, x0, y1, leftWRel, midHRel);
+                ApplyBrush(_middleBrush, MiddleSlice, x1, y1, midWRel, midHRel);
+                ApplyBrush(_rightBrush, RightSlice, x2, y1, rightWRel, midHRel);
+
+                ApplyBrush(_botLeftBrush, BotLeftSlice, x0, y2, leftWRel, botHRel);
+                ApplyBrush(_botMidBrush, BotMidSlice, x1, y2, midWRel, botHRel);
+                ApplyBrush(_botRightBrush, BotRightSlice, x2, y2, rightWRel, botHRel);
+            }
+            else
+            {
+                // Original 3-slice path, unchanged
+                SetNineSliceVisibility(false);
+
+                LeftSlice.Width = leftW;
+                MiddleSlice.Width = midW;
+                RightSlice.Width = rightW;
+                LeftSlice.Height = MiddleSlice.Height = RightSlice.Height = elemH;
+                LeftSlice.Visibility = MiddleSlice.Visibility = RightSlice.Visibility = Visibility.Visible;
+
+                ApplyBrush(_leftBrush, LeftSlice, stateBox.X, stateBox.Y, leftWRel, stateBox.Height);
+                ApplyBrush(_middleBrush, MiddleSlice, stateBox.X + leftWRel, stateBox.Y, midWRel, stateBox.Height);
+                ApplyBrush(_rightBrush, RightSlice, stateBox.X + leftWRel + midWRel, stateBox.Y, rightWRel, stateBox.Height);
+            }
+        }
+
+        private void ApplyBrush(ImageBrush brush, Rectangle rect, double x, double y, double w, double h)
+        {
+            brush.ImageSource = Source;
+            brush.Viewbox = new Rect(x, y, Math.Max(0, w), Math.Max(0, h));
+            rect.Fill = brush;
+        }
+
+        private void SetNineSliceVisibility(bool visible)
+        {
+            var v = visible ? Visibility.Visible : Visibility.Collapsed;
+            TopLeftSlice.Visibility = TopMidSlice.Visibility = TopRightSlice.Visibility = v;
+            BotLeftSlice.Visibility = BotMidSlice.Visibility = BotRightSlice.Visibility = v;
         }
 
         #endregion
