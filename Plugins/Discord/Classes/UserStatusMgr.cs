@@ -9,8 +9,13 @@
 // License: http://skymu.app/license.txt
 /*==========================================================*/
 
+using MiddleMan;
+using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Text.Json.Nodes;
+using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord.Classes
 {
@@ -93,7 +98,6 @@ namespace Discord.Classes
                         }
                     }
                 }
-
                 UserStatusStore.UpdateStatus(userId, status, customStatus);
             }
         }

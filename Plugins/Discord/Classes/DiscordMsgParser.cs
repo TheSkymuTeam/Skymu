@@ -37,9 +37,6 @@ namespace Discord.Classes
 
             Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
 
-            if (String.IsNullOrEmpty(message["content"]?.GetValue<string>()))
-                Debug.Write(message.ToJsonString());
-
             Message parent = ParseReply(message["referenced_message"]);
 
             if (message["message_snapshots"] is not null) return await ParseMessage(message["message_snapshots"][0]["message"], true);

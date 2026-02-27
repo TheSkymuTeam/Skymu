@@ -250,6 +250,9 @@ namespace Discord.Classes
                                 guildsData = readyData["guilds"] ?? new JsonArray();
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
+                            case "READY_SUPPLEMENTAL":
+                                Debug.WriteLine($"[WS] READY_SUPPLEMENTAL received: {json["d"]?.ToJsonString()}");
+                                break;
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
                                 break;
@@ -263,6 +266,9 @@ namespace Discord.Classes
                                 HandleTypingEvent(json["d"]);
                                 break;
                             case "USER_SETTINGS_UPDATE":
+                                Debug.WriteLine($"[WS] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
+                                break;
+                            case "PRESENCE_UPDATE":
                                 Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
                                 break;
                         }

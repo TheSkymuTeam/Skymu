@@ -62,7 +62,7 @@ namespace Discord.Classes
         public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
         {
             string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint; 
-            Debug.WriteLine(url);
+            // Debug.WriteLine(url);
             var request = new HttpRequestMessage(httpMethod, url);
 
             if (!string.IsNullOrEmpty(token))
