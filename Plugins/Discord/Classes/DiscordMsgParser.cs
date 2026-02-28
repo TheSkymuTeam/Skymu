@@ -35,7 +35,7 @@ namespace Discord.Classes
 
             DateTime timestamp = ParseTimestamp(message["timestamp"]?.GetValue<string>());
 
-            Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
+            Attachment[] media = [ new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) ];
 
             Message parent = ParseReply(message["referenced_message"]);
 
@@ -77,7 +77,7 @@ namespace Discord.Classes
                 ?? "Anonymous";
             string username = author?["username"]?.GetValue<string>()
                 ?? "Anonymous";
-            return new string[] { displayname, username };
+            return [displayname, username];
         }
 
         public static async Task<byte[]> ParseMessageMedia(JsonNode message)
