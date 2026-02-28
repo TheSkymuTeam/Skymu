@@ -35,7 +35,7 @@ using System.Windows.Threading;
 
 # pragma warning disable CS4014, CA1416
 
-namespace Skymu
+namespace Skymu.Skyaeris
 {
     public partial class MainWindow : Window
     {
@@ -240,7 +240,7 @@ namespace Skymu
 
         private static BitmapImage LoadAvatar(string avatar)
         {
-            string AvatarPath = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
+            string AvatarPath = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
 
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
@@ -357,10 +357,10 @@ namespace Skymu
         private void Window_Deactivated(object sender, EventArgs e)
         {
             IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Inactive.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillSecondary : SkypeColors.Inactive.Fill;
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Inactive.Fill;
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
 
             foreach (SliceControl button in new[] { close, minimize, maximize, split })
             {
@@ -370,17 +370,17 @@ namespace Skymu
 
             if (this.Background == System.Windows.Media.Brushes.Transparent) return;
 
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Inactive.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Inactive.Fill;
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Fill;
 
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
             IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Active.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillSecondary : SkypeColors.Active.Fill;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Active.Fill;
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
 
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
 
@@ -391,8 +391,8 @@ namespace Skymu
 
             if (this.Background == Brushes.Transparent) return;
 
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Active.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? SkypeColors.Fallback.FillPrimary : SkypeColors.Active.Fill;
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Fill;
         }
 
 
@@ -805,7 +805,7 @@ namespace Skymu
                 while (!token.IsCancellationRequested)
                 {
                     string icon_filename = speedButtonIcons[index % speedButtonIcons.Length];
-                    string icon_uri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + icon_filename;
+                    string icon_uri = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Chat/" + icon_filename;
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -852,7 +852,7 @@ namespace Skymu
                 await animTask;
             }
 
-            string fianl_uri = "pack://application:,,," + Properties.Settings.Default.ThemeRoot + "/Chat/" + final_icon;
+            string fianl_uri = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Chat/" + final_icon;
             var final_bmp = new BitmapImage();
             final_bmp.BeginInit();
             final_bmp.UriSource = new Uri(fianl_uri, UriKind.Absolute);
@@ -1483,294 +1483,4 @@ namespace Skymu
         }
     }
 
-    // Converters used in the MainWindow XAML
-    public class ByteArrayToImageSourceConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            var bytes = values[0] as byte[];
-            var type = values[1] as string;
-
-            if (bytes != null && bytes.Length > 0)
-            {
-                var bmp = new BitmapImage();
-                using (var stream = new MemoryStream(bytes))
-                {
-                    bmp.BeginInit();
-                    bmp.CacheOption = BitmapCacheOption.OnLoad;
-                    bmp.StreamSource = stream;
-                    bmp.EndInit();
-                }
-                bmp.Freeze();
-                return bmp;
-            }
-
-            if (type == "group") return MainWindow.GroupAvatar;
-            else return MainWindow.AnonymousAvatar;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
-        }
-    }
-
-    public class MsgByteArrayToImageConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not byte[] bytes || bytes.Length == 0 || value is null)
-                return null;
-
-            try
-            {
-                var bmp = new BitmapImage();
-                using (var stream = new MemoryStream(bytes))
-                {
-                    bmp.BeginInit();
-                    bmp.CacheOption = BitmapCacheOption.OnLoad;
-                    bmp.StreamSource = stream;
-                    bmp.EndInit();
-                }
-                bmp.Freeze();
-
-                return bmp;
-            }
-            catch { return null; }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
-    public class PreviewVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool isPreview = value is string id && id.StartsWith("@skymu/sending");
-            bool invert = parameter as string == "invert";
-            return (isPreview ^ invert) ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
-    }
-    public class IdentifierToColorConverter : IValueConverter
-    {
-        private static readonly SolidColorBrush ActiveBrush =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
-
-        private static readonly SolidColorBrush InactiveBrush =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value is string identifier && identifier == MainWindow.Identifier
-                ? ActiveBrush
-                : InactiveBrush;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
-    public class StatusToTextConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not UserConnectionStatus statInt)
-                return Universal.Lang["sTRAYHINT_USER_OFFLINE"];
-
-            return Tray.StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sTRAYHINT_USER_OFFLINE"];
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
-    public class ForwardedChecker : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values[1] is bool isForwarded && isForwarded)
-                return values[0] + " (forwarded message)";
-
-            return values[0];
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public sealed class FormatFullTextConverter : IValueConverter
-    {
-        public Style ViewerStyle { get; set; }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not string text)
-                return DependencyProperty.UnsetValue;
-
-            return MessageTools.FormTextblock(text, false, ViewerStyle);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
-    }
-
-    public class MsgIDToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value is null ? Visibility.Collapsed : Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-    public class PresenceStatusConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is UserConnectionStatus stat)
-            {
-                return MainWindow.GetIntFromStatus(stat);
-            }
-            return 0;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
-    public class ChannelTypeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is ChannelType chan)
-            {
-                return MainWindow.GetIntFromChannelType(chan);
-            }
-            return 0;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return Binding.DoNothing;
-        }
-    }
-
-    public class TextStatusConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values[1] is int count)
-            {
-                return count.ToString() + " members";
-            }
-            else return values[0] ?? String.Empty;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public class ReplyBodyConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (String.IsNullOrEmpty(value as string)) return "[media]";
-            string s = value.ToString();
-            return s.Replace("\r", " ").Replace("\n", " ");
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MsgIDMultiToVisibilityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values.Length < 2) return Visibility.Collapsed;
-
-            return values[0] as string == values[1] as string
-                ? Visibility.Hidden
-                : Visibility.Visible;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public class NullDependentVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
-            else if (value is null) return Visibility.Collapsed;
-            else return Visibility.Visible;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class NullDependentBoolean : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is string s && String.IsNullOrEmpty(s)) return false;
-            else if (value is null) return false;
-            else return true;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ThemeImageConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is null || parameter is null) return null;
-
-            string themeRoot = value.ToString();
-            string imagePath = parameter.ToString();
-
-            string fullPath = $"{themeRoot}/{imagePath}".Replace("//", "/");
-
-            string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            string packUri = $"pack://application:,,,/{assemblyName};component{fullPath}";
-
-            return new BitmapImage(new Uri(packUri));
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

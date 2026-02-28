@@ -24,10 +24,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Homepage" Type="System.String" Scope="User">
-      <Value Profile="(Default)">https://silentspacemarine.com/</Value>
+      <Value Profile="(Default)">https://infinitemac.org/embed?disk=Mac+OS+8.0&amp;infinite_hd=true&amp;machine=Quadra+650</Value>
     </Setting>
     <Setting Name="HomepageScroll" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="UseClearType" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -36,10 +36,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.2.1</Value>
+      <Value Profile="(Default)">0.2.3</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Chamonix Fried Ice Cream</Value>
+      <Value Profile="(Default)">Chamonix Crème Brûlée</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
@@ -51,7 +51,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

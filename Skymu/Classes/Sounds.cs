@@ -35,7 +35,7 @@ namespace Skymu
 
         static void Load(string key, string relativePath)
         {
-            var uri = new Uri($"pack://application:,,,/Resources/Universal/Sounds/{relativePath}", UriKind.Absolute);
+            var uri = new Uri($"pack://application:,,,/Sounds/{relativePath}", UriKind.Absolute);
             var streamInfo = Application.GetResourceStream(uri);
             if (streamInfo?.Stream != null)
             {

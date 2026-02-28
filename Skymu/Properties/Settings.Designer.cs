@@ -109,7 +109,8 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://silentspacemarine.com/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://infinitemac.org/embed?disk=Mac+OS+8.0&infinite_hd=true&machine=Quadra+650" +
+            "")]
         public string Homepage {
             get {
                 return ((string)(this["Homepage"]));
@@ -121,7 +122,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool HomepageScroll {
             get {
                 return ((bool)(this["HomepageScroll"]));
@@ -157,7 +158,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.2.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.2.3")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -169,7 +170,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Chamonix Fried Ice Cream")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Chamonix Crème Brûlée")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -217,7 +218,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool DynamicSidebarTabs {
             get {
                 return ((bool)(this["DynamicSidebarTabs"]));

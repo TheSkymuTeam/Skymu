@@ -160,7 +160,7 @@ namespace Skymu
                         break;
                 }*/
 
-                new About().Show();
+                new Skyaeris.About().Show();
                 //Universal.NotImplemented("Windows Native Menu Bar");
             }
             return IntPtr.Zero;

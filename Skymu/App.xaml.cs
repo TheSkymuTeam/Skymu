@@ -48,7 +48,7 @@ namespace Skymu
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                new Notification(e);
+                new Skyaeris.Notification(e);
             });
         }
 

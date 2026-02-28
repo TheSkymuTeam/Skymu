@@ -12,9 +12,9 @@
 using System.Windows.Media;
 using System.Windows;
 
-namespace Skymu
+namespace Skymu.Skyaeris
 {
-    public static class SkypeColors
+    public static class ThemeColors
     {
         // Brushes I'm mostly using for dark theme right now, but later the whole program will rely on
         public static SolidColorBrush darkBlue = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1d3a55"));

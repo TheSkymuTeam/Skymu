@@ -616,7 +616,7 @@ namespace Skymu
 
         internal static SliceControl FormAnimatedEmoji(string emojiName)
         {
-            var uri = new Uri($"pack://application:,,,/Resources/Universal/Emoji/{emojiName}/views/default_20_anim/index.png", UriKind.Absolute);
+            var uri = new Uri($"pack://application:,,,/Emoji/{emojiName}/views/default_20_anim/index.png", UriKind.Absolute);
             var sourceImg = new BitmapImage();
             sourceImg.BeginInit();
             sourceImg.UriSource = uri;

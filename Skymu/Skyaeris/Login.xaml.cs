@@ -29,7 +29,7 @@ using System.Windows.Navigation;
 
 # pragma warning disable CA1416
 
-namespace Skymu
+namespace Skymu.Skyaeris
 {
     /// <summary>
     ///     Interaction logic for Login.xaml

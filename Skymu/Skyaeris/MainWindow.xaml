@@ -1,4 +1,4 @@
-﻿<Window x:Class="Skymu.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" xmlns:properties="clr-namespace:Skymu.Properties" xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan" xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase" xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" WindowStyle="None" FontFamily="Tahoma" FontSize="11" MinHeight="450" MinWidth="800" Style="{StaticResource Window}" Background="#8cbeff" AllowsTransparency="False" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Title="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated" StateChanged="Window_StateChanged" Activated="Window_Activated" DataContext="{StaticResource Lang}">
+﻿<Window x:Class="Skymu.Skyaeris.MainWindow" xmlns:converters="clr-namespace:Skymu.Converters" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:global="clr-namespace:Skymu" xmlns:local="clr-namespace:Skymu.Skyaeris" xmlns:properties="clr-namespace:Skymu.Properties" xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan" xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase" xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" WindowStyle="None" FontFamily="Tahoma" FontSize="11" MinHeight="450" MinWidth="800" Style="{StaticResource Window}" Background="#8cbeff" AllowsTransparency="False" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Title="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" Closing="MainWindow_Closing" Height="856" Width="1448" Deactivated="Window_Deactivated" StateChanged="Window_StateChanged" Activated="Window_Activated" DataContext="{StaticResource Lang}">
     <Window.Resources>
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
             <Setter Property="Width" Value="430"/>
@@ -9,24 +9,24 @@
             <Setter Property="Focusable" Value="True"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
-        <local:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
-        <local:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
-        <local:IdentifierToColorConverter x:Key="IdToColorConverter"/>
-        <local:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
-        <local:NullDependentBoolean x:Key="NullDependentBoolean"/>
-        <local:StatusToTextConverter x:Key="StatIntToText"/>
-        <local:ThemeImageConverter x:Key="ThemeImageConverter"/>
-        <local:ForwardedChecker x:Key="ForwardedChecker"/>
-        <local:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
-        <local:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
-        <local:ChannelTypeConverter x:Key="ChannelTypeConverter"/>
-        <local:TextStatusConverter x:Key="TextStatusConverter"/>
-        <local:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
-        <local:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter"/>
-        <local:FormatFullTextConverter
+        <converters:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
+        <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
+        <converters:IdentifierToColorConverter x:Key="IdToColorConverter"/>
+        <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
+        <converters:NullDependentBoolean x:Key="NullDependentBoolean"/>
+        <converters:StatusToTextConverter x:Key="StatIntToText"/>
+        <converters:ThemeImageConverter x:Key="ThemeImageConverter"/>
+        <converters:ForwardedChecker x:Key="ForwardedChecker"/>
+        <converters:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
+        <converters:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
+        <converters:ChannelTypeConverter x:Key="ChannelTypeConverter"/>
+        <converters:TextStatusConverter x:Key="TextStatusConverter"/>
+        <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
+        <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter"/>
+        <converters:FormatFullTextConverter
     x:Key="FormatFullTextConverter"
     ViewerStyle="{StaticResource TextBlockViewerStyle}" />
-        <Style x:Key="WindowButtonStyle" TargetType="local:SliceControl">
+        <Style x:Key="WindowButtonStyle" TargetType="global:SliceControl">
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Height" Value="18"/>
@@ -93,7 +93,7 @@
                         </Grid>
                     </Border>
                 </Grid>
-                <local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
+                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
                 Converter={StaticResource PresenceStatusConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                 <!-- Name + status text -->
                 <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
@@ -140,7 +140,7 @@
                         </Grid>
                     </Border>
                 </Grid>
-                <local:SliceControl Grid.Column="1" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                 <!-- Name + member count -->
                 <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
                 <TextBlock x:Name="statusText"
@@ -210,11 +210,11 @@
                         <ControlTemplate TargetType="ToggleButton">
                             <Grid Width="12" Height="12">
                                 <Image 
-Source="/Resources/Universal/Sidebar/collapse-toggle-background.png"
+Source="Resources/Universal/Sidebar/collapse-toggle-background.png"
 Width="12" Height="12">
                                 </Image>
                                 <Image x:Name="ToggleImage"
-                       Source="/Resources/Universal/Sidebar/collapse-toggle-arrow.png"
+                       Source="Resources/Universal/Sidebar/collapse-toggle-arrow.png"
                        Width="12" Height="12"
                        RenderTransformOrigin="0.5,0.5">
                                     <Image.RenderTransform>
@@ -249,7 +249,7 @@ Width="12" Height="12">
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <local:SliceControl Grid.Column="0" Grid.Row="1" Source="/Resources/Universal/Icon Bitmap/skype-channel-small.png" ElementCount="16" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType,
+                <global:SliceControl Grid.Column="0" Grid.Row="1" Source="Resources/Universal/Icon Bitmap/skype-channel.png" ElementCount="11" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType,
                             Converter={StaticResource ChannelTypeConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                 <TextBlock
                     Grid.Column="1"
@@ -325,7 +325,7 @@ Width="12" Height="12">
                 <!-- Timestamp -->
                 <Grid Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <TextBlock Text="{Binding Time, StringFormat=h:mm tt}" FontSize="11" FontFamily="Tahoma" Foreground="#999999" Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}"/>
-                    <local:SliceControl Source="/Resources/Universal/Chat/loading.png" ElementCount="72" StackDirection="Vertical" DefaultIndex="0" IsAnimation="True" AnimationFps="60" Slice="false" Width="10" Height="10" Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}"/>
+                    <global:SliceControl Source="Resources/Universal/Chat/loading.png" ElementCount="72" StackDirection="Vertical" DefaultIndex="0" IsAnimation="True" AnimationFps="60" Slice="false" Width="10" Height="10" Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -383,10 +383,10 @@ Width="12" Height="12">
                 <ColumnDefinition Width="121"/>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="CaptionButtons" Margin="0,0,5,0">
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/minimize.png" Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
-                <local:SliceControl Source="/Resources/Universal/Window Frame/Aero/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+                <global:SliceControl Source="Resources/Universal/Window Frame/Aero/split.png" Style="{StaticResource WindowButtonStyle}" x:Name="split" Width="26" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+                <global:SliceControl Source="Resources/Universal/Window Frame/Aero/minimize.png" Style="{StaticResource WindowButtonStyle}" x:Name="minimize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+                <global:SliceControl Source="Resources/Universal/Window Frame/Aero/maximize.png" Style="{StaticResource WindowButtonStyle}" x:Name="maximize" Width="24" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
+                <global:SliceControl Source="Resources/Universal/Window Frame/Aero/close.png" Style="{StaticResource WindowButtonStyle}" x:Name="close" Width="42" MouseEnter="TitleButton_MouseEnter" MouseLeave="TitleButton_MouseLeave" MouseLeftButtonDown="TitleButton_Pressed" MouseLeftButtonUp="TitleButton_Click"/>
             </StackPanel>
             <Grid Grid.Column="0" x:Name="IconText">
                 <TextBlock x:Name="TitleShadow" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Segoe UI" Visibility="Hidden" FontSize="12" Foreground="White" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
@@ -407,7 +407,7 @@ Width="12" Height="12">
                 <TextBlock x:Name="TitleMain" Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" FontFamily="Arial" FontSize="13" FontWeight="Bold" Foreground="#333333" VerticalAlignment="Top" Margin="50,7,0,0" Panel.ZIndex="2">
 
                 </TextBlock>
-                <Image Source="/Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click" Margin="8,0,0,0"/>
+                <Image Source="Resources/Universal/Window Frame/long-icon.png" Cursor="Hand" Style="{StaticResource LongIconStyle}" x:Name="tbli" MouseLeftButtonUp="tbli_Click" Margin="8,0,0,0"/>
             </Grid>
         </Grid>
         <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown" Margin="4,30,4,4">
@@ -542,14 +542,14 @@ Width="12" Height="12">
                             <RowDefinition Height="4"/>
                             <RowDefinition Height="32"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="22"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <Grid x:Name="SidebarStatus" Grid.Row="0" VerticalAlignment="Top">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="32"/>
                                 <RowDefinition Height="32"/>
                             </Grid.RowDefinitions>
-                            <local:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Source={x:Static properties:Settings.Default},
                      Path=ThemeRoot,
                      Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Top.png',
                      diag:PresentationTraceSources.TraceLevel=High}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" ButtonStateOnInit="Pressed" IsRadioButton="True" HoverIndex="-1" PressedIndex="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" TextStartPositionX="43" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#FFFFFF"/>
@@ -558,46 +558,46 @@ Width="12" Height="12">
                                     <ContextMenu x:Key="StatusMenu">
                                         <MenuItem x:Name="sm_online" Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem x:Name="sm_away" Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="3" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem x:Name="sm_dnd" Header="{Binding [sSTATUSMENU_CAPTION_DND]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="5" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem x:Name="sm_invisible" Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem x:Name="sm_offline" IsEnabled="False" Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="14" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <Separator/>
                                         <MenuItem x:Name="sm_call_forwarding" Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}" Click="StatusMenuItemClick">
                                             <MenuItem.Icon>
-                                                <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="13" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
                                 </StackPanel.Resources>
-                                <local:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="/Resources/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
+                                <global:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="Resources/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
                                 <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}" Width="12" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                             </StackPanel>
-                            <local:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_HomeButton_Sprite.png'}" ElementCount="3" StackDirection="Horizontal" DefaultIndex="0" ButtonStateOnInit="Pressed" HorizontalAlignment="Right" Margin="0,0,11,0" IsHitTestVisible="False" HoverIndex="1" PressedIndex="2" Slice="false" Width="16"/>
-                            <local:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Bottom.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION],
                           StringFormat=$ 0.00 - {0}}" TextStartPositionX="34" TextFont="Tahoma" TextSize="11" TextColor="#333333" HorizontalAlignment="Stretch"/>
@@ -609,13 +609,13 @@ Width="12" Height="12">
                                 <ColumnDefinition x:Name="ServersColumn"  Width="*"/>
                                 <ColumnDefinition x:Name="RecentsColumn"  Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <local:SliceControl x:Name="btnContacts" Grid.Column="0" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl x:Name="btnContacts" Grid.Column="0" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Contacts.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sZAPBUTTON_CONTACTS]}" TextStartPositionX="30" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Contacts_BtnDown" HorizontalAlignment="Stretch"/>
-                            <local:SliceControl x:Name="btnServers" Grid.Column="1" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl x:Name="btnServers" Grid.Column="1" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Servers.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="Servers" TextStartPositionX="28" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Servers_BtnDown" HorizontalAlignment="Stretch"/>
-                            <local:SliceControl x:Name="btnRecents" Grid.Column="2" LeftWidth="25" RightWidth="2"  IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl x:Name="btnRecents" Grid.Column="2" LeftWidth="25" RightWidth="2"  IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Recents.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sRECENTS_TAB_TEXT]}" TextStartPositionX="30" MouseLeftButtonDown="Recents_BtnDown" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                         </Grid>
@@ -625,16 +625,12 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                     <RowDefinition Height="31"/>
                                     <RowDefinition Height="1"/>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="0"/>
-                                    <RowDefinition Height="34"/>
-                                    <RowDefinition Height="1"/>
-                                    <RowDefinition Height="32"/>
                                 </Grid.RowDefinitions>
-                                <local:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Source={x:Static properties:Settings.Default},
+                                <global:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_SearchBox.png'}" ElementCount="2" StackDirection="Vertical" DefaultIndex="1" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="0" HorizontalAlignment="Stretch"/>
                                 <TextBox Grid.Row="0" Cursor="IBeam" x:Name="SearchBox" GotKeyboardFocus="SearchBox_Focused" LostKeyboardFocus="SearchBox_Unfocused" BorderThickness="0" Padding="33,0,0,0" Background="Transparent" FontFamily="Tahoma" FontSize="11" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
-                                <Rectangle Grid.Row="1" Height="1" Fill="#b4c0ce"/>
+                                <Rectangle Grid.Row="1" Height="1" Fill="#d9dfe6"/>
                                 <ListBox x:Name="ContactsList" Grid.Row="2" BorderThickness="0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" SelectionChanged="ContactList_SelectionChanged" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -723,27 +719,39 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                         </Style>
                                     </TreeView.ItemContainerStyle>
                                 </TreeView>
-                                <Grid x:Name="SidebarAddButtons" Grid.Row="4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <local:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddFriend.png'}" ElementCount="3" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sADD_CONTACT_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="AddContact_Click" HorizontalAlignment="Stretch"/>
-                                    <local:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddGroup.png'}" ElementCount="4" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sCREATE_GROUP_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="MakeGroup_Click" HorizontalAlignment="Stretch"/>
-                                </Grid>
-                                <Rectangle Grid.Row="5" Height="1" Fill="#c8cbcd"/>
-                                <local:SliceControl Grid.Row="6" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="{Binding [sZAPBUTTON_SKYPEOUT]}" TextStartPositionX="32" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                                
                             </Grid>
                         </Border>
-                        <local:SliceControl x:Name="GlobalUserCount" Grid.Row="4" Source="{Binding Source={x:Static properties:Settings.Default},
+                        
+                        <StackPanel Grid.Row="4" Orientation="Vertical">
+                            <Grid x:Name="SidebarAddButtons" Grid.Row="4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <global:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddFriend.png'}" ElementCount="3" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sADD_CONTACT_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="AddContact_Click" HorizontalAlignment="Stretch"/>
+                                <global:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddGroup.png'}" ElementCount="4" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sCREATE_GROUP_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="MakeGroup_Click" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                            
+                            <Border  BorderBrush="#26000000" BorderThickness="1,0,1,0">
+                                <StackPanel Orientation="Vertical">
+                                    <Rectangle Height="1" Fill="#C5C5C5" Opacity="0.82"/>
+                                    <global:SliceControl  Source="{Binding Source={x:Static properties:Settings.Default},
+Path=ThemeRoot,
+Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="{Binding [sZAPBUTTON_SKYPEOUT]}" TextStartPositionX="32" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                                    <Rectangle Height="1" Fill="#C5C5C5" Opacity="0.82"/>
+                                </StackPanel>
+
+                            </Border>
+                            <global:SliceControl  x:Name="GlobalUserCount" Source="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user-count-tab.png'}" ElementCount="1" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="Skymu Beta. All rights reserved." TextStartPositionX="7" TextFont="Tahoma" TextSize="11" TextColor="#999999" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+                       
                     </Grid>
                     <ContentControl x:Name="SelectedItemHolder" Visibility="Collapsed" Grid.Row="0"/>
                     <Rectangle x:Name="SkypeSplitter" Grid.Column="1" MouseLeftButtonDown="SkypeSplitter_Press" MouseMove="SkypeSplitter_MouseMove" Fill="Transparent" Cursor="SizeWE"/>
@@ -758,10 +766,10 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="chatHeader" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="13" Text="{Binding DisplayName}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch" Loaded="chatHeader_Loaded"/>
-                            <local:SliceControl Grid.Column="1" TextRightMargin="16" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl Grid.Column="1" TextRightMargin="16" Source="{Binding Source={x:Static properties:Settings.Default},
 Path=ThemeRoot,
 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" Width="Auto" ElementCount="5" x:Name="ChatCloseButton" MouseLeftButtonUp="Chat_Close" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" TextStartPositionX="27" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                             <Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
@@ -775,19 +783,19 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <local:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <global:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="MainPageButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" ButtonStateOnInit="Pressed" HoverIndex="-1" PressedIndex="2" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="0" Source="/Resources/Universal/Chat/settings_skype.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <Image Grid.Column="0" Source="Resources/Universal/Chat/settings_skype.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                            <global:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="ProfileButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="1" Source="/Resources/Universal/Chat/info_pressed.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="2" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <Image Grid.Column="1" Source="Resources/Universal/Chat/info_pressed.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                            <global:SliceControl Grid.Column="2" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="FeedbackButton" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" IsRadioButton="True" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="2" Source="/Resources/Universal/Chat/icon-skype-feedback.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <local:SliceControl Grid.Column="3" Source="{Binding Source={x:Static properties:Settings.Default},
+                            <Image Grid.Column="2" Source="Resources/Universal/Chat/icon-skype-feedback.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+                            <global:SliceControl Grid.Column="3" Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" HorizontalAlignment="Stretch"/>
                         </Grid>
@@ -815,7 +823,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
+                                                    <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
                             Converter={StaticResource PresenceStatusConverter}}" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                                     <TextBlock Margin="9,0,0,0" Text="{Binding RemoteUser.PresenceStatus,
                                    Converter={StaticResource StatIntToText}}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
@@ -841,7 +849,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                    <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                                     <TextBlock Margin="9,0,0,0" Text="{Binding Members.Length, StringFormat='{}{0} members'}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
                                             </Grid>
@@ -865,7 +873,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-channel-small.png" ElementCount="16" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
+                                                    <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-channel.png" ElementCount="11" StackDirection="Horizontal" DefaultIndex="2" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                                     <TextBlock Margin="9,0,0,0" Text="{Binding Channels.Length, StringFormat='{}Server - {0} channels'}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
                                             </Grid>
@@ -889,7 +897,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <local:SliceControl Source="/Resources/Universal/Icon Bitmap/skype-channel-small.png" ElementCount="16" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType,
+                                                    <global:SliceControl Source="Resources/Universal/Icon Bitmap/skype-channel.png" ElementCount="11" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType,
                             Converter={StaticResource ChannelTypeConverter}}" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="14"/>
                                                     <TextBlock Margin="9,0,0,0" Text="Server channel" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
@@ -909,18 +917,18 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="7,1,0,0">
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_video_call.png" TextRightMargin="9" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="VideoCallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}" TextStartPositionX="25" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftWidth="22" RightWidth="22" TextColor="White" Width="Auto"/>
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_call_left.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="White" Width="Auto" LeftWidth="22" RightWidth="22"  Margin="10,0,0,0"/>
-                                    <local:SliceControl Source="/Resources/Universal/Chat/btn_call_right.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Width="24" LeftWidth="1" RightWidth="1"/>
-                                    <local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
+                                    <global:SliceControl Source="Resources/Universal/Chat/btn_video_call.png" TextRightMargin="9" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="VideoCallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}" TextStartPositionX="25" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftWidth="22" RightWidth="22" TextColor="White" Width="Auto"/>
+                                    <global:SliceControl Source="Resources/Universal/Chat/btn_call_left.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="White" Width="Auto" LeftWidth="22" RightWidth="22"  Margin="10,0,0,0"/>
+                                    <global:SliceControl Source="Resources/Universal/Chat/btn_call_right.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Width="24" LeftWidth="1" RightWidth="1"/>
+                                    <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_add.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="AddButtonClick" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
-                                    <local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
+                                    <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_network_unavailable.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" x:Name="WifiButton" MouseLeftButtonUp="WifiButton_Click" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
                                 </StackPanel>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8"/>
-                                <Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="/Resources/Universal/Animations/loading_throbber.png" Width="90" Height="90" RenderTransformOrigin="0.5,0.5" Visibility="Visible">
+                                <Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="Resources/Universal/Animations/loading_throbber.png" Width="90" Height="90" RenderTransformOrigin="0.5,0.5" Visibility="Visible">
                                     <Image.RenderTransform>
                                         <TransformGroup>
                                             <ScaleTransform/>
@@ -973,7 +981,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-top.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
-                                                <local:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
+                                                <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
                  Path=ThemeRoot,
                  Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_emoji.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" HorizontalAlignment="Left" x:Name="EmojiButton" MouseLeftButtonUp="EmojiButton_Click" PressedIndex="2" Width="18" Height="17" Slice="false"/>
                                             </StackPanel>
@@ -1010,7 +1018,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                                 </Border>
                                             </Popup>
                                             <StackPanel x:Name="TypingIndicator" Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,7,0">
-                                                <local:SliceControl x:Name="TypingIndicatorIcon" Source="/Resources/Universal/Chat/pencil-write.png" ElementCount="37" IsAnimation="True" AnimationFps="30" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="23"/>
+                                                <global:SliceControl x:Name="TypingIndicatorIcon" Source="Resources/Universal/Chat/pencil-write.png" ElementCount="37" IsAnimation="True" AnimationFps="30" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="23"/>
                                                 <TextBlock VerticalAlignment="Center" Margin="3,0,0,0" Foreground="#666666" x:Name="TypingIndicatorText"/>
                                             </StackPanel>
                                         </Grid>
@@ -1024,7 +1032,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                             </RichTextBox>
                                         </Border>
                                     </StackPanel>
-                                    <local:SliceControl HorizontalAlignment="Left" Grid.Column="2" Margin="8,0,0,0" Source="/Resources/Universal/Chat/msg-send-button-full.png" ElementCount="5" IsEnabled="False" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" Focusable="False" x:Name="SendMsgButton" VerticalAlignment="Top" MouseLeftButtonUp="OnMsgSendClickButton" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftWidth="22" RightWidth="22"  TextColor="White" Width="Auto"/>
+                                    <global:SliceControl HorizontalAlignment="Left" Grid.Column="2" Margin="8,0,0,0" Source="Resources/Universal/Chat/msg-send-button-full.png" ElementCount="5" IsEnabled="False" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" Focusable="False" x:Name="SendMsgButton" VerticalAlignment="Top" MouseLeftButtonUp="OnMsgSendClickButton" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftWidth="22" RightWidth="22"  TextColor="White" Width="Auto"/>
                                 </Grid>
                             </Grid>
                         </Border>

@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace Skymu
+namespace Skymu.Skyaeris
 {
     public partial class Notification : Window
     {
@@ -46,7 +46,7 @@ namespace Skymu
 
                 if (Properties.Settings.Default.AccurateNotifications)
                 {
-                    string packUri = "pack://application:,,,/Resources/light/notifications/bubble-orange.png";
+                    string packUri = "pack://application:,,,/Skyaeris/Resources/Light/Notifications/bubble-orange.png";
                     bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
                 }
 
