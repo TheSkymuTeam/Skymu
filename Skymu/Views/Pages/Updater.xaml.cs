@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
-namespace Skymu.Pages
+namespace Skymu.Views.Pages
 {
     /// <summary>
     /// Interaction logic for Updater.xaml
@@ -29,7 +29,7 @@ namespace Skymu.Pages
         private string brand = Properties.Settings.Default.BrandingName;
         private string[] update_info;
         private const string Repo = "Skymu-Public";
-        private SkypeWindow window;
+        private WindowBase window;
 
         private static readonly HttpClient _httpClient = CreateClient();
 
@@ -46,21 +46,21 @@ namespace Skymu.Pages
             UpdateHandler(manual);
         }
 
-        public async void UpdateHandler(bool manual, SkypeWindow exwin = null)
+        public async void UpdateHandler(bool manual, WindowBase exwin = null)
         {
             update_info = await GetUpdateInfo();
 
             if (update_info.Length > 0) // not up to date, must show window
             {
                 if (exwin is not null) window = exwin;
-                else window = new SkypeWindow(this);
+                else window = new WindowBase(this);
                 window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
 
                 if (update_info[0] == "UPDATE_CHECK_ERROR") // error when checking for update
                 {
                     if (!manual) { window.Close(); return; }
-                    window.HeaderIcon = SkypeWindow.IconType.PackageWarning;
+                    window.HeaderIcon = WindowBase.IconType.PackageWarning;
                     window.HeaderText = Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"];
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
@@ -70,7 +70,7 @@ namespace Skymu.Pages
 
                 else // update is available
                 {
-                    window.HeaderIcon = SkypeWindow.IconType.PackageCheckmark;
+                    window.HeaderIcon = WindowBase.IconType.PackageCheckmark;
                     window.HeaderText = Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info[0];
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
@@ -89,13 +89,13 @@ namespace Skymu.Pages
 
             else // up to date, show dialog
             {
-                if (manual) new Dialog(SkypeWindow.IconType.PackageCheckmark, Universal.Lang["sF_UPGRADE_UPTODATE"], Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]).ShowDialog();
+                if (manual) new Dialog(WindowBase.IconType.PackageCheckmark, Universal.Lang["sF_UPGRADE_UPTODATE"], Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]).ShowDialog();
             }
         }
 
         public void UpdateError(string error)
         {
-            window.HeaderIcon = SkypeWindow.IconType.PackageWarning;
+            window.HeaderIcon = WindowBase.IconType.PackageWarning;
             window.HeaderText = Universal.Lang["sF_UPGRADE_FAILED_CAPTION"];
             window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
@@ -118,7 +118,7 @@ namespace Skymu.Pages
                 }
                 catch (Exception ex)
                 {
-                    new Dialog(SkypeWindow.IconType.PackageWarning, ex.Message, "Cannot open file").ShowDialog();
+                    new Dialog(WindowBase.IconType.PackageWarning, ex.Message, "Cannot open file").ShowDialog();
                 }
                 window.Close();
                 return;
@@ -130,7 +130,7 @@ namespace Skymu.Pages
 
         public async void InitiateUpdate()
         {
-            window.HeaderIcon = SkypeWindow.IconType.PackageStar;
+            window.HeaderIcon = WindowBase.IconType.PackageStar;
             window.HeaderText = Universal.Lang["sF_UPGRADE_DOWNLOAD_CAPTION"];
             window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];

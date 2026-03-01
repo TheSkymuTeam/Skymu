@@ -12,7 +12,7 @@
       <Value Profile="(Default)">Skype</Value>
     </Setting>
     <Setting Name="ThemeRoot" Type="System.String" Scope="User">
-      <Value Profile="(Default)">/Resources/Light</Value>
+      <Value Profile="(Default)">/Assets/Light</Value>
     </Setting>
     <Setting Name="EmojiFps" Type="System.Double" Scope="User">
       <Value Profile="(Default)">45</Value>

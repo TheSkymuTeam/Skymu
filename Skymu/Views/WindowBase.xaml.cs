@@ -15,12 +15,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 
-namespace Skymu
+namespace Skymu.Views
 {
     /// <summary>
     /// Interaction logic for Updater.xaml
     /// </summary>
-    public partial class SkypeWindow : Window
+    public partial class WindowBase : Window
     {
         private Action BLAction;
         private Action BRAction;
@@ -58,7 +58,7 @@ namespace Skymu
             TelephoneFlat
         }
 
-        public SkypeWindow(Page page)
+        public WindowBase(Page page)
         {
             InitializeComponent();
             PageHost.Navigate(page);

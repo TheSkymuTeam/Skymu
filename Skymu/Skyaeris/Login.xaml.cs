@@ -12,7 +12,8 @@
 using Microsoft.Win32;
 using MiddleMan;
 using QRCoder;
-using Skymu.Pages;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -37,7 +38,7 @@ namespace Skymu.Skyaeris
     public partial class Login : Window
     {
         private static PluginListing selectedListing;
-        private MainWindow _mainWindow;
+        private Main _Main;
         public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLoginEnabled;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
 
@@ -70,7 +71,7 @@ namespace Skymu.Skyaeris
                 var result = await Universal.Plugin.Authenticate(selectedListing.AuthenticationType, usernameBox.Text, passwordTokenBox.Password);
                 if (result == LoginResult.Success)
                 {
-                    InitiateMainWindow();
+                    InitiateMain();
                 }
                 else if (result == LoginResult.TwoFARequired)
                 {
@@ -99,12 +100,12 @@ namespace Skymu.Skyaeris
                             }
                             bitmap.Freeze();
 
-                            Dialog qrDialog = new Dialog(SkypeWindow.IconType.ContactRequest, null,
+                            Dialog qrDialog = new Dialog(WindowBase.IconType.ContactRequest, null,
                             "Scan code to authenticate", Properties.Settings.Default.BrandingName + " - Login", null, "Close", false, null, null, false, bitmap);
                             qrDialog.Show();
 
                             if (await Universal.Plugin.AuthenticateTwoFA(null) != LoginResult.Success) SetHeaderToFail();
-                            else InitiateMainWindow();
+                            else InitiateMain();
                             qrDialog.Close();
 
                         }
@@ -116,7 +117,7 @@ namespace Skymu.Skyaeris
                     }
                     else
                     {
-                        var dlg = new Dialog(SkypeWindow.IconType.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
+                        var dlg = new Dialog(WindowBase.IconType.Information, Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
                             "Two-factor authentication required", Properties.Settings.Default.BrandingName + " - Login", null, Universal.Lang["sZAPBUTTON_SIGNIN"], false, null, null, true);
                         var dlgResult = dlg.ShowDialog();
 
@@ -130,7 +131,7 @@ namespace Skymu.Skyaeris
 
                     if (optResult == LoginResult.Success) {
                        
-                        InitiateMainWindow();
+                        InitiateMain();
                     }
                     else
                     {
@@ -153,12 +154,12 @@ namespace Skymu.Skyaeris
             header.Text = Universal.Lang["sF_USERENTRY_ERROR_1101"];
         }
 
-        private void MainWindow_Ready(object sender, EventArgs e)
+        private void Main_Ready(object sender, EventArgs e)
         {
-            _mainWindow.Ready -= MainWindow_Ready;
-            Tray.PushIcon(MainWindow.Status);
+            _Main.Ready -= Main_Ready;
+            Tray.PushIcon(Main.Status);
             Universal.HasLoggedIn = true;
-            _mainWindow.Show();
+            _Main.Show();
             Sounds.Play("login", true);
             new Updater();
             noCloseEvent = true;
@@ -307,7 +308,7 @@ namespace Skymu.Skyaeris
          );
                 if (lr == LoginResult.Success)
                 {
-                    InitiateMainWindow();
+                    InitiateMain();
                     return;
                 }
                 else
@@ -322,7 +323,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private async void InitiateMainWindow()
+        private async void InitiateMain()
         {
             if (SaveCredentials.IsChecked == true)
             {
@@ -330,9 +331,9 @@ namespace Skymu.Skyaeris
                 if (cred is not null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
             }
             header.Text = "Loading user data";
-            _mainWindow = new MainWindow();
-            _mainWindow.Ready += MainWindow_Ready;
-            _ = _mainWindow.InitSidebar();
+            _Main = new Main();
+            _Main.Ready += Main_Ready;
+            _ = _Main.InitSidebar();
         }
 
         private void LoginToggleAnimation(bool anim)

@@ -61,7 +61,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("/Resources/Light")]
+        [global::System.Configuration.DefaultSettingValueAttribute("/Assets/Light")]
         public string ThemeRoot {
             get {
                 return ((string)(this["ThemeRoot"]));

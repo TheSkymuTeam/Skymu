@@ -89,8 +89,7 @@ new GradientStop((Color)ColorConverter.ConvertFromString("#f4f4f4"), 0.0667),
         public static class Fallback
         {
             public static SolidColorBrush FillPrimary = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#d4e2f2"));
-            public static SolidColorBrush FillSecondary = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f0f0f0"));
-            public static SolidColorBrush FillTertiary = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#f7f7f7"));
+            public static SolidColorBrush FillSecondary = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#bfcee0"));
         }
     }
 }

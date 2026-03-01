@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
+using System.Numerics;
+using System.Threading.Tasks;
 using System.Windows;
 
 # pragma warning disable CA1416
@@ -29,6 +31,9 @@ namespace Skymu
             Load("message-sent", "IM_SENT.WAV");
             Load("message-recieved", "IM.WAV");
             Load("call-error", "CALL_ERROR1.WAV");
+            Load("call-init", "CALL_INIT.WAV");
+            Load("call-ring", "CALL_IN.WAV");
+            Load("call-end", "HANGUP.WAV");
             Load("login", "LOGIN.WAV");
             Load("logout", "LOGOUT.WAV");
         }
@@ -73,10 +78,24 @@ namespace Skymu
             }
         }
 
+        public static void StopPlayback(string key)
+        {
+            if (!players.TryGetValue(key, out var sp))
+                return;
+            sp.Stop();
+        }
+
+        public static void PlayLoop(string key)
+        {
+            if (!players.TryGetValue(key, out var sp))
+                return;
+            sp.PlayLooping();
+        }
+
         public static void PlaySynchronous(string key)
         {
-            if (players.TryGetValue(key, out var sp))
-                sp.PlaySync(); // blocking
+            if (players.TryGetValue(key, out var sp)) sp.PlaySync();
+
         }
     }
 }

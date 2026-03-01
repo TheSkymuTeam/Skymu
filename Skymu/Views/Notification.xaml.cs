@@ -1,4 +1,5 @@
 ﻿using MiddleMan;
+using Skymu.Skyaeris;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace Skymu.Skyaeris
+namespace Skymu.Views
 {
     public partial class Notification : Window
     {
@@ -21,14 +22,14 @@ namespace Skymu.Skyaeris
             if (!Properties.Settings.Default.EnableNotifications) return;
             if (e.Item is Message message)
             {
-                if (MainWindow.Identifier == message.Sender.Identifier)
+                if (Main.Identifier == message.Sender.Identifier)
                 {
                     Debug.WriteLine("Notification: message is from me, suppress");
                     return;
                 }
 
                 // 2. window not active → allow notification
-                if (!MainWindow.IsWindowActive)
+                if (!Main.IsWindowActive)
                 {
                     Debug.WriteLine("Notification: window is inactive, show");
                 }
@@ -36,7 +37,7 @@ namespace Skymu.Skyaeris
                 {
                     // window IS active
 
-                    if (MainWindow.SelectedConversation is not null && MainWindow.SelectedConversation.Identifier == e.SentInChannelID)
+                    if (Main.SelectedConversation is not null && Main.SelectedConversation.Identifier == e.SentInChannelID)
                     {
                         Debug.WriteLine("Notification: message is from the active chat, suppress");
                         return;
@@ -46,11 +47,11 @@ namespace Skymu.Skyaeris
 
                 if (Properties.Settings.Default.AccurateNotifications)
                 {
-                    string packUri = "pack://application:,,,/Skyaeris/Resources/Light/Notifications/bubble-orange.png";
+                    string packUri = "pack://application:,,,/Skyaeris/Assets/Light/Notifications/bubble-orange.png";
                     bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
                 }
 
-                StatusIcon.DefaultIndex = MainWindow.GetIntFromStatus(e.Status);
+                StatusIcon.DefaultIndex = Main.GetIntFromStatus(e.Status);
                 TitleText.Text = message.Sender.DisplayName;
 
                 TextBlock tb = MessageTools.FormTextblock("\"" + message.Text + "\"");

@@ -10,12 +10,12 @@
 /*==========================================================*/
 
 using MiddleMan;
-using Skymu.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -37,7 +37,7 @@ using System.Windows.Threading;
 
 namespace Skymu.Skyaeris
 {
-    public partial class MainWindow : Window
+    public partial class Main : Window
     {
         // String constants
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
@@ -55,6 +55,7 @@ namespace Skymu.Skyaeris
         internal static Conversation SelectedConversation = null;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
+        private static bool IsCallPlaying = false;
         private bool is_loading_conversation;
         private NotifyCollectionChangedEventHandler _activeConversationChangedHandler;
         private WindowType current_window = WindowType.Chat;
@@ -91,17 +92,17 @@ namespace Skymu.Skyaeris
 
         public event EventHandler Ready;
 
-        public MainWindow()
+        public Main()
         {
             noCloseEvent = false;
             api = new SkymuApi();
 
             InitializeComponent();
-
+            Application.Current.MainWindow = this;
             InitializeWindow();
 
             this.MouseLeftButtonUp += MouseRelease;
-            this.SizeChanged += MainWindow_SizeChanged;
+            this.SizeChanged += Main_SizeChanged;
             SetWindow(WindowType.Home);
         }
 
@@ -109,7 +110,7 @@ namespace Skymu.Skyaeris
             DependencyProperty.Register(
             "WindowTitle",
             typeof(string),
-            typeof(MainWindow));
+            typeof(Main));
 
         public string WindowTitle
         {
@@ -341,7 +342,7 @@ namespace Skymu.Skyaeris
                 UseShellExecute = true
             });
         }
-        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Close(ev); }
+        private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Close(ev); }
         // For the menu bar at the top of the Skymu window
         private void mn_New(object sender, RoutedEventArgs e) { }
         private void mn_Open(object sender, RoutedEventArgs e) { }
@@ -351,8 +352,8 @@ namespace Skymu.Skyaeris
         private void mn_Accessibility(object sender, RoutedEventArgs e) { }
         private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
         private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
-        private void mn_Options(object sender, RoutedEventArgs e) { new Options().Show(); }
-        private void mn_About(object sender, RoutedEventArgs e) { new About().Show(); }
+        private void mn_Options(object sender, RoutedEventArgs e) { new Views.Options().Show(); }
+        private void mn_About(object sender, RoutedEventArgs e) { new Views.About().Show(); }
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
@@ -360,7 +361,7 @@ namespace Skymu.Skyaeris
             WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Window;
             MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Inactive.Fill;
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
 
             foreach (SliceControl button in new[] { close, minimize, maximize, split })
             {
@@ -380,7 +381,7 @@ namespace Skymu.Skyaeris
             IsWindowActive = true;
             WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Window;
             MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Active.Fill;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillTertiary : new SolidColorBrush(Colors.Transparent);
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
 
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
 
@@ -459,7 +460,7 @@ namespace Skymu.Skyaeris
 
                     foreach (var item in args.NewItems)
                     {
-                        if (item is Message message && message.Sender.Identifier != MainWindow.Identifier && IsWindowActive)
+                        if (item is Message message && message.Sender.Identifier != Main.Identifier && IsWindowActive)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -652,7 +653,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
         }
@@ -880,7 +881,7 @@ namespace Skymu.Skyaeris
 
                             if (item is Message message)
                             {
-                                if (message.Sender.Identifier == MainWindow.Identifier
+                                if (message.Sender.Identifier == Main.Identifier
                                     && message.Identifier != null
                                     && !message.Identifier.StartsWith(SKYMU_SENDING))
                                 {
@@ -1205,8 +1206,31 @@ namespace Skymu.Skyaeris
             }*/
 
         }
+        private async void CallButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            if (IsCallPlaying)
+            {
+                IsCallPlaying = false;
+                Sounds.StopPlayback("call-ring");
+                Sounds.Play("call-end");
+                CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
+            }
+            else
+            {
+                IsCallPlaying = true;
+                CallButton.IsEnabled = false; 
+                CallButton.Text = Universal.Lang["sPARTICIPANT_ACTIVE_PHONE"];
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    Sounds.PlaySynchronous("call-init");
+                });
+                CallButton.IsEnabled = true;
+                CallButton.Text = Universal.Lang["sZAP_ACTIONBUTTON_HANGUP"];
+                Sounds.PlayLoop("call-ring");
+            }
+        }
 
-        private void CallButtonClick(object sender, MouseButtonEventArgs e)
+        private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
         {
             Universal.NotImplemented("Voice calling");
         }

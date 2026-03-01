@@ -196,7 +196,7 @@ namespace Skymu
         {
             string iconName = SIconTextMap.GetValueOrDefault(icon, "offline");
             string iconToolTip = Properties.Settings.Default.BrandingName + " (" + StatusMap.GetValueOrDefault(icon, Universal.Lang["sTRAYHINT_USER_OFFLINE"]) + ")";
-            var resourceUri = new Uri("pack://application:,,,/Skyaeris/Resources/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
+            var resourceUri = new Uri("pack://application:,,,/Skyaeris/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
             if (Icon is not null)

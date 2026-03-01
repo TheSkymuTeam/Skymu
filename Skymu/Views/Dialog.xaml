@@ -1,11 +1,11 @@
-﻿<Window x:Class="Skymu.Dialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" Title="Dialog" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" SizeToContent="Height" MinHeight="235" Style="{StaticResource Window}" MaxHeight="800" Width="383">
+﻿<Window x:Class="Skymu.Views.Dialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:Skymu" Title="Dialog" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" SizeToContent="Height" MinHeight="235" Style="{StaticResource Window}" MaxHeight="800" Width="383">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:SliceControl Slice="False" x:Name="DialogImage" Source="Resources/Universal/Dialog/icons.png" HorizontalAlignment="Left" Width="48" DefaultIndex="0" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="29" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" Margin="11,10,0,0"/>
+        <local:SliceControl Slice="False" x:Name="DialogImage" Source="Assets/Universal/Dialog/icons.png" HorizontalAlignment="Left" Width="48" DefaultIndex="0" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="-1" ElementCount="29" StackDirection="Horizontal" Panel.ZIndex="10" Grid.RowSpan="2" VerticalAlignment="Top" Margin="11,10,0,0"/>
         <!-- Top Header Section -->
         <Grid Grid.Row="0" Panel.ZIndex="0" Height="45">
             <Border Name="GradientTop" BorderThickness="0,0,0,1" BorderBrush="#DADADA">

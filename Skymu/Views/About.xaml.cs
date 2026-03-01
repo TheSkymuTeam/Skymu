@@ -11,7 +11,7 @@
 
 using System.Windows;
 
-namespace Skymu.Skyaeris
+namespace Skymu.Views
 {
     /// <summary>
     /// Interaction logic for About.xaml

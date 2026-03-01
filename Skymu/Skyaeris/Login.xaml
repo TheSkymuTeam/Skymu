@@ -19,7 +19,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill"/>
         <TextBlock x:Name="header" Text="{Binding [sF_LOGIN_WELCOME]}" Foreground="{StaticResource SkBlue}" Height="32" HorizontalAlignment="Center" Margin="0,44,0,0" VerticalAlignment="Top" FontFamily="Arial" FontWeight="Bold" FontSize="20"/>
-        <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="throbber" Source="Resources/Universal/Animations/login-throbber.png" Width="128" Height="128" Margin="0,0,0,48" RenderTransformOrigin="0.50785,0.5001" Visibility="Collapsed">
+        <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="throbber" Source="Assets/Universal/Animations/login-throbber.png" Width="128" Height="128" Margin="0,0,0,48" RenderTransformOrigin="0.50785,0.5001" Visibility="Collapsed">
             <Image.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

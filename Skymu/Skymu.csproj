@@ -46,11 +46,11 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- Resources → WPF Resource -->
-		<None Remove="Skyaeris\Resources\**\*" />
-		<Page Remove="Skyaeris\Resources\**\*" />
-		<EmbeddedResource Remove="Skyaeris\Resources\**\*" />
-		<Compile Remove="Skyaeris\Resources\**\*" />
-		<Resource Include="Skyaeris\Resources\**\*" />
+		<None Remove="Skyaeris\Assets\**\*" />
+		<Page Remove="Skyaeris\Assets\**\*" />
+		<EmbeddedResource Remove="Skyaeris\Assets\**\*" />
+		<Compile Remove="Skyaeris\Assets\**\*" />
+		<Resource Include="Skyaeris\Assets\**\*" />
 		<None Remove="Emoji\**\*" />
 		<Page Remove="Emoji\**\*" />
 		<EmbeddedResource Remove="Emoji\Resources\**\*" />

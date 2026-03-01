@@ -14,7 +14,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Skymu
+namespace Skymu.Views
 {
     public partial class Dialog : Window
     {
@@ -22,7 +22,7 @@ namespace Skymu
         private Action BRAction;
         public string TextBoxText { get; private set; }
 
-        public Dialog(SkypeWindow.IconType type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
+        public Dialog(WindowBase.IconType type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
         {
             try
             {
@@ -60,12 +60,12 @@ namespace Skymu
                     title = Properties.Settings.Default.BrandingName;
                     switch (type)
                     {
-                        case SkypeWindow.IconType.Information: title += " - Information"; break;
-                        case SkypeWindow.IconType.Error: title += " - Error"; break;
-                        case SkypeWindow.IconType.Question: title += " - Confirm action"; break;
-                        case SkypeWindow.IconType.Picture: title += " - Media"; break;
-                        case SkypeWindow.IconType.PackageCheckmark: case SkypeWindow.IconType.PackageStar: case SkypeWindow.IconType.PackageWarning: title += "™ - Update"; break;
-                        default: case SkypeWindow.IconType.Skype: break;
+                        case WindowBase.IconType.Information: title += " - Information"; break;
+                        case WindowBase.IconType.Error: title += " - Error"; break;
+                        case WindowBase.IconType.Question: title += " - Confirm action"; break;
+                        case WindowBase.IconType.Picture: title += " - Media"; break;
+                        case WindowBase.IconType.PackageCheckmark: case WindowBase.IconType.PackageStar: case WindowBase.IconType.PackageWarning: title += "™ - Update"; break;
+                        default: case WindowBase.IconType.Skype: break;
                     }
                 }
 

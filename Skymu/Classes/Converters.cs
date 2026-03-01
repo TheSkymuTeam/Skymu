@@ -57,8 +57,8 @@ namespace Skymu.Converters
                 return bmp;
             }
 
-            if (type == "group") return MainWindow.GroupAvatar;
-            else return MainWindow.AnonymousAvatar;
+            if (type == "group") return Main.GroupAvatar;
+            else return Main.AnonymousAvatar;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -119,7 +119,7 @@ namespace Skymu.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is string identifier && identifier == MainWindow.Identifier
+            return value is string identifier && identifier == Main.Identifier
                 ? ActiveBrush
                 : InactiveBrush;
         }
@@ -196,7 +196,7 @@ namespace Skymu.Converters
         {
             if (value is UserConnectionStatus stat)
             {
-                return MainWindow.GetIntFromStatus(stat);
+                return Main.GetIntFromStatus(stat);
             }
             return 0;
         }
@@ -213,7 +213,7 @@ namespace Skymu.Converters
         {
             if (value is ChannelType chan)
             {
-                return MainWindow.GetIntFromChannelType(chan);
+                return Main.GetIntFromChannelType(chan);
             }
             return 0;
         }

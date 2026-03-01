@@ -14,6 +14,7 @@ using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
+using Skymu.Views;
 
 using System.Windows.Threading;
 
@@ -33,7 +34,7 @@ namespace Skymu
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                new Dialog(SkypeWindow.IconType.Error, e.Message, "Error in plugin " + ((ICore)sender).Name).ShowDialog();
+                new Dialog(WindowBase.IconType.Error, e.Message, "Error in plugin " + ((ICore)sender).Name).ShowDialog();
             });
         }
 
@@ -41,14 +42,14 @@ namespace Skymu
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                new Dialog(SkypeWindow.IconType.Information, e.Message, "Warning from plugin " + ((ICore)sender).Name).ShowDialog();
+                new Dialog(WindowBase.IconType.Information, e.Message, "Warning from plugin " + ((ICore)sender).Name).ShowDialog();
             });
         }
         public static void PluginNotificationHandler(object sender, NotificationEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                new Skyaeris.Notification(e);
+                new Views.Notification(e);
             });
         }
 
@@ -101,7 +102,7 @@ namespace Skymu
                 ev.Cancel = true;
             }
             string brand = Skymu.Properties.Settings.Default.BrandingName;
-            new Dialog(SkypeWindow.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
+            new Dialog(WindowBase.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
         }
 
         public static void Terminate()
@@ -113,17 +114,17 @@ namespace Skymu
         public static void ExceptionHandler(Exception ex)
         {
             string brand = Skymu.Properties.Settings.Default.BrandingName;
-            new Dialog(SkypeWindow.IconType.Error, ex.Message + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
+            new Dialog(WindowBase.IconType.Error, ex.Message + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
         }
 
         public static void ShowMsg(string content, string title = "Information")
         {
-            new Dialog(SkypeWindow.IconType.Information, content, title, null, null, "OK").ShowDialog();
+            new Dialog(WindowBase.IconType.Information, content, title, null, null, "OK").ShowDialog();
         }
 
         public static void NotImplemented(string feature)
         {
-            new Dialog(SkypeWindow.IconType.Information, feature + " hasn't been added to " + Skymu.Properties.Settings.Default.BrandingName + " yet.", "Feature not implemented", null, null, "OK").ShowDialog();
+            new Dialog(WindowBase.IconType.Information, feature + " hasn't been added to " + Skymu.Properties.Settings.Default.BrandingName + " yet.", "Feature not implemented", null, null, "OK").ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs ev)
