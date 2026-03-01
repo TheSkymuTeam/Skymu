@@ -26,6 +26,7 @@ namespace Skymu
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
         public const string Name = "Skymu";
+        public static string SkypeEra;
 
         public static LanguageManager Lang =>
         (LanguageManager)Current.Resources["Lang"];
@@ -131,7 +132,7 @@ namespace Skymu
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            
+            SkypeEra = Skymu.Properties.Settings.Default.SkypeEra;
             ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
             OS.Initialize();
             base.OnStartup(ev);
@@ -167,7 +168,7 @@ namespace Skymu
                 var themeUri = new Uri($"/{assemblyName};component/themes/{frameworkName}.xaml", UriKind.Relative);
                 var theme = new ResourceDictionary { Source = themeUri };
 
-                // Keep custom resources (SkBlue, Sk5Link, styles)
+                // keep custom resources
                 var customResources = new ResourceDictionary();
                 foreach (var key in Resources.Keys)
                 {
@@ -175,11 +176,11 @@ namespace Skymu
                         customResources[key] = Resources[key];
                 }
 
-                // Clear and add theme first
+                // clear and add theme first
                 Resources.MergedDictionaries.Clear();
                 Resources.MergedDictionaries.Add(theme);
 
-                // Re-add custom resources
+                // re-add custom resources
                 foreach (var key in customResources.Keys)
                 {
                     Resources[key] = customResources[key];

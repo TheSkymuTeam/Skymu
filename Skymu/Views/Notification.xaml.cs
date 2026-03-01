@@ -47,7 +47,7 @@ namespace Skymu.Views
 
                 if (Properties.Settings.Default.AccurateNotifications)
                 {
-                    string packUri = "pack://application:,,,/Skyaeris/Assets/Light/Notifications/bubble-orange.png";
+                    string packUri = "pack://application:,,,/" + Properties.Settings.Default.SkypeEra + "/Assets/Light/Notifications/bubble-orange.png";
                     bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
                 }
 

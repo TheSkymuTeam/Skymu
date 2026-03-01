@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -303,26 +304,48 @@ namespace Skymu.Converters
         }
     }
 
-    public class ThemeImageConverter : IValueConverter
+    public class ThemedAssetPathGenerator : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is null || parameter is null) return null;
-
-            string themeRoot = value.ToString();
-            string imagePath = parameter.ToString();
-
-            string fullPath = $"/Skyaeris/{themeRoot}/{imagePath}".Replace("//", "/");
-
-            string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            string packUri = $"pack://application:,,,/{assemblyName};component{fullPath}";
-
-            return new BitmapImage(new Uri(packUri));
+            if (value is not string image_path) return null;
+            else return Helpers.AssetPathGenerator(image_path, false);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class SharedAssetPathGenerator : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not string image_path) return null;
+            else return Helpers.AssetPathGenerator(image_path, true);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class Helpers
+    {
+        internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared)
+        {
+            string theme_root;
+            if (is_shared) theme_root = "Universal";
+            else theme_root = Properties.Settings.Default.ThemeRoot;
+
+            string fullPath = $"/{Universal.SkypeEra}/Assets/{theme_root}/{image_path}".Replace("//", "/");
+
+            string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            string packUri = $"pack://application:,,,/{assemblyName};component{fullPath}";
+
+            return new BitmapImage(new Uri(packUri));
         }
     }
 

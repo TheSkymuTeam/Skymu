@@ -1,6 +1,6 @@
 ﻿<Window x:Class="Skymu.Skyaeris.Login" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  xmlns:converters="clr-namespace:Skymu.Converters" xmlns:global="clr-namespace:Skymu" xmlns:local="clr-namespace:Skymu.Skyaeris" Style="{StaticResource Window}" xmlns:properties="clr-namespace:Skymu.Properties" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" Title="{Binding [sMAINMENU_SKYPE]}" Closing="Login_Closing" Height="429" Width="526" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" Loaded="Login_Loaded" WindowStartupLocation="CenterScreen" DataContext="{StaticResource Lang}">
     <Window.Resources>
-        <converters:ThemeImageConverter x:Key="ThemeImageConverter"/>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
             <Setter Property="Foreground" Value="{StaticResource SkBlue}"/>
             <Setter Property="TextDecorations" Value="{x:Null}"/>
@@ -12,9 +12,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/LoginBackground.png'}" Stretch="Fill"/>
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='backgrounds/LoginBackground.png'}" Stretch="Fill"/>
     </Window.Background>
     <Grid>
         <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill"/>
@@ -53,9 +51,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='backgrounds/
             <Canvas IsHitTestVisible="True">
                 <Grid x:Name="BBuilderGrid" Margin="126,259,128,87" SnapsToDevicePixels="True" Canvas.Left="9" Canvas.Top="-4" Width="240">
                     <TextBlock x:Name="SignIn" Grid.Column="1" IsHitTestVisible="False" Height="13" HorizontalAlignment="Center" Margin="-1,6,0,0" Text="{Binding [sZAPBUTTON_SIGNIN]}" VerticalAlignment="Top" Panel.ZIndex="1" FontFamily="Tahoma" FontWeight="Bold" FontSize="11" Foreground="#FF393A48"/>
-                    <global:SliceControl x:Name="LoginButton" Grid.Row="0" Cursor="Hand" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Buttons/plain.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" DisabledIndex="2" IsEnabled="False" HoverIndex="1" PressedIndex="4" Width="240"/>
+                    <global:SliceControl x:Name="LoginButton" Grid.Row="0" Cursor="Hand" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Buttons/plain.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" DisabledIndex="2" IsEnabled="False" HoverIndex="1" PressedIndex="4" Width="240"/>
                 </Grid>
             </Canvas>
             <Grid>

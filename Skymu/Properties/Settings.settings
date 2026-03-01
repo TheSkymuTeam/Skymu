@@ -12,7 +12,7 @@
       <Value Profile="(Default)">Skype</Value>
     </Setting>
     <Setting Name="ThemeRoot" Type="System.String" Scope="User">
-      <Value Profile="(Default)">/Assets/Light</Value>
+      <Value Profile="(Default)">Light</Value>
     </Setting>
     <Setting Name="EmojiFps" Type="System.Double" Scope="User">
       <Value Profile="(Default)">45</Value>
@@ -52,6 +52,9 @@
     </Setting>
     <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="SkypeEra" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Skyaeris</Value>
     </Setting>
   </Settings>
 </SettingsFile>

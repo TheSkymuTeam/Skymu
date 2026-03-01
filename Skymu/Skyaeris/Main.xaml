@@ -15,7 +15,7 @@
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
         <converters:NullDependentBoolean x:Key="NullDependentBoolean"/>
         <converters:StatusToTextConverter x:Key="StatIntToText"/>
-        <converters:ThemeImageConverter x:Key="ThemeImageConverter"/>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
         <converters:ForwardedChecker x:Key="ForwardedChecker"/>
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter"/>
         <converters:PresenceStatusConverter x:Key="PresenceStatusConverter"/>
@@ -284,10 +284,7 @@ Width="12" Height="12">
                 <!-- Reply header -->
                 <VirtualizingStackPanel Visibility="{Binding ParentMessage,
                 Converter={StaticResource NullDependentVisibilityConverter}}" Grid.Row="0" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Left" Margin="114,0,0,2">
-                    <Image Source="{Binding Source={x:Static properties:Settings.Default},
-                    Path=ThemeRoot,
-                    Converter={StaticResource ThemeImageConverter},
-                    ConverterParameter='Chat/reply-arrow.png'}" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
+                    <Image Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/reply-arrow.png'}" Width="12" Margin="0,0,6,0" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
                     <TextBlock LineHeight="1" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Width="400" FontSize="11" FontFamily="Tahoma" Foreground="#999999">
                         <TextBlock.Text>
                             <MultiBinding StringFormat='Replying to {0} - "{1}"'>
@@ -549,9 +546,7 @@ Width="12" Height="12">
                                 <RowDefinition Height="32"/>
                                 <RowDefinition Height="32"/>
                             </Grid.RowDefinitions>
-                            <global:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Source={x:Static properties:Settings.Default},
-                     Path=ThemeRoot,
-                     Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Top.png',
+                            <global:SliceControl Grid.Row="0" x:Name="StatusBox" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Status_Top.png',
                      diag:PresentationTraceSources.TraceLevel=High}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" ButtonStateOnInit="Pressed" IsRadioButton="True" HoverIndex="-1" PressedIndex="2" IsHitTestVisible="False" HorizontalAlignment="Stretch" TextStartPositionX="43" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#FFFFFF"/>
                             <StackPanel x:Name="StatusArea" Height="20" Grid.Row="0" HorizontalAlignment="Left" MouseLeftButtonUp="StatusArea_Click" Margin="9,0,0,0" Orientation="Horizontal" IsHitTestVisible="True">
                                 <StackPanel.Resources>
@@ -590,16 +585,10 @@ Width="12" Height="12">
                                     </ContextMenu>
                                 </StackPanel.Resources>
                                 <global:SliceControl Grid.Row="0" x:Name="StatusIcon" Source="Assets/Universal/Icon Bitmap/skype-status.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" Slice="false" Width="16"/>
-                                <Image Grid.Row="0" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_DropArrow.png'}" Width="12" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+                                <Image Grid.Row="0" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Status_DropArrow.png'}" Width="12" Height="16" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                             </StackPanel>
-                            <global:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_HomeButton_Sprite.png'}" ElementCount="3" StackDirection="Horizontal" DefaultIndex="0" ButtonStateOnInit="Pressed" HorizontalAlignment="Right" Margin="0,0,11,0" IsHitTestVisible="False" HoverIndex="1" PressedIndex="2" Slice="false" Width="16"/>
-                            <global:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Status_Bottom.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION],
+                            <global:SliceControl Grid.Row="0" x:Name="SBHomeButton" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_HomeButton_Sprite.png'}" ElementCount="3" StackDirection="Horizontal" DefaultIndex="0" ButtonStateOnInit="Pressed" HorizontalAlignment="Right" Margin="0,0,11,0" IsHitTestVisible="False" HoverIndex="1" PressedIndex="2" Slice="false" Width="16"/>
+                            <global:SliceControl x:Name="SkypeCreditBox" Grid.Row="1" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Status_Bottom.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION],
                           StringFormat=$ 0.00 - {0}}" TextStartPositionX="34" TextFont="Tahoma" TextSize="11" TextColor="#333333" HorizontalAlignment="Stretch"/>
                             <Image Grid.Row="1" Source="Assets/Universal/Sidebar/credit.png" Width="16" Height="16" HorizontalAlignment="Left" Margin="9,0,0,0"/>
                         </Grid>
@@ -609,15 +598,9 @@ Width="12" Height="12">
                                 <ColumnDefinition x:Name="ServersColumn"  Width="*"/>
                                 <ColumnDefinition x:Name="RecentsColumn"  Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <global:SliceControl x:Name="btnContacts" Grid.Column="0" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Contacts.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sZAPBUTTON_CONTACTS]}" TextStartPositionX="30" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Contacts_BtnDown" HorizontalAlignment="Stretch"/>
-                            <global:SliceControl x:Name="btnServers" Grid.Column="1" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Servers.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="Servers" TextStartPositionX="28" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Servers_BtnDown" HorizontalAlignment="Stretch"/>
-                            <global:SliceControl x:Name="btnRecents" Grid.Column="2" LeftWidth="25" RightWidth="2"  IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_Recents.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sRECENTS_TAB_TEXT]}" TextStartPositionX="30" MouseLeftButtonDown="Recents_BtnDown" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl x:Name="btnContacts" Grid.Column="0" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Contacts.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sZAPBUTTON_CONTACTS]}" TextStartPositionX="30" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Contacts_BtnDown" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl x:Name="btnServers" Grid.Column="1" LeftWidth="25" RightWidth="2" IsRadioButton="True" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Servers.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="Servers" TextStartPositionX="28" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" MouseLeftButtonDown="Servers_BtnDown" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl x:Name="btnRecents" Grid.Column="2" LeftWidth="25" RightWidth="2"  IsRadioButton="True" ButtonStateOnInit="Pressed" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_Recents.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="1" HoverIndex="-1" PressedIndex="2" Text="{Binding [sRECENTS_TAB_TEXT]}" TextStartPositionX="30" MouseLeftButtonDown="Recents_BtnDown" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                         </Grid>
                         <Border Grid.Row="3" Background="White" BorderBrush="#26000000" BorderThickness="1,0,1,0">
                             <Grid x:Name="ContactsArea">
@@ -626,9 +609,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                     <RowDefinition Height="1"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <global:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_SearchBox.png'}" ElementCount="2" StackDirection="Vertical" DefaultIndex="1" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="0" HorizontalAlignment="Stretch"/>
+                                <global:SliceControl Grid.Row="0" Cursor="IBeam" x:Name="PseudoSearchBox" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_SearchBox.png'}" ElementCount="2" StackDirection="Vertical" DefaultIndex="1" IsHitTestVisible="False" HoverIndex="-1" PressedIndex="0" HorizontalAlignment="Stretch"/>
                                 <TextBox Grid.Row="0" Cursor="IBeam" x:Name="SearchBox" GotKeyboardFocus="SearchBox_Focused" LostKeyboardFocus="SearchBox_Unfocused" BorderThickness="0" Padding="33,0,0,0" Background="Transparent" FontFamily="Tahoma" FontSize="11" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"/>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9dfe6"/>
                                 <ListBox x:Name="ContactsList" Grid.Row="2" BorderThickness="0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="True" SelectionChanged="ContactList_SelectionChanged" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
@@ -651,9 +632,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                                             <Trigger Property="IsSelected" Value="True">
                                                                 <Setter TargetName="ItemBorder" Property="Background">
                                                                     <Setter.Value>
-                                                                        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_ContactListBgSelected.png'}" Stretch="Fill"/>
+                                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_ContactListBgSelected.png'}" Stretch="Fill"/>
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </Trigger>
@@ -703,10 +682,7 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                                                 <Setter TargetName="ItemBorder"
                             Property="Background">
                                                                     <Setter.Value>
-                                                                        <ImageBrush ImageSource="{Binding Source={x:Static properties:Settings.Default},
-                                Path=ThemeRoot,
-                                Converter={StaticResource ThemeImageConverter},
-                                ConverterParameter='Sidebar/ms_ContactListBgSelected.png'}"
+                                                                        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_ContactListBgSelected.png'}"
                                 Stretch="Fill"/>
                                                                     </Setter.Value>
                                                                 </Setter>
@@ -729,27 +705,19 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_S
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <global:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddFriend.png'}" ElementCount="3" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sADD_CONTACT_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="AddContact_Click" HorizontalAlignment="Stretch"/>
-                                <global:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_AddGroup.png'}" ElementCount="4" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sCREATE_GROUP_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="MakeGroup_Click" HorizontalAlignment="Stretch"/>
+                                <global:SliceControl x:Name="AddContactButton" Grid.Column="0" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_AddFriend.png'}" ElementCount="3" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sADD_CONTACT_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="AddContact_Click" HorizontalAlignment="Stretch"/>
+                                <global:SliceControl x:Name="MakeGroupButton" Grid.Column="1" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_AddGroup.png'}" ElementCount="4" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" Text="{Binding [sCREATE_GROUP_LONG]}" TextStartPositionX="41" TextFont="Tahoma" TextSize="11" TextColor="#333333" MouseLeftButtonUp="MakeGroup_Click" HorizontalAlignment="Stretch"/>
                             </Grid>
                             
                             <Border  BorderBrush="#26000000" BorderThickness="1,0,1,0">
                                 <StackPanel Orientation="Vertical">
                                     <Rectangle Height="1" Fill="#C5C5C5" Opacity="0.82"/>
-                                    <global:SliceControl  Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/ms_CallPhones.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="{Binding [sZAPBUTTON_SKYPEOUT]}" TextStartPositionX="32" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                                    <global:SliceControl  Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/ms_CallPhones.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="{Binding [sZAPBUTTON_SKYPEOUT]}" TextStartPositionX="32" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                                     <Rectangle Height="1" Fill="#C5C5C5" Opacity="0.82"/>
                                 </StackPanel>
 
                             </Border>
-                            <global:SliceControl  x:Name="GlobalUserCount" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user-count-tab.png'}" ElementCount="1" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="Skymu Beta. All rights reserved." TextStartPositionX="7" TextFont="Tahoma" TextSize="11" TextColor="#999999" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl  x:Name="GlobalUserCount" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/user-count-tab.png'}" ElementCount="1" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" PressedIndex="2" MouseLeftButtonUp="CallPhones_Click" Text="Skymu Beta. All rights reserved." TextStartPositionX="7" TextFont="Tahoma" TextSize="11" TextColor="#999999" HorizontalAlignment="Stretch"/>
                         </StackPanel>
                        
                     </Grid>
@@ -766,15 +734,9 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Sidebar/user
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <global:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="chatHeader" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="13" Text="{Binding DisplayName}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch" Loaded="chatHeader_Loaded"/>
-                            <global:SliceControl Grid.Column="1" TextRightMargin="16" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" Width="Auto" ElementCount="5" x:Name="ChatCloseButton" MouseLeftButtonUp="Chat_Close" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" TextStartPositionX="27" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
-                            <Image Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
-Path=ThemeRoot,
-Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-close.png'}" Width="16" Height="16" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7,0,0,0"/>
+                            <global:SliceControl Grid.Column="0" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-left-button.png'}" ElementCount="5" x:Name="chatHeader" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="13" Text="{Binding DisplayName}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch" Loaded="chatHeader_Loaded"/>
+                            <global:SliceControl Grid.Column="1" TextRightMargin="16" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-right-button.png'}" Width="Auto" ElementCount="5" x:Name="ChatCloseButton" MouseLeftButtonUp="Chat_Close" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="2" TextStartPositionX="27" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                            <Image Grid.Column="1" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/icon-close.png'}" Width="16" Height="16" IsHitTestVisible="False" HorizontalAlignment="Left" Margin="7,0,0,0"/>
                         </Grid>
                         <Grid Grid.Row="0" x:Name="HomeTopbar" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -783,21 +745,13 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <global:SliceControl Grid.Column="0" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-left-button.png'}" ElementCount="5" x:Name="MainPageButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" ButtonStateOnInit="Pressed" HoverIndex="-1" PressedIndex="2" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl Grid.Column="0" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-left-button.png'}" ElementCount="5" x:Name="MainPageButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" ButtonStateOnInit="Pressed" HoverIndex="-1" PressedIndex="2" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                             <Image Grid.Column="0" Source="Assets/Universal/Chat/settings_skype.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <global:SliceControl Grid.Column="1" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="ProfileButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl Grid.Column="1" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-square-button.png'}" ElementCount="5" x:Name="ProfileButton" StackDirection="Vertical" DefaultIndex="0" IsRadioButton="True" HoverIndex="-1" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                             <Image Grid.Column="1" Source="Assets/Universal/Chat/info_pressed.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <global:SliceControl Grid.Column="2" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-square-button.png'}" ElementCount="5" x:Name="FeedbackButton" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" IsRadioButton="True" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl Grid.Column="2" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-square-button.png'}" ElementCount="5" x:Name="FeedbackButton" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" IsRadioButton="True" PressedIndex="-1" TextStartPositionX="31" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}" TextRightMargin="16" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="#333333" HorizontalAlignment="Stretch"/>
                             <Image Grid.Column="2" Source="Assets/Universal/Chat/icon-skype-feedback.png" Width="16" IsHitTestVisible="False" Height="16" HorizontalAlignment="Left" Margin="8,0,0,0"/>
-                            <global:SliceControl Grid.Column="3" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/blank-right-button.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" HorizontalAlignment="Stretch"/>
+                            <global:SliceControl Grid.Column="3" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/blank-right-button.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="-1" PressedIndex="-1" HorizontalAlignment="Stretch"/>
                         </Grid>
                         <Border Grid.Row="1" Background="#FFF" BorderBrush="#26000000" BorderThickness="1,0,1,1" CornerRadius="0,0,4,4">
                             <Grid>
@@ -920,12 +874,8 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                     <global:SliceControl Source="Assets/Universal/Chat/btn_video_call.png" TextRightMargin="9" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="VideoCallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}" TextStartPositionX="25" TextFont="Arial" TextWeight="Bold" TextSize="13" LeftWidth="22" RightWidth="22" TextColor="White" Width="Auto"/>
                                     <global:SliceControl Source="Assets/Universal/Chat/btn_call_left.png" x:Name="CallButton" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallButtonClick" PressedIndex="2" Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}" TextStartPositionX="26" TextFont="Arial" TextWeight="Bold" TextSize="13" TextColor="White" Width="Auto" LeftWidth="22" RightWidth="22"  Margin="10,0,0,0"/>
                                     <global:SliceControl Source="Assets/Universal/Chat/btn_call_right.png" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="CallDropdownButtonClick" PressedIndex="2" Width="24" LeftWidth="1" RightWidth="1"/>
-                                    <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_add.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="AddButtonClick" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
-                                    <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_pill_small_network_unavailable.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" x:Name="WifiButton" MouseLeftButtonUp="WifiButton_Click" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
+                                    <global:SliceControl Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/btn_pill_small_add.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" MouseLeftButtonUp="AddButtonClick" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
+                                    <global:SliceControl Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/btn_pill_small_network_unavailable.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" x:Name="WifiButton" MouseLeftButtonUp="WifiButton_Click" PressedIndex="2" Width="44" Slice="false" Margin="10,0,0,0"/>
                                 </StackPanel>
                                 <Rectangle Grid.Row="1" Height="1" Fill="#d9e1e8"/>
                                 <Image RenderOptions.BitmapScalingMode="HighQuality" Grid.Row="2" x:Name="throbber" Source="Assets/Universal/Animations/loading_throbber.png" Width="90" Height="90" RenderTransformOrigin="0.5,0.5" Visibility="Visible">
@@ -977,13 +927,9 @@ Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/icon-cl
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="1" x:Name="MessageBoxPanel" Orientation="Vertical" HorizontalAlignment="Center" Width="430">
                                         <Grid>
-                                            <Image Height="25" Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/msg-box-top.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
+                                            <Image Height="25" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/msg-box-top.png'}" UseLayoutRounding="True" SnapsToDevicePixels="True"/>
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0,0,0">
-                                                <global:SliceControl Source="{Binding Source={x:Static properties:Settings.Default},
-                 Path=ThemeRoot,
-                 Converter={StaticResource ThemeImageConverter}, ConverterParameter='Chat/btn_emoji.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" HorizontalAlignment="Left" x:Name="EmojiButton" MouseLeftButtonUp="EmojiButton_Click" PressedIndex="2" Width="18" Height="17" Slice="false"/>
+                                                <global:SliceControl Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/btn_emoji.png'}" ElementCount="5" StackDirection="Vertical" DefaultIndex="0" HoverIndex="1" HorizontalAlignment="Left" x:Name="EmojiButton" MouseLeftButtonUp="EmojiButton_Click" PressedIndex="2" Width="18" Height="17" Slice="false"/>
                                             </StackPanel>
                                             <Popup x:Name="EmojiFlyout" PlacementTarget="{Binding ElementName=EmojiButton}" Placement="Top" HorizontalOffset="-20" StaysOpen="False" AllowsTransparency="True">
                                                 <Border Background="#CC202020" BorderBrush="#666666" BorderThickness="1" CornerRadius="4" Padding="2">

@@ -241,7 +241,7 @@ namespace Skymu.Skyaeris
 
         private static BitmapImage LoadAvatar(string avatar)
         {
-            string AvatarPath = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
+            string AvatarPath = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
 
             var bitmap = new BitmapImage();
             bitmap.BeginInit();
@@ -358,10 +358,10 @@ namespace Skymu.Skyaeris
         private void Window_Deactivated(object sender, EventArgs e)
         {
             IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Inactive.Fill;
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillSecondary : Theme.Inactive.Fill;
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
 
             foreach (SliceControl button in new[] { close, minimize, maximize, split })
             {
@@ -371,17 +371,17 @@ namespace Skymu.Skyaeris
 
             if (this.Background == System.Windows.Media.Brushes.Transparent) return;
 
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Inactive.Fill;
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Fill;
 
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
             IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillSecondary : ThemeColors.Active.Fill;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Window;
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillSecondary : Theme.Active.Fill;
+            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
 
             if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
 
@@ -392,8 +392,8 @@ namespace Skymu.Skyaeris
 
             if (this.Background == Brushes.Transparent) return;
 
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? ThemeColors.Fallback.FillPrimary : ThemeColors.Active.Fill;
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Titlebar;
+            this.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Fill;
         }
 
 
@@ -806,7 +806,7 @@ namespace Skymu.Skyaeris
                 while (!token.IsCancellationRequested)
                 {
                     string icon_filename = speedButtonIcons[index % speedButtonIcons.Length];
-                    string icon_uri = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Chat/" + icon_filename;
+                    string icon_uri = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Chat/" + icon_filename;
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
@@ -853,7 +853,7 @@ namespace Skymu.Skyaeris
                 await animTask;
             }
 
-            string fianl_uri = "pack://application:,,,/Skyaeris" + Properties.Settings.Default.ThemeRoot + "/Chat/" + final_icon;
+            string fianl_uri = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Chat/" + final_icon;
             var final_bmp = new BitmapImage();
             final_bmp.BeginInit();
             final_bmp.UriSource = new Uri(fianl_uri, UriKind.Absolute);

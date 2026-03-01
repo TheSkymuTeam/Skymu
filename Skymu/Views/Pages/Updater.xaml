@@ -16,20 +16,14 @@
                 <TextBlock VerticalAlignment="Stretch" TextWrapping="Wrap" Name="Description" Text="There's a new version of Skype available. Update now to get the latest features and improvements." LineHeight="16" />
             </ScrollViewer>
             <Grid Name="ProgressGrid" HorizontalAlignment="Left" Visibility="Collapsed" Width="370" Margin="0,30,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <!-- UpdateStatusText -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- ProgressBar -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- FileSize -->
-                </Grid.RowDefinitions>
-                <!-- Download status -->
-                <TextBlock Name="UpdateStatusText" Grid.Row="0" Text="Update progress goes here" FontFamily="Tahoma" FontSize="11"/>
-                <!-- Progress bar stretches to available width -->
-                <ProgressBar x:Name="ProgBar" Margin="0,10,0,0" Grid.Row="1" Height="15" HorizontalAlignment="Stretch"/>
-                <!-- File size aligned right -->
-                <TextBlock Name="FileSize" Grid.Row="2" Text="File size 3233.5 KB" Visibility="Collapsed" HorizontalAlignment="Right" FontFamily="Tahoma" FontSize="11" Margin="0,4,0,0"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Name="UpdateStatusText" Grid.Row="0" Text="Update progress goes here" FontFamily="Tahoma" FontSize="11"/>
+            <ProgressBar x:Name="ProgBar" Margin="0,10,0,0" Grid.Row="1" Height="15" HorizontalAlignment="Stretch"/>
+            <TextBlock Name="FileSize" Grid.Row="2" Text="File size 3233.5 KB" Visibility="Collapsed" HorizontalAlignment="Right" FontFamily="Tahoma" FontSize="11" Margin="0,4,0,0"/>
             </Grid>
         </StackPanel>
    

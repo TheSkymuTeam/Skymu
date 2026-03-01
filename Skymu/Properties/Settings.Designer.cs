@@ -61,7 +61,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("/Assets/Light")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Light")]
         public string ThemeRoot {
             get {
                 return ((string)(this["ThemeRoot"]));
@@ -225,6 +225,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["DynamicSidebarTabs"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Skyaeris")]
+        public string SkypeEra {
+            get {
+                return ((string)(this["SkypeEra"]));
+            }
+            set {
+                this["SkypeEra"] = value;
             }
         }
     }
