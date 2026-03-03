@@ -24,7 +24,7 @@ namespace Discord.Classes
 
         public static void EnsureConnected(string token, EventHandler<HelperClasses.MessageReceivedEventArgs> handler, Core core)
         {
-            if (_webSocket is not null)
+            if (_webSocket != null)
                 return;
 
             _webSocket = new WebSocket(token, core);
@@ -49,13 +49,13 @@ namespace Discord.Classes
 
         public static async Task SendPayload(string payload)
         {
-            if (_webSocket is null) return;
+            if (_webSocket == null) return;
             await _webSocket.SendPayload(payload);
         }
 
         public static void SubscribeMessageReceived(EventHandler<HelperClasses.MessageReceivedEventArgs> handler)
         {
-            if (_webSocket is null)
+            if (_webSocket == null)
                 return;
 
             _webSocket.MessageReceived -= handler;

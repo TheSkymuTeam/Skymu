@@ -11,8 +11,8 @@
 
 using MiddleMan;
 using System;
-using System.Reflection.Metadata;
 using System.Text.Json.Nodes;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -22,7 +22,7 @@ namespace Discord.Classes
     {
         public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
         {
-            if (message is null) return null;
+            if (message == null) return null;
 
             string messageId = message["id"]?.GetValue<string>() ?? "0";
 
@@ -35,11 +35,11 @@ namespace Discord.Classes
 
             DateTime timestamp = ParseTimestamp(message["timestamp"]?.GetValue<string>());
 
-            Attachment[] media = [ new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) ];
+            Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
 
             Message parent = ParseReply(message["referenced_message"]);
 
-            if (message["message_snapshots"] is not null) return await ParseMessage(message["message_snapshots"][0]["message"], true);
+            if (message["message_snapshots"] != null) return await ParseMessage(message["message_snapshots"][0]["message"], true);
 
             return new Message(
                 messageId,
@@ -54,7 +54,7 @@ namespace Discord.Classes
 
         public static Message ParseReply(JsonNode refMsg)
         {
-            if (refMsg is null) return null;
+            if (refMsg == null) return null;
 
             string replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, refMsg["content"]?.GetValue<string>() ?? "[unavailable]");
             string[] usernames = GetAuthorNames(refMsg);
@@ -77,7 +77,7 @@ namespace Discord.Classes
                 ?? "Anonymous";
             string username = author?["username"]?.GetValue<string>()
                 ?? "Anonymous";
-            return [displayname, username];
+            return new string[2] { displayname, username };
         }
 
         public static async Task<byte[]> ParseMessageMedia(JsonNode message)

@@ -210,7 +210,7 @@ namespace Skymu.Skyaeris
                     foreach (AuthTypeInfo ati in plugin.AuthenticationTypes)
                     {
                         string name = plugin.Name;
-                        if (ati.CustomTextAuthType is not null) name += " (" + ati.CustomTextAuthType + ")";
+                        if (ati.CustomTextAuthType != null) name += " (" + ati.CustomTextAuthType + ")";
                         else
                         {
                             switch (ati.AuthType)
@@ -239,7 +239,7 @@ namespace Skymu.Skyaeris
                 }
                 pluginIndex++;
             }
-            if (Universal.Plugin is null) { useAutoLogin = false; }
+            if (Universal.Plugin == null) { useAutoLogin = false; }
             if (useAutoLogin) LoginToggleAnimation(true);
             else comboProtocolBox.SelectedIndex = 0;
         }
@@ -297,7 +297,7 @@ namespace Skymu.Skyaeris
             if (useAutoLogin)
             {
                 SavedCredential credential = CredentialsHelper.Read(Universal.Plugin.InternalName);
-                if (credential is null)
+                if (credential == null)
                 {
                     LoginToggleAnimation(false);                    
                     CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                   
@@ -328,7 +328,7 @@ namespace Skymu.Skyaeris
             if (SaveCredentials.IsChecked == true)
             {
                 SavedCredential cred = await Universal.Plugin.StoreCredential();
-                if (cred is not null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
+                if (cred != null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
             }
             header.Text = "Loading user data";
             _Main = new Main();

@@ -54,8 +54,10 @@ namespace Skymu
 
             var json = JsonSerializer.Serialize(payload);
 
-            using var content = new StringContent(json);
-            using var response = await httpClient.PostAsync("/set_status", content);
+            using (StringContent content = new StringContent(json))
+            using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
+            {
+            }
 
             return true;
         }
@@ -69,8 +71,10 @@ namespace Skymu
 
             var json = JsonSerializer.Serialize(payload);
 
-            using var content = new StringContent(json);
-            using var response = await httpClient.PostAsync("/ping", content);
+            using (StringContent content = new StringContent(json))
+            using (HttpResponseMessage response = await httpClient.PostAsync("/ping", content))
+            {
+            }
 
             return true;
         }
@@ -83,7 +87,7 @@ namespace Skymu
 
             var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
             var initBytes = Encoding.UTF8.GetBytes(initMsg);
-            await ws.SendAsync(initBytes, WebSocketMessageType.Text, true, cts.Token);
+            await ws.SendAsync(new ArraySegment<byte>(initBytes), WebSocketMessageType.Text, true, cts.Token);
 
             _ = Task.Run(ReceiveLoop);
         }
@@ -94,7 +98,7 @@ namespace Skymu
 
             while (ws.State == WebSocketState.Open)
             {
-                var result = await ws.ReceiveAsync(buffer, cts.Token);
+                var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
                     await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
@@ -118,7 +122,7 @@ namespace Skymu
             {
                 var msg = JsonSerializer.Serialize(new { action = "get_count" });
                 var bytes = Encoding.UTF8.GetBytes(msg);
-                await ws.SendAsync(bytes, WebSocketMessageType.Text, true, cts.Token);
+                await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
             }
         }
 

@@ -12,6 +12,7 @@
 using MiddleMan;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -29,7 +30,7 @@ namespace Skymu
             }
 
             int pluginCount = 0;
-            foreach (string dll in Directory.GetFiles(path, "*.dll"))
+            foreach (string dll in Directory.GetFiles(path, "plug*.dll"))
             {
                 try
                 {
@@ -50,7 +51,15 @@ namespace Skymu
                         }
                     }
                 }
-                catch { }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    foreach (var loaderEx in ex.LoaderExceptions)
+                        Debug.WriteLine(loaderEx);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
 
             if (pluginCount < 1)
@@ -64,8 +73,8 @@ namespace Skymu
 
         public static void DisposeAll()
         {
-            if (Universal.Plugin is not null) Universal.Plugin.Dispose();
-            if (Universal.PluginList is null) return;
+            if (Universal.Plugin != null) Universal.Plugin.Dispose();
+            if (Universal.PluginList == null) return;
 
             foreach (var plugin in Universal.PluginList)
             {

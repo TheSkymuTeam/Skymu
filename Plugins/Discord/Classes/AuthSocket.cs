@@ -32,9 +32,21 @@ namespace Discord
 
         public static string GenerateEncodedKey()
         {
-            _cryptoKey = RSA.Create(2048);
+            _cryptoKey = RSA.Create();
+            _cryptoKey.KeySize = 2048;
 
-            byte[] pubKeyBytes = _cryptoKey.ExportSubjectPublicKeyInfo();
+            RSAParameters publicParams = _cryptoKey.ExportParameters(false);
+
+            byte[] pubKeyBytes;
+            using (var ms = new System.IO.MemoryStream())
+            using (var writer = new System.IO.BinaryWriter(ms))
+            {
+                writer.Write(publicParams.Modulus.Length);
+                writer.Write(publicParams.Modulus);
+                writer.Write(publicParams.Exponent.Length);
+                writer.Write(publicParams.Exponent);
+                pubKeyBytes = ms.ToArray();
+            }
 
             return Convert.ToBase64String(pubKeyBytes);
         }
@@ -64,7 +76,7 @@ namespace Discord
 
         public async Task<bool> StartSocket()
         {
-            if (WSClient is not null) return true;
+            if (WSClient != null) return true;
             try
             {
                 WSClient = new ClientWebSocket();

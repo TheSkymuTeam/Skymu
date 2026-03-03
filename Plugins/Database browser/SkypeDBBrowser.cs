@@ -18,6 +18,15 @@ using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Linq;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+
+
 namespace SkypeDBBrowser
 {
     public class Core : ICore
@@ -340,7 +349,7 @@ namespace SkypeDBBrowser
                                 availability,
                                 avatar_image
                             FROM Contacts
-                            WHERE skypename IS NOT NULL";
+                            WHERE skypename != null";
 
                         using (var reader = await contactCmd.ExecuteReaderAsync())
                         {
@@ -510,7 +519,7 @@ namespace SkypeDBBrowser
         /// This method scans the blob for the first occurrence of the JPEG SOI magic bytes
         /// and returns everything from that offset onward, giving a clean JPEG that any
         /// standard image decoder can consume.  Returns null when no JPEG is found or the
-        /// input is null/empty.
+        /// input == null/empty.
         /// </summary>
         private static byte[] ExtractJpegFromAvatarBlob(byte[] blob)
         {
@@ -576,14 +585,23 @@ namespace SkypeDBBrowser
         {
             // Skype availability codes:
             // 0 = Offline, 1 = Online, 2 = Away, 3 = Do Not Disturb, 4 = Invisible, etc.
-            return availability switch
+            switch (availability)
             {
-                1 => UserConnectionStatus.Online,
-                2 => UserConnectionStatus.Away,
-                3 => UserConnectionStatus.DoNotDisturb,
-                4 => UserConnectionStatus.Invisible,
-                _ => UserConnectionStatus.Offline
-            };
+                case 1:
+                    return UserConnectionStatus.Online;
+
+                case 2:
+                    return UserConnectionStatus.Away;
+
+                case 3:
+                    return UserConnectionStatus.DoNotDisturb;
+
+                case 4:
+                    return UserConnectionStatus.Invisible;
+
+                default:
+                    return UserConnectionStatus.Offline;
+            }
         }
     }
 }

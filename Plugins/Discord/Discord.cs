@@ -388,10 +388,10 @@ namespace Discord
                     if (type == DM_CHANNEL_TYPE)
                     {
                         var recipients = channel["recipients"] as JsonArray;
-                        if (recipients is null || recipients.Count == 0) continue;
+                        if (recipients == null || recipients.Count == 0) continue;
 
                         var recipient = recipients[0] as JsonObject;
-                        if (recipient is null) continue;
+                        if (recipient == null) continue;
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
@@ -456,7 +456,7 @@ namespace Discord
                                     r["username"]?.GetValue<string>())
                                 .Where(n => !string.IsNullOrWhiteSpace(n));
 
-                            groupName = recipientNames is not null
+                            groupName = recipientNames != null
                                         ? string.Join(", ", recipientNames)
                                         : "N/A";
                         }
@@ -525,7 +525,7 @@ namespace Discord
                 foreach (var node in messages.Reverse())
                 {
                     var item = await DiscordMsgParser.ParseMessage(node);
-                    if (item is not null)
+                    if (item != null)
                         ActiveConversation.Add(item);
                 }
 
@@ -543,7 +543,7 @@ namespace Discord
 
         public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
-            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment is null))
+            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment == null))
                 return false;
 
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
@@ -569,7 +569,7 @@ namespace Discord
                 else
                     payloadJson = new { content = text ?? "" };
 
-                if (attachment is not null)
+                if (attachment != null)
                 {
                     fileName = attachment?.Name ?? "file";
                     if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File)
@@ -579,8 +579,8 @@ namespace Discord
                     }
                 }
 
-                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, payloadJson, attachment is not null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
-                return !string.IsNullOrEmpty(response) && !response.Contains("error", StringComparison.OrdinalIgnoreCase);
+                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, payloadJson, attachment != null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
+                return !string.IsNullOrEmpty(response) && !response.Contains("error");
             }
             catch (Exception ex)
             {
@@ -623,16 +623,18 @@ namespace Discord
                 settings = updatedBase64
             };
 
+            HttpMethod Patch = new HttpMethod("PATCH"); // net standard compat
+
             // send updated proto
             string response = await api.SendAPI(
                 PROTO_ENDPOINT,
-                HttpMethod.Patch,
+                Patch,
                 DscToken,
                 body,
                 null, null, null).ConfigureAwait(false);
 
             Debug.WriteLine(response);
-            return !response.Contains("message", StringComparison.OrdinalIgnoreCase);
+            return !response.Contains("message");
         }
 
         public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
@@ -690,7 +692,7 @@ namespace Discord
             string currentUserId = _currentUserId;
 
             // Check if replied to current user
-            if (e.ParentMessage is not null && e.ParentMessage.Sender.Identifier == currentUserId)
+            if (e.ParentMessage != null && e.ParentMessage.Sender.Identifier == currentUserId)
                 return true;
 
             // Check if current user is mentioned in the message
@@ -737,7 +739,7 @@ namespace Discord
                                 var typingUser = TypingUsersList
                                     .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
 
-                                if (typingUser is not null)
+                                if (typingUser != null)
                                     TypingUsersList.Remove(typingUser);
 
                                 if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))

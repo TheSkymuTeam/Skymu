@@ -48,7 +48,7 @@ namespace XMPP
         public SynchronizationContext _uiContext;
 
         // track recent conversations
-        private readonly Dictionary<string, string> _recentJidMap = new();
+        private readonly Dictionary<string, string> _recentJidMap = new Dictionary<string, string>();
 
         // current user's JID
         private string _currentUserJid;
@@ -60,7 +60,7 @@ namespace XMPP
         private const int CONNECTION_TIMEOUT_MS = 10000;
 
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
-        private readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
+        private readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new Dictionary<string, HashSet<string>>();
 
         public ClickableConfiguration[] ClickableConfigurations
         {
@@ -349,8 +349,8 @@ namespace XMPP
 
         public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
-            if (text is null) { OnError?.Invoke(this, new PluginMessageEventArgs("Attachment sending is not yet supported by the XMPP plugin. As your message does not have text, it will not be sent.")); return false; }
-            if (attachment is not null)
+            if (text == null) { OnError?.Invoke(this, new PluginMessageEventArgs("Attachment sending is not yet supported by the XMPP plugin. As your message does not have text, it will not be sent.")); return false; }
+            if (attachment != null)
             {
                 if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File && attachment.Type != AttachmentType.Audio)
                 {

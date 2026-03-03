@@ -92,7 +92,7 @@ namespace Skymu
 
             IsEnabledChanged += (s, e) =>
             {
-                IsHitTestVisible = IsEnabled;
+                UpdateHitTestState();
 
                 if (!IsEnabled)
                 {
@@ -109,7 +109,7 @@ namespace Skymu
             };
 
             // Animation timer
-            if (_sharedAnimationTimer is null)
+            if (_sharedAnimationTimer == null)
             {
                 _sharedAnimationTimer = new DispatcherTimer();
                 _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // ~60 FPS base tick rate
@@ -325,7 +325,7 @@ namespace Skymu
 
         private void SetStateInternal(ButtonVisualState state)
         {
-            // Allow exiting Disabled ONLY if control is enabled
+            // alllows exiting Disabled only if control is enabled
             if (_visualState == ButtonVisualState.Disabled &&
                 state != ButtonVisualState.Disabled &&
                 !IsEnabled)
@@ -339,14 +339,18 @@ namespace Skymu
             if (_visualState == state)
                 return;
 
-            _visualState = state;
-            UpdateSlices();
-            UpdateTextOffset();
+            SetState(state);
+        }
+
+        public void UpdateHitTestState() 
+        {
+            IsHitTestVisible = IsEnabled && !(IsRadioButton && _visualState == ButtonVisualState.Pressed);
         }
 
         public void SetState(ButtonVisualState state)
         {
             _visualState = state;
+            UpdateHitTestState();
             UpdateSlices();
             UpdateTextOffset();
         }
@@ -359,7 +363,7 @@ namespace Skymu
 
         private void UpdateTextOffset()
         {
-            if (OverlayText is null) return;
+            if (OverlayText == null) return;
             OverlayText.Margin = new Thickness(
                 TextStartPositionX,
                 _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
@@ -399,7 +403,7 @@ namespace Skymu
 
         private void UpdateText()
         {
-            if (OverlayText is null) return;
+            if (OverlayText == null) return;
 
             OverlayText.Text = Text;
             OverlayText.FontFamily = TextFont;
@@ -431,7 +435,7 @@ namespace Skymu
         private Rect GetStateViewbox()
         {
             var bmp = Source as BitmapSource;
-            if (bmp is null || ElementCount <= 0)
+            if (bmp == null || ElementCount <= 0)
                 return new Rect(0, 0, 1, 1);
 
             int index = GetCurrentIndex();
@@ -455,7 +459,7 @@ namespace Skymu
         private double GetElementHeight()
         {
             var bmp = Source as BitmapSource;
-            if (bmp is null || ElementCount <= 0)
+            if (bmp == null || ElementCount <= 0)
                 return ActualHeight;
 
             return StackDirection == SpriteStackDirection.Vertical
@@ -466,7 +470,7 @@ namespace Skymu
         private void UpdateSlices()
         {
             var bmp = Source as BitmapSource;
-            if (bmp is null) return;
+            if (bmp == null) return;
 
             if (!Slice)
             {

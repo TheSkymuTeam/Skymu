@@ -66,28 +66,40 @@ namespace XMPP.Classes
             if (string.IsNullOrEmpty(xmppShow))
                 return UserConnectionStatus.Online;
 
-            return xmppShow.ToLowerInvariant() switch
+            switch (xmppShow.ToLowerInvariant())
             {
-                "away" => UserConnectionStatus.Away,
-                "dnd" => UserConnectionStatus.DoNotDisturb,
-                "xa" => UserConnectionStatus.Invisible,
-                "chat" => UserConnectionStatus.Online,
-                "unavailable" => UserConnectionStatus.Offline,
-                _ => UserConnectionStatus.Offline
-            };
+                case "away":
+                    return UserConnectionStatus.Away;
+                case "dnd":
+                    return UserConnectionStatus.DoNotDisturb;
+                case "xa":
+                    return UserConnectionStatus.Invisible;
+                case "chat":
+                    return UserConnectionStatus.Online;
+                case "unavailable":
+                    return UserConnectionStatus.Offline;
+                default:
+                    return UserConnectionStatus.Offline;
+            }
         }
 
         public string MapStatusToXmpp(UserConnectionStatus status)
         {
-            return status switch
+            switch (status)
             {
-                UserConnectionStatus.Away => "away",
-                UserConnectionStatus.DoNotDisturb => "dnd",
-                UserConnectionStatus.Invisible => "xa",
-                UserConnectionStatus.Online => "",
-                UserConnectionStatus.Offline => "unavailable",
-                _ => ""
-            };
+                case UserConnectionStatus.Away:
+                    return "away";
+                case UserConnectionStatus.DoNotDisturb:
+                    return "dnd";
+                case UserConnectionStatus.Invisible:
+                    return "xa";
+                case UserConnectionStatus.Online:
+                    return "";
+                case UserConnectionStatus.Offline:
+                    return "unavailable";
+                default:
+                    return "";
+            }
         }
 
         public async Task<byte[]> GetDefaultAvatarAsync(string jid)

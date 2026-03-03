@@ -45,7 +45,7 @@ namespace Discord.Classes
             string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
 
             if (File.Exists(cachedFile))
-                return await File.ReadAllBytesAsync(cachedFile).ConfigureAwait(false);
+                return File.ReadAllBytes(cachedFile);
 
             string pattern = $"*-{userId}.png";
             foreach (var file in Directory.GetFiles(cacheDir, pattern))
@@ -59,7 +59,7 @@ namespace Discord.Classes
             try
             {
                 data = await _httpClient.GetByteArrayAsync(url).ConfigureAwait(false);
-                await File.WriteAllBytesAsync(cachedFile, data).ConfigureAwait(false);
+                File.WriteAllBytes(cachedFile, data);
             }
             catch { Debug.WriteLine("Unable to fetch avatar from URL - GetCachedAvatarAsync(). The URL in question is: " + url);  }
             return data;
@@ -67,13 +67,13 @@ namespace Discord.Classes
 
         public static string ReplaceIDWithName(JsonArray idArray, string content)
         {
-            if (idArray is null || string.IsNullOrEmpty(content))
+            if (idArray == null || string.IsNullOrEmpty(content))
                 return content;
 
             foreach (var array in idArray)
             {
                 string id = array["id"]?.GetValue<string>();
-                if (id is null) continue;
+                if (id == null) continue;
 
                 string displayName = array["member"]?["nick"]?.GetValue<string>()
                                      ?? array["global_name"]?.GetValue<string>()
@@ -125,7 +125,7 @@ namespace Discord.Classes
         {
             channelId = null;
             string dictChannelId = Discord.Core.UserIdToChannelId.TryGetValue(identifier, out string mappedChannelId) ? mappedChannelId : null;
-            if (dictChannelId is not null) channelId = dictChannelId;
+            if (dictChannelId != null) channelId = dictChannelId;
             else channelId = identifier;
             return true;
         }

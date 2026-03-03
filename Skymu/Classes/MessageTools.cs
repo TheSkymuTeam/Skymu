@@ -87,7 +87,7 @@ namespace Skymu
                 return textBlock;
             }
 
-            if (style is not null) textBlock.Style = style;
+            if (style != null) textBlock.Style = style;
 
             var pipeline = new MarkdownPipelineBuilder()
             //.UseAdvancedExtensions()   // All standard + extended features (tables, footnotes, task lists, etc.)
@@ -150,15 +150,24 @@ namespace Skymu
                     {
                         var span = new Span
                         {
-                            FontWeight = FontWeights.Bold,
-                            FontSize = heading.Level switch
-                            {
-                                1 => 24,
-                                2 => 20,
-                                3 => 16,
-                                _ => 16
-                            }
+                            FontWeight = FontWeights.Bold
                         };
+
+                        switch (heading.Level)
+                        {
+                            case 1:
+                                span.FontSize = 24;
+                                break;
+                            case 2:
+                                span.FontSize = 20;
+                                break;
+                            case 3:
+                                span.FontSize = 16;
+                                break;
+                            default:
+                                span.FontSize = 16;
+                                break;
+                        }
 
                         if (heading.Inline != null)
                             ProcessInlines(span.Inlines, heading.Inline);
@@ -278,7 +287,7 @@ namespace Skymu
                         break;
                     }
 
-                case ThematicBreakBlock:
+                case ThematicBreakBlock _:
                     {
                         var line = new System.Windows.Shapes.Rectangle
                         {
@@ -534,7 +543,7 @@ namespace Skymu
                 }
 
                 // if the next match is a link, process it like so
-                if (nextLink is not null && nextLink.Index + position == nextIndex)
+                if (nextLink != null && nextLink.Index + position == nextIndex)
                 {
                     if (nextLink.Groups[1].Success)
                     {
@@ -559,7 +568,7 @@ namespace Skymu
                 }
 
                 // if the next match is a Clickable, process it like so
-                if (nextClickableConfig is not null)
+                if (nextClickableConfig != null)
                 {
                     int start = clickableStartIndex;
                     int end = start + nextClickableConfig.DelimiterLeft.Length;

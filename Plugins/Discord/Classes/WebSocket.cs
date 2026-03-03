@@ -161,7 +161,7 @@ namespace Discord.Classes
         {
             if (WSClient?.State != WebSocketState.Open) return;
 
-            if (payload is null)
+            if (payload == null)
             {
                 await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
                 return;
@@ -243,7 +243,7 @@ namespace Discord.Classes
                                 // Only uncomment this if you need to debug the READY event from Discord.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
                                 UserStatusMgr.HandleUserStatus(json["d"]);
-
+                                
                                 var readyData = json["d"];
                                 recipientsData = readyData["relationships"] ?? new JsonArray();
                                 privateChannelsData = readyData["private_channels"] ?? new JsonArray();
@@ -291,10 +291,10 @@ namespace Discord.Classes
 
         private async Task HandleMessageCreate(JsonNode messageData)
         {
-            if (messageData is null) return;
+            if (messageData == null) return;
 
             var messageItem = await DiscordMsgParser.ParseMessage(messageData);
-            if (messageItem is null) return;
+            if (messageItem == null) return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
 

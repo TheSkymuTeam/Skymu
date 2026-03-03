@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -72,7 +71,8 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not byte[] bytes || bytes.Length == 0 || value is null)
+            var bytes = value as byte[];
+            if (bytes == null || bytes.Length == 0)
                 return null;
 
             try
@@ -135,8 +135,12 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not UserConnectionStatus statInt)
+            UserConnectionStatus statInt;
+
+            if (!(value is UserConnectionStatus))
                 return Universal.Lang["sTRAYHINT_USER_OFFLINE"];
+
+            statInt = (UserConnectionStatus)value;
 
             return Tray.StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sTRAYHINT_USER_OFFLINE"];
         }
@@ -169,7 +173,8 @@ namespace Skymu.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not string text)
+            var text = value as string;
+            if (text == null)
                 return DependencyProperty.UnsetValue;
 
             return MessageTools.FormTextblock(text, false, ViewerStyle);
@@ -183,7 +188,7 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is null ? Visibility.Collapsed : Visibility.Visible;
+            return value == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -279,7 +284,7 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
-            else if (value is null) return Visibility.Collapsed;
+            else if (value == null) return Visibility.Collapsed;
             else return Visibility.Visible;
         }
 
@@ -294,7 +299,7 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string s && String.IsNullOrEmpty(s)) return false;
-            else if (value is null) return false;
+            else if (value == null) return false;
             else return true;
         }
 
@@ -308,7 +313,11 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not string image_path) return null;
+            var image_path = value as string;
+            if (image_path == null)
+            {
+                return null;
+            }
             else return Helpers.AssetPathGenerator(image_path, false);
         }
 
@@ -322,7 +331,9 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not string image_path) return null;
+            var image_path = value as string;
+            if (image_path == null)
+                return null;
             else return Helpers.AssetPathGenerator(image_path, true);
         }
 

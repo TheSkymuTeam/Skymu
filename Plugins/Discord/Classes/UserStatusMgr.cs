@@ -53,13 +53,13 @@ namespace Discord.Classes
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
             {
                 string userId = presence["user"]?["id"]?.GetValue<string>();
-                if (userId is null) continue;
+                if (userId == null) continue;
 
                 string status = presence["status"]?.GetValue<string>() ?? "offline";
                 string customStatus = string.Empty;
 
                 var activities = presence["activities"] as JsonArray;
-                if (activities is not null && activities.Count > 0)
+                if (activities != null && activities.Count > 0)
                 {
                     foreach (var activity in activities)
                     {
@@ -67,7 +67,7 @@ namespace Discord.Classes
                         if (type == 0)
                         {
                             string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName is not null)
+                            if (activityName != null)
                             {
                                 customStatus = $"Playing {activityName}";
                                 break;
@@ -76,7 +76,7 @@ namespace Discord.Classes
                         else if (type == 1)
                         {
                             string details = activity["details"]?.GetValue<string>();
-                            if (details is not null)
+                            if (details != null)
                             {
                                 customStatus = $"Streaming {details}";
                                 break;
@@ -85,7 +85,7 @@ namespace Discord.Classes
                         else if (type == 2)
                         {
                             string activityName = activity["name"]?.GetValue<string>();
-                            if (activityName is not null)
+                            if (activityName != null)
                             {
                                 customStatus = $"Listening to {activityName}";
                                 break;

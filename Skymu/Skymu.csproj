@@ -1,8 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows7.0</TargetFramework>
+		<TargetFramework>net461</TargetFramework>
 		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
 		<OutputType>WinExe</OutputType>
+
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+
 		<IsWebBootstrapper>false</IsWebBootstrapper>
 		<PublishUrl>publish\</PublishUrl>
 		<Install>true</Install>
@@ -16,88 +21,95 @@
 		<UpdateRequired>false</UpdateRequired>
 		<MapFileExtensions>true</MapFileExtensions>
 		<ApplicationRevision>0</ApplicationRevision>
-		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+		<ApplicationVersion>1.0.0.*</ApplicationVersion>
 		<UseApplicationTrust>false</UseApplicationTrust>
 		<BootstrapperEnabled>true</BootstrapperEnabled>
+
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<UseWindowsForms>true</UseWindowsForms>
-		<UseWPF>true</UseWPF>
-		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+
 		<StartupObject />
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>AnyCPU;x86</Platforms>
 		<ApplicationIcon>Skype.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<!-- Build Configurations -->
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
 		<OutputPath>bin\x64\Debug\</OutputPath>
-		<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-		<CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 		<OutputPath>bin\x64\Debug\</OutputPath>
-		<CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
-		<CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
 		<OutputPath>bin\x64\Release\</OutputPath>
 	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
 		<OutputPath>bin\x64\Release\</OutputPath>
 	</PropertyGroup>
+
+	<!-- Resource Handling -->
+
 	<ItemGroup>
-		<!-- Resources → WPF Resource -->
+		<!-- Skyaeris -->
 		<None Remove="Skyaeris\Assets\**\*" />
 		<Page Remove="Skyaeris\Assets\**\*" />
 		<EmbeddedResource Remove="Skyaeris\Assets\**\*" />
 		<Compile Remove="Skyaeris\Assets\**\*" />
 		<Resource Include="Skyaeris\Assets\**\*" />
+
+		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
 		<Page Remove="Emoji\**\*" />
 		<EmbeddedResource Remove="Emoji\Resources\**\*" />
 		<Compile Remove="Emoji\**\*" />
 		<Resource Include="Emoji\**\*" />
+
+		<!-- Sounds -->
 		<None Remove="Sounds\**\*" />
 		<Page Remove="Sounds\**\*" />
 		<EmbeddedResource Remove="Sounds\**\*" />
-		<Compile Remove="Sounds**\*" />
+		<Compile Remove="Sounds\**\*" />
 		<Resource Include="Sounds\**\*" />
 
-		<!-- Languages → Content -->
+		<!-- Languages as Content -->
 		<None Remove="Languages\**\*" />
 		<Page Remove="Languages\**\*" />
 		<EmbeddedResource Remove="Languages\**\*" />
 		<Compile Remove="Languages\**\*" />
-
 		<Content Include="Languages\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		
 	</ItemGroup>
 
+	<!-- Packages (compatible with net461) -->
 
 	<ItemGroup>
-		<PackageReference Include="Markdig" Version="1.0.0" />
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="Microsoft.NETCore.Platforms" Version="8.0.0-preview.7.23375.6" />
-		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3719.77" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Markdig" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.864.35" />
 		<PackageReference Include="QRCoder" Version="1.7.0" />
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="10.0.2" />
+		<PackageReference Include="System.Text.Json" Version="10.0.3" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<AppDesigner Include="Properties\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+		<BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
 			<Visible>False</Visible>
-			<ProductName>.NET Framework 3.5 SP1</ProductName>
-			<Install>false</Install>
+			<ProductName>.NET Framework 4.6.1</ProductName>
+			<Install>true</Install>
 		</BootstrapperPackage>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Skype.ico" />
+		<Content Include="Skype.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -110,17 +122,36 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
-	</ItemGroup>
-	<ItemGroup>
+
 		<None Update="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
-
 	</ItemGroup>
+
 	<ItemGroup>
-	  <Page Include="App.xaml" />
+		<Page Include="App.xaml" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="PresentationFramework.Aero">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Aero2">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.AeroLite">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Classic">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Luna">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Royale">
+	    <Private>True</Private>
+	  </Reference>
+	</ItemGroup>
 
 </Project>

@@ -22,7 +22,7 @@ namespace Skymu
 {
     class Tray
     {
-        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new()
+        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<UserConnectionStatus, string>()
         {
             { UserConnectionStatus.Online, Universal.Lang["sTRAYHINT_USER_ONLINE"] },
             { UserConnectionStatus.Away, Universal.Lang["sTRAYHINT_USER_AWAY"] },
@@ -31,7 +31,7 @@ namespace Skymu
             { UserConnectionStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
         };
 
-        public static readonly Dictionary<UserConnectionStatus, string> SIconTextMap = new()
+        public static readonly Dictionary<UserConnectionStatus, string> SIconTextMap = new Dictionary<UserConnectionStatus, string>()
         {
             { UserConnectionStatus.Online, "online" },
             { UserConnectionStatus.Away, "away" },
@@ -104,7 +104,7 @@ namespace Skymu
 
         public static void DisposeIcon()
         {
-            if (Icon is not null)
+            if (Icon != null)
             {
                 Icon.Visible = false;
                 Icon.Icon = null;
@@ -118,7 +118,7 @@ namespace Skymu
                 hMenu = IntPtr.Zero;
             }
 
-            if (messageWindow is not null)
+            if (messageWindow != null)
             {
                 messageWindow.DestroyHandle();
                 messageWindow = null;
@@ -130,7 +130,7 @@ namespace Skymu
             switch (commandId)
             {
                 case MENU_OPEN_SKYPE:
-                    if (System.Windows.Application.Current.Windows is not null)
+                    if (System.Windows.Application.Current.Windows != null)
                     {
                     }
                     else
@@ -139,7 +139,7 @@ namespace Skymu
                     break;
 
                 case MENU_SIGN_IN:
-                    if (System.Windows.Application.Current.Windows is not null)
+                    if (System.Windows.Application.Current.Windows != null)
                     {
                     }
                     else
@@ -194,12 +194,23 @@ namespace Skymu
 
         public static void PushIcon(UserConnectionStatus icon)
         {
-            string iconName = SIconTextMap.GetValueOrDefault(icon, "offline");
-            string iconToolTip = Properties.Settings.Default.BrandingName + " (" + StatusMap.GetValueOrDefault(icon, Universal.Lang["sTRAYHINT_USER_OFFLINE"]) + ")";
+            string iconName;
+            if (!SIconTextMap.TryGetValue(icon, out iconName))
+            {
+                iconName = "offline";
+            }
+
+            string statusText;
+            if (!StatusMap.TryGetValue(icon, out statusText))
+            {
+                statusText = Universal.Lang["sTRAYHINT_USER_OFFLINE"];
+            }
+
+            string iconToolTip = Properties.Settings.Default.BrandingName + " (" + statusText + ")";
             var resourceUri = new Uri("pack://application:,,,/" + Universal.SkypeEra + "/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
-            if (Icon is not null)
+            if (Icon != null)
             {
                 Icon.Icon = new Icon(resourceStreamInfo.Stream);
             }

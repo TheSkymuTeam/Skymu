@@ -10,12 +10,13 @@
 /*==========================================================*/
 
 using MiddleMan;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using Skymu.Views;
-using Skymu.Views.Pages;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace Skymu.Skyaeris
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
 
-        private static readonly Dictionary<UserConnectionStatus, int> status_map = new()
+        private static readonly Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
         {
             { UserConnectionStatus.Online, 2 },
             { UserConnectionStatus.Away, 3 },
@@ -72,7 +73,7 @@ namespace Skymu.Skyaeris
             { UserConnectionStatus.Offline, 19 }
         };
 
-        private static readonly Dictionary<ChannelType, int> channel_type_map = new()
+        private static readonly Dictionary<ChannelType, int> channel_type_map = new Dictionary<ChannelType, int>()
         {
             { ChannelType.Standard, 2 },
             { ChannelType.ReadOnly, 2 },
@@ -150,7 +151,7 @@ namespace Skymu.Skyaeris
                     TitleMain.FontSize = 12;
                     TitleMain.Foreground = Brushes.Black;
 
-                    // Titlebar drop shadow (Imitates the Windows 7 glow effect)
+                    // Titlebar drop shadow (Imitates the Aero glow effect)
                     TitleMain.Effect = new DropShadowEffect
                     {
                         ShadowDepth = 0,
@@ -225,7 +226,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static DropShadowEffect CreateDropShadow(Color color) => new()
+        private static DropShadowEffect CreateDropShadow(Color color) => new DropShadowEffect()
         {
             Color = color,
             BlurRadius = 16,
@@ -283,7 +284,7 @@ namespace Skymu.Skyaeris
         {
             var button = sender as SliceControl;
 
-            if (button is not null)
+            if (button != null)
             {
                 if (button.Name == "close")
                 {
@@ -302,7 +303,7 @@ namespace Skymu.Skyaeris
 
             if (IsWindowActive)
             {
-                if (button is not null)
+                if (button != null)
                 {
                     button.Effect = null;
 
@@ -322,7 +323,7 @@ namespace Skymu.Skyaeris
         private void TitleButton_Click(object sender, MouseButtonEventArgs e)
         {
             var button = sender as SliceControl;
-            if (button is not null)
+            if (button != null)
             {
                 switch (button.Name)
                 {
@@ -355,52 +356,86 @@ namespace Skymu.Skyaeris
         private void mn_Options(object sender, RoutedEventArgs e) { new Views.Options().Show(); }
         private void mn_About(object sender, RoutedEventArgs e) { new Views.About().Show(); }
 
-        private void Window_Deactivated(object sender, EventArgs e)
+		private void Window_Deactivated(object sender, EventArgs e)
+		{
+			IsWindowActive = true;
+
+			WindowArea.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Inactive.Window;
+
+			MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillSecondary
+				: (Brush)Theme.Inactive.Fill;
+
+			if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
+				return;
+
+			menu1.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)new SolidColorBrush(Colors.Transparent);
+
+			SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
+			foreach (SliceControl button in buttons)
+			{
+				button.DefaultIndex = 1;
+				button.Effect = null;
+			}
+
+			if (this.Background == System.Windows.Media.Brushes.Transparent)
+				return;
+
+			TitleBar.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Inactive.Titlebar;
+
+			this.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Inactive.Fill;
+		}
+
+		private void Window_Activated(object sender, EventArgs e)
+		{
+			IsWindowActive = true;
+
+			WindowArea.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Active.Window;
+
+			MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillSecondary
+				: (Brush)Theme.Active.Fill;
+
+			menu1.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)new SolidColorBrush(Colors.Transparent);
+
+			if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
+				return;
+
+			SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
+			foreach (SliceControl button in buttons)
+			{
+				button.DefaultIndex = 0;
+			}
+
+			if (this.Background == Brushes.Transparent)
+				return;
+
+			TitleBar.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Active.Titlebar;
+
+			this.Background = Properties.Settings.Default.FallbackFillColors
+				? (Brush)Theme.Fallback.FillPrimary
+				: (Brush)Theme.Active.Fill;
+		}
+
+
+
+		private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
-            IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillSecondary : Theme.Inactive.Fill;
-            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
-
-            foreach (SliceControl button in new[] { close, minimize, maximize, split })
-            {
-                button.DefaultIndex = 1;
-                button.Effect = null;
-            }
-
-            if (this.Background == System.Windows.Media.Brushes.Transparent) return;
-
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Inactive.Fill;
-
-        }
-
-        private void Window_Activated(object sender, EventArgs e)
-        {
-            IsWindowActive = true;
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Window;
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillSecondary : Theme.Active.Fill;
-            menu1.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : new SolidColorBrush(Colors.Transparent);
-
-            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native) return;
-
-            foreach (SliceControl button in new[] { close, minimize, maximize, split })
-            {
-                button.DefaultIndex = 0;
-            }
-
-            if (this.Background == Brushes.Transparent) return;
-
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Titlebar;
-            this.Background = Properties.Settings.Default.FallbackFillColors ? Theme.Fallback.FillPrimary : Theme.Active.Fill;
-        }
-
-
-
-        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        {
-            if (parent is null)
+            if (parent == null)
                 return null;
 
             int childCount = VisualTreeHelper.GetChildrenCount(parent);
@@ -413,7 +448,7 @@ namespace Skymu.Skyaeris
                     return matchedChild;
 
                 var result = FindVisualChild<T>(child);
-                if (result is not null)
+                if (result != null)
                     return result;
             }
 
@@ -450,7 +485,7 @@ namespace Skymu.Skyaeris
                     }
                 }
 
-                if (_activeConversationChangedHandler is not null)
+                if (_activeConversationChangedHandler != null)
                     conversation.CollectionChanged -= _activeConversationChangedHandler;
 
                 _activeConversationChangedHandler = (s, args) =>
@@ -478,7 +513,7 @@ namespace Skymu.Skyaeris
         private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listBox = (ListBox)sender;
-            if (listBox.SelectedItem is null) return;
+            if (listBox.SelectedItem == null) return;
 
             ChatArea.DataContext = listBox.SelectedItem;
             SelectedConversation = (Conversation)listBox.SelectedItem;
@@ -630,7 +665,7 @@ namespace Skymu.Skyaeris
             dragStart = e.GetPosition(this);
             capturedElement = sender as UIElement; // Store the element reference
 
-            if (capturedElement is not null)
+            if (capturedElement != null)
             {
                 capturedElement.CaptureMouse();
                 e.Handled = true;
@@ -644,7 +679,7 @@ namespace Skymu.Skyaeris
                 isDragging = false;
 
                 // Use the stored reference instead of sender
-                if (capturedElement is not null && capturedElement.IsMouseCaptured)
+                if (capturedElement != null && capturedElement.IsMouseCaptured)
                 {
                     capturedElement.ReleaseMouseCapture();
                 }
@@ -721,7 +756,7 @@ namespace Skymu.Skyaeris
 
         private async Task SendMessage(string message = null)
         {
-            if (!SendMsgButton.IsEnabled && message is null)
+            if (!SendMsgButton.IsEnabled && message == null)
                 return;
 
             string message_body = message ?? ExtractMessageFromRichTextBox();
@@ -834,15 +869,27 @@ namespace Skymu.Skyaeris
 
                 double speedMbps = (data.Length * 8.0) / 1_000_000 / stopwatch.Elapsed.TotalSeconds;
 
-                final_icon = speedMbps switch
-                {
-                    >= 50 => speedButtonIcons[4],
-                    >= 20 => speedButtonIcons[3],
-                    >= 10 => speedButtonIcons[2],
-                    >= 5 => speedButtonIcons[1],
-                    _ => speedButtonIcons[0]
-                };
-            }
+				if (speedMbps >= 50)
+				{
+					final_icon = speedButtonIcons[4];
+				}
+				else if (speedMbps >= 20)
+				{
+					final_icon = speedButtonIcons[3];
+				}
+				else if (speedMbps >= 10)
+				{
+					final_icon = speedButtonIcons[2];
+				}
+				else if (speedMbps >= 5)
+				{
+					final_icon = speedButtonIcons[1];
+				}
+				else
+				{
+					final_icon = speedButtonIcons[0];
+				}
+			}
             catch
             {
                 final_icon = "btn_pill_small_network_unavailable.png";
@@ -902,22 +949,23 @@ namespace Skymu.Skyaeris
                                     {
                                         _pendingPreviewMessages.Remove(match.Identifier);
 
-                                        Dispatcher.BeginInvoke(() =>
-                                        {
-                                            Universal.Plugin.ActiveConversation.Remove(match);
-                                        });
+										Dispatcher.BeginInvoke(new Action(delegate ()
+										{
+											Universal.Plugin.ActiveConversation.Remove(match);
+										}));
 
-                                    }
+									}
                                 }
                                 int currentIndex = listBox.Items.IndexOf(message);
 
                                 for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-                                    if (listBox.Items[i] is not Message previousMessage)
-                                        continue;
+									Message previousMessage = listBox.Items[i] as Message;
+									if (previousMessage == null)
+										continue;
 
-                                    // ignore preview messages
-                                    if (previousMessage.Identifier.StartsWith(SKYMU_SENDING))
+									// ignore preview messages
+									if (previousMessage.Identifier.StartsWith(SKYMU_SENDING))
                                         continue;
 
                                     // only assign a real message's identifier as prev identifier
@@ -940,20 +988,20 @@ namespace Skymu.Skyaeris
             if (listBox?.Items.Count > 0)
             {
                 var scrollViewer = FindScrollViewer(listBox);
-                if (scrollViewer is not null)
+                if (scrollViewer != null)
                 {
                     scrollViewer.ScrollToEnd();
                 }
                 else
                 {
-                    listBox.ScrollIntoView(listBox.Items[^1]);
-                }
+					listBox.ScrollIntoView(listBox.Items[listBox.Items.Count - 1]);
+				}
             }
         }
 
         private static ScrollViewer FindScrollViewer(DependencyObject element)
         {
-            if (element is null)
+            if (element == null)
                 return null;
 
             if (element is ScrollViewer scrollViewer)
@@ -964,7 +1012,7 @@ namespace Skymu.Skyaeris
             {
                 var child = VisualTreeHelper.GetChild(element, i);
                 var result = FindScrollViewer(child);
-                if (result is not null)
+                if (result != null)
                     return result;
             }
 
@@ -973,7 +1021,7 @@ namespace Skymu.Skyaeris
 
         private void UpdateSendButtonState()
         {
-            if (SendMsgButton is null) return;
+            if (SendMsgButton == null) return;
 
 
             if (MessageTextBox.Tag as string == TAG_PLACEHOLDER)
@@ -1004,7 +1052,7 @@ namespace Skymu.Skyaeris
 
         private static bool HasAnyContent(RichTextBox rtb)
         {
-            if (rtb?.Document is null)
+            if (rtb?.Document == null)
                 return false;
 
             if (rtb.Tag as string == TAG_PLACEHOLDER)
@@ -1323,10 +1371,11 @@ namespace Skymu.Skyaeris
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
-            if (border?.Child is not SliceControl sliceControlInside)
-                return;
+			var sliceControlInside = border != null ? border.Child as SliceControl : null;
+			if (sliceControlInside == null)
+				return;
 
-            EmojiFlyout.IsOpen = false;
+			EmojiFlyout.IsOpen = false;
 
             RemovePlaceholder(MessageTextBox);
 
@@ -1374,9 +1423,9 @@ namespace Skymu.Skyaeris
         internal static UserConnectionStatus GetStatusFromInt(int value)
             => status_map.FirstOrDefault(x => x.Value == value).Key;
 
-        private void SelectTab(SliceControl selected_tab)
+        private void SelectTab(SliceControl tab_to_select)
         {
-            if (selected_tab.Name == "btnServers")
+            if (tab_to_select.Name == "btnServers")
             {
                 ContactsList.Visibility = Visibility.Collapsed;
                 ServersList.Visibility = Visibility.Visible;
@@ -1385,34 +1434,33 @@ namespace Skymu.Skyaeris
             {
                 ContactsList.Visibility = Visibility.Visible;
                 ServersList.Visibility = Visibility.Collapsed;
+                ContactsList.ItemsSource = null;
             }
                 GridLength dynamic = new GridLength(1, GridUnitType.Star);
             GridLength small = new GridLength(32);
 
-            buttonToColumn[selected_tab].Width = dynamic;
+            buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
-                if (tab == selected_tab) continue;
+                if (tab == tab_to_select) continue;
                 tab.SetState(ButtonVisualState.Default);
                 buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs ? small : dynamic;
             }
+            SetWindow(WindowType.Home);
         }
         private async void Contacts_BtnDown(object sender, MouseButtonEventArgs e)
         {
             SelectTab(btnContacts);
 
-            SetWindow(WindowType.Home);
-            ContactsList.ItemsSource = null;
 
-            if (Universal.Plugin.ContactsList is null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
+            if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
             ContactsList.ItemsSource = Universal.Plugin.ContactsList;
         }
 
         private async void Servers_BtnDown(object sender, MouseButtonEventArgs e)
         {
             SelectTab(btnServers);
-            SetWindow(WindowType.Home);
-            if (Universal.Plugin.ServerList is null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
+            if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
             ServersList.ItemsSource = Universal.Plugin.ServerList;
         }
 
@@ -1420,10 +1468,9 @@ namespace Skymu.Skyaeris
         {
             SelectTab(btnRecents);
 
-            SetWindow(WindowType.Home);
-            ContactsList.ItemsSource = null;
+            
 
-            if (Universal.Plugin.RecentsList is null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
+            if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
             ContactsList.ItemsSource = Universal.Plugin.RecentsList;
         }
 

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
 
   <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
@@ -23,8 +23,10 @@
     <OutputPath>..\..\Skymu\bin\x64\Debug\plugins\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.33.5" />
+	<PackageReference Include="Google.Protobuf" Version="3.34.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Text.Json" Version="10.0.3" />
+    <PackageReference Include="System.Threading.Channels" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">

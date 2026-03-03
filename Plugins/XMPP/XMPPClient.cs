@@ -165,13 +165,23 @@ namespace XMPP.Classes
 
         public async Task SendPresenceAsync(UserConnectionStatus status, string statusMessage = null)
         {
-            string show = status switch
+            string show;
+
+            switch (status)
             {
-                UserConnectionStatus.Away => "away",
-                UserConnectionStatus.DoNotDisturb => "dnd",
-                UserConnectionStatus.Invisible => "xa",
-                _ => ""
-            };
+                case UserConnectionStatus.Away:
+                    show = "away";
+                    break;
+                case UserConnectionStatus.DoNotDisturb:
+                    show = "dnd";
+                    break;
+                case UserConnectionStatus.Invisible:
+                    show = "xa";
+                    break;
+                default:
+                    show = "";
+                    break;
+            }
 
             string presenceStanza = "<presence>";
 
@@ -469,13 +479,21 @@ namespace XMPP.Classes
                 else
                 {
                     XElement show = presence.Element("show");
-                    status = show?.Value switch
+                    switch (show?.Value)
                     {
-                        "away" => UserConnectionStatus.Away,
-                        "dnd" => UserConnectionStatus.DoNotDisturb,
-                        "xa" => UserConnectionStatus.Invisible,
-                        _ => UserConnectionStatus.Online
-                    };
+                        case "away":
+                            status = UserConnectionStatus.Away;
+                            break;
+                        case "dnd":
+                            status = UserConnectionStatus.DoNotDisturb;
+                            break;
+                        case "xa":
+                            status = UserConnectionStatus.Invisible;
+                            break;
+                        default:
+                            status = UserConnectionStatus.Online;
+                            break;
+                    }
                 }
 
                 XElement statusElement = presence.Element("status");

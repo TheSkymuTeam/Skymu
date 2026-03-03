@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -35,13 +36,8 @@ namespace Discord.Classes
 
         static API()
         {
-            // Use SocketsHttpHandler for better performance and HTTP/2
-            var handler = new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
-                PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
-                MaxConnectionsPerServer = 10
-            };
+            var handler = new HttpClientHandler();
+            ServicePointManager.DefaultConnectionLimit = 10;
 
             // Re-used client (Less memory usage)
             client = new HttpClient(handler);
@@ -53,10 +49,9 @@ namespace Discord.Classes
             XSuperProperties = configMgr.GetXSPJson();
             client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
 
-            // Forcefully use TLS 1.2+ (supports 1.2 and 1.3)
+            // Forcefully use TLS 1.2
             System.Net.ServicePointManager.SecurityProtocol =
-                System.Net.SecurityProtocolType.Tls12 |
-                System.Net.SecurityProtocolType.Tls13;
+                System.Net.SecurityProtocolType.Tls12;
         }
 
         public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
@@ -77,7 +72,7 @@ namespace Discord.Classes
                 }
             }
 
-            if (headers is not null)
+            if (headers != null)
             {
                 foreach (var kvp in headers)
                 {
@@ -85,14 +80,14 @@ namespace Discord.Classes
                 }
             }
 
-            if (fileData is not null && !string.IsNullOrEmpty(fileName))
+            if (fileData != null && !string.IsNullOrEmpty(fileName))
             {
                 var content = new MultipartFormDataContent
                 {
                     { new ByteArrayContent(fileData) { Headers = { { "Content-Type", "application/octet-stream" } } }, "file", fileName }
                 };
 
-                if (data is not null)
+                if (data != null)
                 {
                     string jsonData = JsonSerializer.Serialize(data);
                     content.Add(new StringContent(jsonData, Encoding.UTF8, "application/json"), "payload_json");
@@ -100,7 +95,7 @@ namespace Discord.Classes
 
                 request.Content = content;
             }
-            else if ((httpMethod == HttpMethod.Post || httpMethod == HttpMethod.Put || httpMethod == HttpMethod.Patch) && data is not null)
+            else if ((httpMethod != HttpMethod.Get) && data != null)
             {
                 string jsonData = JsonSerializer.Serialize(data);
                 request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");

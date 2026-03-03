@@ -19,8 +19,8 @@ namespace Skymu
 {
     public class LanguageManager : INotifyPropertyChanged
     {
-        private readonly Dictionary<string, string> ldict = new();
-        private readonly Dictionary<string, string> llist = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> ldict = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> llist = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         public IReadOnlyDictionary<string, string> Languages => llist;
         private string currentPath;
         public string this[string key]
@@ -32,8 +32,7 @@ namespace Skymu
 
                 return value.Replace(
                     "Skype",
-                    Properties.Settings.Default.BrandingName,
-                    StringComparison.OrdinalIgnoreCase);
+                    Properties.Settings.Default.BrandingName);
             }
         }
 
@@ -48,7 +47,7 @@ namespace Skymu
             Properties.Settings.Default.PropertyChanged += Settings_PropertyChanged;
         }
 
-        private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Properties.Settings.Default.Language))
             {
@@ -96,7 +95,7 @@ namespace Skymu
             llist.Clear();
             foreach (var file in Directory.GetFiles(directoryPath, "*.lang"))
             {
-                string? languageName = null;
+                string languageName = null;
 
                 foreach (var line in File.ReadLines(file))
                 {
@@ -107,12 +106,12 @@ namespace Skymu
                     if (idx <= 0)
                         continue;
 
-                    string key = line[..idx].Trim();
+                    string key = line.Substring(0, idx).Trim();
 
                     if (key.Equals("s_LANGUAGE_NAME", StringComparison.OrdinalIgnoreCase))
                     {
-                        languageName = line[(idx + 1)..].Trim();
-                        break; 
+                        languageName = line.Substring(idx + 1).Trim();
+                        break;
                     }
                 }
 

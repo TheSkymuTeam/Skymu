@@ -33,25 +33,31 @@ namespace Skymu
 
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                new Dialog(WindowBase.IconType.Error, e.Message, "Error in plugin " + ((ICore)sender).Name).ShowDialog();
-            });
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new Action(delegate
+                {
+                    var core = (ICore)sender;
+                    new Dialog(WindowBase.IconType.Error, e.Message, "Error in plugin " + core.Name).ShowDialog();
+                }));
         }
 
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                new Dialog(WindowBase.IconType.Information, e.Message, "Warning from plugin " + ((ICore)sender).Name).ShowDialog();
-            });
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new Action(delegate
+                {
+                    var core = (ICore)sender;
+                    new Dialog(WindowBase.IconType.Information, e.Message, "Warning from plugin " + core.Name).ShowDialog();
+                }));
         }
+
         public static void PluginNotificationHandler(object sender, NotificationEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
-            {
-                new Views.Notification(e);
-            });
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new Action(delegate
+                {
+                    new Views.Notification(e);
+                }));
         }
 
         static Universal()
@@ -85,7 +91,7 @@ namespace Skymu
         {
             Exception exception = ev.ExceptionObject as Exception;
 
-            if (exception is not null)
+            if (exception != null)
             {
                 ExceptionHandler(exception);
             }
@@ -98,7 +104,7 @@ namespace Skymu
 
         public static void Close(System.ComponentModel.CancelEventArgs ev = null)
         {
-            if (ev is not null)
+            if (ev != null)
             {
                 ev.Cancel = true;
             }
@@ -152,16 +158,36 @@ namespace Skymu
             if (string.IsNullOrEmpty(frameworkName))
                 frameworkName = "Aero.NormalColor";
 
-            string assemblyName = frameworkName switch
+            string assemblyName;
+
+            if (frameworkName != null && frameworkName.StartsWith("Luna"))
             {
-                string s when s.StartsWith("Luna") => "PresentationFramework.Luna",
-                string s when s.StartsWith("Royale") => "PresentationFramework.Royale",
-                string s when s.StartsWith("Aero2") => "PresentationFramework.Aero2",
-                string s when s.StartsWith("AeroLite") => "PresentationFramework.AeroLite",
-                string s when s.StartsWith("Aero") => "PresentationFramework.Aero",
-                "Classic" => "PresentationFramework.Classic",
-                _ => "PresentationFramework.Aero2"
-            };
+                assemblyName = "PresentationFramework.Luna";
+            }
+            else if (frameworkName != null && frameworkName.StartsWith("Royale"))
+            {
+                assemblyName = "PresentationFramework.Royale";
+            }
+            else if (frameworkName != null && frameworkName.StartsWith("Aero2"))
+            {
+                assemblyName = "PresentationFramework.Aero2";
+            }
+            else if (frameworkName != null && frameworkName.StartsWith("AeroLite"))
+            {
+                assemblyName = "PresentationFramework.AeroLite";
+            }
+            else if (frameworkName != null && frameworkName.StartsWith("Aero"))
+            {
+                assemblyName = "PresentationFramework.Aero";
+            }
+            else if (frameworkName == "Classic")
+            {
+                assemblyName = "PresentationFramework.Classic";
+            }
+            else
+            {
+                assemblyName = "PresentationFramework.Aero2";
+            }
 
             try
             {

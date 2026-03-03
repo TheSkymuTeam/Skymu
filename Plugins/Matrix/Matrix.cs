@@ -14,6 +14,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 #pragma warning disable CS8618
 namespace Matrix
@@ -59,7 +64,7 @@ namespace Matrix
         private string _activeRoomId;
         private SavedCredential credData;
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
-        public readonly Dictionary<string, string> _recentRoomMap = new();
+        public readonly Dictionary<string, string> _recentRoomMap = new Dictionary<string, string>();
         private string _beeperRequestToken;
 
         public async Task<string> GetQRCode()
@@ -81,7 +86,7 @@ namespace Matrix
                 {
                     if (username.Contains(":"))
                     {
-                        string[] parts = username.Split(':', 2);
+                        string[] parts = username.Split(new char[] { ':' }, 2, StringSplitOptions.None);
                         if (parts.Length == 2)
                             _homeserver = $"https://{parts[1]}";
                     }
@@ -302,13 +307,25 @@ namespace Matrix
         {
             try
             {
-                string presenceStr = status switch
+                string presenceStr;
+
+                switch (status)
                 {
-                    UserConnectionStatus.Online => "online",
-                    UserConnectionStatus.Offline or UserConnectionStatus.Invisible => "offline",
-                    UserConnectionStatus.Away or UserConnectionStatus.DoNotDisturb => "unavailable",
-                    _ => "online"
-                };
+                    case UserConnectionStatus.Online:
+                        presenceStr = "online";
+                        break;
+                    case UserConnectionStatus.Offline:
+                    case UserConnectionStatus.Invisible:
+                        presenceStr = "offline";
+                        break;
+                    case UserConnectionStatus.Away:
+                    case UserConnectionStatus.DoNotDisturb:
+                        presenceStr = "unavailable";
+                        break;
+                    default:
+                        presenceStr = "online";
+                        break;
+                }
 
                 var body = new { presence = presenceStr };
                 string bodyJson = JsonSerializer.Serialize(body);
@@ -709,7 +726,7 @@ namespace Matrix
                     _homeserver = "https://matrix.beeper.com";
                 else if (_userId.Contains(":"))
                 {
-                    string[] parts = _userId.Split(':', 2);
+                    string[] parts = _userId.Split(new char[] { ':' }, 2, StringSplitOptions.None);
                     if (parts.Length == 2)
                         _homeserver = $"https://{parts[1]}";
                 }

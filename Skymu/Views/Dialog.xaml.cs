@@ -28,14 +28,14 @@ namespace Skymu.Views
             {
                 InitializeComponent();
 
-                if (img is not null)
+                if (img != null)
                 {
                     tb.Visibility = Visibility.Collapsed;
                     BodyImg.Source = img;
                     BodyImg.Visibility = Visibility.Visible;
                 }
 
-                if (customDimensions is not null)
+                if (customDimensions != null)
                 {
                     this.Width = customDimensions.Value.Width;
                     this.Height = customDimensions.Value.Height;
@@ -52,10 +52,10 @@ namespace Skymu.Views
                         TextBoxText = DialogTextBox.Text;
                         DialogResult = true;
                     };
-                    brText ??= "Save";
+                    brText = brText ?? "Save";
 
                 }
-                if (title is null)
+                if (title == null)
                 {
                     title = Properties.Settings.Default.BrandingName;
                     switch (type)
@@ -75,8 +75,8 @@ namespace Skymu.Views
                 BRAction = brAction;
                 BLAction = blAction;
                 DialogImage.DefaultIndex = (int)type;
-                if (blText is not null) ButtonLeft.Content = blText;
-                if (brText is not null) ButtonRight.Content = brText;
+                if (blText != null) ButtonLeft.Content = blText;
+                if (brText != null) ButtonRight.Content = brText;
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }

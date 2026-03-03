@@ -101,7 +101,8 @@ namespace Skymu
                 string username = credentialData.GetProperty("Username").GetString();
                 string passwordOrToken = credentialData.GetProperty("PasswordOrToken").GetString();
                 string authTypeStr = credentialData.GetProperty("AuthenticationType").GetString();
-                AuthenticationMethod authType = Enum.Parse<AuthenticationMethod>(authTypeStr);
+                AuthenticationMethod authType =
+    (AuthenticationMethod)Enum.Parse(typeof(AuthenticationMethod), authTypeStr);
 
                 byte[] profilePicture = null;
                 if (credentialData.TryGetProperty("ProfilePicture", out var picElement)

@@ -13,7 +13,6 @@ using MiddleMan;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Stub
 {
@@ -52,13 +51,13 @@ namespace Stub
 
         public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
-            if (text is not null)
+            if (text != null)
             {
-                if (attachment is not null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message with text and attachment sent."));
+                if (attachment != null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message with text and attachment sent."));
                 else OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only message sent."));
             }
             else OnWarning?.Invoke(this, new PluginMessageEventArgs("Attachment-only message sent."));
-            if (parent_message_identifier is not null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message references a parent."));
+            if (parent_message_identifier != null) OnWarning?.Invoke(this, new PluginMessageEventArgs("Message references a parent."));
             TypingUsersList.Clear();
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
@@ -97,7 +96,7 @@ namespace Stub
             return true;
         }
 
-        public User? MyInformation { get; private set; }
+        public User MyInformation { get; private set; }
 
         User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
         User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
@@ -150,7 +149,7 @@ namespace Stub
                 };
             }
         }
-        public async Task<SavedCredential?> StoreCredential()
+        public async Task<SavedCredential> StoreCredential()
         {
             return null;
         }

@@ -52,7 +52,7 @@ namespace Skymu.Views.Pages
 
             if (update_info.Length > 0) // not up to date, must show window
             {
-                if (exwin is not null) window = exwin;
+                if (exwin != null) window = exwin;
                 else window = new WindowBase(this);
                 window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
@@ -101,7 +101,7 @@ namespace Skymu.Views.Pages
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
             window.ButtonLeftAction = () => InitiateUpdate();
             Description.Text = Universal.Lang["sF_UPGRADE_FAILED_TEXT1"] + "\n\n" + error;
-            ProgressGrid.Visibility = Visibility.Collapsed;            
+            ProgressGrid.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateComplete(string file_path)
@@ -125,7 +125,7 @@ namespace Skymu.Views.Pages
             };
             UpdateStatusText.Text = "100% done, 00:00:00 remaining";
             Description.Text = "The release package has been saved to the Downloads folder.";
-            ProgBar.Value = 100;            
+            ProgBar.Value = 100;
         }
 
         public async void InitiateUpdate()
@@ -162,47 +162,58 @@ namespace Skymu.Views.Pages
                 string filePath = Path.Combine(downloadsFolder, fileName);
 
                 _cts = new CancellationTokenSource();
-                using HttpResponseMessage response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, _cts.Token);
-                response.EnsureSuccessStatusCode();
 
-                // total file size in bytes
-                int totalFileSize = (int)(response.Content.Headers.ContentLength ?? 0);
-                ProgBar.Minimum = 0;
-                ProgBar.Maximum = 100;
-
-                using (var stream = await response.Content.ReadAsStreamAsync())
-                using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                using (HttpResponseMessage response = await _httpClient.GetAsync(
+                    downloadUrl,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    _cts.Token))
                 {
-                    byte[] buffer = new byte[81920];
-                    long totalRead = 0;
-                    int read;
-                    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    response.EnsureSuccessStatusCode();
 
-                    FileSize.Visibility = Visibility.Visible;
-                    FileSize.Text = Universal.Lang.Format("sF_UPGRADE_DOWNLOAD_FILESIZE", Math.Round(totalFileSize / 1048576.0, 2));
-                    while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, _cts.Token)) > 0) // perennial loop to check status of download
+                    int totalFileSize = (int)(response.Content.Headers.ContentLength ?? 0);
+                    ProgBar.Minimum = 0;
+                    ProgBar.Maximum = 100;
+
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        await fs.WriteAsync(buffer, 0, read);
-                        totalRead += read;
+                        byte[] buffer = new byte[81920];
+                        long totalRead = 0;
+                        int read;
+                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-                        if (totalFileSize > 0)
+                        FileSize.Visibility = Visibility.Visible;
+                        FileSize.Text = Universal.Lang.Format(
+                            "sF_UPGRADE_DOWNLOAD_FILESIZE",
+                            Math.Round(totalFileSize / 1048576.0, 2));
+
+                        while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, _cts.Token)) > 0)
                         {
-                            // percent done
-                            double percent = (double)totalRead / totalFileSize * 100;
-                            ProgBar.Value = percent;
+                            await fs.WriteAsync(buffer, 0, read);
+                            totalRead += read;
 
-                            // download speed in KB/s
-                            double kbPerSec = (totalRead / 1024.0) / stopwatch.Elapsed.TotalSeconds;
+                            if (totalFileSize > 0)
+                            {
+                                double percent = (double)totalRead / totalFileSize * 100;
+                                ProgBar.Value = percent;
 
-                            // estimate of remaining time
-                            double bytesRemaining = totalFileSize - totalRead;
-                            TimeSpan eta = TimeSpan.FromSeconds(bytesRemaining / (totalRead / stopwatch.Elapsed.TotalSeconds));
-                            UpdateStatusText.Text = Universal.Lang.Format("sF_UPGRADE_DOWNLOAD_PROGRESS", percent, eta.ToString(), kbPerSec);
+                                double kbPerSec = (totalRead / 1024.0) / stopwatch.Elapsed.TotalSeconds;
+
+                                double bytesRemaining = totalFileSize - totalRead;
+                                TimeSpan eta = TimeSpan.FromSeconds(
+                                    bytesRemaining / (totalRead / stopwatch.Elapsed.TotalSeconds));
+
+                                UpdateStatusText.Text = Universal.Lang.Format(
+                                    "sF_UPGRADE_DOWNLOAD_PROGRESS",
+                                    percent,
+                                    eta.ToString(),
+                                    kbPerSec);
+                            }
                         }
                     }
                 }
-                UpdateComplete(filePath);
 
+                UpdateComplete(filePath);
             }
             catch (Exception ex)
             {
@@ -217,54 +228,68 @@ namespace Skymu.Views.Pages
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
 
                 string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
-                using HttpResponseMessage response = await _httpClient.GetAsync(url);
 
-                if (!response.IsSuccessStatusCode)
-                    return new string[0];
-
-                string json = await response.Content.ReadAsStringAsync();
-
-                using JsonDocument doc = JsonDocument.Parse(json);
-
-                string latestTag = doc.RootElement
-                                      .GetProperty("tag_name")
-                                      .GetString()
-                                      ?.TrimStart('v');
-
-                if (string.IsNullOrWhiteSpace(latestTag))
-                    return new string[0];
-                string currentVerStr = Properties.Settings.Default.BuildVersion;
-                currentVerStr = currentVerStr.Replace("v", "");
-                Version.TryParse(currentVerStr, out Version currentVer);
-                latestTag = latestTag.Replace("v", "");
-                if (!Version.TryParse(latestTag, out Version updateVer)) return new string[0];
-                if (currentVer >= updateVer) return new string[0];
-
-                string releaseName = doc.RootElement
-                                        .GetProperty("name")
-                                        .GetString() ?? string.Empty;
-
-                string changelog = doc.RootElement
-                                      .GetProperty("body")
-                                      .GetString() ?? string.Empty;
-
-                string buildName = "v" + updateVer.ToString() + " " + releaseName;
-
-                JsonElement assets = doc.RootElement.GetProperty("assets");
-                List<string> urls = new List<string>();
-                foreach (JsonElement asset in assets.EnumerateArray())
+                using (HttpResponseMessage response = await _httpClient.GetAsync(url))
                 {
-                    if (asset.TryGetProperty("browser_download_url", out JsonElement urlElement))
+                    if (!response.IsSuccessStatusCode)
+                        return new string[0];
+
+                    string json = await response.Content.ReadAsStringAsync();
+
+                    using (JsonDocument doc = JsonDocument.Parse(json))
                     {
-                        string downloadUrl = urlElement.GetString();
-                        if (!string.IsNullOrEmpty(downloadUrl))
-                            urls.Add(downloadUrl);
+                        string latestTag = doc.RootElement
+                                              .GetProperty("tag_name")
+                                              .GetString()
+                                              ?.TrimStart('v');
+
+                        if (string.IsNullOrWhiteSpace(latestTag))
+                            return new string[0];
+
+                        string currentVerStr = Properties.Settings.Default.BuildVersion;
+                        currentVerStr = currentVerStr.Replace("v", "");
+
+                        Version currentVer;
+                        Version.TryParse(currentVerStr, out currentVer);
+
+                        latestTag = latestTag.Replace("v", "");
+
+                        Version updateVer;
+                        if (!Version.TryParse(latestTag, out updateVer))
+                            return new string[0];
+
+                        if (currentVer >= updateVer)
+                            return new string[0];
+
+                        string releaseName = doc.RootElement
+                                                .GetProperty("name")
+                                                .GetString() ?? string.Empty;
+
+                        string changelog = doc.RootElement
+                                              .GetProperty("body")
+                                              .GetString() ?? string.Empty;
+
+                        string buildName = "v" + updateVer.ToString() + " " + releaseName;
+
+                        JsonElement assets = doc.RootElement.GetProperty("assets");
+                        List<string> urls = new List<string>();
+
+                        foreach (JsonElement asset in assets.EnumerateArray())
+                        {
+                            JsonElement urlElement;
+                            if (asset.TryGetProperty("browser_download_url", out urlElement))
+                            {
+                                string downloadUrl = urlElement.GetString();
+                                if (!string.IsNullOrEmpty(downloadUrl))
+                                    urls.Add(downloadUrl);
+                            }
+                        }
+
+                        List<string> result = new List<string> { buildName, changelog };
+                        result.AddRange(urls);
+                        return result.ToArray();
                     }
                 }
-
-                List<string> result = new List<string> { buildName, changelog };
-                result.AddRange(urls);
-                return result.ToArray();
             }
             catch (Exception ex)
             {

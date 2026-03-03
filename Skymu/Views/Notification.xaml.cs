@@ -37,7 +37,7 @@ namespace Skymu.Views
                 {
                     // window IS active
 
-                    if (Main.SelectedConversation is not null && Main.SelectedConversation.Identifier == e.SentInChannelID)
+                    if (Main.SelectedConversation != null && Main.SelectedConversation.Identifier == e.SentInChannelID)
                     {
                         Debug.WriteLine("Notification: message is from the active chat, suppress");
                         return;
@@ -66,7 +66,7 @@ namespace Skymu.Views
                     Interval = TimeSpan.FromSeconds(durationSeconds)
                 };
 
-                timer.Tick += (s, e) =>
+                timer.Tick += (s, ev) =>
                 {
                     timer.Stop();
 
@@ -89,12 +89,12 @@ namespace Skymu.Views
                 timer.Start();
 
 
-                this.Loaded += (s, e) =>
+                this.Loaded += (s, ev) =>
                 {
                     PositionNotification();
                 };
 
-                this.Closed += (s, e) =>
+                this.Closed += (s, ev) =>
                 {
                     RemoveNotification(this);
                 };
