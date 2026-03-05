@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyTitle>Matrix</AssemblyTitle>
+	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
+    <AssemblyName>plug-matrix</AssemblyName>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />
+    <PackageReference Include="System.Text.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj" />
+  </ItemGroup>
+
+</Project>

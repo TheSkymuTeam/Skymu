@@ -1,0 +1,163 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<PropertyGroup>
+		<TargetFramework>net461</TargetFramework>
+		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+		<OutputType>WinExe</OutputType>
+
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+
+		<IsWebBootstrapper>false</IsWebBootstrapper>
+		<PublishUrl>publish\</PublishUrl>
+		<Install>true</Install>
+		<InstallFrom>Disk</InstallFrom>
+		<UpdateEnabled>false</UpdateEnabled>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<UpdateMode>Foreground</UpdateMode>
+		<UpdateInterval>7</UpdateInterval>
+		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+		<UpdatePeriodically>false</UpdatePeriodically>
+		<UpdateRequired>false</UpdateRequired>
+		<MapFileExtensions>true</MapFileExtensions>
+		<ApplicationRevision>0</ApplicationRevision>
+		<ApplicationVersion>1.0.0.*</ApplicationVersion>
+		<UseApplicationTrust>false</UseApplicationTrust>
+		<BootstrapperEnabled>true</BootstrapperEnabled>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<StartupObject />
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>AnyCPU;x86</Platforms>
+		<ApplicationIcon>Skype.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<Target Name="MoveNetStandardLibs" AfterTargets="Build">
+		<ItemGroup>
+			<NetStandardAssemblies Include="$(OutDir)System.*.dll" />
+			<NetStandardAssemblies Include="$(OutDir)netstandard.dll" />
+			<NetStandardAssemblies Include="$(OutDir)Microsoft.Bcl.AsyncInterfaces.dll" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(OutDir)netstandard2.0" />
+
+		<Move SourceFiles="@(NetStandardAssemblies)" DestinationFolder="$(OutDir)netstandard2.0" OverwriteReadOnlyFiles="true" />
+	</Target>
+
+	<!-- Build Configurations -->
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+
+
+	<PropertyGroup>
+		<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<!-- Resource Handling -->
+
+	<ItemGroup>
+		<!-- Skyaeris -->
+		<None Remove="Skyaeris\Assets\**\*" />
+		<Page Remove="Skyaeris\Assets\**\*" />
+		<EmbeddedResource Remove="Skyaeris\Assets\**\*" />
+		<Compile Remove="Skyaeris\Assets\**\*" />
+		<Resource Include="Skyaeris\Assets\**\*" />
+
+		<!-- Emoji -->
+		<None Remove="Emoji\**\*" />
+		<Page Remove="Emoji\**\*" />
+		<EmbeddedResource Remove="Emoji\Resources\**\*" />
+		<Compile Remove="Emoji\**\*" />
+		<Resource Include="Emoji\**\*" />
+
+		<!-- Sounds -->
+		<None Remove="Sounds\**\*" />
+		<Page Remove="Sounds\**\*" />
+		<EmbeddedResource Remove="Sounds\**\*" />
+		<Compile Remove="Sounds\**\*" />
+		<Resource Include="Sounds\**\*" />
+
+		<!-- Languages as Content -->
+		<None Remove="Languages\**\*" />
+		<Page Remove="Languages\**\*" />
+		<EmbeddedResource Remove="Languages\**\*" />
+		<Compile Remove="Languages\**\*" />
+		<Content Include="Languages\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<!-- Packages -->
+
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageReference Include="Markdig" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.864.35" />
+		<PackageReference Include="QRCoder" Version="1.7.0" />
+		<PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+		<PackageReference Include="System.Text.Json" Version="10.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AppDesigner Include="Properties\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 4.6.1</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Skype.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MiddleMan\MiddleMan.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="App.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="PresentationFramework.Aero">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Aero2">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.AeroLite">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Classic">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Luna">
+	    <Private>True</Private>
+	  </Reference>
+	  <Reference Include="PresentationFramework.Royale">
+	    <Private>True</Private>
+	  </Reference>
+	</ItemGroup>
+
+</Project>
