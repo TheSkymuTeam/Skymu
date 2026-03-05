@@ -165,7 +165,7 @@ Path=DisablePingbacks,
 Mode=TwoWay}" Margin="0,5" HorizontalAlignment="Left" MaxWidth="450">
                         <CheckBox.Content>
                             <TextBlock TextWrapping="Wrap">
-            Completely block communication with the Skymu server (not recommended as
+            Completely block communication with the Skymu server (warning: not recommended,
             doing this breaks features in the Skymu client!)
                             </TextBlock>
                         </CheckBox.Content>
