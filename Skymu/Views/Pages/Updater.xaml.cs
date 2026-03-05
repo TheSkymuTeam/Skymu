@@ -36,7 +36,7 @@ namespace Skymu.Views.Pages
         private const string Author = "TheSkymuTeam";
         private string brand = Properties.Settings.Default.BrandingName;
         private string[] update_info;
-        private const string Repo = "Skymu-Public";
+        private const string Repo = "Skymu";
         private WindowBase window;
 
         private static readonly HttpClient _httpClient = CreateClient();
