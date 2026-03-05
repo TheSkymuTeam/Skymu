@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stub", "Plugins\Stub\Stub.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkypeDBBrowser", "Plugins\Database browser\SkypeDBBrowser.csproj", "{95337515-01C5-48F9-8256-E5D62B18B35A}"
 EndProject
-Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "Skymu.API", "Skymu.API\Skymu.API.vbproj", "{7C73B16D-55CF-E383-A2C0-305CAA06A067}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,18 +127,6 @@ Global
 		{95337515-01C5-48F9-8256-E5D62B18B35A}.Release|x64.Build.0 = Release|Any CPU
 		{95337515-01C5-48F9-8256-E5D62B18B35A}.Release|x86.ActiveCfg = Release|Any CPU
 		{95337515-01C5-48F9-8256-E5D62B18B35A}.Release|x86.Build.0 = Release|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|x64.ActiveCfg = Debug|x64
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|x64.Build.0 = Debug|x64
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Debug|x86.Build.0 = Debug|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|x64.ActiveCfg = Release|x64
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|x64.Build.0 = Release|x64
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|x86.ActiveCfg = Release|Any CPU
-		{7C73B16D-55CF-E383-A2C0-305CAA06A067}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
