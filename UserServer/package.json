@@ -1,0 +1,12 @@
+{
+  "name": "skymu-backend",
+  "version": "1.2.0",
+  "description": "Skymu user list backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

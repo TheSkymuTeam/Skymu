@@ -1,0 +1,49 @@
+This special license [2] applies exclusively to persons or organizations who
+have been issued a Statement of Exception by the copyright holders
+of Skymu, not to any other person or organization. If you have not been
+issued such a Statement, the terms of this license do not apply and you 
+are bound by the terms of the standard Skymu license [1].
+
+Such a Statement is issued directly by the copyright holders of Skymu and 
+permits a person or organization to use and distribute Skymu's copyrighted
+code and assets under a different license, specified in the terms of the Statement.
+
+We, the copyright holders of all Skymu-specific code and all Skymu-specific 
+assets in the Skymu project, formally declare that access to the Skymu 
+project is granted to you under if you agree that your use and distribution
+of our code and assets is bound to the terms of the following license.
+
+We do not purport or declare the right to license the Skype assets found in
+certain distributions of the Skymu project, which are copyrighted by Microsoft
+Corporation, formerly copyrighted by Skype Technologies S.A.R.L; they are 
+employed under the doctrine of fair use. The use and distribution of those 
+assets is not covered by this license.
+
+[1] The standard license can be found at 
+http://skymu.app/legal/licenses/standard.txt.
+
+[2] A special license that applies only to those defined in a Statement of 
+Exception can be found at
+http://skymu.app/legal/licenses/exception.txt.
+
+MIT License
+
+Copyright (c) 2026 The Skymu Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
