@@ -110,7 +110,7 @@ namespace Stub
         public Task<bool> PopulateServerList()
         {
             string id = "2132";
-            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id, ChannelType.Standard), new ServerChannel("rtead only", "2132/2", id, ChannelType.ReadOnly) }));
+            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id, 0, ChannelType.Standard), new ServerChannel("rtead only", "2132/2", id, 0, ChannelType.ReadOnly) }));
             return Task.FromResult(true);
         }
 
@@ -123,8 +123,8 @@ namespace Stub
 
         public Task<bool> PopulateContactsList()
         {
-            ContactsList.Add(new DirectMessage(new User("Skymu user 1", "u1", "u1", "hi skmuuymu", UserConnectionStatus.Online), "32"));
-            ContactsList.Add(new DirectMessage(new User("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away), "32"));
+            ContactsList.Add(new DirectMessage(new User("Skymu user 1", "u1", "u1", "hi skmuuymu", UserConnectionStatus.Online), 10, "32"));
+            ContactsList.Add(new DirectMessage(new User("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away), 0, "32"));
             return Task.FromResult(true);
         }
 
@@ -132,9 +132,9 @@ namespace Stub
         {
             User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
             User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
-            RecentsList.Add(new DirectMessage(luigi, "24"));
-            RecentsList.Add(new DirectMessage(mario, "3412"));
-            RecentsList.Add(new Group("Giga based coalition", "067", new User[2] { luigi, mario }));
+            RecentsList.Add(new DirectMessage(luigi, 1, "24"));
+            RecentsList.Add(new DirectMessage(mario, 0, "3412"));
+            RecentsList.Add(new Group("Giga based coalition", "067", 3, new User[2] { luigi, mario }));
             return Task.FromResult(true);
         }
         public ClickableConfiguration[] ClickableConfigurations
