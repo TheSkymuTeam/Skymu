@@ -176,7 +176,7 @@ namespace Discord
                                     break;
                             }
 
-                            channelList.Add(new ServerChannel(channelName, channelId, guildId, channelType));
+                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType));
                         }
                     }
 
@@ -404,9 +404,9 @@ namespace Discord
                         var profileData = new User(displayName ?? dscUserName, dscUserName, userId, customStatus, HelperMethods.MapStatus(status), avatarImage);
 
                         if (lType == ListType.Recents)
-                            RecentsList.Add(new DirectMessage(profileData, channelId));
+                            RecentsList.Add(new DirectMessage(profileData, 0, channelId));
                         else
-                            ContactsList.Add(new DirectMessage(profileData, channelId));
+                            ContactsList.Add(new DirectMessage(profileData, 0, channelId));
                     }
                     else if (type == GROUP_CHANNEL_TYPE)
                     {
@@ -456,7 +456,7 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, true);
-                        var profileData = new Group(groupName, channelId, members, avatarImage);
+                        var profileData = new Group(groupName, channelId, 0, members, avatarImage);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);

@@ -722,9 +722,9 @@ namespace Matrix
 
                     Conversation conversation;
                     if (isDirect)
-                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), roomIdStr);
+                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), 0, roomIdStr);
                     else
-                        conversation = new Group(roomName, roomIdStr, members, roomAvatar);
+                        conversation = new Group(roomName, roomIdStr, 0, members, roomAvatar);
 
                     if (lType == ListType.Recents)
                         RecentsList.Add(conversation);

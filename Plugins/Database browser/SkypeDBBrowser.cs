@@ -299,7 +299,7 @@ namespace SkypeDBBrowser
                                     mood,
                                     status,
                                     avatarBytes
-                                ), skypename));
+                                ), 0, skypename));
                             }
                         }
                     }
@@ -389,6 +389,7 @@ namespace SkypeDBBrowser
                                     RecentsList.Add(new Group(
                                         displayName,
                                         identity,
+                                        0,
                                         members
                                     ));
                                 }
@@ -404,7 +405,7 @@ namespace SkypeDBBrowser
                                         info.Mood,
                                         info.Status == default ? UserConnectionStatus.Offline : info.Status,
                                         info.Avatar
-                                    ), identity));
+                                    ), 0, identity));
                                 }
                             }
                         }
