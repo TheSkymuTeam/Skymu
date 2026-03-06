@@ -1,161 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <TargetFramework>net461</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{82EC0D75-013A-4A49-893B-93A657F22F24}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SkymuInstallers</RootNamespace>
     <AssemblyName>SkymuInstallers</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+	<UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="s53InstallerPg3.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s53InstallerPg3.Designer.cs">
-      <DependentUpon>s53InstallerPg3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="s7InstallerPg4.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s7InstallerPg4.Designer.cs">
-      <DependentUpon>s7InstallerPg4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="s53InstallerPg2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s53InstallerPg2.Designer.cs">
-      <DependentUpon>s53InstallerPg2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="s7InstallerPg3.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s7InstallerPg3.Designer.cs">
-      <DependentUpon>s7InstallerPg3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EraSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="EraSelector.Designer.cs">
-      <DependentUpon>EraSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="s53InstallerPg1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s53InstallerPg1.Designer.cs">
-      <DependentUpon>s53InstallerPg1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="s7InstallerPg1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s7InstallerPg1.Designer.cs">
-      <DependentUpon>s7InstallerPg1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="s7InstallerPg2.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="s7InstallerPg2.Designer.cs">
-      <DependentUpon>s7InstallerPg2.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="s53InstallerPg3.resx">
-      <DependentUpon>s53InstallerPg3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="s7InstallerPg4.resx">
-      <DependentUpon>s7InstallerPg4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="s53InstallerPg2.resx">
-      <DependentUpon>s53InstallerPg2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="s7InstallerPg3.resx">
-      <DependentUpon>s7InstallerPg3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EraSelector.resx">
-      <DependentUpon>EraSelector.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="s53InstallerPg1.resx">
-      <DependentUpon>s53InstallerPg1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="s7InstallerPg1.resx">
-      <DependentUpon>s7InstallerPg1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="s7InstallerPg2.resx">
-      <DependentUpon>s7InstallerPg2.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sean.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\seansmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\headers5o.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\headers5o1.png" />
-    <None Include="Resources\skype-7-16-0-102_poa6PB1fw1.png" />
-    <None Include="Resources\skype-7-16-0-102_xbjaOsiyZ4.png" />
     <Content Include="Resources\SkypeSetup 5_1001.ico" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
