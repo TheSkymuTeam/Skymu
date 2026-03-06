@@ -39,7 +39,7 @@
       <Value Profile="(Default)">0.3.4</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Eclair</Value>
+      <Value Profile="(Default)">Drocea French Fry</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>

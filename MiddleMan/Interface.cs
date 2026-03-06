@@ -10,11 +10,8 @@
 /*==========================================================*/
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace MiddleMan
@@ -146,9 +143,10 @@ namespace MiddleMan
             set => Set(ref _unreadCount, value, nameof(UnreadCount));
         }
 
-        protected Conversation(string display_name, string identifier, byte[] profile_picture = null)
+        protected Conversation(string display_name, string identifier, int unread_count, byte[] profile_picture = null)
             : base(display_name, identifier, profile_picture)
         {
+            _unreadCount = unread_count;
         }
     }
 
@@ -156,8 +154,8 @@ namespace MiddleMan
     {
         public User RemoteUser { get; }
 
-        public DirectMessage(User remote_user, string identifier)
-            : base(remote_user.DisplayName, identifier, remote_user.ProfilePicture)
+        public DirectMessage(User remote_user, int unread_count, string identifier)
+            : base(remote_user.DisplayName, identifier, unread_count, remote_user.ProfilePicture)
         {
             RemoteUser = remote_user;
         }
@@ -173,8 +171,8 @@ namespace MiddleMan
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public Group(string name, string identifier, User[] members, byte[] profile_picture = null)
-            : base(name, identifier, profile_picture)
+        public Group(string name, string identifier, int unread_count, User[] members, byte[] profile_picture = null)
+            : base(name, identifier, unread_count, profile_picture)
         {
             _members = members;
         }
@@ -214,8 +212,8 @@ namespace MiddleMan
         public string Description { get; }
         public ChannelType ChannelType { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id, ChannelType channel_type, string description = null)
-            : base(name, identifier, null)
+        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string description = null)
+            : base(name, identifier, unread_count, null)
         {
             ParentServerID = parent_server_id;
             Description = description;
@@ -241,7 +239,7 @@ namespace MiddleMan
         public Attachment(byte[] file, string name, AttachmentType type)
         {
             File = file;
-            Name = name;   
+            Name = name;
             Type = type;
         }
         public Attachment(string location_url, string name)
@@ -286,7 +284,7 @@ namespace MiddleMan
     }
 
     public class Message : ConversationItem
-    { 
+    {
         public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
         public string Identifier { get; set; } // Unique identifier for the message
         public User Sender { get; set; } // Who sent the message 
@@ -373,11 +371,11 @@ namespace MiddleMan
     {
         public ConversationItem Item { get; }
         public UserConnectionStatus Status { get; }
-        public string SentInChannelID { get; } 
+        public string SentInChannelID { get; }
         public NotificationEventArgs(ConversationItem item, UserConnectionStatus user_status)
         {
             Item = item;
-            Status = user_status;           
+            Status = user_status;
         }
         public NotificationEventArgs(Message message, UserConnectionStatus user_status, string sent_in_channel_id)
         {

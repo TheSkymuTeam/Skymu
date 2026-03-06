@@ -12,7 +12,6 @@
 using MiddleMan;
 using Skymu.Skyaeris;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -44,7 +43,7 @@ namespace Skymu.Views
 
             if (e.Item is Message message)
             {
-                if (Main.Identifier == message.Sender.Identifier)
+                if (Main.CurrentUser?.Identifier == message.Sender.Identifier)
                 {
                     Debug.WriteLine("Notification: message is from me, suppress");
                     return;
@@ -73,24 +72,25 @@ namespace Skymu.Views
                     _activeNotification = new Notification();
                     _activeNotification.InitializeComponent();
 
+                    Notification notif = _activeNotification;
+
                     if (Properties.Settings.Default.AccurateNotifications)
                     {
-                        string packUri = "pack://application:,,,/" + Properties.Settings.Default.SkypeEra + "/Assets/Light/Notifications/bubble-orange.png";
-                        _activeNotification.bubble.Source = new BitmapImage(new Uri(packUri, UriKind.Absolute));
+                        // add stuff later - already accurate
                     }
 
-                    _activeNotification._closeTimer = new DispatcherTimer
+                    notif._closeTimer = new DispatcherTimer
                     {
                         Interval = TimeSpan.FromSeconds(durationSeconds)
                     };
 
-                    _activeNotification._closeTimer.Tick += (s, ev) =>
+                    notif._closeTimer.Tick += (s, ev) =>
                     {
-                        _activeNotification._closeTimer.Stop();
+                        notif._closeTimer.Stop();
 
                         var fadeOut = new DoubleAnimation
                         {
-                            From = _activeNotification.Opacity,
+                            From = notif.Opacity,
                             To = 0,
                             Duration = TimeSpan.FromMilliseconds(250),
                             EasingFunction = new QuadraticEase
@@ -99,23 +99,29 @@ namespace Skymu.Views
                             }
                         };
 
-                        fadeOut.Completed += (_, __) => 
+                        fadeOut.Completed += (_, __) =>
                         {
-                            _activeNotification.Close();
-                            _activeNotification = null;
+                            notif.Close();
+
+                            if (_activeNotification == notif)
+                                _activeNotification = null;
                         };
 
-                        _activeNotification.BeginAnimation(Window.OpacityProperty, fadeOut);
+                        notif.BeginAnimation(Window.OpacityProperty, fadeOut);
                     };
 
-                    _activeNotification.Loaded += (s, ev) =>
+                    notif.Loaded += (s, ev) =>
                     {
-                        _activeNotification.PositionNotification();
+                        notif.PositionNotification();
                     };
 
-                    _activeNotification.Closed += (s, ev) =>
+                    notif.Closed += (s, ev) =>
                     {
-                        _activeNotification = null;
+                        if (notif._closeTimer != null)
+                            notif._closeTimer.Stop();
+
+                        if (_activeNotification == notif)
+                            _activeNotification = null;
                     };
 
                     _activeNotification.Show();
@@ -124,7 +130,7 @@ namespace Skymu.Views
 
                 _activeNotification.AddMessage(e, message);
 
-                if (_activeNotification._closeTimer != null)
+                if (_activeNotification != null && _activeNotification._closeTimer != null)
                 {
                     _activeNotification._closeTimer.Stop();
                     _activeNotification._closeTimer.Interval = TimeSpan.FromSeconds(durationSeconds);

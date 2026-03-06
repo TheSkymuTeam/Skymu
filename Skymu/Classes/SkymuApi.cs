@@ -12,7 +12,6 @@
 using System;
 using System.Net.Http;
 using System.Net.WebSockets;
-using System.Net.WebSockets.Managed;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -115,7 +114,7 @@ namespace Skymu
 
             _ = Task.Run(ReceiveLoop);
         }
-         
+
 
         private async Task ReceiveLoop()
         {

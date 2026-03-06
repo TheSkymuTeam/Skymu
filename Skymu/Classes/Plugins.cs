@@ -12,7 +12,6 @@
 using MiddleMan;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -91,7 +90,7 @@ namespace Skymu
                 }
                 catch
                 {
-                    
+
                 }
             }
             Universal.PluginList = null;
