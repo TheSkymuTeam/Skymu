@@ -14,9 +14,9 @@ using System.Windows.Forms;
 
 namespace SkymuInstallers
 {
-    public partial class installselector : Form
+    public partial class EraSelectorLegacy : Form
     {
-        public installselector()
+        public EraSelectorLegacy()
         {
             InitializeComponent();
         }
