@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Eclair")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea French Fry")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

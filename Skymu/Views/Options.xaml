@@ -51,9 +51,6 @@
             </ListBox>
         </StackPanel>
         <Grid Grid.Column="1" Margin="-4,9,0,0">
-            <Grid.ColumnDefinitions>
-
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>

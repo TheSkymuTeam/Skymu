@@ -1,5 +1,7 @@
 # Comprehensive history of the Skymu project
 
+It's been a long journey to get to where we're at now. Here's a recap of previous events and releases.
+
 ## Origins (April - May 2025)
 
 Skymu started as a project to recreate the classic Skype user interface as a modern, multiprotocol client. The early work, done by perfídìous, impactoenjambre, and others, focused on getting the UI right. The Skype 5 title bar was one of the first things nailed down. Work was also done on a resizable left column, with research into original Skype confirming a minimum width of 240px. Multiple themes were in consideration early on, with the idea of Steam-inspired dark themes also discussed.

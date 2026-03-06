@@ -20,7 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Http;
 
-#pragma warning disable CS8618
 namespace Matrix
 {
     public class Core : ICore

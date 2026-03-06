@@ -13,36 +13,29 @@ using MiddleMan;
 using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using System.Windows.Interop;
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
-using WinForms = System.Windows.Forms;
-
-# pragma warning disable CS4014, CA1416
 
 namespace Skymu.Skyaeris
 {
     public partial class Main : Window
     {
+        #region Variables
+
         // String constants
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
@@ -56,6 +49,10 @@ namespace Skymu.Skyaeris
         private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private static Thickness OriginalWindowAreaMargin = new Thickness(0);
         private SkymuApi api;
+        internal static readonly BitmapImage AnonymousAvatar = GenerateAvatarImage("anonymous");
+        internal static readonly BitmapImage GroupAvatar = GenerateAvatarImage("group");
+        private static bool noCloseEvent;
+        internal static User CurrentUser;
         private BitmapImage img_maximize, img_restore, img_split, img_join;
         internal static Conversation SelectedConversation = null;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
@@ -68,75 +65,12 @@ namespace Skymu.Skyaeris
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
         internal static UserConnectionStatus CurrentStatus = UserConnectionStatus.Offline;
-
-        private static readonly Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
-        {
-            { UserConnectionStatus.Online, 2 },
-            { UserConnectionStatus.Away, 3 },
-            { UserConnectionStatus.DoNotDisturb, 5 },
-            { UserConnectionStatus.Invisible, 19 },
-            { UserConnectionStatus.Offline, 19 }
-        };
-
-        private static readonly Dictionary<ChannelType, int> channel_type_map = new Dictionary<ChannelType, int>()
-        {
-            { ChannelType.Standard, 2 },
-            { ChannelType.ReadOnly, 2 },
-            { ChannelType.Announcement, 6 },
-            { ChannelType.Voice, 1 },
-            { ChannelType.Restricted, 2 },
-            { ChannelType.Forum, 9 },
-            { ChannelType.NoAccess, 4 }
-        };
+        public event EventHandler Ready;
 
         private enum WindowType
         {
             Home,
             Chat
-        }
-
-
-        public event EventHandler Ready;
-
-        public Main()
-        {
-            noCloseEvent = false;
-            api = new SkymuApi();
-
-            InitializeComponent();
-            Application.Current.MainWindow = this;
-            InitializeWindowFrame();
-
-            this.MouseLeftButtonUp += MouseRelease;
-            this.SizeChanged += Main_SizeChanged;
-            buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
-            {
-                { btnContacts, ContactsColumn },
-                { btnServers, ServersColumn },
-                { btnRecents, RecentsColumn }
-            };
-            SelectTab(btnRecents);
-            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
-            InitializeEmojiPicker();
-
-
-            Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
-            {
-                UpdateTypingIndicator();
-            };
-            SetWindow(WindowType.Home);
-        }
-
-        public static readonly DependencyProperty WindowTitleProperty =
-            DependencyProperty.Register(
-            "WindowTitle",
-            typeof(string),
-            typeof(Main));
-
-        public string WindowTitle
-        {
-            get { return (string)GetValue(WindowTitleProperty); }
-            set { SetValue(WindowTitleProperty, value); }
         }
 
         private enum WindowFrame
@@ -145,6 +79,136 @@ namespace Skymu.Skyaeris
             SkypeBasic,
             Native
         };
+
+        public static readonly DependencyProperty WindowTitleProperty =
+    DependencyProperty.Register(
+    "WindowTitle",
+    typeof(string),
+    typeof(Main));
+
+        public string WindowTitle
+        {
+            get { return (string)GetValue(WindowTitleProperty); }
+            set { SetValue(WindowTitleProperty, value); }
+        }
+
+        #endregion
+
+        #region BitmapImage generators
+        private BitmapImage GenerateTitlebarButtonImage(string name)
+        {
+            BitmapImage img = new BitmapImage();
+            img.BeginInit();
+            img.UriSource = new Uri($"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/{name}.png");
+            img.EndInit();
+            img.Freeze();
+            return img;
+        }
+
+        private static BitmapImage GenerateAvatarImage(string avatar)
+        {
+            string AvatarPath = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
+
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(AvatarPath, UriKind.Absolute);
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+
+            return bitmap;
+        }
+
+        #endregion
+
+        #region Home and Chat window switching
+
+        private void SetWindow(WindowType type)
+        {
+            if (type == current_window)
+                return;
+
+            current_window = type;
+
+            switch (type)
+            {
+                case WindowType.Home:
+                    ToggleStatusBoxSelection(true);
+
+                    HomeTopbar.Visibility = Visibility.Visible;
+                    ChatTopbar.Visibility = Visibility.Collapsed;
+                    ChatProfileArea.Visibility = Visibility.Collapsed;
+                    MessageWindow.Visibility = Visibility.Collapsed;
+
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    Browser.Visibility = Visibility.Visible;
+                    InitiateWebview();
+                    MainPageButton.SetState(ButtonVisualState.Pressed);
+                    ContactsList.SelectedItem = null;
+                    ClearTreeSelection(ServersList);
+                    break;
+
+                case WindowType.Chat:
+                    ToggleStatusBoxSelection(false);
+                    StatusBox.SetState(ButtonVisualState.Default);
+
+                    HomeTopbar.Visibility = Visibility.Collapsed;
+                    ChatTopbar.Visibility = Visibility.Visible;
+                    ChatProfileArea.Visibility = Visibility.Visible;
+                    MessageWindow.Visibility = Visibility.Visible;
+                    Browser.Visibility = Visibility.Collapsed;
+
+                    TopbarWindowRow.Height = new GridLength(120);
+                    MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    break;
+            }
+        }
+
+        private void ClearTreeSelection(TreeView tree)
+        {
+            if (tree.SelectedItem == null)
+                return;
+
+            TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
+            if (container != null)
+                container.IsSelected = false;
+        }
+
+        private void ToggleStatusBoxSelection(bool selected)
+        {
+            StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
+            StatusBox.TextColor = selected ? Brushes.White : DefaultTextBrush;
+            SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
+        }
+
+        private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
+        {
+            if (parent == null)
+                return null;
+
+            TreeViewItem container =
+                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+
+            if (container != null)
+                return container;
+
+            foreach (object child in parent.Items)
+            {
+                TreeViewItem parentContainer =
+                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+
+                TreeViewItem result = GetContainerFromItem(parentContainer, item);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Custom window logic
 
         public void InitializeWindowFrame()
         {
@@ -187,10 +251,10 @@ namespace Skymu.Skyaeris
                     TitleShadow3.Visibility = Visibility.Visible;
                 }
 
-                img_maximize = MakeTitlebarImg("maximize");
-                img_restore = MakeTitlebarImg("restore");
-                img_split = MakeTitlebarImg("split");
-                img_join = MakeTitlebarImg("join");
+                img_maximize = GenerateTitlebarButtonImage("maximize");
+                img_restore = GenerateTitlebarButtonImage("restore");
+                img_split = GenerateTitlebarButtonImage("split");
+                img_join = GenerateTitlebarButtonImage("join");
             }
 
             else if (border == WindowFrame.Native) // using system native border
@@ -201,16 +265,564 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private BitmapImage MakeTitlebarImg(string name)
+        private static DropShadowEffect CreateDropShadow(Color color) => new DropShadowEffect()
         {
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.UriSource = new Uri($"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/{name}.png");
-            img.EndInit();
-            img.Freeze();
-            return img;
+            Color = color,
+            BlurRadius = 16,
+            ShadowDepth = 0,
+            Opacity = 0.8
+        };
+
+        private static void SetClickable(params IInputElement[] buttons)
+        {
+            foreach (var b in buttons)
+                WindowChrome.SetIsHitTestVisibleInChrome(b, true);
         }
 
+        private void HandleWindowStateChanged()
+        {
+            if (OriginalWindowAreaMargin.Top != 0)
+            {
+                if (WindowState == WindowState.Maximized)
+                {
+                    maximize.Source = img_restore;
+                    FrameArea.Margin = new Thickness(0, 5, 0, 0);
+                    Thickness ReducedWinAreaMargin = OriginalWindowAreaMargin;
+                    ReducedWinAreaMargin.Top -= 4;
+                    WindowArea.Margin = ReducedWinAreaMargin;
+                }
+                else
+                {
+                    maximize.Source = img_maximize;
+                    FrameArea.Margin = new Thickness(0);
+                    WindowArea.Margin = OriginalWindowAreaMargin;
+                }
+            }
+        }
+
+        private void HandleWindowButtonEnter(SliceControl button)
+        {
+            if (button != null)
+            {
+                if (button.Name == "close")
+                {
+                    button.Effect = CreateDropShadow(Colors.Red);
+                }
+                else
+                {
+                    button.Effect = CreateDropShadow(Colors.Cyan);
+                }
+            }
+        }
+
+        private void HandleWindowButtonLeave(SliceControl button)
+        {
+            if (IsWindowActive)
+            {
+                if (button != null)
+                {
+                    button.Effect = null;
+
+                }
+            }
+            else if (!IsWindowActive)
+            {
+                button.Effect = null;
+            }
+        }
+
+        private void HandleWindowDeactivated()
+        {
+            IsWindowActive = false;
+
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Inactive.Window;
+
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillSecondary
+                : (Brush)Theme.Inactive.Fill;
+
+            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
+                return;
+
+            menu1.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)new SolidColorBrush(Colors.Transparent);
+
+            SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
+            foreach (SliceControl button in buttons)
+            {
+                button.DefaultIndex = 1;
+                button.Effect = null;
+            }
+
+            if (this.Background == System.Windows.Media.Brushes.Transparent)
+                return;
+
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Inactive.Titlebar;
+
+            this.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Inactive.Fill;
+        }
+
+        private void HandleWindowButtonClick(SliceControl button)
+        {
+            if (button != null)
+            {
+                switch (button.Name)
+                {
+                    case "close": Close(); break;
+                    case "split": Universal.NotImplemented("Split Window"); break;
+                    case "minimize": WindowState = WindowState.Minimized; break;
+                    case "maximize": if (WindowState == WindowState.Normal) { WindowState = WindowState.Maximized; } else { WindowState = WindowState.Normal; } break;
+                }
+            }
+        }
+
+        private void HandleWindowActivated()
+        {
+            IsWindowActive = true;
+
+            WindowArea.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Active.Window;
+
+            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillSecondary
+                : (Brush)Theme.Active.Fill;
+
+            menu1.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)new SolidColorBrush(Colors.Transparent);
+
+            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
+                return;
+
+            SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
+            foreach (SliceControl button in buttons)
+            {
+                button.DefaultIndex = 0;
+            }
+
+            if (this.Background == Brushes.Transparent)
+                return;
+
+            TitleBar.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Active.Titlebar;
+
+            this.Background = Properties.Settings.Default.FallbackFillColors
+                ? (Brush)Theme.Fallback.FillPrimary
+                : (Brush)Theme.Active.Fill;
+        }
+
+        #endregion
+
+        #region Sidebar tab selection and population
+        internal async Task InitSidebar()
+        {
+            await Universal.Plugin.PopulateSidebarInformation();
+            await Universal.Plugin.PopulateRecentsList();
+
+            CurrentUser = Universal.Plugin.MyInformation;
+            GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
+
+            SkymuApiStatusHandler();
+            api.OnUserCountUpdate += usrCount =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    GlobalUserCount.Text = Universal.Lang.Format("sTOTAL_USERS_ONLINE", usrCount);
+                });
+            };
+
+            WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + CurrentUser.Username;
+            this.Title = WindowTitle;
+
+            StatusBox.Text = CurrentUser.DisplayName;
+            StatusIcon.DefaultIndex = GetIntFromStatus(CurrentUser.PresenceStatus);
+
+            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+
+            SpeedTester();
+
+            Ready?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async void HandleConversationSelection(object selected_item)
+        {
+            if (selected_item == null) return;
+
+            ChatArea.DataContext = selected_item;
+            SelectedConversation = (Conversation)selected_item;
+            await SetConversation();
+        }
+
+        private void HandleServerItemSelection(RoutedPropertyChangedEventArgs<object> e)
+        {
+            ChatArea.DataContext = e.NewValue;
+            if (e.NewValue is ServerChannel channel)
+            {
+                SelectedConversation = channel;
+                SetConversation();
+            }
+        }
+
+        private async void SelectTab(SliceControl tab_to_select)
+        {
+            if (tab_to_select.Name == "btnServers")
+            {
+                ContactsList.Visibility = Visibility.Collapsed;
+                ServersList.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ContactsList.Visibility = Visibility.Visible;
+                ServersList.Visibility = Visibility.Collapsed;
+                ContactsList.ItemsSource = null;
+            }
+
+            GridLength dynamic = new GridLength(1, GridUnitType.Star);
+            GridLength small = new GridLength(32);
+
+            buttonToColumn[tab_to_select].Width = dynamic;
+            foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
+            {
+                if (tab == tab_to_select) continue;
+                tab.SetState(ButtonVisualState.Default);
+                buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs ? small : dynamic;
+            }
+
+            SetWindow(WindowType.Home);
+
+            switch (tab_to_select.Name)
+            {
+                case "btnServers":
+                    if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
+                    ServersList.ItemsSource = Universal.Plugin.ServerList;
+                    break;
+                case "btnContacts":
+                    if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
+                    ContactsList.ItemsSource = Universal.Plugin.ContactsList;
+                    break;
+                case "btnRecents":
+                    if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
+                    ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Sidebar resizing
+
+        private bool isDragging = false;
+        private Point dragStart;
+        private UIElement capturedElement = null; 
+
+        private void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isDragging)
+            {
+                Point current = e.GetPosition(this);
+                Vector delta = current - dragStart;
+                ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
+                double max = sidebarCol.MaxWidth;
+                double min = sidebarCol.MinWidth;
+
+                double newWidth = sidebarCol.Width.Value + delta.X;
+
+                if (newWidth < min) newWidth = min;
+                if (newWidth > max) newWidth = max;
+
+                sidebarCol.Width = new GridLength(newWidth);
+                dragStart = current;
+            }
+        }
+
+        private void SkypeSplitter_Press(object sender, MouseButtonEventArgs e)
+        {
+            isDragging = true;
+            dragStart = e.GetPosition(this);
+            capturedElement = sender as UIElement; 
+
+            if (capturedElement != null)
+            {
+                capturedElement.CaptureMouse();
+                e.Handled = true;
+            }
+        }
+
+        private void MouseRelease(object sender, MouseButtonEventArgs e)
+        {
+            if (isDragging)
+            {
+                isDragging = false;
+
+                if (capturedElement != null && capturedElement.IsMouseCaptured)
+                {
+                    capturedElement.ReleaseMouseCapture();
+                }
+                capturedElement = null; 
+                e.Handled = true;
+            }
+        }
+
+        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SidebarColumn.MaxWidth = this.ActualWidth / 2;
+        }
+
+        #endregion
+
+        #region User count API
+
+        private async Task SkymuApiStatusHandler()
+        {
+            if (Properties.Settings.Default.DisablePingbacks) return;
+            await api.GenerateUID();
+            await api.SetUsrStatus(true, CurrentUser?.DisplayName, CurrentUser?.Username, CurrentUser?.Identifier);
+            await api.ConnectWS();
+
+            _ = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await Task.Delay(60000);
+                    await api.SendPingToServ();
+                }
+            });
+        }
+
+        private bool CanSetStatus()
+        {
+            int index = StatusIcon.DefaultIndex;
+            if (index == 5 || index == 2 || index == 3 || index == 19) { return true; } else { return false; }
+        }
+
+        #endregion
+
+        #region Event handlers
+
+        private void ServersList_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            HandleServerItemSelection(e);
+        }
+
+        private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            HandleConversationSelection(((ListBox)sender).SelectedItem);
+        }
+
+        private void Chat_Close(object sender, MouseButtonEventArgs e)
+        {
+            SetWindow(WindowType.Home);
+        }
+
+        private void StatusArea_Click(object sender, MouseButtonEventArgs e)
+        {
+            OpenStatusMenu();
+        }
+
+        private void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
+        {
+            SelectTab(sender as SliceControl);
+        }
+
+        private void TitleButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            HandleWindowButtonClick(sender as SliceControl);
+        }
+
+        private void TitleButton_MouseLeave(object sender, MouseEventArgs e)
+        {
+            HandleWindowButtonLeave(sender as SliceControl);
+        }
+
+        private void TitleButton_MouseEnter(object sender, MouseEventArgs e)
+        {
+            HandleWindowButtonEnter(sender as SliceControl);
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            HandleWindowStateChanged();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            HandleWindowActivated();
+        }
+
+        private void Window_Deactivated(object sender, EventArgs e)
+        {
+            HandleWindowDeactivated();
+        }
+
+        private void tbli_Click(object sender, MouseEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://www.youtube.com/watch?v=kVsH_ySm5_E",
+                UseShellExecute = true
+            });
+        }
+
+        private void StatusMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            HandleStatusItemClick(sender as MenuItem);
+        }
+
+        private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Close(ev); }
+        private void mn_New(object sender, RoutedEventArgs e) { }
+        private void mn_Open(object sender, RoutedEventArgs e) { }
+        private void mn_Close(object sender, RoutedEventArgs e) { Universal.Close(); }
+        private void mn_Apps(object sender, RoutedEventArgs e) { }
+        private void mn_Language(object sender, RoutedEventArgs e) { }
+        private void mn_Accessibility(object sender, RoutedEventArgs e) { }
+        private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
+        private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
+        private void mn_Options(object sender, RoutedEventArgs e) { new Views.Options().Show(); }
+        private void mn_About(object sender, RoutedEventArgs e) { new Views.About().Show(); }
+
+        private void chatHeader_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void mn_CheckUpdates(object sender, RoutedEventArgs e)
+        {
+            new Updater(true);
+        }
+
+        private void mn_SignOut(object sender, RoutedEventArgs e)
+        {
+            InitiateSignOut();
+        }
+
+        private void MakeGroup_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
+        {
+            await SendMessage();
+        }
+
+        private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            await SpeedTester();
+        }
+
+        private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
+        {
+            HandleConversationItems((ListBox)sender);
+        }
+
+        private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            PseudoSearchBox.SetState(ButtonVisualState.Pressed);
+            RemovePlaceholderTb(SearchBox);
+        }
+
+        private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            PseudoSearchBox.SetState(ButtonVisualState.Default);
+            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+        }
+
+        private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            RemovePlaceholder(MessageTextBox);
+            UpdateSendButtonState();
+        }
+
+        private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            CheckIfMTBUnfocused(true);
+        }
+
+        private async void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Enter)
+                return;
+
+            // Shift+Enter for newline
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+                return;
+
+            e.Handled = true;
+            await SendMessage();
+        }
+        private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Keyboard.ClearFocus();
+        }
+
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateSendButtonState();
+        }
+
+        private void CallPhones_Click(object sender, MouseButtonEventArgs e)
+        {
+            Sounds.Play("call-error");
+            Universal.ShowMsg(VONAGE, VONAGE_CAPTION);
+        }
+
+        private void AddButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented(NOTIMPL_ADD_CONTACTS_CHATS);
+
+            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
+                "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
+
+            var dlg = new OpenFileDialog
+            {
+                Title = "Select a file to send",
+                CheckFileExists = true
+            };
+
+            if (dlg.ShowDialog() == true)
+            {
+                send file logic goes here
+            }*/
+
+        }
+
+        private async void CallButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            await InitiateDummyCall();
+        }
+
+        private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Voice calling");
+        }
+
+        private void VideoCallButtonClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Video calling");
+        }
+
+        private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
+        {
+            EmojiFlyout.IsOpen = true;
+        }
+
+        #endregion
+
+        #region Typing indicator
         private void UpdateTypingIndicator()
         {
             int count = Universal.Plugin.TypingUsersList.Count;
@@ -246,534 +858,9 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static DropShadowEffect CreateDropShadow(Color color) => new DropShadowEffect()
-        {
-            Color = color,
-            BlurRadius = 16,
-            ShadowDepth = 0,
-            Opacity = 0.8
-        };
+        #endregion
 
-        private static void SetClickable(params IInputElement[] buttons)
-        {
-            foreach (var b in buttons)
-                WindowChrome.SetIsHitTestVisibleInChrome(b, true);
-        }
-
-        private static BitmapImage LoadAvatar(string avatar)
-        {
-            string AvatarPath = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
-
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(AvatarPath, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-
-            return bitmap;
-        }
-
-        internal static readonly BitmapImage AnonymousAvatar = LoadAvatar("anonymous");
-        internal static readonly BitmapImage GroupAvatar = LoadAvatar("group");
-
-        internal static string DisplayName, Username, Identifier = String.Empty;
-        internal static UserConnectionStatus Status = UserConnectionStatus.Offline;
-
-        private void Window_StateChanged(object sender, EventArgs e)
-        {
-            if (OriginalWindowAreaMargin.Top != 0)
-            {
-                if (WindowState == WindowState.Maximized)
-                {
-                    maximize.Source = img_restore;
-                    FrameArea.Margin = new Thickness(0, 5, 0, 0);
-                    Thickness ReducedWinAreaMargin = OriginalWindowAreaMargin;
-                    ReducedWinAreaMargin.Top -= 4;
-                    WindowArea.Margin = ReducedWinAreaMargin;
-                }
-                else
-                {
-                    maximize.Source = img_maximize;
-                    FrameArea.Margin = new Thickness(0);
-                    WindowArea.Margin = OriginalWindowAreaMargin;
-                }
-            }
-        }
-
-
-        private void TitleButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var button = sender as SliceControl;
-
-            if (button != null)
-            {
-                if (button.Name == "close")
-                {
-                    button.Effect = CreateDropShadow(Colors.Red);
-                }
-                else
-                {
-                    button.Effect = CreateDropShadow(Colors.Cyan);
-                }
-            }
-        }
-
-        private void TitleButton_MouseLeave(object sender, MouseEventArgs e)
-        {
-            var button = sender as SliceControl;
-
-            if (IsWindowActive)
-            {
-                if (button != null)
-                {
-                    button.Effect = null;
-
-                }
-            }
-            else if (!IsWindowActive)
-            {
-                button.Effect = null;
-            }
-
-        }
-
-        private void TitleButton_Pressed(object sender, MouseButtonEventArgs e)
-        {
-        }
-
-        private void TitleButton_Click(object sender, MouseButtonEventArgs e)
-        {
-            var button = sender as SliceControl;
-            if (button != null)
-            {
-                switch (button.Name)
-                {
-                    case "close": Close(); break;
-                    case "split": Universal.NotImplemented("Split Window"); break;
-                    case "minimize": WindowState = WindowState.Minimized; break;
-                    case "maximize": if (WindowState == WindowState.Normal) { WindowState = WindowState.Maximized; } else { WindowState = WindowState.Normal; } break;
-                }
-            }
-        }
-
-        private void tbli_Click(object sender, MouseEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://www.youtube.com/watch?v=kVsH_ySm5_E",
-                UseShellExecute = true
-            });
-        }
-        private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs ev) { if (!noCloseEvent) Universal.Close(ev); }
-        // For the menu bar at the top of the Skymu window
-        private void mn_New(object sender, RoutedEventArgs e) { }
-        private void mn_Open(object sender, RoutedEventArgs e) { }
-        private void mn_Close(object sender, RoutedEventArgs e) { Universal.Close(); }
-        private void mn_Apps(object sender, RoutedEventArgs e) { }
-        private void mn_Language(object sender, RoutedEventArgs e) { }
-        private void mn_Accessibility(object sender, RoutedEventArgs e) { }
-        private void mn_ShareWithFriend(object sender, RoutedEventArgs e) { }
-        private void mn_SkypeWifi(object sender, RoutedEventArgs e) { }
-        private void mn_Options(object sender, RoutedEventArgs e) { new Views.Options().Show(); }
-        private void mn_About(object sender, RoutedEventArgs e) { new Views.About().Show(); }
-
-        private void Window_Deactivated(object sender, EventArgs e)
-		{
-			IsWindowActive = false;
-
-			WindowArea.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Inactive.Window;
-
-			MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillSecondary
-				: (Brush)Theme.Inactive.Fill;
-
-			if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
-				return;
-
-			menu1.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)new SolidColorBrush(Colors.Transparent);
-
-			SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
-			foreach (SliceControl button in buttons)
-			{
-				button.DefaultIndex = 1;
-				button.Effect = null;
-			}
-
-			if (this.Background == System.Windows.Media.Brushes.Transparent)
-				return;
-
-			TitleBar.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Inactive.Titlebar;
-
-			this.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Inactive.Fill;
-		}
-
-		private void Window_Activated(object sender, EventArgs e)
-		{
-			IsWindowActive = true;
-
-			WindowArea.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Active.Window;
-
-			MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillSecondary
-				: (Brush)Theme.Active.Fill;
-
-			menu1.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)new SolidColorBrush(Colors.Transparent);
-
-			if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
-				return;
-
-			SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
-			foreach (SliceControl button in buttons)
-			{
-				button.DefaultIndex = 0;
-			}
-
-			if (this.Background == Brushes.Transparent)
-				return;
-
-			TitleBar.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Active.Titlebar;
-
-			this.Background = Properties.Settings.Default.FallbackFillColors
-				? (Brush)Theme.Fallback.FillPrimary
-				: (Brush)Theme.Active.Fill;
-		}
-
-
-
-		private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        {
-            if (parent == null)
-                return null;
-
-            int childCount = VisualTreeHelper.GetChildrenCount(parent);
-
-            for (int i = 0; i < childCount; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-
-                if (child is T matchedChild)
-                    return matchedChild;
-
-                var result = FindVisualChild<T>(child);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
-        }
-
-        private async Task SetConversation()
-        {
-            Universal.Plugin.ActiveConversation.Clear();
-            Universal.Plugin.TypingUsersList.Clear();
-            SetWindow(WindowType.Chat);
-            PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedConversation.DisplayName);
-            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            UpdateSendButtonState();
-            throbber.Visibility = Visibility.Visible;
-            is_loading_conversation = true;
-
-            if (await Universal.Plugin.SetActiveConversation(SelectedConversation))
-            {
-                var conversation = Universal.Plugin.ActiveConversation;
-
-                for (int i = 0; i < conversation.Count; i++)
-                {
-                    if (conversation[i] is Message message)
-                    {
-                        for (int j = i - 1; j >= 0; j--)
-                        {
-                            if (conversation[j] is Message previousMessage)
-                            {
-                                message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (_activeConversationChangedHandler != null)
-                    conversation.CollectionChanged -= _activeConversationChangedHandler;
-
-                _activeConversationChangedHandler = (s, args) =>
-                {
-                    if (is_loading_conversation || args.Action != NotifyCollectionChangedAction.Add)
-                        return;
-
-                    foreach (var item in args.NewItems)
-                    {
-                        if (item is Message message && message.Sender.Identifier != Main.Identifier && IsWindowActive)
-                        {
-                            Sounds.Play("message-recieved");
-                            break;
-                        }
-                    }
-                };
-
-                conversation.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = conversation;
-            }
-            throbber.Visibility = Visibility.Collapsed;
-            is_loading_conversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
-        }
-
-        private async void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var listBox = (ListBox)sender;
-            if (listBox.SelectedItem == null) return;
-
-            ChatArea.DataContext = listBox.SelectedItem;
-            SelectedConversation = (Conversation)listBox.SelectedItem;
-            await SetConversation();         
-        }
-
-        private void Chat_Close(object sender, MouseButtonEventArgs e)
-        {
-            SetWindow(WindowType.Home);
-        }
-
-
-
-        private void SetWindow(WindowType type)
-        {
-            if (type == current_window)
-                return;
-
-            current_window = type;
-
-            switch (type)
-            {
-                case WindowType.Home:
-                    ToggleStBSelection(true);
-
-                    HomeTopbar.Visibility = Visibility.Visible;
-                    ChatTopbar.Visibility = Visibility.Collapsed;
-                    ChatProfileArea.Visibility = Visibility.Collapsed;
-                    MessageWindow.Visibility = Visibility.Collapsed;
-
-                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    MessageWindowRow.Height = new GridLength(0);
-                    Browser.Visibility = Visibility.Visible;
-                    InitiateWebview();
-                    MainPageButton.SetState(ButtonVisualState.Pressed);
-                    ContactsList.SelectedItem = null;
-                    ClearTreeSelection(ServersList);
-                    break;
-
-                case WindowType.Chat:
-                    ToggleStBSelection(false);
-                    StatusBox.SetState(ButtonVisualState.Default);
-
-                    HomeTopbar.Visibility = Visibility.Collapsed;
-                    ChatTopbar.Visibility = Visibility.Visible;
-                    ChatProfileArea.Visibility = Visibility.Visible;
-                    MessageWindow.Visibility = Visibility.Visible;
-                    Browser.Visibility = Visibility.Collapsed;
-
-                    TopbarWindowRow.Height = new GridLength(120);
-                    MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    break;
-            }
-        }
-
-        private void ClearTreeSelection(TreeView tree)
-        {
-            if (tree.SelectedItem == null)
-                return;
-
-            TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
-            if (container != null)
-                container.IsSelected = false;
-        }
-
-        private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
-        {
-            if (parent == null)
-                return null;
-
-            TreeViewItem container =
-                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-
-            if (container != null)
-                return container;
-
-            foreach (object child in parent.Items)
-            {
-                TreeViewItem parentContainer =
-                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
-
-                TreeViewItem result = GetContainerFromItem(parentContainer, item);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
-        }
-
-
-        private async Task InitiateWebview()
-        {
-            await Browser.EnsureCoreWebView2Async();
-
-            Browser.CoreWebView2.NewWindowRequested += (sender, args) =>
-            {
-                args.Handled = true;
-                Browser.CoreWebView2.Navigate(args.Uri);
-            };
-
-            Browser.CoreWebView2.NavigationCompleted += async (s, e) =>
-            {
-                if (!Properties.Settings.Default.HomepageScroll)
-                {
-                    await Browser.CoreWebView2.ExecuteScriptAsync(@"
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-        ");
-                }
-            };
-
-            Browser.CoreWebView2.Navigate(Properties.Settings.Default.Homepage);
-        }
-
-        private void ToggleStBSelection(bool selected)
-        {
-            StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-            StatusBox.TextColor = selected ? Brushes.White : DefaultTextBrush;
-            SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-        }
-
-        private bool isDragging = false;
-        private Point dragStart;
-        private UIElement capturedElement = null; // Store reference to the captured element
-
-        private void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragging)
-            {
-                Point current = e.GetPosition(this);
-                Vector delta = current - dragStart;
-                ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
-                double max = sidebarCol.MaxWidth;
-                double min = sidebarCol.MinWidth;
-
-                double newWidth = sidebarCol.Width.Value + delta.X;
-
-                if (newWidth < min) newWidth = min;
-                if (newWidth > max) newWidth = max;
-
-                sidebarCol.Width = new GridLength(newWidth);
-                dragStart = current; // update drag start
-            }
-        }
-
-        private void SkypeSplitter_Press(object sender, MouseButtonEventArgs e)
-        {
-            isDragging = true;
-            dragStart = e.GetPosition(this);
-            capturedElement = sender as UIElement; // Store the element reference
-
-            if (capturedElement != null)
-            {
-                capturedElement.CaptureMouse();
-                e.Handled = true;
-            }
-        }
-
-        private void MouseRelease(object sender, MouseButtonEventArgs e)
-        {
-            if (isDragging)
-            {
-                isDragging = false;
-
-                // Use the stored reference instead of sender
-                if (capturedElement != null && capturedElement.IsMouseCaptured)
-                {
-                    capturedElement.ReleaseMouseCapture();
-                }
-                capturedElement = null; // Clean up the reference
-                e.Handled = true;
-            }
-        }
-
-        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SidebarColumn.MaxWidth = this.ActualWidth / 2;
-        }
-        private async Task SkymuApiStatusHandler()
-        {
-            if (Properties.Settings.Default.DisablePingbacks) return;
-            await api.GenerateUID();
-            await api.SetUsrStatus(true, DisplayName, Username, Identifier);
-            await api.ConnectWS();
-
-            _ = Task.Run(async () =>
-            {
-                while (true)
-                {
-                    await Task.Delay(60000);
-                    await api.SendPingToServ();
-                }
-            });
-        }
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19) { return true; } else { return false; }
-        }
-
-        internal async Task InitSidebar()
-        {
-            await Universal.Plugin.PopulateSidebarInformation();
-            await Universal.Plugin.PopulateRecentsList();
-
-            User data = Universal.Plugin.MyInformation;
-            GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
-
-            SkymuApiStatusHandler();
-            api.OnUserCountUpdate += usrCount =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    GlobalUserCount.Text = Universal.Lang.Format("sTOTAL_USERS_ONLINE", usrCount);
-                });
-            };
-
-            WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + data.Username;
-            this.Title = WindowTitle;
-
-            Username = data.Username;
-            Identifier = data.Identifier;
-            StatusBox.Text = DisplayName = data.DisplayName;
-            StatusIcon.DefaultIndex = GetIntFromStatus(data.PresenceStatus);
-            Status = data.PresenceStatus;
-
-            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
-
-            SpeedTester();
-
-            Ready?.Invoke(this, EventArgs.Empty);
-        }
-
-        private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
-        {
-            await SendMessage();
-        }
+        #region Message sending
 
         private readonly Dictionary<string, Message> _pendingPreviewMessages = new Dictionary<string, Message>();
 
@@ -836,12 +923,118 @@ namespace Skymu.Skyaeris
             }
         }
 
-
-        private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
+        private void UpdateSendButtonState()
         {
-            await SpeedTester();
+            if (SendMsgButton == null) return;
+
+
+            if (MessageTextBox.Tag as string == TAG_PLACEHOLDER)
+            {
+                SendMsgButton.IsEnabled = false;
+                return;
+            }
+
+
+            bool hasContent = HasAnyContent(MessageTextBox);
+            SendMsgButton.IsEnabled = hasContent;
         }
 
+        private void CheckIfMTBUnfocused(bool force = false)
+        {
+            if (!MessageTextBox.IsKeyboardFocused || force)
+            {
+
+                bool hasContent = HasAnyContent(MessageTextBox);
+
+                if (!hasContent)
+                {
+                    ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                }
+                UpdateSendButtonState();
+            }
+        }
+
+        private static bool HasAnyContent(RichTextBox rtb)
+        {
+            if (rtb?.Document == null)
+                return false;
+
+            if (rtb.Tag as string == TAG_PLACEHOLDER)
+                return false;
+
+            var flowDoc = rtb.Document;
+
+            foreach (var block in flowDoc.Blocks)
+            {
+                if (block is Paragraph para)
+                {
+                    foreach (var inline in para.Inlines)
+                    {
+                        if (inline is Run run && !string.IsNullOrWhiteSpace(run.Text))
+                        {
+                            return true;
+                        }
+                        else if (inline is InlineUIContainer)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private string ExtractMessageFromRichTextBox()
+        {
+            var sb = new StringBuilder();
+            var flow_document = MessageTextBox.Document;
+
+            bool first_paragraph = true;
+
+            foreach (var block in flow_document.Blocks)
+            {
+                if (block is Paragraph paragraph)
+                {
+                    if (!first_paragraph)
+                        sb.Append(Environment.NewLine);
+
+                    first_paragraph = false;
+
+                    foreach (var inline in paragraph.Inlines)
+                    {
+                        if (inline is Run run)
+                        {
+                            sb.Append(run.Text);
+                        }
+                        else if (inline is LineBreak)
+                        {
+                            sb.Append(Environment.NewLine);
+                        }
+                        else if (inline is InlineUIContainer container)
+                        {
+                            if (container.Tag is string emojiFilename)
+                            {
+                                var emojiKey = EmojiDictionary.Map
+                                    .FirstOrDefault(kvp => kvp.Value == emojiFilename).Key;
+
+                                if (!string.IsNullOrEmpty(emojiKey))
+                                {
+                                    string unicode_emoji = ConvertHexKeyToUnicode(emojiKey);
+                                    sb.Append(unicode_emoji);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        #endregion
+
+        #region Internet speed tester
         private async Task SpeedTester()
         {
             const string TestFileUrl = "https://speed.cloudflare.com/__down?bytes=10485760";
@@ -934,10 +1127,67 @@ namespace Skymu.Skyaeris
             WifiButton.Source = final_bmp;
         }
 
+        #endregion
 
-        private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
+        #region Active conversation 
+
+        private async Task SetConversation()
         {
-            var listBox = (ListBox)sender;
+            Universal.Plugin.ActiveConversation.Clear();
+            Universal.Plugin.TypingUsersList.Clear();
+            SetWindow(WindowType.Chat);
+            PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedConversation.DisplayName);
+            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            UpdateSendButtonState();
+            throbber.Visibility = Visibility.Visible;
+            is_loading_conversation = true;
+
+            if (await Universal.Plugin.SetActiveConversation(SelectedConversation))
+            {
+                var conversation = Universal.Plugin.ActiveConversation;
+
+                for (int i = 0; i < conversation.Count; i++)
+                {
+                    if (conversation[i] is Message message)
+                    {
+                        for (int j = i - 1; j >= 0; j--)
+                        {
+                            if (conversation[j] is Message previousMessage)
+                            {
+                                message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (_activeConversationChangedHandler != null)
+                    conversation.CollectionChanged -= _activeConversationChangedHandler;
+
+                _activeConversationChangedHandler = (s, args) =>
+                {
+                    if (is_loading_conversation || args.Action != NotifyCollectionChangedAction.Add)
+                        return;
+
+                    foreach (var item in args.NewItems)
+                    {
+                        if (item is Message message && message.Sender.Identifier != Main.CurrentUser?.Identifier && IsWindowActive)
+                        {
+                            Sounds.Play("message-recieved");
+                            break;
+                        }
+                    }
+                };
+
+                conversation.CollectionChanged += _activeConversationChangedHandler;
+                ConversationItemsList.ItemsSource = conversation;
+            }
+            throbber.Visibility = Visibility.Collapsed;
+            is_loading_conversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
+        }
+
+        private void HandleConversationItems(ListBox listBox)
+        {
             ScrollToBottom(listBox);
 
             if (listBox.Items is INotifyCollectionChanged notifyCollection)
@@ -951,7 +1201,7 @@ namespace Skymu.Skyaeris
 
                             if (item is Message message)
                             {
-                                if (message.Sender.Identifier == Main.Identifier
+                                if (message.Sender.Identifier == Main.CurrentUser?.Identifier
                                     && message.Identifier != null
                                     && !message.Identifier.StartsWith(SKYMU_SENDING))
                                 {
@@ -972,23 +1222,23 @@ namespace Skymu.Skyaeris
                                     {
                                         _pendingPreviewMessages.Remove(match.Identifier);
 
-										Dispatcher.BeginInvoke(new Action(delegate ()
-										{
-											Universal.Plugin.ActiveConversation.Remove(match);
-										}));
+                                        Dispatcher.BeginInvoke(new Action(delegate ()
+                                        {
+                                            Universal.Plugin.ActiveConversation.Remove(match);
+                                        }));
 
-									}
+                                    }
                                 }
                                 int currentIndex = listBox.Items.IndexOf(message);
 
                                 for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-									Message previousMessage = listBox.Items[i] as Message;
-									if (previousMessage == null)
-										continue;
+                                    Message previousMessage = listBox.Items[i] as Message;
+                                    if (previousMessage == null)
+                                        continue;
 
-									// ignore preview messages
-									if (previousMessage.Identifier.StartsWith(SKYMU_SENDING))
+                                    // ignore preview messages
+                                    if (previousMessage.Identifier.StartsWith(SKYMU_SENDING))
                                         continue;
 
                                     // only assign a real message's identifier as prev identifier
@@ -1042,67 +1292,9 @@ namespace Skymu.Skyaeris
             return null;
         }
 
-        private void UpdateSendButtonState()
-        {
-            if (SendMsgButton == null) return;
+        #endregion
 
-
-            if (MessageTextBox.Tag as string == TAG_PLACEHOLDER)
-            {
-                SendMsgButton.IsEnabled = false;
-                return;
-            }
-
-
-            bool hasContent = HasAnyContent(MessageTextBox);
-            SendMsgButton.IsEnabled = hasContent;
-        }
-
-        private void CheckIfMTBUnfocused(bool force = false)
-        {
-            if (!MessageTextBox.IsKeyboardFocused || force)
-            {
-
-                bool hasContent = HasAnyContent(MessageTextBox);
-
-                if (!hasContent)
-                {
-                    ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
-                }
-                UpdateSendButtonState();
-            }
-        }
-
-        private static bool HasAnyContent(RichTextBox rtb)
-        {
-            if (rtb?.Document == null)
-                return false;
-
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-                return false;
-
-            var flowDoc = rtb.Document;
-
-            foreach (var block in flowDoc.Blocks)
-            {
-                if (block is Paragraph para)
-                {
-                    foreach (var inline in para.Inlines)
-                    {
-                        if (inline is Run run && !string.IsNullOrWhiteSpace(run.Text))
-                        {
-                            return true;
-                        }
-                        else if (inline is InlineUIContainer)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
+        #region Text box placeholders
 
         private static void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
@@ -1156,128 +1348,11 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            PseudoSearchBox.SetState(ButtonVisualState.Pressed);
+        #endregion
 
-            RemovePlaceholderTb(SearchBox);
-        }
+        #region Calling
 
-        private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            PseudoSearchBox.SetState(ButtonVisualState.Default);
-
-            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
-        }
-
-        private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            RemovePlaceholder(MessageTextBox);
-            UpdateSendButtonState();
-        }
-
-        private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            CheckIfMTBUnfocused(true);
-        }
-
-        private string ExtractMessageFromRichTextBox()
-        {
-            var sb = new StringBuilder();
-            var flow_document = MessageTextBox.Document;
-
-            bool first_paragraph = true;
-
-            foreach (var block in flow_document.Blocks)
-            {
-                if (block is Paragraph paragraph)
-                {
-                    if (!first_paragraph)
-                        sb.Append(Environment.NewLine);
-
-                    first_paragraph = false;
-
-                    foreach (var inline in paragraph.Inlines)
-                    {
-                        if (inline is Run run)
-                        {
-                            sb.Append(run.Text);
-                        }
-                        else if (inline is LineBreak)
-                        {
-                            sb.Append(Environment.NewLine);
-                        }
-                        else if (inline is InlineUIContainer container)
-                        {
-                            if (container.Tag is string emojiFilename)
-                            {
-                                var emojiKey = EmojiDictionary.Map
-                                    .FirstOrDefault(kvp => kvp.Value == emojiFilename).Key;
-
-                                if (!string.IsNullOrEmpty(emojiKey))
-                                {
-                                    string unicode_emoji = ConvertHexKeyToUnicode(emojiKey);
-                                    sb.Append(unicode_emoji);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return sb.ToString();
-        }
-
-
-        private void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Keyboard.ClearFocus();
-        }
-
-        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateSendButtonState();
-        }
-
-        private async void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Enter)
-                return;
-
-            // Shift+Enter for newline
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
-                return;
-
-            e.Handled = true;
-            await SendMessage();
-        }
-
-        private void CallPhones_Click(object sender, MouseButtonEventArgs e)
-        {
-            Sounds.Play("call-error");
-            Universal.ShowMsg(VONAGE, VONAGE_CAPTION);
-        }
-
-        private void AddButtonClick(object sender, MouseButtonEventArgs e)
-        {
-            Universal.NotImplemented(NOTIMPL_ADD_CONTACTS_CHATS);
-
-            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
-                "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
-
-            var dlg = new OpenFileDialog
-            {
-                Title = "Select a file to send",
-                CheckFileExists = true
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                send file logic goes here
-            }*/
-
-        }
-        private async void CallButtonClick(object sender, MouseButtonEventArgs e)
+        private async Task InitiateDummyCall()
         {
             if (IsCallPlaying)
             {
@@ -1289,7 +1364,7 @@ namespace Skymu.Skyaeris
             else
             {
                 IsCallPlaying = true;
-                CallButton.IsEnabled = false; 
+                CallButton.IsEnabled = false;
                 CallButton.Text = Universal.Lang["sPARTICIPANT_ACTIVE_PHONE"];
                 await System.Threading.Tasks.Task.Run(() =>
                 {
@@ -1301,21 +1376,37 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
+        #endregion
+
+        #region WebView
+
+        private async Task InitiateWebview()
         {
-            Universal.NotImplemented("Voice calling");
+            await Browser.EnsureCoreWebView2Async();
+
+            Browser.CoreWebView2.NewWindowRequested += (sender, args) =>
+            {
+                args.Handled = true;
+                Browser.CoreWebView2.Navigate(args.Uri);
+            };
+
+            Browser.CoreWebView2.NavigationCompleted += async (s, e) =>
+            {
+                if (!Properties.Settings.Default.HomepageScroll)
+                {
+                    await Browser.CoreWebView2.ExecuteScriptAsync(@"
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
+        ");
+                }
+            };
+
+            Browser.CoreWebView2.Navigate(Properties.Settings.Default.Homepage);
         }
 
-        private void VideoCallButtonClick(object sender, MouseButtonEventArgs e)
-        {
-            Universal.NotImplemented("Video calling");
-        }
+        #endregion
 
-        private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
-        {
-            EmojiFlyout.IsOpen = true;
-        }
-
+        #region Emoji picker
         private static string ConvertHexKeyToUnicode(string hexKey)
         {
             try
@@ -1390,7 +1481,6 @@ namespace Skymu.Skyaeris
             }
         }
 
-
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
@@ -1437,79 +1527,40 @@ namespace Skymu.Skyaeris
             UpdateSendButtonState();
         }
 
-        internal static int GetIntFromChannelType(ChannelType channel)
-    => channel_type_map.TryGetValue(channel, out int value) ? value : 0;
+        #endregion
 
-        internal static int GetIntFromStatus(UserConnectionStatus status)
-    => status_map.TryGetValue(status, out int value) ? value : 0;
+        #region Initialization and closing
 
-        internal static UserConnectionStatus GetStatusFromInt(int value)
-            => status_map.FirstOrDefault(x => x.Value == value).Key;
-
-        private void SelectTab(SliceControl tab_to_select)
+        public Main()
         {
-            if (tab_to_select.Name == "btnServers")
-            {
-                ContactsList.Visibility = Visibility.Collapsed;
-                ServersList.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ContactsList.Visibility = Visibility.Visible;
-                ServersList.Visibility = Visibility.Collapsed;
-                ContactsList.ItemsSource = null;
-            }
-                GridLength dynamic = new GridLength(1, GridUnitType.Star);
-            GridLength small = new GridLength(32);
+            noCloseEvent = false;
+            api = new SkymuApi();
 
-            buttonToColumn[tab_to_select].Width = dynamic;
-            foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
+            InitializeComponent();
+            Application.Current.MainWindow = this;
+            InitializeWindowFrame();
+
+            this.MouseLeftButtonUp += MouseRelease;
+            this.SizeChanged += Main_SizeChanged;
+            buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
             {
-                if (tab == tab_to_select) continue;
-                tab.SetState(ButtonVisualState.Default);
-                buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs ? small : dynamic;
-            }
+                { btnContacts, ContactsColumn },
+                { btnServers, ServersColumn },
+                { btnRecents, RecentsColumn }
+            };
+            SelectTab(btnRecents);
+            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            InitializeEmojiPicker();
+
+
+            Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
+            {
+                UpdateTypingIndicator();
+            };
             SetWindow(WindowType.Home);
         }
-        private async void Contacts_BtnDown(object sender, MouseButtonEventArgs e)
-        {
-            SelectTab(btnContacts);
 
-
-            if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
-            ContactsList.ItemsSource = Universal.Plugin.ContactsList;
-        }
-
-        private async void Servers_BtnDown(object sender, MouseButtonEventArgs e)
-        {
-            SelectTab(btnServers);
-            if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
-            ServersList.ItemsSource = Universal.Plugin.ServerList;
-        }
-
-        private async void Recents_BtnDown(object sender, MouseButtonEventArgs e)
-        {
-            SelectTab(btnRecents);
-
-            
-
-            if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
-            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
-        }
-
-        private void ServersList_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            ChatArea.DataContext = e.NewValue;
-            if (e.NewValue is ServerChannel channel)
-            {
-               SelectedConversation = channel;
-               SetConversation();
-            }
-        }
-
-        private static bool noCloseEvent;
-
-        private void mn_SignOut(object sender, RoutedEventArgs e)
+        private void InitiateSignOut()
         {
             CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
             Sounds.Play("logout");
@@ -1519,17 +1570,44 @@ namespace Skymu.Skyaeris
             this.Close();
         }
 
-        private void MakeGroup_Click(object sender, MouseButtonEventArgs e)
+        #endregion
+
+        #region Icon dictionaries with helper methods
+
+        private static readonly Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
         {
+            { UserConnectionStatus.Online, 2 },
+            { UserConnectionStatus.Away, 3 },
+            { UserConnectionStatus.DoNotDisturb, 5 },
+            { UserConnectionStatus.Invisible, 19 },
+            { UserConnectionStatus.Offline, 19 }
+        };
 
-        }
-
-        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        private static readonly Dictionary<ChannelType, int> channel_type_map = new Dictionary<ChannelType, int>()
         {
+            { ChannelType.Standard, 2 },
+            { ChannelType.ReadOnly, 2 },
+            { ChannelType.Announcement, 6 },
+            { ChannelType.Voice, 1 },
+            { ChannelType.Restricted, 2 },
+            { ChannelType.Forum, 9 },
+            { ChannelType.NoAccess, 4 }
+        };
 
-        }
+        internal static int GetIntFromChannelType(ChannelType channel)
+    => channel_type_map.TryGetValue(channel, out int value) ? value : 0;
 
-        private void StatusArea_Click(object sender, MouseButtonEventArgs e)
+        internal static int GetIntFromStatus(UserConnectionStatus status)
+    => status_map.TryGetValue(status, out int value) ? value : 0;
+
+        internal static UserConnectionStatus GetStatusFromInt(int value)
+            => status_map.FirstOrDefault(x => x.Value == value).Key;
+
+        #endregion
+
+        #region Status change menu
+
+        private void OpenStatusMenu()
         {
             var menu = (ContextMenu)StatusArea.Resources["StatusMenu"];
 
@@ -1539,54 +1617,44 @@ namespace Skymu.Skyaeris
             menu.IsOpen = true;
         }
 
-        private async void StatusMenuItemClick(object sender, RoutedEventArgs e)
+        private async void HandleStatusItemClick(MenuItem item)
         {
-            if (sender is MenuItem item)
+            string name = item.Name.Substring(3);
+            int old_default_index = StatusIcon.DefaultIndex;
+            UserConnectionStatus status;
+            switch (name)
             {
-                string name = item.Name.Substring(3);
-                int old_default_index = StatusIcon.DefaultIndex;
-                UserConnectionStatus status;
-                switch (name)
-                {
-                    case "online": status = UserConnectionStatus.Online; break;
-                    case "offline": status = UserConnectionStatus.Offline; break;
-                    case "invisible": status = UserConnectionStatus.Invisible; break;
-                    case "away": status = UserConnectionStatus.Away; break;
-                    case "dnd":
-                        // jim: localized dnd warning
-                        status = UserConnectionStatus.DoNotDisturb;
-                        var dialog = new Dialog(
-                            WindowBase.IconType.Information,
-                            Universal.Lang["sINFORM_DND"],
-                            Universal.Lang["sINFORM_DND_CAP"],
-                            Universal.Lang["sINFORM_DND_TITLE"],
-                            brText: "OK"
-                        );
-                        dialog.ShowDialog();
-                        break;
-                    default: case "call_forwarding": Universal.NotImplemented(Universal.Lang["sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL"]); return;
-                }
-                if (status == GetStatusFromInt(old_default_index)) return;
-                StatusIcon.DefaultIndex = GetIntFromStatus(status);
-                Tray.PushIcon(status);
-                CurrentStatus = status;
-                if (!await Universal.Plugin.SetPresenceStatus(status))
-                {
-                    StatusIcon.DefaultIndex = old_default_index;
-                    Tray.PushIcon(GetStatusFromInt(old_default_index));
-                }
+                case "online": status = UserConnectionStatus.Online; break;
+                case "offline": status = UserConnectionStatus.Offline; break;
+                case "invisible": status = UserConnectionStatus.Invisible; break;
+                case "away": status = UserConnectionStatus.Away; break;
+                case "dnd":
+                    // jim: localized dnd warning
+                    status = UserConnectionStatus.DoNotDisturb;
+                    var dialog = new Dialog(
+                        WindowBase.IconType.Information,
+                        Universal.Lang["sINFORM_DND"],
+                        Universal.Lang["sINFORM_DND_CAP"],
+                        Universal.Lang["sINFORM_DND_TITLE"],
+                        brText: "OK"
+                    );
+                    dialog.ShowDialog();
+                    break;
+                default: case "call_forwarding": Universal.NotImplemented(Universal.Lang["sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL"]); return;
+            }
+            if (status == GetStatusFromInt(old_default_index)) return;
+            StatusIcon.DefaultIndex = GetIntFromStatus(status);
+            Tray.PushIcon(status);
+            CurrentStatus = status;
+            if (!await Universal.Plugin.SetPresenceStatus(status))
+            {
+                StatusIcon.DefaultIndex = old_default_index;
+                Tray.PushIcon(GetStatusFromInt(old_default_index));
             }
         }
 
-        private void chatHeader_Loaded(object sender, RoutedEventArgs e)
-        {
+        #endregion
 
-        }
-
-        private void mn_CheckUpdates(object sender, RoutedEventArgs e)
-        {
-            new Updater(true);
-        }
     }
 
 }

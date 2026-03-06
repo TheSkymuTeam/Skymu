@@ -10,12 +10,7 @@
 /*==========================================================*/
 
 using Markdig;
-using Markdig.Extensions.TaskLists;
-using Markdig.Extensions.Tables;
 using Markdig.Extensions.Mathematics;
-using Markdig.Extensions.DefinitionLists;
-using Markdig.Extensions.Footnotes;
-using Markdig.Extensions.CustomContainers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using MiddleMan;
@@ -24,26 +19,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Text.RegularExpressions;
+using System.Windows;
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
 using System.Windows.Controls; // Standard Textblock with Tahoma-rendered emoji
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using MarkdigBlock = Markdig.Syntax.Block;
 using MarkdigInline = Markdig.Syntax.Inlines.Inline;
-using WpfBlock = System.Windows.Documents.Block;
-using WpfInline = System.Windows.Documents.Inline;
 using MdTable = Markdig.Extensions.Tables.Table;
-using MdTableRow = Markdig.Extensions.Tables.TableRow;
 using MdTableCell = Markdig.Extensions.Tables.TableCell;
-
-using WpfTable = System.Windows.Documents.Table;
-using WpfTableRow = System.Windows.Documents.TableRow;
-using WpfTableCell = System.Windows.Documents.TableCell;
-using WpfTableRowGroup = System.Windows.Documents.TableRowGroup;
+using MdTableRow = Markdig.Extensions.Tables.TableRow;
+using WpfInline = System.Windows.Documents.Inline;
 
 namespace Skymu
 {
