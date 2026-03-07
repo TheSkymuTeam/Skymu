@@ -12,6 +12,7 @@
 using MiddleMan;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using System.IO;
@@ -25,7 +26,6 @@ namespace SkypeDBBrowser
         private string _currentUserId;
 
         // configurable message limit 
-        private const int MESSAGE_LIMIT = 1000;
         private static readonly byte[] JpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
 
         public event EventHandler<PluginMessageEventArgs> OnError;
@@ -43,7 +43,6 @@ namespace SkypeDBBrowser
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
         public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
@@ -119,12 +118,12 @@ namespace SkypeDBBrowser
             return Task.FromResult(false);
         }
 
-        public async Task<bool> SetActiveConversation(Conversation conversation)
+        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             try
             {
-                ActiveConversation.Clear();
                 TypingUsersList.Clear();
+                List<Message> messageList = new List<Message>();
 
                 using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
                 {
@@ -132,28 +131,62 @@ namespace SkypeDBBrowser
 
                     using (var command = connection.CreateCommand())
                     {
-                        // query messages from the Messages table
-                        // get the most recent (MESSAGE_LIMIT) messages, then sort them chronologically
-                        command.CommandText = @"
-                            SELECT 
-                                id,
-                                author,
-                                from_dispname,
-                                body_xml,
-                                timestamp,
-                                type,
-                                chatmsg_type
-                            FROM (
-                                SELECT * FROM Messages
-                                WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @identifier OR displayname = @identifier)
-                                ORDER BY timestamp DESC
-                                LIMIT " + MESSAGE_LIMIT + @"
-                            )
-                            ORDER BY timestamp ASC";
+                        string fetchQuery;
 
-                        command.Parameters.AddWithValue("@identifier", conversation.Identifier);
+                        if (fetch_type == Fetch.Newest)
+                        {
+                            fetchQuery = @"
+        SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
+        FROM (
+            SELECT * FROM Messages
+            WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
+            ORDER BY timestamp DESC
+            LIMIT @message_count
+        )
+        ORDER BY timestamp ASC";
+                        }
+                        else if (fetch_type == Fetch.Oldest)
+                        {
+                            fetchQuery = @"
+        SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
+        FROM Messages
+        WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
+        ORDER BY timestamp ASC
+        LIMIT @message_count";
+                        }
+                        else if (fetch_type == Fetch.BeforeIdentifier)
+                        {
+                            fetchQuery = @"
+        SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
+        FROM (
+            SELECT * FROM Messages
+            WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
+            AND timestamp < (SELECT timestamp FROM Messages WHERE id = @identifier)
+            ORDER BY timestamp DESC
+            LIMIT @message_count
+        )
+        ORDER BY timestamp ASC";
+                        }
+                        else if (fetch_type == Fetch.AfterIdentifier)
+                        {
+                            fetchQuery = @"
+        SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
+        FROM Messages
+        WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
+        AND timestamp > (SELECT timestamp FROM Messages WHERE id = @identifier)
+        ORDER BY timestamp ASC
+        LIMIT @message_count";
+                        }
+                        else
+                        {
+                            throw new ArgumentOutOfRangeException("fetch_type", fetch_type, null);
+                        }
 
-                        var messageList = new System.Collections.Generic.List<Message>();
+                        command.CommandText = fetchQuery;
+                        command.Parameters.AddWithValue("@convoIdentifier", conversation.Identifier);
+                        command.Parameters.AddWithValue("@message_count", message_count);
+
+                        command.Parameters.AddWithValue("@identifier", identifier ?? string.Empty);
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -162,7 +195,6 @@ namespace SkypeDBBrowser
                                 var messageType = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
                                 var chatMsgType = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
 
-                                // chatmsg_type variations: 1 = text, 2 = file, et Cetera.
                                 if (messageType == 61 || chatMsgType == 1)
                                 {
                                     var messageId = reader.GetInt64(0).ToString();
@@ -171,10 +203,8 @@ namespace SkypeDBBrowser
                                     var body = reader.IsDBNull(3) ? "" : reader.GetString(3);
                                     var timestamp = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
 
-                                    // (skype timestamps are unix time in seconds)
                                     var dateTime = DateTimeOffset.FromUnixTimeSeconds(timestamp).LocalDateTime;
 
-                                    // clean up XML-formatted body text (Skype stores messages with XML tags)
                                     body = CleanSkypeMessageBody(body);
 
                                     var messageItem = new Message(
@@ -188,20 +218,15 @@ namespace SkypeDBBrowser
                                 }
                             }
                         }
-
-                        foreach (var message in messageList)
-                        {
-                            ActiveConversation.Add(message);
-                        }
                     }
                 }
 
-                return true;
+                return messageList.ToArray();
             }
             catch (Exception ex)
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
-                return false;
+                return new ConversationItem[0];
             }
         }
 
@@ -441,7 +466,6 @@ namespace SkypeDBBrowser
             _currentUserId = null;
             ContactsList?.Clear();
             RecentsList?.Clear();
-            ActiveConversation?.Clear();
             TypingUsersList?.Clear();
         }
 
@@ -532,7 +556,8 @@ namespace SkypeDBBrowser
             body = System.Net.WebUtility.HtmlDecode(body);
 
             var ssPattern = new System.Text.RegularExpressions.Regex(@"<ss type=""([^""]+)"">([^<]*)</ss>");
-            body = ssPattern.Replace(body, m => {
+            body = ssPattern.Replace(body, m =>
+            {
                 var emoticonName = m.Groups[1].Value;
                 var emoticonText = m.Groups[2].Value;
                 return string.IsNullOrEmpty(emoticonText) ? $"({emoticonName})" : emoticonText;

@@ -15,6 +15,7 @@ using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace Skymu.Skyaeris
     {
         #region Variables
 
-        // String constants
+        // Constants
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
         private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
@@ -44,8 +45,10 @@ namespace Skymu.Skyaeris
         private const string MSG_SEND_ERR = "Error sending message.";
         private const string SKYMU_PREFIX = "@skymu/";
         private const string SKYMU_SENDING = SKYMU_PREFIX + "sending";
+        private const int MESSAGE_LIMIT = 50;
 
         // Other file-level variables
+        private ObservableCollection<ConversationItem> _activeConversation = new ObservableCollection<ConversationItem>();
         private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private static Thickness OriginalWindowAreaMargin = new Thickness(0);
         private SkymuApi api;
@@ -887,7 +890,7 @@ namespace Skymu.Skyaeris
             );
 
             _pendingPreviewMessages[temp_id] = previewMessage;
-            Universal.Plugin.ActiveConversation.Add(previewMessage);
+            _activeConversation.Add(previewMessage);
 
             bool didSend = false;
 
@@ -915,7 +918,7 @@ namespace Skymu.Skyaeris
 
                     Dispatcher.Invoke(() =>
                     {
-                        Universal.Plugin.ActiveConversation.Remove(pending);
+                        _activeConversation.Remove(pending);
                     });
                 }
 
@@ -1133,7 +1136,7 @@ namespace Skymu.Skyaeris
 
         private async Task SetConversation()
         {
-            Universal.Plugin.ActiveConversation.Clear();
+            _activeConversation.Clear();
             Universal.Plugin.TypingUsersList.Clear();
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedConversation.DisplayName);
@@ -1142,17 +1145,20 @@ namespace Skymu.Skyaeris
             throbber.Visibility = Visibility.Visible;
             is_loading_conversation = true;
 
-            if (await Universal.Plugin.FetchMessages(SelectedConversation))
-            {
-                var conversation = Universal.Plugin.ActiveConversation;
+            var items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
 
-                for (int i = 0; i < conversation.Count; i++)
+            if (items != null && items.Length > 0)
+            {
+                foreach (var item in items)
+                    _activeConversation.Add(item);
+
+                for (int i = 0; i < _activeConversation.Count; i++)
                 {
-                    if (conversation[i] is Message message)
+                    if (_activeConversation[i] is Message message)
                     {
                         for (int j = i - 1; j >= 0; j--)
                         {
-                            if (conversation[j] is Message previousMessage)
+                            if (_activeConversation[j] is Message previousMessage)
                             {
                                 message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                 break;
@@ -1162,13 +1168,12 @@ namespace Skymu.Skyaeris
                 }
 
                 if (_activeConversationChangedHandler != null)
-                    conversation.CollectionChanged -= _activeConversationChangedHandler;
+                    _activeConversation.CollectionChanged -= _activeConversationChangedHandler;
 
                 _activeConversationChangedHandler = (s, args) =>
                 {
                     if (is_loading_conversation || args.Action != NotifyCollectionChangedAction.Add)
                         return;
-
                     foreach (var item in args.NewItems)
                     {
                         if (item is Message message && message.Sender.Identifier != Main.CurrentUser?.Identifier && IsWindowActive)
@@ -1179,11 +1184,12 @@ namespace Skymu.Skyaeris
                     }
                 };
 
-                conversation.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = conversation;
+                _activeConversation.CollectionChanged += _activeConversationChangedHandler;
+                ConversationItemsList.ItemsSource = _activeConversation;
             }
+
             throbber.Visibility = Visibility.Collapsed;
-            is_loading_conversation = false; // add break point here to benchmark message rendering (this is when server finishes loading)
+            is_loading_conversation = false;
         }
 
         private void HandleConversationItems(ListBox listBox)
@@ -1224,7 +1230,7 @@ namespace Skymu.Skyaeris
 
                                         Dispatcher.BeginInvoke(new Action(delegate ()
                                         {
-                                            Universal.Plugin.ActiveConversation.Remove(match);
+                                            _activeConversation.Remove(match);
                                         }));
 
                                     }
