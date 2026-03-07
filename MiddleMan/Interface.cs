@@ -385,6 +385,14 @@ namespace MiddleMan
         }
     }
 
+    public enum Fetch
+    {
+        Newest,
+        Oldest,
+        BeforeIdentifier,
+        AfterIdentifier
+    }
+
     public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;
@@ -401,14 +409,13 @@ namespace MiddleMan
         Task<bool> SendMessage(string identifier, string text = null, Attachment attachment = null, string parent_message_identifier = null); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
-        ObservableCollection<ConversationItem> ActiveConversation { get; }  // field for conversation items in the active conversation, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Conversation> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Conversation> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Server> ServerList { get; } // field for server list, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> PopulateServerList(); // Fetches and assigns the recents list to the ServerList variable. Returns true on success.
-        Task<bool> SetActiveConversation(Conversation conversation); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
+        Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type = Fetch.Newest, int message_count = 50, string identifier = null); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 

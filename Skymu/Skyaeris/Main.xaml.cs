@@ -1129,7 +1129,7 @@ namespace Skymu.Skyaeris
 
         #endregion
 
-        #region Active conversation 
+        #region Conversation
 
         private async Task SetConversation()
         {
@@ -1142,7 +1142,7 @@ namespace Skymu.Skyaeris
             throbber.Visibility = Visibility.Visible;
             is_loading_conversation = true;
 
-            if (await Universal.Plugin.SetActiveConversation(SelectedConversation))
+            if (await Universal.Plugin.FetchMessages(SelectedConversation))
             {
                 var conversation = Universal.Plugin.ActiveConversation;
 

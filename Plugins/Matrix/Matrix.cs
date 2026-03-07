@@ -495,17 +495,15 @@ namespace Matrix
             }
         }
 
-        public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
-
-        public async Task<bool> SetActiveConversation(Conversation conversation)
+        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             TypingUsersList.Clear();
-            ActiveConversation.Clear();
+            List<Message> messageList = new List<Message>();
 
             if (string.IsNullOrEmpty(conversation.Identifier))
             {
                 _activeRoomId = null;
-                return false;
+                return new ConversationItem[0];
             }
 
             _activeRoomId = conversation.Identifier;
@@ -519,7 +517,7 @@ namespace Matrix
                     if (!response.IsSuccessStatusCode)
                     {
                         OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"));
-                        return false;
+                        return new ConversationItem[0];
                     }
                     responseBody = await response.Content.ReadAsStringAsync();
                 }
@@ -527,16 +525,16 @@ namespace Matrix
                 var messagesData = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
                 var chunk = messagesData.GetProperty("chunk");
-                var messagesList = new List<JsonElement>();
+                var messages = new List<JsonElement>();
                 foreach (var item in chunk.EnumerateArray())
-                    messagesList.Add(item);
-                messagesList.Reverse();
+                    messages.Add(item);
+                messages.Reverse();
 
                 _displayNameCache = await GetRoomMemberDisplayNames(conversation.Identifier);
 
                 var eventItemCache = new Dictionary<string, Message>();
 
-                foreach (var message in messagesList)
+                foreach (var message in messages)
                 {
                     string eventType = message.GetProperty("type").GetString();
                     string eventId = message.GetProperty("event_id").GetString();
@@ -550,7 +548,7 @@ namespace Matrix
                     {
                         var encryptedItem = new Message(eventId, senderData, timestamp, "`This message is encrypted and cannot currently be read by Skymu.`", null, null);
                         eventItemCache[eventId] = encryptedItem;
-                        ActiveConversation.Add(encryptedItem);
+                        messageList.Add(encryptedItem);
                         continue;
                     }
 
@@ -605,16 +603,16 @@ namespace Matrix
 
                     var messageItem = new Message(eventId, senderData, timestamp, body, attachments, parentMessage);
                     eventItemCache[eventId] = messageItem;
-                    ActiveConversation.Add(messageItem);
+                    messageList.Add(messageItem);
                 }
 
-                return true;
+                return messageList.ToArray();
             }
             catch (Exception ex)
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
                 _activeRoomId = null;
-                return false;
+                return new ConversationItem[0];
             }
         }
 
@@ -624,7 +622,6 @@ namespace Matrix
             _syncCancellationTokenSource?.Dispose();
             _syncCancellationTokenSource = null;
 
-            ActiveConversation?.Clear();
             ContactsList?.Clear();
             RecentsList?.Clear();
             TypingUsersList?.Clear();
