@@ -160,4 +160,8 @@
 	  </Reference>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Pontis\" />
+	</ItemGroup>
+
 </Project>

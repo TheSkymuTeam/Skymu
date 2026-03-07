@@ -63,7 +63,6 @@ namespace Discord
         private User _currentUser;
 
         // Magic numbers used for some stuff...
-        private const int MAX_MESSAGES_LIMIT = 30;
         private const int WARNING_WS_MS = 5000;
         private const int DM_CHANNEL_TYPE = 1;
         private const int GROUP_CHANNEL_TYPE = 3;
@@ -193,7 +192,6 @@ namespace Discord
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
         public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
@@ -473,20 +471,23 @@ namespace Discord
             return true;
         }
 
-        public async Task<bool> SetActiveConversation(Conversation conversation)
+        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             TypingUsersList.Clear();
-            ActiveConversation.Clear();
+            List<Message> messageList = new List<Message>();
 
-            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId))
-                return false;
+            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId) || fetch_type == Fetch.Oldest) // not implemented in discord
+                return new ConversationItem[0];
 
             _activeChannelId = channelId;
+            string parameters = $"/channels/{channelId}/messages?limit={message_count}";
+            if (fetch_type == Fetch.AfterIdentifier) parameters += "&after=" + identifier;
+            else if (fetch_type == Fetch.BeforeIdentifier) parameters += "&before=" + identifier;
 
             try
             {
                 string json = await api.SendAPI(
-                    $"/channels/{channelId}/messages?limit={MAX_MESSAGES_LIMIT}",
+                    parameters,
                     HttpMethod.Get,
                     DscToken,
                     null, null, null);
@@ -513,17 +514,17 @@ namespace Discord
                     {
                         OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {json}"));
                     }
-                    return false;
+                    return new ConversationItem[0];
                 }
 
                 foreach (var node in messages.Reverse())
                 {
                     var item = await DiscordMsgParser.ParseMessage(node);
                     if (item != null)
-                        ActiveConversation.Add(item);
+                        messageList.Add(item);
                 }
 
-                return true;
+                return messageList.ToArray();
             }
             catch (Exception ex)
             {
@@ -531,7 +532,7 @@ namespace Discord
                 if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
                 OnError?.Invoke(this, new PluginMessageEventArgs(message));
                 _activeChannelId = null;
-                return false;
+                return new ConversationItem[0];
             }
         }
 
