@@ -1,4 +1,4 @@
-﻿namespace SkymuInstallers
+﻿namespace Installers
 {
     partial class s7InstallerPg1
     {
@@ -191,7 +191,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = global::SkymuInstallers.Properties.Resources.skype_7_16_0_102_xbjaOsiyZ4;
+            this.pictureBox2.Image = global::Installers.Properties.Resources.skype_7_16_0_102_xbjaOsiyZ4;
             this.pictureBox2.Location = new System.Drawing.Point(336, 162);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(51, 207);
@@ -200,7 +200,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::SkymuInstallers.Properties.Resources.skype_7_16_0_102_poa6PB1fw1;
+            this.pictureBox1.Image = global::Installers.Properties.Resources.skype_7_16_0_102_poa6PB1fw1;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(720, 122);
