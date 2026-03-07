@@ -9,9 +9,9 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 using System;
-using System.Windows.Forms;
+using System.Windows;
 
-namespace SkymuInstallers
+namespace Installers
 {
     static class Program
     {
@@ -21,9 +21,8 @@ namespace SkymuInstallers
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new EraSelectorLegacy());
+            var app = new Application();
+            app.Run(new EraSelector()); // your WPF Window class
         }
     }
 }

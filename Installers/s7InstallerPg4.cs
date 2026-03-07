@@ -13,7 +13,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SkymuInstallers
+namespace Installers
 {
     public partial class s7InstallerPg4 : Form
     {

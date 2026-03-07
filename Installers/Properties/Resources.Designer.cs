@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SkymuInstallers.Properties {
+namespace Installers.Properties {
     using System;
     
     

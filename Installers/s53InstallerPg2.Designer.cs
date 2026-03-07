@@ -1,4 +1,4 @@
-﻿namespace SkymuInstallers
+﻿namespace Installers
 {
     partial class s53InstallerPg2
     {
@@ -47,7 +47,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::SkymuInstallers.Properties.Resources.headers5o;
+            this.pictureBox1.Image = global::Installers.Properties.Resources.headers5o;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(509, 228);
