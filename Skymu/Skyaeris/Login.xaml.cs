@@ -355,13 +355,13 @@ namespace Skymu.Skyaeris
         {
             if (anim)
             {
-                signInControls.Visibility = Visibility.Collapsed;
+                LoginControls.Visibility = Visibility.Collapsed;
                 throbber.Visibility = Visibility.Visible;
                 header.Text = Universal.Lang["sSTATUSTEXT_PROFILE_LOGGING_IN"];
             }
             else
             {
-                signInControls.Visibility = Visibility.Visible;
+                LoginControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
                 header.Text = Universal.Lang["sF_LOGIN_WELCOME"];
             }

@@ -192,7 +192,7 @@ namespace Discord
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
         private enum ListType
@@ -203,7 +203,7 @@ namespace Discord
         public void Dispose()
         {
             WebSocketMgr._webSocket = null;
-            UserStatusMgr.UserStatusStore.Clear();
+            UserStore.Clear();
             UserIdToChannelId = new Dictionary<string, string>();
         }
 
@@ -292,7 +292,7 @@ namespace Discord
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings."));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", "")));
                 }
                 else
                 {
@@ -337,8 +337,8 @@ namespace Discord
                 string global_name = parsedDetails["global_name"]?.GetValue<string>() ?? parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
                 string username = parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
                 string identifier = parsedDetails["id"]?.GetValue<string>();
-                UserConnectionStatus status = HelperMethods.MapStatus(WebSocketMgr.GetUserStatus("0"));
-                string custom_status = WebSocketMgr.GetCustomStatus(identifier);
+                UserConnectionStatus status = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
+                string custom_status = UserStore.Get(identifier)?.Status;
 
                 MyInformation = _currentUser = new User(global_name, username, identifier, custom_status, status); ;
 
@@ -397,9 +397,8 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
-                        string status = WebSocketMgr.GetUserStatus(userId);
-                        string customStatus = WebSocketMgr.GetCustomStatus(userId);
-                        var profileData = new User(displayName ?? dscUserName, dscUserName, userId, customStatus, HelperMethods.MapStatus(status), avatarImage);
+                        var profileData = UserStore.GetOrCreate(userId, displayName ?? dscUserName, dscUserName);
+                        profileData.ProfilePicture = avatarImage;
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(new DirectMessage(profileData, 0, channelId));
@@ -417,11 +416,11 @@ namespace Discord
                         {
                             User[] temp = recipients
                                 .OfType<JsonObject>()
-                                .Select(r => new User(
-                                    r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
-                                    r["username"]?.GetValue<string>() ?? "Unknown",
-                                    r["id"]?.GetValue<string>() ?? "0"
-                                ))
+                                .Select(r => UserStore.GetOrCreate(
+    r["id"]?.GetValue<string>() ?? "0",
+    r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
+    r["username"]?.GetValue<string>() ?? "Unknown"
+))
                                 .ToArray();
 
                             members = new User[temp.Length + 1];
@@ -458,8 +457,6 @@ namespace Discord
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
-                        else
-                            ContactsList.Add(profileData);
                     }
                 }
             }

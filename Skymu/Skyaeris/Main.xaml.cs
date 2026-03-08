@@ -145,7 +145,7 @@ namespace Skymu.Skyaeris
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
                     Browser.Visibility = Visibility.Visible;
-                    InitiateWebview();
+                    Browser.Navigate("https://www.skymu.app");
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ContactsList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
@@ -429,8 +429,13 @@ namespace Skymu.Skyaeris
         {
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
+            await Universal.Plugin.PopulateContactsList();
+
+            await Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
+            await Database.Contacts.Write(Universal.Plugin.ContactsList.ToArray());
 
             CurrentUser = Universal.Plugin.MyInformation;
+            await Database.Accounts.Write(CurrentUser);
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
             SkymuApiStatusHandler();
@@ -1146,6 +1151,7 @@ namespace Skymu.Skyaeris
             is_loading_conversation = true;
 
             ConversationItem[] items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
+            await Database.Messages.Write(items, SelectedConversation);
 
             if (items != null && items.Length > 0)
             {
@@ -1384,34 +1390,6 @@ namespace Skymu.Skyaeris
 
         #endregion
 
-        #region WebView
-
-        private async Task InitiateWebview()
-        {
-            await Browser.EnsureCoreWebView2Async();
-
-            Browser.CoreWebView2.NewWindowRequested += (sender, args) =>
-            {
-                args.Handled = true;
-                Browser.CoreWebView2.Navigate(args.Uri);
-            };
-
-            Browser.CoreWebView2.NavigationCompleted += async (s, e) =>
-            {
-                if (!Properties.Settings.Default.HomepageScroll)
-                {
-                    await Browser.CoreWebView2.ExecuteScriptAsync(@"
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-        ");
-                }
-            };
-
-            Browser.CoreWebView2.Navigate(Properties.Settings.Default.Homepage);
-        }
-
-        #endregion
-
         #region Emoji picker
         private static string ConvertHexKeyToUnicode(string hexKey)
         {
@@ -1568,6 +1546,7 @@ namespace Skymu.Skyaeris
             {
                 UpdateTypingIndicator();
             };
+
             SetWindow(WindowType.Home);
         }
 

@@ -72,11 +72,5 @@ namespace Discord.Classes
         {
             return Socket?.guildsData as JsonArray ?? new JsonArray();
         }
-
-        public static string GetUserStatus(string userId)
-            => UserStatusMgr.UserStatusStore.GetStatus(userId);
-
-        public static string GetCustomStatus(string userId)
-            => UserStatusMgr.UserStatusStore.GetCustomStatus(userId);
     }
 }

@@ -60,7 +60,7 @@
                     </EventTrigger>
                 </Image.Triggers>
             </Image>
-            <Grid x:Name="signInControls">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="270"/>

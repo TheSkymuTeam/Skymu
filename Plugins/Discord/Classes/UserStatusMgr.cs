@@ -21,21 +21,6 @@ namespace Discord.Classes
 {
     internal class UserStatusMgr
     {
-        public static class UserStatusStore
-        {
-            private static readonly ConcurrentDictionary<string, StatusData> _statuses = new();
-            public static void UpdateStatus(string userId, string status, string customStatus = null)
-            {
-                _statuses[userId] = new StatusData { Status = status, CustomStatus = customStatus };
-            }
-            public static string GetStatus(string userId) =>
-                _statuses.TryGetValue(userId, out var data) ? data.Status : "offline"; // TODO idk what this should be bruh
-            public static string GetCustomStatus(string userId) =>
-                _statuses.TryGetValue(userId, out var data) ? data.CustomStatus : null;
-            public static bool ContainsUser(string userId) => _statuses.ContainsKey(userId);
-            public static void Clear() => _statuses.Clear();
-        }
-
         public static void HandleUserStatus(JsonNode messageData)
         {
             if (messageData["user_settings"] is JsonObject userSettings)
@@ -47,7 +32,7 @@ namespace Discord.Classes
                 {
                     rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
                 }
-                UserStatusStore.UpdateStatus("0", rawMainStatus, rawCustomStatus);
+                UserStore.UpdatePresence("0", rawMainStatus, rawCustomStatus);
             }
 
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
@@ -98,7 +83,7 @@ namespace Discord.Classes
                         }
                     }
                 }
-                UserStatusStore.UpdateStatus(userId, status, customStatus);
+                UserStore.UpdatePresence(userId, status, customStatus);
             }
         }
 

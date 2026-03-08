@@ -27,6 +27,7 @@ namespace SkypeDBBrowser
 
         // configurable message limit 
         private static readonly byte[] JpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
+        private static readonly byte[] PngMagic = new byte[] { 0x89, 0x50, 0x4E, 0x47 }; // \x89PNG
 
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -45,7 +46,7 @@ namespace SkypeDBBrowser
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
         public ObservableCollection<Server> ServerList { get; private set; }
@@ -59,8 +60,7 @@ namespace SkypeDBBrowser
 
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            try
-            {
+            
                 if (authType != AuthenticationMethod.Token)
                     return LoginResult.UnsupportedAuthType;
 
@@ -93,12 +93,7 @@ namespace SkypeDBBrowser
                 }
 
                 return LoginResult.Success;
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Login failed: {ex.Message}"));
-                return LoginResult.Failure;
-            }
+            
         }
 
         public Task<string> GetQRCode()
@@ -315,7 +310,7 @@ namespace SkypeDBBrowser
                                 var displayName = reader.IsDBNull(1) ? skypename : reader.GetString(1);
                                 var mood = reader.IsDBNull(2) ? "" : reader.GetString(2);
                                 var availability = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
-                                var avatarBytes = reader.IsDBNull(4) ? null : ExtractJpegFromAvatarBlob((byte[])reader.GetValue(4));
+                                var avatarBytes = reader.IsDBNull(4) ? null : ExtractImageFromAvatarBlob((byte[])reader.GetValue(4));
 
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
@@ -364,7 +359,7 @@ namespace SkypeDBBrowser
                                 availability,
                                 avatar_image
                             FROM Contacts
-                            WHERE skypename != null";
+                            WHERE skypename IS NOT null";
 
                         using (var reader = await contactCmd.ExecuteReaderAsync())
                         {
@@ -375,7 +370,7 @@ namespace SkypeDBBrowser
 
                                 var mood = reader.IsDBNull(1) ? "" : reader.GetString(1);
                                 var availability = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
-                                var avatarBytes = reader.IsDBNull(3) ? null : ExtractJpegFromAvatarBlob((byte[])reader.GetValue(3));
+                                var avatarBytes = reader.IsDBNull(3) ? null : ExtractImageFromAvatarBlob((byte[])reader.GetValue(3));
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
                                 contactInfo[skypename] = (mood, avatarBytes, status);
@@ -391,6 +386,7 @@ namespace SkypeDBBrowser
                                 c.identity,
                                 c.displayname,
                                 c.type,
+                                c.dialog_partner,
                                 MAX(m.timestamp) as last_message
                             FROM Conversations c
                             LEFT JOIN Messages m ON c.id = m.convo_id
@@ -406,6 +402,7 @@ namespace SkypeDBBrowser
                                 var identity = reader.IsDBNull(0) ? "unknown" : reader.GetString(0);
                                 var displayName = reader.IsDBNull(1) ? identity : reader.GetString(1);
                                 var type = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
+                                var dialogPartner = reader.IsDBNull(3) ? null : reader.GetString(3);
 
                                 // type 1 = one-on-one, 2 = group chat, 4 = ???
                                 if (type == 2)
@@ -422,13 +419,13 @@ namespace SkypeDBBrowser
                                 }
                                 else
                                 {
-                                    // individual conversation, enrich with contact data if available
-                                    contactInfo.TryGetValue(identity, out var info);
-
+                                    // individual conversation — enrich with contact data if available
+                                    string identifier = dialogPartner ?? identity;
+                                    contactInfo.TryGetValue(identifier, out var info);
                                     RecentsList.Add(new DirectMessage(new User(
                                         displayName,
-                                        identity,
-                                        identity,
+                                        identifier,
+                                        identifier,
                                         info.Mood,
                                         info.Status == default ? UserConnectionStatus.Offline : info.Status,
                                         info.Avatar
@@ -528,26 +525,38 @@ namespace SkypeDBBrowser
         /// and returns everything from that offset onward, giving a clean JPEG that any
         /// standard image decoder can consume.  Returns null when no JPEG is found or the
         /// input == null/empty.
-        private static byte[] ExtractJpegFromAvatarBlob(byte[] blob)
+        private static byte[] ExtractImageFromAvatarBlob(byte[] blob)
         {
-            if (blob == null || blob.Length < JpegMagic.Length)
+            if (blob == null || blob.Length < 4)
                 return null;
 
-            // scan for 0xFF 0xD8 0xFF (JPEG SOI + first marker byte)
-            for (int i = 0; i <= blob.Length - JpegMagic.Length; i++)
+            for (int i = 0; i <= blob.Length - 4; i++)
             {
-                if (blob[i] == JpegMagic[0] &&
+                // JPEG
+                if (i <= blob.Length - JpegMagic.Length &&
+                    blob[i] == JpegMagic[0] &&
                     blob[i + 1] == JpegMagic[1] &&
                     blob[i + 2] == JpegMagic[2])
                 {
-                    // found the JPEG header — slice from here to end
-                    var jpeg = new byte[blob.Length - i];
-                    Array.Copy(blob, i, jpeg, 0, jpeg.Length);
-                    return jpeg;
+                    var img = new byte[blob.Length - i];
+                    Array.Copy(blob, i, img, 0, img.Length);
+                    return img;
+                }
+
+                // PNG
+                if (i <= blob.Length - PngMagic.Length &&
+                    blob[i] == PngMagic[0] &&
+                    blob[i + 1] == PngMagic[1] &&
+                    blob[i + 2] == PngMagic[2] &&
+                    blob[i + 3] == PngMagic[3])
+                {
+                    var img = new byte[blob.Length - i];
+                    Array.Copy(blob, i, img, 0, img.Length);
+                    return img;
                 }
             }
 
-            return null; // no valid JPEG found in blob
+            return null;
         }
 
         private string CleanSkypeMessageBody(string body)

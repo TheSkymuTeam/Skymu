@@ -110,7 +110,7 @@ namespace Discord.Classes
                 }
                 catch (Exception ex)
                 {
-                    return $"[API/RequestError] An error occurred while sending the request: {ex.Message}\n\n$\"[API] URL used when the error occurred: {{url}}";
+                    return $"[API/RequestError]{ex.Message}\nURL: {url}";
                 }
             }
         }

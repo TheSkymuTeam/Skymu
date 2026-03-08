@@ -149,10 +149,7 @@ Path=Homepage,
 Mode=TwoWay,
 UpdateSourceTrigger=PropertyChanged}" Width="250"/>
                     </StackPanel>
-                    <CheckBox Content="Enable scrolling on the Skype Home website" IsChecked="{Binding Source={x:Static properties:Settings.Default},
-Path=HomepageScroll,
-Mode=TwoWay}" Margin="0,5"/>
-                    <CheckBox Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+                        <CheckBox Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=StartOnStartup,
 Mode=TwoWay}" Margin="0,5"/>
                         <CheckBox Content="Retain original versions of edited and deleted messages (MessageLogger)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
