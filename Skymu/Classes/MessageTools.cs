@@ -771,9 +771,17 @@ namespace Skymu
                 if (index != -1)
                 {
                     Message edited_msg = eE.NewItem as Message;
-                    if (!Properties.Settings.Default.MessageLogger) Skyaeris.Main.ActiveConversation.RemoveAt(index);
-                    edited_msg.Text = edited_msg.Text += " ==[edited]==";
-                    Skyaeris.Main.ActiveConversation.Insert(index + 1, edited_msg);
+                    if (!Properties.Settings.Default.MessageLogger)
+                    {
+                        Skyaeris.Main.ActiveConversation.RemoveAt(index);
+                    }
+
+                    edited_msg.Text += " ==[edited]==";
+
+                    int insertIndex = Math.Min(index + (Properties.Settings.Default.MessageLogger ? 1 : 0),
+                                               Skyaeris.Main.ActiveConversation.Count);
+
+                    Skyaeris.Main.ActiveConversation.Insert(insertIndex, edited_msg);
                 }
             }
         }
