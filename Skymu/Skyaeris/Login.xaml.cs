@@ -34,7 +34,7 @@ namespace Skymu.Skyaeris
     {
         private static PluginListing selectedListing;
         private Main _Main;
-        public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLoginEnabled;
+        public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLogin;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
 
         public Login() : this(false)
@@ -48,7 +48,7 @@ namespace Skymu.Skyaeris
 
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
-            BBuilderGrid.MouseLeftButtonUp += buttonLaunch;
+            LoginButton.MouseLeftButtonUp += buttonLaunch;
 
             this.ContentRendered += Login_ContentRendered;
 
@@ -139,7 +139,6 @@ namespace Skymu.Skyaeris
                 {
                     LoginToggleAnimation(false);
                     SetHeaderToFail();
-
                 }
             }
         }
@@ -190,15 +189,18 @@ namespace Skymu.Skyaeris
                 (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled)) || !passwordTokenBox.IsEnabled && !usernameBox.IsEnabled)
             {
                 LoginButton.IsEnabled = true;
+                LoginButton.Opacity = 1;
             }
             else
             {
                 LoginButton.IsEnabled = false;
+                LoginButton.Opacity = 0.4;
             }
         }
 
         private void Login_Loaded(object sender, EventArgs e)
         {
+            MenuBarRow.Height = new GridLength(0);
             MenuBar.MenuInit(this);
             MenuBar.MenuCreator("&" + Universal.Lang["sMAINMENU_SKYPE"], Universal.Lang["sMAINMENU_SKYPE_CLOSE"]);
             MenuBar.MenuCreator("&" + Universal.Lang["sMAINMENU_TOOLS"], Universal.Lang["sLOGIN_CHANGE_LANGUAGE"], "$", Universal.Lang["sLOGIN_CONNECTION_OPTIONS"], "$", Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]);
@@ -223,25 +225,25 @@ namespace Skymu.Skyaeris
                     foreach (AuthTypeInfo ati in plugin.AuthenticationTypes)
                     {
                         string name = plugin.Name;
-                        if (ati.CustomTextAuthType != null) name += " (" + ati.CustomTextAuthType + ")";
+                        if (ati.CustomTextAuthType != null) name += " - " + ati.CustomTextAuthType;
                         else
                         {
                             switch (ati.AuthType)
                             {
                                 case AuthenticationMethod.Password:
-                                    name += " (username & password)";
+                                    name += " - username & password";
                                     break;
                                 case AuthenticationMethod.QRCode:
-                                    name += " (QR code)";
+                                    name += " - QR code";
                                     break;
                                 case AuthenticationMethod.Passwordless:
-                                    name += " (passwordless)";
+                                    name += " - passwordless";
                                     break;
                                 case AuthenticationMethod.External:
-                                    name += " (external login)";
+                                    name += " - external login";
                                     break;
                                 case AuthenticationMethod.Token:
-                                    name += " (token login)";
+                                    name += " - token login";
                                     break;
                                 default:
                                     continue;
@@ -266,7 +268,7 @@ namespace Skymu.Skyaeris
             passwordTokenBox.IsEnabled = true;
             Password.FontStyle = FontStyles.Normal;
             Password.Text = Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
-            SignIn.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
+            LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             SkypeName.Foreground = new SolidColorBrush(Colors.Black);
             usernameBox.IsEnabled = true;
@@ -283,7 +285,7 @@ namespace Skymu.Skyaeris
                 switch (selectedListing.AuthenticationType)
                 {
                     case AuthenticationMethod.QRCode:
-                        SignIn.Text = "Scan QR code";
+                        LoginButton.Text = "Scan QR code";
 
                         SkypeName.Foreground = new SolidColorBrush(Colors.DarkGray);
                         usernameBox.IsEnabled = false;
@@ -292,13 +294,13 @@ namespace Skymu.Skyaeris
 
                         break;
                     case AuthenticationMethod.Passwordless:
-                        SignIn.Text = "Send code";
+                        LoginButton.Text = "Send code";
                         break;
                     case AuthenticationMethod.External:
-                        SignIn.Text = "External login";
+                        LoginButton.Text = "External login";
                         break;
                     default:
-                        SignIn.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
+                        LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
                         break;
                 }
             }

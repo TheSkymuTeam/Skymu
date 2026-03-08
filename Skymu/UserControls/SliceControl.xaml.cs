@@ -477,7 +477,7 @@ namespace Skymu
                 MiddleSlice.Visibility = Visibility.Visible;
                 LeftSlice.Visibility = RightSlice.Visibility = Visibility.Collapsed;
 
-                MiddleSlice.Width = Width;
+                MiddleSlice.Width = double.IsNaN(Width) ? bmp.PixelWidth : Width;
                 MiddleSlice.Height = GetElementHeight();
 
                 _middleBrush.ImageSource = Source;

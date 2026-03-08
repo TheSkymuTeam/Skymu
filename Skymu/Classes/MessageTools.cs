@@ -729,6 +729,54 @@ namespace Skymu
             if (!string.IsNullOrEmpty(currentRun.Text))
                 inlines.Add(currentRun);
         }
+
+        public static void HandleIncoming(MessageEventArgs e)
+        { 
+            if (e is MessageRecievedEventArgs eR)
+            {
+                Skyaeris.Main.ActiveConversation.Add(eR.Item);
+                if (eR.Item is Message message)
+                {
+                    if (message.Sender.Identifier != Skyaeris.Main.CurrentUser?.Identifier)
+                    {
+                        if (!Skyaeris.Main.IsWindowActive || Skyaeris.Main.SelectedConversation?.Identifier != e.ConversationId)
+                        {
+                            new Views.Notification(eR);
+                        }
+                    }
+                }
+            }
+
+            else if (e is MessageDeletedEventArgs eD)
+            {
+                var item = Skyaeris.Main.ActiveConversation.FirstOrDefault(x => x.Identifier == eD.DeletedItemId);
+                if (item is Message deleted_msg)
+                {
+                    int index = Skyaeris.Main.ActiveConversation.IndexOf(deleted_msg);
+                    Skyaeris.Main.ActiveConversation.RemoveAt(index);
+                    if (Properties.Settings.Default.MessageLogger)
+                    {
+                        deleted_msg.Text += " ==[deleted]==";
+                        Skyaeris.Main.ActiveConversation.Insert(index, deleted_msg);
+                    }
+                }
+            }
+
+            else if (e is MessageEditedEventArgs eE)
+            {
+                var index = Skyaeris.Main.ActiveConversation
+                    .Select((item, i) => new { item, i })
+                    .LastOrDefault(x => x.item.Identifier == eE.OldItemId)?.i ?? -1;
+
+                if (index != -1)
+                {
+                    Message edited_msg = eE.NewItem as Message;
+                    if (!Properties.Settings.Default.MessageLogger) Skyaeris.Main.ActiveConversation.RemoveAt(index);
+                    edited_msg.Text = edited_msg.Text += " ==[edited]==";
+                    Skyaeris.Main.ActiveConversation.Insert(index + 1, edited_msg);
+                }
+            }
+        }
     }
 
 }

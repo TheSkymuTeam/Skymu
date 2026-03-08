@@ -26,9 +26,10 @@ namespace Matrix
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<NotificationEventArgs> Notification;
+        public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Matrix"; } }
         public string InternalName { get { return "skymu-matrix-plugin"; } }
+        public bool SupportsServers { get { return false; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -498,7 +499,7 @@ namespace Matrix
         public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             TypingUsersList.Clear();
-            List<Message> messageList = new List<Message>();
+            List<ConversationItem> messageList = new List<ConversationItem>();
 
             if (string.IsNullOrEmpty(conversation.Identifier))
             {
@@ -861,6 +862,15 @@ namespace Matrix
             }
         }
 
+        private Conversation GetConversationById(string roomId)
+        {
+            foreach (var c in RecentsList)
+                if (c.Identifier == roomId) return c;
+            foreach (var c in ContactsList)
+                if (c.Identifier == roomId) return c;
+            return null;
+        }
+
         private async Task ProcessTimelineEvent(string roomId, JsonElement evt)
         {
             try
@@ -881,14 +891,11 @@ namespace Matrix
                     var senderData = new User(displayName, sender, sender);
                     var encryptedItem = new Message(eventId, senderData, timestamp, "[encrypted message]", null, null);
 
-                    if (roomId == _activeRoomId)
-                    {
-                        _uiContext?.Post(_ => ActiveConversation.Add(encryptedItem), null);
-                    }
-                    else if (_recentRoomMap.ContainsKey(roomId))
+                    if (_recentRoomMap.ContainsKey(roomId))
                     {
                         _uiContext?.Post(_ =>
-                            Notification?.Invoke(this, new NotificationEventArgs(encryptedItem, UserConnectionStatus.Online, roomId)),
+                            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
+                                roomId, encryptedItem)),
                             null);
                     }
                     return;
@@ -909,18 +916,19 @@ namespace Matrix
                 DateTime timestampMsg = DateTimeOffset.FromUnixTimeMilliseconds(ts).DateTime;
                 string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
 
-                if (roomId == _activeRoomId)
+                // AFTER
+                if (_recentRoomMap.ContainsKey(roomId))
                 {
-                    string displayName = _displayNameCache.TryGetValue(senderMsg, out var name)
-                        ? name
+                    string displayName = _displayNameCache.TryGetValue(senderMsg, out var notifName)
+                        ? notifName
                         : await GetDisplayNameForUser(senderMsg, roomId);
 
                     var senderData = new User(displayName, senderMsg, senderMsg);
                     Attachment[] attachments = null;
 
-                    if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
+                    if (msgtype == "m.image" && content.TryGetProperty("url", out var urlPropEvt))
                     {
-                        string mxcUrl = urlProp.GetString();
+                        string mxcUrl = urlPropEvt.GetString();
                         byte[] imageBytes = await MatrixOOTBStuff.DownloadMatrixContent(mxcUrl, _homeserver, _httpClient);
                         if (imageBytes != null)
                         {
@@ -929,33 +937,17 @@ namespace Matrix
                         }
                     }
                     else if (msgtype == "m.video" || msgtype == "m.audio" || msgtype == "m.file")
-                    {
-                        body = $"📎 {body}";
-                    }
+                        body = $"[attachment] {body}";
                     else if (msgtype == "m.notice")
-                    {
-                        body = $"ℹ️ {body}";
-                    }
+                        body = $"[info] {body}";
                     else if (msgtype == "m.emote")
-                    {
                         body = $"* {displayName} {body}";
-                    }
 
                     var messageItem = new Message(eventIdMsg, senderData, timestampMsg, body, attachments, null);
-                    _uiContext?.Post(_ => ActiveConversation.Add(messageItem), null);
-                }
-
-                if (roomId != _activeRoomId && _recentRoomMap.ContainsKey(roomId))
-                {
-                    string displayName = _displayNameCache.TryGetValue(senderMsg, out var notifName)
-                        ? notifName
-                        : await GetDisplayNameForUser(senderMsg, roomId);
-
-                    var senderData = new User(displayName, senderMsg, senderMsg);
-                    var notifMessage = new Message(eventIdMsg, senderData, timestampMsg, body, null, null);
 
                     _uiContext?.Post(_ =>
-                        Notification?.Invoke(this, new NotificationEventArgs(notifMessage, UserConnectionStatus.Online, roomId)),
+                        MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
+                            roomId, messageItem)),
                         null);
                 }
             }

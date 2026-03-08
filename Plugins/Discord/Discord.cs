@@ -24,7 +24,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord
 {
@@ -33,9 +32,10 @@ namespace Discord
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<NotificationEventArgs> Notification;
+        public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "skymu-discord-plugin"; } }
+        public bool SupportsServers { get { return true; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -474,7 +474,7 @@ namespace Discord
         public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             TypingUsersList.Clear();
-            List<Message> messageList = new List<Message>();
+            List<ConversationItem> messageList = new List<ConversationItem>();
 
             if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId) || fetch_type == Fetch.Oldest) // not implemented in discord
                 return new ConversationItem[0];
@@ -635,7 +635,7 @@ namespace Discord
         public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
         {
             PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
-            settings.Status = new StatusSettings();
+            settings.Status = new PreloadedUserSettings.Types.StatusSettings();
 
             // map to proto enum
             settings.Status.Status = status switch // update status
@@ -657,67 +657,14 @@ namespace Discord
             if (String.IsNullOrEmpty(status)) return false;
 
             PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
-            settings.Status = new StatusSettings();
+            settings.Status = new PreloadedUserSettings.Types.StatusSettings();
 
             settings.Status.CustomStatus.Text = status; // set text of status
             return await UpdateProtoSettings(settings); // try push
         }
 
-        private bool ShouldNotify(HelperClasses.MessageReceivedEventArgs e)
+        private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
         {
-            // Get the channel info to check its type
-            var privateChannels = WebSocketMgr.GetPrivateChannels();
-            var channel = privateChannels
-                .OfType<JsonObject>()
-                .FirstOrDefault(c => c["id"]?.GetValue<string>() == e.ChannelId);
-
-            if (channel != null)
-            {
-                int channelType = channel["type"]?.GetValue<int>() ?? -1;
-
-                // Always notify for DMs (type 1) and Group DMs (type 3)
-                if (channelType == 1 || channelType == 3)
-                    return true;
-            }
-
-            // For server channels (guild channels), only notify if:
-            // 1. User is mentioned in the content
-            // 2. User is replied to
-
-            string currentUserId = _currentUser.Identifier;
-
-            // Check if replied to current user
-            if (e.ParentMessage != null && e.ParentMessage.Sender.Identifier == currentUserId)
-                return true;
-
-            // Check if current user is mentioned in the message
-            if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{currentUserId}>"))
-                return true;
-
-            return false;
-        }
-
-        private void OnWebSocketMessageReceived(object sender, HelperClasses.MessageReceivedEventArgs e)
-        {
-            // Fire notification only for created messages
-            if (e.EventType == MessageEventType.Create && ShouldNotify(e))
-            {
-                UserConnectionStatus status = HelperMethods.MapStatus(
-                    WebSocketMgr.GetUserStatus(e.Sender.Identifier)
-                );
-
-                Message message = new Message(
-                    e.Identifier,
-                    e.Sender,
-                    e.Timestamp,
-                    e.Text,
-                    e.Attachments,
-                    e.ParentMessage
-                );
-
-                Notification?.Invoke(this, new NotificationEventArgs(message, status, e.ChannelId));
-            }
-
             // Ignore other channels
             if (e.ChannelId != _activeChannelId)
                 return;
@@ -730,17 +677,14 @@ namespace Discord
                     {
                         case MessageEventType.Create:
                             {
-                                // Remove typing indicator
                                 var typingUser = TypingUsersList
                                     .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
-
                                 if (typingUser != null)
                                     TypingUsersList.Remove(typingUser);
-
                                 if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
                                     users.Remove(e.Sender.Identifier);
 
-                                Message message = new Message(
+                                var message = new Message(
                                     e.Identifier,
                                     e.Sender,
                                     e.Timestamp,
@@ -748,35 +692,34 @@ namespace Discord
                                     e.Attachments,
                                     e.ParentMessage
                                 );
+                                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message));
+                                break;
+                            }
 
-                                ActiveConversation.Add(message);
+                        case MessageEventType.Update:
+                            {
+                                var message = new Message(
+                                    e.Identifier,
+                                    e.Sender,
+                                    e.Timestamp,
+                                    e.Text,
+                                    e.Attachments,
+                                    e.ParentMessage
+                                );
+                                MessageEvent?.Invoke(this, new MessageEditedEventArgs(e.ChannelId, e.Identifier, message));
                                 break;
                             }
 
                         case MessageEventType.Delete:
                             {
-                                var existing = ActiveConversation
-                                .OfType<Message>()
-                                    .FirstOrDefault(m => m.Identifier == e.Identifier);
-
-                                if (existing != null)
-                                    ActiveConversation.Remove(existing);
-
+                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
                                 break;
                             }
 
                         case MessageEventType.BulkDelete:
                             {
                                 foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
-                                {
-                                    var msg = ActiveConversation
-                                    .OfType<Message>()
-                                        .FirstOrDefault(m => m.Identifier == id);
-
-                                    if (msg != null)
-                                        ActiveConversation.Remove(msg);
-                                }
-
+                                    MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
                                 break;
                             }
                     }

@@ -29,126 +29,110 @@ namespace Skymu.Views
         private DispatcherTimer _closeTimer;
         private const int MaxMessages = 5;
         private const string SHARED_PHOTO = "shared a photo";
+        private BitmapImage blue_background = null;
 
-        public Notification(NotificationEventArgs e, int durationSeconds = 5)
+        public Notification(MessageRecievedEventArgs e, int durationSeconds = 5)
         {
             if (!Properties.Settings.Default.EnableNotifications) return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
-            if (Main.CurrentStatus == UserConnectionStatus.DoNotDisturb)
+            if (Main.CurrentUser.PresenceStatus == UserConnectionStatus.DoNotDisturb)
             {
                 Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
                 return;
             }
 
-            if (e.Item is Message message)
+            if (_activeNotification != null && !_activeNotification.IsLoaded)
             {
-                if (Main.CurrentUser?.Identifier == message.Sender.Identifier)
-                {
-                    Debug.WriteLine("Notification: message is from me, suppress");
-                    return;
-                }
+                _activeNotification = null;
+            }
 
-                if (!Main.IsWindowActive)
+            if (_activeNotification == null)
+            {
+                _activeNotification = new Notification();
+                _activeNotification.InitializeComponent();
+
+                if (Properties.Settings.Default.BlueNotifications)
                 {
-                    Debug.WriteLine("Notification: window is inactive, show");
-                }
-                else
-                {
-                    if (Main.SelectedConversation != null && Main.SelectedConversation.Identifier == e.SentInChannelID)
+                    if (blue_background == null)
                     {
-                        Debug.WriteLine("Notification: message is from the active chat, suppress");
-                        return;
+                        blue_background = Converters.Helpers.AssetPathGenerator("Notifications/bubble-blue.png", false);
                     }
+                    _activeNotification.bubble.Source = blue_background;
                 }
 
-                if (_activeNotification != null && !_activeNotification.IsLoaded)
+                Notification notif = _activeNotification;
+
+                notif._closeTimer = new DispatcherTimer
                 {
-                    _activeNotification = null;
-                }
+                    Interval = TimeSpan.FromSeconds(durationSeconds)
+                };
 
-                if (_activeNotification == null)
+                notif._closeTimer.Tick += (s, ev) =>
                 {
-                    _activeNotification = new Notification();
-                    _activeNotification.InitializeComponent();
+                    notif._closeTimer.Stop();
 
-                    Notification notif = _activeNotification;
-
-                    if (Properties.Settings.Default.AccurateNotifications)
+                    var fadeOut = new DoubleAnimation
                     {
-                        // add stuff later - already accurate
-                    }
-
-                    notif._closeTimer = new DispatcherTimer
-                    {
-                        Interval = TimeSpan.FromSeconds(durationSeconds)
-                    };
-
-                    notif._closeTimer.Tick += (s, ev) =>
-                    {
-                        notif._closeTimer.Stop();
-
-                        var fadeOut = new DoubleAnimation
+                        From = notif.Opacity,
+                        To = 0,
+                        Duration = TimeSpan.FromMilliseconds(250),
+                        EasingFunction = new QuadraticEase
                         {
-                            From = notif.Opacity,
-                            To = 0,
-                            Duration = TimeSpan.FromMilliseconds(250),
-                            EasingFunction = new QuadraticEase
-                            {
-                                EasingMode = EasingMode.EaseOut
-                            }
-                        };
-
-                        fadeOut.Completed += (_, __) =>
-                        {
-                            notif.Close();
-
-                            if (_activeNotification == notif)
-                                _activeNotification = null;
-                        };
-
-                        notif.BeginAnimation(Window.OpacityProperty, fadeOut);
+                            EasingMode = EasingMode.EaseOut
+                        }
                     };
 
-                    notif.Loaded += (s, ev) =>
+                    fadeOut.Completed += (_, __) =>
                     {
-                        notif.PositionNotification();
-                    };
-
-                    notif.Closed += (s, ev) =>
-                    {
-                        if (notif._closeTimer != null)
-                            notif._closeTimer.Stop();
+                        notif.Close();
 
                         if (_activeNotification == notif)
                             _activeNotification = null;
                     };
 
-                    _activeNotification.Show();
-                    Taskbar.Flash(Application.Current.MainWindow);
-                }
+                    notif.BeginAnimation(Window.OpacityProperty, fadeOut);
+                };
 
-                _activeNotification.AddMessage(e, message);
-
-                if (_activeNotification != null && _activeNotification._closeTimer != null)
+                notif.Loaded += (s, ev) =>
                 {
-                    _activeNotification._closeTimer.Stop();
-                    _activeNotification._closeTimer.Interval = TimeSpan.FromSeconds(durationSeconds);
-                    _activeNotification._closeTimer.Start();
-                }
+                    notif.PositionNotification();
+                };
 
-                Sounds.Play("message-recieved");
+                notif.Closed += (s, ev) =>
+                {
+                    if (notif._closeTimer != null)
+                        notif._closeTimer.Stop();
+
+                    if (_activeNotification == notif)
+                        _activeNotification = null;
+                };
+
+                _activeNotification.Show();
+                Taskbar.Flash(Application.Current.MainWindow);
             }
+
+            _activeNotification.AddMessage((Message)e.Item, e);
+
+            if (_activeNotification != null && _activeNotification._closeTimer != null)
+            {
+                _activeNotification._closeTimer.Stop();
+                _activeNotification._closeTimer.Interval = TimeSpan.FromSeconds(durationSeconds);
+                _activeNotification._closeTimer.Start();
+            }
+
+            Sounds.Play("message-recieved");
+
         }
 
         private Notification()
         {
         }
 
-        private void AddMessage(NotificationEventArgs e, Message message)
+        private void AddMessage(Message message, MessageRecievedEventArgs e)
         {
-            Conversation conversation = Universal.Plugin.RecentsList?.FirstOrDefault(c => c.Identifier == e.SentInChannelID) 
-                ?? Universal.Plugin.ContactsList?.FirstOrDefault(c => c.Identifier == e.SentInChannelID);
+            Conversation conversation = Universal.Plugin.RecentsList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
+                ?? Universal.Plugin.ContactsList?.FirstOrDefault(c => c.Identifier == e.ConversationId);
 
             bool isGroupChat = conversation is Group;
 
@@ -178,7 +162,7 @@ namespace Skymu.Views
                 Source = new BitmapImage(new Uri("pack://application:,,,/Skyaeris/Assets/Universal/Icon Bitmap/skype-status.png", UriKind.Absolute)),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
-                DefaultIndex = isGroupChat ? 21 : Main.GetIntFromStatus(e.Status),
+                DefaultIndex = isGroupChat ? 21 : Main.GetIntFromStatus(message.Sender.PresenceStatus),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 0, 4, 0),
                 HoverIndex = -1,

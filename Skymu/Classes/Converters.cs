@@ -364,7 +364,7 @@ namespace Skymu.Converters
 
             string packUri = $"pack://application:,,,/Skymu;component{fullPath}";
 
-            return new BitmapImage(new Uri(packUri));
+            return FrameworkExtensions.FreezeImage(packUri);
         }
     }
 
