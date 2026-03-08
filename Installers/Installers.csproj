@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <Platforms>AnyCPU;x86;x64</Platforms>
     <OutputType>WinExe</OutputType>
     <RootNamespace>SkymuInstallers</RootNamespace>
     <AssemblyName>SkymuInstallers</AssemblyName>

@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLogin {
             get {
                 return ((bool)(this["AutoLogin"]));
@@ -122,18 +122,6 @@ namespace Skymu.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool HomepageScroll {
-            get {
-                return ((bool)(this["HomepageScroll"]));
-            }
-            set {
-                this["HomepageScroll"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UseClearType {
             get {
                 return ((bool)(this["UseClearType"]));
@@ -169,7 +157,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Honeypie")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Happy Cake")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

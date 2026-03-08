@@ -305,6 +305,7 @@ namespace Discord.Classes
                                 break;
                             case "PRESENCE_UPDATE":
                                 Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
+                                UserStatusMgr.HandleUserStatus(json["d"]);
                                 break;
                         }
                         break;
@@ -439,11 +440,7 @@ namespace Discord.Classes
             {
                 string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
 
-                var typingUser = new User(
-                    display_name: globalName,
-                    username: globalName,
-                    identifier: userId
-                );
+                var typingUser = UserStore.GetOrCreate(userId, globalName, globalName);
 
                 _core?._uiContext?.Post(_ =>
                 {

@@ -6,6 +6,7 @@
     <AssemblyTitle>Stub Plugin</AssemblyTitle>
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <FileVersion>1.0.0.0</FileVersion>
+	  <Platforms>AnyCPU;x86;x64</Platforms>
 	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

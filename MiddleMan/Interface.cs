@@ -468,7 +468,7 @@ namespace MiddleMan
         Task<bool> SendMessage(string identifier, string text = null, Attachment attachment = null, string parent_message_identifier = null); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
-        ObservableCollection<Conversation> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
+        ObservableCollection<DirectMessage> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Conversation> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Server> ServerList { get; } // field for server list, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.

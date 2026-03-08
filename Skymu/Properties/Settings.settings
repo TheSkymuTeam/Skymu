@@ -6,7 +6,7 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="AutoLogin" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="BrandingName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skype</Value>
@@ -26,9 +26,6 @@
     <Setting Name="Homepage" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://skymu.app</Value>
     </Setting>
-    <Setting Name="HomepageScroll" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="UseClearType" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -39,7 +36,7 @@
       <Value Profile="(Default)">0.3.7</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Honeypie</Value>
+      <Value Profile="(Default)">Drocea Happy Cake</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>

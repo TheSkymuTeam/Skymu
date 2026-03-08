@@ -639,7 +639,7 @@ namespace Matrix
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
         public async Task<bool> PopulateSidebarInformation()
@@ -726,8 +726,8 @@ namespace Matrix
 
                     if (lType == ListType.Recents)
                         RecentsList.Add(conversation);
-                    else if (isDirect)
-                        ContactsList.Add(conversation);
+                    else if (isDirect && conversation is DirectMessage dm)
+                        ContactsList.Add(dm);
                 }
 
                 return true;

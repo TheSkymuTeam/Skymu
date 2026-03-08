@@ -5,12 +5,12 @@
 		<AssemblyTitle>SkypeDBBrowser</AssemblyTitle>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<Platforms>AnyCPU;x86;x64</Platforms>
 		<OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
 		<AssemblyName>plug-sdb-browser</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.3" />
-		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
+	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj" />
@@ -18,12 +18,4 @@
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
 	</PropertyGroup>
-	<!-- After build: copy only the Windows x64 native DLL to output, then delete runtimes folder -->
-	<Target Name="CopyAndCleanupNativeLibrary" AfterTargets="Build">
-		<!-- Copy the Windows x64 native DLL to the output root -->
-		<Copy SourceFiles="$(OutputPath)runtimes\win-x64\native\e_sqlite3.dll" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" Condition="Exists('$(OutputPath)runtimes\win-x64\native\e_sqlite3.dll')" />
-
-		<!-- Delete the entire runtimes folder to save space -->
-		<RemoveDir Directories="$(OutputPath)runtimes" />
-	</Target>
 </Project>
