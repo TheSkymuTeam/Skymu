@@ -66,6 +66,13 @@
 		<Compile Remove="Skyaeris\Assets\**\*" />
 		<Resource Include="Skyaeris\Assets\**\*" />
 
+		<!-- Pontis -->
+		<None Remove="Pontis\Assets\**\*" />
+		<Page Remove="Pontis\Assets\**\*" />
+		<EmbeddedResource Remove="Pontis\Assets\**\*" />
+		<Compile Remove="Pontis\Assets\**\*" />
+		<Resource Include="Pontis\Assets\**\*" />
+
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
 		<Page Remove="Emoji\**\*" />

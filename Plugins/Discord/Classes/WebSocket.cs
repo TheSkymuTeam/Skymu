@@ -86,11 +86,11 @@ namespace Discord.Classes
         private CancellationTokenSource _receiveCts;
 
         // Event for new messages
-        public event EventHandler<HelperClasses.MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> MessageReceived;
         // Event for new guilds
         public event EventHandler<JsonNode> GuildCreated;
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
-        private readonly Channel<HelperClasses.MessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.MessageReceivedEventArgs>();
+        private readonly Channel<HelperClasses.DiscordMessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.DiscordMessageReceivedEventArgs>();
 
         public WebSocket(string token, Core core)
         {
@@ -288,6 +288,9 @@ namespace Discord.Classes
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
                                 break;
+                            case "MESSAGE_UPDATE":
+                                HandleMessageUpdate(json["d"]);
+                                break;
                             case "MESSAGE_DELETE":
                                 HandleMessageDelete(json["d"]);
                                 break;
@@ -330,7 +333,7 @@ namespace Discord.Classes
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
 
-            var args = new HelperClasses.MessageReceivedEventArgs
+            var args = new HelperClasses.DiscordMessageReceivedEventArgs
             {
                 EventType = MessageEventType.Create,
                 ChannelId = channelId,
@@ -345,6 +348,26 @@ namespace Discord.Classes
             _ = _messageQueue.Writer.WriteAsync(args);
         }
 
+        private async Task HandleMessageUpdate(JsonNode messageData) // omega
+        {
+            if (messageData == null) return;
+            var messageItem = await DiscordMsgParser.ParseMessage(messageData);
+            if (messageItem == null) return;
+            string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
+            var args = new HelperClasses.DiscordMessageReceivedEventArgs
+            {
+                EventType = MessageEventType.Update,
+                ChannelId = channelId,
+                Identifier = messageItem.Identifier,
+                Sender = messageItem.Sender,
+                Timestamp = messageItem.Time,
+                Text = messageItem.Text,
+                Attachments = messageItem.Attachments,
+                ParentMessage = messageItem.ParentMessage
+            };
+            _ = _messageQueue.Writer.WriteAsync(args);
+        }
+
         private Task HandleMessageDelete(JsonNode data) // omega
         {
             var messageId = data?["id"]?.GetValue<string>();
@@ -353,7 +376,7 @@ namespace Discord.Classes
             if (messageId == null || channelId == null)
                 return Task.CompletedTask;
 
-            var args = new MessageReceivedEventArgs
+            var args = new DiscordMessageReceivedEventArgs
             {
                 EventType = MessageEventType.Delete,
                 ChannelId = channelId,
@@ -373,7 +396,7 @@ namespace Discord.Classes
             if (ids == null || channelId == null)
                 return Task.CompletedTask;
 
-            var args = new MessageReceivedEventArgs
+            var args = new DiscordMessageReceivedEventArgs
             {
                 EventType = MessageEventType.BulkDelete,
                 ChannelId = channelId,

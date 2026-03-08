@@ -37,13 +37,13 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AutoLoginEnabled {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoLogin {
             get {
-                return ((bool)(this["AutoLoginEnabled"]));
+                return ((bool)(this["AutoLogin"]));
             }
             set {
-                this["AutoLoginEnabled"] = value;
+                this["AutoLogin"] = value;
             }
         }
         
@@ -97,13 +97,13 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AccurateNotifications {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool BlueNotifications {
             get {
-                return ((bool)(this["AccurateNotifications"]));
+                return ((bool)(this["BlueNotifications"]));
             }
             set {
-                this["AccurateNotifications"] = value;
+                this["BlueNotifications"] = value;
             }
         }
         
@@ -157,7 +157,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.3.4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3.7")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -169,7 +169,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea French Fry")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Honeypie")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -272,6 +272,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["DisablePingbacks"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MessageLogger {
+            get {
+                return ((bool)(this["MessageLogger"]));
+            }
+            set {
+                this["MessageLogger"] = value;
             }
         }
     }

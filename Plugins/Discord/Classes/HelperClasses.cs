@@ -20,12 +20,13 @@ namespace Discord.Classes
     {
         Create,
         Delete,
-        BulkDelete
+        BulkDelete,
+        Update
     }
 
     internal class HelperClasses
     {
-        public class MessageReceivedEventArgs : EventArgs
+        public class DiscordMessageReceivedEventArgs : EventArgs
         {
             public MessageEventType EventType { get; set; }
 

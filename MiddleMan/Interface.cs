@@ -281,12 +281,12 @@ namespace MiddleMan
     public abstract class ConversationItem
     {
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
+        public string Identifier { get; set; } // Unique identifier for the item
     }
 
     public class Message : ConversationItem
     {
         public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
-        public string Identifier { get; set; } // Unique identifier for the message
         public User Sender { get; set; } // Who sent the message 
         public string Text { get; set; } // Message body
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
@@ -367,21 +367,41 @@ namespace MiddleMan
         }
     }
 
-    public class NotificationEventArgs : EventArgs
+    public abstract class MessageEventArgs : EventArgs
+    {
+        public string ConversationId { get; }
+        public MessageEventArgs(string conversation_id)
+        {
+            ConversationId = conversation_id;
+        }
+    }
+
+    public class MessageRecievedEventArgs : MessageEventArgs
     {
         public ConversationItem Item { get; }
-        public UserConnectionStatus Status { get; }
-        public string SentInChannelID { get; }
-        public NotificationEventArgs(ConversationItem item, UserConnectionStatus user_status)
+        public MessageRecievedEventArgs(string conversation_id, ConversationItem item) : base(conversation_id)
         {
             Item = item;
-            Status = user_status;
         }
-        public NotificationEventArgs(Message message, UserConnectionStatus user_status, string sent_in_channel_id)
+    }
+
+    public class MessageEditedEventArgs : MessageEventArgs
+    {
+        public string OldItemId { get; }
+        public ConversationItem NewItem { get; }
+        public MessageEditedEventArgs(string conversation_id, string old_item_id, ConversationItem new_item) : base(conversation_id)
         {
-            Item = message;
-            Status = user_status;
-            SentInChannelID = sent_in_channel_id;
+            OldItemId = old_item_id;
+            NewItem = new_item;
+        }
+    }
+
+    public class MessageDeletedEventArgs : MessageEventArgs
+    {
+        public string DeletedItemId { get; }
+        public MessageDeletedEventArgs(string conversation_id, string deleted_item_id) : base(conversation_id)
+        {
+            DeletedItemId = deleted_item_id;
         }
     }
 
@@ -393,14 +413,53 @@ namespace MiddleMan
         AfterIdentifier
     }
 
+    public enum CallState { Ringing, Active, Ended, Failed }
+
+    public class CallEventArgs : EventArgs
+    {
+        public string CallId { get; }
+        public string ConversationId { get; }
+        public bool IsVideo { get; }
+        public User Caller { get; }
+
+        public CallEventArgs(string call_id, string conversation_id, bool is_video, User caller)
+        {
+            CallId = call_id;
+            ConversationId = conversation_id;
+            IsVideo = is_video;
+            Caller = caller;
+        }
+    }
+
+    public class ActiveCall
+    {
+        public string CallId { get; }
+        public string ConversationId { get; }
+        public bool IsVideo { get; }
+        public CallState State { get; set; }
+        public DateTime StartedAt { get; }
+        public User[] Participants { get; set; }
+
+        public ActiveCall(string call_id, string conversation_id, bool is_video, User[] participants)
+        {
+            CallId = call_id;
+            ConversationId = conversation_id;
+            IsVideo = is_video;
+            StartedAt = DateTime.UtcNow;
+            Participants = participants;
+            State = CallState.Ringing;
+        }
+    }
+
     public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
-        event EventHandler<NotificationEventArgs> Notification;
+        event EventHandler<MessageEventArgs> MessageEvent;
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
+        bool SupportsServers { get; } // Does the plugin support servers or not? (Most don't)
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> Authenticate(AuthenticationMethod auth_type, string username, string password); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.

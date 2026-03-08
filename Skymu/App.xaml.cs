@@ -51,12 +51,12 @@ namespace Skymu
                 }));
         }
 
-        public static void PluginNotificationHandler(object sender, NotificationEventArgs e)
+        public static void PluginNotificationHandler(object sender, MessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
                 new Action(delegate
                 {
-                    new Views.Notification(e);
+                    MessageTools.HandleIncoming(e);
                 }));
         }
 

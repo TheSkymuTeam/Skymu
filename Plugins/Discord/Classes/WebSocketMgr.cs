@@ -22,7 +22,7 @@ namespace Discord.Classes
         public static WebSocket _webSocket;
         public static WebSocket Socket => _webSocket;
 
-        public static void EnsureConnected(string token, EventHandler<HelperClasses.MessageReceivedEventArgs> handler, Core core)
+        public static void EnsureConnected(string token, EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler, Core core)
         {
             if (_webSocket != null)
                 return;
@@ -53,7 +53,7 @@ namespace Discord.Classes
             await _webSocket.SendPayload(payload);
         }
 
-        public static void SubscribeMessageReceived(EventHandler<HelperClasses.MessageReceivedEventArgs> handler)
+        public static void SubscribeMessageReceived(EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler)
         {
             if (_webSocket == null)
                 return;

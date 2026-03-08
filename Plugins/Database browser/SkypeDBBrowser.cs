@@ -30,10 +30,12 @@ namespace SkypeDBBrowser
 
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<NotificationEventArgs> Notification;
+        public event EventHandler<MessageEventArgs> MessageEvent;
 
         public string Name => "Skype DB Browser";
         public string InternalName => "skymu-skypedb-plugin";
+
+        public bool SupportsServers { get { return false; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -123,7 +125,7 @@ namespace SkypeDBBrowser
             try
             {
                 TypingUsersList.Clear();
-                List<Message> messageList = new List<Message>();
+                List<ConversationItem> messageList = new List<ConversationItem>();
 
                 using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
                 {

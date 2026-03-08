@@ -12,7 +12,7 @@
             </Grid.RowDefinitions>
             <Image Grid.Row="0" Margin="5,0,0,0" Stretch="Fill"
     Width="33"
-    Height="15" Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/skype-notif.png'}" VerticalAlignment="Center" HorizontalAlignment="Left">
+    Height="15" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/logo.png'}" VerticalAlignment="Center" HorizontalAlignment="Left">
             </Image>
             <Border Grid.Row="1" Padding="8,7">
                 <StackPanel x:Name="MessagesContainer" Orientation="Vertical">

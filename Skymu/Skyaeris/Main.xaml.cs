@@ -48,7 +48,7 @@ namespace Skymu.Skyaeris
         private const int MESSAGE_LIMIT = 50;
 
         // Other file-level variables
-        private ObservableCollection<ConversationItem> _activeConversation = new ObservableCollection<ConversationItem>();
+        internal static ObservableCollection<ConversationItem> ActiveConversation = new ObservableCollection<ConversationItem>();
         private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private static Thickness OriginalWindowAreaMargin = new Thickness(0);
         private SkymuApi api;
@@ -67,7 +67,6 @@ namespace Skymu.Skyaeris
         private static readonly Brush DefaultTextBrush = (Brush)new BrushConverter().ConvertFromString("#333333");
         private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
-        internal static UserConnectionStatus CurrentStatus = UserConnectionStatus.Offline;
         public event EventHandler Ready;
 
         private enum WindowType
@@ -496,8 +495,9 @@ namespace Skymu.Skyaeris
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select) continue;
+                if (tab == btnServers && !Universal.Plugin.SupportsServers) continue; 
                 tab.SetState(ButtonVisualState.Default);
-                buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs ? small : dynamic;
+                buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs && Universal.Plugin.SupportsServers ? small : dynamic;
             }
 
             SetWindow(WindowType.Home);
@@ -890,7 +890,7 @@ namespace Skymu.Skyaeris
             );
 
             _pendingPreviewMessages[temp_id] = previewMessage;
-            _activeConversation.Add(previewMessage);
+            ActiveConversation.Add(previewMessage);
 
             bool didSend = false;
 
@@ -918,7 +918,7 @@ namespace Skymu.Skyaeris
 
                     Dispatcher.Invoke(() =>
                     {
-                        _activeConversation.Remove(pending);
+                        ActiveConversation.Remove(pending);
                     });
                 }
 
@@ -1136,7 +1136,7 @@ namespace Skymu.Skyaeris
 
         private async Task SetConversation()
         {
-            _activeConversation.Clear();
+            ActiveConversation.Clear();
             Universal.Plugin.TypingUsersList.Clear();
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = Universal.Lang.Format("sCHAT_TYPE_HERE_DIALOG", SelectedConversation.DisplayName);
@@ -1145,20 +1145,20 @@ namespace Skymu.Skyaeris
             throbber.Visibility = Visibility.Visible;
             is_loading_conversation = true;
 
-            var items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
+            ConversationItem[] items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
 
             if (items != null && items.Length > 0)
             {
-                foreach (var item in items)
-                    _activeConversation.Add(item);
+                foreach (ConversationItem item in items)
+                    ActiveConversation.Add(item);
 
-                for (int i = 0; i < _activeConversation.Count; i++)
+                for (int i = 0; i < ActiveConversation.Count; i++)
                 {
-                    if (_activeConversation[i] is Message message)
+                    if (ActiveConversation[i] is Message message)
                     {
                         for (int j = i - 1; j >= 0; j--)
                         {
-                            if (_activeConversation[j] is Message previousMessage)
+                            if (ActiveConversation[j] is Message previousMessage)
                             {
                                 message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
                                 break;
@@ -1168,7 +1168,7 @@ namespace Skymu.Skyaeris
                 }
 
                 if (_activeConversationChangedHandler != null)
-                    _activeConversation.CollectionChanged -= _activeConversationChangedHandler;
+                    ActiveConversation.CollectionChanged -= _activeConversationChangedHandler;
 
                 _activeConversationChangedHandler = (s, args) =>
                 {
@@ -1184,8 +1184,8 @@ namespace Skymu.Skyaeris
                     }
                 };
 
-                _activeConversation.CollectionChanged += _activeConversationChangedHandler;
-                ConversationItemsList.ItemsSource = _activeConversation;
+                ActiveConversation.CollectionChanged += _activeConversationChangedHandler;
+                ConversationItemsList.ItemsSource = ActiveConversation;
             }
 
             throbber.Visibility = Visibility.Collapsed;
@@ -1230,7 +1230,7 @@ namespace Skymu.Skyaeris
 
                                         Dispatcher.BeginInvoke(new Action(delegate ()
                                         {
-                                            _activeConversation.Remove(match);
+                                            ActiveConversation.Remove(match);
                                         }));
 
                                     }
@@ -1558,6 +1558,11 @@ namespace Skymu.Skyaeris
             ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
+            if (!Universal.Plugin.SupportsServers)
+            {
+                btnServers.Visibility = Visibility.Collapsed;
+                ServersColumn.Width = new GridLength(0);
+            }
 
             Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) =>
             {
@@ -1565,6 +1570,8 @@ namespace Skymu.Skyaeris
             };
             SetWindow(WindowType.Home);
         }
+
+
 
         private void InitiateSignOut()
         {
@@ -1651,7 +1658,7 @@ namespace Skymu.Skyaeris
             if (status == GetStatusFromInt(old_default_index)) return;
             StatusIcon.DefaultIndex = GetIntFromStatus(status);
             Tray.PushIcon(status);
-            CurrentStatus = status;
+            CurrentUser.PresenceStatus = status;
             if (!await Universal.Plugin.SetPresenceStatus(status))
             {
                 StatusIcon.DefaultIndex = old_default_index;

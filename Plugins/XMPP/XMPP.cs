@@ -11,6 +11,7 @@
 
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -20,10 +21,10 @@ namespace Stub
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<NotificationEventArgs> Notification;
+        public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "XMPP"; } }
         public string InternalName { get { return "plug-xmpp"; } }
-
+        public bool SupportsServers { get { return false; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -33,8 +34,8 @@ namespace Stub
         }
         public Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            Notification.Invoke(this, new NotificationEventArgs(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "but seriously you have no fucking excuse to hate on genshin impact except for that fact its an anime game like most people", null, null), UserConnectionStatus.Online));
-            return Task.FromResult(LoginResult.Failure);
+            MessageEvent.Invoke(this, new MessageRecievedEventArgs("13414", new Message("20202", users[0], new DateTime(2025, 4, 30, 8, 14, 0), "Hello")));
+            return Task.FromResult(LoginResult.Success);
         }
         public Task<string> GetQRCode()
         {
@@ -69,37 +70,33 @@ namespace Stub
 
         public ObservableCollection<ConversationItem> ActiveConversation { get; private set; } = new ObservableCollection<ConversationItem>();
 
-        public async Task<bool> SetActiveConversation(Conversation conversation) // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
-        {                                                                // DO NOT USE THIS FORMAT AS A REFERENCE FOR YOUR PLUGIN. HAVE THIS METHOD SET THE ACTIVE CONV. IDENTIFIER
-            TypingUsersList.Clear();                                                             // AND BIND THE ACTIVECONVERSATION COLLECTION TO THE WEBSOCKET MESSAGES FOR THE SELECTED CONVERSATION.
-            ActiveConversation.Clear();
+        public Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        {                                                                        // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
+            TypingUsersList.Clear();
+            List<ConversationItem> messageList = new List<ConversationItem>();
 
-            ActiveConversation.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 0), "Hey, I’ve been playing Genshin Impact on the Steam Deck, it works fine."));
-            ActiveConversation.Add(new Message("20203", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 10), "Oh nice, I’ve heard good things about it."));
-            ActiveConversation.Add(new Message("20204", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 20), "Yeah, it’s a really fun game."));
-            ActiveConversation.Add(new Message("20205", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 30), "Cool, I might try it out sometime."));
-            ActiveConversation.Add(new Message("20206", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 40), "It’s pretty enjoyable even without spending money."));
-            ActiveConversation.Add(new Message("20207", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 50), "That’s good to know."));
-            ActiveConversation.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 0), "I just wanted to share it’s a solid game."));
-            ActiveConversation.Add(new Message("20202", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 11, 10), "Thanks for the info!"));
-            ActiveConversation.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 20), "Gameplay-wise it’s really engaging and well-designed."));
-            ActiveConversation.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 12, 40), "Sounds interesting, I’ll check it out."));
-            ActiveConversation.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 13, 30), "@Amongus do you want to discuss this more in DMs?"));
-            ActiveConversation.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "Just sharing my experience, I think most people would enjoy it."));
-            ActiveConversation.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 15, 0), "I think it could be fun to collaborate on the project with this in mind."));
-            ActiveConversation.Add(new Message("20202", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 15, 20), "Yeah, that makes sense. Thanks for sharing."));
-            ActiveConversation.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 15, 30), "Great, let’s move forward."));
-            ActiveConversation.Add(new Message("20202", new User("Amongus", "Amongus", "Amongus"), new DateTime(2025, 4, 30, 8, 15, 40), "Got it, thanks everyone. Also, Genshin impact fuckin sucks ass lol"));
+            messageList.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 0), "Hey, I’ve been playing Genshin Impact on the Steam Deck, it works fine."));
+            messageList.Add(new Message("20203", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 10), "Oh nice, I’ve heard good things about it."));
+            messageList.Add(new Message("20204", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 20), "Yeah, it’s a really fun game."));
+            messageList.Add(new Message("20205", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 30), "Cool, I might try it out sometime."));
+            messageList.Add(new Message("20206", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 10, 40), "It’s pretty enjoyable even without spending money."));
+            messageList.Add(new Message("20207", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 10, 50), "That’s good to know."));
+            messageList.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 0), "I just wanted to share it’s a solid game."));
+            messageList.Add(new Message("20202", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 11, 10), "Thanks for the info!"));
+            messageList.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 11, 20), "Gameplay-wise it’s really engaging and well-designed."));
+            messageList.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 12, 40), "Sounds interesting, I’ll check it out."));
+            messageList.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 13, 30), "@Amongus do you want to discuss this more in DMs?"));
+            messageList.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 14, 0), "Just sharing my experience, I think most people would enjoy it."));
+            messageList.Add(new Message("20202", new User("Nova", "Nova", "Nova"), new DateTime(2025, 4, 30, 8, 15, 0), "I think it could be fun to collaborate on the project with this in mind."));
+            messageList.Add(new Message("20202", new User("omega", "omega", "omega"), new DateTime(2025, 4, 30, 8, 15, 20), "Yeah, that makes sense. Thanks for sharing."));
+            messageList.Add(new Message("20202", new User("patricktbp", "patricktbp", "patricktbp"), new DateTime(2025, 4, 30, 8, 15, 30), "Great, let’s move forward."));
+            messageList.Add(new Message("20202", new User("Amongus", "Amongus", "Amongus"), new DateTime(2025, 4, 30, 8, 15, 40), "Got it, thanks everyone. Also, Genshin impact fuckin sucks ass lol"));
 
-
-
-            return true;
+            return Task.FromResult(messageList.ToArray());
         }
 
         public User MyInformation { get; private set; }
 
-        User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
-        User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
 
         public ObservableCollection<Conversation> ContactsList { get; private set; } = new ObservableCollection<Conversation>();
 
@@ -110,7 +107,7 @@ namespace Stub
         public Task<bool> PopulateServerList()
         {
             string id = "2132";
-            ServerList.Add(new Server("Epic gamer soyciety", id, new User[2] { luigi, mario }, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id, 0, ChannelType.Standard), new ServerChannel("rtead only", "2132/2", id, 0, ChannelType.ReadOnly) }));
+            ServerList.Add(new Server("Epic gamer soyciety", id, users, new ServerChannel[] { new ServerChannel("channel1", "2132/1", id, 0, ChannelType.Standard), new ServerChannel("rtead only", "2132/2", id, 0, ChannelType.ReadOnly) }));
             return Task.FromResult(true);
         }
 
@@ -128,15 +125,72 @@ namespace Stub
             return Task.FromResult(true);
         }
 
+
+        User[] users = new User[]
+{
+    new User("Mario", "mario", "012", "It's-a me!", UserConnectionStatus.Online),
+    new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb),
+    new User("Peach", "peach", "014", "In the castle", UserConnectionStatus.Away),
+    new User("Bowser", "bowser", "015", "Planning something...", UserConnectionStatus.Online),
+    new User("Yoshi", "yoshi", "016", "Yoshi!", UserConnectionStatus.Online),
+    new User("Toad", "toad", "017", "Welcome!", UserConnectionStatus.Online),
+    new User("Wario", "wario", "018", "Hehehe", UserConnectionStatus.DoNotDisturb),
+    new User("Waluigi", "waluigi", "019", "Wah!", UserConnectionStatus.Invisible),
+    new User("Daisy", "daisy", "020", "Hi!", UserConnectionStatus.Online),
+    new User("Rosalina", "rosalina", "021", "Watching the stars", UserConnectionStatus.Away),
+    new User("Donkey Kong", "dk", "022", "Bananas!", UserConnectionStatus.Online),
+    new User("Koopa", "koopa", "023", "Patrolling", UserConnectionStatus.Offline)
+};
+
+        private System.Threading.Timer presenceTimer;
+        private Random rand = new Random();
+
+        private string[] randomTexts = new string[]
+ {
+    "It's-a me, Mario!",
+    "Let's-a go!",
+    "Mamma mia!",
+    "Here we go!",
+    "Just jumped on a Goomba",
+    "Looking for Princess Peach",
+    "Time to save the kingdom",
+    "Collecting coins",
+    "Found a Super Mushroom",
+    "Jumping through pipes",
+    "Watch out for Bowser",
+    "Yahoo!",
+    "Wahoo!",
+    "On my way to the castle"
+ };
+
         public Task<bool> PopulateRecentsList()
         {
-            User luigi = new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb);
-            User mario = new User("Mario", "mario", "012", "SAY SOMETHING", UserConnectionStatus.Offline);
-            RecentsList.Add(new DirectMessage(luigi, 0, "24"));
-            RecentsList.Add(new DirectMessage(mario, 0, "3412"));
-            RecentsList.Add(new Group("Giga based coalition", "067", 0, new User[2] { luigi, mario }));
+            RecentsList.Clear();
+
+            foreach (var user in users)
+                RecentsList.Add(new DirectMessage(user, rand.Next(0, 5), rand.Next(100, 5000).ToString()));
+
+            RecentsList.Add(new Group("Giga based coalition", "067", users.Length, users));
+
+            if (presenceTimer == null)
+                presenceTimer = new System.Threading.Timer(UpdatePresence, null, 0, 500);
+
             return Task.FromResult(true);
         }
+
+        private void UpdatePresence(object state)
+        {
+            foreach (var user in users)
+                RandomizeUser(user);
+        }
+
+        private void RandomizeUser(User user)
+        {
+            Array values = Enum.GetValues(typeof(UserConnectionStatus));
+            user.PresenceStatus = (UserConnectionStatus)values.GetValue(rand.Next(values.Length));
+            user.Status = randomTexts[rand.Next(randomTexts.Length)];
+        }
+
         public ClickableConfiguration[] ClickableConfigurations
         {
             get
@@ -152,7 +206,7 @@ namespace Stub
         }
         public Task<SavedCredential> StoreCredential()
         {
-            return null;
+            return Task.FromResult<SavedCredential>(null);
         }
 
         public Task<bool> SetPresenceStatus(UserConnectionStatus status) { return Task.FromResult(true); }
@@ -160,7 +214,7 @@ namespace Stub
 
         public Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
-            return Task.FromResult(LoginResult.Failure);
+            return Task.FromResult(LoginResult.Success);
         }
     }
 }
