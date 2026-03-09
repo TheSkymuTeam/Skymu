@@ -39,8 +39,8 @@ namespace Discord.Classes
             User sender = UserStore.Get(authorId);
             if (sender == null)
             {
-                var (displayName, username, avatarHash) = GetAuthorInfo(message);
-                sender = UserStore.GetOrCreate(authorId, displayName, username, avatarHash);
+                var (displayName, username) = GetAuthorInfo(message);
+                sender = UserStore.GetOrCreate(authorId, displayName, username);
             }
 
             return new Message(
@@ -58,17 +58,17 @@ namespace Discord.Classes
         {
             if (refMsg == null) return null;
             string replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, refMsg["content"]?.GetValue<string>() ?? "[unavailable]");
-            var (displayName, username, avatarHash) = GetAuthorInfo(refMsg);
+            var (displayName, username) = GetAuthorInfo(refMsg);
             string authorId = refMsg["author"]?["id"]?.GetValue<string>() ?? "0";
             return new Message(
                 refMsg["id"]?.GetValue<string>() ?? "0",
-                UserStore.GetOrCreate(authorId, displayName, username, avatarHash),
+                UserStore.GetOrCreate(authorId, displayName, username),
                 ParseTimestamp(refMsg["timestamp"]?.GetValue<string>()),
                 replyContent
             );
         }
 
-        public static (string displayName, string username, string avatarHash) GetAuthorInfo(JsonNode node)
+        public static (string displayName, string username) GetAuthorInfo(JsonNode node)
         {
             var member = node?["member"];
             var author = node?["author"];
@@ -78,9 +78,8 @@ namespace Discord.Classes
                 ?? author?["username"]?.GetValue<string>()
                 ?? "Anonymous";
             string username = author?["username"]?.GetValue<string>() ?? "Anonymous";
-            string avatarHash = author?["avatar"]?.GetValue<string>();
 
-            return (displayName, username, avatarHash);
+            return (displayName, username);
         }
 
         public static async Task<byte[]> ParseMessageMedia(JsonNode message)

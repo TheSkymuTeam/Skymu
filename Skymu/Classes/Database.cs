@@ -210,12 +210,6 @@ namespace Skymu
                         event_flags                 INTEGER
                     );
 
-                    CREATE TABLE IF NOT EXISTS AppSchemaVersion (
-                        ClientVersion               TEXT NOT NULL,
-                        SQLiteSchemaVersion         INTEGER NOT NULL,
-                        SchemaUpdateType            INTEGER NOT NULL
-                    );
-
                     CREATE TABLE IF NOT EXISTS CallHandlers (
                         id                          INTEGER NOT NULL PRIMARY KEY,
                         is_permanent                INTEGER
@@ -837,7 +831,8 @@ namespace Skymu
                         endpoint_details                    TEXT,
                         messaging_mode                      INTEGER,
                         real_identity                       TEXT,
-                        adding_in_progress_since            INTEGER
+                        adding_in_progress_since            INTEGER,
+                        UNIQUE(convo_id, identity)
                     );
 
                     CREATE TABLE IF NOT EXISTS SMSes (
@@ -1245,6 +1240,79 @@ namespace Skymu
                     }
                 }
 
+                Database.Participants.Write(conversations); // need this for members of groups lol
+                return true;
+            }
+        }
+
+        public static class Participants
+        {
+            public static bool Write(Conversation[] conversations)
+            {
+                using (SqliteConnection connection = CreateConnection())
+                {
+                    SqliteTransaction transaction = connection.BeginTransaction();
+                    try
+                    {
+                        using (SqliteCommand idCmd = connection.CreateCommand())
+                        using (SqliteCommand cmd = connection.CreateCommand())
+                        {
+                            cmd.Transaction = transaction;
+                            idCmd.CommandText = "SELECT id FROM Conversations WHERE identity = @identity LIMIT 1;";
+                            idCmd.Parameters.Add("@identity", SqliteType.Text);
+
+                            cmd.CommandText = @"
+                        INSERT INTO Participants (
+                            is_permanent, convo_id, identity, rank
+                        )
+                        VALUES (
+                            1, @convo_id, @identity, @rank
+                        )
+                        ON CONFLICT(convo_id, identity) DO UPDATE SET
+                            rank = excluded.rank;";
+                            cmd.Parameters.Add("@convo_id", SqliteType.Integer);
+                            cmd.Parameters.Add("@identity", SqliteType.Text);
+                            cmd.Parameters.Add("@rank", SqliteType.Integer);
+
+                            foreach (Conversation conversation in conversations)
+                            {
+                                idCmd.Parameters["@identity"].Value = (object)conversation.Identifier ?? DBNull.Value;
+                                object result = idCmd.ExecuteScalar();
+                                if (result == null || result == DBNull.Value)
+                                    continue;
+                                long convoId = Convert.ToInt64(result);
+
+                                User[] members = null;
+                                if (conversation is Group group)
+                                    members = group.Members;
+                                else if (conversation is DirectMessage dm)
+                                    members = dm.RemoteUser != null ? new[] { dm.RemoteUser } : null;
+
+                                if (members == null)
+                                    continue;
+
+                                foreach (User member in members)
+                                {
+                                    if (member?.Identifier == null)
+                                        continue;
+
+                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@identity"].Value = member.Identifier;
+                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+
                 return true;
             }
         }
@@ -1282,14 +1350,14 @@ namespace Skymu
                                 INSERT INTO Messages (
                                     is_permanent, chatname, timestamp, author, from_dispname, from_username,
                                     chatmsg_type, body_xml, dialog_partner, convo_id, type,
-                                    pk_id, timestamp__ms, guid, 
+                                    pk_id, timestamp__ms, 
                                     identities, leavereason, chatmsg_status, body_is_rawxml,
                                     edited_by, edited_timestamp, sending_status, consumption_status
                                 )
                                 VALUES (
                                     @is_permanent, @chatname, @timestamp, @author, @from_dispname, @from_username,
                                     @chatmsg_type, @body_xml, @dialog_partner, @convo_id, @type,
-                                    @pk_id, @timestamp__ms, @guid, 
+                                    @pk_id, @timestamp__ms, 
                                     NULL, NULL, 4, 0,
                                     NULL, NULL, 2, 0
                                 )
