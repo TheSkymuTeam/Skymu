@@ -168,34 +168,25 @@ namespace Skymu
                 frameworkName = "Aero.NormalColor";
 
             string assemblyName;
-
-            if (frameworkName != null && frameworkName.StartsWith("Luna"))
+            switch (frameworkName)
             {
-                assemblyName = "PresentationFramework.Luna";
-            }
-            else if (frameworkName != null && frameworkName.StartsWith("Royale"))
-            {
-                assemblyName = "PresentationFramework.Royale";
-            }
-            else if (frameworkName != null && frameworkName.StartsWith("Aero2"))
-            {
-                assemblyName = "PresentationFramework.Aero2";
-            }
-            else if (frameworkName != null && frameworkName.StartsWith("AeroLite"))
-            {
-                assemblyName = "PresentationFramework.AeroLite";
-            }
-            else if (frameworkName != null && frameworkName.StartsWith("Aero"))
-            {
-                assemblyName = "PresentationFramework.Aero";
-            }
-            else if (frameworkName == "Classic")
-            {
-                assemblyName = "PresentationFramework.Classic";
-            }
-            else
-            {
-                assemblyName = "PresentationFramework.Aero2";
+                case "Classic":
+                    assemblyName = "PresentationFramework.Classic";
+                    break;
+                default:
+                    if (frameworkName.StartsWith("Luna"))
+                        assemblyName = "PresentationFramework.Luna";
+                    else if (frameworkName.StartsWith("Royale"))
+                        assemblyName = "PresentationFramework.Royale";
+                    else if (frameworkName.StartsWith("Aero2"))
+                        assemblyName = "PresentationFramework.Aero2";
+                    else if (frameworkName.StartsWith("AeroLite"))
+                        assemblyName = "PresentationFramework.AeroLite";
+                    else if (frameworkName.StartsWith("Aero"))
+                        assemblyName = "PresentationFramework.Aero";
+                    else
+                        assemblyName = "PresentationFramework.Aero2";
+                    break;
             }
 
             try

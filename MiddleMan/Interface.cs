@@ -306,11 +306,11 @@ namespace MiddleMan
 
     public class CallStartedNotice : ConversationItem
     {
-        public string StartedBy { get; set; } // Return the user's display name (NOT identifier)
+        public User StartedBy { get; set; }
         public bool IsVideoCall { get; set; } // Set to true if the call is video
-        public CallStartedNotice(string started_by_display_name, bool is_video_call, DateTime time)
+        public CallStartedNotice(User started_by, bool is_video_call, DateTime time)
         {
-            StartedBy = started_by_display_name;
+            StartedBy = started_by;
             Time = time;
             IsVideoCall = is_video_call;
         }
@@ -318,10 +318,12 @@ namespace MiddleMan
 
     public class CallEndedNotice : ConversationItem
     {
+        public User StartedBy { get; set; }
         public TimeSpan Duration { get; set; } // Length of call
         public bool IsVideoCall { get; set; } // Set to true if the call was video
-        public CallEndedNotice(TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+        public CallEndedNotice(User started_by, TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
         {
+            StartedBy = started_by;
             Duration = duration;
             Time = time;
             IsVideoCall = is_video_call;

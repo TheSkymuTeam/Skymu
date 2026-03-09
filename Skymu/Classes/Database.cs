@@ -21,9 +21,8 @@
 // It basically tries to impersonate a Skype database. 
 /*==========================================================*/
 // Some new columns have been added, though, such as:
-// skymu_dialog_partner_id (for user ID in conversation)
-// skymu_userid (for user ID alongside Skype Name)
-// skymu_plugin (plugin this account is associated with)
+// username (for storage of mutable username; skypename is now used for the identifier)
+// plugin (plugin this account is associated with)
 // This has been done to make sure that Skymu doesn't cause
 // incompatibiliies with old Skype database-reading software.
 /*==========================================================*/
@@ -44,6 +43,8 @@ namespace Skymu
 
         private static string PluginName => Universal.Plugin?.InternalName ?? "unknown";
 
+        private static bool _tablesEnsured = false;
+
         private static SqliteConnection CreateConnection()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(DbPath));
@@ -52,7 +53,20 @@ namespace Skymu
             return connection;
         }
 
-        private static void EnsureTables(SqliteConnection connection)
+        public static void EnsureTables()
+        {
+            if (_tablesEnsured)
+                return;
+
+            using (SqliteConnection connection = CreateConnection())
+            {
+                EnsureTablesInternal(connection);
+            }
+
+            _tablesEnsured = true;
+        }
+
+        private static void EnsureTablesInternal(SqliteConnection connection)
         {
             using (SqliteCommand cmd = connection.CreateCommand())
             {
@@ -100,6 +114,7 @@ namespace Skymu
                         hidden_expression_tabs      TEXT,
                         owner_under_legal_age       INTEGER,
                         type                        INTEGER,
+                        username                    TEXT,
                         skypename                   TEXT,
                         pstnnumber                  TEXT,
                         fullname                    TEXT,
@@ -162,8 +177,8 @@ namespace Skymu
                         verified_company            BLOB,
                         uses_jcs                    INTEGER,
                         forward_starttime           INTEGER,
-                        skymu_userid                TEXT,
-                        skymu_plugin                TEXT
+                        plugin                      TEXT,
+                        UNIQUE(skypename, plugin)
                     );
 
                     CREATE TABLE IF NOT EXISTS Alerts (
@@ -427,6 +442,7 @@ namespace Skymu
                         is_permanent                        INTEGER,
                         type                                INTEGER,
                         skypename                           TEXT,
+                        username                            TEXT,
                         pstnnumber                          TEXT,
                         aliases                             TEXT,
                         fullname                            TEXT,
@@ -534,7 +550,7 @@ namespace Skymu
                         profile_etag                        TEXT,
                         dirblob_last_search_time            INTEGER,
                         mutual_friend_count                 INTEGER,
-                        skymu_userid                        TEXT
+                        UNIQUE(skypename)
                     );
 
                     CREATE TABLE IF NOT EXISTS ContentSharings (
@@ -559,7 +575,7 @@ namespace Skymu
                     CREATE TABLE IF NOT EXISTS Conversations (
                         id                                      INTEGER NOT NULL PRIMARY KEY,
                         is_permanent                            INTEGER,
-                        identity                                TEXT,
+                        identity                                TEXT UNIQUE,
                         type                                    INTEGER,
                         live_host                               TEXT,
                         live_is_hostless                        INTEGER,
@@ -611,7 +627,6 @@ namespace Skymu
                         premium_video_is_grace_period           INTEGER,
                         guid                                    TEXT,
                         dialog_partner                          TEXT,
-                        skymu_dialog_partner_id                 TEXT,
                         meta_description                        TEXT,
                         premium_video_sponsor_list              TEXT,
                         mcr_caller                              TEXT,
@@ -736,6 +751,7 @@ namespace Skymu
                         chatname                        TEXT,
                         timestamp                       INTEGER,
                         author                          TEXT,
+                        from_username                   TEXT,
                         from_dispname                   TEXT,
                         chatmsg_type                    INTEGER,
                         identities                      TEXT,
@@ -748,7 +764,6 @@ namespace Skymu
                         newoptions                      INTEGER,
                         newrole                         INTEGER,
                         dialog_partner                  TEXT,
-                        skymu_dialog_partner_id         TEXT,
                         oldoptions                      INTEGER,
                         guid                            BLOB,
                         convo_id                        INTEGER,
@@ -776,7 +791,7 @@ namespace Skymu
                         bots_settings                   TEXT,
                         reaction_thread                 TEXT,
                         content_flags                   INTEGER,
-                        skymu_userid                    TEXT
+                        UNIQUE(pk_id, convo_id)
                     );
 
                     CREATE TABLE IF NOT EXISTS Participants (
@@ -823,7 +838,6 @@ namespace Skymu
                         messaging_mode                      INTEGER,
                         real_identity                       TEXT,
                         adding_in_progress_since            INTEGER,
-                        skymu_userid                        TEXT
                     );
 
                     CREATE TABLE IF NOT EXISTS SMSes (
@@ -964,421 +978,439 @@ namespace Skymu
 
         public static class Accounts
         {
-            public static async Task Write(User user)
+            public static bool Write(User user)
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    EnsureTables(connection);
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
                     {
                         using (SqliteCommand cmd = connection.CreateCommand())
                         {
+                            cmd.Transaction = transaction;
                             cmd.CommandText = @"
                                 INSERT INTO Accounts (
-                                    is_permanent, skypename, pstnnumber, fullname, birthday, gender,
+                                    is_permanent, skypename, username, pstnnumber, fullname, birthday, gender,
                                     languages, country, province, city, phone_home, phone_office,
                                     phone_mobile, emails, homepage, about, displayname, given_displayname,
                                     mood_text, rich_mood_text, avatar_image, liveid_membername,
-                                    availability, lastonline_timestamp, skymu_userid, skymu_plugin
+                                    availability, lastonline_timestamp, plugin
                                 )
                                 VALUES (
-                                    @is_permanent, @skypename, @pstnnumber, @fullname, @birthday, @gender,
+                                    @is_permanent, @skypename, @username, @pstnnumber, @fullname, @birthday, @gender,
                                     @languages, @country, @province, @city, @phone_home, @phone_office,
                                     @phone_mobile, @emails, @homepage, @about, @displayname, @given_displayname,
                                     @mood_text, @rich_mood_text, @avatar_image, @liveid_membername,
-                                    @availability, @lastonline_timestamp, @skymu_userid, @skymu_plugin
+                                    @availability, @lastonline_timestamp, @plugin
                                 )
-                                ON CONFLICT(id) DO UPDATE SET
-                                    skypename           = excluded.skypename,
-                                    fullname            = excluded.fullname,
-                                    displayname         = excluded.displayname,
-                                    given_displayname   = excluded.given_displayname,
-                                    mood_text           = excluded.mood_text,
-                                    rich_mood_text      = excluded.rich_mood_text,
-                                    avatar_image        = excluded.avatar_image,
-                                    liveid_membername   = excluded.liveid_membername,
-                                    availability        = excluded.availability,
-                                    lastonline_timestamp= excluded.lastonline_timestamp,
-                                    skymu_userid        = excluded.skymu_userid,
-                                    skymu_plugin        = excluded.skymu_plugin;";
+                                ON CONFLICT(skypename, plugin) DO UPDATE SET
+                                    skypename            = excluded.skypename,
+                                    username             = excluded.username,
+                                    fullname             = excluded.fullname,
+                                    displayname          = excluded.displayname,
+                                    given_displayname    = excluded.given_displayname,
+                                    mood_text            = excluded.mood_text,
+                                    rich_mood_text       = excluded.rich_mood_text,
+                                    avatar_image         = excluded.avatar_image,
+                                    liveid_membername    = excluded.liveid_membername,
+                                    availability         = excluded.availability,
+                                    lastonline_timestamp = excluded.lastonline_timestamp,
+                                    plugin               = excluded.plugin;";
 
-                            cmd.Parameters.AddWithValue("@is_permanent", 1);
-                            cmd.Parameters.AddWithValue("@skypename", user.Username ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@pstnnumber", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@fullname", user.DisplayName ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@birthday", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@gender", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@languages", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@country", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@province", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@city", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@phone_home", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@phone_office", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@phone_mobile", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@emails", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@homepage", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@about", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@displayname", user.DisplayName ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@given_displayname", user.DisplayName ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@mood_text", user.Status ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@rich_mood_text", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@avatar_image", user.ProfilePicture ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@liveid_membername", user.Username ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@availability", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@lastonline_timestamp", (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@skymu_userid", user.Identifier ?? (object)DBNull.Value);
-                            cmd.Parameters.AddWithValue("@skymu_plugin", PluginName);
+                            cmd.Parameters.Add("@is_permanent", SqliteType.Integer).Value = 1;
+                            cmd.Parameters.Add("@skypename", SqliteType.Text).Value = (object)user.Identifier ?? DBNull.Value;
+                            cmd.Parameters.Add("@username", SqliteType.Text).Value = (object)user.Username ?? DBNull.Value;
+                            cmd.Parameters.Add("@pstnnumber", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@fullname", SqliteType.Text).Value = (object)user.DisplayName ?? DBNull.Value;
+                            cmd.Parameters.Add("@birthday", SqliteType.Integer).Value = DBNull.Value;
+                            cmd.Parameters.Add("@gender", SqliteType.Integer).Value = DBNull.Value;
+                            cmd.Parameters.Add("@languages", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@country", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@province", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@city", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@phone_home", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@phone_office", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@phone_mobile", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@emails", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@homepage", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@about", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@displayname", SqliteType.Text).Value = (object)user.DisplayName ?? DBNull.Value;
+                            cmd.Parameters.Add("@given_displayname", SqliteType.Text).Value = (object)user.DisplayName ?? DBNull.Value;
+                            cmd.Parameters.Add("@mood_text", SqliteType.Text).Value = (object)user.Status ?? DBNull.Value;
+                            cmd.Parameters.Add("@rich_mood_text", SqliteType.Text).Value = DBNull.Value;
+                            cmd.Parameters.Add("@avatar_image", SqliteType.Blob).Value = (object)user.ProfilePicture ?? DBNull.Value;
+                            cmd.Parameters.Add("@liveid_membername", SqliteType.Text).Value = (object)user.Username ?? DBNull.Value;
+                            cmd.Parameters.Add("@availability", SqliteType.Integer).Value = DBNull.Value;
+                            cmd.Parameters.Add("@lastonline_timestamp", SqliteType.Integer).Value = DBNull.Value;
+                            cmd.Parameters.Add("@plugin", SqliteType.Text).Value = PluginName;
 
-                            await cmd.ExecuteNonQueryAsync();
+                            cmd.ExecuteNonQuery();
                         }
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Universal.ShowMsg(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
                 }
+
+                return true;
             }
         }
 
         public static class Contacts
         {
-            public static async Task Write(Conversation[] conversations)
+            public static bool Write(Conversation[] conversations)
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    EnsureTables(connection);
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
                     {
-                        foreach (Conversation conversation in conversations)
+                        using (SqliteCommand cmd = connection.CreateCommand())
                         {
-                            if (!(conversation is DirectMessage) && !(conversation is Group))
-                                continue;
+                            cmd.Transaction = transaction;
+                            cmd.CommandText = @"
+                                INSERT INTO Contacts (
+                                    is_permanent, type, skypename, username, pstnnumber, fullname,
+                                    displayname, given_displayname, avatar_image, mood_text,
+                                    isauthorized, isblocked, buddystatus,
+                                    aliases, birthday, gender, languages, country, province,
+                                    city, phone_home, phone_office, phone_mobile, emails,
+                                    hashed_emails, homepage, about, rich_mood_text,
+                                    profile_timestamp, nrof_authed_buddies, ipcountry,
+                                    avatar_timestamp, mood_timestamp, received_authrequest,
+                                    authreq_timestamp, lastonline_timestamp, availability,
+                                    refreshing, given_authlevel, assigned_speeddial,
+                                    assigned_comment, alertstring, lastused_timestamp,
+                                    authrequest_count
+                                )
+                                VALUES (
+                                    @is_permanent, @type, @skypename, @username, @pstnnumber, @fullname,
+                                    @displayname, @given_displayname, @avatar_image, @mood_text,
+                                    @isauthorized, @isblocked, @buddystatus, 
+                                    NULL, NULL, NULL, NULL, NULL, NULL,
+                                    NULL, NULL, NULL, NULL, NULL,
+                                    NULL, NULL, NULL, NULL,
+                                    NULL, NULL, NULL,
+                                    NULL, NULL, NULL,
+                                    NULL, NULL, NULL,
+                                    NULL, NULL, NULL,
+                                    NULL, NULL, NULL,
+                                    NULL
+                                )
+                                ON CONFLICT(skypename) DO UPDATE SET
+                                    fullname          = excluded.fullname,
+                                    displayname       = excluded.displayname,
+                                    given_displayname = excluded.given_displayname,
+                                    avatar_image      = excluded.avatar_image,
+                                    mood_text         = excluded.mood_text,
+                                    skypename         = excluded.skypename;";
 
-                            int type;
-                            string skypename;
-                            string pstnnumber;
-                            string fullname;
-                            string displayname;
-                            string givenDisplayname;
-                            byte[] avatarImage;
-                            string moodText;
-                            int isauthorized;
-                            int isblocked;
-                            int buddystatus;
+                            cmd.Parameters.Add("@is_permanent", SqliteType.Integer);
+                            cmd.Parameters.Add("@type", SqliteType.Integer);
+                            cmd.Parameters.Add("@skypename", SqliteType.Text);
+                            cmd.Parameters.Add("@username", SqliteType.Text);
+                            cmd.Parameters.Add("@pstnnumber", SqliteType.Text);
+                            cmd.Parameters.Add("@fullname", SqliteType.Text);
+                            cmd.Parameters.Add("@displayname", SqliteType.Text);
+                            cmd.Parameters.Add("@given_displayname", SqliteType.Text);
+                            cmd.Parameters.Add("@avatar_image", SqliteType.Blob);
+                            cmd.Parameters.Add("@mood_text", SqliteType.Text);
+                            cmd.Parameters.Add("@isauthorized", SqliteType.Integer);
+                            cmd.Parameters.Add("@isblocked", SqliteType.Integer);
+                            cmd.Parameters.Add("@buddystatus", SqliteType.Integer);
 
-                            if (conversation is DirectMessage dm)
+                            foreach (Conversation conversation in conversations)
                             {
-                                type = 1; // CONTACT_TYPE_NORMAL
-                                skypename = dm.RemoteUser?.Username;
-                                pstnnumber = null;
-                                fullname = dm.RemoteUser?.DisplayName;
-                                displayname = dm.RemoteUser?.DisplayName;
-                                givenDisplayname = dm.RemoteUser?.DisplayName;
-                                avatarImage = dm.RemoteUser?.ProfilePicture;
-                                moodText = dm.RemoteUser?.Status;
-                                isauthorized = 1;
-                                isblocked = 0;
-                                buddystatus = 2; // mutual contact
-                            }
-                            else
-                            {
-                                // Groups have no skypename — use identity as pstnnumber sentinel
-                                type = 2;
-                                skypename = conversation.Identifier;
-                                pstnnumber = null;
-                                fullname = conversation.DisplayName;
-                                displayname = conversation.DisplayName;
-                                givenDisplayname = conversation.DisplayName;
-                                avatarImage = conversation.ProfilePicture;
-                                moodText = null;
-                                isauthorized = 1;
-                                isblocked = 0;
-                                buddystatus = 2;
-                            }
+                                if (!(conversation is DirectMessage) && !(conversation is Group))
+                                    continue;
 
-                            string skymuUserid = (conversation is DirectMessage dmId)
-                                ? dmId.RemoteUser?.Identifier
-                                : conversation.Identifier;
+                                int type;
+                                string username;
+                                string fullname;
+                                string displayname;
+                                byte[] avatarImage;
+                                string moodText;
 
-                            using (SqliteCommand cmd = connection.CreateCommand())
-                            {
-                                cmd.CommandText = @"
-                                    INSERT INTO Contacts (
-                                        is_permanent, type, skypename, pstnnumber, fullname,
-                                        displayname, given_displayname, avatar_image, mood_text,
-                                        isauthorized, isblocked, buddystatus, skymu_userid,
-                                        aliases, birthday, gender, languages, country, province,
-                                        city, phone_home, phone_office, phone_mobile, emails,
-                                        hashed_emails, homepage, about, rich_mood_text,
-                                        profile_timestamp, nrof_authed_buddies, ipcountry,
-                                        avatar_timestamp, mood_timestamp, received_authrequest,
-                                        authreq_timestamp, lastonline_timestamp, availability,
-                                        refreshing, given_authlevel, assigned_speeddial,
-                                        assigned_comment, alertstring, lastused_timestamp,
-                                        authrequest_count
-                                    )
-                                    VALUES (
-                                        @is_permanent, @type, @skypename, @pstnnumber, @fullname,
-                                        @displayname, @given_displayname, @avatar_image, @mood_text,
-                                        @isauthorized, @isblocked, @buddystatus, @skymu_userid,
-                                        NULL, NULL, NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL, NULL,
-                                        NULL, NULL, NULL,
-                                        NULL, NULL, NULL,
-                                        NULL, NULL, NULL,
-                                        NULL, NULL, NULL,
-                                        NULL, NULL, NULL,
-                                        NULL
-                                    )
-                                    ON CONFLICT(id) DO UPDATE SET
-                                        fullname            = excluded.fullname,
-                                        displayname         = excluded.displayname,
-                                        given_displayname   = excluded.given_displayname,
-                                        avatar_image        = excluded.avatar_image,
-                                        mood_text           = excluded.mood_text,
-                                        skymu_userid        = excluded.skymu_userid;";
+                                if (conversation is DirectMessage dm)
+                                {
+                                    type = 1; // CONTACT_TYPE_NORMAL
+                                    username = dm.RemoteUser?.Username;
+                                    fullname = dm.RemoteUser?.DisplayName;
+                                    displayname = dm.RemoteUser?.DisplayName;
+                                    avatarImage = dm.RemoteUser?.ProfilePicture;
+                                    moodText = dm.RemoteUser?.Status;
+                                }
+                                else
+                                {
+                                    type = 2;
+                                    username = conversation.DisplayName;
+                                    fullname = conversation.DisplayName;
+                                    displayname = conversation.DisplayName;
+                                    avatarImage = conversation.ProfilePicture;
+                                    moodText = null;
+                                }
 
-                                cmd.Parameters.AddWithValue("@is_permanent", 1);
-                                cmd.Parameters.AddWithValue("@type", type);
-                                cmd.Parameters.AddWithValue("@skypename", skypename ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@pstnnumber", pstnnumber ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@fullname", fullname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@displayname", displayname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@given_displayname", givenDisplayname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@avatar_image", avatarImage ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@mood_text", moodText ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@isauthorized", isauthorized);
-                                cmd.Parameters.AddWithValue("@isblocked", isblocked);
-                                cmd.Parameters.AddWithValue("@buddystatus", buddystatus);
-                                cmd.Parameters.AddWithValue("@skymu_userid", skymuUserid ?? (object)DBNull.Value);
+                                string identifier = (conversation is DirectMessage dmId)
+                                    ? dmId.RemoteUser?.Identifier
+                                    : conversation.Identifier;
 
-                                await cmd.ExecuteNonQueryAsync();
+                                cmd.Parameters["@is_permanent"].Value = 1;
+                                cmd.Parameters["@type"].Value = type;
+                                cmd.Parameters["@skypename"].Value = (object)identifier ?? DBNull.Value;
+                                cmd.Parameters["@username"].Value = (object)username ?? DBNull.Value;
+                                cmd.Parameters["@pstnnumber"].Value = DBNull.Value;
+                                cmd.Parameters["@fullname"].Value = (object)fullname ?? DBNull.Value;
+                                cmd.Parameters["@displayname"].Value = (object)displayname ?? DBNull.Value;
+                                cmd.Parameters["@given_displayname"].Value = (object)displayname ?? DBNull.Value;
+                                cmd.Parameters["@avatar_image"].Value = (object)avatarImage ?? DBNull.Value;
+                                cmd.Parameters["@mood_text"].Value = (object)moodText ?? DBNull.Value;
+                                cmd.Parameters["@isauthorized"].Value = 1;
+                                cmd.Parameters["@isblocked"].Value = 0;
+                                cmd.Parameters["@buddystatus"].Value = 2;
+
+                                cmd.ExecuteNonQuery();
                             }
                         }
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Universal.ShowMsg(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
                 }
+
+                return true;
             }
         }
 
         public static class Conversations
         {
-            public static async Task Write(Conversation[] conversations)
+            public static bool Write(Conversation[] conversations)
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    EnsureTables(connection);
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
                     {
-                        foreach (Conversation conversation in conversations)
+                        using (SqliteCommand cmd = connection.CreateCommand())
                         {
-                            int type;
-                            if (conversation is DirectMessage) type = 1; // CHATS_TYPE_SINGLE
-                            else if (conversation is Group) type = 2; // CHATS_TYPE_GROUP
-                            else if (conversation is ServerChannel) type = 2; // closest equivalent
-                            else type = 0;
+                            cmd.Transaction = transaction;
+                            cmd.CommandText = @"
+                                INSERT INTO Conversations (
+                                    is_permanent, identity, type, displayname, given_displayname,
+                                    meta_topic, meta_name, dialog_partner, 
+                                    creator, creation_timestamp,
+                                    last_message_id, last_activity_timestamp,
+                                    is_bookmarked, is_blocked, my_status
+                                )
+                                VALUES (
+                                    @is_permanent, @identity, @type, @displayname, @given_displayname,
+                                    @meta_topic, @meta_name, @dialog_partner,
+                                    NULL, NULL,
+                                    NULL, NULL,
+                                    0, 0, 0
+                                )
+                                ON CONFLICT(identity) DO UPDATE SET
+                                    displayname             = excluded.displayname,
+                                    given_displayname       = excluded.given_displayname,
+                                    meta_topic              = excluded.meta_topic,
+                                    meta_name               = excluded.meta_name,
+                                    dialog_partner          = excluded.dialog_partner;";
 
-                            string dialogPartner = null;
-                            string dialogPartnerId = null;
-                            string displayname = conversation.DisplayName;
-                            string metaTopic = conversation.DisplayName;
-                            string identity = conversation.Identifier;
+                            cmd.Parameters.Add("@is_permanent", SqliteType.Integer);
+                            cmd.Parameters.Add("@identity", SqliteType.Text);
+                            cmd.Parameters.Add("@type", SqliteType.Integer);
+                            cmd.Parameters.Add("@displayname", SqliteType.Text);
+                            cmd.Parameters.Add("@given_displayname", SqliteType.Text);
+                            cmd.Parameters.Add("@meta_topic", SqliteType.Text);
+                            cmd.Parameters.Add("@meta_name", SqliteType.Text);
+                            cmd.Parameters.Add("@dialog_partner", SqliteType.Text);
 
-                            if (conversation is DirectMessage dm)
+                            foreach (Conversation conversation in conversations)
                             {
-                                dialogPartner = dm.RemoteUser?.Username;
-                                dialogPartnerId = dm.RemoteUser?.Identifier;
-                            }
+                                int type;
+                                if (conversation is DirectMessage) type = 1;
+                                else if (conversation is Group) type = 2;
+                                else if (conversation is ServerChannel) type = 2;
+                                else type = 0;
 
+                                string dialogPartner = null;
+                                string dialogPartnerId = null;
 
-                            using (SqliteCommand cmd = connection.CreateCommand())
-                            {
-                                cmd.CommandText = @"
-                                    INSERT INTO Conversations (
-                                        is_permanent, identity, type, displayname, given_displayname,
-                                        meta_topic, meta_name, dialog_partner, skymu_dialog_partner_id,
-                                        creator, creation_timestamp,
-                                        last_message_id, last_activity_timestamp,
-                                        is_bookmarked, is_blocked, my_status
-                                    )
-                                    VALUES (
-                                        @is_permanent, @identity, @type, @displayname, @given_displayname,
-                                        @meta_topic, @meta_name, @dialog_partner, @skymu_dialog_partner_id,
-                                        NULL, NULL,
-                                        NULL, NULL,
-                                        0, 0, 0
-                                    )
-                                    ON CONFLICT(id) DO UPDATE SET
-                                        displayname                = excluded.displayname,
-                                        given_displayname          = excluded.given_displayname,
-                                        meta_topic                 = excluded.meta_topic,
-                                        meta_name                  = excluded.meta_name,
-                                        dialog_partner             = excluded.dialog_partner,
-                                        skymu_dialog_partner_id    = excluded.skymu_dialog_partner_id;";
+                                if (conversation is DirectMessage dm)
+                                {
+                                    dialogPartner = dm.RemoteUser?.Username;
+                                    dialogPartnerId = dm.RemoteUser?.Identifier;
+                                }
 
-                                cmd.Parameters.AddWithValue("@is_permanent", 1);
-                                cmd.Parameters.AddWithValue("@identity", identity ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@type", type);
-                                cmd.Parameters.AddWithValue("@displayname", displayname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@given_displayname", displayname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@meta_topic", metaTopic ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@meta_name", displayname ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@dialog_partner", dialogPartner ?? (object)DBNull.Value);
-                                cmd.Parameters.AddWithValue("@skymu_dialog_partner_id", dialogPartnerId ?? (object)DBNull.Value);
-                                await cmd.ExecuteNonQueryAsync();
+                                cmd.Parameters["@is_permanent"].Value = 1;
+                                cmd.Parameters["@identity"].Value = (object)conversation.Identifier ?? DBNull.Value;
+                                cmd.Parameters["@type"].Value = type;
+                                cmd.Parameters["@displayname"].Value = (object)conversation.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@given_displayname"].Value = (object)conversation.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@meta_topic"].Value = (object)conversation.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@meta_name"].Value = (object)conversation.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
+
+                                cmd.ExecuteNonQuery();
                             }
                         }
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Universal.ShowMsg(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
                 }
+
+                return true;
             }
         }
 
         public static class Messages
         {
-            public static async Task Write(ConversationItem[] items, Conversation conversation)
+            public static bool Write(ConversationItem[] items, Conversation conversation)
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    EnsureTables(connection);
-
                     // Resolve the integer convo_id from the Conversations table
                     long convoId = 0;
                     using (SqliteCommand idCmd = connection.CreateCommand())
                     {
                         idCmd.CommandText = "SELECT id FROM Conversations WHERE identity = @identity LIMIT 1;";
-                        idCmd.Parameters.AddWithValue("@identity", conversation.Identifier ?? (object)DBNull.Value);
-                        object result = await idCmd.ExecuteScalarAsync();
+                        idCmd.Parameters.Add("@identity", SqliteType.Text).Value = (object)conversation.Identifier ?? DBNull.Value;
+                        object result = idCmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value)
                             convoId = Convert.ToInt64(result);
                     }
 
                     string dialogPartner = null;
-                    string dialogPartnerId = null;
                     if (conversation is DirectMessage dm)
                     {
                         dialogPartner = dm.RemoteUser?.Identifier;
-                        dialogPartnerId = dm.RemoteUser?.Identifier;
                     }
 
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
                     {
-                        foreach (ConversationItem item in items)
+                        using (SqliteCommand cmd = connection.CreateCommand())
                         {
-                            using (SqliteCommand cmd = connection.CreateCommand())
-                            {
-                                cmd.CommandText = @"
-                                    INSERT OR IGNORE INTO Messages (
-                                        is_permanent, chatname, timestamp, author, from_dispname,
-                                        chatmsg_type, body_xml, dialog_partner, skymu_dialog_partner_id, convo_id, type,
-                                        pk_id, timestamp__ms, guid, skymu_userid,
-                                        identities, leavereason, chatmsg_status, body_is_rawxml,
-                                        edited_by, edited_timestamp, sending_status, consumption_status
-                                    )
-                                    VALUES (
-                                        @is_permanent, @chatname, @timestamp, @author, @from_dispname,
-                                        @chatmsg_type, @body_xml, @dialog_partner, @skymu_dialog_partner_id, @convo_id, @type,
-                                        @pk_id, @timestamp__ms, @guid, @skymu_userid,
-                                        NULL, NULL, 4, 0,
-                                        NULL, NULL, 2, 0
-                                    );";
+                            cmd.Transaction = transaction;
+                            cmd.CommandText = @"
+                                INSERT INTO Messages (
+                                    is_permanent, chatname, timestamp, author, from_dispname, from_username,
+                                    chatmsg_type, body_xml, dialog_partner, convo_id, type,
+                                    pk_id, timestamp__ms, guid, 
+                                    identities, leavereason, chatmsg_status, body_is_rawxml,
+                                    edited_by, edited_timestamp, sending_status, consumption_status
+                                )
+                                VALUES (
+                                    @is_permanent, @chatname, @timestamp, @author, @from_dispname, @from_username,
+                                    @chatmsg_type, @body_xml, @dialog_partner, @convo_id, @type,
+                                    @pk_id, @timestamp__ms, @guid, 
+                                    NULL, NULL, 4, 0,
+                                    NULL, NULL, 2, 0
+                                )
+                                ON CONFLICT(pk_id, convo_id) DO UPDATE SET
+                                    timestamp     = excluded.timestamp,
+                                    author        = excluded.author,
+                                    from_dispname = excluded.from_dispname,
+                                    from_username = excluded.from_username,
+                                    chatmsg_type  = excluded.chatmsg_type,
+                                    body_xml      = excluded.body_xml,
+                                    type          = excluded.type,
+                                    timestamp__ms = excluded.timestamp__ms";
 
+                            cmd.Parameters.Add("@is_permanent", SqliteType.Integer);
+                            cmd.Parameters.Add("@chatname", SqliteType.Text);
+                            cmd.Parameters.Add("@timestamp", SqliteType.Integer);
+                            cmd.Parameters.Add("@author", SqliteType.Text);
+                            cmd.Parameters.Add("@from_username", SqliteType.Text);
+                            cmd.Parameters.Add("@from_dispname", SqliteType.Text);
+                            cmd.Parameters.Add("@chatmsg_type", SqliteType.Integer);
+                            cmd.Parameters.Add("@body_xml", SqliteType.Text);
+                            cmd.Parameters.Add("@dialog_partner", SqliteType.Text);
+                            cmd.Parameters.Add("@convo_id", SqliteType.Integer);
+                            cmd.Parameters.Add("@type", SqliteType.Integer);
+                            cmd.Parameters.Add("@pk_id", SqliteType.Integer);
+                            cmd.Parameters.Add("@timestamp__ms", SqliteType.Integer);
+
+                            foreach (ConversationItem item in items)
+                            {
                                 if (item is Message message)
                                 {
                                     long tsSeconds = new DateTimeOffset(message.Time).ToUnixTimeSeconds();
                                     long tsMs = new DateTimeOffset(message.Time).ToUnixTimeMilliseconds();
                                     bool hasFile = message.Attachments != null
-                                                       && message.Attachments.Length > 0
-                                                       && message.Attachments[0]?.File != null;
+                                                     && message.Attachments.Length > 0
+                                                     && message.Attachments[0]?.File != null;
 
-                                    // chatmsg_type 3 = ordinary message (type 61)
-                                    // chatmsg_type 7 = file/special (type 61 or 68)
-                                    int chatmsgType = hasFile ? 7 : 3;
-                                    int msgType = hasFile ? 68 : 61;
-
-                                    cmd.Parameters.AddWithValue("@is_permanent", 1);
-                                    cmd.Parameters.AddWithValue("@chatname", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp", tsSeconds);
-                                    cmd.Parameters.AddWithValue("@author", message.Sender?.Username ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@from_dispname", message.Sender?.DisplayName ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@chatmsg_type", chatmsgType);
-                                    cmd.Parameters.AddWithValue("@body_xml", message.Text ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@dialog_partner", dialogPartner ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_dialog_partner_id", dialogPartnerId ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@convo_id", convoId);
-                                    cmd.Parameters.AddWithValue("@type", msgType);
-                                    cmd.Parameters.AddWithValue("@pk_id", message.Identifier ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp__ms", tsMs);
-                                    cmd.Parameters.AddWithValue("@guid", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_userid", message.Sender?.Identifier ?? (object)DBNull.Value);
+                                    cmd.Parameters["@is_permanent"].Value = 1;
+                                    cmd.Parameters["@chatname"].Value = DBNull.Value;
+                                    cmd.Parameters["@timestamp"].Value = tsSeconds;
+                                    cmd.Parameters["@author"].Value = (object)message.Sender?.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@from_username"].Value = (object)message.Sender?.Username ?? DBNull.Value;
+                                    cmd.Parameters["@from_dispname"].Value = (object)message.Sender?.DisplayName ?? DBNull.Value;
+                                    cmd.Parameters["@chatmsg_type"].Value = hasFile ? 7 : 3;
+                                    cmd.Parameters["@body_xml"].Value = (object)message.Text ?? DBNull.Value;
+                                    cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
+                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@type"].Value = hasFile ? 68 : 61;
+                                    cmd.Parameters["@pk_id"].Value = (object)message.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else if (item is CallStartedNotice callStarted)
                                 {
-                                    // type 30 = call started, chatmsg_type 18
                                     long tsSeconds = new DateTimeOffset(callStarted.Time).ToUnixTimeSeconds();
                                     long tsMs = new DateTimeOffset(callStarted.Time).ToUnixTimeMilliseconds();
 
-                                    cmd.Parameters.AddWithValue("@is_permanent", 1);
-                                    cmd.Parameters.AddWithValue("@chatname", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp", tsSeconds);
-                                    cmd.Parameters.AddWithValue("@author", callStarted.StartedBy ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@from_dispname", callStarted.StartedBy ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@chatmsg_type", 18);
-                                    cmd.Parameters.AddWithValue("@body_xml", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@dialog_partner", dialogPartner ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_dialog_partner_id", dialogPartnerId ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@convo_id", convoId);
-                                    cmd.Parameters.AddWithValue("@type", 30);
-                                    cmd.Parameters.AddWithValue("@pk_id", item.Identifier ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp__ms", tsMs);
-                                    cmd.Parameters.AddWithValue("@guid", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_userid", (object)DBNull.Value);
+                                    cmd.Parameters["@is_permanent"].Value = 1;
+                                    cmd.Parameters["@chatname"].Value = DBNull.Value;
+                                    cmd.Parameters["@timestamp"].Value = tsSeconds;
+                                    cmd.Parameters["@author"].Value = (object)callStarted.StartedBy?.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@from_username"].Value = (object)callStarted.StartedBy?.Username ?? DBNull.Value;
+                                    cmd.Parameters["@from_dispname"].Value = (object)callStarted.StartedBy ?? DBNull.Value;
+                                    cmd.Parameters["@chatmsg_type"].Value = 18;
+                                    cmd.Parameters["@body_xml"].Value = DBNull.Value;
+                                    cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
+                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@type"].Value = 30;
+                                    cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else if (item is CallEndedNotice callEnded)
                                 {
-                                    // type 39 = call ended, chatmsg_type 18
                                     long tsSeconds = new DateTimeOffset(callEnded.Time).ToUnixTimeSeconds();
                                     long tsMs = new DateTimeOffset(callEnded.Time).ToUnixTimeMilliseconds();
 
-                                    cmd.Parameters.AddWithValue("@is_permanent", 1);
-                                    cmd.Parameters.AddWithValue("@chatname", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp", tsSeconds);
-                                    cmd.Parameters.AddWithValue("@author", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@from_dispname", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@chatmsg_type", 18);
-                                    cmd.Parameters.AddWithValue("@body_xml", callEnded.Duration.ToString());
-                                    cmd.Parameters.AddWithValue("@dialog_partner", dialogPartner ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_dialog_partner_id", dialogPartnerId ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@convo_id", convoId);
-                                    cmd.Parameters.AddWithValue("@type", 39);
-                                    cmd.Parameters.AddWithValue("@pk_id", item.Identifier ?? (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@timestamp__ms", tsMs);
-                                    cmd.Parameters.AddWithValue("@guid", (object)DBNull.Value);
-                                    cmd.Parameters.AddWithValue("@skymu_userid", (object)DBNull.Value);
+                                    cmd.Parameters["@is_permanent"].Value = 1;
+                                    cmd.Parameters["@chatname"].Value = DBNull.Value;
+                                    cmd.Parameters["@timestamp"].Value = tsSeconds;
+                                    cmd.Parameters["@author"].Value = (object)callEnded.StartedBy?.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@from_username"].Value = (object)callEnded.StartedBy?.Username ?? DBNull.Value;
+                                    cmd.Parameters["@from_dispname"].Value = (object)callEnded.StartedBy ?? DBNull.Value;
+                                    cmd.Parameters["@chatmsg_type"].Value = 18;
+                                    cmd.Parameters["@body_xml"].Value = callEnded.Duration.ToString();
+                                    cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
+                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@type"].Value = 39;
+                                    cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else
                                 {
                                     continue;
                                 }
 
-                                await cmd.ExecuteNonQueryAsync();
+                                cmd.ExecuteNonQuery();
                             }
                         }
 
@@ -1387,26 +1419,30 @@ namespace Skymu
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
                             {
+                                updateCmd.Transaction = transaction;
                                 updateCmd.CommandText = @"
                                     UPDATE Conversations
                                     SET last_message_id         = (SELECT id FROM Messages WHERE convo_id = @convo_id ORDER BY timestamp DESC LIMIT 1),
                                         last_activity_timestamp = @last_activity_timestamp
                                     WHERE identity = @identity;";
-                                updateCmd.Parameters.AddWithValue("@convo_id", convoId);
-                                updateCmd.Parameters.AddWithValue("@last_activity_timestamp", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-                                updateCmd.Parameters.AddWithValue("@identity", conversation.Identifier ?? (object)DBNull.Value);
-                                await updateCmd.ExecuteNonQueryAsync();
+                                updateCmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = convoId;
+                                updateCmd.Parameters.Add("@last_activity_timestamp", SqliteType.Integer).Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                                updateCmd.Parameters.Add("@identity", SqliteType.Text).Value = (object)conversation.Identifier ?? DBNull.Value;
+                                updateCmd.ExecuteNonQuery();
                             }
                         }
 
                         transaction.Commit();
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        Universal.ShowMsg(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
                 }
+
+                return true;
             }
         }
     }

@@ -17,7 +17,7 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
   <ItemGroup>
-	<PackageReference Include="Google.Protobuf" Version="3.34.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />

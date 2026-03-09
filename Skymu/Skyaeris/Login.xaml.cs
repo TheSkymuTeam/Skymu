@@ -41,7 +41,6 @@ namespace Skymu.Skyaeris
         {
         }
 
-
         public Login(bool forceManualLogin = false)
         {
             InitializeComponent();

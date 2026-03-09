@@ -145,7 +145,7 @@ namespace Skymu.Skyaeris
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
                     Browser.Visibility = Visibility.Visible;
-                    Browser.Navigate("https://www.skymu.app");
+                    Browser.Navigate(Properties.Settings.Default.Homepage);
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ContactsList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
@@ -429,13 +429,13 @@ namespace Skymu.Skyaeris
         {
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
-            await Universal.Plugin.PopulateContactsList();
 
-            await Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
-            await Database.Contacts.Write(Universal.Plugin.ContactsList.ToArray());
+            Database.EnsureTables();
+            Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
+            _ = LoadAndCacheContacts();
 
             CurrentUser = Universal.Plugin.MyInformation;
-            await Database.Accounts.Write(CurrentUser);
+            Database.Accounts.Write(CurrentUser);
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
             SkymuApiStatusHandler();
@@ -458,6 +458,12 @@ namespace Skymu.Skyaeris
             SpeedTester();
 
             Ready?.Invoke(this, EventArgs.Empty);
+        }
+
+        private async Task LoadAndCacheContacts()
+        {
+            Universal.Plugin.PopulateContactsList();
+            Database.Contacts.Write(Universal.Plugin.ContactsList.ToArray());
         }
 
         private async void HandleConversationSelection(object selected_item)
@@ -1151,7 +1157,7 @@ namespace Skymu.Skyaeris
             is_loading_conversation = true;
 
             ConversationItem[] items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
-            await Database.Messages.Write(items, SelectedConversation);
+            Database.Messages.Write(items, SelectedConversation);
 
             if (items != null && items.Length > 0)
             {
