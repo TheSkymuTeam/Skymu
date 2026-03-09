@@ -10,7 +10,20 @@ namespace Discord.Classes
     {
         private static readonly ConcurrentDictionary<string, User> _users = new();
 
-        public static User GetOrCreate(string userId, string displayName, string username, string avatarHash = null)
+        public static async Task<User> GetOrCreateWithAvatar(string userId, string displayName, string username, string avatarHash = null)
+        {
+            var user = GetOrCreate(userId, displayName, username);
+
+            if (user.ProfilePicture == null && avatarHash != null)
+            {
+                var avatar = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
+                if (avatar != null) user.ProfilePicture = avatar;
+            }
+
+            return user;
+        }
+
+        public static User GetOrCreate(string userId, string displayName, string username)
         {
             var user = _users.GetOrAdd(userId, _ => new User(displayName, username, userId));
 
@@ -18,15 +31,6 @@ namespace Discord.Classes
                 user.DisplayName = displayName;
             if (string.IsNullOrEmpty(user.Username) && !string.IsNullOrEmpty(username))
                 user.Username = username;
-
-            if (user.ProfilePicture == null && avatarHash != null)
-            {
-                _ = Task.Run(async () =>
-                {
-                    var avatar = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
-                    if (avatar != null) user.ProfilePicture = avatar;
-                });
-            }
 
             return user;
         }

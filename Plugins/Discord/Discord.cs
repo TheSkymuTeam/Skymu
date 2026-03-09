@@ -108,7 +108,7 @@ namespace Discord
 
                     if (string.IsNullOrWhiteSpace(guildId)) continue;
 
-                    byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, false, true);
+                    byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, HelperMethods.DiscordChannelType.Server);
 
                     var channelList = new List<ServerChannel>();
                     if (guildNode["channels"] is JsonArray channels)
@@ -396,9 +396,7 @@ namespace Discord
                             _recentChannelMap[channelId] = userId;
                         }
 
-                        byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, false);
-                        var profileData = UserStore.GetOrCreate(userId, displayName ?? dscUserName, dscUserName);
-                        profileData.ProfilePicture = avatarImage;
+                        var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(new DirectMessage(profileData, 0, channelId));
@@ -414,14 +412,15 @@ namespace Discord
 
                         if (recipients != null && recipients.Count > 0)
                         {
-                            User[] temp = recipients
-                                .OfType<JsonObject>()
-                                .Select(r => UserStore.GetOrCreate(
-    r["id"]?.GetValue<string>() ?? "0",
-    r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
-    r["username"]?.GetValue<string>() ?? "Unknown"
-))
-                                .ToArray();
+                            User[] temp = await Task.WhenAll(
+     recipients
+         .OfType<JsonObject>()
+         .Select(async r => await UserStore.GetOrCreateWithAvatar(
+             r["id"]?.GetValue<string>() ?? "0",
+             r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
+             r["username"]?.GetValue<string>() ?? "Unknown"
+         ))
+ );
 
                             members = new User[temp.Length + 1];
 
@@ -452,7 +451,7 @@ namespace Discord
                                         : "N/A";
                         }
 
-                        byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, true);
+                        byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
                         var profileData = new Group(groupName, channelId, 0, members, avatarImage);
 
                         if (lType == ListType.Recents)

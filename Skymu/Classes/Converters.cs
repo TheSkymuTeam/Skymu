@@ -119,17 +119,17 @@ namespace Skymu.Converters
     }
     public class IdentifierToColorConverter : IValueConverter
     {
-        private static readonly SolidColorBrush ActiveBrush =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
-
-        private static readonly SolidColorBrush InactiveBrush =
+        private static readonly SolidColorBrush MyIdentifierBrush =
             new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+
+        private static readonly SolidColorBrush AnotherIdentifierBrush =
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value is string identifier && identifier == Main.CurrentUser?.Identifier
-                ? ActiveBrush
-                : InactiveBrush;
+                ? MyIdentifierBrush
+                : AnotherIdentifierBrush;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -25,30 +25,43 @@ namespace Discord.Classes
 {
     internal static class HelperMethods
     {
-        private static readonly string cacheDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "avatar-cache");
         internal static readonly API api = new API();
 
         // Global avatar size used for fetching the profile pictures
         private const int AVATAR_SIZE = 128;
 
-        // So we don't have to fetch the data everytime
-        public static async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, bool isGC, bool isServer = false)
+        private static string GetPath(string dir)
         {
-            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
-            if (String.IsNullOrEmpty(hash)) return null;
-            string cachedFile = Path.Combine(cacheDir, $"{hash}-{userId}.png");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dir);
+        }
 
+        public enum DiscordChannelType
+        {
+            DirectMessage,
+            Group,
+            Server
+        }
+
+        // So we don't have to fetch the data everytime
+        public static async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, DiscordChannelType channel_type)
+        {
+            string cacheDirName = channel_type == DiscordChannelType.Group ? "discord-group-avatar-cache"
+                    : channel_type == DiscordChannelType.Server ? "discord-server-avatar-cache"
+                    : "discord-user-avatar-cache";
+
+            string avatar_cache_dir = GetPath(cacheDirName);
+            if (!Directory.Exists(avatar_cache_dir)) Directory.CreateDirectory(avatar_cache_dir);
+            if (String.IsNullOrEmpty(hash)) return null;
+            string cachedFile = Path.Combine(avatar_cache_dir, $"{hash}-{userId}.png");
             if (File.Exists(cachedFile))
                 return File.ReadAllBytes(cachedFile);
-
             string pattern = $"*-{userId}.png";
-            foreach (var file in Directory.GetFiles(cacheDir, pattern))
+            foreach (var file in Directory.GetFiles(avatar_cache_dir, pattern))
             {
                 if (file != cachedFile)
                     File.Delete(file);
             }
-
-            string url = GetAvatarUrl(userId, hash, isServer, isGC);
+            string url = GetAvatarUrl(userId, hash, channel_type);
             byte[] data = null;
             try
             {
@@ -58,7 +71,7 @@ namespace Discord.Classes
                 data = ms.ToArray();
                 File.WriteAllBytes(cachedFile, data);
             }
-            catch { Debug.WriteLine("Unable to fetch avatar from URL - GetCachedAvatarAsync(). The URL in question is: " + url);  }
+            catch { Debug.WriteLine("Unable to fetch avatar from URL - GetCachedAvatarAsync(). The URL in question is: " + url); }
             return data;
         }
 
@@ -149,15 +162,15 @@ namespace Discord.Classes
         public static string GetDisplayName(string globalName, string username)
             => string.IsNullOrEmpty(globalName) ? username : globalName;
 
-        public static string GetAvatarUrl(string Id, string Hash, bool isServer, bool isGC)
+        private static string GetAvatarUrl(string Id, string Hash, DiscordChannelType channel_type)
         {
-            if (isServer)
+            if (channel_type == DiscordChannelType.Server)
                 return $"https://cdn.discordapp.com/icons/{Id}/{Hash}.png?size={AVATAR_SIZE}";
 
-            if (isGC)
+            else if (channel_type == DiscordChannelType.Group)
                 return $"https://cdn.discordapp.com/channel-icons/{Id}/{Hash}.png?size={AVATAR_SIZE}";
 
-            return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size={AVATAR_SIZE}";
+            else return $"https://cdn.discordapp.com/avatars/{Id}/{Hash}.png?size={AVATAR_SIZE}";
         }
     }
 }
