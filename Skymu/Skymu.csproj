@@ -97,6 +97,10 @@
 		</Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="english.lang" />
+	</ItemGroup>
+
 	<!-- Packages -->
 
 	<ItemGroup>

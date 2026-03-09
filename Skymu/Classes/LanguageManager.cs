@@ -40,7 +40,14 @@ namespace Skymu
 
         public LanguageManager()
         {
-            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return;
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+            {
+                string dir = AppDomain.CurrentDomain.BaseDirectory;
+                string ff = Path.Combine(dir, "languages", "english.lang");
+                if (File.Exists(ff))
+                    Load(ff);
+                return;
+            }
             string lang = Properties.Settings.Default.Language ?? "English";
             if (!Scan()) Universal.ExceptionHandler(new Exception("Could not find any compatible files in directory /languages."));
             if (!Load(llist.TryGetValue(lang, out var path) ? path : String.Empty)) Universal.ExceptionHandler(new Exception("Could not load language \"" + lang + "\"."));

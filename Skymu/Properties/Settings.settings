@@ -33,10 +33,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.3.7</Value>
+      <Value Profile="(Default)">0.3.8</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Happy Cake</Value>
+      <Value Profile="(Default)">Drocea Igloo</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
