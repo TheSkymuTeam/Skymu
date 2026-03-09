@@ -837,7 +837,7 @@ namespace Skymu
                         endpoint_details                    TEXT,
                         messaging_mode                      INTEGER,
                         real_identity                       TEXT,
-                        adding_in_progress_since            INTEGER,
+                        adding_in_progress_since            INTEGER
                     );
 
                     CREATE TABLE IF NOT EXISTS SMSes (
@@ -1125,49 +1125,23 @@ namespace Skymu
 
                             foreach (Conversation conversation in conversations)
                             {
-                                if (!(conversation is DirectMessage) && !(conversation is Group))
+                                if (!(conversation is DirectMessage dm))
                                     continue;
-
-                                int type;
-                                string username;
-                                string fullname;
-                                string displayname;
-                                byte[] avatarImage;
-                                string moodText;
-
-                                if (conversation is DirectMessage dm)
-                                {
-                                    type = 1; // CONTACT_TYPE_NORMAL
-                                    username = dm.RemoteUser?.Username;
-                                    fullname = dm.RemoteUser?.DisplayName;
-                                    displayname = dm.RemoteUser?.DisplayName;
-                                    avatarImage = dm.RemoteUser?.ProfilePicture;
-                                    moodText = dm.RemoteUser?.Status;
-                                }
-                                else
-                                {
-                                    type = 2;
-                                    username = conversation.DisplayName;
-                                    fullname = conversation.DisplayName;
-                                    displayname = conversation.DisplayName;
-                                    avatarImage = conversation.ProfilePicture;
-                                    moodText = null;
-                                }
 
                                 string identifier = (conversation is DirectMessage dmId)
                                     ? dmId.RemoteUser?.Identifier
                                     : conversation.Identifier;
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
-                                cmd.Parameters["@type"].Value = type;
+                                cmd.Parameters["@type"].Value = 1;
                                 cmd.Parameters["@skypename"].Value = (object)identifier ?? DBNull.Value;
-                                cmd.Parameters["@username"].Value = (object)username ?? DBNull.Value;
+                                cmd.Parameters["@username"].Value = (object)dm.RemoteUser?.Username ?? DBNull.Value;
                                 cmd.Parameters["@pstnnumber"].Value = DBNull.Value;
-                                cmd.Parameters["@fullname"].Value = (object)fullname ?? DBNull.Value;
-                                cmd.Parameters["@displayname"].Value = (object)displayname ?? DBNull.Value;
-                                cmd.Parameters["@given_displayname"].Value = (object)displayname ?? DBNull.Value;
-                                cmd.Parameters["@avatar_image"].Value = (object)avatarImage ?? DBNull.Value;
-                                cmd.Parameters["@mood_text"].Value = (object)moodText ?? DBNull.Value;
+                                cmd.Parameters["@fullname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@displayname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@given_displayname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@avatar_image"].Value = (object)dm.RemoteUser?.ProfilePicture ?? DBNull.Value;
+                                cmd.Parameters["@mood_text"].Value = (object)dm.RemoteUser?.Status ?? DBNull.Value;
                                 cmd.Parameters["@isauthorized"].Value = 1;
                                 cmd.Parameters["@isblocked"].Value = 0;
                                 cmd.Parameters["@buddystatus"].Value = 2;
