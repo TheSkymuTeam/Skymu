@@ -35,10 +35,7 @@ namespace Skymu
 {
     internal class Database
     {
-        private static readonly string DbPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Skymu", "main.db"); // this may be changed to be plugin specific somehow in the future
-
+        private static string DbPath;
         private static string PluginName => Universal.Plugin?.InternalName ?? "unknown";
 
         private static bool _tablesEnsured = false;
@@ -51,8 +48,11 @@ namespace Skymu
             return connection;
         }
 
-        public static void EnsureTables()
+        public static void Init(User user)
         {
+            DbPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Skymu", Universal.Plugin.InternalName + " (" + user.Identifier + ")", "main.db"); 
             if (_tablesEnsured)
                 return;
 
@@ -1043,11 +1043,9 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(DbPath);
-                        Accounts.Write(user);
-                       // Universal.ShowMsg(ex.Message);
-                       // transaction.Rollback();
-                       // throw;
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
                     }
                 }
 
@@ -1148,11 +1146,9 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(DbPath);
-                        Contacts.Write(conversations);
-                        //Universal.ShowMsg(ex.Message);
-                        //transaction.Rollback();
-                        //throw;
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
                     }
                 }
 
@@ -1236,11 +1232,9 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(DbPath);
-                        Conversations.Write(conversations);
-                        //Universal.ShowMsg(ex.Message);
-                        //transaction.Rollback();
-                        //throw;
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
                     }
                 }
 
@@ -1311,11 +1305,9 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(DbPath);
-                        Participants.Write(conversations);
-                        //Universal.ShowMsg(ex.Message);
-                        //transaction.Rollback();
-                        //throw;
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
                     }
                 }
 
@@ -1484,11 +1476,9 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        File.Delete(DbPath);
-                        Messages.Write(items, conversation);
-                        //Universal.ShowMsg(ex.Message);
-                        //transaction.Rollback();
-                        //throw;
+                        Universal.ShowMsg(ex.Message);
+                        transaction.Rollback();
+                        throw;
                     }
                 }
 
