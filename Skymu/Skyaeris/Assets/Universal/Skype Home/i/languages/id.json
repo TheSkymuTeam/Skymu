@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Berita dan peringatan", 
+		"addVideo":"Tambahkan video", 
+		"changePicture":"Klik untuk mengubah gambar Anda",
+		"showRecentContacts":"Tampilkan kontak terkini", 
+		"share":"Perbarui",
+		"updateMoodMessage":"Perbarui pesan mood Anda",
+		"setPictureAndUpdate":"Atur gambar Anda lalu perbarui pesan mood Anda"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Hapus Pembaruan", 
+		"hideMessage":"Sembunyikan Pembaruan Baru dari", 
+		"showMessage":"Tampilkan Pembaruan Baru dari", 
+		"noUpdatesYet":"Belum ada berita atau peringatan", 
+		"findFriends":"Temukan teman", 
+		"importContacts":"impor kontak", 
+		"or":"atau" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Tampilkan", 
+		"showAlerts":"Beri tahu saya", 
+		"hideAlerts":"Jangan beri tahu saya", 
+		"friendsUpdates":"Pembaruan pesan mood", 
+		"showHiddenFriendUpdates":"Tampilkan pembaruan pesan mood tersembunyi" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Pelajari cara menggunakan Skype", 
+		"viewHelpVideos":"Tampilkan video bantuan", 
+		"closeHelpVideos":"Tutup",
+		"videosHeading":"Video",
+		"noFlashPlayer":"Tidak ada flash player terdeteksi.",
+		"downloadFlashPlayer":"Unduh",
+		"here":"di sini",
+		"wizardsHeading":"Wisaya",
+		"findFriends":"Temukan Teman",
+		"searchFrom":"Tambahkan orang yang Anda kenal atau pilih kontak dari email, Facebook, dan lainnya.",
+		"play":"Mainkan",
+		"improveCallQuality":"Periksa kualitas panggilan",
+		"makeCallQualityBetter":"Lihat bagaimana Anda dapat membuat kualitas panggilan Anda lebih baik.",
+		"setUpSoundEquipment":"Atur peralatan suara Anda",
+		"makeSureEverythingsAlright":"Pastikan semuanya diatur dengan baik untuk panggilan telepon dan video.",
+		"start":"Mulai"
+	},
+	"avatarView":{
+		"recentContacts":"Kontak terkini",
+		"noContactsYet":"Anda belum memiliki kontak",
+		"addAContact":"Tambah kontak"
+	}
+}

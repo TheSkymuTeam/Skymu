@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Naujienos ir įspėjimai", 
+		"addVideo":"Pridėti vaizdo įrašą", 
+		"changePicture":"Spustelėkite, jei norite pakeisti savo nuotrauką",
+		"showRecentContacts":"Rodyti neseniai naudotus kontaktus", 
+		"share":"Atnaujinti",
+		"updateMoodMessage":"Atnaujinti žinutes apie savo nuotaiką",
+		"setPictureAndUpdate":"Nustatykite savo nuotrauką ir tada atnaujinkite žinutę apie savo nuotaiką"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Ištrinti naujinimą", 
+		"hideMessage":"Slėpti naujus naujinimus nuo", 
+		"showMessage":"Rodyti naujus naujinimus nuo", 
+		"noUpdatesYet":"Nėra naujienų ar įspėjimų", 
+		"findFriends":"Ieškokite draugų", 
+		"importContacts":"importuokite kontaktus", 
+		"or":"arba" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Rodyti", 
+		"showAlerts":"Pranešti man", 
+		"hideAlerts":"Nepranešti man", 
+		"friendsUpdates":"Žinučių apie nuotaiką naujinimai", 
+		"showHiddenFriendUpdates":"Rodyti paslėptus žinučių apie nuotaiką naujinimus" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Sužinokite, kaip naudotis „Skype“", 
+		"viewHelpVideos":"Peržiūrėti pagalbos vaizdo įrašus", 
+		"closeHelpVideos":"Uždaryti",
+		"videosHeading":"Vaizdo įrašai",
+		"noFlashPlayer":"„Flash“ grotuvas neaptiktas.",
+		"downloadFlashPlayer":"Parsisiųsti jį",
+		"here":"čia",
+		"wizardsHeading":"Vedikliai",
+		"findFriends":"Ieškoti draugų",
+		"searchFrom":"Pridėkite žmones, kuriuos pažįstate, arba pasirinkite kontaktus iš el. pašto, „Facebook“ ir daugiau.",
+		"play":"Groti",
+		"improveCallQuality":"Patikrinti skambučio kokybę",
+		"makeCallQualityBetter":"Sužinokite, kaip galite pagerinti savo skambučių kokybę.",
+		"setUpSoundEquipment":"Nustatykite savo garso įrangą",
+		"makeSureEverythingsAlright":"Patikrinkite, ar viskas tinkamai nustatyta skambučiams ir vaizdo skambučiams.",
+		"start":"Pradėti"
+	},
+	"avatarView":{
+		"recentContacts":"Neseniai naudoti kontaktai",
+		"noContactsYet":"Jūs dar neturite nė vieno kontakto.",
+		"addAContact":"Pridėti kontaktą"
+	}
+}

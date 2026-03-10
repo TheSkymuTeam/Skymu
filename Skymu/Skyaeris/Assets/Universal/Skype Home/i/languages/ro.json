@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Noutăţi şi alerte", 
+		"addVideo":"Adăugare video", 
+		"changePicture":"Faceţi clic pentru a schimba fotografia",
+		"showRecentContacts":"Afişare contacte recente", 
+		"share":"Actualizare",
+		"updateMoodMessage":"Actualizaţi-vă mesajul de dispoziţie",
+		"setPictureAndUpdate":"Setaţi-vă fotografia, apoi actualizaţi-vă mesajul de dispoziţie"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Ştergere actualizare", 
+		"hideMessage":"Ascundere actualizări noi de la", 
+		"showMessage":"Afişare actualizări noi de la", 
+		"noUpdatesYet":"Nu sunt încă noutăţi sau alerte noi", 
+		"findFriends":"Găsire prieteni", 
+		"importContacts":"importare contacte", 
+		"or":"sau" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Afişare", 
+		"showAlerts":"Anunţă-mă", 
+		"hideAlerts":"Nu mă anunţa", 
+		"friendsUpdates":"Actualizări pentru mesaje de dispoziţie", 
+		"showHiddenFriendUpdates":"Afişare actualizări ascunse pentru mesaje de dispoziţie" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Aflaţi cum să utilizaţi Skype", 
+		"viewHelpVideos":"Vizualizare materiale video de ajutor", 
+		"closeHelpVideos":"Închidere",
+		"videosHeading":"Materiale video",
+		"noFlashPlayer":"Nu s-a detectat niciun flash player.",
+		"downloadFlashPlayer":"Descărcaţi-l",
+		"here":"aici",
+		"wizardsHeading":"Experţi",
+		"findFriends":"Găsire prieteni",
+		"searchFrom":"Adăugaţi persoane cunoscute sau alegeţi contacte din e-mail, Facebook şi nu numai.",
+		"play":"Redare",
+		"improveCallQuality":"Verificare calitate apel",
+		"makeCallQualityBetter":"Aflaţi cum puteţi îmbunătăţi calitatea apelului.",
+		"setUpSoundEquipment":"Configuraţi echipamentul audio",
+		"makeSureEverythingsAlright":"Verificaţi ca totul să fie configurat în mod corespunzător pentru apeluri vocale şi video.",
+		"start":"Creează"
+	},
+	"avatarView":{
+		"recentContacts":"Contacte recente",
+		"noContactsYet":"Nu aveţi încă niciun contact",
+		"addAContact":"Adăugare contact"
+	}
+}

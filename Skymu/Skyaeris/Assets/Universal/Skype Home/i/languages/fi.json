@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Uutiset ja ilmoitukset", 
+		"addVideo":"Lisää video", 
+		"changePicture":"Vaihda kuvaasi napsauttamalla",
+		"showRecentContacts":"Näytä uusimmat kontaktit", 
+		"share":"Päivitä",
+		"updateMoodMessage":"Päivitä fiilisviestisi",
+		"setPictureAndUpdate":"Määritä kuvasi ja päivitä fiilisviestisi"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Poista päivitys", 
+		"hideMessage":"Piilota uudet päivitykset käyttäjältä", 
+		"showMessage":"Näytä uudet päivitykset käyttäjältä", 
+		"noUpdatesYet":"Ei vielä uutisia tai ilmoituksia", 
+		"findFriends":"Hae kavereita", 
+		"importContacts":"tuo kontakteja", 
+		"or":"tai" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Näytä", 
+		"showAlerts":"Ilmoita minulle", 
+		"hideAlerts":"Älä ilmoita minulle", 
+		"friendsUpdates":"Fiilisviestipäivitykset", 
+		"showHiddenFriendUpdates":"Näytä piilotetut fiilisviestipäivitykset" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Lisätietoja Skypen käytöstä", 
+		"viewHelpVideos":"Näytä ohjevideot", 
+		"closeHelpVideos":"Sulje",
+		"videosHeading":"Videot",
+		"noFlashPlayer":"Flash-soitinta ei havaittu.",
+		"downloadFlashPlayer":"Imuroi se",
+		"here":"täältä",
+		"wizardsHeading":"Ohjatut toiminnot",
+		"findFriends":"Hae kavereita",
+		"searchFrom":"Lisää tuntemiasi henkilöitä tai valitse kontaktit sähköpostista, Facebookista tai muualta.",
+		"play":"Toista",
+		"improveCallQuality":"Tarkista soittolaatu",
+		"makeCallQualityBetter":"Ota selvää, miten voit parantaa soittolaatua.",
+		"setUpSoundEquipment":"Valmistele äänilaitteet",
+		"makeSureEverythingsAlright":"Varmista, että kaikki laitteet ovat valmiina puhelujen ja näköpuhelujen soittamiseen.",
+		"start":"Aloita"
+	},
+	"avatarView":{
+		"recentContacts":"Uusimmat kontaktit",
+		"noContactsYet":"Sinulla ei ole vielä yhtään kontaktia",
+		"addAContact":"Lisää kontakti"
+	}
+}
