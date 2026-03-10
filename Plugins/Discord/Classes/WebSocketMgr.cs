@@ -10,7 +10,6 @@
 /*==========================================================*/
 
 using System;
-using System.Net.Sockets;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
@@ -19,15 +18,15 @@ namespace Discord.Classes
     internal class WebSocketMgr
     {
         // We reuse this to avoid creating more WebSocket instances, which is quite heavy
-        public static WebSocket _webSocket;
-        public static WebSocket Socket => _webSocket;
+        // Also, marked as static so WebSocketMgr helper classes can be called throughout the app
+        internal static WebSocket Socket;
 
         public static void EnsureConnected(string token, EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler, Core core)
         {
-            if (_webSocket != null)
+            if (Socket != null)
                 return;
 
-            _webSocket = new WebSocket(token, core);
+            Socket = new WebSocket(token, core);
             SubscribeMessageReceived(handler);
         }
 
@@ -49,17 +48,17 @@ namespace Discord.Classes
 
         public static async Task SendPayload(string payload)
         {
-            if (_webSocket == null) return;
-            await _webSocket.SendPayload(payload);
+            if (Socket == null) return;
+            await Socket.SendPayload(payload);
         }
 
         public static void SubscribeMessageReceived(EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler)
         {
-            if (_webSocket == null)
+            if (Socket == null)
                 return;
 
-            _webSocket.MessageReceived -= handler;
-            _webSocket.MessageReceived += handler;
+            Socket.MessageReceived -= handler;
+            Socket.MessageReceived += handler;
         }
 
         public static JsonArray GetPrivateChannels()

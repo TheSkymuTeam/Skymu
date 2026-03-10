@@ -32,9 +32,9 @@ namespace Skymu.Skyaeris
 {
     public partial class Login : Window
     {
-        private static PluginListing selectedListing;
+        private PluginListing selectedListing;
         private Main _Main;
-        public static bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLogin;
+        public bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLogin;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
 
         public Login() : this(false)

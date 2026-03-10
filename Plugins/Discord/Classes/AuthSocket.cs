@@ -22,9 +22,9 @@ namespace Discord
         private string gatewayUrl = "wss://remote-auth-gateway.discord.gg/?v=2";
         private string authUrl = "https://discord.com/ra/";
 
-        private static RSAParameters _cryptoKeyParams;
+        private RSAParameters _cryptoKeyParams;
 
-        public static string GenerateEncodedKey()
+        public string GenerateEncodedKey()
         {
             using (var rsa = new RSACryptoServiceProvider(2048))
             {
@@ -42,7 +42,7 @@ namespace Discord
             return Convert.ToBase64String(spki);
         }
 
-        private static byte[] DecryptOaepSha256(byte[] data)
+        private byte[] DecryptOaepSha256(byte[] data)
         {
             var p = _cryptoKeyParams;
             int keySize = p.Modulus.Length;
@@ -86,7 +86,7 @@ namespace Discord
 
             return OaepSha256Decode(em);
         }
-        private static byte[] OaepSha256Decode(byte[] em)
+        private byte[] OaepSha256Decode(byte[] em)
         {
             using (var sha256 = SHA256.Create())
             {
@@ -110,7 +110,7 @@ namespace Discord
             }
         }
 
-        private static byte[] MGF1SHA256(byte[] seed, int length)
+        private byte[] MGF1SHA256(byte[] seed, int length)
         {
             using (var sha256 = SHA256.Create())
             {
@@ -130,21 +130,21 @@ namespace Discord
             }
         }
 
-        private static byte[] XorBytes(byte[] a, byte[] b)
+        private byte[] XorBytes(byte[] a, byte[] b)
         {
             byte[] result = new byte[a.Length];
             for (int i = 0; i < a.Length; i++) result[i] = (byte)(a[i] ^ b[i]);
             return result;
         }
 
-        private static byte[] Reverse(byte[] data)
+        private byte[] Reverse(byte[] data)
         {
             byte[] copy = (byte[])data.Clone();
             Array.Reverse(copy);
             return copy;
         }
 
-        private static byte[] EncodeSubjectPublicKeyInfo(RSAParameters p)
+        private byte[] EncodeSubjectPublicKeyInfo(RSAParameters p)
         {
             byte[] modulus = EncodeIntegerBigEndian(p.Modulus);
             byte[] exponent = EncodeIntegerBigEndian(p.Exponent);
@@ -162,7 +162,7 @@ namespace Discord
             return DerSequence(Concat(oid, bitString));
         }
 
-        private static byte[] EncodeIntegerBigEndian(byte[] value)
+        private byte[] EncodeIntegerBigEndian(byte[] value)
         {
             // prepend 0x00 if high bit set to keep it positive
             bool needsPad = (value[0] & 0x80) != 0;
@@ -177,13 +177,13 @@ namespace Discord
             WSClient?.Dispose();
             WSClient = null;
         }
-        private static byte[] DerSequence(byte[] content)
+        private byte[] DerSequence(byte[] content)
             => Concat(new byte[] { 0x30 }, DerLength(content.Length), content);
 
-        private static byte[] DerBitString(byte[] content)
+        private byte[] DerBitString(byte[] content)
             => Concat(new byte[] { 0x03 }, DerLength(content.Length + 1), new byte[] { 0x00 }, content);
 
-        private static byte[] DerLength(int length)
+        private byte[] DerLength(int length)
         {
             if (length < 0x80)
                 return new byte[] { (byte)length };
@@ -192,7 +192,7 @@ namespace Discord
             return new byte[] { 0x82, (byte)(length >> 8), (byte)(length & 0xFF) };
         }
 
-        private static byte[] Concat(params byte[][] arrays)
+        private byte[] Concat(params byte[][] arrays)
         {
             int total = 0;
             foreach (var a in arrays) total += a.Length;
@@ -202,7 +202,7 @@ namespace Discord
             return result;
         }
 
-        public static string DecryptNonce(string encNonce)
+        public string DecryptNonce(string encNonce)
         {
             byte[] encBytes = Convert.FromBase64String(encNonce);
             byte[] plainBytes = DecryptOaepSha256(encBytes);
@@ -213,7 +213,7 @@ namespace Discord
                 .Replace('/', '_');
         }
 
-        public static string DecryptRSA(string base64Input)
+        public string DecryptRSA(string base64Input)
         {
             byte[] encBytes = Convert.FromBase64String(base64Input);
             byte[] plainBytes = DecryptOaepSha256(encBytes);
@@ -288,11 +288,6 @@ namespace Discord
             );
         }
 
-        internal static async Task<bool> Init()
-        {
-            return await new AuthSocket().StartSocket();
-        }
-
         private void HandleQRCode(string data)
         {
             var json = JsonObject.Parse(data);
@@ -314,7 +309,7 @@ namespace Discord
             string discordTkt = json["ticket"]?.GetValue<string>();
             var ticketPayload = new { ticket = discordTkt };
 
-            string encToken = await HelperMethods.api.SendAPI("users/@me/remote-auth/login", HttpMethod.Post, null, ticketPayload, null, null);
+            string encToken = await Core.api.SendAPI("users/@me/remote-auth/login", HttpMethod.Post, null, ticketPayload, null, null);
 
             var encJson = JsonObject.Parse(encToken);
             string discordEncTkn = encJson["encrypted_token"]?.GetValue<string>();

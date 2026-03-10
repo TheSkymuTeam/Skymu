@@ -49,23 +49,23 @@ namespace Skymu.Skyaeris
 
         // Other file-level variables
         internal static ObservableCollection<ConversationItem> ActiveConversation = new ObservableCollection<ConversationItem>();
-        private static readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
-        private static Thickness OriginalWindowAreaMargin = new Thickness(0);
+        private readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
+        private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private SkymuApi api;
-        internal static readonly BitmapImage AnonymousAvatar = GenerateAvatarImage("anonymous");
-        internal static readonly BitmapImage GroupAvatar = GenerateAvatarImage("group");
-        private static bool noCloseEvent;
-        internal static User CurrentUser;
+        internal static BitmapImage AnonymousAvatar;
+        internal static BitmapImage GroupAvatar;
+        private bool noCloseEvent;
+        internal static User CurrentUser; // static for other code to use it
         private BitmapImage img_maximize, img_restore, img_split, img_join;
         internal static Conversation SelectedConversation = null;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
-        private static bool IsCallPlaying = false;
+        private bool IsCallPlaying = false;
         private bool is_loading_conversation;
         private NotifyCollectionChangedEventHandler _activeConversationChangedHandler;
         private WindowType current_window = WindowType.Chat;
-        private static readonly Brush DefaultTextBrush = (Brush)new BrushConverter().ConvertFromString("#333333");
-        private static readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+        private readonly Brush DefaultTextBrush = (Brush)new BrushConverter().ConvertFromString("#333333");
+        private readonly Brush PlaceholderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
@@ -82,7 +82,7 @@ namespace Skymu.Skyaeris
             Native
         };
 
-        public static readonly DependencyProperty WindowTitleProperty =
+        public readonly DependencyProperty WindowTitleProperty =
     DependencyProperty.Register(
     "WindowTitle",
     typeof(string),
@@ -107,7 +107,7 @@ namespace Skymu.Skyaeris
             return img;
         }
 
-        private static BitmapImage GenerateAvatarImage(string avatar)
+        private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
 
@@ -267,7 +267,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static DropShadowEffect CreateDropShadow(Color color) => new DropShadowEffect()
+        private DropShadowEffect CreateDropShadow(Color color) => new DropShadowEffect()
         {
             Color = color,
             BlurRadius = 16,
@@ -275,7 +275,7 @@ namespace Skymu.Skyaeris
             Opacity = 0.8
         };
 
-        private static void SetClickable(params IInputElement[] buttons)
+        private void SetClickable(params IInputElement[] buttons)
         {
             foreach (var b in buttons)
                 WindowChrome.SetIsHitTestVisibleInChrome(b, true);
@@ -968,7 +968,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static bool HasAnyContent(RichTextBox rtb)
+        private bool HasAnyContent(RichTextBox rtb)
         {
             if (rtb?.Document == null)
                 return false;
@@ -1188,7 +1188,7 @@ namespace Skymu.Skyaeris
                         return;
                     foreach (var item in args.NewItems)
                     {
-                        if (item is Message message && message.Sender.Identifier != Main.CurrentUser?.Identifier && IsWindowActive)
+                        if (item is Message message && message.Sender.Identifier != CurrentUser?.Identifier && IsWindowActive)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -1219,7 +1219,7 @@ namespace Skymu.Skyaeris
 
                             if (item is Message message)
                             {
-                                if (message.Sender.Identifier == Main.CurrentUser?.Identifier
+                                if (message.Sender.Identifier == CurrentUser?.Identifier
                                     && message.Identifier != null
                                     && !message.Identifier.StartsWith(SKYMU_SENDING))
                                 {
@@ -1290,7 +1290,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static ScrollViewer FindScrollViewer(DependencyObject element)
+        private ScrollViewer FindScrollViewer(DependencyObject element)
         {
             if (element == null)
                 return null;
@@ -1314,7 +1314,7 @@ namespace Skymu.Skyaeris
 
         #region Text box placeholders
 
-        private static void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
+        private void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
             if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
                 return;
@@ -1343,7 +1343,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private static void ApplyPlaceholderTb(TextBox tb, string text)
+        private void ApplyPlaceholderTb(TextBox tb, string text)
         {
             if (tb.Tag as string == TAG_PLACEHOLDER)
                 return;
@@ -1397,7 +1397,7 @@ namespace Skymu.Skyaeris
         #endregion
 
         #region Emoji picker
-        private static string ConvertHexKeyToUnicode(string hexKey)
+        private string ConvertHexKeyToUnicode(string hexKey)
         {
             try
             {
@@ -1530,6 +1530,9 @@ namespace Skymu.Skyaeris
             Application.Current.MainWindow = this;
             InitializeWindowFrame();
 
+            GroupAvatar = GenerateAvatarImage("group");
+            AnonymousAvatar = GenerateAvatarImage("anonymous");
+
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += Main_SizeChanged;
             buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
@@ -1572,7 +1575,7 @@ namespace Skymu.Skyaeris
 
         #region Icon dictionaries with helper methods
 
-        private static readonly Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
+        private readonly static Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
         {
             { UserConnectionStatus.Online, 2 },
             { UserConnectionStatus.Away, 3 },
@@ -1598,7 +1601,7 @@ namespace Skymu.Skyaeris
         internal static int GetIntFromStatus(UserConnectionStatus status)
     => status_map.TryGetValue(status, out int value) ? value : 0;
 
-        internal static UserConnectionStatus GetStatusFromInt(int value)
+        internal UserConnectionStatus GetStatusFromInt(int value)
             => status_map.FirstOrDefault(x => x.Value == value).Key;
 
         #endregion

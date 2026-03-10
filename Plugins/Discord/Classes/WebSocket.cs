@@ -38,7 +38,6 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using static Discord.Classes.HelperClasses;
 
 namespace Discord.Classes
 {
@@ -377,7 +376,7 @@ namespace Discord.Classes
             if (messageId == null || channelId == null)
                 return Task.CompletedTask;
 
-            var args = new DiscordMessageReceivedEventArgs
+            var args = new HelperClasses.DiscordMessageReceivedEventArgs
             {
                 EventType = MessageEventType.Delete,
                 ChannelId = channelId,
@@ -397,7 +396,7 @@ namespace Discord.Classes
             if (ids == null || channelId == null)
                 return Task.CompletedTask;
 
-            var args = new DiscordMessageReceivedEventArgs
+            var args = new HelperClasses.DiscordMessageReceivedEventArgs
             {
                 EventType = MessageEventType.BulkDelete,
                 ChannelId = channelId,

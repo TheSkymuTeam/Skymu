@@ -50,7 +50,7 @@ namespace Discord
 
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
-        public string DscToken;
+        private string DscToken;
         // We reuse this to avoid creating more API instances, which is quite heavy
         internal static readonly API api = new API();
         internal AuthSocket socket = new AuthSocket();
@@ -58,7 +58,7 @@ namespace Discord
         private string _activeChannelId;
         public SynchronizationContext _uiContext;
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
-        public readonly Dictionary<string, string> _recentChannelMap = new();
+        public Dictionary<string, string> _recentChannelMap = new();
         // The current user
         private User _currentUser;
 
@@ -202,8 +202,11 @@ namespace Discord
         }
         public void Dispose()
         {
-            WebSocketMgr._webSocket = null;
+            WebSocketMgr.Socket = null;
             UserStore.Clear();
+            _recentChannelMap.Clear();
+            UserIdToChannelId.Clear();
+            _recentChannelMap = new Dictionary<string, string>();
             UserIdToChannelId = new Dictionary<string, string>();
         }
 

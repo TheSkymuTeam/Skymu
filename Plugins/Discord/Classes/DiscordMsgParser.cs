@@ -96,7 +96,7 @@ namespace Discord.Classes
 
             try
             {
-                using var stream = await API.client.GetStreamAsync(url); // skip double buffering and thusly extra RAM usage
+                using var stream = await Core.api.client.GetStreamAsync(url); // skip double buffering and thusly extra RAM usage
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 return ms.ToArray();

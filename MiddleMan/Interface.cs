@@ -152,12 +152,12 @@ namespace MiddleMan
 
     public class DirectMessage : Conversation
     {
-        public User RemoteUser { get; }
+        public User ConversationPartner { get; }
 
-        public DirectMessage(User remote_user, int unread_count, string identifier)
-            : base(remote_user.DisplayName, identifier, unread_count, remote_user.ProfilePicture)
+        public DirectMessage(User conversation_partner, int unread_count, string identifier)
+            : base(conversation_partner.DisplayName, identifier, unread_count, conversation_partner.ProfilePicture)
         {
-            RemoteUser = remote_user;
+            ConversationPartner = conversation_partner;
         }
     }
 
