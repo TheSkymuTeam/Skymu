@@ -114,7 +114,8 @@ namespace Skymu
 
         public async static void Terminate()
         {
-            await SkymuApi.Instance.CloseWS(); // this just sets the status to offline for the server to get the memo
+            try { await UserCountAPI.CloseWS(); } // this just sets the status to offline for the server to get the memo
+            catch { } // in case it couldn't close the websocket due to some problem
             Tray.DisposeIcon();
             Application.Current.Shutdown();
         }

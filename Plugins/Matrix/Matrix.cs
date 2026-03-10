@@ -679,9 +679,9 @@ namespace Matrix
         public async Task<bool> PopulateRecentsList() => await PopulateListsBackend(ListType.Recents);
 
         public ObservableCollection<Server> ServerList { get; private set; }
-        public async Task<bool> PopulateServerList()
+        public Task<bool> PopulateServerList()
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         private enum ListType { Contacts, Recents }

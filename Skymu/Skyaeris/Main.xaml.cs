@@ -52,7 +52,6 @@ namespace Skymu.Skyaeris
         internal static ObservableCollection<ConversationItem> ActiveConversation = new ObservableCollection<ConversationItem>();
         private readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
-        private SkymuApi api;
         internal static BitmapImage AnonymousAvatar;
         internal static BitmapImage GroupAvatar;
         private bool noCloseEvent;
@@ -83,11 +82,15 @@ namespace Skymu.Skyaeris
             Native
         };
 
-        public readonly DependencyProperty WindowTitleProperty =
+        public static readonly DependencyProperty WindowTitleProperty =
     DependencyProperty.Register(
-    "WindowTitle",
-    typeof(string),
-    typeof(Main));
+        "WindowTitle",
+        typeof(string),
+        typeof(Main),
+        new PropertyMetadata(null, (d, e) =>
+        {
+            ((Main)d).Title = (string)e.NewValue;
+        }));
 
         public string WindowTitle
         {
@@ -371,7 +374,7 @@ namespace Skymu.Skyaeris
                 : (Brush)Theme.Inactive.Fill;
         }
 
-        private async void HandleWindowButtonClick(SliceControl button)
+        private void HandleWindowButtonClick(SliceControl button)
         {
             if (button != null)
             {
@@ -452,7 +455,7 @@ namespace Skymu.Skyaeris
             if (Properties.Settings.Default.EnableSkypeHome)
                 SkypeHome.Generate(browser, CurrentUser, Universal.Plugin.ContactsList.ToArray()); // can be static cos browser is an object so sign out -> sign in still disposes it
             _ = SkymuApiStatusHandler(); // DO NOT AWAIT THIS!!!!!!
-            api.OnUserCountUpdate += usrCount =>
+            UserCountAPI.OnUserCountUpdate += usrCount =>
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -475,7 +478,7 @@ namespace Skymu.Skyaeris
 
         private async Task LoadAndCacheContacts()
         {
-            Universal.Plugin.PopulateContactsList();
+            await Universal.Plugin.PopulateContactsList();
             Database.Contacts.Write(Universal.Plugin.ContactsList.ToArray());
         }
 
@@ -488,13 +491,13 @@ namespace Skymu.Skyaeris
             await SetConversation();
         }
 
-        private void HandleServerItemSelection(RoutedPropertyChangedEventArgs<object> e)
+        private async void HandleServerItemSelection(RoutedPropertyChangedEventArgs<object> e)
         {
             ChatArea.DataContext = e.NewValue;
             if (e.NewValue is ServerChannel channel)
             {
                 SelectedConversation = channel;
-                SetConversation();
+                await SetConversation();
             }
         }
 
@@ -611,18 +614,19 @@ namespace Skymu.Skyaeris
         private async Task SkymuApiStatusHandler()
         {
             if (Properties.Settings.Default.DisablePingbacks) return;
-            await api.GenerateUID();
-            await api.SetUsrStatus(true, CurrentUser?.DisplayName, CurrentUser?.Username, CurrentUser?.Identifier);
-            await api.ConnectWS();
+            await UserCountAPI.GenerateUID();
+            await UserCountAPI.SetUsrStatus(true, CurrentUser?.DisplayName, CurrentUser?.Username, CurrentUser?.Identifier);
+            await UserCountAPI.ConnectWS();
+            _ = PingLoop();
+        }
 
-            _ = Task.Run(async () =>
+        private static async Task PingLoop()
+        {
+            while (true)
             {
-                while (true)
-                {
-                    await Task.Delay(60000);
-                    await api.SendPingToServ();
-                }
-            });
+                await Task.Delay(60000);
+                await UserCountAPI.SendPingToServ();
+            }
         }
 
         private bool CanSetStatus()
@@ -1537,7 +1541,6 @@ namespace Skymu.Skyaeris
         public Main()
         {
             noCloseEvent = false;
-            api = SkymuApi.Instance;
 
             InitializeComponent();
             Application.Current.MainWindow = this;
