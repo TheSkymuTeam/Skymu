@@ -428,12 +428,12 @@ namespace Skymu.Skyaeris
         {
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
+            CurrentUser = Universal.Plugin.MyInformation;
 
-            Database.EnsureTables(); // basic init safety for db, dont want it crashing FOR THE BILLION'TH TIME DO WE
+            Database.Init(CurrentUser); // basic init safety for db, dont want it crashing FOR THE BILLION'TH TIME DO WE
             Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
 
-            CurrentUser = Universal.Plugin.MyInformation;
             Database.Accounts.Write(CurrentUser);
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
