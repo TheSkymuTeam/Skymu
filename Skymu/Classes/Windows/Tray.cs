@@ -189,7 +189,7 @@ namespace Skymu
             }
 
             // post a null message to clear menu state
-            PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
+            if (messageWindow != null) { PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero); }
         }
 
         public static void PushIcon(UserConnectionStatus icon)
