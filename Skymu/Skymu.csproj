@@ -29,7 +29,7 @@
 
 		<StartupObject />
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>AnyCPU;x86</Platforms>
+		<Platforms>AnyCPU;x86;x64</Platforms>
 		<ApplicationIcon>Skype.ico</ApplicationIcon>
 	</PropertyGroup>
 
