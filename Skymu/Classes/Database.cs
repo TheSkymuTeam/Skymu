@@ -1043,9 +1043,11 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
-                        transaction.Rollback();
-                        throw;
+                        File.Delete(DbPath);
+                        Accounts.Write(user);
+                       // Universal.ShowMsg(ex.Message);
+                       // transaction.Rollback();
+                       // throw;
                     }
                 }
 
@@ -1146,9 +1148,11 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
-                        transaction.Rollback();
-                        throw;
+                        File.Delete(DbPath);
+                        Contacts.Write(conversations);
+                        //Universal.ShowMsg(ex.Message);
+                        //transaction.Rollback();
+                        //throw;
                     }
                 }
 
@@ -1232,9 +1236,11 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
-                        transaction.Rollback();
-                        throw;
+                        File.Delete(DbPath);
+                        Conversations.Write(conversations);
+                        //Universal.ShowMsg(ex.Message);
+                        //transaction.Rollback();
+                        //throw;
                     }
                 }
 
@@ -1305,9 +1311,11 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
-                        transaction.Rollback();
-                        throw;
+                        File.Delete(DbPath);
+                        Participants.Write(conversations);
+                        //Universal.ShowMsg(ex.Message);
+                        //transaction.Rollback();
+                        //throw;
                     }
                 }
 
@@ -1476,9 +1484,11 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
-                        transaction.Rollback();
-                        throw;
+                        File.Delete(DbPath);
+                        Messages.Write(items, conversation);
+                        //Universal.ShowMsg(ex.Message);
+                        //transaction.Rollback();
+                        //throw;
                     }
                 }
 

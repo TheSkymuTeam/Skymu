@@ -95,6 +95,15 @@
 		<Content Include="Languages\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+
+		<!-- Skype Home as Content -->
+		<None Remove="skypehome\**\*" />
+		<Page Remove="skypehome\**\*" />
+		<EmbeddedResource Remove="skypehome\**\*" />
+		<Compile Remove="skypehome\**\*" />
+		<Content Include="skypehome\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -164,11 +173,13 @@
 	  <Reference Include="PresentationFramework.Royale">
 	    <Private>True</Private>
 	  </Reference>
+	  <Reference Include="System.Web" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Pontis\" />
 	</ItemGroup>
+
 
 	<ItemGroup>
 	  <Compile Update="Properties\Settings.Designer.cs">

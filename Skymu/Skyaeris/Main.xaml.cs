@@ -144,8 +144,7 @@ namespace Skymu.Skyaeris
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    Browser.Visibility = Visibility.Visible;
-                    Browser.Navigate(Properties.Settings.Default.Homepage);
+                    browser.Visibility = Visibility.Visible;
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ContactsList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
@@ -159,7 +158,7 @@ namespace Skymu.Skyaeris
                     ChatTopbar.Visibility = Visibility.Visible;
                     ChatProfileArea.Visibility = Visibility.Visible;
                     MessageWindow.Visibility = Visibility.Visible;
-                    Browser.Visibility = Visibility.Collapsed;
+                    browser.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -430,7 +429,7 @@ namespace Skymu.Skyaeris
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
 
-            Database.EnsureTables();
+            Database.EnsureTables(); // basic init safety for db, dont want it crashing FOR THE BILLION'TH TIME DO WE
             Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
 
@@ -438,7 +437,9 @@ namespace Skymu.Skyaeris
             Database.Accounts.Write(CurrentUser);
             GlobalUserCount.Text = Universal.Lang["sCALLPHONES_RATES_LOADING"];
 
-            SkymuApiStatusHandler();
+            if (Properties.Settings.Default.EnableSkypeHome)
+                SkypeHome.Generate(browser, CurrentUser, Universal.Plugin.ContactsList.ToArray()); // can be static cos browser is an object so sign out -> sign in still disposes it
+            _ = SkymuApiStatusHandler(); // DO NOT AWAIT THIS!!!!!!
             api.OnUserCountUpdate += usrCount =>
             {
                 Dispatcher.Invoke(() =>

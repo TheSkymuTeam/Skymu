@@ -1,0 +1,242 @@
+
+html.rtl #myselfPanel .header h1{
+	float:right;
+}
+html.rtl #myselfPanel .header .rightNavControls{
+	float:left;
+}
+html.rtl #myselfPanel a.avatar{
+	float:right;
+}
+html.rtl #myselfPanel .body .textareaContainer{
+	float:right;
+	padding-right:9px;
+	padding-left:0px;
+} 
+html.rtl #myselfPanel .body .textareaContainer .editControls .movie{
+	float:right;
+}
+html.rtl #myselfPanel .body .textareaContainer .editControls .share{
+	float:left;
+}
+
+/**FEED SETTINGS**/
+html.rtl #feedSettings .header h1{
+	float:right;
+}
+html.rtl #feedSettings .header a.close{
+	float:left;
+}
+html.rtl #feedSettings .col{
+	margin-left:72px;
+	margin-right:0px;
+	float:right;
+}
+html.rtl #feedSettings .col.last{
+	margin-left:0px;
+}
+html.rtl #feedSettings .checkboxGroup
+,html.rtl #feedSettings .toggleGroup{
+	float:right;
+}
+html.rtl #feedSettings .toggleGroup .text{
+	float:right;
+	text-align:left;
+}
+html.rtl #feedSettings .toggleGroup a.toggle{
+	float:left;
+}
+html.rtl #feed div.item .col1{
+	float:right;
+	margin-left:10px;
+	margin-right:0px;
+}
+html.rtl #feed div.item .col2{
+	float:right;
+	margin-left:2px;
+	margin-right:0px;
+}
+html.rtl #feed div.item .col3{
+	float:right;
+}
+html.rtl #feed div.item .col3 .settingsContainer{
+	float:left;
+	right:-999em;
+	left:auto;
+}
+html.rtl #feed div.item .col3 .settingsContainer.hover{
+	float:left;
+	right:auto;
+}
+html.rtl div.promotion .header h1{
+	float: right;
+}
+html.rtl div.promotion .linksRow li{
+	float:right;
+	text-align:right;
+}
+html.rtl div.promotion .linksRow li p.text{
+	text-align:right;
+}
+html.rtl div.promotion .linksRow li a.noArrow{
+	padding-right:0px;
+	padding-left:20px;
+}
+html.rtl div.promotion .linksRow li img
+{
+	float: right;
+	margin-right: 0px;
+	margin-left:10px;
+}
+html.rtl div.promotion .cta li img{
+	float: right;
+	margin-right: -60px;
+	margin-left:10px;	
+}
+html.rtl div.promotion .cta li{
+	padding-right:60px;
+	padding-left:0px;
+}
+html.rtl div.promotion .cta .selectbox input{
+	text-align:right;
+}
+html.rtl #videoRosterToggle h2 {
+	float: right;
+}
+html.rtl #videoRosterToggle .barAction {
+	float: left;
+}	
+html.rtl .header .barAction,
+html.rtl .videoRosterToggle .barAction {
+	float: left;
+	margin-right: 0px;
+	margin-left:20px;
+}
+	
+html.rtl .header .barAction span.innerButton,
+html.rtl #videoRosterToggle .barAction span.innerButton {
+	float: left;
+}
+html.rtl #videoRoster .linksRow .group{
+	float:right;
+}
+html.rtl #videoRoster .linksRow li {
+	float: right;
+	text-align: right;
+	margin-left:20px;
+	margin-right:0px;
+}
+html.rtl #videoRoster .linksRow li.last {
+	margin-left: 0;
+}
+html.rtl #videoRoster .linksRow li p.text {
+	text-align:right;
+}
+html.rtl #videoRoster .linksRow li a.icon
+,html.rtl #videoRoster .linksRow li a.showVideo {
+	float:right;
+	margin-left:20px;
+	margin-right:0px;
+}
+html.rtl #videoRoster .linksRow li a.showVideo {
+	padding-right: 0px;
+	padding-left:20px;
+}
+
+html.rtl #videoRoster .linksRow li a.noArrow {
+	padding-right: 0px;
+	padding-left:20px;
+}
+html.rtl div.promotion .cta img,
+html.rtl div.promotion .cta p,
+html.rtl div.promotion .cta div {
+	float: right;
+}
+html.rtl div.promotion .cta p {
+	width:100%;
+	margin-right:0px;
+	margin-left:10px;
+}
+html.rtl #feed div.item .col3 .settingsContainer .settings ul{
+	right:auto;
+	left:0;
+}
+html.rtl #myselfPanel .body .textareaContainer .bubbles{
+	background-image:url("../images/Bubbles-rtl_10x9_x2.png");
+	left:auto;
+	right:0;
+}
+html.rtl #feedSettings .checkboxGroup label{
+	float:right;
+}
+html.rtl #feedSettings .checkboxGroup input{
+	float:right;
+	margin-right:0px;
+	margin-left:9px;
+}
+html.rtl #feed div.item .col3 .date{
+	text-align:left;
+}
+html.rtl #avatarView .avatarList .avatarItem{
+	float:right;
+	margin-right:32px;
+	margin-left:0px;
+}
+html.rtl #avatarView .avatarList .avatarItem.first{
+	margin-right:0px;
+}
+html.rtl #avatarView h1{
+	text-align:right;
+}
+html.rtl .promotion{
+	text-align:right;
+}
+html.rtl .promotion a.buttonSmallBlue{
+	float:right;
+}
+html.rtl div.win42TakeoverPromotion a.getStarted{
+	float:right;
+}
+html.rtl div.win42TakeoverPromotion p{
+	width:auto;
+	padding-right:10px;
+	padding-left:0;
+}
+
+html.rtl div.promotion span.price b {
+background-position:right 0;
+padding-right:10px;
+}
+
+html.rtl div.promotion .leaderBody span.price {
+float:right;
+}
+
+html.rtl div.promotion span.price b {
+padding-right:24px;
+padding-left:0;
+}
+
+html.rtl div.lightboxPromotion .buttonSmallBlue,
+html.rtl div.toasterPromotion .buttonSmallBlue {
+  right: auto;
+  left:10px;
+}
+
+html.rtl div.promotion .cta div.ctaText {
+  clear:both;
+  width: 100%;
+}
+
+html.rtl div.leaderPromotion .disclaimer {
+position:absolute;
+bottom: 10px;
+left: 10px;
+}
+
+html.rtl div.bnr4 .buttonSmallBlue {
+  right: auto;
+  left: 10px;
+}
+
+

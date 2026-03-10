@@ -88,7 +88,7 @@
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Application theme (expiremental)" VerticalAlignment="Center" Padding="0,0,10,0"/>
+                            <TextBlock Text="Application theme (experimental)" VerticalAlignment="Center" Padding="0,0,10,0"/>
                         <ComboBox Width="250" SelectedValue="{Binding Source={x:Static properties:Settings.Default}, Path=ThemeRoot, Mode=TwoWay}" SelectedValuePath="Tag">
                             <ComboBoxItem Content="Light" Tag="Light"/>
                             <ComboBoxItem Content="Dark" Tag="Dark"/>
@@ -142,13 +142,9 @@ Mode=TwoWay}" Margin="0,5">
                             </TextBlock>
                         </CheckBox.Content>
                     </CheckBox>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Skype Home website" VerticalAlignment="Center" Padding="0,0,10,0"/>
-                        <TextBox FontFamily="Tahoma" Text="{Binding Source={x:Static properties:Settings.Default},
-Path=Homepage,
-Mode=TwoWay,
-UpdateSourceTrigger=PropertyChanged}" Width="250"/>
-                    </StackPanel>
+                        <CheckBox Content="Enable the 'Skype Home' feature (experimental, may use 20-60 MB of additional RAM)" IsChecked="{Binding Source={x:Static properties:Settings.Default},
+Path=EnableSkypeHome,
+Mode=TwoWay}" Margin="0,5"/>
                         <CheckBox Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}" IsChecked="{Binding Source={x:Static properties:Settings.Default},
 Path=StartOnStartup,
 Mode=TwoWay}" Margin="0,5"/>
