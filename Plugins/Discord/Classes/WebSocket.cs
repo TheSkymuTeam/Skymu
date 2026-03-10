@@ -282,7 +282,7 @@ namespace Discord.Classes
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "READY_SUPPLEMENTAL":
-                                Debug.WriteLine($"[WS] READY_SUPPLEMENTAL received: {json["d"]?.ToJsonString()}");
+                                Debug.WriteLine($"[WebSocket] READY_SUPPLEMENTAL received: {json["d"]?.ToJsonString()}");
                                 break;
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
@@ -300,10 +300,9 @@ namespace Discord.Classes
                                 HandleTypingEvent(json["d"]);
                                 break;
                             case "USER_SETTINGS_UPDATE":
-                                Debug.WriteLine($"[WS] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
+                                Debug.WriteLine($"[WebSocket] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
                                 break;
                             case "PRESENCE_UPDATE":
-                                Debug.WriteLine($"[WS] PRESENCE_UPDATE received: {json["d"]?.ToJsonString()}");
                                 UserStatusMgr.HandleUserStatus(json["d"]);
                                 break;
                         }

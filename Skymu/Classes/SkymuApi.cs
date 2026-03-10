@@ -22,14 +22,14 @@ namespace Skymu
 {
     internal class SkymuApi
     {
-        private static readonly string DOMAIN_NAME = "skymu.onrender.com";
+        private static readonly string DOMAIN_NAME = "skymu.kier.ovh";
         // REST API variables
         private static readonly HttpClient httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://" + DOMAIN_NAME)
         };
         public string ApiTkn = null;
-        public string WsUrl = $"wss://{DOMAIN_NAME}/v1/ws";
+        public string WsUrl = $"wss://{DOMAIN_NAME}/ws";
 
 
         // WebSocket variables
@@ -40,7 +40,7 @@ namespace Skymu
         // REST API functions
         public async Task GenerateUID()
         {
-            string json = await httpClient.GetStringAsync("/v1/token");
+            string json = await httpClient.GetStringAsync("/token");
             JsonNode node = JsonNode.Parse(json);
             ApiTkn = node?["token"]?.ToString();
         }
@@ -76,7 +76,7 @@ namespace Skymu
             var json = JsonSerializer.Serialize(payload);
 
             using (StringContent content = new StringContent(json))
-            using (HttpResponseMessage response = await httpClient.PostAsync("/v1/set_status", content))
+            using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
             }
@@ -94,7 +94,7 @@ namespace Skymu
             var json = JsonSerializer.Serialize(payload);
 
             using (StringContent content = new StringContent(json))
-            using (HttpResponseMessage response = await httpClient.PostAsync("/v1/set_status", content))
+            using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
             }
