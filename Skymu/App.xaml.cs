@@ -112,8 +112,9 @@ namespace Skymu
             new Dialog(WindowBase.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
         }
 
-        public static void Terminate()
+        public async static void Terminate()
         {
+            await SkymuApi.Instance.CloseWS(); // this just sets the status to offline for the server to get the memo
             Tray.DisposeIcon();
             Application.Current.Shutdown();
         }

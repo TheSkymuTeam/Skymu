@@ -12,6 +12,7 @@
 using MiddleMan;
 using Skymu.Views;
 using Skymu.Views.Pages;
+using Skymu;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -370,16 +371,27 @@ namespace Skymu.Skyaeris
                 : (Brush)Theme.Inactive.Fill;
         }
 
-        private void HandleWindowButtonClick(SliceControl button)
+        private async void HandleWindowButtonClick(SliceControl button)
         {
             if (button != null)
             {
                 switch (button.Name)
                 {
-                    case "close": Close(); break;
-                    case "split": Universal.NotImplemented("Split Window"); break;
-                    case "minimize": WindowState = WindowState.Minimized; break;
-                    case "maximize": if (WindowState == WindowState.Normal) { WindowState = WindowState.Maximized; } else { WindowState = WindowState.Normal; } break;
+                    case "close":
+                        Close();
+                        break;
+                    case "split":
+                        Universal.NotImplemented("Split Window");
+                        break;
+                    case "minimize":
+                        WindowState = WindowState.Minimized;
+                        break;
+                    case "maximize":
+                        if (WindowState == WindowState.Normal)
+                            WindowState = WindowState.Maximized;
+                        else
+                            WindowState = WindowState.Normal;
+                        break;
                 }
             }
         }
@@ -1525,7 +1537,7 @@ namespace Skymu.Skyaeris
         public Main()
         {
             noCloseEvent = false;
-            api = new SkymuApi();
+            api = SkymuApi.Instance;
 
             InitializeComponent();
             Application.Current.MainWindow = this;
