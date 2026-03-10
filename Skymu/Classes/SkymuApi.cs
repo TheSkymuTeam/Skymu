@@ -22,20 +22,26 @@ namespace Skymu
 {
     internal class SkymuApi
     {
+        // Singleton instance
+        private static readonly Lazy<SkymuApi> _instance = new Lazy<SkymuApi>(() => new SkymuApi());
+        public static SkymuApi Instance => _instance.Value;
+
+        public string ApiTkn = null;
         private static readonly string DOMAIN_NAME = "skymu.kier.ovh";
         // REST API variables
         private static readonly HttpClient httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://" + DOMAIN_NAME)
         };
-        public string ApiTkn = null;
         public string WsUrl = $"wss://{DOMAIN_NAME}/ws";
-
 
         // WebSocket variables
         private System.Net.WebSockets.Managed.ClientWebSocket ws;
         private CancellationTokenSource cts = new CancellationTokenSource();
         public event Action<int> OnUserCountUpdate;
+
+        // Private constructor for singleton
+        private SkymuApi() { }
 
         // REST API functions
         public async Task GenerateUID()
@@ -50,11 +56,7 @@ namespace Skymu
             Random random = new Random();
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < length; i++)
-            {
-                sb.Append(random.Next(0, 10));
-            }
-
+            for (int i = 0; i < length; i++) { sb.Append(random.Next(0, 10)); }
             return sb.ToString();
         }
 
@@ -65,7 +67,6 @@ namespace Skymu
             {
                 display_name = Properties.Settings.Default.Anonymize ? "Anonymous" : dn,
                 username = Properties.Settings.Default.Anonymize ? anon_random : user,
-                identifier = Properties.Settings.Default.Anonymize ? anon_random : id,
                 plugin = Universal.Plugin.Name,
                 skymu_build_codename = Properties.Settings.Default.BuildName,
                 skymu_build_version = Properties.Settings.Default.BuildVersion,
@@ -74,11 +75,10 @@ namespace Skymu
             };
 
             var json = JsonSerializer.Serialize(payload);
-
             using (StringContent content = new StringContent(json))
             using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
             {
-                await response.Content.ReadAsStringAsync(); // drain the buffer
+                await response.Content.ReadAsStringAsync();
             }
 
             return true;
@@ -86,17 +86,13 @@ namespace Skymu
 
         public async Task<bool> SendPingToServ()
         {
-            var payload = new
-            {
-                token = ApiTkn
-            };
-
+            var payload = new { token = ApiTkn };
             var json = JsonSerializer.Serialize(payload);
 
             using (StringContent content = new StringContent(json))
             using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
             {
-                await response.Content.ReadAsStringAsync(); // drain the buffer
+                await response.Content.ReadAsStringAsync();
             }
 
             return true;
@@ -115,11 +111,9 @@ namespace Skymu
             _ = Task.Run(ReceiveLoop);
         }
 
-
         private async Task ReceiveLoop()
         {
             var buffer = new byte[4096];
-
             while (ws.State == WebSocketState.Open)
             {
                 var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
@@ -137,16 +131,6 @@ namespace Skymu
                         OnUserCountUpdate?.Invoke(count);
                     }
                 }
-            }
-        }
-
-        public async Task SendGetCount()
-        {
-            if (ws.State == WebSocketState.Open)
-            {
-                var msg = JsonSerializer.Serialize(new { action = "get_count" });
-                var bytes = Encoding.UTF8.GetBytes(msg);
-                await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
             }
         }
 
