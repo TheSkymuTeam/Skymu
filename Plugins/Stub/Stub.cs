@@ -46,12 +46,12 @@ namespace Stub
         public void Dispose() { }
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
 
-        public async Task<LoginResult> AuthenticateTwoFA(string code)
+        public Task<LoginResult> AuthenticateTwoFA(string code)
         {
-            return LoginResult.Success;
+            return Task.FromResult(LoginResult.Success);
         }
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
+        public Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
         {
             if (text != null)
             {
@@ -66,7 +66,7 @@ namespace Stub
             TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
             TypingUsersList.Add(new User("WGP", "20200", "20200"));
             TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
-            return true;
+            return Task.FromResult(true);
         }
 
         public Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
