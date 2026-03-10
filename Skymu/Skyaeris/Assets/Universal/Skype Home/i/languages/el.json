@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Νέα και ειδοποιήσεις", 
+		"addVideo":"Προσθήκη βίντεο", 
+		"changePicture":"Για να αλλάξετε τη φωτογραφία σας, κάντε κλικ εδώ",
+		"showRecentContacts":"Εμφάνιση πρόσφατων επαφών", 
+		"share":"Ενημέρωση",
+		"updateMoodMessage":"Ενημερώστε το μήνυμα διάθεσής σας",
+		"setPictureAndUpdate":"Επιλέξτε τη φωτογραφία σας και στη συνέχεια ενημερώστε το μήνυμα διάθεσής σας"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Διαγραφή ενημέρωσης", 
+		"hideMessage":"Απόκρυψη νέων ενημερώσεων από", 
+		"showMessage":"Εμφάνιση νέων ενημερώσεων από", 
+		"noUpdatesYet":"Δεν υπάρχουν ακόμα νέα ή ειδοποιήσεις", 
+		"findFriends":"Αναζήτηση φίλων", 
+		"importContacts":"εισαγωγή επαφών", 
+		"or":"ή" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Εμφάνιση", 
+		"showAlerts":"Να ειδοποιηθώ", 
+		"hideAlerts":"Να μην ειδοποιηθώ", 
+		"friendsUpdates":"Ενημερώσεις μηνύματος διάθεσης", 
+		"showHiddenFriendUpdates":"Εμφάνιση κρυφών ενημερώσεων μηνύματος διάθεσης" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Μάθετε πώς να χρησιμοποιείτε το Skype", 
+		"viewHelpVideos":"Προβολή βοηθητικών βίντεο", 
+		"closeHelpVideos":"Κλείσιμο",
+		"videosHeading":"Βίντεο",
+		"noFlashPlayer":"Δεν εντοπίστηκε λογισμικό flash player.",
+		"downloadFlashPlayer":"Κάντε λήψη",
+		"here":"εδώ",
+		"wizardsHeading":"Οδηγοί",
+		"findFriends":"Αναζήτηση φίλων",
+		"searchFrom":"Προσθέστε επαφές που γνωρίζετε ή επιλέξτε επαφές από το email σας, το Facebook και αλλού.",
+		"play":"Αναπαραγωγή",
+		"improveCallQuality":"Έλεγχος ποιότητας κλήσεων",
+		"makeCallQualityBetter":"Δείτε πώς μπορείτε να βελτιώσετε την ποιότητα των κλήσεών σας.",
+		"setUpSoundEquipment":"Ρυθμίστε τον ακουστικό εξοπλισμό σας",
+		"makeSureEverythingsAlright":"Βεβαιωθείτε ότι όλα έχουν ρυθμιστεί σωστά για την πραγματοποίηση κλήσεων και βιντεοκλήσεων.",
+		"start":"Έναρξη"
+	},
+	"avatarView":{
+		"recentContacts":"Πρόσφατες επαφές",
+		"noContactsYet":"Δεν έχετε ακόμα επαφές",
+		"addAContact":"Προσθήκη επαφής"
+	}
+}

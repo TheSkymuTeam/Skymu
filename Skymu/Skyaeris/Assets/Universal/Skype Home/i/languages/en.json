@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"News and alerts", 
+		"addVideo":"Add video", 
+		"changePicture":"Click to change your picture",
+		"showRecentContacts":"Show recent contacts", 
+		"share":"Update",
+		"updateMoodMessage":"Update your mood message",
+		"setPictureAndUpdate":"Set your picture and then update your mood message"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Delete Update", 
+		"hideMessage":"Hide New Updates from", 
+		"showMessage":"Show New Updates from", 
+		"noUpdatesYet":"No news or alerts yet", 
+		"findFriends":"Find friends", 
+		"importContacts":"import contacts", 
+		"or":"or" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Show", 
+		"showAlerts":"Notify me", 
+		"hideAlerts":"Don't notify me", 
+		"friendsUpdates":"Mood message updates", 
+		"showHiddenFriendUpdates":"Show hidden mood message updates" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Learn how to use Skype", 
+		"viewHelpVideos":"View help videos", 
+		"closeHelpVideos":"Close",
+		"videosHeading":"Videos",
+		"noFlashPlayer":"No flash player detected.",
+		"downloadFlashPlayer":"Download it",
+		"here":"here",
+		"wizardsHeading":"Wizards",
+		"findFriends":"Find Friends",
+		"searchFrom":"Add people you know or choose contacts from email, Facebook and more.",
+		"play":"Play",
+		"improveCallQuality":"Check call quality",
+		"makeCallQualityBetter":"See how you can make your call quality better.",
+		"setUpSoundEquipment":"Set up your sound equipment",
+		"makeSureEverythingsAlright":"Make sure everything's set up properly for calls and video calls.",
+		"start":"Start"
+	},
+	"avatarView":{
+		"recentContacts":"Recent contacts",
+		"noContactsYet":"You don't have any contacts yet",
+		"addAContact":"Add a contact"
+	}
+}

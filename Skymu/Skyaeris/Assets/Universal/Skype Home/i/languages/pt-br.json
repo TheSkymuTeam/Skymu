@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Notícias e alertas", 
+		"addVideo":"Adicionar vídeo", 
+		"changePicture":"Clique para mudar sua foto",
+		"showRecentContacts":"Mostrar contatos recentes", 
+		"share":"Atualizar",
+		"updateMoodMessage":"Atualizar sua mensagem de humor",
+		"setPictureAndUpdate":"Escolher sua foto e depois atualizar a sua mensagem de humor"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Excluir atualização", 
+		"hideMessage":"Ocultar novas atualizações de", 
+		"showMessage":"Mostrar novas atualizações de", 
+		"noUpdatesYet":"Nenhuma notícia ou alerta ainda", 
+		"findFriends":"Localizar amigos", 
+		"importContacts":"importar contatos", 
+		"or":"ou" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Mostrar", 
+		"showAlerts":"Notificar-me", 
+		"hideAlerts":"Não me notificar", 
+		"friendsUpdates":"Atualizações das mensagens de humor", 
+		"showHiddenFriendUpdates":"Mostrar atualizações ocultas das mensagens de humor" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Saiba como usar o Skype", 
+		"viewHelpVideos":"Ver vídeos de ajuda", 
+		"closeHelpVideos":"Fechar",
+		"videosHeading":"Vídeos",
+		"noFlashPlayer":"O flash player não foi detectado.",
+		"downloadFlashPlayer":"Faça o download",
+		"here":"aqui",
+		"wizardsHeading":"Assistentes",
+		"findFriends":"Localizar amigos",
+		"searchFrom":"Adicione pessoas que você conhece ou selecione contatos de e-mail, Facebook e outros.",
+		"play":"Reproduzir",
+		"improveCallQuality":"Verificar a qualidade da chamada",
+		"makeCallQualityBetter":"Veja como você pode melhorar a qualidade da sua chamada.",
+		"setUpSoundEquipment":"Configurar o seu equipamento de som",
+		"makeSureEverythingsAlright":"Veja se tudo está configurado corretamente para chamadas e chamadas com vídeo.",
+		"start":"Iniciar"
+	},
+	"avatarView":{
+		"recentContacts":"Contatos recentes",
+		"noContactsYet":"Você ainda não tem nenhum contato",
+		"addAContact":"Adicione um contato"
+	}
+}

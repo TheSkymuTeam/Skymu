@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Notícias e alertas", 
+		"addVideo":"Adicionar vídeo", 
+		"changePicture":"Clique para alterar a sua imagem",
+		"showRecentContacts":"Mostrar contactos recentes", 
+		"share":"Actualizar",
+		"updateMoodMessage":"Actualizar a sua mensagem de disposição",
+		"setPictureAndUpdate":"Definir a sua imagem e actualizar a sua mensagem de disposição"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Eliminar actualização", 
+		"hideMessage":"Ocultar novas actualizações de", 
+		"showMessage":"Mostrar novas actualizações de", 
+		"noUpdatesYet":"Ainda sem notícias ou alertas", 
+		"findFriends":"Encontrar amigos", 
+		"importContacts":"importar contactos", 
+		"or":"ou" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Mostrar", 
+		"showAlerts":"Receber notificação", 
+		"hideAlerts":"Não receber notificação", 
+		"friendsUpdates":"Actualizações da mensagem de disposição", 
+		"showHiddenFriendUpdates":"Mostrar actualizações ocultas da mensagem de disposição" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Obter informações sobre como utilizar o Skype", 
+		"viewHelpVideos":"Ver vídeos de ajuda", 
+		"closeHelpVideos":"Fechar",
+		"videosHeading":"Vídeos",
+		"noFlashPlayer":"Não foi detectado nenhum leitor de Flash.",
+		"downloadFlashPlayer":"Descarregar",
+		"here":"aqui",
+		"wizardsHeading":"Assistentes",
+		"findFriends":"Encontrar amigos",
+		"searchFrom":"Adicione pessoas que conhece ou escolha contactos a partir do e-mail, do Facebook e muito mais.",
+		"play":"Reproduzir",
+		"improveCallQuality":"Verificar qualidade da chamada",
+		"makeCallQualityBetter":"Veja como pode melhorar a qualidade das suas chamadas.",
+		"setUpSoundEquipment":"Configurar o seu equipamento de som",
+		"makeSureEverythingsAlright":"Certifique-se de que está tudo correctamente configurado para efectuar chamadas e videochamadas.",
+		"start":"Iniciar"
+	},
+	"avatarView":{
+		"recentContacts":"Contactos recentes",
+		"noContactsYet":"Ainda não tem quaisquer contactos",
+		"addAContact":"Adicionar um contacto"
+	}
+}

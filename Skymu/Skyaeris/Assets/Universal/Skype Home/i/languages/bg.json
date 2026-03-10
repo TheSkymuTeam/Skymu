@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Новини и предупреждения", 
+		"addVideo":"Задаване на видео в настроението", 
+		"changePicture":"Смяна на вашата снимка/аватар",
+		"showRecentContacts":"Показване на последните абонати", 
+		"share":"Обнови настроението",
+		"updateMoodMessage":"Обновяване на вашето настроение",
+		"setPictureAndUpdate":"Задайте снимка/аватар и обновете вашето настроение."
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Изтрий обновеното настроение", 
+		"hideMessage":"Не следвай настроението на", 
+		"showMessage":"Следвай настроението на", 
+		"noUpdatesYet":"Още няма новини и предупреждения.", 
+		"findFriends":"Намиране на приятели", 
+		"importContacts":"внасяне на абонати", 
+		"or":"или" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Показвай уведомяване за", 
+		"showAlerts":"ВКЛ", 
+		"hideAlerts":"ИЗКЛ", 
+		"friendsUpdates":"Промени в настроението", 
+		"showHiddenFriendUpdates":"Показване на неследваните настроения" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Научете как да ползвате Skype", 
+		"viewHelpVideos":"Помощни клипове", 
+		"closeHelpVideos":"Затвори",
+		"videosHeading":"Клипове",
+		"noFlashPlayer":"Няма плеър за flash.",
+		"downloadFlashPlayer":"Изтегле го",
+		"here":"от тук",
+		"wizardsHeading":"Съветници",
+		"findFriends":"Намиране на приятели",
+		"searchFrom":"Добавете познати или потребители на е-пощи, Facebook и др.",
+		"play":"Пусни",
+		"improveCallQuality":"Проверяване на качеството на разговора",
+		"makeCallQualityBetter":"Вижте как да подобрите качеството на разговора.",
+		"setUpSoundEquipment":"Настройване на звуковото оборудване",
+		"makeSureEverythingsAlright":"Уверете се, че всичко е настроено правилно за провеждане на разговори и видеоразговори.",
+		"start":"Начало"
+	},
+	"avatarView":{
+		"recentContacts":"Последни абонати",
+		"noContactsYet":"Все още нямате абонати.",
+		"addAContact":"Добави абонат"
+	}
+}

@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Nyheder og beskeder", 
+		"addVideo":"Tilføj video", 
+		"changePicture":"Klik for at ændre dit billede",
+		"showRecentContacts":"Vis seneste kontaktpersoner", 
+		"share":"Opdater",
+		"updateMoodMessage":"Opdater din humørbesked",
+		"setPictureAndUpdate":"Konfigurer dit billede, og opdater dernæst din humørbesked"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Slet opdatering", 
+		"hideMessage":"Skjul nye opdateringer fra", 
+		"showMessage":"Vis nye opdateringer fra", 
+		"noUpdatesYet":"Endnu ingen nyheder eller beskeder", 
+		"findFriends":"Find venner", 
+		"importContacts":"importer kontaktpersoner", 
+		"vor":"eller" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Vis", 
+		"showAlerts":"Giv besked", 
+		"hideAlerts":"Giv ikke besked", 
+		"friendsUpdates":"Opdateringer af humørbesked", 
+		"showHiddenFriendUpdates":"Vis skjulte opdateringer af humørbeskeder" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"Lær at bruge Skype", 
+		"viewHelpVideos":"Se hjælpevideoer", 
+		"closeHelpVideos":"Luk",
+		"videosHeading":"Videoer",
+		"noFlashPlayer":"Flash Player blev ikke registreret.",
+		"downloadFlashPlayer":"Hent det",
+		"here":"her",
+		"wizardsHeading":"Guider",
+		"findFriends":"Find venner",
+		"searchFrom":"Tilføj personer, du kender, eller vælg kontaktpersoner fra e-mail, Facebook m.m.",
+		"play":"Afspil",
+		"improveCallQuality":"Kontrollér opkaldskvaliteten",
+		"makeCallQualityBetter":"Se, hvordan du får bedre opkaldskvalitet.",
+		"setUpSoundEquipment":"Konfigurer dit lydudstyr",
+		"makeSureEverythingsAlright":"Kontrollér, at dit udstyr er konfigureret korrekt til tale- og videoopkald.",
+		"start":"Begynd"
+	},
+	"avatarView":{
+		"recentContacts":"Seneste kontaktpersoner",
+		"noContactsYet":"Du har endnu ikke nogen kontaktpersoner",
+		"addAContact":"Tilføj en kontaktperson"
+	}
+}

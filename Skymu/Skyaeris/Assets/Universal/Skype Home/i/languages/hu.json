@@ -1,0 +1,50 @@
+{ 
+	"myselfPanel":{ 
+		"header":"Hírek és értesítések", 
+		"addVideo":"Videó hozzáadása", 
+		"changePicture":"Kattintson ide képe megváltoztatásához",
+		"showRecentContacts":"Legfrissebb partnerek megjelenítése", 
+		"share":"Frissítés",
+		"updateMoodMessage":"Frissítse hangulatüzenetét",
+		"setPictureAndUpdate":"Állítsa be képét, majd frissítse hangulatüzenetét"
+	}, 
+	"feedItem":{ 
+		"deleteMessage":"Frissítés törlése", 
+		"hideMessage":"Új frissítések elrejtése innen", 
+		"showMessage":"Új frissítések megjelenítése innen", 
+		"noUpdatesYet":"Még nincsenek hírek és értesítések", 
+		"findFriends":"Barátok megkeresése", 
+		"importContacts":"partnerek importálása", 
+		"or":"vagy" 
+	}, 
+	"feedSettings":{ 
+		"headerTitle":"Megjelenítés", 
+		"showAlerts":"Értesítsen engem", 
+		"hideAlerts":"Ne értesítsen engem", 
+		"friendsUpdates":"Hangulatüzenet frissítések", 
+		"showHiddenFriendUpdates":"Rejtett hangulatüzenet frissítések megjelenítése" 
+	}, 
+	"videoroster":{ 
+		"learnHowTo":"A Skype használatának elsajátítása", 
+		"viewHelpVideos":"Útmutató videók megtekintése", 
+		"closeHelpVideos":"Bezárás",
+		"videosHeading":"Videók",
+		"noFlashPlayer":"Nem észlelhető Flash lejátszó.",
+		"downloadFlashPlayer":"Töltse le",
+		"here":"itt",
+		"wizardsHeading":"Varázslók",
+		"findFriends":"Barátok megkeresése",
+		"searchFrom":"Adja hozzá ismerőseit, vagy válassza ki partnereit e-mailjei alapján, a Facebookból és egyéb helyekről.",
+		"play":"Lejátszás",
+		"improveCallQuality":"Hívásminőség ellenőrzése",
+		"makeCallQualityBetter":"Tekintse meg, hogyan javíthatja a hívásminőséget.",
+		"setUpSoundEquipment":"Hangberendezése beállítása",
+		"makeSureEverythingsAlright":"Győződjön meg arról, hogy minden megfelelően be van-e állítva a hívásokhoz és a videohívásokhoz.",
+		"start":"Indítás"
+	},
+	"avatarView":{
+		"recentContacts":"Legutóbbi partnerek",
+		"noContactsYet":"Még nincsenek partnerei",
+		"addAContact":"Partner felvétele"
+	}
+}
