@@ -37,7 +37,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoLogin {
             get {
                 return ((bool)(this["AutoLogin"]));
@@ -97,7 +97,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool BlueNotifications {
             get {
                 return ((bool)(this["BlueNotifications"]));
@@ -109,13 +109,13 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://skymu.app")]
-        public string Homepage {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableSkypeHome {
             get {
-                return ((string)(this["Homepage"]));
+                return ((bool)(this["EnableSkypeHome"]));
             }
             set {
-                this["Homepage"] = value;
+                this["EnableSkypeHome"] = value;
             }
         }
         
@@ -145,7 +145,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.3.8")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3.10")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -157,7 +157,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Igloo")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Key Lime Pie")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));

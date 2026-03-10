@@ -102,15 +102,6 @@ namespace Skymu
             }
         }
 
-        private static void SetBrowserEmulationMode()
-        {
-            using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
-                @"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION", true))
-            {
-                key?.SetValue(Name + ".exe", 11001, Microsoft.Win32.RegistryValueKind.DWord);
-            }
-        }
-
         public static void Close(System.ComponentModel.CancelEventArgs ev = null)
         {
             if (ev != null)
@@ -149,7 +140,6 @@ namespace Skymu
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
             OS.Initialize();
-            SetBrowserEmulationMode();
             base.OnStartup(ev);
             // Listen for changes
             Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>

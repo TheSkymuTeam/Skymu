@@ -279,8 +279,6 @@ namespace Discord
                 // Parse and store details
                 var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
                 _currentUser = new User(null, parsedUser["username"]?.GetValue<string>() ?? "Anonymous", null); // temp just for StoreCredential
-
-                WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this);
                 return LoginResult.Success;
             }
             else
@@ -307,6 +305,7 @@ namespace Discord
 
         public async Task<bool> PopulateSidebarInformation()
         {
+            WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
             _uiContext = SynchronizationContext.Current;
             JsonObject parsedDetails = null;
 
@@ -340,10 +339,12 @@ namespace Discord
                 string global_name = parsedDetails["global_name"]?.GetValue<string>() ?? parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
                 string username = parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
                 string identifier = parsedDetails["id"]?.GetValue<string>();
+                string avatarHash = parsedDetails["avatar"]?.GetValue<string>();
                 UserConnectionStatus status = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
                 string custom_status = UserStore.Get(identifier)?.Status;
+                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(identifier, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
 
-                MyInformation = _currentUser = new User(global_name, username, identifier, custom_status, status); ;
+                MyInformation = _currentUser = new User(global_name, username, identifier, custom_status, status, avatar); 
 
                 return true;
             }

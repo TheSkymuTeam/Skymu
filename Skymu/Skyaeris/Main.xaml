@@ -755,7 +755,7 @@ Width="12" Height="12">
                         </Grid>
                         <Border Grid.Row="1" Background="#FFF" BorderBrush="#26000000" BorderThickness="1,0,1,1" CornerRadius="0,0,4,4">
                             <Grid>
-                                <WebBrowser x:Name="Browser" Grid.Row="1" Visibility="Collapsed"/>
+                                <WebBrowser x:Name="browser" Grid.Row="1" Visibility="Collapsed"/>
                                 <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                     <ContentControl.Resources>
                                         <DataTemplate DataType="{x:Type plugin:DirectMessage}">
