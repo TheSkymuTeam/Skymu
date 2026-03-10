@@ -25,8 +25,6 @@ namespace Discord.Classes
 {
     internal static class HelperMethods
     {
-        internal static readonly API api = new API();
-
         // Global avatar size used for fetching the profile pictures
         private const int AVATAR_SIZE = 128;
 
@@ -65,7 +63,7 @@ namespace Discord.Classes
             byte[] data = null;
             try
             {
-                using var stream = await API.client.GetStreamAsync(url).ConfigureAwait(false);
+                using var stream = await Core.api.client.GetStreamAsync(url).ConfigureAwait(false);
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 data = ms.ToArray();
@@ -104,7 +102,7 @@ namespace Discord.Classes
             string apiUri = $"/users/{id}/profile";
             Debug.WriteLine($"The API endpoint used is {apiUri}");
 
-            string userData = await api.SendAPI(apiUri, HttpMethod.Get, token, null, null, null, null);
+            string userData = await Core.api.SendAPI(apiUri, HttpMethod.Get, token, null, null, null, null);
             Debug.WriteLine($"The response sent back from the API is: {userData}");
 
             try

@@ -8,12 +8,10 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
-
-/*==========================================================*/
 // Important Notice
 /*==========================================================*/
-// Full credits go to the Skyperious team for their extensive
-// documentation of the Skype SQL database format.
+// Full credits go to Erki Suurjaak, Skyperious, for his
+// extensive documentation of the Skype SQL database format.
 // This is simply a port of their own implementation.
 // Heads up: This database includes over 90% redundant
 // columns and all tables except 5 are redundant, this
@@ -21,8 +19,9 @@
 // It basically tries to impersonate a Skype database. 
 /*==========================================================*/
 // Some new columns have been added, though, such as:
-// username (for storage of mutable username; skypename is now used for the identifier)
-// plugin (plugin this account is associated with)
+// username (for storage of a mutable username; skypename is
+// now used for the identifier, as tools expect immutability)
+// and plugin (plugin this account is associated with)
 // This has been done to make sure that Skymu doesn't cause
 // incompatibiliies with old Skype database-reading software.
 /*==========================================================*/
@@ -31,7 +30,6 @@ using Microsoft.Data.Sqlite;
 using MiddleMan;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Skymu
 {
@@ -39,7 +37,7 @@ namespace Skymu
     {
         private static readonly string DbPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Skymu", "main.db");
+            "Skymu", "main.db"); // this may be changed to be plugin specific somehow in the future
 
         private static string PluginName => Universal.Plugin?.InternalName ?? "unknown";
 
@@ -1124,19 +1122,19 @@ namespace Skymu
                                     continue;
 
                                 string identifier = (conversation is DirectMessage dmId)
-                                    ? dmId.RemoteUser?.Identifier
+                                    ? dmId.ConversationPartner?.Identifier
                                     : conversation.Identifier;
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
                                 cmd.Parameters["@type"].Value = 1;
                                 cmd.Parameters["@skypename"].Value = (object)identifier ?? DBNull.Value;
-                                cmd.Parameters["@username"].Value = (object)dm.RemoteUser?.Username ?? DBNull.Value;
+                                cmd.Parameters["@username"].Value = (object)dm.ConversationPartner?.Username ?? DBNull.Value;
                                 cmd.Parameters["@pstnnumber"].Value = DBNull.Value;
-                                cmd.Parameters["@fullname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@displayname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@given_displayname"].Value = (object)dm.RemoteUser?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@avatar_image"].Value = (object)dm.RemoteUser?.ProfilePicture ?? DBNull.Value;
-                                cmd.Parameters["@mood_text"].Value = (object)dm.RemoteUser?.Status ?? DBNull.Value;
+                                cmd.Parameters["@fullname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@displayname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@given_displayname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@avatar_image"].Value = (object)dm.ConversationPartner?.ProfilePicture ?? DBNull.Value;
+                                cmd.Parameters["@mood_text"].Value = (object)dm.ConversationPartner?.Status ?? DBNull.Value;
                                 cmd.Parameters["@isauthorized"].Value = 1;
                                 cmd.Parameters["@isblocked"].Value = 0;
                                 cmd.Parameters["@buddystatus"].Value = 2;
@@ -1214,8 +1212,8 @@ namespace Skymu
 
                                 if (conversation is DirectMessage dm)
                                 {
-                                    dialogPartner = dm.RemoteUser?.Username;
-                                    dialogPartnerId = dm.RemoteUser?.Identifier;
+                                    dialogPartner = dm.ConversationPartner?.Username;
+                                    dialogPartnerId = dm.ConversationPartner?.Identifier;
                                 }
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
@@ -1286,7 +1284,7 @@ namespace Skymu
                                 if (conversation is Group group)
                                     members = group.Members;
                                 else if (conversation is DirectMessage dm)
-                                    members = dm.RemoteUser != null ? new[] { dm.RemoteUser } : null;
+                                    members = dm.ConversationPartner != null ? new[] { dm.ConversationPartner } : null;
 
                                 if (members == null)
                                     continue;
@@ -1298,7 +1296,7 @@ namespace Skymu
 
                                     cmd.Parameters["@convo_id"].Value = convoId;
                                     cmd.Parameters["@identity"].Value = member.Identifier;
-                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member
+                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member, CHANGE LATER for roles
                                     cmd.ExecuteNonQuery();
                                 }
                             }
@@ -1323,21 +1321,21 @@ namespace Skymu
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    // Resolve the integer convo_id from the Conversations table
-                    long convoId = 0;
+                    // resolve the increm id from the Conversations table
+                    long conversation_incremental_id = 0;
                     using (SqliteCommand idCmd = connection.CreateCommand())
                     {
                         idCmd.CommandText = "SELECT id FROM Conversations WHERE identity = @identity LIMIT 1;";
                         idCmd.Parameters.Add("@identity", SqliteType.Text).Value = (object)conversation.Identifier ?? DBNull.Value;
                         object result = idCmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value)
-                            convoId = Convert.ToInt64(result);
+                            conversation_incremental_id = Convert.ToInt64(result);
                     }
 
                     string dialogPartner = null;
                     if (conversation is DirectMessage dm)
                     {
-                        dialogPartner = dm.RemoteUser?.Identifier;
+                        dialogPartner = dm.ConversationPartner?.Identifier;
                     }
 
                     SqliteTransaction transaction = connection.BeginTransaction();
@@ -1404,7 +1402,7 @@ namespace Skymu
                                     cmd.Parameters["@chatmsg_type"].Value = hasFile ? 7 : 3;
                                     cmd.Parameters["@body_xml"].Value = (object)message.Text ?? DBNull.Value;
                                     cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
-                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = hasFile ? 68 : 61;
                                     cmd.Parameters["@pk_id"].Value = (object)message.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
@@ -1423,7 +1421,7 @@ namespace Skymu
                                     cmd.Parameters["@chatmsg_type"].Value = 18;
                                     cmd.Parameters["@body_xml"].Value = DBNull.Value;
                                     cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
-                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = 30;
                                     cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
@@ -1442,7 +1440,7 @@ namespace Skymu
                                     cmd.Parameters["@chatmsg_type"].Value = 18;
                                     cmd.Parameters["@body_xml"].Value = callEnded.Duration.ToString();
                                     cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
-                                    cmd.Parameters["@convo_id"].Value = convoId;
+                                    cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = 39;
                                     cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
@@ -1456,7 +1454,7 @@ namespace Skymu
                             }
                         }
 
-                        // Update last_message_id and last_activity_timestamp on the parent conversation
+                        // update things on the parent conversation
                         if (items.Length > 0)
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
@@ -1467,7 +1465,7 @@ namespace Skymu
                                     SET last_message_id         = (SELECT id FROM Messages WHERE convo_id = @convo_id ORDER BY timestamp DESC LIMIT 1),
                                         last_activity_timestamp = @last_activity_timestamp
                                     WHERE identity = @identity;";
-                                updateCmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = convoId;
+                                updateCmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = conversation_incremental_id;
                                 updateCmd.Parameters.Add("@last_activity_timestamp", SqliteType.Integer).Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                                 updateCmd.Parameters.Add("@identity", SqliteType.Text).Value = (object)conversation.Identifier ?? DBNull.Value;
                                 updateCmd.ExecuteNonQuery();

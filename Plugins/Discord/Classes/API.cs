@@ -25,20 +25,20 @@ namespace Discord.Classes
 {
     internal class API 
     {
-        private static readonly ConfigMgr configMgr = new ConfigMgr();
+        private readonly ConfigMgr configMgr = new ConfigMgr();
 
-        internal static readonly HttpClient client;
+        // Reuse client (less memory usage)
+        internal readonly HttpClient client;
 
         // Configuration (Firefox 115 ESR on Windows 10)
-        public static string XSuperProperties = null;
-        public static readonly string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
+        public string XSuperProperties = null;
+        public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
 
-        static API()
+        internal API()
         {
             var handler = new HttpClientHandler();
             ServicePointManager.DefaultConnectionLimit = 10;
 
-            // Re-used client (Less memory usage)
             client = new HttpClient(handler);
 
             // Set default headers once
