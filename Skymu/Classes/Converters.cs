@@ -352,6 +352,27 @@ namespace Skymu.Converters
         }
     }
 
+    public class CompactConversationTypeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is DirectMessage dm)
+            {
+                return Main.GetIntFromStatus(dm.ConversationPartner.PresenceStatus);
+            }
+            else if (value is Group)
+            {
+                return 21; // group icon index
+            }
+            return 0; // unknown status icon index
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return Binding.DoNothing;
+        }
+    }
+
     class Helpers
     {
         internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared)

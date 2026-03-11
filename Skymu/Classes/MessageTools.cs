@@ -737,6 +737,8 @@ namespace Skymu
                 Skyaeris.Main.ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
+                    UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
+
                     if (message.Sender.Identifier != Skyaeris.Main.CurrentUser?.Identifier)
                     {
                         if (!Skyaeris.Main.IsWindowActive || Skyaeris.Main.SelectedConversation?.Identifier != e.ConversationId)
@@ -784,6 +786,15 @@ namespace Skymu
                     Skyaeris.Main.ActiveConversation.Insert(insertIndex, edited_msg);
                 }
             }
+        }
+
+        private static void UpdateRecentsListOnNewMessage(string conversationId, DateTime messageTimestamp)
+        {
+            var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c => c.Identifier == conversationId);
+            if (conversation == null) return;
+
+            conversation.LastMessageTime = messageTimestamp;
+            Skyaeris.Main.RefreshCompactRecentsView();
         }
     }
 
