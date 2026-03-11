@@ -269,7 +269,9 @@ namespace Discord
         }
 
         public Task<SavedCredential> StoreCredential()
-            => Task.FromResult(new SavedCredential(_currentUser.Username, DscToken, AuthenticationMethod.Token));
+        {
+            return Task.FromResult(new SavedCredential(_currentUser, DscToken, AuthenticationMethod.Token, InternalName));
+        }
 
         public async Task<LoginResult> StartClient()
         {
@@ -278,7 +280,13 @@ namespace Discord
             {
                 // Parse and store details
                 var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
-                _currentUser = new User(null, parsedUser["username"]?.GetValue<string>() ?? "Anonymous", null); // temp just for StoreCredential
+
+                string id = parsedUser["id"]?.GetValue<string>();
+                string username = parsedUser["username"]?.GetValue<string>() ?? "Anonymous";
+                string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
+                string avatarHash = parsedUser["avatar"]?.GetValue<string>();
+                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
+                _currentUser = new User(displayName, username, id, null, UserConnectionStatus.Offline, avatar); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
@@ -336,15 +344,11 @@ namespace Discord
                     return false;
                 }
 
-                string global_name = parsedDetails["global_name"]?.GetValue<string>() ?? parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
-                string username = parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
-                string identifier = parsedDetails["id"]?.GetValue<string>();
-                string avatarHash = parsedDetails["avatar"]?.GetValue<string>();
-                UserConnectionStatus status = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
-                string custom_status = UserStore.Get(identifier)?.Status;
-                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(identifier, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
 
-                MyInformation = _currentUser = new User(global_name, username, identifier, custom_status, status, avatar); 
+                _currentUser.PresenceStatus = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
+                _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
+
+                MyInformation = _currentUser; 
 
                 return true;
             }
@@ -667,20 +671,10 @@ namespace Discord
             return await UpdateProtoSettings(settings); // try push
         }
 
-        private DateTime GetTimestampFromSnowflake(string snowflake)
-        {
-            if (string.IsNullOrEmpty(snowflake) || !long.TryParse(snowflake, out long snowflakeId))
-                return DateTime.MinValue;
-
-            const long discordEpoch = 1420070400000L;
-            long timestamp = (snowflakeId >> 22) + discordEpoch;
-            return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
-        }
-
         private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
         {
-            // Ignore other channels
-            if (e.ChannelId != _activeChannelId)
+            // Ignore if shouldn't notify
+            if (!ShouldNotify(e))
                 return;
 
             _uiContext?.Post(_ =>
