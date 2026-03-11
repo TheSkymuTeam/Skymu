@@ -40,7 +40,7 @@ namespace Skymu
                 _browser.Dispatcher.Invoke(() =>
                 {
                     foreach (var dm in contacts)
-                        InjectAvatar(dm.ConversationPartner.Username, dm.ConversationPartner.ProfilePicture);
+                        InjectAvatar(dm.Partner.Username, dm.Partner.ProfilePicture);
                 });
             }
 
@@ -151,7 +151,7 @@ namespace Skymu
                 {
                     items.Add(new UserEntry
                     {
-                        Handle = dm.ConversationPartner.Username,
+                        Handle = dm.Partner.Username,
                         Popularity = 1
                     });
                 }
@@ -323,7 +323,7 @@ namespace Skymu
             {
                 foreach (var dm in _contacts)
                 {
-                    var p = dm.ConversationPartner;
+                    var p = dm.Partner;
                     if (p.Username == _skypename && !string.IsNullOrEmpty(p.DisplayName))
                         return p.DisplayName;
                 }

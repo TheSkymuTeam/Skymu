@@ -358,7 +358,7 @@ namespace Skymu.Converters
         {
             if (value is DirectMessage dm)
             {
-                return Main.GetIntFromStatus(dm.ConversationPartner.PresenceStatus);
+                return Main.GetIntFromStatus(dm.Partner.PresenceStatus);
             }
             else if (value is Group)
             {

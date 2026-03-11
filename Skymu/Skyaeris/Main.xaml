@@ -95,11 +95,11 @@
                         </Grid>
                     </Border>
                 </Grid>
-                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
+                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding Partner.PresenceStatus,
                 Converter={StaticResource PresenceStatusConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
                 <!-- Name + status text -->
                 <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
-                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding RemoteUser.Status, TargetNullValue=''}"/>
+                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding Partner.Status, TargetNullValue=''}"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsSelected,
@@ -281,7 +281,7 @@ Width="12" Height="12">
                     <ColumnDefinition Width="18"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <global:SliceControl Grid.Column="0" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding ConversationPartner.PresenceStatus, Converter={StaticResource PresenceStatusConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14" Height="14"/>
+                <global:SliceControl Grid.Column="0" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding Partner.PresenceStatus, Converter={StaticResource PresenceStatusConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14" Height="14"/>
                 <TextBlock x:Name="compactName" Grid.Column="1" Text="{Binding DisplayName}" FontFamily="Tahoma" FontSize="11" VerticalAlignment="Center" Margin="6,0,0,0" TextTrimming="CharacterEllipsis"/>
             </Grid>
             <DataTemplate.Triggers>
@@ -823,9 +823,9 @@ Width="12" Height="12">
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <global:SliceControl Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
+                                                    <global:SliceControl Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding Partner.PresenceStatus,
                             Converter={StaticResource PresenceStatusConverter}}" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
-                                                    <TextBlock Margin="9,0,0,0" Text="{Binding RemoteUser.PresenceStatus,
+                                                    <TextBlock Margin="9,0,0,0" Text="{Binding Partner.PresenceStatus,
                                    Converter={StaticResource StatIntToText}}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
                                             </Grid>

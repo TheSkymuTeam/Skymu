@@ -1130,19 +1130,19 @@ namespace Skymu
                                     continue;
 
                                 string identifier = (conversation is DirectMessage dmId)
-                                    ? dmId.ConversationPartner?.Identifier
+                                    ? dmId.Partner?.Identifier
                                     : conversation.Identifier;
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
                                 cmd.Parameters["@type"].Value = 1;
                                 cmd.Parameters["@skypename"].Value = (object)identifier ?? DBNull.Value;
-                                cmd.Parameters["@username"].Value = (object)dm.ConversationPartner?.Username ?? DBNull.Value;
+                                cmd.Parameters["@username"].Value = (object)dm.Partner?.Username ?? DBNull.Value;
                                 cmd.Parameters["@pstnnumber"].Value = DBNull.Value;
-                                cmd.Parameters["@fullname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@displayname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@given_displayname"].Value = (object)dm.ConversationPartner?.DisplayName ?? DBNull.Value;
-                                cmd.Parameters["@avatar_image"].Value = (object)dm.ConversationPartner?.ProfilePicture ?? DBNull.Value;
-                                cmd.Parameters["@mood_text"].Value = (object)dm.ConversationPartner?.Status ?? DBNull.Value;
+                                cmd.Parameters["@fullname"].Value = (object)dm.Partner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@displayname"].Value = (object)dm.Partner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@given_displayname"].Value = (object)dm.Partner?.DisplayName ?? DBNull.Value;
+                                cmd.Parameters["@avatar_image"].Value = (object)dm.Partner?.ProfilePicture ?? DBNull.Value;
+                                cmd.Parameters["@mood_text"].Value = (object)dm.Partner?.Status ?? DBNull.Value;
                                 cmd.Parameters["@isauthorized"].Value = 1;
                                 cmd.Parameters["@isblocked"].Value = 0;
                                 cmd.Parameters["@buddystatus"].Value = 2;
@@ -1222,8 +1222,8 @@ namespace Skymu
 
                                 if (conversation is DirectMessage dm)
                                 {
-                                    dialogPartner = dm.ConversationPartner?.Username;
-                                    dialogPartnerId = dm.ConversationPartner?.Identifier;
+                                    dialogPartner = dm.Partner?.Username;
+                                    dialogPartnerId = dm.Partner?.Identifier;
                                 }
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
@@ -1296,7 +1296,7 @@ namespace Skymu
                                 if (conversation is Group group)
                                     members = group.Members;
                                 else if (conversation is DirectMessage dm)
-                                    members = dm.ConversationPartner != null ? new[] { dm.ConversationPartner } : null;
+                                    members = dm.Partner != null ? new[] { dm.Partner } : null;
 
                                 if (members == null)
                                     continue;
@@ -1348,7 +1348,7 @@ namespace Skymu
                     string dialogPartner = null;
                     if (conversation is DirectMessage dm)
                     {
-                        dialogPartner = dm.ConversationPartner?.Identifier;
+                        dialogPartner = dm.Partner?.Identifier;
                     }
 
                     SqliteTransaction transaction = connection.BeginTransaction();
