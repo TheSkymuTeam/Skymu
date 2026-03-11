@@ -29,7 +29,7 @@ namespace Installers
         #region Constructor
         private ButtonVisualState _visualState = ButtonVisualState.Default;
         private static DispatcherTimer _sharedAnimationTimer;
-        private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
+        private static HashSet<WeakReference<SliceControl>> _animatingControls = new HashSet<WeakReference<SliceControl>>();
         private int _currentAnimationFrame = 0;
         private double _frameAccumulator = 0;
 
@@ -93,10 +93,9 @@ namespace Installers
             IsEnabledChanged += (s, e) =>
             {
                 UpdateHitTestState();
-
                 if (!IsEnabled)
                 {
-                    _animatingControls.Remove(this);
+                    _animatingControls.RemoveWhere(wr => !wr.TryGetTarget(out var t) || t == this);
                     if (_animatingControls.Count == 0)
                         _sharedAnimationTimer?.Stop();
                     SetStateInternal(ButtonVisualState.Disabled);
@@ -115,10 +114,12 @@ namespace Installers
                 _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // ~60 FPS base tick rate
                 _sharedAnimationTimer.Tick += (s, e) =>
                 {
-                    double deltaTime = 16.67 / 1000.0; // Time per tick in seconds
+                    double deltaTime = 16.67 / 1000.0;
+                    _animatingControls.RemoveWhere(wr => !wr.TryGetTarget(out _)); // clean up dead refs
 
-                    foreach (var control in _animatingControls.ToList())
+                    foreach (var wr in _animatingControls)
                     {
+                        if (!wr.TryGetTarget(out var control)) continue;
                         if (control.AnimationFps <= 0) continue;
 
                         control._frameAccumulator += deltaTime * control.AnimationFps;
@@ -127,11 +128,9 @@ namespace Installers
                         {
                             int framesToAdvance = (int)control._frameAccumulator;
                             control._frameAccumulator -= framesToAdvance;
-
                             control._currentAnimationFrame += framesToAdvance;
                             if (control._currentAnimationFrame >= control.ElementCount)
                                 control._currentAnimationFrame %= control.ElementCount;
-
                             control.UpdateSlices();
                         }
                     }
@@ -147,7 +146,7 @@ namespace Installers
 
             Unloaded += (s, e) =>
             {
-                _animatingControls.Remove(this);
+                _animatingControls.RemoveWhere(wr => !wr.TryGetTarget(out var t) || t == this);
                 if (_animatingControls.Count == 0)
                     _sharedAnimationTimer?.Stop();
             };
@@ -365,13 +364,13 @@ namespace Installers
 
         private void UpdateAnimation()
         {
-            _animatingControls.Remove(this);
+            _animatingControls.RemoveWhere(wr => !wr.TryGetTarget(out var t) || t == this);
 
             if (IsEnabled && IsAnimation && AnimationFps > 0)
             {
                 _currentAnimationFrame = 0;
                 _frameAccumulator = 0;
-                _animatingControls.Add(this);
+                _animatingControls.Add(new WeakReference<SliceControl>(this));
 
                 if (!_sharedAnimationTimer.IsEnabled)
                     _sharedAnimationTimer.Start();
