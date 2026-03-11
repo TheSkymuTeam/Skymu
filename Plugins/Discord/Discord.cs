@@ -402,8 +402,10 @@ namespace Discord
 
                         var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
+
                         if (lType == ListType.Recents)
-                            RecentsList.Add(new DirectMessage(profileData, 0, channelId));
+                            RecentsList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
                         else
                             ContactsList.Add(new DirectMessage(profileData, 0, channelId));
                     }
@@ -456,7 +458,9 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
-                        var profileData = new Group(groupName, channelId, 0, members, avatarImage);
+
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
+                        var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -661,6 +665,16 @@ namespace Discord
 
             settings.Status.CustomStatus.Text = status; // set text of status
             return await UpdateProtoSettings(settings); // try push
+        }
+
+        private DateTime GetTimestampFromSnowflake(string snowflake)
+        {
+            if (string.IsNullOrEmpty(snowflake) || !long.TryParse(snowflake, out long snowflakeId))
+                return DateTime.MinValue;
+
+            const long discordEpoch = 1420070400000L;
+            long timestamp = (snowflakeId >> 22) + discordEpoch;
+            return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
         }
 
         private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)

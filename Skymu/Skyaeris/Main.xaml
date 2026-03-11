@@ -24,6 +24,7 @@
         <converters:TextStatusConverter x:Key="TextStatusConverter"/>
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter"/>
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter"/>
+        <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter"/>
         <converters:FormatFullTextConverter
     x:Key="FormatFullTextConverter"
     ViewerStyle="{StaticResource TextBlockViewerStyle}" />
@@ -94,11 +95,11 @@
                         </Grid>
                     </Border>
                 </Grid>
-                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding ConversationPartner.PresenceStatus,
+                <global:SliceControl Grid.Column="1" Grid.Row="1" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
                 Converter={StaticResource PresenceStatusConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
                 <!-- Name + status text -->
                 <TextBlock x:Name="usernameText" Grid.Column="2" Grid.Row="1" Margin="10,0,0,0" Text="{Binding DisplayName}" Style="{StaticResource ContactUsernameStyle}"/>
-                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding ConversationPartner.Status, TargetNullValue=''}"/>
+                <TextBlock x:Name="statusText" Grid.Column="2" Grid.Row="2" Margin="10,1,0,0" Style="{StaticResource ContactStatusStyle}" Text="{Binding RemoteUser.Status, TargetNullValue=''}"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsSelected,
@@ -268,6 +269,43 @@ Width="12" Height="12">
             </DataTemplate.Triggers>
         </DataTemplate>
         <!-- CONTACT ITEM TEMPLATE END -->
+        <!-- COMPACT RECENTS TEMPLATES START -->
+        <DataTemplate x:Key="DateHeaderTemplate" DataType="{x:Type global:DateHeaderItem}">
+            <Border Background="#F0F0F0" Padding="8,4" Margin="0">
+                <TextBlock Text="{Binding DateText}" FontFamily="Tahoma" FontSize="11" Foreground="#000000"/>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type plugin:DirectMessage}">
+            <Grid Margin="8,1" Height="22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <global:SliceControl Grid.Column="0" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding ConversationPartner.PresenceStatus, Converter={StaticResource PresenceStatusConverter}}" HorizontalAlignment="Left" VerticalAlignment="Center" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14" Height="14"/>
+                <TextBlock x:Name="compactName" Grid.Column="1" Text="{Binding DisplayName}" FontFamily="Tahoma" FontSize="11" VerticalAlignment="Center" Margin="6,0,0,0" TextTrimming="CharacterEllipsis"/>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter TargetName="compactName" Property="Foreground" Value="White"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type plugin:Group}">
+            <Grid Margin="8,1" Height="22">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="18"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <global:SliceControl Grid.Column="0" Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="21" HorizontalAlignment="Left" VerticalAlignment="Center" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14" Height="14"/>
+                <TextBlock x:Name="compactGroupName" Grid.Column="1" Text="{Binding DisplayName}" FontFamily="Tahoma" FontSize="11" VerticalAlignment="Center" Margin="6,0,0,0" TextTrimming="CharacterEllipsis"/>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                    <Setter TargetName="compactGroupName" Property="Foreground" Value="White"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <!-- COMPACT RECENTS TEMPLATES END -->
         <!-- CONVERSATION ITEM TEMPLATES START -->
         <!-- MessageItem Template -->
         <DataTemplate DataType="{x:Type plugin:Message}">
@@ -623,6 +661,8 @@ Width="12" Height="12">
                                         <Style TargetType="ListBoxItem">
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                             <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Focusable" Value="True"/>
+                                            <Setter Property="IsEnabled" Value="True"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListBoxItem">
@@ -637,6 +677,10 @@ Width="12" Height="12">
                                                                     </Setter.Value>
                                                                 </Setter>
                                                             </Trigger>
+                                                            <DataTrigger Binding="{Binding}" Value="{x:Type global:DateHeaderItem}">
+                                                                <Setter Property="Focusable" Value="False"/>
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
                                                         </ControlTemplate.Triggers>
                                                     </ControlTemplate>
                                                 </Setter.Value>
@@ -777,9 +821,9 @@ Width="12" Height="12">
                                                     </Image.Effect>
                                                 </Image>
                                                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Margin="125,0,0,0">
-                                                    <global:SliceControl Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding ConversationPartner.PresenceStatus,
+                                                    <global:SliceControl Source="Assets/Universal/Icon Bitmap/skype-status-small.png" ElementCount="22" StackDirection="Horizontal" DefaultIndex="{Binding RemoteUser.PresenceStatus,
                             Converter={StaticResource PresenceStatusConverter}}" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
-                                                    <TextBlock Margin="9,0,0,0" Text="{Binding ConversationPartner.PresenceStatus,
+                                                    <TextBlock Margin="9,0,0,0" Text="{Binding RemoteUser.PresenceStatus,
                                    Converter={StaticResource StatIntToText}}" FontSize="11" FontFamily="Tahoma" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
                                             </Grid>
