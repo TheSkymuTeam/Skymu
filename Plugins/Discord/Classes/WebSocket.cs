@@ -272,10 +272,8 @@ namespace Discord.Classes
                                 _privateChannelsJson = readyData["private_channels"]?.ToJsonString() ?? "[]"; // Store as strings to save memory
                                 _guildsJson = readyData["guilds"]?.ToJsonString() ?? "[]";
                                 //_recipientsJson = readyData["relationships"]?.ToJsonString() ?? "[]"; // unused in code as of yet. TODO: add friends list
-
                                 readyData = null;
                                 json = null;
-                                GC.Collect(); // force collection of the massive READY payload
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "READY_SUPPLEMENTAL":

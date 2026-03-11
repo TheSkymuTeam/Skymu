@@ -33,14 +33,34 @@ using System.IO;
 
 namespace Skymu
 {
-    internal class Database
+    internal class DatabaseManager
     {
-        private static string DbPath;
-        private static string PluginName => Universal.Plugin?.InternalName ?? "unknown";
+        public DatabaseManager(User user)
+        {
+            DbPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "Skymu", Universal.Plugin.InternalName + " (" + user.Identifier + ")", "main.db"); 
 
-        private static bool _tablesEnsured = false;
+            Accounts = new AccountsTable(this);
+            Contacts = new ContactsTable(this);
+            Conversations = new ConversationsTable(this);
+            Participants = new ParticipantsTable(this);
+            Messages = new MessagesTable(this);
 
-        private static SqliteConnection CreateConnection()
+            using (SqliteConnection connection = CreateConnection())
+            {
+                EnsureTablesInternal(connection);
+            }
+        }
+
+        private string DbPath;
+        public AccountsTable Accounts { get; private set; }
+        public ContactsTable Contacts { get; private set; }
+        public ConversationsTable Conversations { get; private set; }
+        public ParticipantsTable Participants { get; private set; }
+        public MessagesTable Messages { get; private set; }
+
+        private SqliteConnection CreateConnection()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(DbPath));
             SqliteConnection connection = new SqliteConnection($"Data Source={DbPath}");
@@ -48,23 +68,7 @@ namespace Skymu
             return connection;
         }
 
-        public static void Init(User user)
-        {
-            DbPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Skymu", Universal.Plugin.InternalName + " (" + user.Identifier + ")", "main.db"); 
-            if (_tablesEnsured)
-                return;
-
-            using (SqliteConnection connection = CreateConnection())
-            {
-                EnsureTablesInternal(connection);
-            }
-
-            _tablesEnsured = true;
-        }
-
-        private static void EnsureTablesInternal(SqliteConnection connection)
+        private void EnsureTablesInternal(SqliteConnection connection)
         {
             using (SqliteCommand cmd = connection.CreateCommand())
             {
@@ -969,11 +973,13 @@ namespace Skymu
             }
         }
 
-        public static class Accounts
+        public class AccountsTable
         {
-            public static bool Write(User user)
+            private readonly DatabaseManager _db;
+            public AccountsTable(DatabaseManager db) { _db = db; }
+            public bool Write(User user)
             {
-                using (SqliteConnection connection = CreateConnection())
+                using (SqliteConnection connection = _db.CreateConnection())
                 {
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
@@ -1035,7 +1041,7 @@ namespace Skymu
                             cmd.Parameters.Add("@liveid_membername", SqliteType.Text).Value = (object)user.Username ?? DBNull.Value;
                             cmd.Parameters.Add("@availability", SqliteType.Integer).Value = DBNull.Value;
                             cmd.Parameters.Add("@lastonline_timestamp", SqliteType.Integer).Value = DBNull.Value;
-                            cmd.Parameters.Add("@plugin", SqliteType.Text).Value = PluginName;
+                            cmd.Parameters.Add("@plugin", SqliteType.Text).Value = Universal.Plugin.InternalName;
 
                             cmd.ExecuteNonQuery();
                         }
@@ -1053,11 +1059,13 @@ namespace Skymu
             }
         }
 
-        public static class Contacts
+        public class ContactsTable
         {
-            public static bool Write(Conversation[] conversations)
+            private readonly DatabaseManager _db;
+            public ContactsTable(DatabaseManager db) { _db = db; }
+            public bool Write(Conversation[] conversations)
             {
-                using (SqliteConnection connection = CreateConnection())
+                using (SqliteConnection connection = _db.CreateConnection())
                 {
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
@@ -1156,11 +1164,13 @@ namespace Skymu
             }
         }
 
-        public static class Conversations
+        public class ConversationsTable
         {
-            public static bool Write(Conversation[] conversations)
+            private readonly DatabaseManager _db;
+            public ConversationsTable(DatabaseManager db) { _db = db; }
+            public bool Write(Conversation[] conversations)
             {
-                using (SqliteConnection connection = CreateConnection())
+                using (SqliteConnection connection = _db.CreateConnection())
                 {
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
@@ -1238,16 +1248,18 @@ namespace Skymu
                     }
                 }
 
-                Database.Participants.Write(conversations); // need this for members of groups lol
+                _db.Participants.Write(conversations); // need this for members of groups lol
                 return true;
             }
         }
 
-        public static class Participants
+        public class ParticipantsTable
         {
-            public static bool Write(Conversation[] conversations)
+            private readonly DatabaseManager _db;
+            public ParticipantsTable(DatabaseManager db) { _db = db; }
+            public bool Write(Conversation[] conversations)
             {
-                using (SqliteConnection connection = CreateConnection())
+                using (SqliteConnection connection = _db.CreateConnection())
                 {
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
@@ -1315,11 +1327,13 @@ namespace Skymu
             }
         }
 
-        public static class Messages
+        public class MessagesTable
         {
-            public static bool Write(ConversationItem[] items, Conversation conversation)
+            private readonly DatabaseManager _db;
+            public MessagesTable(DatabaseManager db) { _db = db; }
+            public bool Write(ConversationItem[] items, Conversation conversation)
             {
-                using (SqliteConnection connection = CreateConnection())
+                using (SqliteConnection connection = _db.CreateConnection())
                 {
                     long conversation_incremental_id = 0;
                     using (SqliteCommand idCmd = connection.CreateCommand())

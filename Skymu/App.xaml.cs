@@ -114,8 +114,6 @@ namespace Skymu
 
         public async static void Terminate()
         {
-            try { await UserCountAPI.CloseWS(); } // this just sets the status to offline for the server to get the memo
-            catch { } // in case it couldn't close the websocket due to some problem
             Tray.DisposeIcon();
             Application.Current.Shutdown();
         }
@@ -212,6 +210,8 @@ namespace Skymu
 
         protected override void OnExit(ExitEventArgs ev)
         {
+            try { _ = UserCountAPI.CloseWS(); } // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+            catch { }                           // If it doesn't work, too bad.
             if (HasLoggedIn) Sounds.PlaySynchronous("logout");
             base.OnExit(ev);
         }

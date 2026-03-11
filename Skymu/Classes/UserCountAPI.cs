@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Skymu
 {
-    internal static  class UserCountAPI
+    internal static class UserCountAPI
     {
         private static readonly string DOMAIN_NAME = "skymu.kier.ovh";
         public static readonly string WS_URL = $"wss://{DOMAIN_NAME}/ws";

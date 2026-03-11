@@ -50,6 +50,9 @@ namespace Skymu.Skyaeris
 
         // Other file-level variables
         internal static ObservableCollection<ConversationItem> ActiveConversation = new ObservableCollection<ConversationItem>();
+        private DatabaseManager Database;
+        private Action<int> _userCountHandler;
+        private NotifyCollectionChangedEventHandler _conversationItemsChangedHandler;
         private readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         internal static BitmapImage AnonymousAvatar;
@@ -445,7 +448,7 @@ namespace Skymu.Skyaeris
             await Universal.Plugin.PopulateRecentsList();
             CurrentUser = Universal.Plugin.MyInformation;
 
-            Database.Init(CurrentUser);
+            Database = new DatabaseManager(CurrentUser);
             Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
 
@@ -455,13 +458,19 @@ namespace Skymu.Skyaeris
             if (Properties.Settings.Default.EnableSkypeHome)
                 SkypeHome.Generate(browser, CurrentUser, Universal.Plugin.ContactsList.ToArray()); // can be static cos browser is an object so sign out -> sign in still disposes it
             _ = SkymuApiStatusHandler(); // DO NOT AWAIT THIS!!!!!!
-            UserCountAPI.OnUserCountUpdate += usrCount =>
+
+            if (_userCountHandler != null)
+                UserCountAPI.OnUserCountUpdate -= _userCountHandler;
+
+            _userCountHandler = usrCount =>
             {
                 Dispatcher.Invoke(() =>
                 {
                     GlobalUserCount.Text = Universal.Lang.Format("sTOTAL_USERS_ONLINE", usrCount);
                 });
             };
+
+            UserCountAPI.OnUserCountUpdate += _userCountHandler;
 
             WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + CurrentUser.Username;
             this.Title = WindowTitle;
@@ -1227,7 +1236,10 @@ namespace Skymu.Skyaeris
 
             if (listBox.Items is INotifyCollectionChanged notifyCollection)
             {
-                notifyCollection.CollectionChanged += (s, args) =>
+                if (_conversationItemsChangedHandler != null)
+                    notifyCollection.CollectionChanged -= _conversationItemsChangedHandler;
+
+                _conversationItemsChangedHandler += (s, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Add)
                     {
@@ -1288,6 +1300,8 @@ namespace Skymu.Skyaeris
                     Dispatcher.BeginInvoke(DispatcherPriority.Background,
                         new Action(() => ScrollToBottom(listBox)));
                 };
+
+                notifyCollection.CollectionChanged += _conversationItemsChangedHandler;
             }
         }
 
