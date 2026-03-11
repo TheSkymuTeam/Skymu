@@ -1296,7 +1296,7 @@ namespace Skymu
 
                                     cmd.Parameters["@convo_id"].Value = convoId;
                                     cmd.Parameters["@identity"].Value = member.Identifier;
-                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member, CHANGE LATER for roles
+                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member. TODO: CHANGE LATER for server roles
                                     cmd.ExecuteNonQuery();
                                 }
                             }
@@ -1321,7 +1321,6 @@ namespace Skymu
             {
                 using (SqliteConnection connection = CreateConnection())
                 {
-                    // resolve the increm id from the Conversations table
                     long conversation_incremental_id = 0;
                     using (SqliteCommand idCmd = connection.CreateCommand())
                     {

@@ -265,16 +265,16 @@ namespace MiddleMan
 
     public class SavedCredential
     {
-        public string Username { get; }
-        public byte[] ProfilePicture { get; }
+        public User User { get; }
         public string PasswordOrToken { get; }
+        public string Plugin { get; }
         public AuthenticationMethod AuthenticationType { get; }
-        public SavedCredential(string username, string password_or_token, AuthenticationMethod authentication_type, byte[] profile_picture = null)
+        public SavedCredential(User user, string password_or_token, AuthenticationMethod authentication_type, string plugin)
         {
-            Username = username;
+            User = user;
             PasswordOrToken = password_or_token;
             AuthenticationType = authentication_type;
-            ProfilePicture = profile_picture;
+            Plugin = plugin;
         }
     }
 

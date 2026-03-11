@@ -135,6 +135,8 @@ namespace Skymu
             if (!ldict.TryGetValue(key, out var value))
                 return key;
 
+            value = value.Replace("%%", "%");
+
             int index = 0;
             value = System.Text.RegularExpressions.Regex.Replace(
                 value,

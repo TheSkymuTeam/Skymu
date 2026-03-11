@@ -63,13 +63,14 @@ namespace Discord.Classes
 
         public static JsonArray GetPrivateChannels()
         {
-            return Socket?.privateChannelsData as JsonArray
-                   ?? new JsonArray();
+            string json = Socket?._privateChannelsJson ?? "[]";
+            return JsonNode.Parse(json) as JsonArray ?? new JsonArray();
         }
 
         public static JsonArray GetGuilds()
         {
-            return Socket?.guildsData as JsonArray ?? new JsonArray();
+            string json = Socket?._guildsJson ?? "[]";
+            return JsonNode.Parse(json) as JsonArray ?? new JsonArray();
         }
     }
 }

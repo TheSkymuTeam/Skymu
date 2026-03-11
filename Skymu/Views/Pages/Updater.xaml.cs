@@ -131,7 +131,11 @@ namespace Skymu.Views.Pages
                 window.Close();
                 return;
             };
-            UpdateStatusText.Text = "100% done, 00:00:00 remaining";
+            UpdateStatusText.Text = Universal.Lang.Format(
+                                    "sF_UPGRADE_DOWNLOAD_PROGRESS",
+                                    100,
+                                    new TimeSpan(0).ToString(@"hh\:mm\:ss"),
+                                    0);
             Description.Text = "The release package has been saved to the Downloads folder.";
             ProgBar.Value = 100;
         }
@@ -193,7 +197,7 @@ namespace Skymu.Views.Pages
                         FileSize.Visibility = Visibility.Visible;
                         FileSize.Text = Universal.Lang.Format(
                             "sF_UPGRADE_DOWNLOAD_FILESIZE",
-                            Math.Round(totalFileSize / 1048576.0, 2));
+                            (int)Math.Round(totalFileSize / 1024.0));
 
                         while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, _cts.Token)) > 0)
                         {
@@ -202,10 +206,10 @@ namespace Skymu.Views.Pages
 
                             if (totalFileSize > 0)
                             {
-                                double percent = (double)totalRead / totalFileSize * 100;
+                                int percent = (int)Math.Round((double)totalRead * 100 / totalFileSize);
                                 ProgBar.Value = percent;
 
-                                double kbPerSec = (totalRead / 1024.0) / stopwatch.Elapsed.TotalSeconds;
+                                int kbPerSec = (int)Math.Round(totalRead / 1024.0 / stopwatch.Elapsed.TotalSeconds);
 
                                 double bytesRemaining = totalFileSize - totalRead;
                                 TimeSpan eta = TimeSpan.FromSeconds(
@@ -214,7 +218,7 @@ namespace Skymu.Views.Pages
                                 UpdateStatusText.Text = Universal.Lang.Format(
                                     "sF_UPGRADE_DOWNLOAD_PROGRESS",
                                     percent,
-                                    eta.ToString(),
+                                    eta.ToString(@"hh\:mm\:ss"),
                                     kbPerSec);
                             }
                         }

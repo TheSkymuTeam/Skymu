@@ -23,7 +23,7 @@ namespace SkypeDBBrowser
     public class Core : ICore
     {
         private string _databasePath;
-        private string _currentUserId;
+        private User _currentUser;
 
         // configurable message limit 
         private static readonly byte[] JpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
@@ -83,14 +83,22 @@ namespace SkypeDBBrowser
                 {
                     await connection.OpenAsync();
 
-                    // try to get the current user's Skype Name from Accounts table
-                    using (var command = connection.CreateCommand())
+                // try to get the current user's Skype Name from Accounts table
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT skypename, displayname, avatar_image FROM Accounts LIMIT 1";
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        command.CommandText = "SELECT skypename FROM Accounts LIMIT 1";
-                        var result = await command.ExecuteScalarAsync();
-                        _currentUserId = result?.ToString() ?? "unknown";
+                        if (await reader.ReadAsync())
+                        {
+                            string identifier = reader.IsDBNull(0) ? null : reader.GetString(0);
+                            string displayName = reader.IsDBNull(1) ? null : reader.GetString(1);
+                            byte[] avatar = reader.IsDBNull(2) ? null : (byte[])reader.GetValue(2);
+                            _currentUser = new User(displayName, identifier, identifier, null, UserConnectionStatus.Offline, avatar);
+                        }
                     }
                 }
+            }
 
                 return LoginResult.Success;
             
@@ -227,51 +235,10 @@ namespace SkypeDBBrowser
             }
         }
 
-        public async Task<bool> PopulateSidebarInformation()
+        public Task<bool> PopulateSidebarInformation()
         {
-            try
-            {
-                using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
-                {
-                    await connection.OpenAsync();
-
-                    string displayName = _currentUserId;
-                    string mood = string.Empty;
-
-                    using (var command = connection.CreateCommand())
-                    {
-                        command.CommandText = @"
-                            SELECT fullname, mood_text 
-                            FROM Accounts 
-                            WHERE skypename = @userId";
-                        command.Parameters.AddWithValue("@userId", _currentUserId);
-
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            if (await reader.ReadAsync())
-                            {
-                                displayName = reader.IsDBNull(0) ? _currentUserId : reader.GetString(0);
-                                mood = reader.IsDBNull(1) ? "" : reader.GetString(1);
-                            }
-                        }
-                    }
-
-                    MyInformation = new User(
-                        displayName,
-                        _currentUserId,
-                        _currentUserId,
-                        null,
-                        UserConnectionStatus.Offline
-                    );
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load sidebar: {ex.Message}"));
-                return false;
-            }
+            MyInformation = _currentUser;
+            return Task.FromResult(true);
         }
 
         public async Task<bool> PopulateContactsList()
@@ -300,7 +267,7 @@ namespace SkypeDBBrowser
                             ORDER BY displayname ASC
                             LIMIT 500";
 
-                        command.Parameters.AddWithValue("@currentUser", _currentUserId);
+                        command.Parameters.AddWithValue("@currentUser", _currentUser.Identifier);
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -448,7 +415,7 @@ namespace SkypeDBBrowser
         public Task<SavedCredential> StoreCredential()
         {
             // save the database path for auto-login
-            return Task.FromResult(new SavedCredential(_currentUserId, _databasePath, AuthenticationMethod.Token));
+            return Task.FromResult(new SavedCredential(_currentUser, _databasePath, AuthenticationMethod.Token, InternalName));
         }
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
@@ -462,7 +429,7 @@ namespace SkypeDBBrowser
         public void Dispose()
         {
             _databasePath = null;
-            _currentUserId = null;
+            _currentUser = null;
             ContactsList?.Clear();
             RecentsList?.Clear();
             TypingUsersList?.Clear();
@@ -490,7 +457,7 @@ namespace SkypeDBBrowser
                       AND p.identity != @currentUser";
 
                 cmd.Parameters.AddWithValue("@conversationIdentity", conversationIdentity);
-                cmd.Parameters.AddWithValue("@currentUser", _currentUserId);
+                cmd.Parameters.AddWithValue("@currentUser", _currentUser.Identifier);
 
                 using (var reader = await cmd.ExecuteReaderAsync())
                 {

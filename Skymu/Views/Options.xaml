@@ -197,11 +197,11 @@ Mode=TwoWay}" Margin="0,5" HorizontalAlignment="Left" MaxWidth="450">
                 </StackPanel>
                 </ScrollViewer>
             </Border>
-            <StackPanel Panel.ZIndex="4" Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right" Height="23" VerticalAlignment="Bottom">
-                <Button MinWidth="75" Click="SaveButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}" Height="23" Padding="7,0" Margin="0,0,10,0" FontSize="11"/>
-                <Button MinWidth="75" Click="RestartButtonClick" Content="Save and restart" Height="23" Padding="7,0" Margin="0,0,10,0" FontSize="11"/>
-                <Button MinWidth="75" Click="ResetButtonClick" Content="{Binding [sF_OPTIONS_BTN_RESET]}" Height="23" Padding="7,0" Margin="0,0,10,0" FontSize="11"/>
-                <Button MinWidth="75" Click="CancelButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}" Height="23" Padding="7,0" FontSize="11"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Grid.Column="1" Margin="0,0,9,11" RenderTransformOrigin="0.362,-3.031" HorizontalAlignment="Right" Height="23" VerticalAlignment="Bottom">
+                <Button MinWidth="73" Padding="12,0" Click="SaveButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}" Height="23"  Margin="0,0,10,0" FontSize="11"/>
+                <Button MinWidth="73" Padding="12,0" Click="RestartButtonClick" Content="Save and restart" Height="23"  Margin="0,0,10,0" FontSize="11"/>
+                <Button MinWidth="73" Padding="12,0" Click="ResetButtonClick" Content="{Binding [sF_OPTIONS_BTN_RESET]}" Height="23" Margin="0,0,10,0" FontSize="11"/>
+                <Button MinWidth="73" Padding="12,0" Click="CancelButtonClick" Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}" Height="23" FontSize="11"/>
             </StackPanel>
         </Grid>
     </Grid>

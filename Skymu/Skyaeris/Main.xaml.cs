@@ -445,7 +445,7 @@ namespace Skymu.Skyaeris
             await Universal.Plugin.PopulateRecentsList();
             CurrentUser = Universal.Plugin.MyInformation;
 
-            Database.Init(CurrentUser); // basic init safety for db, dont want it crashing FOR THE BILLION'TH TIME DO WE
+            Database.Init(CurrentUser);
             Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
 
@@ -1579,10 +1579,10 @@ namespace Skymu.Skyaeris
 
         private void InitiateSignOut()
         {
-            CredentialsHelper.Purge(Universal.Plugin.InternalName, false);
+            Credentials.Purge(CurrentUser, Universal.Plugin.InternalName);
             Sounds.Play("logout");
             Universal.HasLoggedIn = false;
-            new Login(true).Show();
+            new Login().Show();
             noCloseEvent = true;
             this.Close();
         }

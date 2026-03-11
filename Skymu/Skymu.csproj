@@ -173,6 +173,7 @@
 	  <Reference Include="PresentationFramework.Royale">
 	    <Private>True</Private>
 	  </Reference>
+	  <Reference Include="System.Security" />
 	  <Reference Include="System.Web" />
 	</ItemGroup>
 
