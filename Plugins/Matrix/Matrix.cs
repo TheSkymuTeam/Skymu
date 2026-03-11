@@ -40,7 +40,7 @@ namespace Matrix
         }
 
         private string _accessToken;
-        private string _userId;
+        private User _user;
         private string _homeserver = "https://matrix.org";
         private string _nextBatch;
         private static readonly HttpClient _httpClient = new HttpClient();
@@ -116,9 +116,30 @@ namespace Matrix
 
                         var loginResponse = JsonSerializer.Deserialize<JsonElement>(responseBody);
                         _accessToken = loginResponse.GetProperty("access_token").GetString();
-                        _userId = loginResponse.GetProperty("user_id").GetString();
+                        string userid = loginResponse.GetProperty("user_id").GetString();
 
-                        credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
+                        string displayName = userid;
+                        var profileUrl = $"{_homeserver}/_matrix/client/v3/profile/{Uri.EscapeDataString(userid)}/displayname";
+
+                        using (var profileRequest = await _httpClient.GetAsync(
+                   $"{_homeserver}/_matrix/client/r0/profile/{userid}?access_token={_accessToken}"))
+                        {
+                            string responseProf;
+                            if (!response.IsSuccessStatusCode)
+                            {
+                                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to fetch user profile."));
+                                return LoginResult.Failure;
+                            }
+                            responseProf = await response.Content.ReadAsStringAsync();
+                            var profileData = JsonSerializer.Deserialize<JsonElement>(responseProf);
+                            displayName = profileData.TryGetProperty("displayname", out var dnProp)
+                                ? dnProp.GetString()
+                                : userid;
+                        }  
+
+                        _user = new User(displayName, userid, userid);
+
+                        credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
                         return await StartClient();
                     }
                 }
@@ -263,9 +284,9 @@ namespace Matrix
                     }
                     var res4Data = JsonSerializer.Deserialize<JsonElement>(res4Body);
                     _accessToken = res4Data.GetProperty("access_token").GetString();
-                    _userId = res4Data.GetProperty("user_id").GetString();
-                    Debug.WriteLine($"[Beeper] Logged in as {_userId} on {_homeserver}");
-                    credData = new SavedCredential(_userId, _accessToken, AuthenticationMethod.Token);
+                    _user.Identifier = res4Data.GetProperty("user_id").GetString();
+                    Debug.WriteLine($"[Beeper] Logged in as {_user.Identifier} on {_homeserver}");
+                    credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
                     Debug.WriteLine("[Beeper] Credentials stored, starting client.");
                     return await StartClient();
                 }
@@ -353,7 +374,7 @@ namespace Matrix
                 string bodyJson = JsonSerializer.Serialize(body);
                 var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
                 using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_userId)}/status?access_token={_accessToken}",
+                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
                     content))
                 {
                     return response.IsSuccessStatusCode;
@@ -374,7 +395,7 @@ namespace Matrix
                 string bodyJson = JsonSerializer.Serialize(body);
                 var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
                 using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_userId)}/status?access_token={_accessToken}",
+                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
                     content))
                 {
                     return response.IsSuccessStatusCode;
@@ -483,7 +504,7 @@ namespace Matrix
                 string typingJson = JsonSerializer.Serialize(typingData);
                 var content = new StringContent(typingJson, Encoding.UTF8, "application/json");
                 using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/typing/{_userId}?access_token={_accessToken}",
+                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/typing/{_user.Identifier}?access_token={_accessToken}",
                     content))
                 {
                     return response.IsSuccessStatusCode;
@@ -631,7 +652,7 @@ namespace Matrix
             _recentRoomMap?.Clear();
 
             _accessToken = null;
-            _userId = null;
+            _user = null;
             _homeserver = "https://matrix.org";
             _nextBatch = null;
             _activeRoomId = null;
@@ -642,37 +663,12 @@ namespace Matrix
         public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
         public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
 
-        public async Task<bool> PopulateSidebarInformation()
+        public Task<bool> PopulateSidebarInformation()
         {
             _uiContext = SynchronizationContext.Current;
 
-            try
-            {
-                string responseBody;
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/profile/{_userId}?access_token={_accessToken}"))
-                {
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        OnError?.Invoke(this, new PluginMessageEventArgs("Failed to fetch user profile."));
-                        return false;
-                    }
-                    responseBody = await response.Content.ReadAsStringAsync();
-                }
-
-                var profileData = JsonSerializer.Deserialize<JsonElement>(responseBody);
-                string displayName = profileData.TryGetProperty("displayname", out var dnProp)
-                    ? dnProp.GetString()
-                    : _userId;
-
-                MyInformation = new User(displayName, _userId, _userId, null, UserConnectionStatus.Online, null);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to populate sidebar: {ex.Message}"));
-                return false;
-            }
+            MyInformation = _user;
+            return Task.FromResult(true);
         }
 
         public async Task<bool> PopulateContactsList() => await PopulateListsBackend(ListType.Contacts);
@@ -746,13 +742,13 @@ namespace Matrix
             try
             {
                 _accessToken = credential.PasswordOrToken;
-                _userId = credential.Username;
+                _user = credential.User;
 
-                if (_userId.Contains(":beeper.com"))
+                if (_user.Identifier.Contains(":beeper.com"))
                     _homeserver = "https://matrix.beeper.com";
-                else if (_userId.Contains(":"))
+                else if (_user.Identifier.Contains(":"))
                 {
-                    string[] parts = _userId.Split(new char[] { ':' }, 2, StringSplitOptions.None);
+                    string[] parts = _user.Identifier.Split(new char[] { ':' }, 2, StringSplitOptions.None);
                     if (parts.Length == 2)
                         _homeserver = $"https://{parts[1]}";
                 }
@@ -972,7 +968,7 @@ namespace Matrix
                         foreach (var userId in userIds.EnumerateArray())
                         {
                             string userIdStr = userId.GetString();
-                            if (userIdStr == _userId) continue;
+                            if (userIdStr == _user.Identifier) continue;
 
                             string displayName = _displayNameCache.TryGetValue(userIdStr, out var name)
                                 ? name

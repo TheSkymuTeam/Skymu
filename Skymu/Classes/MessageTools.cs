@@ -734,12 +734,12 @@ namespace Skymu
         { 
             if (e is MessageRecievedEventArgs eR)
             {
-                Skyaeris.Main.ActiveConversation.Add(eR.Item);
+                if (Skyaeris.Main.SelectedConversation?.Identifier == eR.ConversationId) Skyaeris.Main.ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
                     if (message.Sender.Identifier != Skyaeris.Main.CurrentUser?.Identifier)
                     {
-                        if (!Skyaeris.Main.IsWindowActive || Skyaeris.Main.SelectedConversation?.Identifier != e.ConversationId)
+                        if (!Skyaeris.Main.IsWindowActive || Skyaeris.Main.SelectedConversation?.Identifier != eR.ConversationId)
                         {
                             new Views.Notification(eR);
                         }

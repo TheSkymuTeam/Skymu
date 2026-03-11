@@ -358,7 +358,9 @@ Width="12" Height="12">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBox">
-                        <ScrollViewer x:Name="ScrollViewer" Focusable="false" Padding="0" Margin="0" VerticalContentAlignment="Bottom">
+                        <ScrollViewer x:Name="ScrollViewer" Focusable="false" Padding="0" Margin="0" 
+                              VerticalContentAlignment="Bottom"
+                              CanContentScroll="True">
                             <ItemsPresenter/>
                         </ScrollViewer>
                     </ControlTemplate>
@@ -897,10 +899,13 @@ Width="12" Height="12">
                                         </EventTrigger>
                                     </Image.Triggers>
                                 </Image>
-                                <ListBox x:Name="ConversationItemsList" Grid.Row="2" BorderThickness="0" VerticalAlignment="Bottom" Margin="0,0,0,0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ConversationItemsList_Loaded" ScrollViewer.CanContentScroll="False" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d">
+                                <ListBox x:Name="ConversationItemsList" Grid.Row="2" BorderThickness="0" VerticalAlignment="Bottom" Margin="0,0,0,0" Style="{StaticResource NoInsetListBox}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Loaded="ConversationItemsList_Loaded" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+                                                  VirtualizingPanel.ScrollUnit="Pixel"
+         VirtualizingPanel.IsVirtualizing="True"
+         VirtualizingPanel.VirtualizationMode="Recycling">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling"/>
+                                            <VirtualizingStackPanel />
                                         </ItemsPanelTemplate>
                                     </ListBox.ItemsPanel>
                                     <ListBox.ItemContainerStyle>

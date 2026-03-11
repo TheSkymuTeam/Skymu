@@ -40,8 +40,8 @@
             </Border>
             <Grid x:Name="BottomControlsGrid">
                 <TextBox x:Name="DialogTextBox" Visibility="Hidden" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Height="23" VerticalAlignment="Center" HorizontalAlignment="Left" FontFamily="Tahoma" FontSize="11" TextOptions.TextHintingMode="Fixed" Margin="10,0,0,0" Width="250"/>
-                <Button Content="Exit" Click="bLClick" x:Name="ButtonLeft" Width="73" VerticalAlignment="Center" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,0,95,0" Height="23" FontFamily="Tahoma" FontSize="11"/>
-                <Button Content="OK" Click="bRClick" IsDefault="True" x:Name="ButtonRight" Width="73" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Height="23" FontSize="11" FontFamily="Tahoma"/>
+                <Button Content="Exit" Click="bLClick" x:Name="ButtonLeft" Padding="12,0" MinWidth="73" VerticalAlignment="Center" Visibility="Collapsed" HorizontalAlignment="Right" Margin="0,0,95,0" Height="23" FontFamily="Tahoma" FontSize="11"/>
+                <Button Content="OK" Click="bRClick" IsDefault="True" x:Name="ButtonRight" Padding="12,0" MinWidth="73" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Height="23" FontSize="11" FontFamily="Tahoma"/>
             </Grid>
         </Grid>
     </Grid>

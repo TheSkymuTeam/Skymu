@@ -49,13 +49,12 @@ namespace Discord.Classes
             client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
 
             // Forcefully use TLS 1.2
-            System.Net.ServicePointManager.SecurityProtocol =
-                System.Net.SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
         public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
         {
-            string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint;
+            string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint.TrimStart('/');
             // Debug.WriteLine(url);
             using (var request = new HttpRequestMessage(httpMethod, url))
             {

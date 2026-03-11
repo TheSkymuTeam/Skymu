@@ -34,8 +34,8 @@
                 </Border.Background>
             </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" x:Name="BottomControlsGrid">
-                <Button Content="OK" Click="bLClick" x:Name="ButtonLeft" VerticalAlignment="Center" Visibility="Visible" Padding="12,0" HorizontalAlignment="Right" MinWidth="75" Margin="0,0,10,0" IsDefault="True" Height="23" FontFamily="Tahoma" FontSize="11"/>
-                <Button Content="Cancel" Click="bRClick" x:Name="ButtonRight" Padding="12,0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Height="23" MinWidth="75" FontSize="11" FontFamily="Tahoma"/>
+                <Button Content="OK" Click="bLClick" x:Name="ButtonLeft" VerticalAlignment="Center" Visibility="Visible" Padding="12,0" MinWidth="73" HorizontalAlignment="Right" Margin="0,0,10,0" IsDefault="True" Height="23" FontFamily="Tahoma" FontSize="11"/>
+                <Button Content="Cancel" Click="bRClick" x:Name="ButtonRight" Padding="12,0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" Height="23" MinWidth="73" FontSize="11" FontFamily="Tahoma"/>
             </StackPanel>
         </Grid>
        

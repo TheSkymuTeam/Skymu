@@ -34,14 +34,11 @@ namespace Skymu.Skyaeris
     {
         private PluginListing selectedListing;
         private Main _Main;
-        public bool noCloseEvent, useAutoLogin = Properties.Settings.Default.AutoLogin;
+        internal bool noCloseEvent;
+        private SavedCredential pendingAutoLogin = null;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
 
-        public Login() : this(false)
-        {
-        }
-
-        public Login(bool forceManualLogin = false)
+        public Login()
         {
             InitializeComponent();
 
@@ -52,8 +49,6 @@ namespace Skymu.Skyaeris
             this.ContentRendered += Login_ContentRendered;
 
             Sounds.Init();
-
-            if (forceManualLogin) useAutoLogin = false;
             Tray.PushIcon(UserConnectionStatus.Offline);
         }
 
@@ -211,20 +206,37 @@ namespace Skymu.Skyaeris
             Plugins.DisposeAll();
             Universal.PluginList = Plugins.Load("plugins");
             int pluginIndex = 0;
-            string[] autoLoginCandidates = CredentialsHelper.GetSavedCredentialPlugins();
+            SavedCredential[] savedCredentials = Credentials.GetAll();
+
             foreach (var plugin in Universal.PluginList)
             {
-                if (autoLoginCandidates.Contains(plugin.InternalName))
+                SavedCredential match = null;
+                foreach (SavedCredential cred in savedCredentials)
                 {
+                    if (cred.Plugin == plugin.InternalName)
+                    {
+                        match = cred;
+                        break;
+                    }
+                }
+
+                if (match != null && pendingAutoLogin == null && Properties.Settings.Default.AutoLogin)
+                {
+                    pendingAutoLogin = match;
                     Universal.Plugin = plugin;
                 }
-                if (plugin.AuthenticationTypes.Length <= 1) comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationTypes[0].AuthType, plugin.AuthenticationTypes[0].CustomTextUsername));
+
+                if (plugin.AuthenticationTypes.Length <= 1)
+                {
+                    comboProtocolBox.Items.Add(new PluginListing(plugin.Name, pluginIndex, plugin.AuthenticationTypes[0].AuthType, plugin.AuthenticationTypes[0].CustomTextUsername));
+                }
                 else
                 {
                     foreach (AuthTypeInfo ati in plugin.AuthenticationTypes)
                     {
                         string name = plugin.Name;
-                        if (ati.CustomTextAuthType != null) name += " - " + ati.CustomTextAuthType;
+                        if (ati.CustomTextAuthType != null)
+                            name += " - " + ati.CustomTextAuthType;
                         else
                         {
                             switch (ati.AuthType)
@@ -253,8 +265,8 @@ namespace Skymu.Skyaeris
                 }
                 pluginIndex++;
             }
-            if (Universal.Plugin == null) { useAutoLogin = false; }
-            if (useAutoLogin) LoginToggleAnimation(true);
+
+            if (pendingAutoLogin != null) LoginToggleAnimation(true);
             else comboProtocolBox.SelectedIndex = 0;
         }
 
@@ -308,17 +320,10 @@ namespace Skymu.Skyaeris
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            if (useAutoLogin)
+            if (pendingAutoLogin != null)
             {
-                SavedCredential credential = CredentialsHelper.Read(Universal.Plugin.InternalName);
-                if (credential == null)
-                {
-                    LoginToggleAnimation(false);                    
-                    CredentialsHelper.Purge(Universal.Plugin.InternalName, false);                   
-                    return;
-                }
                 LoginResult lr = await Task.Run(async () =>
-             await Universal.Plugin.Authenticate(credential)
+             await Universal.Plugin.Authenticate(pendingAutoLogin)
          );
                 if (lr == LoginResult.Success)
                 {
@@ -335,6 +340,11 @@ namespace Skymu.Skyaeris
                     }
                 }
             }
+            else 
+            {
+                LoginToggleAnimation(false);
+                return;
+            }
         }
 
         private async void InitiateMain()
@@ -342,7 +352,7 @@ namespace Skymu.Skyaeris
             if (SaveCredentials.IsChecked == true)
             {
                 SavedCredential cred = await Universal.Plugin.StoreCredential();
-                if (cred != null) CredentialsHelper.Write(cred, Universal.Plugin.InternalName);
+                if (cred != null) Credentials.Save(cred);
             }
             header.Text = "Loading user data";
             _Main = new Main();

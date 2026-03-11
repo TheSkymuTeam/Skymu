@@ -55,13 +55,9 @@ namespace Discord.Classes
         // Used in functions outside of WebSocket.cs to see if we can parse the data right now or not. (Changed to event OmegaAOL)
         internal event EventHandler Ready;
 
-        // Used in functions outside and inside WebSocket.cs to parse data - now stores JToken instead of string to avoid ToString() allocation
-        public JsonNode recipientsData;
-
-        // Used to store all private channels (DMs and GCs)
-        public JsonNode privateChannelsData;
-
-        public JsonNode guildsData;
+        internal string _privateChannelsJson;
+        internal string _guildsJson;
+        internal string _recipientsJson;
 
         // Used for sending the first payload required
         private string identifyPayloadJson;
@@ -209,8 +205,7 @@ namespace Discord.Classes
 
                     if (result.EndOfMessage)
                     {
-                        byte[] data = ms.ToArray();
-                        string message = DecodeZStream(data);
+                        string message = DecodeZStream(ms.ToArray());
                         ms.SetLength(0);
                         HandleMessage(message);
                     }
@@ -240,10 +235,9 @@ namespace Discord.Classes
             _inflater.SetInput(compressed);
             using (var output = new MemoryStream())
             {
-                byte[] buf = new byte[4096];
                 int read;
-                while ((read = _inflater.Inflate(buf)) > 0)
-                    output.Write(buf, 0, read);
+                while ((read = _inflater.Inflate(_receiveBuffer)) > 0)
+                    output.Write(_receiveBuffer, 0, read);
                 return Encoding.UTF8.GetString(output.ToArray());
             }
         }
@@ -274,11 +268,14 @@ namespace Discord.Classes
                                 UserStatusMgr.HandleUserStatus(json["d"]);
                                 
                                 var readyData = json["d"];
-                                recipientsData = readyData["relationships"] ?? new JsonArray();
-                                privateChannelsData = readyData["private_channels"] ?? new JsonArray();
-                                guildsData = readyData["guilds"] ?? new JsonArray();
-                                readyData = null; // allow GC to collect the rest of the READY payload
+
+                                _privateChannelsJson = readyData["private_channels"]?.ToJsonString() ?? "[]"; // Store as strings to save memory
+                                _guildsJson = readyData["guilds"]?.ToJsonString() ?? "[]";
+                                //_recipientsJson = readyData["relationships"]?.ToJsonString() ?? "[]"; // unused in code as of yet. TODO: add friends list
+
+                                readyData = null;
                                 json = null;
+                                GC.Collect(); // force collection of the massive READY payload
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "READY_SUPPLEMENTAL":

@@ -97,24 +97,27 @@ namespace Discord.Classes
             return content;
         }
 
-        public async static Task<string> ReplaceIDWithNameForTyping(string id, string token)
+        public static async Task<string> ReplaceIDWithNameForTyping(string id, string token)
         {
-            string apiUri = $"/users/{id}/profile";
-            Debug.WriteLine($"The API endpoint used is {apiUri}");
+            var user = UserStore.Get(id);
+            if (user != null)
+                return user.DisplayName ?? id;
 
-            string userData = await Core.api.SendAPI(apiUri, HttpMethod.Get, token, null, null, null, null);
-            Debug.WriteLine($"The response sent back from the API is: {userData}");
-
+            string userData = await Core.api.SendAPI($"/users/{id}/profile", HttpMethod.Get, token, null, null, null, null);
             try
             {
-                using JsonDocument doc = JsonDocument.Parse(userData);
-                string displayName = doc.RootElement
-                                       .GetProperty("user")
-                                       .GetProperty("global_name")
-                                       .GetString();
-                return displayName ?? string.Empty;
+                using (JsonDocument doc = JsonDocument.Parse(userData))
+                {
+                    return doc.RootElement
+                              .GetProperty("user")
+                              .GetProperty("global_name")
+                              .GetString() ?? id;
+                }
             }
-            finally { }
+            catch
+            {
+                return id;
+            }
         }
 
         public static UserConnectionStatus MapStatus(string statusStr)
