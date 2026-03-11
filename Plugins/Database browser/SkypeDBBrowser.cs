@@ -370,6 +370,11 @@ namespace SkypeDBBrowser
                                 var displayName = reader.IsDBNull(1) ? identity : reader.GetString(1);
                                 var type = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                                 var dialogPartner = reader.IsDBNull(3) ? null : reader.GetString(3);
+                                var lastMessageTimestamp = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
+
+                                DateTime lastMessageTime = lastMessageTimestamp > 0
+                                    ? DateTimeOffset.FromUnixTimeSeconds(lastMessageTimestamp).LocalDateTime
+                                    : DateTime.Now;
 
                                 // type 1 = one-on-one, 2 = group chat, 4 = ???
                                 if (type == 2)
@@ -381,7 +386,9 @@ namespace SkypeDBBrowser
                                         displayName,
                                         identity,
                                         0,
-                                        members
+                                        members,
+                                        null,
+                                        lastMessageTime
                                     ));
                                 }
                                 else
@@ -396,7 +403,7 @@ namespace SkypeDBBrowser
                                         info.Mood,
                                         info.Status == default ? UserConnectionStatus.Offline : info.Status,
                                         info.Avatar
-                                    ), 0, identity));
+                                    ), 0, identity, lastMessageTime));
                                 }
                             }
                         }

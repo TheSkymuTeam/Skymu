@@ -714,11 +714,13 @@ namespace Matrix
                     if (lType == ListType.Recents)
                         _recentRoomMap[roomIdStr] = roomIdStr;
 
+                    DateTime lastMessageTime = DateTime.Now; // haven't figured out how to get it thru matrix API so this'll do to not break the plugin entirely
+
                     Conversation conversation;
                     if (isDirect)
-                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), 0, roomIdStr);
+                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), 0, roomIdStr, lastMessageTime);
                     else
-                        conversation = new Group(roomName, roomIdStr, 0, members, roomAvatar);
+                        conversation = new Group(roomName, roomIdStr, 0, members, roomAvatar, lastMessageTime);
 
                     if (lType == ListType.Recents)
                         RecentsList.Add(conversation);

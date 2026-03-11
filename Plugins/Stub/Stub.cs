@@ -13,6 +13,7 @@ using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Stub
@@ -102,6 +103,8 @@ namespace Stub
 
         public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
 
+        private SynchronizationContext _uiContext;
+
         public Task<bool> PopulateServerList()
         {
             string id = "2132";
@@ -111,7 +114,7 @@ namespace Stub
 
         public Task<bool> PopulateSidebarInformation()
         {
-            
+            _uiContext = SynchronizationContext.Current;
             MyInformation = new User("Sensei Wu", "thegamingkart", "00001", "Hello test", UserConnectionStatus.Online);
             return Task.FromResult(true);
         }
@@ -166,10 +169,27 @@ namespace Stub
         {
             RecentsList.Clear();
 
+            int dayOffset = 0;
             foreach (var user in users)
-                RecentsList.Add(new DirectMessage(user, rand.Next(0, 5), rand.Next(100, 5000).ToString()));
+            {
+                DateTime messageTime;
+                if (dayOffset <= 2)
+                {
+                    messageTime = DateTime.Now.AddMinutes(-rand.Next(1, 360));
+                }
+                else if (dayOffset == 3)
+                {
+                    messageTime = DateTime.Now.AddDays(-1).AddHours(-rand.Next(0, 12));
+                }
+                else
+                {
+                    messageTime = DateTime.Now.AddDays(-(dayOffset - 2)).AddHours(-rand.Next(0, 12));
+                }
+                RecentsList.Add(new DirectMessage(user, rand.Next(0, 5), rand.Next(100, 5000).ToString(), messageTime));
+                dayOffset++;
+            }
 
-            RecentsList.Add(new Group("Giga based coalition", "067", users.Length, users));
+            RecentsList.Add(new Group("Giga based coalition", "067", users.Length, users, null, DateTime.Now.AddHours(-1)));
 
             if (presenceTimer == null)
                 presenceTimer = new System.Threading.Timer(UpdatePresence, null, 0, 1);
@@ -186,8 +206,14 @@ namespace Stub
         private void RandomizeUser(User user)
         {
             Array values = Enum.GetValues(typeof(UserConnectionStatus));
-            user.PresenceStatus = (UserConnectionStatus)values.GetValue(rand.Next(values.Length));
-            user.Status = randomTexts[rand.Next(randomTexts.Length)];
+            var newStatus = (UserConnectionStatus)values.GetValue(rand.Next(values.Length));
+            var newText = randomTexts[rand.Next(randomTexts.Length)];
+
+            _uiContext?.Post(_ =>
+            {
+                user.PresenceStatus = newStatus;
+                user.Status = newText;
+            }, null);
         }
 
         public ClickableConfiguration[] ClickableConfigurations
