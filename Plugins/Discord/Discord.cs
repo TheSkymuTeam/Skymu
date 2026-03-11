@@ -269,9 +269,7 @@ namespace Discord
         }
 
         public Task<SavedCredential> StoreCredential()
-        {
-            return Task.FromResult(new SavedCredential(_currentUser, DscToken, AuthenticationMethod.Token, InternalName));
-        }
+            => Task.FromResult(new SavedCredential(_currentUser.Username, DscToken, AuthenticationMethod.Token));
 
         public async Task<LoginResult> StartClient()
         {
@@ -280,13 +278,7 @@ namespace Discord
             {
                 // Parse and store details
                 var parsedUser = JsonNode.Parse(userCheckTkn).AsObject();
-
-                string id = parsedUser["id"]?.GetValue<string>();
-                string username = parsedUser["username"]?.GetValue<string>() ?? "Anonymous";
-                string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
-                string avatarHash = parsedUser["avatar"]?.GetValue<string>();
-                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
-                _currentUser = new User(displayName, username, id, null, UserConnectionStatus.Offline, avatar); // temp just for StoreCredential
+                _currentUser = new User(null, parsedUser["username"]?.GetValue<string>() ?? "Anonymous", null); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
@@ -344,11 +336,15 @@ namespace Discord
                     return false;
                 }
 
+                string global_name = parsedDetails["global_name"]?.GetValue<string>() ?? parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
+                string username = parsedDetails["username"]?.GetValue<string>() ?? "Anonymous";
+                string identifier = parsedDetails["id"]?.GetValue<string>();
+                string avatarHash = parsedDetails["avatar"]?.GetValue<string>();
+                UserConnectionStatus status = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
+                string custom_status = UserStore.Get(identifier)?.Status;
+                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(identifier, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
 
-                _currentUser.PresenceStatus = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
-                _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
-
-                MyInformation = _currentUser; 
+                MyInformation = _currentUser = new User(global_name, username, identifier, custom_status, status, avatar); 
 
                 return true;
             }
@@ -406,8 +402,10 @@ namespace Discord
 
                         var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
+
                         if (lType == ListType.Recents)
-                            RecentsList.Add(new DirectMessage(profileData, 0, channelId));
+                            RecentsList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
                         else
                             ContactsList.Add(new DirectMessage(profileData, 0, channelId));
                     }
@@ -460,7 +458,9 @@ namespace Discord
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
-                        var profileData = new Group(groupName, channelId, 0, members, avatarImage);
+
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
+                        var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -667,42 +667,20 @@ namespace Discord
             return await UpdateProtoSettings(settings); // try push
         }
 
-        private bool ShouldNotify(HelperClasses.DiscordMessageReceivedEventArgs e)
+        private DateTime GetTimestampFromSnowflake(string snowflake)
         {
-            // Get the channel info to check its type
-            var privateChannels = WebSocketMgr.GetPrivateChannels();
-            var channel = privateChannels
-                .OfType<JsonObject>()
-                .FirstOrDefault(c => c["id"]?.GetValue<string>() == e.ChannelId);
+            if (string.IsNullOrEmpty(snowflake) || !long.TryParse(snowflake, out long snowflakeId))
+                return DateTime.MinValue;
 
-            if (channel != null)
-            {
-                int channelType = channel["type"]?.GetValue<int>() ?? -1;
-
-                // Always notify for DMs (type 1) and Group DMs (type 3)
-                if (channelType == 1 || channelType == 3)
-                    return true;
-            }
-
-            // For server channels (guild channels), only notify if:
-            // 1. User is mentioned in the content
-            // 2. User is replied to
-
-            // Check if replied to current user
-            if (e.ParentMessage is not null && e.ParentMessage.Sender.Identifier == _currentUser.Identifier)
-                return true;
-
-            // Check if current user is mentioned in the message
-            if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{_currentUser.DisplayName}>")) // TODO: replace with identifier
-                return true;
-
-            return false;
+            const long discordEpoch = 1420070400000L;
+            long timestamp = (snowflakeId >> 22) + discordEpoch;
+            return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
         }
 
         private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
         {
-            // Ignore if shouldn't notify
-            if (!ShouldNotify(e))
+            // Ignore other channels
+            if (e.ChannelId != _activeChannelId)
                 return;
 
             _uiContext?.Post(_ =>

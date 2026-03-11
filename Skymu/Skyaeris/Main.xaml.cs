@@ -478,7 +478,7 @@ namespace Skymu.Skyaeris
             StatusBox.Text = CurrentUser.DisplayName;
             StatusIcon.DefaultIndex = GetIntFromStatus(CurrentUser.PresenceStatus);
 
-            ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+            setupcompactrecentsview();
 
             SpeedTester();
 
@@ -507,6 +507,29 @@ namespace Skymu.Skyaeris
             {
                 SelectedConversation = channel;
                 await SetConversation();
+            }
+        }
+
+        private void setupcompactrecentsview()
+        {
+            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList);
+            var selector = new CompactRecentsTemplateSelector
+            {
+                DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
+                CompactDirectMessageTemplate = (DataTemplate)FindResource("CompactDirectMessageTemplate"),
+                CompactGroupTemplate = (DataTemplate)FindResource("CompactGroupTemplate")
+            };
+            ContactsList.ItemTemplateSelector = selector;
+            ContactsList.ItemsSource = grouped;
+        }
+
+        public static void RefreshCompactRecentsView()
+        {
+            var mainWindow = Application.Current.MainWindow as Main;
+            if (mainWindow?.ContactsList.Visibility == Visibility.Visible && 
+                mainWindow.ContactsList.ItemTemplateSelector is CompactRecentsTemplateSelector)
+            {
+                mainWindow.Dispatcher.Invoke(mainWindow.setupcompactrecentsview);
             }
         }
 
@@ -546,11 +569,12 @@ namespace Skymu.Skyaeris
                     break;
                 case "btnContacts":
                     if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
+                    ContactsList.ItemTemplateSelector = null;
                     ContactsList.ItemsSource = Universal.Plugin.ContactsList;
                     break;
                 case "btnRecents":
                     if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
-                    ContactsList.ItemsSource = Universal.Plugin.RecentsList;
+                    setupcompactrecentsview();
                     break;
             }
         }
@@ -655,7 +679,13 @@ namespace Skymu.Skyaeris
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HandleConversationSelection(((ListBox)sender).SelectedItem);
+            var selected = ((ListBox)sender).SelectedItem;
+            if (selected is DateHeaderItem)
+            {
+                ((ListBox)sender).SelectedItem = null;
+                return;
+            }
+            HandleConversationSelection(selected);
         }
 
         private void Chat_Close(object sender, MouseButtonEventArgs e)
@@ -1686,6 +1716,24 @@ namespace Skymu.Skyaeris
 
         #endregion
 
+    }
+
+    public class CompactRecentsTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DateHeaderTemplate { get; set; }
+        public DataTemplate CompactDirectMessageTemplate { get; set; }
+        public DataTemplate CompactGroupTemplate { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is DateHeaderItem)
+                return DateHeaderTemplate;
+            else if (item is DirectMessage)
+                return CompactDirectMessageTemplate;
+            else if (item is Group)
+                return CompactGroupTemplate;
+            return base.SelectTemplate(item, container);
+        }
     }
 
 }
