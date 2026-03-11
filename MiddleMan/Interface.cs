@@ -136,6 +136,7 @@ namespace MiddleMan
     public abstract class Conversation : Metadata
     {
         private int _unreadCount;
+        private DateTime _lastMessageTime;
 
         public int UnreadCount
         {
@@ -143,10 +144,17 @@ namespace MiddleMan
             set => Set(ref _unreadCount, value, nameof(UnreadCount));
         }
 
-        protected Conversation(string display_name, string identifier, int unread_count, byte[] profile_picture = null)
+        public DateTime LastMessageTime
+        {
+            get => _lastMessageTime;
+            set => Set(ref _lastMessageTime, value, nameof(LastMessageTime));
+        }
+
+        protected Conversation(string display_name, string identifier, int unread_count, byte[] profile_picture = null, DateTime? last_message_time = null)
             : base(display_name, identifier, profile_picture)
         {
             _unreadCount = unread_count;
+            _lastMessageTime = last_message_time ?? DateTime.Now;
         }
     }
 
@@ -154,8 +162,10 @@ namespace MiddleMan
     {
         public User ConversationPartner { get; }
 
-        public DirectMessage(User conversation_partner, int unread_count, string identifier)
-            : base(conversation_partner.DisplayName, identifier, unread_count, conversation_partner.ProfilePicture)
+        public User RemoteUser => ConversationPartner;
+
+        public DirectMessage(User conversation_partner, int unread_count, string identifier, DateTime? last_message_time = null)
+            : base(conversation_partner.DisplayName, identifier, unread_count, conversation_partner.ProfilePicture, last_message_time)
         {
             ConversationPartner = conversation_partner;
         }
@@ -171,8 +181,8 @@ namespace MiddleMan
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public Group(string name, string identifier, int unread_count, User[] members, byte[] profile_picture = null)
-            : base(name, identifier, unread_count, profile_picture)
+        public Group(string name, string identifier, int unread_count, User[] members, byte[] profile_picture = null, DateTime? last_message_time = null)
+            : base(name, identifier, unread_count, profile_picture, last_message_time)
         {
             _members = members;
         }
@@ -212,8 +222,8 @@ namespace MiddleMan
         public string Description { get; }
         public ChannelType ChannelType { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string description = null)
-            : base(name, identifier, unread_count, null)
+        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string description = null, DateTime? last_message_time = null)
+            : base(name, identifier, unread_count, null, last_message_time)
         {
             ParentServerID = parent_server_id;
             Description = description;
