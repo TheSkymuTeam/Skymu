@@ -348,7 +348,7 @@ namespace Discord
                 _currentUser.PresenceStatus = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
-                MyInformation = _currentUser; 
+                MyInformation = _currentUser;
 
                 return true;
             }
@@ -477,6 +477,15 @@ namespace Discord
                 return false;
             }
             return true;
+        }
+
+        private DateTime GetTimestampFromSnowflake(string snowflake)
+        {
+            if (string.IsNullOrEmpty(snowflake) || !long.TryParse(snowflake, out long snowflakeId))
+              return DateTime.MinValue;
+            const long discordEpoch = 1420070400000L;
+            long timestamp = (snowflakeId >> 22) + discordEpoch;
+            return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
         }
 
         public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
@@ -670,6 +679,39 @@ namespace Discord
             settings.Status.CustomStatus.Text = status; // set text of status
             return await UpdateProtoSettings(settings); // try push
         }
+
+        private bool ShouldNotify(HelperClasses.DiscordMessageReceivedEventArgs e)
+        {
+            // Get the channel info to check its type
+            var privateChannels = WebSocketMgr.GetPrivateChannels();
+            var channel = privateChannels
+                .OfType<JsonObject>()
+                .FirstOrDefault(c => c["id"]?.GetValue<string>() == e.ChannelId);
+
+            if (channel != null)
+            {
+                int channelType = channel["type"]?.GetValue<int>() ?? -1;
+
+                // Always notify for DMs (type 1) and Group DMs (type 3)
+                if (channelType == 1 || channelType == 3)
+                    return true;
+            }
+
+            // For server channels (guild channels), only notify if:
+            // 1. User is mentioned in the content
+            // 2. User is replied to
+
+            // Check if replied to current user
+            if (e.ParentMessage is not null && e.ParentMessage.Sender.Identifier == _currentUser.Identifier)
+                return true;
+
+            // Check if current user is mentioned in the message
+            if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{_currentUser.DisplayName}>")) // TODO: replace with identifier
+                return true;
+
+            return false;
+        }
+
 
         private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
         {

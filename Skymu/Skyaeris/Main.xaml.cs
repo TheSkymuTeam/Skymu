@@ -657,7 +657,7 @@ namespace Skymu.Skyaeris
         {
             while (true)
             {
-                await Task.Delay(60000);
+                await Task.Delay(45000);
                 await UserCountAPI.SendPingToServ();
             }
         }
