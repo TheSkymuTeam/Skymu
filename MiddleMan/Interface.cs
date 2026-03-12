@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -190,6 +191,8 @@ namespace MiddleMan
     {
         private User[] _members;
         private ServerChannel[] _channels;
+        private ObservableCollection<object> _groupedChannels;
+        private int _memberCount;
 
         public User[] Members
         {
@@ -203,14 +206,33 @@ namespace MiddleMan
             set => Set(ref _channels, value, nameof(Channels));
         }
 
+        public ObservableCollection<object> GroupedChannels
+        {
+            get => _groupedChannels;
+            set => Set(ref _groupedChannels, value, nameof(GroupedChannels));
+        }
+
+        public int MemberCount
+        {
+            get => _memberCount;
+            set => Set(ref _memberCount, value, nameof(MemberCount));
+        }
+
+        public Dictionary<string, string> CategoryMap { get; set; }
+
         public Server(string name, string identifier,
                       User[] members,
                       ServerChannel[] channels,
-                      byte[] profile_picture = null)
+                      byte[] profile_picture = null,
+                      Dictionary<string, string> category_map = null,
+                      int member_count = 0)
             : base(name, identifier, profile_picture)
         {
             _members = members;
             _channels = channels;
+            CategoryMap = category_map ?? new Dictionary<string, string>();
+            _groupedChannels = new ObservableCollection<object>();
+            _memberCount = member_count == 0 && members != null ? members.Length : member_count;
         }
     }
 
@@ -219,13 +241,17 @@ namespace MiddleMan
         public string ParentServerID { get; }
         public string Description { get; }
         public ChannelType ChannelType { get; }
+        public string CategoryID { get; }
+        public int Position { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string description = null, DateTime? last_message_time = null)
+        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string category_id = null, int position = 0, string description = null, DateTime? last_message_time = null)
             : base(name, identifier, unread_count, null, last_message_time)
         {
             ParentServerID = parent_server_id;
             Description = description;
             ChannelType = channel_type;
+            CategoryID = category_id;
+            Position = position;
         }
     }
 

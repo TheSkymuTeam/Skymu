@@ -161,7 +161,43 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!-- Server template -->
-        <HierarchicalDataTemplate DataType="{x:Type plugin:Server}" ItemsSource="{Binding Channels}">
+        <HierarchicalDataTemplate DataType="{x:Type plugin:Server}" 
+                                  ItemsSource="{Binding GroupedChannels}">
+            <HierarchicalDataTemplate.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding}">
+                        <ContentControl.Resources>
+                            <DataTemplate DataType="{x:Type global:CategoryHeaderItem}">
+                                <Border Background="#F0F0F0" Padding="8,4" Margin="0">
+                                    <TextBlock Text="{Binding CategoryName}" FontFamily="Tahoma" FontSize="11" Foreground="#000000"/>
+                                </Border>
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type plugin:ServerChannel}">
+                                <Grid Margin="0,0,0,0" Height="22">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <global:SliceControl Grid.Column="0" Source="Assets/Universal/Icon Bitmap/skype-channel.png" ElementCount="11" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        x:Name="channelText"
+                                        VerticalAlignment="Center"
+                                        Margin="10,0,0,0"
+                                        Text="{Binding DisplayName}"
+                    Foreground="Black"
+                                        Style="{StaticResource ContactStatusStyle}"/>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                                        <Setter TargetName="channelText" Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </DataTemplate>
+            </HierarchicalDataTemplate.ItemTemplate>
             <Grid Margin="2,4,0,4" Height="32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2"/>
@@ -199,7 +235,7 @@
             Grid.Row="2"
             Margin="10,1,0,0"
             Style="{StaticResource ContactStatusStyle}"
-            Text="{Binding Members.Length, StringFormat={}{0} members}"/>
+            Text="{Binding MemberCount, StringFormat={}{0} members}"/>
                 <ToggleButton Grid.RowSpan="3" Grid.Column="2"
               IsChecked="{Binding Path=IsExpanded,
            RelativeSource={RelativeSource AncestorType=TreeViewItem},
@@ -244,30 +280,6 @@ Width="12" Height="12">
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
-        <!-- Server channel template -->
-        <DataTemplate DataType="{x:Type plugin:ServerChannel}">
-            <Grid Margin="0,0,0,0" Height="22">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="24"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <global:SliceControl Grid.Column="0" Grid.Row="1" Source="Assets/Universal/Icon Bitmap/skype-channel.png" ElementCount="11" StackDirection="Horizontal" DefaultIndex="{Binding ChannelType,
-                            Converter={StaticResource ChannelTypeConverter}}" Margin="10,0,0,0" HorizontalAlignment="Left" HoverIndex="-1" PressedIndex="-1" SliceMode="0" Width="14"/>
-                <TextBlock
-                    Grid.Column="1"
-                    x:Name="channelText"
-            VerticalAlignment="Center"
-            Margin="10,0,0,0"
-            Text="{Binding DisplayName}"
-            Foreground="DimGray"
-            Style="{StaticResource ContactStatusStyle}"/>
-            </Grid>
-            <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                    <Setter TargetName="channelText" Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
         <!-- CONTACT ITEM TEMPLATE END -->
         <!-- COMPACT RECENTS TEMPLATES START -->
         <DataTemplate x:Key="DateHeaderTemplate" DataType="{x:Type global:DateHeaderItem}">
@@ -306,6 +318,9 @@ Width="12" Height="12">
             </DataTemplate.Triggers>
         </DataTemplate>
         <!-- COMPACT RECENTS TEMPLATES END -->
+
+
+        <!-- SERVER CHANNEL TEMPLATES END -->
         <!-- CONVERSATION ITEM TEMPLATES START -->
         <!-- MessageItem Template -->
         <DataTemplate DataType="{x:Type plugin:Message}">

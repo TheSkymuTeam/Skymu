@@ -105,22 +105,45 @@ namespace Discord
                     string guildId = guildNode["id"]?.GetValue<string>();
                     string guildName = guildNode["name"]?.GetValue<string>();
                     string iconHash = guildNode["icon"]?.GetValue<string>();
+                    int memberCount = 0;
+                    int.TryParse(guildNode["member_count"]?.ToString(), out memberCount);
 
                     if (string.IsNullOrWhiteSpace(guildId)) continue;
 
                     byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, HelperMethods.DiscordChannelType.Server);
 
                     var channelList = new List<ServerChannel>();
+                    var categoryMap = new Dictionary<string, string>();
+
                     if (guildNode["channels"] is JsonArray channels)
                     {
+                        foreach (var ch in channels.OfType<JsonObject>())
+                        {
+                            int typeValue = -1;
+                            if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
+                                typeValue = -1;
+
+                            if (typeValue == 4)
+                            {
+                                string categoryId = ch["id"]?.GetValue<string>();
+                                string categoryName = ch["name"]?.GetValue<string>();
+                                if (!string.IsNullOrWhiteSpace(categoryId) && !string.IsNullOrWhiteSpace(categoryName))
+                                {
+                                    categoryMap[categoryId] = categoryName;
+                                }
+                            }
+                        }
+
                         foreach (var ch in channels.OfType<JsonObject>())
                         {
                             string channelId = ch["id"]?.GetValue<string>();
                             string channelName = ch["name"]?.GetValue<string>();
                             if (string.IsNullOrWhiteSpace(channelId)) continue;
 
+                            int position = 0;
+                            int.TryParse(ch["position"]?.ToString(), out position);
+                            string parentId = ch["parent_id"]?.GetValue<string>();
 
-                            // Determine channel type
                             int typeValue = -1;
                             if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
                                 typeValue = -1;
@@ -129,17 +152,16 @@ namespace Discord
 
                             switch (typeValue)
                             {
-                                case 0: // Text channel, forum, etc
+                                case 0:
                                     channelType = ChannelType.Standard;
 
-                                    // Only check @everyone overwrites for read-only  
                                     bool everyoneDeniesSend = false;
                                     if (ch["permission_overwrites"] is JsonArray perms)
                                     {
                                         foreach (var perm in perms.OfType<JsonObject>())
                                         {
                                             string permId = perm["id"]?.GetValue<string>() ?? "";
-                                            if (permId != guildId) continue; // @everyone only  
+                                            if (permId != guildId) continue;
 
                                             int deny = 0;
                                             int.TryParse(perm["deny"]?.ToString(), out deny);
@@ -150,19 +172,18 @@ namespace Discord
                                         }
                                     }
 
-                                    // Mark as read-only only if @everyone denies AND no role allows it  
                                     if (everyoneDeniesSend)
                                         channelType = ChannelType.ReadOnly;
                                     break;
 
-                                case 2: // voice channel  
+                                case 2:
                                     channelType = ChannelType.Voice;
                                     break;
 
-                                case 4: // category 
-                                    continue; // skip
+                                case 4:
+                                    continue;
 
-                                case 5: // announcement/news channel  
+                                case 5:
                                     channelType = ChannelType.Announcement;
                                     break;
 
@@ -175,11 +196,11 @@ namespace Discord
                                     break;
                             }
 
-                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType));
+                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
                         }
                     }
 
-                    ServerList.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar));
+                    ServerList.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar, categoryMap, memberCount));
                 }
 
                 return true;
