@@ -12,6 +12,11 @@ namespace Skymu
         public string DateText { get; set; }
     }
 
+    public class CategoryHeaderItem
+    {
+        public string CategoryName { get; set; }
+    }
+
     public class CompactRecentsHelper
     {
         public static ObservableCollection<object> GroupByDate(ObservableCollection<Conversation> conversations)
@@ -21,15 +26,8 @@ namespace Skymu
                 return result;
 
             var sorted = conversations.OrderByDescending(c => c.LastMessageTime).ToList();
-            var groups = new Dictionary<string, List<Conversation>>();
-
-            foreach (var convo in sorted)
-            {
-                string key = GetDateKey(convo.LastMessageTime);
-                if (!groups.ContainsKey(key))
-                    groups[key] = new List<Conversation>();
-                groups[key].Add(convo);
-            }
+            var groups = sorted.GroupBy(c => GetDateKey(c.LastMessageTime))
+                .ToDictionary(g => g.Key, g => g.ToList());
 
             var sortedKeys = groups.Keys
                 .OrderByDescending(k => ParseDateKey(k, sorted[0].LastMessageTime))
@@ -69,6 +67,48 @@ namespace Skymu
                 return parsed;
 
             return reference;
+        }
+    }
+
+    public class ServerChannelHelper
+    {
+        public static ObservableCollection<object> GroupByCategory(ServerChannel[] channels, Dictionary<string, string> categoryMap)
+        {
+            var result = new ObservableCollection<object>();
+            if (channels == null || channels.Length == 0)
+                return result;
+
+            var uncategorized = channels
+                .Where(c => string.IsNullOrEmpty(c.CategoryID))
+                .OrderBy(c => c.Position);
+
+            foreach (var channel in uncategorized)
+                result.Add(channel);
+
+            var categorized = channels
+                .Where(c => !string.IsNullOrEmpty(c.CategoryID))
+                .GroupBy(c => c.CategoryID)
+                .Select(g => new
+                {
+                    CategoryId = g.Key,
+                    Channels = g.OrderBy(c => c.Position).ToList(),
+                    Position = g.Min(c => c.Position)
+                })
+                .OrderBy(g => g.Position);
+
+            foreach (var group in categorized)
+            {
+                string categoryName = categoryMap != null && categoryMap.TryGetValue(group.CategoryId, out var name)
+                    ? name
+                    : "Unknown Category";
+
+                result.Add(new CategoryHeaderItem { CategoryName = categoryName });
+
+                foreach (var channel in group.Channels)
+                    result.Add(channel);
+            }
+
+            return result;
         }
     }
 }
