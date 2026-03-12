@@ -14,17 +14,17 @@
         <Grid.Background>
             <ImageBrush ImageSource="Assets/Universal/Call Screen/background.png"/>
         </Grid.Background>
-
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <StackPanel VerticalAlignment="Center" Orientation="Vertical">
-                    <Image Height="160" VerticalAlignment="Top" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/profile_anonymous.png'}" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center" Width="300" Margin="0,50,0,0"/>
-                    <global:SliceControl Source="Assets/Universal/Call Screen/connection_anim.png" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Image Width="205" Source="Assets/Universal/Call Screen/logo_big.png" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            <StackPanel VerticalAlignment="Center" Orientation="Vertical">
+                <Image Height="160" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/profile_anonymous.png'}" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center" />
+                <global:SliceControl Source="Assets/Universal/Call Screen/connection_anim.png" 
                                  StackDirection="Vertical"
+                                 AnimationFps="30"
                                  ElementCount="10"
                                  IsAnimation="True"
                                  DefaultIndex="0"
@@ -32,44 +32,81 @@
                                  SliceMode="0"
                                  VerticalAlignment="Bottom"
                                  Margin="0,50"/>
-                    <Image Height="160" VerticalAlignment="Top" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/profile_anonymous.png'}" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center" />
-                </StackPanel>
-            </Grid>
-            <Grid Grid.Row="1">
-                <Grid x:Name="pillBar"  VerticalAlignment="Bottom" MinWidth="600" HorizontalAlignment="Center" Margin="0,0,0,50">
-                    <global:SliceControl Source="Assets/Universal/Call Screen/pill.png" Width="Auto"/>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <global:SliceControl Source="Assets/Universal/Call Screen/btn_mic.png" 
+                <Image Height="160"  Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/profile_anonymous.png'}" RenderOptions.BitmapScalingMode="HighQuality" HorizontalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1" x:Name="actionbar" VerticalAlignment="Bottom" MinWidth="600" HorizontalAlignment="Center" Margin="0,0,0,10" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <global:SliceControl Grid.ColumnSpan="3" Source="Assets/Universal/Call Screen/pill.png" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_sidebar_expand.png" 
                                  StackDirection="Vertical"
                                  ElementCount="5"
                                  SliceMode="0"       
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"/>
-                        <global:SliceControl Source="Assets/Universal/Call Screen/btn_dialpad.png" 
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_chat_active.png" 
+                                 StackDirection="Vertical"
+                                 ElementCount="5"
+                                 SliceMode="0"       
+                                 DefaultIndex="0"
+                                 HoverIndex="3"
+                                 PressedIndex="2"
+                                 Margin="5,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_mic.png" 
                                  StackDirection="Vertical"
                                  ElementCount="5"
                                  SliceMode="0"       
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"/>
-                        <global:SliceControl Source="Assets/Universal/Call Screen/btn_add.png" 
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_dialpad.png" 
                                  StackDirection="Vertical"
                                  ElementCount="5"
                                  SliceMode="0"       
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"/>
-                        <global:SliceControl Source="Assets/Universal/Call Screen/btn_hangup.png" 
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_add.png" 
                                  StackDirection="Vertical"
                                  ElementCount="5"
                                  SliceMode="0"       
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"/>
-                    </StackPanel>
-                </Grid>
-            </Grid>
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_hangup.png" 
+                                 StackDirection="Vertical"
+                                 ElementCount="5"
+                                 SliceMode="0"       
+                                 DefaultIndex="0"
+                                 HoverIndex="3"
+                                 PressedIndex="2"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_connection_4.png" 
+                                 StackDirection="Vertical"
+                                 ElementCount="5"
+                                 SliceMode="0"       
+                                 DefaultIndex="0"
+                                 HoverIndex="3"
+                                 PressedIndex="2"/>
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_screen_expand.png" 
+                                 StackDirection="Vertical"
+                                 ElementCount="5"
+                                 SliceMode="0"       
+                                 DefaultIndex="0"
+                                 HoverIndex="3"
+                                 PressedIndex="2"
+                                 Margin="5,0,0,0"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

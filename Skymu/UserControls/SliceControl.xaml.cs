@@ -231,7 +231,7 @@ namespace Skymu
         public double AnimationFps { get { return (double)GetValue(AnimationFpsProperty); } set { SetValue(AnimationFpsProperty, value); } }
         public static readonly DependencyProperty AnimationFpsProperty =
             DependencyProperty.Register(nameof(AnimationFps), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(10.0, OnAnimationPropertyChanged));
+                new PropertyMetadata(30.0, OnAnimationPropertyChanged));
 
         public string Text { get { return (string)GetValue(TextProperty); } set { SetValue(TextProperty, value); } }
         public static readonly DependencyProperty TextProperty =
