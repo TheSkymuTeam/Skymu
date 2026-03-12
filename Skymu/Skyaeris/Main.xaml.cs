@@ -502,6 +502,9 @@ namespace Skymu.Skyaeris
 
         private async void HandleServerItemSelection(RoutedPropertyChangedEventArgs<object> e)
         {
+            if (e.NewValue is CategoryHeaderItem)
+                return;
+
             ChatArea.DataContext = e.NewValue;
             if (e.NewValue is ServerChannel channel)
             {
@@ -564,7 +567,14 @@ namespace Skymu.Skyaeris
             switch (tab_to_select.Name)
             {
                 case "btnServers":
-                    if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) await Universal.Plugin.PopulateServerList();
+                    if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) 
+                        await Universal.Plugin.PopulateServerList();
+
+                    foreach (var server in Universal.Plugin.ServerList)
+                    {
+                        server.GroupedChannels = ServerChannelHelper.GroupByCategory(server.Channels, server.CategoryMap);
+                    }
+
                     ServersList.ItemsSource = Universal.Plugin.ServerList;
                     break;
                 case "btnContacts":
@@ -1732,6 +1742,21 @@ namespace Skymu.Skyaeris
                 return CompactDirectMessageTemplate;
             else if (item is Group)
                 return CompactGroupTemplate;
+            return base.SelectTemplate(item, container);
+        }
+    }
+
+    public class ServerChannelTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate CategoryHeaderTemplate { get; set; }
+        public DataTemplate ChannelTemplate { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is CategoryHeaderItem)
+                return CategoryHeaderTemplate;
+            else if (item is ServerChannel)
+                return ChannelTemplate;
             return base.SelectTemplate(item, container);
         }
     }
