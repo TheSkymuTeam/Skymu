@@ -1049,7 +1049,7 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
+                        Universal.MessageBox(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1154,7 +1154,7 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
+                        Universal.MessageBox(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1242,7 +1242,7 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
+                        Universal.MessageBox(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1317,7 +1317,7 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
+                        Universal.MessageBox(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1489,7 +1489,7 @@ namespace Skymu
                     }
                     catch (Exception ex)
                     {
-                        Universal.ShowMsg(ex.Message);
+                        Universal.MessageBox(ex.Message);
                         transaction.Rollback();
                         throw;
                     }

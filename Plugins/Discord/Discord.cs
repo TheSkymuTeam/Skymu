@@ -51,6 +51,7 @@ namespace Discord
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
         private string DscToken;
+        private PreloadedUserSettings _proto;
         // We reuse this to avoid creating more API instances, which is quite heavy
         internal static readonly API api = new API();
         internal AuthSocket socket = new AuthSocket();
@@ -365,7 +366,6 @@ namespace Discord
                     return false;
                 }
 
-
                 _currentUser.PresenceStatus = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
@@ -470,16 +470,20 @@ namespace Discord
 
                         if (string.IsNullOrWhiteSpace(groupName))
                         {
-                            var recipientNames = recipients?
-                                .OfType<JsonObject>()
-                                .Select(r =>
-                                    r["global_name"]?.GetValue<string>() ??
-                                    r["username"]?.GetValue<string>())
-                                .Where(n => !string.IsNullOrWhiteSpace(n));
+                            try
+                            {
+                                var recipientNames = recipients?
+                                    .OfType<JsonObject>()
+                                    .Select(r =>
+                                        r["global_name"]?.GetValue<string>() ??
+                                        r["username"]?.GetValue<string>())
+                                    .Where(n => !string.IsNullOrWhiteSpace(n));
 
-                            groupName = recipientNames != null
-                                        ? string.Join(", ", recipientNames)
-                                        : "N/A";
+                                groupName = recipientNames != null
+                                            ? string.Join(", ", recipientNames)
+                                            : "N/A";
+                            }
+                            catch { OnError?.Invoke(this, new PluginMessageEventArgs("Error constructing group name.")); }
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
@@ -624,25 +628,29 @@ namespace Discord
 
         internal async Task<PreloadedUserSettings> FetchProtoSettings() // gets the latest proto settings from the server
         {
-            // get current proto blob from Discord
-            string current = await api.SendAPI(
-                PROTO_ENDPOINT,
-                HttpMethod.Get,
-                DscToken,
-                null, null, null).ConfigureAwait(false);
+            try
+            {
+                // get current proto blob from Discord
+                string current = await api.SendAPI(
+                    PROTO_ENDPOINT,
+                    HttpMethod.Get,
+                    DscToken,
+                    null, null, null).ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(current))
-                return null;
+                if (string.IsNullOrWhiteSpace(current))
+                    return new PreloadedUserSettings();
 
-            var json = JsonNode.Parse(current)?.AsObject();
-            string base64 = json?["settings"]?.GetValue<string>();
+                var json = JsonNode.Parse(current)?.AsObject();
+                string base64 = json?["settings"]?.GetValue<string>();
 
-            if (string.IsNullOrWhiteSpace(base64))
-                return null;
+                if (string.IsNullOrWhiteSpace(base64))
+                    return new PreloadedUserSettings();
 
-            // decode proto
-            byte[] bytes = Convert.FromBase64String(base64);
-            return PreloadedUserSettings.Parser.ParseFrom(bytes);
+                // decode proto
+                byte[] bytes = Convert.FromBase64String(base64);
+                return PreloadedUserSettings.Parser.ParseFrom(bytes);
+            }
+            catch { OnError?.Invoke(this, new PluginMessageEventArgs("Failed to fetch Protobuf settings from Discord. Falling back to blank settings object.")); return new PreloadedUserSettings(); } // just in case
         }
 
         internal async Task<bool> UpdateProtoSettings(PreloadedUserSettings settings) // updates the server proto settings blob 
@@ -672,11 +680,9 @@ namespace Discord
 
         public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
         {
-            PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
-            settings.Status = new PreloadedUserSettings.Types.StatusSettings();
-
+            _proto = await FetchProtoSettings();
             // map to proto enum
-            settings.Status.Status = status switch // update status
+            _proto.Status.Status = status switch // update status
             {
                 UserConnectionStatus.Online => "online",
                 UserConnectionStatus.Away => "idle",
@@ -686,7 +692,7 @@ namespace Discord
                 _ => "offline"
             };
 
-            return await UpdateProtoSettings(settings); // try push
+            return await UpdateProtoSettings(_proto); // try push
         }
 
 
@@ -694,11 +700,9 @@ namespace Discord
         {
             if (String.IsNullOrEmpty(status)) return false;
 
-            PreloadedUserSettings settings = new PreloadedUserSettings(); // create settings object
-            settings.Status = new PreloadedUserSettings.Types.StatusSettings();
-
-            settings.Status.CustomStatus.Text = status; // set text of status
-            return await UpdateProtoSettings(settings); // try push
+            _proto = await FetchProtoSettings();
+            _proto.Status.CustomStatus.Text = status; // set text of status
+            return await UpdateProtoSettings(_proto); // try push
         }
 
         private bool ShouldNotify(HelperClasses.DiscordMessageReceivedEventArgs e)
@@ -721,13 +725,18 @@ namespace Discord
             // For server channels (guild channels), only notify if:
             // 1. User is mentioned in the content
             // 2. User is replied to
+            // 3. Message is from the current user
+
+            // Check if message from current user
+            if (e.Sender?.Identifier == _currentUser?.Identifier)
+                return true;
 
             // Check if replied to current user
-            if (e.ParentMessage is not null && e.ParentMessage.Sender.Identifier == _currentUser.Identifier)
+            else if (e.ParentMessage?.Sender?.Identifier == _currentUser.Identifier)
                 return true;
 
             // Check if current user is mentioned in the message
-            if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{_currentUser.DisplayName}>")) // TODO: replace with identifier
+            else if (!string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<@{_currentUser.DisplayName}>")) // TODO: replace with identifier
                 return true;
 
             return false;
