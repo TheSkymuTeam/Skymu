@@ -36,18 +36,13 @@ namespace Skymu.Views
             if (!Properties.Settings.Default.EnableNotifications) return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
-            if (Universal.Plugin.Name == "Stub plugin")
+
+            if (Main.CurrentUser.PresenceStatus == UserConnectionStatus.DoNotDisturb)
             {
-                // Do nothing and continue along
+                Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
+                return;
             }
-            else
-            {
-                if (Main.CurrentUser.PresenceStatus == UserConnectionStatus.DoNotDisturb)
-                {
-                    Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
-                    return;
-                }
-            }
+
 
             if (_activeNotification != null && !_activeNotification.IsLoaded)
             {

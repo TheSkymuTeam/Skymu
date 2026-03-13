@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 
 namespace Skymu.Skyaeris
 {
-    public partial class Call : Page
+    public partial class CallScreen : Page
     {
-        public Call()
+        public CallScreen()
         {
             InitializeComponent();
         }

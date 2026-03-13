@@ -857,7 +857,7 @@ namespace Skymu.Skyaeris
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
             Sounds.Play("call-error");
-            Universal.ShowMsg(VONAGE, VONAGE_CAPTION);
+            Universal.MessageBox(VONAGE, VONAGE_CAPTION);
         }
 
         private void AddButtonClick(object sender, MouseButtonEventArgs e)
@@ -999,7 +999,7 @@ namespace Skymu.Skyaeris
                     });
                 }
 
-                Universal.ShowMsg(MSG_SEND_ERR);
+                Universal.MessageBox(MSG_SEND_ERR);
             }
         }
 

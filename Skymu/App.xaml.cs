@@ -53,7 +53,7 @@ namespace Skymu
 
         public static void PluginNotificationHandler(object sender, MessageEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+            Current.Dispatcher.BeginInvoke(
                 new Action(delegate
                 {
                     MessageTools.HandleIncoming(e);
@@ -124,7 +124,7 @@ namespace Skymu
             new Dialog(WindowBase.IconType.Error, ex.ToString() + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
         }
 
-        public static void ShowMsg(string content, string title = "Information")
+        public static void MessageBox(string content, string title = "Information")
         {
             new Dialog(WindowBase.IconType.Information, content, title, null, null, "OK").ShowDialog();
         }
@@ -204,7 +204,7 @@ namespace Skymu
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to apply presentation framework: {ex.Message}");
+                System.Windows.MessageBox.Show($"Failed to apply presentation framework: {ex.Message}");
             }
         }
 
