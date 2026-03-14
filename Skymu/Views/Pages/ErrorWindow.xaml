@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" TextWrapping="Wrap">
             <TextBlock.Text>
-                <Binding Source="{x:Static properties:Settings.Default}" Path="BrandingName" StringFormat="Looks like there was an error in {0}. Here are the details. Please report this to the developers so that we can fix it."/>
+                <Binding Source="{x:Static properties:Settings.Default}" Path="BrandingName" StringFormat="{}Oh no! {0} encountered an unexpected error. Details are provided below. Please report this to the developers so it can be investigated and resolved."/>
             </TextBlock.Text>
         </TextBlock>
         <ScrollViewer Grid.Row="1" Background="#0A0A0A" Margin="0,20" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

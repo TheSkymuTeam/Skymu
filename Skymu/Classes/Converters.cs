@@ -14,6 +14,7 @@ using Skymu.Skyaeris;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -138,8 +139,21 @@ namespace Skymu.Converters
         }
     }
 
+
     public class StatusToTextConverter : IValueConverter
     {
+        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<UserConnectionStatus, string>()
+        {
+            { UserConnectionStatus.Online, Universal.Lang["sSTATUS_ONLINE"] },
+            { UserConnectionStatus.OnlineMobile, Universal.Lang["sSTATUS_ONLINE_MOBILE"] },
+            { UserConnectionStatus.Away, Universal.Lang["sSTATUS_AWAY"] },
+            { UserConnectionStatus.AwayMobile, Universal.Lang["sSTATUS_AWAY_MOBILE"] },
+            { UserConnectionStatus.DoNotDisturb, Universal.Lang["sSTATUS_DND"] },
+            { UserConnectionStatus.DoNotDisturbMobile, Universal.Lang["sSTATUS_DND_MOBILE"] },
+            { UserConnectionStatus.Blocked, Universal.Lang["sSTATUS_BLOCKED"] },
+            { UserConnectionStatus.Offline, Universal.Lang["sSTATUS_OFFLINE"] },
+            { UserConnectionStatus.Unknown, Universal.Lang["sSTATUS_UNKNOWN"] /* fallback */ }
+        };
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             UserConnectionStatus statInt;
@@ -149,7 +163,7 @@ namespace Skymu.Converters
 
             statInt = (UserConnectionStatus)value;
 
-            return Tray.StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sTRAYHINT_USER_OFFLINE"];
+            return StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sSTATUS_UNKNOWN"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

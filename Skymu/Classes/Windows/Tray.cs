@@ -192,7 +192,7 @@ namespace Skymu
             if (messageWindow != null) { PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero); }
         }
 
-        public static void PushIcon(UserConnectionStatus icon)
+        public static void PushIcon(UserConnectionStatus icon, bool is_signed_in = true)
         {
             string iconName;
             if (!SIconTextMap.TryGetValue(icon, out iconName))
@@ -201,7 +201,8 @@ namespace Skymu
             }
 
             string statusText;
-            if (!StatusMap.TryGetValue(icon, out statusText))
+            if (!is_signed_in) statusText = Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"];
+            else if (!StatusMap.TryGetValue(icon, out statusText))
             {
                 statusText = Universal.Lang["sTRAYHINT_USER_OFFLINE"];
             }

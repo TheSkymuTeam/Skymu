@@ -98,24 +98,29 @@ namespace Skymu
 
             else
             {
-                ExceptionHandler(new Exception("CurrentDomain non-exception object thrown"));
+                ExceptionHandler(new Exception("Skymu Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n" + ev.ToString()));
             }
         }
 
         public static void Close(System.ComponentModel.CancelEventArgs ev = null)
         {
-            if (ev != null)
+            try
             {
-                ev.Cancel = true;
+                if (ev != null)
+                {
+                    ev.Cancel = true;
+                }
+                string brand = Skymu.Properties.Settings.Default.BrandingName;
+                new Dialog(WindowBase.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
             }
-            string brand = Skymu.Properties.Settings.Default.BrandingName;
-            new Dialog(WindowBase.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
+            catch { Universal.Terminate(); } // in case app is already too dead to show dialog by the time this is called
         }
 
-        public async static void Terminate()
+        public static void Terminate()
         {
-            Tray.DisposeIcon();
-            Application.Current.Shutdown();
+            try { Tray.DisposeIcon(); }
+            catch { }  // in case app is already too dead to clear icon by the time this is called
+            finally { Application.Current.Shutdown(); }
         }
 
         public static void ExceptionHandler(Exception ex)
@@ -124,7 +129,7 @@ namespace Skymu
             Views.Pages.ErrorWindow page = new Views.Pages.ErrorWindow(ex.ToString());
             WindowBase frame = new WindowBase(page);
             frame.HeaderIcon = WindowBase.IconType.Error;
-            frame.HeaderText = "Oops! Something went wrong";
+            frame.HeaderText = "That wasn't supposed to happen...";
             frame.Title = brand + " Error";
             frame.ButtonRightAction = () => frame.Close();
             frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
@@ -158,7 +163,7 @@ namespace Skymu
                     ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
                 }
             };
-           
+
         }
 
         private void ApplyPresentationFramework(string frameworkName)
