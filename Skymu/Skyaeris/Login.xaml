@@ -41,7 +41,7 @@
         <Rectangle Grid.Row="0" Fill="{StaticResource SkBlue}"/> <!-- placeholder for menu bar so designer donesnt mess up -->
         <Grid Grid.Row="1">
             <Image x:Name="BackgroundImg" Height="371" Width="510" Stretch="Fill"/>
-            <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="throbber" Source="Assets/Universal/Animations/loading-throbber.png" Width="128" Height="128" Margin="0,0,0,48" RenderTransformOrigin="0.50785,0.5001" Visibility="Collapsed">
+            <Image RenderOptions.BitmapScalingMode="HighQuality" x:Name="throbber" Source="Assets/Universal/Animations/throbber.png" Width="128" Height="128" Margin="0,0,0,48" RenderTransformOrigin="0.50785,0.5001" Visibility="Collapsed">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>

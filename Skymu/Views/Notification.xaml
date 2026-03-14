@@ -1,4 +1,7 @@
-﻿<Window Style="{StaticResource Window}" x:Class="Skymu.Views.Notification" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:global="clr-namespace:Skymu"  xmlns:converters="clr-namespace:Skymu.Converters" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Notification" xmlns:properties="clr-namespace:Skymu.Properties" SizeToContent="Height" Width="240" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" ShowActivated="False" FontFamily="Tahoma" FontSize="11">
+﻿<Window Style="{StaticResource Window}" x:Class="Skymu.Views.Notification" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:global="clr-namespace:Skymu"  xmlns:converters="clr-namespace:Skymu.Converters" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Notification" xmlns:properties="clr-namespace:Skymu.Properties" SizeToContent="Height" Width="240" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" ShowActivated="False" FontFamily="Tahoma" FontSize="11" 
+        MouseEnter="Window_MouseEnter"
+        MouseLeave="Window_MouseLeave"
+        MouseRightButtonDown="Window_MouseRightButtonDown">
     <Window.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator"/>
@@ -10,10 +13,22 @@
                 <RowDefinition Height="26"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Margin="5,0,0,0" Stretch="Fill"
-    Width="33"
-    Height="15" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/logo.png'}" VerticalAlignment="Center" HorizontalAlignment="Left">
-            </Image>
+            <Image Grid.Row="0" Margin="5,0,0,0" Stretch="Fill" Width="33" Height="15" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/logo.png'}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <global:SliceControl
+                MouseLeftButtonDown="CloseButton_Click"
+                Visibility="Hidden"
+                x:Name="close"
+                Grid.Row="0"
+                SliceMode="0"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Notifications/close.png'}"
+                ElementCount="5"
+                StackDirection="Vertical"
+                HorizontalAlignment="Right"
+                Margin="6,0"
+                DefaultIndex="2"
+                HoverIndex="1"
+                PressedIndex="0"
+                />
             <Border Grid.Row="1" Padding="8,7">
                 <StackPanel x:Name="MessagesContainer" Orientation="Vertical">
                 </StackPanel>

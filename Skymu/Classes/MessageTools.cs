@@ -676,6 +676,7 @@ namespace Skymu
                 StackDirection = SpriteStackDirection.Vertical,
                 DefaultIndex = 0,
                 SliceMode = 0,
+                Interactive = false,
                 IsAnimation = true,
                 AnimationFps = Properties.Settings.Default.EmojiFps
             };
@@ -730,14 +731,25 @@ namespace Skymu
                 inlines.Add(currentRun);
         }
 
-        public static void HandleIncoming(MessageEventArgs e)
+        public static void HandleIncoming(MessageEventArgs e) 
         { 
             if (e is MessageRecievedEventArgs eR)
-            {
+            { 
+                // TODO: have creation, editing and deletion affect all conversations in database, not just the current
                 if (Skyaeris.Main.SelectedConversation?.Identifier == eR.ConversationId) Skyaeris.Main.ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
+                    if (eR.SentInServerChannel)
+                    {
+                        // For server channels (guild channels), only notify if:
+                        // 1. User is replied to
+                        // 2. User is mentioned in the content
+
+                        if (message.ParentMessage?.Sender?.Identifier == Skyaeris.Main.CurrentUser?.Identifier) { /* case 1 is true, continue */ } 
+                        else if (!string.IsNullOrEmpty(message.Text) && message.Text.Contains($"<@{Skyaeris.Main.CurrentUser.DisplayName}>")) { /* case 2 is true, continue */ }
+                        else { return; }
+                    }
 
                     if (message.Sender.Identifier != Skyaeris.Main.CurrentUser?.Identifier)
                     {
@@ -749,7 +761,7 @@ namespace Skymu
                 }
             }
 
-            else if (e is MessageDeletedEventArgs eD)
+            else if (e is MessageDeletedEventArgs eD && Skyaeris.Main.SelectedConversation?.Identifier == e.ConversationId) 
             {
                 var item = Skyaeris.Main.ActiveConversation.FirstOrDefault(x => x.Identifier == eD.DeletedItemId);
                 if (item is Message deleted_msg)
@@ -764,7 +776,7 @@ namespace Skymu
                 }
             }
 
-            else if (e is MessageEditedEventArgs eE)
+            else if (e is MessageEditedEventArgs eE && Skyaeris.Main.SelectedConversation?.Identifier == e.ConversationId) 
             {
                 var index = Skyaeris.Main.ActiveConversation
                     .Select((item, i) => new { item, i })

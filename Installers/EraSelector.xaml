@@ -71,7 +71,7 @@
                     TextFont="Arial"
                     TextSize="13"
                  Width="Auto"
-                    TextStartPositionX="15"
+                    TextLeftMargin="15"
                     TextRightMargin="15"
                     TextWeight="Bold"
                     Text="Select the Skype 5 era"

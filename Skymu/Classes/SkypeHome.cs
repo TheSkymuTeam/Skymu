@@ -140,7 +140,7 @@ namespace Skymu
 
         // Called by SH.API.getPopularContacts() as h.Users(3).
         // Returns a collection the JS iterates via .Count and indexer calls.
-        // All contacts get equal popularity so display order matches the ContactsList order.
+        // All contacts get equal popularity so display order matches the ConversationList order.
         // TODO: Make friends more popular
         public UsersCollection Users(int filter)
         {

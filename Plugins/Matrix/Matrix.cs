@@ -893,7 +893,7 @@ namespace Matrix
                     {
                         _uiContext?.Post(_ =>
                             MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
-                                roomId, encryptedItem)),
+                                roomId, encryptedItem, false)),
                             null);
                     }
                     return;
@@ -945,7 +945,7 @@ namespace Matrix
 
                     _uiContext?.Post(_ =>
                         MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
-                            roomId, messageItem)),
+                            roomId, messageItem, false)),
                         null);
                 }
             }

@@ -36,7 +36,7 @@ namespace Stub
         }
         public Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            MessageEvent.Invoke(this, new MessageRecievedEventArgs("13414", new Message("20202", users[0], new DateTime(2025, 4, 30, 8, 14, 0), "Hello")));
+            MessageEvent.Invoke(this, new MessageRecievedEventArgs("13414", new Message("20202", users[0], new DateTime(2025, 4, 30, 8, 14, 0), "Hello"), false));
             return Task.FromResult(LoginResult.Success);
         }
         public Task<string> GetQRCode()

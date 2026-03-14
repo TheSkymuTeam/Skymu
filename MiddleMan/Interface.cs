@@ -373,6 +373,12 @@ namespace MiddleMan
         GroupChat
     }
 
+    public enum ConversationType
+    {
+        DirectMessage,
+        Group,
+        Server
+    }
 
     public class ClickableConfiguration
     {
@@ -415,9 +421,11 @@ namespace MiddleMan
     public class MessageRecievedEventArgs : MessageEventArgs
     {
         public ConversationItem Item { get; }
-        public MessageRecievedEventArgs(string conversation_id, ConversationItem item) : base(conversation_id)
+        public bool SentInServerChannel { get; }
+        public MessageRecievedEventArgs(string conversation_id, ConversationItem item, bool sent_in_server_channel) : base(conversation_id)
         {
             Item = item;
+            SentInServerChannel = sent_in_server_channel;
         }
     }
 
@@ -509,7 +517,7 @@ namespace MiddleMan
         ObservableCollection<Server> ServerList { get; } // field for server list, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
-        Task<bool> PopulateServerList(); // Fetches and assigns the recents list to the ServerList variable. Returns true on success.
+        Task<bool> PopulateServerList(); // Fetches and assigns the server list to the ServerList variable. Returns true on success.
         Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type = Fetch.Newest, int message_count = 50, string identifier = null); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items

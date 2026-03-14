@@ -62,6 +62,9 @@ namespace Skymu.Views.Pages
             {
                 if (exwin != null) window = exwin;
                 else window = new WindowBase(this);
+                window.Width = 518;
+                window.Height = 394;
+                window.SizeToContent = SizeToContent.Manual;
                 window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
 
