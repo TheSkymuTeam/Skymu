@@ -37,6 +37,14 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
+            <Style TargetType="Hyperlink">
+                <!-- This fixes the red hyperlink hover color -->
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="#00AFF0"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
             <Style TargetType="{x:Type MenuItem}" BasedOn="{x:Null}">
                 <!-- This fixes the horrible WPF Aero PresentationFramework menu items -->
                 <Style.Triggers>

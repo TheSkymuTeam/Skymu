@@ -1661,7 +1661,7 @@ namespace Skymu.Skyaeris
             { UserConnectionStatus.DoNotDisturbMobile, 5 },
             { UserConnectionStatus.Invisible, 19 },
             { UserConnectionStatus.Blocked, 9 },
-            { UserConnectionStatus.Offline, 19 },
+            { UserConnectionStatus.Offline, 14 },
             { UserConnectionStatus.Unknown, 0 }
         };
 
