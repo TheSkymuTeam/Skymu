@@ -11,118 +11,129 @@
 
 using MiddleMan;
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
+using System.Xml.Linq;
 
 namespace Skymu
 {
     internal static class Credentials
     {
         private static readonly string FilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Skymu", "shared.json");
-        private class CredentialEntry
-        {
-            public string Plugin { get; set; }
-            public string Identifier { get; set; }
-            public string Username { get; set; }
-            public string DisplayName { get; set; }
-            public string PasswordOrToken { get; set; }
-            public string AuthenticationType { get; set; }
-            public string ProfilePicture { get; set; }
-        }
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Skymu", "credentials.xml");
 
-        private static List<CredentialEntry> ReadFile()
+        private static XDocument ReadFile()
         {
             if (!File.Exists(FilePath))
-                return new List<CredentialEntry>();
+                return new XDocument(new XElement("Credentials"));
 
             try
             {
-                string json = File.ReadAllText(FilePath);
-                return JsonSerializer.Deserialize<List<CredentialEntry>>(json)
-                       ?? new List<CredentialEntry>();
+                return XDocument.Load(FilePath);
             }
             catch
             {
-                return new List<CredentialEntry>();
+                return new XDocument(new XElement("Credentials"));
             }
         }
 
-        private static void WriteFile(List<CredentialEntry> entries)
+        private static void WriteFile(XDocument doc)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-            string json = JsonSerializer.Serialize(entries, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(FilePath, json);
+            doc.Save(FilePath);
         }
 
-        private static CredentialEntry ToEntry(SavedCredential cred)
+        private static XElement ToElement(SavedCredential cred)
         {
-            return new CredentialEntry
+            string encryptedToken = null;
+            if (cred.PasswordOrToken != null)
             {
-                Plugin = cred.Plugin,
-                Identifier = cred.User?.Identifier,
-                Username = cred.User?.Username,
-                DisplayName = cred.User?.DisplayName,
-                PasswordOrToken = cred.PasswordOrToken != null ? Convert.ToBase64String(ProtectedData.Protect(System.Text.Encoding.UTF8.GetBytes(cred.PasswordOrToken), null,
-                DataProtectionScope.CurrentUser)) : null,
-                AuthenticationType = cred.AuthenticationType.ToString(),
-                ProfilePicture = cred.User?.ProfilePicture != null ? Convert.ToBase64String(cred.User.ProfilePicture) : null
-            };
+                encryptedToken = Convert.ToBase64String(ProtectedData.Protect(
+                    System.Text.Encoding.UTF8.GetBytes(cred.PasswordOrToken),
+                    null, DataProtectionScope.CurrentUser));
+            }
+
+            string avatar = cred.User?.ProfilePicture != null
+                ? Convert.ToBase64String(cred.User.ProfilePicture)
+                : null;
+
+            return new XElement("Credential",
+                new XElement("Plugin", cred.Plugin),
+                new XElement("Identifier", cred.User?.Identifier),
+                new XElement("Username", cred.User?.Username),
+                new XElement("DisplayName", cred.User?.DisplayName),
+                new XElement("PasswordOrToken", encryptedToken),
+                new XElement("AuthenticationType", cred.AuthenticationType.ToString()),
+                new XElement("ProfilePicture", avatar)
+            );
         }
 
-        private static SavedCredential FromEntry(CredentialEntry e)
+        private static SavedCredential FromElement(XElement e)
         {
             byte[] avatar = null;
-            if (!string.IsNullOrEmpty(e.ProfilePicture))
+            string picStr = (string)e.Element("ProfilePicture");
+            if (!string.IsNullOrEmpty(picStr))
             {
-                try { avatar = Convert.FromBase64String(e.ProfilePicture); } catch { }
+                try { avatar = Convert.FromBase64String(picStr); } catch { }
             }
 
             AuthenticationMethod authType = AuthenticationMethod.Password;
-            if (!string.IsNullOrEmpty(e.AuthenticationType))
-                Enum.TryParse(e.AuthenticationType, out authType);
+            string authStr = (string)e.Element("AuthenticationType");
+            if (!string.IsNullOrEmpty(authStr))
+                Enum.TryParse(authStr, out authType);
 
-            var user = new User(e.DisplayName, e.Username, e.Identifier, null, UserConnectionStatus.Offline, avatar);
+            var user = new User(
+                (string)e.Element("DisplayName"),
+                (string)e.Element("Username"),
+                (string)e.Element("Identifier"),
+                null,
+                UserConnectionStatus.Offline,
+                avatar);
 
             string token = null;
-            if (!string.IsNullOrEmpty(e.PasswordOrToken))
+            string tokenStr = (string)e.Element("PasswordOrToken");
+            if (!string.IsNullOrEmpty(tokenStr))
             {
                 try
                 {
                     token = System.Text.Encoding.UTF8.GetString(ProtectedData.Unprotect(
-                        Convert.FromBase64String(e.PasswordOrToken),
-                        null,
-                        DataProtectionScope.CurrentUser));
+                        Convert.FromBase64String(tokenStr),
+                        null, DataProtectionScope.CurrentUser));
                 }
                 catch { token = null; }
             }
 
-            return new SavedCredential(user, token, authType, e.Plugin);
+            return new SavedCredential(user, token, authType, (string)e.Element("Plugin"));
         }
+
+        private static bool Matches(XElement e, string plugin, string identifier) =>
+            (string)e.Element("Plugin") == plugin &&
+            (string)e.Element("Identifier") == identifier;
 
         internal static void Save(SavedCredential credential)
         {
-            List<CredentialEntry> entries = ReadFile();
+            XDocument doc = ReadFile();
+            XElement root = doc.Root;
 
-            entries.RemoveAll(e =>
-                e.Plugin == credential.Plugin &&
-                e.Identifier == credential.User?.Identifier);
+            root.Elements("Credential").Where(e =>
+                Matches(e, credential.Plugin, credential.User?.Identifier))
+                .Remove();
 
-            entries.Add(ToEntry(credential));
-            WriteFile(entries);
+            root.Add(ToElement(credential));
+            WriteFile(doc);
         }
 
         internal static SavedCredential Get(User user, string plugin)
         {
-            List<CredentialEntry> entries = ReadFile();
+            XDocument doc = ReadFile();
 
-            foreach (CredentialEntry e in entries)
+            foreach (XElement e in doc.Root.Elements("Credential"))
             {
-                if (e.Plugin == plugin && e.Identifier == user?.Identifier)
-                    return FromEntry(e);
+                if (Matches(e, plugin, user?.Identifier))
+                    return FromElement(e);
             }
 
             return null;
@@ -130,12 +141,12 @@ namespace Skymu
 
         internal static SavedCredential GetFirst(string plugin)
         {
-            List<CredentialEntry> entries = ReadFile();
+            XDocument doc = ReadFile();
 
-            foreach (CredentialEntry e in entries)
+            foreach (XElement e in doc.Root.Elements("Credential"))
             {
-                if (e.Plugin == plugin)
-                    return FromEntry(e);
+                if ((string)e.Element("Plugin") == plugin)
+                    return FromElement(e);
             }
 
             return null;
@@ -143,27 +154,31 @@ namespace Skymu
 
         internal static SavedCredential[] GetAll()
         {
-            List<CredentialEntry> entries = ReadFile();
+            XDocument doc = ReadFile();
             List<SavedCredential> results = new List<SavedCredential>();
 
-            foreach (CredentialEntry e in entries)
-                results.Add(FromEntry(e));
+            foreach (XElement e in doc.Root.Elements("Credential"))
+                results.Add(FromElement(e));
 
             return results.ToArray();
         }
 
         internal static void Purge(User user, string plugin)
         {
-            List<CredentialEntry> entries = ReadFile();
-            entries.RemoveAll(e => e.Plugin == plugin && e.Identifier == user?.Identifier);
-            WriteFile(entries);
+            XDocument doc = ReadFile();
+            doc.Root.Elements("Credential")
+                .Where(e => Matches(e, plugin, user?.Identifier))
+                .Remove();
+            WriteFile(doc);
         }
 
         internal static void PurgePlugin(string plugin)
         {
-            List<CredentialEntry> entries = ReadFile();
-            entries.RemoveAll(e => e.Plugin == plugin);
-            WriteFile(entries);
+            XDocument doc = ReadFile();
+            doc.Root.Elements("Credential")
+                .Where(e => (string)e.Element("Plugin") == plugin)
+                .Remove();
+            WriteFile(doc);
         }
 
         internal static void PurgeAll()

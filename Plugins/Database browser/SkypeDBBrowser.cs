@@ -34,7 +34,7 @@ namespace SkypeDBBrowser
         public event EventHandler<MessageEventArgs> MessageEvent;
 
         public string Name => "Skype DB Browser";
-        public string InternalName => "skymu-skypedb-plugin";
+        public string InternalName => "db-browser";
 
         public bool SupportsServers { get { return false; } }
         public AuthTypeInfo[] AuthenticationTypes

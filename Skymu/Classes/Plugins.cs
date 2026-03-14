@@ -29,7 +29,7 @@ namespace Skymu
             }
 
             int pluginCount = 0;
-            foreach (string dll in Directory.GetFiles(path, "plug*.dll"))
+            foreach (string dll in Directory.GetFiles(path, "plugin*.dll"))
             {
                 try
                 {
@@ -64,7 +64,7 @@ namespace Skymu
             if (pluginCount < 1)
             {
                 Universal.ExceptionHandler(
-                    new Exception("No plugins detected in the plugin folder. Please download some from our website.")
+                    new Exception("No plugins detected in the plugin folder. You are most likely getting this error because you extracted the .7z archive with Windows Explorer. Use 7-Zip instead.")
                 );
             }
             return PluginList.ToArray();

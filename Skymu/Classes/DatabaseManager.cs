@@ -38,8 +38,8 @@ namespace Skymu
         public DatabaseManager(User user)
         {
             DbPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "Skymu", Universal.Plugin.InternalName + " (" + user.Identifier + ")", "main.db"); 
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Skymu", Universal.Plugin.InternalName, user.Identifier, "main.db"); 
 
             Accounts = new AccountsTable(this);
             Contacts = new ContactsTable(this);
@@ -49,6 +49,14 @@ namespace Skymu
 
             using (SqliteConnection connection = CreateConnection())
             {
+                connection.Open();
+
+                using (var cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; // .db-journal fles, Accurate to skype
+                    cmd.ExecuteNonQuery();
+                }
+
                 EnsureTablesInternal(connection);
             }
         }
@@ -991,14 +999,14 @@ namespace Skymu
                                 INSERT INTO Accounts (
                                     is_permanent, skypename, username, pstnnumber, fullname, birthday, gender,
                                     languages, country, province, city, phone_home, phone_office,
-                                    phone_mobile, emails, homepage, about, displayname, given_displayname,
+                                    phone_mobile, emails, homepage, about, displayname,
                                     mood_text, rich_mood_text, avatar_image, liveid_membername,
                                     availability, lastonline_timestamp, plugin
                                 )
                                 VALUES (
                                     @is_permanent, @skypename, @username, @pstnnumber, @fullname, @birthday, @gender,
                                     @languages, @country, @province, @city, @phone_home, @phone_office,
-                                    @phone_mobile, @emails, @homepage, @about, @displayname, @given_displayname,
+                                    @phone_mobile, @emails, @homepage, @about, @displayname,
                                     @mood_text, @rich_mood_text, @avatar_image, @liveid_membername,
                                     @availability, @lastonline_timestamp, @plugin
                                 )
@@ -1007,7 +1015,6 @@ namespace Skymu
                                     username             = excluded.username,
                                     fullname             = excluded.fullname,
                                     displayname          = excluded.displayname,
-                                    given_displayname    = excluded.given_displayname,
                                     mood_text            = excluded.mood_text,
                                     rich_mood_text       = excluded.rich_mood_text,
                                     avatar_image         = excluded.avatar_image,
@@ -1034,7 +1041,6 @@ namespace Skymu
                             cmd.Parameters.Add("@homepage", SqliteType.Text).Value = DBNull.Value;
                             cmd.Parameters.Add("@about", SqliteType.Text).Value = DBNull.Value;
                             cmd.Parameters.Add("@displayname", SqliteType.Text).Value = (object)user.DisplayName ?? DBNull.Value;
-                            cmd.Parameters.Add("@given_displayname", SqliteType.Text).Value = (object)user.DisplayName ?? DBNull.Value;
                             cmd.Parameters.Add("@mood_text", SqliteType.Text).Value = (object)user.Status ?? DBNull.Value;
                             cmd.Parameters.Add("@rich_mood_text", SqliteType.Text).Value = DBNull.Value;
                             cmd.Parameters.Add("@avatar_image", SqliteType.Blob).Value = (object)user.ProfilePicture ?? DBNull.Value;

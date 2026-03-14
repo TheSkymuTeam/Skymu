@@ -747,7 +747,7 @@ namespace Skymu
                         // 2. User is mentioned in the content
 
                         if (message.ParentMessage?.Sender?.Identifier == Skyaeris.Main.CurrentUser?.Identifier) { /* case 1 is true, continue */ } 
-                        else if (!string.IsNullOrEmpty(message.Text) && message.Text.Contains($"<@{Skyaeris.Main.CurrentUser.DisplayName}>")) { /* case 2 is true, continue */ }
+                        else if (!string.IsNullOrEmpty(message.Text) && !string.IsNullOrEmpty(Skyaeris.Main.CurrentUser?.DisplayName) && message.Text.Contains($"<@{Skyaeris.Main.CurrentUser.DisplayName}>")) { /* case 2 is true, continue */ }
                         else { return; }
                     }
 

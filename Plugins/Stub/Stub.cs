@@ -24,7 +24,7 @@ namespace Stub
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Stub plugin"; } }
-        public string InternalName { get { return "skymu-pluginstub"; } }
+        public string InternalName { get { return "stub"; } }
         public bool SupportsServers { get { return false; } }
 
         public AuthTypeInfo[] AuthenticationTypes

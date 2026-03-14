@@ -7,7 +7,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Platforms>AnyCPU;x86;x64</Platforms>
 		<OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-		<AssemblyName>plug-sdb-browser</AssemblyName>
+		<AssemblyName>plugin-SkypeDBBrowser</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.3" />
