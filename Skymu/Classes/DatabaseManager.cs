@@ -53,7 +53,7 @@ namespace Skymu
 
                 using (var cmd = connection.CreateCommand())
                 {
-                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; // .db-journal fles, Accurate to skype
+                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; 
                     cmd.ExecuteNonQuery();
                 }
 
