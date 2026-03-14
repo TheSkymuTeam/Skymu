@@ -34,7 +34,7 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Discord"; } }
-        public string InternalName { get { return "skymu-discord-plugin"; } }
+        public string InternalName { get { return "discord"; } }
         public bool SupportsServers { get { return true; } }
         public AuthTypeInfo[] AuthenticationTypes
         {

@@ -5,7 +5,7 @@
     <AssemblyTitle>Matrix</AssemblyTitle>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
-    <AssemblyName>plug-matrix</AssemblyName>
+    <AssemblyName>plugin-Matrix</AssemblyName>
     <Platforms>AnyCPU;x86;x64</Platforms>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

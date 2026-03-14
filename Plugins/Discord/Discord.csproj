@@ -5,7 +5,7 @@
   <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
     <OutputType>Library</OutputType>
-    <AssemblyName>plug-discord</AssemblyName>
+    <AssemblyName>plugin-Discord</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <LangVersion>latest</LangVersion>

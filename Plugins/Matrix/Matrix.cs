@@ -28,7 +28,7 @@ namespace Matrix
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Matrix"; } }
-        public string InternalName { get { return "skymu-matrix-plugin"; } }
+        public string InternalName { get { return "matrix"; } }
         public bool SupportsServers { get { return false; } }
         public AuthTypeInfo[] AuthenticationTypes
         {
