@@ -39,8 +39,13 @@ namespace MiddleMan
         Online,
         DoNotDisturb,
         Away,
+        OnlineMobile,
+        DoNotDisturbMobile,
+        AwayMobile,
         Invisible,
-        Offline
+        Blocked,
+        Offline,
+        Unknown
     }
 
     public enum ChannelType

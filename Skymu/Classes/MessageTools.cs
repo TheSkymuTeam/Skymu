@@ -41,8 +41,8 @@ namespace Skymu
         public static class BrushesStatic
         {
             // Gradient background
-            public static readonly Brush CodeBackgroundTop = new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5)); 
-            public static readonly Brush CodeBackgroundBottom = new SolidColorBrush(Color.FromRgb(0xF9, 0xF9, 0xF9)); 
+            public static readonly Brush CodeBackgroundBottom = new SolidColorBrush(Color.FromRgb(0xF2, 0xF2, 0xF2)); 
+            public static readonly Brush CodeBackgroundTop = new SolidColorBrush(Color.FromRgb(0xF9, 0xF9, 0xF9)); 
 
             // Code text foreground
             public static readonly Brush CodeForeground = new SolidColorBrush(Color.FromRgb(0x55, 0x55, 0x55)); // #757575

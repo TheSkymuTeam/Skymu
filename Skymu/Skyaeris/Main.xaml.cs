@@ -1654,10 +1654,15 @@ namespace Skymu.Skyaeris
         private readonly static Dictionary<UserConnectionStatus, int> status_map = new Dictionary<UserConnectionStatus, int>()
         {
             { UserConnectionStatus.Online, 2 },
+            { UserConnectionStatus.OnlineMobile, 2 },
             { UserConnectionStatus.Away, 3 },
+            { UserConnectionStatus.AwayMobile, 3 },
             { UserConnectionStatus.DoNotDisturb, 5 },
+            { UserConnectionStatus.DoNotDisturbMobile, 5 },
             { UserConnectionStatus.Invisible, 19 },
-            { UserConnectionStatus.Offline, 19 }
+            { UserConnectionStatus.Blocked, 9 },
+            { UserConnectionStatus.Offline, 19 },
+            { UserConnectionStatus.Unknown, 0 }
         };
 
         private static readonly Dictionary<ChannelType, int> channel_type_map = new Dictionary<ChannelType, int>()
