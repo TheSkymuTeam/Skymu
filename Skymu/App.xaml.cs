@@ -121,7 +121,16 @@ namespace Skymu
         public static void ExceptionHandler(Exception ex)
         {
             string brand = Skymu.Properties.Settings.Default.BrandingName;
-            new Dialog(WindowBase.IconType.Error, ex.ToString() + "\n\nPlease report this to a developer.", "Exception thrown in " + brand, brand + " Exception Handling").ShowDialog();
+            Views.Pages.ErrorWindow page = new Views.Pages.ErrorWindow(ex.ToString());
+            WindowBase frame = new WindowBase(page);
+            frame.HeaderIcon = WindowBase.IconType.Error;
+            frame.HeaderText = "Oops! Something went wrong";
+            frame.Title = brand + " Error";
+            frame.ButtonRightAction = () => frame.Close();
+            frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
+            frame.ButtonLeftAction = () => page.CopyToClipboard();
+            frame.ButtonLeftText = "Copy to clipboard";
+            frame.ShowDialog();
         }
 
         public static void MessageBox(string content, string title = "Information")

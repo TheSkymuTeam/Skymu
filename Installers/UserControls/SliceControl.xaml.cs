@@ -292,9 +292,9 @@ namespace Installers
             DependencyProperty.Register(nameof(TextVerticalAlignment), typeof(VerticalAlignment), typeof(SliceControl),
                 new PropertyMetadata(VerticalAlignment.Center, OnTextChanged));
 
-        public int TextStartPositionX { get { return (int)GetValue(TextStartPositionXProperty); } set { SetValue(TextStartPositionXProperty, value); } }
-        public static readonly DependencyProperty TextStartPositionXProperty =
-            DependencyProperty.Register(nameof(TextStartPositionX), typeof(int), typeof(SliceControl),
+        public int TextLeftMargin { get { return (int)GetValue(TextLeftMarginProperty); } set { SetValue(TextLeftMarginProperty, value); } }
+        public static readonly DependencyProperty TextLeftMarginProperty =
+            DependencyProperty.Register(nameof(TextLeftMargin), typeof(int), typeof(SliceControl),
                 new PropertyMetadata(0, OnTextChanged));
 
         public int TextRightMargin { get { return (int)GetValue(TextRightMarginProperty); } set { SetValue(TextRightMarginProperty, value); } }
@@ -353,7 +353,7 @@ namespace Installers
         {
             if (OverlayText == null) return;
             OverlayText.Margin = new Thickness(
-                TextStartPositionX,
+                TextLeftMargin,
                 _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
                 TextRightMargin,
                 0);

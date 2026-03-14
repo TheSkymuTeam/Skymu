@@ -7,13 +7,13 @@
       xmlns:converters="clr-namespace:Skymu.Converters"
       mc:Ignorable="d"
       Title="CallScreen"
-      FontFamily="Arial" FontSize="15.5"  Width="1100" Height="700" >
+      FontFamily="Arial" FontSize="15.5"  Width="1100" Height="700" Style="{StaticResource Page}" >
     <Page.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
     </Page.Resources>
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="Assets/Universal/Call Screen/background.png"/>
+            <ImageBrush ImageSource="Assets/Universal/Call Screen/background_hires.png" RenderOptions.BitmapScalingMode="HighQuality"/>
         </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -43,7 +43,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1" x:Name="actionbar" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Margin="0,0,0,16" >
+        <Grid Grid.Row="1" x:Name="actionbar" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,16" >
             <Grid.ColumnDefinitions>
                 <!-- You might be wondering why Column 1 is 156px and Column 2 is 164px,
                 and why both aren't 160px for an equally aligned UI. The answer to this
@@ -51,10 +51,10 @@
                 visual bug, it wouldn't look accurate, and this is why the columns are 
                 going to remain misaligned. -->
                 <ColumnDefinition Width="156"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="164"/>
             </Grid.ColumnDefinitions>
-            <global:SliceControl Grid.ColumnSpan="3" Width="Auto" Source="Assets/Universal/Call Screen/pill.png" />
+            <global:SliceControl SliceMode="1" TopHeight="10" BottomHeight="10" Grid.ColumnSpan="3" Width="Auto" Source="Assets/Universal/Call Screen/pill.png" />
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="24,0,0,0">
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_sidebar_expand.png" 
                                  StackDirection="Vertical"
@@ -63,7 +63,7 @@
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"/>
-                <global:SliceControl Source="Assets/Universal/Call Screen/btn_chat_inactive.png" 
+                <global:SliceControl Source="Assets/Universal/Call Screen/btn_chat_active.png" 
                                  StackDirection="Vertical"
                                  ElementCount="5"
                                  SliceMode="0"       
@@ -104,7 +104,7 @@
                                  DefaultIndex="0"
                                  HoverIndex="3"
                                  PressedIndex="2"
-                                 Margin="4,0"/>
+                                 Margin="4,0" Loaded="SliceControl_Loaded"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" HorizontalAlignment="Right">
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_connection_4.png" 

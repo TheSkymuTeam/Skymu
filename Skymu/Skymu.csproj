@@ -25,14 +25,18 @@
 		<UseApplicationTrust>false</UseApplicationTrust>
 		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
 		<StartupObject />
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>AnyCPU;x86;x64</Platforms>
 		<ApplicationIcon>Skype.ico</ApplicationIcon>
 	</PropertyGroup>
-
+	<PropertyGroup>
+		<AssemblyTitle>Sky Multiprotocol</AssemblyTitle>
+		<Description>Sky Multiprotocol</Description>
+		<FileDescription>Sky Multiprotocol</FileDescription>
+		<Company>The Skymu Team</Company>
+		<Product>Sky Multiprotocol</Product>
+	</PropertyGroup>
 	<Target Name="MoveNetStandardLibs" AfterTargets="Build">
 		<ItemGroup>
 			<NetStandardAssemblies Include="$(OutDir)System.*.dll" />

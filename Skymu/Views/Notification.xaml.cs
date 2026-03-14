@@ -72,6 +72,13 @@ namespace Skymu.Views
 
                 notif._closeTimer.Tick += (s, ev) =>
                 {
+                    if (notif.close.Visibility == Visibility.Visible)
+                    {
+                        notif._closeTimer.Stop();
+                        notif._closeTimer.Start();   
+                        return;
+                    }
+
                     notif._closeTimer.Stop();
 
                     var fadeOut = new DoubleAnimation
@@ -257,6 +264,26 @@ namespace Skymu.Views
             var workingArea = SystemParameters.WorkArea;
             this.Left = workingArea.Right - this.ActualWidth - 5;
             this.Top = workingArea.Bottom - this.ActualHeight - 1;
+        }
+
+        private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            close.Visibility = Visibility.Visible;
+        }
+
+        private void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            close.Visibility = Visibility.Hidden;
+        }
+
+        private void CloseButton_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Close();
+        }
+
+        private void Window_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Close();
         }
     }
 }

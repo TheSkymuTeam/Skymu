@@ -55,11 +55,10 @@ namespace Skymu.Skyaeris
         private NotifyCollectionChangedEventHandler _conversationItemsChangedHandler;
         private readonly WindowFrame border = (WindowFrame)Properties.Settings.Default.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
-        internal static BitmapImage AnonymousAvatar;
-        internal static BitmapImage GroupAvatar;
+        internal static BitmapImage AnonymousAvatar, GroupAvatar;
         private bool noCloseEvent;
         internal static User CurrentUser; // static for other code to use it
-        private BitmapImage img_maximize, img_restore, img_split, img_join;
+        private BitmapImage img_maximize, img_restore, img_split, img_join, EndCallButton, CallLeftButton;
         internal static Conversation SelectedConversation = null;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
@@ -116,16 +115,9 @@ namespace Skymu.Skyaeris
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = "pack://application:,,,/" + Universal.SkypeEra + "/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
+            string AvatarPath = "pack://application:,,,/Skyaeris/Assets/" + Properties.Settings.Default.ThemeRoot + "/Profile Pictures/profile_" + avatar + ".png";
 
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri(AvatarPath, UriKind.Absolute);
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            bitmap.Freeze();
-
-            return bitmap;
+            return FrameworkExtensions.FreezeImage(AvatarPath);
         }
 
         #endregion
@@ -153,7 +145,7 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(0);
                     browser.Visibility = Visibility.Visible;
                     MainPageButton.SetState(ButtonVisualState.Pressed);
-                    ContactsList.SelectedItem = null;
+                    ConversationList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
                     break;
 
@@ -522,15 +514,15 @@ namespace Skymu.Skyaeris
                 CompactDirectMessageTemplate = (DataTemplate)FindResource("CompactDirectMessageTemplate"),
                 CompactGroupTemplate = (DataTemplate)FindResource("CompactGroupTemplate")
             };
-            ContactsList.ItemTemplateSelector = selector;
-            ContactsList.ItemsSource = grouped;
+            ConversationList.ItemTemplateSelector = selector;
+            ConversationList.ItemsSource = grouped;
         }
 
         public static void RefreshCompactRecentsView()
         {
             var mainWindow = Application.Current.MainWindow as Main;
-            if (mainWindow?.ContactsList.Visibility == Visibility.Visible && 
-                mainWindow.ContactsList.ItemTemplateSelector is CompactRecentsTemplateSelector)
+            if (mainWindow?.ConversationList.Visibility == Visibility.Visible && 
+                mainWindow.ConversationList.ItemTemplateSelector is CompactRecentsTemplateSelector)
             {
                 mainWindow.Dispatcher.Invoke(mainWindow.setupcompactrecentsview);
             }
@@ -540,14 +532,14 @@ namespace Skymu.Skyaeris
         {
             if (tab_to_select.Name == "btnServers")
             {
-                ContactsList.Visibility = Visibility.Collapsed;
+                ConversationList.Visibility = Visibility.Collapsed;
                 ServersList.Visibility = Visibility.Visible;
             }
             else
             {
-                ContactsList.Visibility = Visibility.Visible;
+                ConversationList.Visibility = Visibility.Visible;
                 ServersList.Visibility = Visibility.Collapsed;
-                ContactsList.ItemsSource = null;
+                ConversationList.ItemsSource = null;
             }
 
             GridLength dynamic = new GridLength(1, GridUnitType.Star);
@@ -579,8 +571,8 @@ namespace Skymu.Skyaeris
                     break;
                 case "btnContacts":
                     if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1) await Universal.Plugin.PopulateContactsList();
-                    ContactsList.ItemTemplateSelector = null;
-                    ContactsList.ItemsSource = Universal.Plugin.ContactsList;
+                    ConversationList.ItemTemplateSelector = null;
+                    ConversationList.ItemsSource = Universal.Plugin.ContactsList;
                     break;
                 case "btnRecents":
                     if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1) await Universal.Plugin.PopulateRecentsList();
@@ -1448,19 +1440,31 @@ namespace Skymu.Skyaeris
                 IsCallPlaying = false;
                 Sounds.StopPlayback("call-ring");
                 Sounds.Play("call-end");
+                CallDropdown.Visibility = Visibility.Visible;
+                CallButton.Source = CallLeftButton;
+                CallButton.TextLeftMargin = 26;
+                CallButton.RightWidth = 4;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
             else
             {
+                WindowBase callwin = new WindowBase(new CallScreen());
+                callwin.HeaderText = "DU DU DUN. DU DU DOO";
+                callwin.HeaderIcon = WindowBase.IconType.SkypeOut;
+                callwin.Show();
                 IsCallPlaying = true;
                 CallButton.IsEnabled = false;
                 CallButton.Text = Universal.Lang["sPARTICIPANT_ACTIVE_PHONE"];
-                await System.Threading.Tasks.Task.Run(() =>
+                await Task.Run(() =>
                 {
                     Sounds.PlaySynchronous("call-init");
                 });
                 CallButton.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAP_ACTIONBUTTON_HANGUP"];
+                CallDropdown.Visibility = Visibility.Collapsed;
+                CallButton.Source = EndCallButton;
+                CallButton.TextLeftMargin = 30;
+                CallButton.RightWidth = 23;
                 Sounds.PlayLoop("call-ring");
             }
         }
@@ -1602,6 +1606,8 @@ namespace Skymu.Skyaeris
 
             GroupAvatar = GenerateAvatarImage("group");
             AnonymousAvatar = GenerateAvatarImage("anonymous");
+            EndCallButton = FrameworkExtensions.FreezeImage("pack://application:,,,/Skyaeris/Assets/Universal/Chat/btn_end_call.png");
+            CallLeftButton = FrameworkExtensions.FreezeImage("pack://application:,,,/Skyaeris/Assets/Universal/Chat/btn_call_left.png");
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += Main_SizeChanged;

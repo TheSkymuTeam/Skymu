@@ -207,7 +207,6 @@ namespace Skymu.Skyaeris
             Universal.PluginList = Plugins.Load("plugins");
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = Credentials.GetAll();
-
             foreach (var plugin in Universal.PluginList)
             {
                 SavedCredential match = null;

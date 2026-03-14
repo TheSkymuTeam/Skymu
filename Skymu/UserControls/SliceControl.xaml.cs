@@ -18,11 +18,22 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Windows.Shapes;
+using System.Windows.Media.Animation;
 
 namespace Skymu
 {
-    public enum SpriteStackDirection { Vertical, Horizontal }
-    public enum ButtonVisualState { Default, Hover, Pressed, Disabled }
+    public enum SpriteStackDirection
+    {
+        Vertical,
+        Horizontal
+    }
+    public enum ButtonVisualState
+    {
+        Default,
+        Hover,
+        Pressed,
+        Disabled
+    }
 
     public partial class SliceControl : UserControl
     {
@@ -32,6 +43,8 @@ namespace Skymu
         private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
         private int _currentAnimationFrame = 0;
         private double _frameAccumulator = 0;
+        private Storyboard _fadeStoryboard;
+        private ButtonVisualState _fadeTargetState;
 
         private ImageBrush _leftBrush;
         private ImageBrush _middleBrush;
@@ -45,6 +58,10 @@ namespace Skymu
         private ImageBrush _botMidBrush;
         private ImageBrush _botRightBrush;
 
+        private ImageBrush _overlayLeftBrush; // overlay currently only supported in 3 slice mode
+        private ImageBrush _overlayMidBrush;
+        private ImageBrush _overlayRightBrush;
+
         private const double PressedTextOffsetY = 1.0;
 
         public SliceControl()
@@ -54,38 +71,46 @@ namespace Skymu
             // Mouse events
             MouseEnter += (s, e) =>
             {
-                if (!IsEnabled) return;
-                if (HoverIndex != -1) SetStateInternal(ButtonVisualState.Hover);
+                if (!IsEnabled)
+                    return;
+                if (HoverIndex != -1)
+                    SetStateInternal(ButtonVisualState.Hover);
             };
 
             MouseLeave += (s, e) =>
             {
                 if (!IsEnabled) return;
-                if (HoverIndex != -1) SetStateInternal(ButtonVisualState.Default);
+                if (IsRadioButton && _visualState == ButtonVisualState.Pressed) return;
+                SetStateInternal(ButtonVisualState.Default);
             };
 
             MouseLeftButtonDown += (s, e) =>
             {
-                if (!IsEnabled) return;
+                if (!IsEnabled)
+                    return;
 
                 if (PressedIndex != -1)
                 {
-                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed) return;
+                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
+                        return;
                     SetStateInternal(ButtonVisualState.Pressed);
                 }
             };
 
             MouseLeftButtonUp += (s, e) =>
             {
-                if (!IsEnabled) return;
+                if (!IsEnabled)
+                    return;
 
                 if (PressedIndex != -1)
                 {
-                    var newState = (IsMouseOver && HoverIndex != -1)
-                        ? ButtonVisualState.Hover
-                        : ButtonVisualState.Default;
+                    var newState =
+                        (IsMouseOver && HoverIndex != -1)
+                            ? ButtonVisualState.Hover
+                            : ButtonVisualState.Default;
 
-                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed) return;
+                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
+                        return;
                     SetStateInternal(newState);
                 }
             };
@@ -112,14 +137,15 @@ namespace Skymu
             if (_sharedAnimationTimer == null)
             {
                 _sharedAnimationTimer = new DispatcherTimer();
-                _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // ~60 FPS base tick rate
+                _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // 60 FPS base tick rate
                 _sharedAnimationTimer.Tick += (s, e) =>
                 {
-                    double deltaTime = 16.67 / 1000.0; // Time per tick in seconds
+                    double deltaTime = 16.67 / 1000.0;
 
                     foreach (var control in _animatingControls.ToList())
                     {
-                        if (control.AnimationFps <= 0) continue;
+                        if (control.AnimationFps <= 0)
+                            continue;
 
                         control._frameAccumulator += deltaTime * control.AnimationFps;
 
@@ -140,6 +166,7 @@ namespace Skymu
 
             Loaded += (s, e) =>
             {
+                UpdateHitTestState();
                 UpdateTextOffset();
                 SetStateInternal(IsEnabled ? ButtonStateOnInit : ButtonVisualState.Disabled);
                 UpdateAnimation();
@@ -162,8 +189,12 @@ namespace Skymu
             set { SetValue(ButtonStateOnInitProperty, value); }
         }
         public static readonly DependencyProperty ButtonStateOnInitProperty =
-            DependencyProperty.Register(nameof(ButtonStateOnInit), typeof(ButtonVisualState), typeof(SliceControl),
-                new PropertyMetadata(ButtonVisualState.Default));
+            DependencyProperty.Register(
+                nameof(ButtonStateOnInit),
+                typeof(ButtonVisualState),
+                typeof(SliceControl),
+                new PropertyMetadata(ButtonVisualState.Default)
+            );
 
         public bool IsRadioButton
         {
@@ -171,142 +202,352 @@ namespace Skymu
             set { SetValue(IsRadioButtonProperty, value); }
         }
         public static readonly DependencyProperty IsRadioButtonProperty =
-            DependencyProperty.Register(nameof(IsRadioButton), typeof(bool), typeof(SliceControl),
-                new PropertyMetadata(false));
+            DependencyProperty.Register(
+                nameof(IsRadioButton),
+                typeof(bool),
+                typeof(SliceControl),
+                new PropertyMetadata(false)
+            );
 
         public bool Interactive
         {
             get { return (bool)GetValue(InteractiveProperty); }
             set { SetValue(InteractiveProperty, value); }
         }
-        public static readonly DependencyProperty InteractiveProperty =
-            DependencyProperty.Register(nameof(Interactive), typeof(bool), typeof(SliceControl),
-                new PropertyMetadata(true));
 
-        public ImageSource Source { get { return (ImageSource)GetValue(SourceProperty); } set { SetValue(SourceProperty, value); } }
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(SliceControl),
-                new PropertyMetadata(null, OnAnyPropertyChanged));
+        public static readonly DependencyProperty InteractiveProperty = DependencyProperty.Register(
+    nameof(Interactive),
+    typeof(bool),
+    typeof(SliceControl),
+    new PropertyMetadata(true, OnInteractiveChanged)
+);
 
-        public int ElementCount { get { return (int)GetValue(ElementCountProperty); } set { SetValue(ElementCountProperty, value); } }
+        private static void OnInteractiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    => ((SliceControl)d).UpdateHitTestState();
+
+        public bool FadeOnHover
+        {
+            get { return (bool)GetValue(FadeOnHoverProperty); }
+            set { SetValue(FadeOnHoverProperty, value); }
+        }
+        public static readonly DependencyProperty FadeOnHoverProperty = DependencyProperty.Register(
+            nameof(FadeOnHover),
+            typeof(bool),
+            typeof(SliceControl),
+            new PropertyMetadata(true)
+        );
+
+        public ImageSource Source
+        {
+            get { return (ImageSource)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
+            "Source",
+            typeof(ImageSource),
+            typeof(SliceControl),
+            new PropertyMetadata(null, OnAnyPropertyChanged)
+        );
+
+        public int ElementCount
+        {
+            get { return (int)GetValue(ElementCountProperty); }
+            set { SetValue(ElementCountProperty, value); }
+        }
         public static readonly DependencyProperty ElementCountProperty =
-            DependencyProperty.Register("ElementCount", typeof(int), typeof(SliceControl),
-                new PropertyMetadata(1, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                "ElementCount",
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(1, OnAnyPropertyChanged)
+            );
 
-        public double SpriteSpacing { get { return (double)GetValue(SpriteSpacingProperty); } set { SetValue(SpriteSpacingProperty, value); } }
+        public double SpriteSpacing
+        {
+            get { return (double)GetValue(SpriteSpacingProperty); }
+            set { SetValue(SpriteSpacingProperty, value); }
+        }
         public static readonly DependencyProperty SpriteSpacingProperty =
-            DependencyProperty.Register(nameof(SpriteSpacing), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(0.0, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                nameof(SpriteSpacing),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(0.0, OnAnyPropertyChanged)
+            );
 
-        public SpriteStackDirection StackDirection { get { return (SpriteStackDirection)GetValue(StackDirectionProperty); } set { SetValue(StackDirectionProperty, value); } }
+        public SpriteStackDirection StackDirection
+        {
+            get { return (SpriteStackDirection)GetValue(StackDirectionProperty); }
+            set { SetValue(StackDirectionProperty, value); }
+        }
         public static readonly DependencyProperty StackDirectionProperty =
-            DependencyProperty.Register("StackDirection", typeof(SpriteStackDirection), typeof(SliceControl),
-                new PropertyMetadata(SpriteStackDirection.Vertical, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                "StackDirection",
+                typeof(SpriteStackDirection),
+                typeof(SliceControl),
+                new PropertyMetadata(SpriteStackDirection.Vertical, OnAnyPropertyChanged)
+            );
 
-        public int DefaultIndex { get { return (int)GetValue(DefaultIndexProperty); } set { SetValue(DefaultIndexProperty, value); } }
+        public int DefaultIndex
+        {
+            get { return (int)GetValue(DefaultIndexProperty); }
+            set { SetValue(DefaultIndexProperty, value); }
+        }
         public static readonly DependencyProperty DefaultIndexProperty =
-            DependencyProperty.Register("DefaultIndex", typeof(int), typeof(SliceControl),
-                new PropertyMetadata(0, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                "DefaultIndex",
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnAnyPropertyChanged)
+            );
 
-        public int DisabledIndex { get { return (int)GetValue(DisabledIndexProperty); } set { SetValue(DisabledIndexProperty, value); } }
+        public int DisabledIndex
+        {
+            get { return (int)GetValue(DisabledIndexProperty); }
+            set { SetValue(DisabledIndexProperty, value); }
+        }
         public static readonly DependencyProperty DisabledIndexProperty =
-            DependencyProperty.Register("DisabledIndex", typeof(int), typeof(SliceControl),
-                new PropertyMetadata(0, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                "DisabledIndex",
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnAnyPropertyChanged)
+            );
 
-        public int HoverIndex { get { return (int)GetValue(HoverIndexProperty); } set { SetValue(HoverIndexProperty, value); } }
-        public static readonly DependencyProperty HoverIndexProperty =
-            DependencyProperty.Register("HoverIndex", typeof(int), typeof(SliceControl),
-                new PropertyMetadata(0, OnAnyPropertyChanged));
+        public int HoverIndex
+        {
+            get { return (int)GetValue(HoverIndexProperty); }
+            set { SetValue(HoverIndexProperty, value); }
+        }
+        public static readonly DependencyProperty HoverIndexProperty = DependencyProperty.Register(
+            "HoverIndex",
+            typeof(int),
+            typeof(SliceControl),
+            new PropertyMetadata(0, OnAnyPropertyChanged)
+        );
 
-        public int PressedIndex { get { return (int)GetValue(PressedIndexProperty); } set { SetValue(PressedIndexProperty, value); } }
+        public int PressedIndex
+        {
+            get { return (int)GetValue(PressedIndexProperty); }
+            set { SetValue(PressedIndexProperty, value); }
+        }
         public static readonly DependencyProperty PressedIndexProperty =
-            DependencyProperty.Register("PressedIndex", typeof(int), typeof(SliceControl),
-                new PropertyMetadata(0, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                "PressedIndex",
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnAnyPropertyChanged)
+            );
 
-        public bool IsAnimation { get { return (bool)GetValue(IsAnimationProperty); } set { SetValue(IsAnimationProperty, value); } }
-        public static readonly DependencyProperty IsAnimationProperty =
-            DependencyProperty.Register(nameof(IsAnimation), typeof(bool), typeof(SliceControl),
-                new PropertyMetadata(false, OnAnimationPropertyChanged));
+        public bool IsAnimation
+        {
+            get { return (bool)GetValue(IsAnimationProperty); }
+            set { SetValue(IsAnimationProperty, value); }
+        }
+        public static readonly DependencyProperty IsAnimationProperty = DependencyProperty.Register(
+            nameof(IsAnimation),
+            typeof(bool),
+            typeof(SliceControl),
+            new PropertyMetadata(false, OnAnimationPropertyChanged)
+        );
 
-        public double AnimationFps { get { return (double)GetValue(AnimationFpsProperty); } set { SetValue(AnimationFpsProperty, value); } }
+        public double AnimationFps
+        {
+            get { return (double)GetValue(AnimationFpsProperty); }
+            set { SetValue(AnimationFpsProperty, value); }
+        }
         public static readonly DependencyProperty AnimationFpsProperty =
-            DependencyProperty.Register(nameof(AnimationFps), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(30.0, OnAnimationPropertyChanged));
+            DependencyProperty.Register(
+                nameof(AnimationFps),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(30.0, OnAnimationPropertyChanged)
+            );
 
-        public string Text { get { return (string)GetValue(TextProperty); } set { SetValue(TextProperty, value); } }
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(nameof(Text), typeof(string), typeof(SliceControl),
-                new PropertyMetadata(string.Empty, OnTextChanged));
+        public string Text
+        {
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
+        }
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(
+            nameof(Text),
+            typeof(string),
+            typeof(SliceControl),
+            new PropertyMetadata(string.Empty, OnTextChanged)
+        );
 
-        public FontFamily TextFont { get { return (FontFamily)GetValue(TextFontProperty); } set { SetValue(TextFontProperty, value); } }
-        public static readonly DependencyProperty TextFontProperty =
-            DependencyProperty.Register(nameof(TextFont), typeof(FontFamily), typeof(SliceControl),
-                new PropertyMetadata(SystemFonts.MessageFontFamily, OnTextChanged));
+        public FontFamily TextFont
+        {
+            get { return (FontFamily)GetValue(TextFontProperty); }
+            set { SetValue(TextFontProperty, value); }
+        }
+        public static readonly DependencyProperty TextFontProperty = DependencyProperty.Register(
+            nameof(TextFont),
+            typeof(FontFamily),
+            typeof(SliceControl),
+            new PropertyMetadata(SystemFonts.MessageFontFamily, OnTextChanged)
+        );
 
-        public FontWeight TextWeight { get { return (FontWeight)GetValue(TextWeightProperty); } set { SetValue(TextWeightProperty, value); } }
-        public static readonly DependencyProperty TextWeightProperty =
-            DependencyProperty.Register(nameof(TextWeight), typeof(FontWeight), typeof(SliceControl),
-                new PropertyMetadata(FontWeights.Normal, OnTextChanged));
+        public FontWeight TextWeight
+        {
+            get { return (FontWeight)GetValue(TextWeightProperty); }
+            set { SetValue(TextWeightProperty, value); }
+        }
+        public static readonly DependencyProperty TextWeightProperty = DependencyProperty.Register(
+            nameof(TextWeight),
+            typeof(FontWeight),
+            typeof(SliceControl),
+            new PropertyMetadata(FontWeights.Normal, OnTextChanged)
+        );
 
-        public double LeftWidth { get { return (double)GetValue(LeftWidthProperty); } set { SetValue(LeftWidthProperty, value); } }
-        public static readonly DependencyProperty LeftWidthProperty =
-            DependencyProperty.Register(nameof(LeftWidth), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+        public double LeftWidth
+        {
+            get { return (double)GetValue(LeftWidthProperty); }
+            set { SetValue(LeftWidthProperty, value); }
+        }
+        public static readonly DependencyProperty LeftWidthProperty = DependencyProperty.Register(
+            nameof(LeftWidth),
+            typeof(double),
+            typeof(SliceControl),
+            new PropertyMetadata(32.0, OnAnyPropertyChanged)
+        );
 
-        public double RightWidth { get { return (double)GetValue(RightWidthProperty); } set { SetValue(RightWidthProperty, value); } }
-        public static readonly DependencyProperty RightWidthProperty =
-            DependencyProperty.Register(nameof(RightWidth), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+        public double RightWidth
+        {
+            get { return (double)GetValue(RightWidthProperty); }
+            set { SetValue(RightWidthProperty, value); }
+        }
+        public static readonly DependencyProperty RightWidthProperty = DependencyProperty.Register(
+            nameof(RightWidth),
+            typeof(double),
+            typeof(SliceControl),
+            new PropertyMetadata(32.0, OnAnyPropertyChanged)
+        );
 
-        public double TopHeight { get { return (double)GetValue(TopHeightProperty); } set { SetValue(TopHeightProperty, value); } }
-        public static readonly DependencyProperty TopHeightProperty =
-            DependencyProperty.Register(nameof(TopHeight), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+        public double TopHeight
+        {
+            get { return (double)GetValue(TopHeightProperty); }
+            set { SetValue(TopHeightProperty, value); }
+        }
+        public static readonly DependencyProperty TopHeightProperty = DependencyProperty.Register(
+            nameof(TopHeight),
+            typeof(double),
+            typeof(SliceControl),
+            new PropertyMetadata(32.0, OnAnyPropertyChanged)
+        );
 
-        public double BottomHeight { get { return (double)GetValue(BottomHeightProperty); } set { SetValue(BottomHeightProperty, value); } }
+        public double BottomHeight
+        {
+            get { return (double)GetValue(BottomHeightProperty); }
+            set { SetValue(BottomHeightProperty, value); }
+        }
         public static readonly DependencyProperty BottomHeightProperty =
-            DependencyProperty.Register(nameof(BottomHeight), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(32.0, OnAnyPropertyChanged));
+            DependencyProperty.Register(
+                nameof(BottomHeight),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(32.0, OnAnyPropertyChanged)
+            );
 
-        public FontStyle TextStyle { get { return (FontStyle)GetValue(TextStyleProperty); } set { SetValue(TextStyleProperty, value); } }
-        public static readonly DependencyProperty TextStyleProperty =
-            DependencyProperty.Register(nameof(TextStyle), typeof(FontStyle), typeof(SliceControl),
-                new PropertyMetadata(FontStyles.Normal, OnTextChanged));
+        public FontStyle TextStyle
+        {
+            get { return (FontStyle)GetValue(TextStyleProperty); }
+            set { SetValue(TextStyleProperty, value); }
+        }
+        public static readonly DependencyProperty TextStyleProperty = DependencyProperty.Register(
+            nameof(TextStyle),
+            typeof(FontStyle),
+            typeof(SliceControl),
+            new PropertyMetadata(FontStyles.Normal, OnTextChanged)
+        );
 
-        public double TextSize { get { return (double)GetValue(TextSizeProperty); } set { SetValue(TextSizeProperty, value); } }
-        public static readonly DependencyProperty TextSizeProperty =
-            DependencyProperty.Register(nameof(TextSize), typeof(double), typeof(SliceControl),
-                new PropertyMetadata(12.0, OnTextChanged));
+        public double TextSize
+        {
+            get { return (double)GetValue(TextSizeProperty); }
+            set { SetValue(TextSizeProperty, value); }
+        }
+        public static readonly DependencyProperty TextSizeProperty = DependencyProperty.Register(
+            nameof(TextSize),
+            typeof(double),
+            typeof(SliceControl),
+            new PropertyMetadata(12.0, OnTextChanged)
+        );
 
-        public Brush TextColor { get { return (Brush)GetValue(TextColorProperty); } set { SetValue(TextColorProperty, value); } }
-        public static readonly DependencyProperty TextColorProperty =
-            DependencyProperty.Register(nameof(TextColor), typeof(Brush), typeof(SliceControl),
-                new PropertyMetadata(Brushes.Black, OnTextChanged));
+        public Brush TextColor
+        {
+            get { return (Brush)GetValue(TextColorProperty); }
+            set { SetValue(TextColorProperty, value); }
+        }
+        public static readonly DependencyProperty TextColorProperty = DependencyProperty.Register(
+            nameof(TextColor),
+            typeof(Brush),
+            typeof(SliceControl),
+            new PropertyMetadata(Brushes.Black, OnTextChanged)
+        );
 
-        public HorizontalAlignment TextHorizontalAlignment { get { return (HorizontalAlignment)GetValue(TextHorizontalAlignmentProperty); } set { SetValue(TextHorizontalAlignmentProperty, value); } }
+        public HorizontalAlignment TextHorizontalAlignment
+        {
+            get { return (HorizontalAlignment)GetValue(TextHorizontalAlignmentProperty); }
+            set { SetValue(TextHorizontalAlignmentProperty, value); }
+        }
         public static readonly DependencyProperty TextHorizontalAlignmentProperty =
-            DependencyProperty.Register(nameof(TextHorizontalAlignment), typeof(HorizontalAlignment), typeof(SliceControl),
-                new PropertyMetadata(HorizontalAlignment.Left, OnTextChanged));
+            DependencyProperty.Register(
+                nameof(TextHorizontalAlignment),
+                typeof(HorizontalAlignment),
+                typeof(SliceControl),
+                new PropertyMetadata(HorizontalAlignment.Left, OnTextChanged)
+            );
 
-        public VerticalAlignment TextVerticalAlignment { get { return (VerticalAlignment)GetValue(TextVerticalAlignmentProperty); } set { SetValue(TextVerticalAlignmentProperty, value); } }
+        public VerticalAlignment TextVerticalAlignment
+        {
+            get { return (VerticalAlignment)GetValue(TextVerticalAlignmentProperty); }
+            set { SetValue(TextVerticalAlignmentProperty, value); }
+        }
         public static readonly DependencyProperty TextVerticalAlignmentProperty =
-            DependencyProperty.Register(nameof(TextVerticalAlignment), typeof(VerticalAlignment), typeof(SliceControl),
-                new PropertyMetadata(VerticalAlignment.Center, OnTextChanged));
+            DependencyProperty.Register(
+                nameof(TextVerticalAlignment),
+                typeof(VerticalAlignment),
+                typeof(SliceControl),
+                new PropertyMetadata(VerticalAlignment.Center, OnTextChanged)
+            );
 
-        public int TextStartPositionX { get { return (int)GetValue(TextStartPositionXProperty); } set { SetValue(TextStartPositionXProperty, value); } }
-        public static readonly DependencyProperty TextStartPositionXProperty =
-            DependencyProperty.Register(nameof(TextStartPositionX), typeof(int), typeof(SliceControl),
-                new PropertyMetadata(0, OnTextChanged));
+        public int TextLeftMargin
+        {
+            get { return (int)GetValue(TextLeftMarginProperty); }
+            set { SetValue(TextLeftMarginProperty, value); }
+        }
+        public static readonly DependencyProperty TextLeftMarginProperty =
+            DependencyProperty.Register(
+                nameof(TextLeftMargin),
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnTextChanged)
+            );
 
-        public int TextRightMargin { get { return (int)GetValue(TextRightMarginProperty); } set { SetValue(TextRightMarginProperty, value); } }
+        public int TextRightMargin
+        {
+            get { return (int)GetValue(TextRightMarginProperty); }
+            set { SetValue(TextRightMarginProperty, value); }
+        }
         public static readonly DependencyProperty TextRightMarginProperty =
-            DependencyProperty.Register(nameof(TextRightMargin), typeof(int), typeof(SliceControl),
-                new PropertyMetadata(8, OnTextChanged));
+            DependencyProperty.Register(
+                nameof(TextRightMargin),
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(8, OnTextChanged)
+            );
 
-        public int SliceMode { get { return (int)GetValue(SliceModeProperty); } set { SetValue(SliceModeProperty, value); } }
-        public static readonly DependencyProperty SliceModeProperty =
-            DependencyProperty.Register(nameof(SliceMode), typeof(int), typeof(SliceControl),
-                new PropertyMetadata(1, OnAnyPropertyChanged));
+        public int SliceMode
+        {
+            get { return (int)GetValue(SliceModeProperty); }
+            set { SetValue(SliceModeProperty, value); }
+        }
+        public static readonly DependencyProperty SliceModeProperty = DependencyProperty.Register(
+            nameof(SliceMode),
+            typeof(int),
+            typeof(SliceControl),
+            new PropertyMetadata(1, OnAnyPropertyChanged)
+        );
 
         #endregion
 
@@ -314,26 +555,179 @@ namespace Skymu
 
         private void SetStateInternal(ButtonVisualState state)
         {
-            // alllows exiting Disabled only if control is enabled
-            if (_visualState == ButtonVisualState.Disabled &&
-                state != ButtonVisualState.Disabled &&
-                !IsEnabled)
+            if (_visualState == ButtonVisualState.Disabled && state != ButtonVisualState.Disabled && !IsEnabled)
                 return;
 
-            if (IsRadioButton &&
-                _visualState == ButtonVisualState.Pressed &&
-                state != ButtonVisualState.Disabled)
+            if (IsRadioButton && _visualState == ButtonVisualState.Pressed && state != ButtonVisualState.Disabled)
                 return;
 
-            if (_visualState == state)
+            ButtonVisualState effectiveState = _fadeStoryboard != null ? _fadeTargetState : _visualState;
+
+            if (effectiveState == state) return;
+
+            bool shouldFade =
+                FadeOnHover
+                && !IsAnimation
+                && HoverIndex != DefaultIndex
+                && (
+                    state == ButtonVisualState.Hover
+                    || (state == ButtonVisualState.Default && effectiveState == ButtonVisualState.Hover)
+                );
+
+            if (shouldFade)
+                BeginFadeTransition(state);
+            else
+            {
+                AbortFade();
+                SetState(state);
+            }
+        }
+
+        private void BeginFadeTransition(ButtonVisualState targetState)
+        {
+            double currentOpacity = OverlayMiddle.Opacity;
+            bool wasReversing = _fadeStoryboard != null;
+
+            var sb = _fadeStoryboard;
+            _fadeStoryboard = null;
+            sb?.Stop();
+
+            _fadeTargetState = targetState;
+
+            if (_overlayLeftBrush == null) _overlayLeftBrush = MakeBrush();
+            if (_overlayMidBrush == null) _overlayMidBrush = MakeBrush();
+            if (_overlayRightBrush == null) _overlayRightBrush = MakeBrush();
+
+            if (!wasReversing)
+            {
+                PaintOverlay(targetState);
+                SyncOverlayLayout();
+            }
+
+            bool isFadeOut = targetState == ButtonVisualState.Default && wasReversing;
+
+            double fromOpacity = isFadeOut ? currentOpacity : 0.0;
+            double toOpacity = isFadeOut ? 0.0 : 1.0;
+
+            double fraction = Math.Abs(toOpacity - fromOpacity);
+            var duration = TimeSpan.FromMilliseconds(150 * fraction);
+
+            var animation = new DoubleAnimation
+            {
+                From = fromOpacity,
+                To = toOpacity,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
+                FillBehavior = FillBehavior.Stop
+            };
+
+            var newSb = new Storyboard();
+            _fadeStoryboard = newSb;
+
+            foreach (var rect in new[] { OverlayLeft, OverlayMiddle, OverlayRight })
+            {
+                if (rect.Visibility != Visibility.Visible) continue;
+                var anim = animation.Clone();
+                Storyboard.SetTarget(anim, rect);
+                Storyboard.SetTargetProperty(anim, new PropertyPath(UIElement.OpacityProperty));
+                newSb.Children.Add(anim);
+            }
+
+            newSb.Completed += (s, e) =>
+            {
+                if (_fadeStoryboard != newSb) return;
+                SetState(targetState);
+                OverlayLeft.Opacity = OverlayMiddle.Opacity = OverlayRight.Opacity = 0;
+                _fadeStoryboard = null;
+            };
+
+            newSb.Begin();
+        }
+
+        private void AbortFade()
+        {
+            if (_fadeStoryboard == null)
+                return;
+            _fadeStoryboard.Stop();
+            _fadeStoryboard = null;
+            OverlayLeft.Opacity = OverlayMiddle.Opacity = OverlayRight.Opacity = 0;
+        }
+
+        private void PaintOverlay(ButtonVisualState targetState)
+        {
+            var bmp = Source as BitmapSource;
+            if (bmp == null)
                 return;
 
-            SetState(state);
+            // spoof
+            var saved = _visualState;
+            _visualState = targetState;
+            var stateBox = GetStateViewbox();
+            _visualState = saved;
+
+            if (SliceMode == 0)
+            {
+                if (_overlayMidBrush == null) _overlayMidBrush = MakeBrush();
+                ApplyBrush(_overlayMidBrush, OverlayMiddle, stateBox.X, stateBox.Y, stateBox.Width, stateBox.Height);
+                return;
+            }
+
+            double leftW = LeftWidth;
+            double rightW = RightWidth;
+            double leftWRel = leftW / bmp.PixelWidth * stateBox.Width;
+            double rightWRel = rightW / bmp.PixelWidth * stateBox.Width;
+            double midWRel = Math.Max(0, stateBox.Width - leftWRel - rightWRel);
+
+            ApplyBrush(
+                _overlayLeftBrush,
+                OverlayLeft,
+                stateBox.X,
+                stateBox.Y,
+                leftWRel,
+                stateBox.Height
+            );
+            ApplyBrush(
+                _overlayMidBrush,
+                OverlayMiddle,
+                stateBox.X + leftWRel,
+                stateBox.Y,
+                midWRel,
+                stateBox.Height
+            );
+            ApplyBrush(
+                _overlayRightBrush,
+                OverlayRight,
+                stateBox.X + leftWRel + midWRel,
+                stateBox.Y,
+                rightWRel,
+                stateBox.Height
+            );
+        }
+
+        private void SyncOverlayLayout()
+        {                
+            OverlayMiddle.Width = MiddleSlice.ActualWidth;
+            OverlayMiddle.Height = MiddleSlice.ActualHeight;
+            OverlayMiddle.Visibility = MiddleSlice.Visibility;
+
+            if (SliceMode > 0)
+            {
+
+                OverlayLeft.Width = LeftSlice.ActualWidth;
+                OverlayLeft.Height = LeftSlice.ActualHeight;
+                OverlayRight.Width = RightSlice.ActualWidth;
+                OverlayRight.Height = RightSlice.ActualHeight;
+                OverlayLeft.Visibility = LeftSlice.Visibility;
+                OverlayRight.Visibility = RightSlice.Visibility;
+            }     
         }
 
         public void UpdateHitTestState()
         {
-            IsHitTestVisible = IsEnabled && Interactive && !(IsRadioButton && _visualState == ButtonVisualState.Pressed);
+            IsHitTestVisible =
+                IsEnabled
+                && Interactive
+                && !(IsRadioButton && _visualState == ButtonVisualState.Pressed);
         }
 
         public void SetState(ButtonVisualState state)
@@ -349,19 +743,22 @@ namespace Skymu
             return _visualState;
         }
 
-
         private void UpdateTextOffset()
         {
-            if (OverlayText == null) return;
+            if (OverlayText == null)
+                return;
             OverlayText.Margin = new Thickness(
-                TextStartPositionX,
+                TextLeftMargin,
                 _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
                 TextRightMargin,
-                0);
+                0
+            );
         }
 
-        private static void OnAnimationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-            => ((SliceControl)d).UpdateAnimation();
+        private static void OnAnimationPropertyChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e
+        ) => ((SliceControl)d).UpdateAnimation();
 
         private void UpdateAnimation()
         {
@@ -384,15 +781,22 @@ namespace Skymu
             UpdateSlices();
         }
 
-        private static void OnAnyPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-            => ((SliceControl)d).UpdateSlices();
+        private static void OnAnyPropertyChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e
+        ) => ((SliceControl)d).UpdateSlices();
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-            => ((SliceControl)d).UpdateText();
+        {
+            var control = (SliceControl)d;
+            control.UpdateText();
+            control.UpdateTextOffset();
+        }
 
         private void UpdateText()
         {
-            if (OverlayText == null) return;
+            if (OverlayText == null)
+                return;
 
             OverlayText.Text = Text;
             OverlayText.FontFamily = TextFont;
@@ -437,8 +841,10 @@ namespace Skymu
                 return new Rect(0, 0, 1, 1);
 
             int index = GetCurrentIndex();
-            if (index < 0) index = 0;
-            if (index >= ElementCount) index = ElementCount - 1;
+            if (index < 0)
+                index = 0;
+            if (index >= ElementCount)
+                index = ElementCount - 1;
 
             if (StackDirection == SpriteStackDirection.Vertical)
             {
@@ -448,7 +854,8 @@ namespace Skymu
             }
             else
             {
-                double spriteWidthPx = (bmp.PixelWidth - (ElementCount - 1) * SpriteSpacing) / ElementCount;
+                double spriteWidthPx =
+                    (bmp.PixelWidth - (ElementCount - 1) * SpriteSpacing) / ElementCount;
                 double xPx = index * (spriteWidthPx + SpriteSpacing);
                 return new Rect(xPx / bmp.PixelWidth, 0, spriteWidthPx / bmp.PixelWidth, 1);
             }
@@ -461,16 +868,19 @@ namespace Skymu
                 return ActualHeight;
 
             return StackDirection == SpriteStackDirection.Vertical
-                ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
-                : bmp.PixelHeight;
+              ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
+              : bmp.PixelHeight;
         }
 
         private void UpdateSlices()
         {
             var bmp = Source as BitmapSource;
-            if (bmp == null) return;
+            if (bmp == null)
+                return;
 
-            if (_middleBrush == null) _middleBrush = MakeBrush();
+            if (_middleBrush == null)
+                _middleBrush = MakeBrush();
+
             if (SliceMode == 0)
             {
                 SetNineSliceVisibility(false);
@@ -485,10 +895,13 @@ namespace Skymu
                 MiddleSlice.Fill = _middleBrush;
                 return;
             }
+
             else
             {
-                if (_leftBrush == null) _leftBrush = MakeBrush();
-                if (_rightBrush == null) _rightBrush = MakeBrush();
+                if (_leftBrush == null)
+                    _leftBrush = MakeBrush();
+                if (_rightBrush == null)
+                    _rightBrush = MakeBrush();
             }
 
             var stateBox = GetStateViewbox();
@@ -497,19 +910,25 @@ namespace Skymu
             double midW = Math.Max(0, Width - leftW - rightW);
             double elemH = GetElementHeight();
 
-            // Relative units within stateBox
             double leftWRel = leftW / bmp.PixelWidth * stateBox.Width;
             double rightWRel = rightW / bmp.PixelWidth * stateBox.Width;
             double midWRel = Math.Max(0, stateBox.Width - leftWRel - rightWRel);
 
             if (SliceMode == 2)
             {
-                if (_topLeftBrush == null) _topLeftBrush = MakeBrush();
-                if (_topMidBrush == null) _topMidBrush = MakeBrush();
-                if (_topRightBrush == null) _topRightBrush = MakeBrush();
-                if (_botLeftBrush == null) _botLeftBrush = MakeBrush();
-                if (_botMidBrush == null) _botMidBrush = MakeBrush();
-                if (_botRightBrush == null) _botRightBrush = MakeBrush();
+                if (_topLeftBrush == null)
+                    _topLeftBrush = MakeBrush();
+                if (_topMidBrush == null)
+                    _topMidBrush = MakeBrush();
+                if (_topRightBrush == null)
+                    _topRightBrush = MakeBrush();
+                if (_botLeftBrush == null)
+                    _botLeftBrush = MakeBrush();
+                if (_botMidBrush == null)
+                    _botMidBrush = MakeBrush();
+                if (_botRightBrush == null)
+                    _botRightBrush = MakeBrush();
+
                 double topH = TopHeight;
                 double botH = BottomHeight;
                 double midH = Math.Max(0, Height - topH - botH);
@@ -526,7 +945,10 @@ namespace Skymu
                 double y2 = stateBox.Y + topHRel + midHRel;
 
                 SetNineSliceVisibility(true);
-                LeftSlice.Visibility = MiddleSlice.Visibility = RightSlice.Visibility = Visibility.Visible;
+                LeftSlice.Visibility =
+                    MiddleSlice.Visibility =
+                    RightSlice.Visibility =
+                        Visibility.Visible;
 
                 TopLeftSlice.Width = BotLeftSlice.Width = LeftSlice.Width = leftW;
                 TopRightSlice.Width = BotRightSlice.Width = RightSlice.Width = rightW;
@@ -548,6 +970,7 @@ namespace Skymu
                 ApplyBrush(_botMidBrush, BotMidSlice, x1, y2, midWRel, botHRel);
                 ApplyBrush(_botRightBrush, BotRightSlice, x2, y2, rightWRel, botHRel);
             }
+
             else
             {
                 SetNineSliceVisibility(false);
@@ -556,15 +979,46 @@ namespace Skymu
                 MiddleSlice.Width = midW;
                 RightSlice.Width = rightW;
                 LeftSlice.Height = MiddleSlice.Height = RightSlice.Height = elemH;
-                LeftSlice.Visibility = MiddleSlice.Visibility = RightSlice.Visibility = Visibility.Visible;
+                LeftSlice.Visibility =
+                    MiddleSlice.Visibility =
+                    RightSlice.Visibility =
+                        Visibility.Visible;
 
-                ApplyBrush(_leftBrush, LeftSlice, stateBox.X, stateBox.Y, leftWRel, stateBox.Height);
-                ApplyBrush(_middleBrush, MiddleSlice, stateBox.X + leftWRel, stateBox.Y, midWRel, stateBox.Height);
-                ApplyBrush(_rightBrush, RightSlice, stateBox.X + leftWRel + midWRel, stateBox.Y, rightWRel, stateBox.Height);
+                ApplyBrush(
+                    _leftBrush,
+                    LeftSlice,
+                    stateBox.X,
+                    stateBox.Y,
+                    leftWRel,
+                    stateBox.Height
+                );
+                ApplyBrush(
+                    _middleBrush,
+                    MiddleSlice,
+                    stateBox.X + leftWRel,
+                    stateBox.Y,
+                    midWRel,
+                    stateBox.Height
+                );
+                ApplyBrush(
+                    _rightBrush,
+                    RightSlice,
+                    stateBox.X + leftWRel + midWRel,
+                    stateBox.Y,
+                    rightWRel,
+                    stateBox.Height
+                );
             }
         }
 
-        private void ApplyBrush(ImageBrush brush, Rectangle rect, double x, double y, double w, double h)
+        private void ApplyBrush(
+            ImageBrush brush,
+            Rectangle rect,
+            double x,
+            double y,
+            double w,
+            double h
+        )
         {
             brush.ImageSource = Source;
             brush.Viewbox = new Rect(x, y, Math.Max(0, w), Math.Max(0, h));
@@ -577,7 +1031,6 @@ namespace Skymu
             TopLeftSlice.Visibility = TopMidSlice.Visibility = TopRightSlice.Visibility = v;
             BotLeftSlice.Visibility = BotMidSlice.Visibility = BotRightSlice.Visibility = v;
         }
-
         #endregion
     }
 }

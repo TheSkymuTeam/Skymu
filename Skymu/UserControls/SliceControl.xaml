@@ -19,6 +19,11 @@
         <Rectangle x:Name="MiddleSlice" Grid.Row="1" Grid.Column="1"/>
         <Rectangle x:Name="RightSlice"  Grid.Row="1" Grid.Column="2" Width="20"/>
 
+        <!-- overlay -->
+        <Rectangle x:Name="OverlayLeft"   Grid.Row="1" Grid.Column="0" Opacity="0" IsHitTestVisible="False"/>
+        <Rectangle x:Name="OverlayMiddle" Grid.Row="1" Grid.Column="1" Opacity="0" IsHitTestVisible="False"/>
+        <Rectangle x:Name="OverlayRight"  Grid.Row="1" Grid.Column="2" Opacity="0" IsHitTestVisible="False"/>
+
         <Rectangle x:Name="BotLeftSlice"  Grid.Row="2" Grid.Column="0" Visibility="Collapsed"/>
         <Rectangle x:Name="BotMidSlice"   Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
         <Rectangle x:Name="BotRightSlice" Grid.Row="2" Grid.Column="2" Visibility="Collapsed"/>

@@ -13,18 +13,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Skymu.Skyaeris
+namespace Skymu.Views.Pages
 {
-    public partial class CallScreen : Page
+    /// <summary>
+    /// Interaction logic for ErrorWindow.xaml
+    /// </summary>
+    public partial class ErrorWindow : Page
     {
-        public CallScreen()
+        public ErrorWindow(string text)
         {
             InitializeComponent();
+            DetailsBox.Text = text;
         }
 
-        private void SliceControl_Loaded(object sender, RoutedEventArgs e)
+        public void CopyToClipboard()
         {
-
+            Clipboard.SetText(DetailsBox.Text);
         }
     }
 }
