@@ -93,8 +93,8 @@ namespace Skymu
 
             var json = JsonSerializer.Serialize(payload);
 
-            using (StringContent content = new StringContent(json))
-            using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
+            using (StringContent content = new StringContent(json, Encoding.UTF8, "application/json"))
+            using (HttpResponseMessage response = await httpClient.PostAsync("/ping", content))
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
             }

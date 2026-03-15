@@ -12,7 +12,7 @@
         </Style>
         <converters:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter"/>
         <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter"/>
-        <converters:IdentifierToColorConverter x:Key="IdToColorConverter"/>
+        <converters:SenderToColorConverter x:Key="SenderToColorConverter"/>
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter"/>
         <converters:NullDependentBoolean x:Key="NullDependentBoolean"/>
         <converters:StatusToTextConverter x:Key="StatIntToText"/>
@@ -349,8 +349,13 @@ Width="12" Height="12">
                     </TextBlock>
                 </VirtualizingStackPanel>
                 <!-- Sender name -->
-                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-1000,0,0,0" FontSize="11" FontFamily="Tahoma" Foreground="{Binding Sender.Identifier,
-                       Converter={StaticResource IdToColorConverter}}">
+                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-1000,0,0,0" FontSize="11" FontFamily="Tahoma">
+                    <TextBlock.Foreground>
+                        <MultiBinding Converter="{StaticResource SenderToColorConverter}">
+                            <Binding Path="Sender.Identifier"/>
+                            <Binding Path="IsForwarded"/>
+                        </MultiBinding>
+                    </TextBlock.Foreground>
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource ForwardedChecker}">
                             <Binding Path="Sender.DisplayName"/>

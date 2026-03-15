@@ -29,6 +29,7 @@
 using Microsoft.Data.Sqlite;
 using MiddleMan;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Skymu
@@ -39,7 +40,7 @@ namespace Skymu
         {
             DbPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Skymu", Universal.Plugin.InternalName, user.Identifier, "main.db"); 
+            "Skymu", Universal.Plugin.InternalName, user.Identifier, "main.db");
 
             Accounts = new AccountsTable(this);
             Contacts = new ContactsTable(this);
@@ -53,7 +54,7 @@ namespace Skymu
 
                 using (var cmd = connection.CreateCommand())
                 {
-                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; 
+                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; // .db-journal files, accurate to Skype
                     cmd.ExecuteNonQuery();
                 }
 
@@ -981,10 +982,29 @@ namespace Skymu
             }
         }
 
+        // Shared helper: reconstruct a User from a reader row.
+        // Expected column order: skypename, username, displayname, avatar_image, mood_text
+        private static User UserFromReader(SqliteDataReader reader, int offset = 0)
+        {
+            string identifier = reader.IsDBNull(offset + 0) ? null : reader.GetString(offset + 0);
+            string username = reader.IsDBNull(offset + 1) ? null : reader.GetString(offset + 1);
+            string displayName = reader.IsDBNull(offset + 2) ? null : reader.GetString(offset + 2);
+            byte[] avatar = reader.IsDBNull(offset + 3) ? null : (byte[])reader[offset + 3];
+            string status = reader.IsDBNull(offset + 4) ? null : reader.GetString(offset + 4);
+            return new User(displayName, username, identifier, status, profilePicture: avatar);
+        }
+
+        // Shared helper: minimal stub User when only an identifier is available.
+        private static User StubUser(string identifier)
+        {
+            return new User(identifier, identifier, identifier);
+        }
+
         public class AccountsTable
         {
             private readonly DatabaseManager _db;
             public AccountsTable(DatabaseManager db) { _db = db; }
+
             public bool Write(User user)
             {
                 using (SqliteConnection connection = _db.CreateConnection())
@@ -1069,6 +1089,39 @@ namespace Skymu
         {
             private readonly DatabaseManager _db;
             public ContactsTable(DatabaseManager db) { _db = db; }
+
+            /// <summary>
+            /// Returns every contact in the database as a User[].
+            /// </summary>
+            public User[] Read()
+            {
+                var users = new List<User>();
+                using (SqliteConnection connection = _db.CreateConnection())
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT skypename, username, displayname, avatar_image, mood_text FROM Contacts;";
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
+                            users.Add(UserFromReader(reader));
+                }
+                return users.ToArray();
+            }
+
+            /// <summary>
+            /// Returns the contact with the given skypename/identifier, or null.
+            /// </summary>
+            public User Read(string identifier)
+            {
+                using (SqliteConnection connection = _db.CreateConnection())
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT skypename, username, displayname, avatar_image, mood_text FROM Contacts WHERE skypename = @skypename LIMIT 1;";
+                    cmd.Parameters.Add("@skypename", SqliteType.Text).Value = identifier;
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                        return reader.Read() ? UserFromReader(reader) : null;
+                }
+            }
+
             public bool Write(Conversation[] conversations)
             {
                 using (SqliteConnection connection = _db.CreateConnection())
@@ -1174,6 +1227,165 @@ namespace Skymu
         {
             private readonly DatabaseManager _db;
             public ConversationsTable(DatabaseManager db) { _db = db; }
+
+            /// <summary>
+            /// Returns all conversations sorted by most recent activity (newest first).
+            /// DM partners and group members are hydrated from Contacts where available;
+            /// unknown identifiers become stub Users with only Identifier/Username/DisplayName set.
+            /// </summary>
+            public Conversation[] Read()
+            {
+                var contactMap = BuildContactMap();
+                var participantMap = LoadParticipantMap();
+                var result = new List<Conversation>();
+
+                using (SqliteConnection connection = _db.CreateConnection())
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT id, identity, type, displayname, dialog_partner,
+                               last_activity_timestamp, unconsumed_normal_messages
+                        FROM Conversations
+                        ORDER BY last_activity_timestamp DESC;";
+
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            long dbId = reader.GetInt64(0);
+                            string identity = reader.IsDBNull(1) ? null : reader.GetString(1);
+                            int type = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
+                            string displayName = reader.IsDBNull(3) ? null : reader.GetString(3);
+                            string dlgPartner = reader.IsDBNull(4) ? null : reader.GetString(4);
+                            long lastActivity = reader.IsDBNull(5) ? 0 : reader.GetInt64(5);
+                            int unread = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
+
+                            DateTime lastTime = lastActivity != 0
+                                ? DateTimeOffset.FromUnixTimeSeconds(lastActivity).UtcDateTime
+                                : DateTime.MinValue;
+
+                            participantMap.TryGetValue(dbId, out var memberIds);
+
+                            result.Add(type == 1
+     ? (Conversation)BuildDM(identity, dlgPartner, unread, lastTime, contactMap)
+     : BuildGroup(identity, displayName, unread, lastTime, memberIds, contactMap));
+                        }
+                    }
+                }
+
+                return result.ToArray();
+            }
+
+            /// <summary>
+            /// Returns the single conversation matching the given identity, or null.
+            /// </summary>
+            public Conversation Read(string identity)
+            {
+                var contactMap = BuildContactMap();
+
+                using (SqliteConnection connection = _db.CreateConnection())
+                {
+                    long dbId; int type; string displayName, dlgPartner; long lastActivity; int unread;
+
+                    using (SqliteCommand cmd = connection.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            SELECT id, type, displayname, dialog_partner,
+                                   last_activity_timestamp, unconsumed_normal_messages
+                            FROM Conversations WHERE identity = @identity LIMIT 1;";
+                        cmd.Parameters.Add("@identity", SqliteType.Text).Value = identity;
+
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (!reader.Read()) return null;
+                            dbId = reader.GetInt64(0);
+                            type = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
+                            displayName = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            dlgPartner = reader.IsDBNull(3) ? null : reader.GetString(3);
+                            lastActivity = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
+                            unread = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
+                        }
+                    }
+
+                    DateTime lastTime = lastActivity != 0
+                        ? DateTimeOffset.FromUnixTimeSeconds(lastActivity).UtcDateTime
+                        : DateTime.MinValue;
+
+                    var memberIds = new List<string>();
+                    using (SqliteCommand pCmd = connection.CreateCommand())
+                    {
+                        pCmd.CommandText = "SELECT identity FROM Participants WHERE convo_id = @convo_id;";
+                        pCmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = dbId;
+                        using (SqliteDataReader pr = pCmd.ExecuteReader())
+                            while (pr.Read())
+                                if (!pr.IsDBNull(0)) memberIds.Add(pr.GetString(0));
+                    }
+
+                    return type == 1
+                        ? BuildDM(identity, dlgPartner, unread, lastTime, contactMap)
+                        : (Conversation)BuildGroup(identity, displayName, unread, lastTime, memberIds, contactMap);
+                }
+            }
+
+            // --- private helpers ---
+
+            private Dictionary<string, User> BuildContactMap()
+            {
+                var map = new Dictionary<string, User>();
+                foreach (User u in _db.Contacts.Read())
+                    if (u.Identifier != null) map[u.Identifier] = u;
+                return map;
+            }
+
+            private Dictionary<long, List<string>> LoadParticipantMap()
+            {
+                var map = new Dictionary<long, List<string>>();
+                using (SqliteConnection connection = _db.CreateConnection())
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT convo_id, identity FROM Participants;";
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.IsDBNull(1)) continue;
+                            long convoId = reader.GetInt64(0);
+                            if (!map.TryGetValue(convoId, out var list))
+                                map[convoId] = list = new List<string>();
+                            list.Add(reader.GetString(1));
+                        }
+                    }
+                }
+                return map;
+            }
+
+            private static DirectMessage BuildDM(string identity, string dialogPartner,
+                int unread, DateTime lastTime, Dictionary<string, User> contactMap)
+            {
+                string partnerId = dialogPartner ?? identity;
+                contactMap.TryGetValue(partnerId, out User partner);
+                return new DirectMessage(
+                    partner ?? StubUser(partnerId),
+                    unread,
+                    identity,
+                    lastTime);
+            }
+
+            private static Group BuildGroup(string identity, string displayName,
+                int unread, DateTime lastTime, List<string> memberIds,
+                Dictionary<string, User> contactMap)
+            {
+                var members = new List<User>();
+                if (memberIds != null)
+                    foreach (string mid in memberIds)
+                    {
+                        contactMap.TryGetValue(mid, out User m);
+                        members.Add(m ?? StubUser(mid));
+                    }
+                return new Group(displayName, identity, unread, members.ToArray(),
+                    last_message_time: lastTime);
+            }
+
             public bool Write(Conversation[] conversations)
             {
                 using (SqliteConnection connection = _db.CreateConnection())
@@ -1224,13 +1436,8 @@ namespace Skymu
                                 else type = 0;
 
                                 string dialogPartner = null;
-                                string dialogPartnerId = null;
-
                                 if (conversation is DirectMessage dm)
-                                {
                                     dialogPartner = dm.Partner?.Username;
-                                    dialogPartnerId = dm.Partner?.Identifier;
-                                }
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
                                 cmd.Parameters["@identity"].Value = (object)conversation.Identifier ?? DBNull.Value;
@@ -1254,7 +1461,7 @@ namespace Skymu
                     }
                 }
 
-                _db.Participants.Write(conversations); // need this for members of groups lol
+                _db.Participants.Write(conversations);
                 return true;
             }
         }
@@ -1263,6 +1470,7 @@ namespace Skymu
         {
             private readonly DatabaseManager _db;
             public ParticipantsTable(DatabaseManager db) { _db = db; }
+
             public bool Write(Conversation[] conversations)
             {
                 using (SqliteConnection connection = _db.CreateConnection())
@@ -1278,14 +1486,9 @@ namespace Skymu
                             idCmd.Parameters.Add("@identity", SqliteType.Text);
 
                             cmd.CommandText = @"
-                        INSERT INTO Participants (
-                            is_permanent, convo_id, identity, rank
-                        )
-                        VALUES (
-                            1, @convo_id, @identity, @rank
-                        )
-                        ON CONFLICT(convo_id, identity) DO UPDATE SET
-                            rank = excluded.rank;";
+                                INSERT INTO Participants (is_permanent, convo_id, identity, rank)
+                                VALUES (1, @convo_id, @identity, @rank)
+                                ON CONFLICT(convo_id, identity) DO UPDATE SET rank = excluded.rank;";
                             cmd.Parameters.Add("@convo_id", SqliteType.Integer);
                             cmd.Parameters.Add("@identity", SqliteType.Text);
                             cmd.Parameters.Add("@rank", SqliteType.Integer);
@@ -1294,27 +1497,22 @@ namespace Skymu
                             {
                                 idCmd.Parameters["@identity"].Value = (object)conversation.Identifier ?? DBNull.Value;
                                 object result = idCmd.ExecuteScalar();
-                                if (result == null || result == DBNull.Value)
-                                    continue;
+                                if (result == null || result == DBNull.Value) continue;
                                 long convoId = Convert.ToInt64(result);
 
                                 User[] members = null;
-                                if (conversation is Group group)
-                                    members = group.Members;
+                                if (conversation is Group group) members = group.Members;
                                 else if (conversation is DirectMessage dm)
                                     members = dm.Partner != null ? new[] { dm.Partner } : null;
 
-                                if (members == null)
-                                    continue;
+                                if (members == null) continue;
 
                                 foreach (User member in members)
                                 {
-                                    if (member?.Identifier == null)
-                                        continue;
-
+                                    if (member?.Identifier == null) continue;
                                     cmd.Parameters["@convo_id"].Value = convoId;
                                     cmd.Parameters["@identity"].Value = member.Identifier;
-                                    cmd.Parameters["@rank"].Value = 0; // 0 = normal member. TODO: CHANGE LATER for server roles
+                                    cmd.Parameters["@rank"].Value = 0;
                                     cmd.ExecuteNonQuery();
                                 }
                             }
@@ -1337,6 +1535,126 @@ namespace Skymu
         {
             private readonly DatabaseManager _db;
             public MessagesTable(DatabaseManager db) { _db = db; }
+
+            /// <summary>
+            /// Returns all ConversationItems for the given conversation, oldest first.
+            /// </summary>
+            public ConversationItem[] Read(Conversation conversation, int limit = 0)
+            {
+                return Read(conversation, limit, beforeTimestampMs: null);
+            }
+
+            /// <summary>
+            /// Returns up to <paramref name="limit"/> ConversationItems for the given
+            /// conversation, oldest first. Pass <paramref name="beforeTimestampMs"/> to
+            /// page backwards: only messages with a timestamp strictly older than that
+            /// value are returned, letting you load history in chunks.
+            /// A limit of 0 returns everything.
+            /// </summary>
+            public ConversationItem[] Read(Conversation conversation, int limit, long? beforeTimestampMs)
+            {
+                var contactMap = new Dictionary<string, User>();
+                foreach (User u in _db.Contacts.Read())
+                    if (u.Identifier != null) contactMap[u.Identifier] = u;
+
+                var items = new List<ConversationItem>();
+
+                using (SqliteConnection connection = _db.CreateConnection())
+                {
+                    long convoId = 0;
+                    using (SqliteCommand idCmd = connection.CreateCommand())
+                    {
+                        idCmd.CommandText = "SELECT id FROM Conversations WHERE identity = @identity LIMIT 1;";
+                        idCmd.Parameters.Add("@identity", SqliteType.Text).Value =
+                            (object)conversation.Identifier ?? DBNull.Value;
+                        object result = idCmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                            return items.ToArray();
+                        convoId = Convert.ToInt64(result);
+                    }
+
+                    using (SqliteCommand cmd = connection.CreateCommand())
+                    {
+                        string beforeClause = beforeTimestampMs.HasValue ? " AND timestamp__ms < @before_ms" : "";
+                        string limitClause = limit > 0 ? $" LIMIT {limit}" : "";
+
+                        cmd.CommandText = limit > 0
+    ? $@"SELECT type, author, from_username, from_dispname,
+                body_xml, timestamp__ms, timestamp, pk_id
+         FROM (
+             SELECT type, author, from_username, from_dispname,
+                    body_xml, timestamp__ms, timestamp, pk_id
+             FROM Messages
+             WHERE convo_id = @convo_id{beforeClause}
+             ORDER BY timestamp DESC{limitClause}
+         )
+         ORDER BY timestamp ASC;"
+    : $@"SELECT type, author, from_username, from_dispname,
+                body_xml, timestamp__ms, timestamp, pk_id
+         FROM Messages
+         WHERE convo_id = @convo_id{beforeClause}
+         ORDER BY timestamp ASC;";
+
+                        cmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = convoId;
+                        if (beforeTimestampMs.HasValue)
+                            cmd.Parameters.Add("@before_ms", SqliteType.Integer).Value = beforeTimestampMs.Value;
+
+                        using (SqliteDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int msgType = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
+                                string authorId = reader.IsDBNull(1) ? null : reader.GetString(1);
+                                string authorUser = reader.IsDBNull(2) ? null : reader.GetString(2);
+                                string authorDisp = reader.IsDBNull(3) ? null : reader.GetString(3);
+                                string bodyXml = reader.IsDBNull(4) ? null : reader.GetString(4);
+                                long tsMs = reader.IsDBNull(5) ? 0 : reader.GetInt64(5);
+                                long tsSec = reader.IsDBNull(6) ? 0 : reader.GetInt64(6);
+                                string pkId = reader.IsDBNull(7) ? null : reader.GetInt64(7).ToString();
+
+                                User sender = null;
+                                if (authorId != null)
+                                {
+                                    contactMap.TryGetValue(authorId, out sender);
+                                    if (sender == null) sender = new User(authorDisp, authorUser, authorId);
+                                }
+
+                                DateTime time = tsMs != 0
+                                    ? DateTimeOffset.FromUnixTimeMilliseconds(tsMs).UtcDateTime
+                                    : DateTimeOffset.FromUnixTimeSeconds(tsSec).UtcDateTime;
+
+                                switch (msgType)
+                                {
+                                    case 61: // Ordinary message
+                                    case 68: // File transfer (body still present)
+                                        items.Add(new Message(pkId, sender, time, text: bodyXml));
+                                        break;
+
+                                    case 30: // Call started
+                                        items.Add(new CallStartedNotice(sender, is_video_call: false, time));
+                                        break;
+
+                                    case 39: // Call ended. I think body_xml stores duration in seconds (Which is how i write it to the DB anyway), but not sure if this is accurate
+                                        double secs = 0;
+                                        double.TryParse(bodyXml, out secs);
+                                        items.Add(new CallEndedNotice(
+                                            sender,
+                                            TimeSpan.FromSeconds(secs),
+                                            is_video_call: false,
+                                            time));
+                                        break;
+
+                                        // Other types (topic changes, joins, etc.) are not yet
+                                        // surfaced as MiddleMan objects — skip them for now.
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return items.ToArray();
+            }
+
             public bool Write(ConversationItem[] items, Conversation conversation)
             {
                 using (SqliteConnection connection = _db.CreateConnection())
@@ -1353,9 +1671,7 @@ namespace Skymu
 
                     string dialogPartner = null;
                     if (conversation is DirectMessage dm)
-                    {
                         dialogPartner = dm.Partner?.Identifier;
-                    }
 
                     SqliteTransaction transaction = connection.BeginTransaction();
                     try
@@ -1367,14 +1683,14 @@ namespace Skymu
                                 INSERT INTO Messages (
                                     is_permanent, chatname, timestamp, author, from_dispname, from_username,
                                     chatmsg_type, body_xml, dialog_partner, convo_id, type,
-                                    pk_id, timestamp__ms, 
+                                    pk_id, remote_id, timestamp__ms, 
                                     identities, leavereason, chatmsg_status, body_is_rawxml,
                                     edited_by, edited_timestamp, sending_status, consumption_status
                                 )
                                 VALUES (
                                     @is_permanent, @chatname, @timestamp, @author, @from_dispname, @from_username,
                                     @chatmsg_type, @body_xml, @dialog_partner, @convo_id, @type,
-                                    @pk_id, @timestamp__ms, 
+                                    @pk_id, @remote_id, @timestamp__ms, 
                                     NULL, NULL, 4, 0,
                                     NULL, NULL, 2, 0
                                 )
@@ -1400,6 +1716,7 @@ namespace Skymu
                             cmd.Parameters.Add("@convo_id", SqliteType.Integer);
                             cmd.Parameters.Add("@type", SqliteType.Integer);
                             cmd.Parameters.Add("@pk_id", SqliteType.Integer);
+                            cmd.Parameters.Add("@remote_id", SqliteType.Integer);
                             cmd.Parameters.Add("@timestamp__ms", SqliteType.Integer);
 
                             foreach (ConversationItem item in items)
@@ -1424,6 +1741,7 @@ namespace Skymu
                                     cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = hasFile ? 68 : 61;
                                     cmd.Parameters["@pk_id"].Value = (object)message.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@remote_id"].Value = (object)message.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else if (item is CallStartedNotice callStarted)
@@ -1436,13 +1754,14 @@ namespace Skymu
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value = (object)callStarted.StartedBy?.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value = (object)callStarted.StartedBy?.Username ?? DBNull.Value;
-                                    cmd.Parameters["@from_dispname"].Value = (object)callStarted.StartedBy ?? DBNull.Value;
+                                    cmd.Parameters["@from_dispname"].Value = (object)callStarted.StartedBy?.DisplayName ?? DBNull.Value;
                                     cmd.Parameters["@chatmsg_type"].Value = 18;
                                     cmd.Parameters["@body_xml"].Value = DBNull.Value;
                                     cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
                                     cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = 30;
                                     cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@remote_id"].Value = (object)item.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else if (item is CallEndedNotice callEnded)
@@ -1455,13 +1774,14 @@ namespace Skymu
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value = (object)callEnded.StartedBy?.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value = (object)callEnded.StartedBy?.Username ?? DBNull.Value;
-                                    cmd.Parameters["@from_dispname"].Value = (object)callEnded.StartedBy ?? DBNull.Value;
+                                    cmd.Parameters["@from_dispname"].Value = (object)callEnded.StartedBy?.DisplayName ?? DBNull.Value;
                                     cmd.Parameters["@chatmsg_type"].Value = 18;
-                                    cmd.Parameters["@body_xml"].Value = callEnded.Duration.ToString();
+                                    cmd.Parameters["@body_xml"].Value = callEnded.Duration.TotalSeconds.ToString();
                                     cmd.Parameters["@dialog_partner"].Value = (object)dialogPartner ?? DBNull.Value;
                                     cmd.Parameters["@convo_id"].Value = conversation_incremental_id;
                                     cmd.Parameters["@type"].Value = 39;
                                     cmd.Parameters["@pk_id"].Value = (object)item.Identifier ?? DBNull.Value;
+                                    cmd.Parameters["@remote_id"].Value = (object)item.Identifier ?? DBNull.Value;
                                     cmd.Parameters["@timestamp__ms"].Value = tsMs;
                                 }
                                 else
@@ -1473,7 +1793,6 @@ namespace Skymu
                             }
                         }
 
-                        // update things on the parent conversation
                         if (items.Length > 0)
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
