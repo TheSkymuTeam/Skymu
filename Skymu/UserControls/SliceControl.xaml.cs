@@ -225,13 +225,13 @@ namespace Skymu
         private static void OnInteractiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     => ((SliceControl)d).UpdateHitTestState();
 
-        public bool FadeOnHover
+        public bool HoverTransition
         {
-            get { return (bool)GetValue(FadeOnHoverProperty); }
-            set { SetValue(FadeOnHoverProperty, value); }
+            get { return (bool)GetValue(HoverTransitionProperty); }
+            set { SetValue(HoverTransitionProperty, value); }
         }
-        public static readonly DependencyProperty FadeOnHoverProperty = DependencyProperty.Register(
-            nameof(FadeOnHover),
+        public static readonly DependencyProperty HoverTransitionProperty = DependencyProperty.Register(
+            nameof(HoverTransition),
             typeof(bool),
             typeof(SliceControl),
             new PropertyMetadata(true)
@@ -566,13 +566,13 @@ namespace Skymu
             if (effectiveState == state) return;
 
             bool shouldFade =
-                FadeOnHover
-                && !IsAnimation
-                && HoverIndex != DefaultIndex
-                && (
-                    state == ButtonVisualState.Hover
-                    || (state == ButtonVisualState.Default && effectiveState == ButtonVisualState.Hover)
-                );
+    HoverTransition
+    && !IsAnimation
+    && HoverIndex != DefaultIndex
+    && (
+        state == ButtonVisualState.Hover
+        || (state == ButtonVisualState.Default && _visualState == ButtonVisualState.Hover)
+    );
 
             if (shouldFade)
                 BeginFadeTransition(state);
@@ -598,16 +598,16 @@ namespace Skymu
             if (_overlayMidBrush == null) _overlayMidBrush = MakeBrush();
             if (_overlayRightBrush == null) _overlayRightBrush = MakeBrush();
 
-            if (!wasReversing)
-            {
-                PaintOverlay(targetState);
-                SyncOverlayLayout();
-            }
+            // Paint the OLD state onto the overlay (was: targetState)
+            PaintOverlay(_visualState);
+            SyncOverlayLayout();
 
-            bool isFadeOut = targetState == ButtonVisualState.Default && wasReversing;
+            // Snap the base to the target state immediately
+            SetState(targetState);
 
-            double fromOpacity = isFadeOut ? currentOpacity : 0.0;
-            double toOpacity = isFadeOut ? 0.0 : 1.0;
+            // When reversing mid-animation, pick up from wherever the overlay currently is
+            double fromOpacity = wasReversing ? currentOpacity : 1.0;
+            double toOpacity = 0.0;
 
             double fraction = Math.Abs(toOpacity - fromOpacity);
             var duration = TimeSpan.FromMilliseconds(150 * fraction);
@@ -636,9 +636,9 @@ namespace Skymu
             newSb.Completed += (s, e) =>
             {
                 if (_fadeStoryboard != newSb) return;
-                SetState(targetState);
                 OverlayLeft.Opacity = OverlayMiddle.Opacity = OverlayRight.Opacity = 0;
                 _fadeStoryboard = null;
+                // No SetState call needed here — base was already set above
             };
 
             newSb.Begin();

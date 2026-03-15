@@ -10,6 +10,16 @@
       FontFamily="Arial" FontSize="15.5"  Width="1100" Height="700" Style="{StaticResource Page}" >
     <Page.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
+        <Style x:Key="ActionButtonStyle" TargetType="global:SliceControl">
+            <Setter Property="StackDirection" Value="Vertical"/>
+            <Setter Property="ElementCount" Value="5"/>
+            <Setter Property="SliceMode" Value="0"/>
+            <Setter Property="DefaultIndex" Value="0"/>
+            <Setter Property="HoverIndex" Value="3"/>
+            <Setter Property="PressedIndex" Value="2"/>
+            <Setter Property="HoverTransition" Value="False"/>
+            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
+        </Style>
     </Page.Resources>
     <Grid>
         <Grid.Background>
@@ -57,71 +67,31 @@
             <global:SliceControl SliceMode="1" TopHeight="10" BottomHeight="10" Grid.ColumnSpan="3" Width="Auto" Source="Assets/Universal/Call Screen/pill.png" />
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="24,0,0,0">
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_sidebar_expand.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"/>
+                                 Style="{StaticResource ActionButtonStyle}"/>
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_chat_active.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                Style="{StaticResource ActionButtonStyle}"
                                  Margin="8,0,0,0"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_mic.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                 Style="{StaticResource ActionButtonStyle}"
                                  Margin="4,0"/>
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_dialpad.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                 Style="{StaticResource ActionButtonStyle}"
                                  Margin="4,0"/>
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_add.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                 Style="{StaticResource ActionButtonStyle}"
                                  Margin="4,0"/>
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_hangup.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                 Style="{StaticResource ActionButtonStyle}"
                                  Margin="4,0" Loaded="SliceControl_Loaded"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,24,0" HorizontalAlignment="Right">
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_connection_4.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"
+                                 Style="{StaticResource ActionButtonStyle}"
                                  Margin="0,0,8,0"/>
                 <global:SliceControl Source="Assets/Universal/Call Screen/btn_screen_expand.png" 
-                                 StackDirection="Vertical"
-                                 ElementCount="5"
-                                 SliceMode="0"       
-                                 DefaultIndex="0"
-                                 HoverIndex="3"
-                                 PressedIndex="2"/>
+                                 Style="{StaticResource ActionButtonStyle}"/>
             </StackPanel>
         </Grid>
     </Grid>
