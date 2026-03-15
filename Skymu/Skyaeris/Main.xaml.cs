@@ -1214,8 +1214,23 @@ namespace Skymu.Skyaeris
             throbber.Visibility = Visibility.Visible;
             is_loading_conversation = true;
 
-            ConversationItem[] items = await Universal.Plugin.FetchMessages(SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
-            Database.Messages.Write(items, SelectedConversation);
+            ConversationItem[] cached = Database.Messages.Read(SelectedConversation, 50);
+            ConversationItem[] items;
+
+            if (cached != null && cached.Length > 0)
+            {
+                items = cached;
+                throbber.Visibility = Visibility.Collapsed;
+                _ = SyncMessagesInBackground(SelectedConversation, cached[cached.Length - 1].Identifier);
+            }
+            else
+            {
+                items = await Universal.Plugin.FetchMessages(
+                    SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null);
+                Database.Messages.Write(items, SelectedConversation);
+            }
+
+            if (SelectedConversation == null) return;
 
             if (items != null && items.Length > 0)
             {
@@ -1262,6 +1277,13 @@ namespace Skymu.Skyaeris
             is_loading_conversation = false;
         }
 
+        private async Task SyncMessagesInBackground(Conversation conversation, string afterId)
+        {
+            ConversationItem[] items = await Universal.Plugin.FetchMessages(
+                conversation, Fetch.AfterIdentifier, MESSAGE_LIMIT, afterId);
+            Database.Messages.Write(items, conversation);
+        }
+
         private void HandleConversationItems(ListBox listBox)
         {
             ScrollToBottom(listBox);
@@ -1277,9 +1299,12 @@ namespace Skymu.Skyaeris
                     {
                         foreach (var item in args.NewItems)
                         {
-
                             if (item is Message message)
                             {
+                                if (message.Identifier != null && !message.Identifier.StartsWith(SKYMU_SENDING))
+                                {
+                                    Database.Messages.Write(new ConversationItem[] { message }, SelectedConversation);
+                                }
                                 if (message.Sender.Identifier == CurrentUser?.Identifier
                                     && message.Identifier != null
                                     && !message.Identifier.StartsWith(SKYMU_SENDING))

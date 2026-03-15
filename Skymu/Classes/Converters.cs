@@ -118,24 +118,27 @@ namespace Skymu.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
-    public class IdentifierToColorConverter : IValueConverter
+    public class SenderToColorConverter : IMultiValueConverter
     {
-        private static readonly SolidColorBrush MyIdentifierBrush =
+        private static readonly SolidColorBrush MyColor =
             new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
 
-        private static readonly SolidColorBrush AnotherIdentifierBrush =
+        private static readonly SolidColorBrush OtherUserColor =
             new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        private static readonly SolidColorBrush ForwardedMessageColor =
+            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00cc88"));
+
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is string identifier && identifier == Main.CurrentUser?.Identifier
-                ? MyIdentifierBrush
-                : AnotherIdentifierBrush;
+            if (values[0] is string identifier && identifier == Main.CurrentUser?.Identifier) return MyColor;
+            else if (values[1] is bool isForwarded && isForwarded) return ForwardedMessageColor;
+            else return OtherUserColor;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
-            return Binding.DoNothing;
+            return new object[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
 
@@ -177,7 +180,7 @@ namespace Skymu.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values[1] is bool isForwarded && isForwarded)
-                return values[0] + " (forwarded)";
+                return !String.IsNullOrEmpty(values[0] as string) ? values[0] + " (forwarded message)" : "Forwarded message";
 
             return values[0];
         }
