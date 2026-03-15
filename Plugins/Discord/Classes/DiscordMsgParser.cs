@@ -37,9 +37,13 @@ namespace Discord.Classes
             Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
             Message parent = ParseReply(message["referenced_message"]);
             User sender = UserStore.Get(authorId);
+            var (displayName, username) = GetAuthorInfo(message);
             if (sender == null)
             {
-                var (displayName, username) = GetAuthorInfo(message);
+                sender = UserStore.GetOrCreate(authorId, displayName, username);
+            }
+            else if (string.IsNullOrEmpty(sender.DisplayName) || string.IsNullOrEmpty(sender.Username))
+            {
                 sender = UserStore.GetOrCreate(authorId, displayName, username);
             }
 

@@ -58,7 +58,7 @@ namespace Skymu.Skyaeris
         internal static BitmapImage AnonymousAvatar, GroupAvatar;
         private bool noCloseEvent;
         internal static User CurrentUser; // static for other code to use it
-        private BitmapImage img_maximize, img_restore, img_split, img_join, EndCallButton, CallLeftButton;
+        private BitmapImage img_maximize, img_restore, img_split, img_join;
         internal static Conversation SelectedConversation = null;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
@@ -521,7 +521,7 @@ namespace Skymu.Skyaeris
         public static void RefreshCompactRecentsView()
         {
             var mainWindow = Application.Current.MainWindow as Main;
-            if (mainWindow?.ConversationList.Visibility == Visibility.Visible && 
+            if (mainWindow?.ConversationList.Visibility == Visibility.Visible &&
                 mainWindow.ConversationList.ItemTemplateSelector is CompactRecentsTemplateSelector)
             {
                 mainWindow.Dispatcher.Invoke(mainWindow.setupcompactrecentsview);
@@ -549,7 +549,7 @@ namespace Skymu.Skyaeris
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select) continue;
-                if (tab == btnServers && !Universal.Plugin.SupportsServers) continue; 
+                if (tab == btnServers && !Universal.Plugin.SupportsServers) continue;
                 tab.SetState(ButtonVisualState.Default);
                 buttonToColumn[tab].Width = Properties.Settings.Default.DynamicSidebarTabs && Universal.Plugin.SupportsServers ? small : dynamic;
             }
@@ -559,7 +559,7 @@ namespace Skymu.Skyaeris
             switch (tab_to_select.Name)
             {
                 case "btnServers":
-                    if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1) 
+                    if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1)
                         await Universal.Plugin.PopulateServerList();
 
                     foreach (var server in Universal.Plugin.ServerList)
@@ -587,7 +587,7 @@ namespace Skymu.Skyaeris
 
         private bool isDragging = false;
         private Point dragStart;
-        private UIElement capturedElement = null; 
+        private UIElement capturedElement = null;
 
         private void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
         {
@@ -613,7 +613,7 @@ namespace Skymu.Skyaeris
         {
             isDragging = true;
             dragStart = e.GetPosition(this);
-            capturedElement = sender as UIElement; 
+            capturedElement = sender as UIElement;
 
             if (capturedElement != null)
             {
@@ -632,7 +632,7 @@ namespace Skymu.Skyaeris
                 {
                     capturedElement.ReleaseMouseCapture();
                 }
-                capturedElement = null; 
+                capturedElement = null;
                 e.Handled = true;
             }
         }
@@ -1157,27 +1157,27 @@ namespace Skymu.Skyaeris
 
                 double speedMbps = (data.Length * 8.0) / 1_000_000 / stopwatch.Elapsed.TotalSeconds;
 
-				if (speedMbps >= 50)
-				{
-					final_icon = speedButtonIcons[4];
-				}
-				else if (speedMbps >= 20)
-				{
-					final_icon = speedButtonIcons[3];
-				}
-				else if (speedMbps >= 10)
-				{
-					final_icon = speedButtonIcons[2];
-				}
-				else if (speedMbps >= 5)
-				{
-					final_icon = speedButtonIcons[1];
-				}
-				else
-				{
-					final_icon = speedButtonIcons[0];
-				}
-			}
+                if (speedMbps >= 50)
+                {
+                    final_icon = speedButtonIcons[4];
+                }
+                else if (speedMbps >= 20)
+                {
+                    final_icon = speedButtonIcons[3];
+                }
+                else if (speedMbps >= 10)
+                {
+                    final_icon = speedButtonIcons[2];
+                }
+                else if (speedMbps >= 5)
+                {
+                    final_icon = speedButtonIcons[1];
+                }
+                else
+                {
+                    final_icon = speedButtonIcons[0];
+                }
+            }
             catch
             {
                 final_icon = "btn_pill_small_network_unavailable.png";
@@ -1261,7 +1261,7 @@ namespace Skymu.Skyaeris
                         return;
                     foreach (var item in args.NewItems)
                     {
-                        if (item is Message message && message.Sender.Identifier != CurrentUser?.Identifier && IsWindowActive)
+                        if (item is Message message && message.Sender.Identifier != CurrentUser?.Identifier && IsWindowActive && !synchronizing)
                         {
                             Sounds.Play("message-recieved");
                             break;
@@ -1277,11 +1277,21 @@ namespace Skymu.Skyaeris
             is_loading_conversation = false;
         }
 
+        private bool synchronizing = false;
+
         private async Task SyncMessagesInBackground(Conversation conversation, string afterId)
         {
             ConversationItem[] items = await Universal.Plugin.FetchMessages(
                 conversation, Fetch.AfterIdentifier, MESSAGE_LIMIT, afterId);
+            if (items == null || items.Length == 0) return;
             Database.Messages.Write(items, conversation);
+
+            if (SelectedConversation != conversation) return;
+            synchronizing = true;
+            foreach (ConversationItem item in items)
+                ActiveConversation.Add(item);
+            synchronizing = false;
+
         }
 
         private void HandleConversationItems(ListBox listBox)
@@ -1333,21 +1343,15 @@ namespace Skymu.Skyaeris
 
                                     }
                                 }
-                                int currentIndex = listBox.Items.IndexOf(message);
-
+                                int currentIndex = ActiveConversation.IndexOf(message);
                                 for (int i = currentIndex - 1; i >= 0; i--)
                                 {
-                                    Message previousMessage = listBox.Items[i] as Message;
-                                    if (previousMessage == null)
-                                        continue;
-
-                                    // ignore preview messages
-                                    if (previousMessage.Identifier.StartsWith(SKYMU_SENDING))
-                                        continue;
-
-                                    // only assign a real message's identifier as prev identifier
-                                    message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
-                                    break;
+                                    if (ActiveConversation[i] is Message previousMessage
+                                        && !previousMessage.Identifier.StartsWith(SKYMU_SENDING))
+                                    {
+                                        message.PreviousMessageIdentifier = previousMessage.Sender.Identifier;
+                                        break;
+                                    }
                                 }
 
                             }
@@ -1373,8 +1377,8 @@ namespace Skymu.Skyaeris
                 }
                 else
                 {
-					listBox.ScrollIntoView(listBox.Items[listBox.Items.Count - 1]);
-				}
+                    listBox.ScrollIntoView(listBox.Items[listBox.Items.Count - 1]);
+                }
             }
         }
 
@@ -1466,7 +1470,6 @@ namespace Skymu.Skyaeris
                 Sounds.StopPlayback("call-ring");
                 Sounds.Play("call-end");
                 CallDropdown.Visibility = Visibility.Visible;
-                CallButton.Source = CallLeftButton;
                 CallButton.TextLeftMargin = 26;
                 CallButton.RightWidth = 4;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
@@ -1487,7 +1490,6 @@ namespace Skymu.Skyaeris
                 CallButton.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAP_ACTIONBUTTON_HANGUP"];
                 CallDropdown.Visibility = Visibility.Collapsed;
-                CallButton.Source = EndCallButton;
                 CallButton.TextLeftMargin = 30;
                 CallButton.RightWidth = 23;
                 Sounds.PlayLoop("call-ring");
@@ -1574,11 +1576,11 @@ namespace Skymu.Skyaeris
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
-			var sliceControlInside = border != null ? border.Child as SliceControl : null;
-			if (sliceControlInside == null)
-				return;
+            var sliceControlInside = border != null ? border.Child as SliceControl : null;
+            if (sliceControlInside == null)
+                return;
 
-			EmojiFlyout.IsOpen = false;
+            EmojiFlyout.IsOpen = false;
 
             RemovePlaceholder(MessageTextBox);
 
@@ -1631,8 +1633,6 @@ namespace Skymu.Skyaeris
 
             GroupAvatar = GenerateAvatarImage("group");
             AnonymousAvatar = GenerateAvatarImage("anonymous");
-            EndCallButton = FrameworkExtensions.FreezeImage("pack://application:,,,/Skyaeris/Assets/Universal/Chat/btn_end_call.png");
-            CallLeftButton = FrameworkExtensions.FreezeImage("pack://application:,,,/Skyaeris/Assets/Universal/Chat/btn_call_left.png");
 
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += Main_SizeChanged;

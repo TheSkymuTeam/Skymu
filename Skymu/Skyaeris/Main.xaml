@@ -33,6 +33,7 @@
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="Height" Value="18"/>
             <Setter Property="Margin" Value="-1,0,0,0"/>
+            <Setter Property="HoverTransition" Value="False"/>
             <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor"/>
             <Setter Property="SliceMode" Value="0"/>
             <Setter Property="ElementCount" Value="4"/>

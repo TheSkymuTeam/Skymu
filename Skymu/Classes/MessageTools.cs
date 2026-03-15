@@ -515,10 +515,6 @@ namespace Skymu
             }
         }
 
-
-
-
-
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
         // the main method, and the span, containg formatted text, is added to the global inline list. This, and the emoji-processing function only update the inline collection, and as such, return void.
         private static void AddTextOrLinkOrClickable(IList<WpfInline> inlines, string text)
@@ -646,7 +642,6 @@ namespace Skymu
             }
         }
 
-
         private static void AddTextOrLinkOrClickable(InlineCollection inlines, string text)
         {
             var temp = new List<WpfInline>();
@@ -654,7 +649,6 @@ namespace Skymu
             foreach (var il in temp)
                 inlines.Add(il);
         }
-
 
         internal static SliceControl FormAnimatedEmoji(string emojiName)
         {

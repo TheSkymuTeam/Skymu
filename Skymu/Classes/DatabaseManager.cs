@@ -1432,7 +1432,7 @@ namespace Skymu
                                 int type;
                                 if (conversation is DirectMessage) type = 1;
                                 else if (conversation is Group) type = 2;
-                                else if (conversation is ServerChannel) type = 2;
+                                else if (conversation is ServerChannel) type = 3;
                                 else type = 0;
 
                                 string dialogPartner = null;
@@ -1620,8 +1620,8 @@ namespace Skymu
                                 }
 
                                 DateTime time = tsMs != 0
-                                    ? DateTimeOffset.FromUnixTimeMilliseconds(tsMs).UtcDateTime
-                                    : DateTimeOffset.FromUnixTimeSeconds(tsSec).UtcDateTime;
+                                    ? DateTimeOffset.FromUnixTimeMilliseconds(tsMs).LocalDateTime
+                                    : DateTimeOffset.FromUnixTimeSeconds(tsSec).LocalDateTime;
 
                                 switch (msgType)
                                 {
@@ -1728,6 +1728,7 @@ namespace Skymu
                                     bool hasFile = message.Attachments != null
                                                      && message.Attachments.Length > 0
                                                      && message.Attachments[0]?.File != null;
+
 
                                     cmd.Parameters["@is_permanent"].Value = 1;
                                     cmd.Parameters["@chatname"].Value = DBNull.Value;
