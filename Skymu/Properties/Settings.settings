@@ -33,7 +33,7 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.3.14</Value>
+      <Value Profile="(Default)">0.3.13</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Drocea Osmanthus</Value>
