@@ -26,7 +26,7 @@ namespace Discord.Classes
             // READY
             if (messageData["user_settings"] is JsonObject userSettings)
             {
-                string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "offline";
+                string rawMainStatus = userSettings["status"]?.GetValue<string>() ?? "unknown";
                 string rawCustomStatus = string.Empty;
                 if (userSettings["custom_status"] is JsonObject customStatusObj)
                     rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
@@ -47,7 +47,7 @@ namespace Discord.Classes
             string userId = presence["user"]?["id"]?.GetValue<string>();
             if (userId == null) return;
 
-            string status = presence["status"]?.GetValue<string>() ?? "offline";
+            string status = presence["status"]?.GetValue<string>() ?? "unknown";
             string customStatus = string.Empty;
 
             var activities = presence["activities"] as JsonArray;

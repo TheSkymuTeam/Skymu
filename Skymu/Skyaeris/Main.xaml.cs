@@ -57,6 +57,8 @@ namespace Skymu.Skyaeris
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         internal static BitmapImage AnonymousAvatar, GroupAvatar;
         private bool noCloseEvent;
+        private ScrollViewer _conversationScrollViewer;
+        private bool _userScrolledUp = false;
         internal static User CurrentUser; // static for other code to use it
         private BitmapImage img_maximize, img_restore, img_split, img_join;
         internal static Conversation SelectedConversation = null;
@@ -81,7 +83,8 @@ namespace Skymu.Skyaeris
         {
             SkypeAero,
             SkypeBasic,
-            Native
+            Native,
+            SkypeAeroCustom
         };
 
         public static readonly DependencyProperty WindowTitleProperty =
@@ -220,15 +223,33 @@ namespace Skymu.Skyaeris
                 WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
                 SetClickable(tbli, close, minimize, maximize, split);
 
-                if (border == WindowFrame.SkypeAero) // switch configuration from Skype Basic to Aero
+                if (border == WindowFrame.SkypeAero || border == WindowFrame.SkypeAeroCustom) // switch configuration from Skype Basic to Aero
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
                     OriginalWindowAreaMargin = AeroThickness;
                     chrome.GlassFrameThickness = AeroThickness;
                     // Set up the window background and margin
-                    this.Background = Brushes.Transparent;
-                    TitleBar.Background = Brushes.Transparent;
                     WindowArea.Margin = AeroThickness;
+                    TitleBar.Background = Brushes.Transparent;
+
+                    if (border == WindowFrame.SkypeAero)
+                    {
+                        this.AllowsTransparency = false;
+                        this.Background = Brushes.Transparent;
+                    }
+
+                    else if (border == WindowFrame.SkypeAeroCustom) // TODO: finish this
+                    {
+                        var img = FrameworkExtensions.FreezeImage("pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/aero-background.png");
+                        this.Background = new ImageBrush
+                        {
+                            ImageSource = img,
+                            Stretch = Stretch.None,
+                            TileMode = TileMode.None,
+                            ViewportUnits = BrushMappingMode.Absolute,
+                            Viewport = new Rect(0, 0, img.Width, img.Height)
+                        };
+                    }
 
                     // Titlebar font styling
                     TitleMain.FontFamily = new FontFamily("Segoe UI");
@@ -259,6 +280,7 @@ namespace Skymu.Skyaeris
 
             else if (border == WindowFrame.Native) // using system native border
             {
+                this.AllowsTransparency = false;
                 WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0);
@@ -357,7 +379,7 @@ namespace Skymu.Skyaeris
                 button.Effect = null;
             }
 
-            if (this.Background == System.Windows.Media.Brushes.Transparent)
+            if (border != WindowFrame.SkypeBasic)
                 return;
 
             TitleBar.Background = Properties.Settings.Default.FallbackFillColors
@@ -419,7 +441,7 @@ namespace Skymu.Skyaeris
                 button.DefaultIndex = 0;
             }
 
-            if (this.Background == Brushes.Transparent)
+            if (border != WindowFrame.SkypeBasic)
                 return;
 
             TitleBar.Background = Properties.Settings.Default.FallbackFillColors
@@ -1205,6 +1227,7 @@ namespace Skymu.Skyaeris
 
         private async Task SetConversation()
         {
+            _userScrolledUp = false;
             ActiveConversation.Clear();
             Universal.Plugin.TypingUsersList.Clear();
             SetWindow(WindowType.Chat);
@@ -1275,6 +1298,7 @@ namespace Skymu.Skyaeris
 
             throbber.Visibility = Visibility.Collapsed;
             is_loading_conversation = false;
+            _conversationScrollViewer.ScrollToEnd();
         }
 
         private bool synchronizing = false;
@@ -1291,19 +1315,24 @@ namespace Skymu.Skyaeris
             foreach (ConversationItem item in items)
                 ActiveConversation.Add(item);
             synchronizing = false;
-
         }
 
         private void HandleConversationItems(ListBox listBox)
         {
-            ScrollToBottom(listBox);
+            ConversationItemsList.ApplyTemplate();
+            _conversationScrollViewer = ConversationItemsList.Template.FindName("ScrollViewer", ConversationItemsList) as ScrollViewer;
+            _conversationScrollViewer.ScrollChanged += (s, e) =>
+            {
+                if (e.ExtentHeightChange == 0)
+                    _userScrolledUp = _conversationScrollViewer.VerticalOffset < _conversationScrollViewer.ScrollableHeight - 10;
+            };
 
             if (listBox.Items is INotifyCollectionChanged notifyCollection)
             {
                 if (_conversationItemsChangedHandler != null)
                     notifyCollection.CollectionChanged -= _conversationItemsChangedHandler;
 
-                _conversationItemsChangedHandler += (s, args) =>
+                _conversationItemsChangedHandler = (s, args) =>
                 {
                     if (args.Action == NotifyCollectionChangedAction.Add)
                     {
@@ -1313,7 +1342,8 @@ namespace Skymu.Skyaeris
                             {
                                 if (message.Identifier != null && !message.Identifier.StartsWith(SKYMU_SENDING))
                                 {
-                                    Database.Messages.Write(new ConversationItem[] { message }, SelectedConversation);
+                                    var msg = new ConversationItem[] { message };
+                                    Task.Run(() => Database.Messages.Write(msg, SelectedConversation));
                                 }
                                 if (message.Sender.Identifier == CurrentUser?.Identifier
                                     && message.Identifier != null
@@ -1358,48 +1388,13 @@ namespace Skymu.Skyaeris
                         }
                     }
 
-                    Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                        new Action(() => ScrollToBottom(listBox)));
+                    if (!is_loading_conversation && !_userScrolledUp)
+                        _conversationScrollViewer?.ScrollToEnd();
+
                 };
 
                 notifyCollection.CollectionChanged += _conversationItemsChangedHandler;
             }
-        }
-
-        private void ScrollToBottom(ListBox listBox)
-        {
-            if (listBox?.Items.Count > 0)
-            {
-                var scrollViewer = FindScrollViewer(listBox);
-                if (scrollViewer != null)
-                {
-                    scrollViewer.ScrollToEnd();
-                }
-                else
-                {
-                    listBox.ScrollIntoView(listBox.Items[listBox.Items.Count - 1]);
-                }
-            }
-        }
-
-        private ScrollViewer FindScrollViewer(DependencyObject element)
-        {
-            if (element == null)
-                return null;
-
-            if (element is ScrollViewer scrollViewer)
-                return scrollViewer;
-
-            int childCount = VisualTreeHelper.GetChildrenCount(element);
-            for (int i = 0; i < childCount; i++)
-            {
-                var child = VisualTreeHelper.GetChild(element, i);
-                var result = FindScrollViewer(child);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
         }
 
         #endregion

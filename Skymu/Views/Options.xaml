@@ -82,10 +82,10 @@
                         <ComboBox SelectedIndex="{Binding Source={x:Static properties:Settings.Default},
                    Path=WindowFrame,
                    Mode=TwoWay}" Width="250">
-                            <ComboBoxItem Content="Skype Aero"/>
-                            <ComboBoxItem Content="Skype Basic"/>
-                            <ComboBoxItem Content="Use the system window frame"/>
-                        </ComboBox>
+                                <ComboBoxItem Content="Skype Aero"/>
+                                <ComboBoxItem Content="Skype Basic"/>
+                                <ComboBoxItem Content="Use the system window frame"/>
+                            </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Application theme (experimental)" VerticalAlignment="Center" Padding="0,0,10,0"/>
