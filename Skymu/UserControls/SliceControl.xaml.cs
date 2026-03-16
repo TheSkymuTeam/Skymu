@@ -136,13 +136,13 @@ namespace Skymu
             // Animation timer
             if (_sharedAnimationTimer == null)
             {
-                _sharedAnimationTimer = new DispatcherTimer();
+                _sharedAnimationTimer = new DispatcherTimer(DispatcherPriority.Render);
                 _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // 60 FPS base tick rate
                 _sharedAnimationTimer.Tick += (s, e) =>
                 {
                     double deltaTime = 16.67 / 1000.0;
 
-                    foreach (var control in _animatingControls.ToList())
+                    foreach (var control in _animatingControls)
                     {
                         if (control.AnimationFps <= 0)
                             continue;
@@ -158,7 +158,8 @@ namespace Skymu
                             if (control._currentAnimationFrame >= control.ElementCount)
                                 control._currentAnimationFrame %= control.ElementCount;
 
-                            control.UpdateSlices();
+                            if (control.SliceMode == 0) control._middleBrush.Viewbox = control.GetStateViewbox();
+                            else control.UpdateSlices();
                         }
                     }
                 };
