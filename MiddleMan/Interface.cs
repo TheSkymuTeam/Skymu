@@ -23,7 +23,7 @@ namespace MiddleMan
         QRCode,
         Passwordless,
         External,
-        Token
+        Token,
     }
 
     public enum LoginResult
@@ -31,7 +31,7 @@ namespace MiddleMan
         Success,
         TwoFARequired,
         Failure,
-        UnsupportedAuthType
+        UnsupportedAuthType,
     }
 
     public enum UserConnectionStatus
@@ -45,7 +45,7 @@ namespace MiddleMan
         Invisible,
         Blocked,
         Offline,
-        Unknown
+        Unknown,
     }
 
     public enum ChannelType
@@ -56,7 +56,7 @@ namespace MiddleMan
         Voice,
         Restricted,
         NoAccess,
-        Forum
+        Forum,
     }
 
     public abstract class Metadata : INotifyPropertyChanged
@@ -89,7 +89,8 @@ namespace MiddleMan
 
         protected void Set<T>(ref T field, T value, string name)
         {
-            if (Equals(field, value)) return;
+            if (Equals(field, value))
+                return;
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -98,9 +99,7 @@ namespace MiddleMan
     public abstract class Participant : Metadata
     {
         protected Participant(string displayName, string identifier, byte[] profilePicture = null)
-            : base(displayName, identifier, profilePicture)
-        {
-        }
+            : base(displayName, identifier, profilePicture) { }
     }
 
     public class User : Participant
@@ -127,10 +126,14 @@ namespace MiddleMan
             set => Set(ref _presence_status, value, nameof(PresenceStatus));
         }
 
-        public User(string display_name, string username, string identifier,
-                    string status = null,
-                    UserConnectionStatus presence_status = UserConnectionStatus.Offline,
-                    byte[] profilePicture = null)
+        public User(
+            string display_name,
+            string username,
+            string identifier,
+            string status = null,
+            UserConnectionStatus presence_status = UserConnectionStatus.Offline,
+            byte[] profilePicture = null
+        )
             : base(display_name, identifier, profilePicture)
         {
             _username = username;
@@ -156,7 +159,13 @@ namespace MiddleMan
             set => Set(ref _lastMessageTime, value, nameof(LastMessageTime));
         }
 
-        protected Conversation(string display_name, string identifier, int unread_count, byte[] profile_picture = null, DateTime? last_message_time = null)
+        protected Conversation(
+            string display_name,
+            string identifier,
+            int unread_count,
+            byte[] profile_picture = null,
+            DateTime? last_message_time = null
+        )
             : base(display_name, identifier, profile_picture)
         {
             _unreadCount = unread_count;
@@ -168,8 +177,19 @@ namespace MiddleMan
     {
         public User Partner { get; }
 
-        public DirectMessage(User partner, int unread_count, string identifier, DateTime? last_message_time = null)
-            : base(partner.DisplayName, identifier, unread_count, partner.ProfilePicture, last_message_time)
+        public DirectMessage(
+            User partner,
+            int unread_count,
+            string identifier,
+            DateTime? last_message_time = null
+        )
+            : base(
+                partner.DisplayName,
+                identifier,
+                unread_count,
+                partner.ProfilePicture,
+                last_message_time
+            )
         {
             Partner = partner;
         }
@@ -185,7 +205,14 @@ namespace MiddleMan
             set => Set(ref _members, value, nameof(Members));
         }
 
-        public Group(string name, string identifier, int unread_count, User[] members, byte[] profile_picture = null, DateTime? last_message_time = null)
+        public Group(
+            string name,
+            string identifier,
+            int unread_count,
+            User[] members,
+            byte[] profile_picture = null,
+            DateTime? last_message_time = null
+        )
             : base(name, identifier, unread_count, profile_picture, last_message_time)
         {
             _members = members;
@@ -225,12 +252,15 @@ namespace MiddleMan
 
         public Dictionary<string, string> CategoryMap { get; set; }
 
-        public Server(string name, string identifier,
-                      User[] members,
-                      ServerChannel[] channels,
-                      byte[] profile_picture = null,
-                      Dictionary<string, string> category_map = null,
-                      int member_count = 0)
+        public Server(
+            string name,
+            string identifier,
+            User[] members,
+            ServerChannel[] channels,
+            byte[] profile_picture = null,
+            Dictionary<string, string> category_map = null,
+            int member_count = 0
+        )
             : base(name, identifier, profile_picture)
         {
             _members = members;
@@ -249,7 +279,17 @@ namespace MiddleMan
         public string CategoryID { get; }
         public int Position { get; }
 
-        public ServerChannel(string name, string identifier, string parent_server_id, int unread_count, ChannelType channel_type, string category_id = null, int position = 0, string description = null, DateTime? last_message_time = null)
+        public ServerChannel(
+            string name,
+            string identifier,
+            string parent_server_id,
+            int unread_count,
+            ChannelType channel_type,
+            string category_id = null,
+            int position = 0,
+            string description = null,
+            DateTime? last_message_time = null
+        )
             : base(name, identifier, unread_count, null, last_message_time)
         {
             ParentServerID = parent_server_id;
@@ -260,13 +300,12 @@ namespace MiddleMan
         }
     }
 
-
     public enum AttachmentType
     {
         Image,
         Video,
         Audio,
-        File
+        File,
     }
 
     public class Attachment
@@ -275,12 +314,14 @@ namespace MiddleMan
         public AttachmentType Type { get; set; }
         public byte[] File { get; set; }
         public string Url { get; set; }
+
         public Attachment(byte[] file, string name, AttachmentType type)
         {
             File = file;
             Name = name;
             Type = type;
         }
+
         public Attachment(string location_url, string name)
         {
             Url = location_url;
@@ -294,7 +335,12 @@ namespace MiddleMan
         public string CustomTextUsername { get; set; }
         public string CustomTextAuthType { get; set; }
         public string Url { get; set; }
-        public AuthTypeInfo(AuthenticationMethod type, string custom_text_username_field = null, string custom_text_auth_type = null)
+
+        public AuthTypeInfo(
+            AuthenticationMethod type,
+            string custom_text_username_field = null,
+            string custom_text_auth_type = null
+        )
         {
             AuthType = type;
             CustomTextAuthType = custom_text_auth_type;
@@ -308,7 +354,13 @@ namespace MiddleMan
         public string PasswordOrToken { get; }
         public string Plugin { get; }
         public AuthenticationMethod AuthenticationType { get; }
-        public SavedCredential(User user, string password_or_token, AuthenticationMethod authentication_type, string plugin)
+
+        public SavedCredential(
+            User user,
+            string password_or_token,
+            AuthenticationMethod authentication_type,
+            string plugin
+        )
         {
             User = user;
             PasswordOrToken = password_or_token;
@@ -326,12 +378,21 @@ namespace MiddleMan
     public class Message : ConversationItem
     {
         public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
-        public User Sender { get; set; } // Who sent the message 
+        public User Sender { get; set; } // Who sent the message
         public string Text { get; set; } // Message body
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
-        public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message) 
+        public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message)
         public bool IsForwarded { get; set; }
-        public Message(string identifier, User sender, DateTime time, string text = null, Attachment[] attachments = null, Message parent_message = null, bool is_forwarded = false)
+
+        public Message(
+            string identifier,
+            User sender,
+            DateTime time,
+            string text = null,
+            Attachment[] attachments = null,
+            Message parent_message = null,
+            bool is_forwarded = false
+        )
         {
             Identifier = identifier;
             Sender = sender;
@@ -347,6 +408,7 @@ namespace MiddleMan
     {
         public User StartedBy { get; set; }
         public bool IsVideoCall { get; set; } // Set to true if the call is video
+
         public CallStartedNotice(User started_by, bool is_video_call, DateTime time)
         {
             StartedBy = started_by;
@@ -360,7 +422,13 @@ namespace MiddleMan
         public User StartedBy { get; set; }
         public TimeSpan Duration { get; set; } // Length of call
         public bool IsVideoCall { get; set; } // Set to true if the call was video
-        public CallEndedNotice(User started_by, TimeSpan duration, bool is_video_call, DateTime time) // time here is when the "Call ended" notification was sent, not when call started
+
+        public CallEndedNotice(
+            User started_by,
+            TimeSpan duration,
+            bool is_video_call,
+            DateTime time
+        ) // time here is when the "Call ended" notification was sent, not when call started
         {
             StartedBy = started_by;
             Duration = duration;
@@ -375,39 +443,44 @@ namespace MiddleMan
         Server,
         ServerRole,
         ServerChannel,
-        GroupChat
+        GroupChat,
     }
 
     public enum ConversationType
     {
         DirectMessage,
         Group,
-        Server
+        Server,
     }
 
     public class ClickableConfiguration
     {
-        public string DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'. 
+        public string DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'.
         public string DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
         public ClickableItemType Type { get; set; } // items that are clickable within the clickability delimiter range
-        public ClickableConfiguration(ClickableItemType type, string delimiter_left, string delimiter_right)
+
+        public ClickableConfiguration(
+            ClickableItemType type,
+            string delimiter_left,
+            string delimiter_right
+        )
         {
             DelimiterLeft = delimiter_left;
             DelimiterRight = delimiter_right;
             Type = type;
         }
-
     }
 
     public enum DialogType
     {
         Error,
-        Warning
+        Warning,
     }
 
     public class PluginMessageEventArgs : EventArgs
     {
         public string Message { get; }
+
         public PluginMessageEventArgs(string message)
         {
             Message = message;
@@ -417,6 +490,7 @@ namespace MiddleMan
     public abstract class MessageEventArgs : EventArgs
     {
         public string ConversationId { get; }
+
         public MessageEventArgs(string conversation_id)
         {
             ConversationId = conversation_id;
@@ -427,7 +501,13 @@ namespace MiddleMan
     {
         public ConversationItem Item { get; }
         public bool SentInServerChannel { get; }
-        public MessageRecievedEventArgs(string conversation_id, ConversationItem item, bool sent_in_server_channel) : base(conversation_id)
+
+        public MessageRecievedEventArgs(
+            string conversation_id,
+            ConversationItem item,
+            bool sent_in_server_channel
+        )
+            : base(conversation_id)
         {
             Item = item;
             SentInServerChannel = sent_in_server_channel;
@@ -438,7 +518,13 @@ namespace MiddleMan
     {
         public string OldItemId { get; }
         public ConversationItem NewItem { get; }
-        public MessageEditedEventArgs(string conversation_id, string old_item_id, ConversationItem new_item) : base(conversation_id)
+
+        public MessageEditedEventArgs(
+            string conversation_id,
+            string old_item_id,
+            ConversationItem new_item
+        )
+            : base(conversation_id)
         {
             OldItemId = old_item_id;
             NewItem = new_item;
@@ -448,7 +534,9 @@ namespace MiddleMan
     public class MessageDeletedEventArgs : MessageEventArgs
     {
         public string DeletedItemId { get; }
-        public MessageDeletedEventArgs(string conversation_id, string deleted_item_id) : base(conversation_id)
+
+        public MessageDeletedEventArgs(string conversation_id, string deleted_item_id)
+            : base(conversation_id)
         {
             DeletedItemId = deleted_item_id;
         }
@@ -459,10 +547,16 @@ namespace MiddleMan
         Newest,
         Oldest,
         BeforeIdentifier,
-        AfterIdentifier
+        AfterIdentifier,
     }
 
-    public enum CallState { Ringing, Active, Ended, Failed }
+    public enum CallState
+    {
+        Ringing,
+        Active,
+        Ended,
+        Failed,
+    }
 
     public class CallEventArgs : EventArgs
     {
@@ -489,7 +583,12 @@ namespace MiddleMan
         public DateTime StartedAt { get; }
         public User[] Participants { get; set; }
 
-        public ActiveCall(string call_id, string conversation_id, bool is_video, User[] participants)
+        public ActiveCall(
+            string call_id,
+            string conversation_id,
+            bool is_video,
+            User[] participants
+        )
         {
             CallId = call_id;
             ConversationId = conversation_id;
@@ -511,10 +610,19 @@ namespace MiddleMan
         bool SupportsServers { get; } // Does the plugin support servers or not? (Most don't)
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
-        Task<LoginResult> Authenticate(AuthenticationMethod auth_type, string username, string password); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
+        Task<LoginResult> Authenticate(
+            AuthenticationMethod auth_type,
+            string username,
+            string password
+        ); // Step 1 of the login system, basically when you click 'Sign in' on the Login window.
         Task<LoginResult> Authenticate(SavedCredential credential); // Tries to log in with saved tokens/credentials
         Task<LoginResult> AuthenticateTwoFA(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication. (TOTP)
-        Task<bool> SendMessage(string identifier, string text = null, Attachment attachment = null, string parent_message_identifier = null); // Sends a message. Returns true on success.
+        Task<bool> SendMessage(
+            string identifier,
+            string text = null,
+            Attachment attachment = null,
+            string parent_message_identifier = null
+        ); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         ObservableCollection<DirectMessage> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
@@ -523,21 +631,22 @@ namespace MiddleMan
         Task<bool> PopulateContactsList(); // Fetches and assigns the contact list to the ContactList variable. Returns true on success.
         Task<bool> PopulateRecentsList(); // Fetches and assigns the recents list to the RecentsList variable. Returns true on success.
         Task<bool> PopulateServerList(); // Fetches and assigns the server list to the ServerList variable. Returns true on success.
-        Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type = Fetch.Newest, int message_count = 50, string identifier = null); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
+        Task<ConversationItem[]> FetchMessages(
+            Conversation conversation,
+            Fetch fetch_type = Fetch.Newest,
+            int message_count = 50,
+            string identifier = null
+        ); // sets the active conversation to the specified identifier and fetches its messages. Returns true on success.
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
-        ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation. 
+        ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation.
         Task<bool> SetPresenceStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
         Task<bool> SetTextStatus(string status); // sets text status, sometimes referred to as "custom" status
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
-    {
-
-    }
+    { }
 
     public interface IBoard // For methods/variables specific to messageboard services, like Bluesky, Reddit, etc. Yes, Instagram is technically a messageboard.
-    {
-
-    }
+    { }
 }

@@ -9,10 +9,9 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
 using System.Collections.Generic;
-
+using MiddleMan;
 
 namespace Discord.Classes
 {
@@ -21,7 +20,7 @@ namespace Discord.Classes
         Create,
         Delete,
         BulkDelete,
-        Update
+        Update,
     }
 
     internal class HelperClasses
@@ -34,10 +33,10 @@ namespace Discord.Classes
             public string Identifier { get; set; }
             public IEnumerable<string> BulkIdentifiers { get; set; }
 
-            public User Sender { get; set; } 
+            public User Sender { get; set; }
             public DateTime Timestamp { get; set; }
-            public string Text { get; set; } 
-            public Attachment[] Attachments { get; set; } 
+            public string Text { get; set; }
+            public Attachment[] Attachments { get; set; }
             public Message ParentMessage { get; set; } = null;
         }
     }

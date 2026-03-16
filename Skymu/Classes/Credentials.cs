@@ -9,13 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Xml.Linq;
+using MiddleMan;
 
 namespace Skymu
 {
@@ -23,7 +23,9 @@ namespace Skymu
     {
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Skymu", "credentials.xml");
+            "Skymu",
+            "credentials.xml"
+        );
 
         private static XDocument ReadFile()
         {
@@ -51,16 +53,22 @@ namespace Skymu
             string encryptedToken = null;
             if (cred.PasswordOrToken != null)
             {
-                encryptedToken = Convert.ToBase64String(ProtectedData.Protect(
-                    System.Text.Encoding.UTF8.GetBytes(cred.PasswordOrToken),
-                    null, DataProtectionScope.CurrentUser));
+                encryptedToken = Convert.ToBase64String(
+                    ProtectedData.Protect(
+                        System.Text.Encoding.UTF8.GetBytes(cred.PasswordOrToken),
+                        null,
+                        DataProtectionScope.CurrentUser
+                    )
+                );
             }
 
-            string avatar = cred.User?.ProfilePicture != null
-                ? Convert.ToBase64String(cred.User.ProfilePicture)
-                : null;
+            string avatar =
+                cred.User?.ProfilePicture != null
+                    ? Convert.ToBase64String(cred.User.ProfilePicture)
+                    : null;
 
-            return new XElement("Credential",
+            return new XElement(
+                "Credential",
                 new XElement("Plugin", cred.Plugin),
                 new XElement("Identifier", cred.User?.Identifier),
                 new XElement("Username", cred.User?.Username),
@@ -77,7 +85,11 @@ namespace Skymu
             string picStr = (string)e.Element("ProfilePicture");
             if (!string.IsNullOrEmpty(picStr))
             {
-                try { avatar = Convert.FromBase64String(picStr); } catch { }
+                try
+                {
+                    avatar = Convert.FromBase64String(picStr);
+                }
+                catch { }
             }
 
             AuthenticationMethod authType = AuthenticationMethod.Password;
@@ -91,7 +103,8 @@ namespace Skymu
                 (string)e.Element("Identifier"),
                 null,
                 UserConnectionStatus.Offline,
-                avatar);
+                avatar
+            );
 
             string token = null;
             string tokenStr = (string)e.Element("PasswordOrToken");
@@ -99,27 +112,33 @@ namespace Skymu
             {
                 try
                 {
-                    token = System.Text.Encoding.UTF8.GetString(ProtectedData.Unprotect(
-                        Convert.FromBase64String(tokenStr),
-                        null, DataProtectionScope.CurrentUser));
+                    token = System.Text.Encoding.UTF8.GetString(
+                        ProtectedData.Unprotect(
+                            Convert.FromBase64String(tokenStr),
+                            null,
+                            DataProtectionScope.CurrentUser
+                        )
+                    );
                 }
-                catch { token = null; }
+                catch
+                {
+                    token = null;
+                }
             }
 
             return new SavedCredential(user, token, authType, (string)e.Element("Plugin"));
         }
 
         private static bool Matches(XElement e, string plugin, string identifier) =>
-            (string)e.Element("Plugin") == plugin &&
-            (string)e.Element("Identifier") == identifier;
+            (string)e.Element("Plugin") == plugin && (string)e.Element("Identifier") == identifier;
 
         internal static void Save(SavedCredential credential)
         {
             XDocument doc = ReadFile();
             XElement root = doc.Root;
 
-            root.Elements("Credential").Where(e =>
-                Matches(e, credential.Plugin, credential.User?.Identifier))
+            root.Elements("Credential")
+                .Where(e => Matches(e, credential.Plugin, credential.User?.Identifier))
                 .Remove();
 
             root.Add(ToElement(credential));

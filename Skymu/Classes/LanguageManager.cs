@@ -20,7 +20,9 @@ namespace Skymu
     public class LanguageManager : INotifyPropertyChanged
     {
         private readonly Dictionary<string, string> ldict = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> llist = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> llist = new Dictionary<string, string>(
+            StringComparer.OrdinalIgnoreCase
+        );
         public IReadOnlyDictionary<string, string> Languages => llist;
         private string currentPath;
         public string this[string key]
@@ -30,9 +32,7 @@ namespace Skymu
                 if (!ldict.TryGetValue(key, out var value))
                     return key;
 
-                return value.Replace(
-                    "Skype",
-                    Properties.Settings.Default.BrandingName);
+                return value.Replace("Skype", Properties.Settings.Default.BrandingName);
             }
         }
 
@@ -49,8 +49,14 @@ namespace Skymu
                 return;
             }
             string lang = Properties.Settings.Default.Language ?? "English";
-            if (!Scan()) Universal.ExceptionHandler(new Exception("Could not find any compatible files in directory /languages."));
-            if (!Load(llist.TryGetValue(lang, out var path) ? path : String.Empty)) Universal.ExceptionHandler(new Exception("Could not load language \"" + lang + "\"."));
+            if (!Scan())
+                Universal.ExceptionHandler(
+                    new Exception("Could not find any compatible files in directory /languages.")
+                );
+            if (!Load(llist.TryGetValue(lang, out var path) ? path : String.Empty))
+                Universal.ExceptionHandler(
+                    new Exception("Could not load language \"" + lang + "\".")
+                );
             Properties.Settings.Default.PropertyChanged += Settings_PropertyChanged;
         }
 
@@ -74,12 +80,14 @@ namespace Skymu
 
         public bool Load(string path)
         {
-            if (String.IsNullOrEmpty(path) || !File.Exists(path)) return false;
+            if (String.IsNullOrEmpty(path) || !File.Exists(path))
+                return false;
             currentPath = path;
             ldict.Clear();
             foreach (string line in File.ReadLines(currentPath))
             {
-                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+                if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                    continue;
                 int idx = line.IndexOf('=');
                 if (idx > 0)
                 {
@@ -96,7 +104,7 @@ namespace Skymu
         {
             string directoryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "languages");
 
-            if (!Directory.Exists(directoryPath))   
+            if (!Directory.Exists(directoryPath))
                 return false;
 
             llist.Clear();

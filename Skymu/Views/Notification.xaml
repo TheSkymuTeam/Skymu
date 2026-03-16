@@ -1,37 +1,68 @@
-﻿<Window Style="{StaticResource Window}" x:Class="Skymu.Views.Notification" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:global="clr-namespace:Skymu"  xmlns:converters="clr-namespace:Skymu.Converters" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Notification" xmlns:properties="clr-namespace:Skymu.Properties" SizeToContent="Height" Width="240" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False" Topmost="True" ShowActivated="False" FontFamily="Tahoma" FontSize="11" 
-        MouseEnter="Window_MouseEnter"
-        MouseLeave="Window_MouseLeave"
-        MouseRightButtonDown="Window_MouseRightButtonDown">
+﻿<Window
+    x:Class="Skymu.Views.Notification"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:properties="clr-namespace:Skymu.Properties"
+    Title="Notification"
+    Width="240"
+    AllowsTransparency="True"
+    Background="Transparent"
+    FontFamily="Tahoma"
+    FontSize="11"
+    MouseEnter="Window_MouseEnter"
+    MouseLeave="Window_MouseLeave"
+    MouseRightButtonDown="Window_MouseRightButtonDown"
+    ShowActivated="False"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{StaticResource Window}"
+    Topmost="True"
+    WindowStyle="None">
     <Window.Resources>
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator"/>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
     </Window.Resources>
     <Grid>
-        <global:SliceControl x:Name="bubble" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/bubble-orange.png'}" SliceMode="2" HorizontalAlignment="Stretch" StackDirection="Vertical" ElementCount="1" DefaultIndex="0"/>
+        <global:SliceControl
+            x:Name="bubble"
+            HorizontalAlignment="Stretch"
+            DefaultIndex="0"
+            ElementCount="1"
+            SliceMode="2"
+            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/bubble-orange.png'}"
+            StackDirection="Vertical" />
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="26"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="26" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Margin="5,0,0,0" Stretch="Fill" Width="33" Height="15" Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/logo.png'}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+            <Image
+                Grid.Row="0"
+                Width="33"
+                Height="15"
+                Margin="5,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-notification.png'}"
+                Stretch="Fill" />
             <global:SliceControl
-                MouseLeftButtonDown="CloseButton_Click"
-                Visibility="Hidden"
                 x:Name="close"
                 Grid.Row="0"
+                Margin="6,0"
+                HorizontalAlignment="Right"
+                DefaultIndex="2"
+                ElementCount="5"
+                HoverIndex="1"
+                MouseLeftButtonDown="CloseButton_Click"
+                PressedIndex="0"
                 SliceMode="0"
                 Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Notifications/close.png'}"
-                ElementCount="5"
                 StackDirection="Vertical"
-                HorizontalAlignment="Right"
-                Margin="6,0"
-                DefaultIndex="2"
-                HoverIndex="1"
-                PressedIndex="0"
-                />
+                Visibility="Hidden" />
             <Border Grid.Row="1" Padding="8,7">
-                <StackPanel x:Name="MessagesContainer" Orientation="Vertical">
-                </StackPanel>
+                <StackPanel x:Name="MessagesContainer" Orientation="Vertical" />
             </Border>
         </Grid>
     </Grid>

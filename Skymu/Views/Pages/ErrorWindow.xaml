@@ -1,26 +1,47 @@
-﻿<Page x:Class="Skymu.Views.Pages.ErrorWindow"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Skymu.Views.Pages"
-      xmlns:properties="clr-namespace:Skymu.Properties"
-      Width="400"
-      Height="400"
-      Title="Error Window"
-      FontFamily="Tahoma" FontSize="11" Style="{StaticResource Page}" >
+﻿<Page
+    x:Class="Skymu.Views.Pages.ErrorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Skymu.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:Skymu.Properties"
+    Title="Error Window"
+    Width="400"
+    Height="400"
+    FontFamily="Tahoma"
+    FontSize="11"
+    Style="{StaticResource Page}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" TextWrapping="Wrap">
             <TextBlock.Text>
-                <Binding Source="{x:Static properties:Settings.Default}" Path="BrandingName" StringFormat="{}Oh no! {0} encountered an unexpected error. Details are provided below. Please report this to the developers so it can be investigated and resolved."/>
+                <Binding
+                    Path="BrandingName"
+                    Source="{x:Static properties:Settings.Default}"
+                    StringFormat="{}Oh no! {0} encountered an unexpected error. Details are provided below. Please report this to the developers so it can be investigated and resolved." />
             </TextBlock.Text>
         </TextBlock>
-        <ScrollViewer Grid.Row="1" Background="#0A0A0A" Margin="0,20" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <TextBox IsReadOnly="True" Padding="5" FontFamily="OCR A Extended" FontSize="12"  Foreground="#888888" x:Name="DetailsBox" Text="Error details go here" TextWrapping="Wrap" Background="Transparent" BorderThickness="0"/>
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,20"
+            Background="#0A0A0A"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <TextBox
+                x:Name="DetailsBox"
+                Padding="5"
+                Background="Transparent"
+                BorderThickness="0"
+                FontFamily="OCR A Extended"
+                FontSize="12"
+                Foreground="#888888"
+                IsReadOnly="True"
+                Text="Error details go here"
+                TextWrapping="Wrap" />
         </ScrollViewer>
     </Grid>
 </Page>

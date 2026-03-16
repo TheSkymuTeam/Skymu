@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Windows.Controls;
-using System.Web;
-using System.IO;
-using MiddleMan;
 using System.Threading.Tasks;
+using System.Web;
+using System.Windows.Controls;
+using MiddleMan;
 
 namespace Skymu
 {
@@ -25,12 +25,19 @@ namespace Skymu
             _contacts = contacts;
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
-            _browser.Navigate(new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SKHOME_DIR, PAGENAME)));
+            _browser.Navigate(
+                new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SKHOME_DIR, PAGENAME))
+            );
         }
 
-        private static void OnLoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        private static void OnLoadCompleted(
+            object sender,
+            System.Windows.Navigation.NavigationEventArgs e
+        )
         {
-            (_browser.ObjectForScripting as SkypeExternalObject)?.GetAPI()?.FireShowingChanged(true);
+            (_browser.ObjectForScripting as SkypeExternalObject)
+                ?.GetAPI()
+                ?.FireShowingChanged(true);
             (_browser.ObjectForScripting as SkypeExternalObject)?.GetAPI()?.FireLiveChanged(true);
             InjectAvatar(_user.Username, _user.ProfilePicture);
 
@@ -54,30 +61,36 @@ namespace Skymu
 
         public static void FireMoodUpdate(string skypename, string moodText, byte[] profilePicture)
         {
-            (_browser.ObjectForScripting as SkypeExternalObject)?.GetAPI()?.FireMoodUpdate(skypename, moodText);
+            (_browser.ObjectForScripting as SkypeExternalObject)
+                ?.GetAPI()
+                ?.FireMoodUpdate(skypename, moodText);
             InjectAvatar(skypename, profilePicture);
         }
 
         private static void InjectAvatar(string username, byte[] picture)
         {
             // I'm not going to implement Skype's arcane httpfe:// protocol just for a single avatar image, so I'll simply inject it into the script.
-            if (picture == null) return;
+            if (picture == null)
+                return;
             string base64 = Convert.ToBase64String(picture);
             string src = $"data:image/jpeg;base64,{base64}";
             // The local user's avatar has class 'user{username}' (set by SH.MyselfPanel markup).
             // Contact avatars in SH.AvatarViewItem have no username class; their src is set to
             // httpfe://avatar.local/{username} so we match on that instead.
-            _browser.InvokeScript("eval", new object[]
-            {
-                $"(function(){{" +
-                $"var imgs=document.getElementsByTagName('img');" +
-                $"for(var i=0;i<imgs.length;i++){{" +
-                $"var s=imgs[i].src||'',c=imgs[i].className||'';" +
-                $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)" +
-                $"imgs[i].src='{src}';" +
-                $"}}" +
-                $"}})();"
-            });
+            _browser.InvokeScript(
+                "eval",
+                new object[]
+                {
+                    $"(function(){{"
+                        + $"var imgs=document.getElementsByTagName('img');"
+                        + $"for(var i=0;i<imgs.length;i++){{"
+                        + $"var s=imgs[i].src||'',c=imgs[i].className||'';"
+                        + $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)"
+                        + $"imgs[i].src='{src}';"
+                        + $"}}"
+                        + $"}})();",
+                }
+            );
         }
     }
 
@@ -126,16 +139,15 @@ namespace Skymu
             LocalUser = new LocalUserObject
             {
                 handle = user.Username,
-                MoodText = user.Status ?? ""
+                MoodText = user.Status ?? "",
             };
-            _account = new AccountObject
-            {
-                ContactsCount = contacts?.Length ?? 0
-            };
+            _account = new AccountObject { ContactsCount = contacts?.Length ?? 0 };
         }
 
         public object getAccount() => _account;
+
         public object getClient() => _client;
+
         public object getUser(string skypename) => new SkypeUserObject(skypename, _contacts);
 
         // Called by SH.API.getPopularContacts() as h.Users(3).
@@ -149,25 +161,21 @@ namespace Skymu
             {
                 foreach (var dm in _contacts)
                 {
-                    items.Add(new UserEntry
-                    {
-                        Handle = dm.Partner.Username,
-                        Popularity = 1
-                    });
+                    items.Add(new UserEntry { Handle = dm.Partner.Username, Popularity = 1 });
                 }
             }
             return new UsersCollection(items);
         }
 
         public bool isBuddy(string skypename) => false;
+
         public string encodeContent(string s) => HttpUtility.HtmlEncode(s);
+
         public string escapeXML(string s) => SecurityElement.Escape(s) ?? s;
 
-        public string fetchLocal(string key) =>
-            _storage.TryGetValue(key, out var v) ? v : "";
+        public string fetchLocal(string key) => _storage.TryGetValue(key, out var v) ? v : "";
 
-        public void storeLocal(string key, string value) =>
-            _storage[key] = value;
+        public void storeLocal(string key, string value) => _storage[key] = value;
 
         public string libprop(int id) => "0";
 
@@ -176,24 +184,44 @@ namespace Skymu
 
         public void setChannelNotification(int channelId) { }
 
-        public void setAvatarListener(object fn) { _avatarListener = fn; }
-        public void setShowingListener(object fn) { _showingListener = fn; }
-        public void setLiveListener(object fn) { _liveListener = fn; }
-        public void setLanguageChangeListener(object fn) { _languageListener = fn; }
-        public void setMoodListener(object fn) { _moodListener = fn; }
-        public void setAlertListener(object fn) { _alertListener = fn; }
+        public void setAvatarListener(object fn)
+        {
+            _avatarListener = fn;
+        }
+
+        public void setShowingListener(object fn)
+        {
+            _showingListener = fn;
+        }
+
+        public void setLiveListener(object fn)
+        {
+            _liveListener = fn;
+        }
+
+        public void setLanguageChangeListener(object fn)
+        {
+            _languageListener = fn;
+        }
+
+        public void setMoodListener(object fn)
+        {
+            _moodListener = fn;
+        }
+
+        public void setAlertListener(object fn)
+        {
+            _alertListener = fn;
+        }
 
         public void FireMoodUpdate(string skypename, string moodText) =>
             _moodListener?.call(null, skypename, moodText);
 
-        public void FireAvatarChange(string skypename) =>
-            _avatarListener?.call(null, skypename);
+        public void FireAvatarChange(string skypename) => _avatarListener?.call(null, skypename);
 
-        public void FireShowingChanged(bool isShowing) =>
-            _showingListener?.call(null, isShowing);
+        public void FireShowingChanged(bool isShowing) => _showingListener?.call(null, isShowing);
 
-        public void FireLiveChanged(bool isLive) =>
-            _liveListener?.call(null, isLive);
+        public void FireLiveChanged(bool isLive) => _liveListener?.call(null, isLive);
     }
 
     // Returned by SkypeAPI.Users().
@@ -221,7 +249,9 @@ namespace Skymu
     {
         public string handle = "";
         public string MoodText = "";
+
         public bool hasCapability(int capId) => false;
+
         public string PhoneMobile = "";
     }
 
@@ -263,6 +293,7 @@ namespace Skymu
     {
         private readonly List<AlertObject> _items;
         public int Count => _items.Count;
+
         public AlertCollection(List<AlertObject> items) => _items = items;
 
         [DispId(0)]
@@ -273,9 +304,13 @@ namespace Skymu
     public class PartnerObject
     {
         public string getName() => "";
+
         public string getId() => "";
+
         public bool canOptout() => false;
+
         public bool getOptoutStatus() => false;
+
         public void setOptoutStatus(bool v) { }
     }
 
@@ -293,11 +328,17 @@ namespace Skymu
         public long Timestamp = 0;
 
         public bool getReadStatus() => !IsUnseen;
+
         public void setReadStatus(bool v) => IsUnseen = !v;
+
         public string getName() => PartnerNameDCURI;
+
         public string getPartnerId() => PartnerID;
+
         public string getAvatarURI() => PartnerHeaderDCURI;
+
         public void MarkSeen() => IsUnseen = false;
+
         public void Delete() { }
     }
 
@@ -315,6 +356,7 @@ namespace Skymu
 
         public string FullName => ResolveDisplayName();
         public string DisplayName => ResolveDisplayName();
+
         public object getMoodMediaObject() => null;
 
         private string ResolveDisplayName()

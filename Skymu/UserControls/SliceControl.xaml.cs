@@ -15,24 +15,25 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using System.Windows.Shapes;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Skymu
 {
     public enum SpriteStackDirection
     {
         Vertical,
-        Horizontal
+        Horizontal,
     }
+
     public enum ButtonVisualState
     {
         Default,
         Hover,
         Pressed,
-        Disabled
+        Disabled,
     }
 
     public partial class SliceControl : UserControl
@@ -58,7 +59,7 @@ namespace Skymu
         private ImageBrush _botMidBrush;
         private ImageBrush _botRightBrush;
 
-        private ImageBrush _overlayLeftBrush; // overlay currently only supported in 3 slice mode
+        private ImageBrush _overlayLeftBrush; // overlay currently only supported in 3 slice mode, cos there aren't any 9 slice controls that need it
         private ImageBrush _overlayMidBrush;
         private ImageBrush _overlayRightBrush;
 
@@ -79,8 +80,10 @@ namespace Skymu
 
             MouseLeave += (s, e) =>
             {
-                if (!IsEnabled) return;
-                if (IsRadioButton && _visualState == ButtonVisualState.Pressed) return;
+                if (!IsEnabled)
+                    return;
+                if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
+                    return;
                 SetStateInternal(ButtonVisualState.Default);
             };
 
@@ -158,8 +161,10 @@ namespace Skymu
                             if (control._currentAnimationFrame >= control.ElementCount)
                                 control._currentAnimationFrame %= control.ElementCount;
 
-                            if (control.SliceMode == 0) control._middleBrush.Viewbox = control.GetStateViewbox();
-                            else control.UpdateSlices();
+                            if (control.SliceMode == 0)
+                                control._middleBrush.Viewbox = control.GetStateViewbox();
+                            else
+                                control.UpdateSlices();
                         }
                     }
                 };
@@ -217,26 +222,29 @@ namespace Skymu
         }
 
         public static readonly DependencyProperty InteractiveProperty = DependencyProperty.Register(
-    nameof(Interactive),
-    typeof(bool),
-    typeof(SliceControl),
-    new PropertyMetadata(true, OnInteractiveChanged)
-);
+            nameof(Interactive),
+            typeof(bool),
+            typeof(SliceControl),
+            new PropertyMetadata(true, OnInteractiveChanged)
+        );
 
-        private static void OnInteractiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    => ((SliceControl)d).UpdateHitTestState();
+        private static void OnInteractiveChanged(
+            DependencyObject d,
+            DependencyPropertyChangedEventArgs e
+        ) => ((SliceControl)d).UpdateHitTestState();
 
         public bool HoverTransition
         {
             get { return (bool)GetValue(HoverTransitionProperty); }
             set { SetValue(HoverTransitionProperty, value); }
         }
-        public static readonly DependencyProperty HoverTransitionProperty = DependencyProperty.Register(
-            nameof(HoverTransition),
-            typeof(bool),
-            typeof(SliceControl),
-            new PropertyMetadata(true)
-        );
+        public static readonly DependencyProperty HoverTransitionProperty =
+            DependencyProperty.Register(
+                nameof(HoverTransition),
+                typeof(bool),
+                typeof(SliceControl),
+                new PropertyMetadata(true)
+            );
 
         public ImageSource Source
         {
@@ -556,24 +564,37 @@ namespace Skymu
 
         private void SetStateInternal(ButtonVisualState state)
         {
-            if (_visualState == ButtonVisualState.Disabled && state != ButtonVisualState.Disabled && !IsEnabled)
+            if (
+                _visualState == ButtonVisualState.Disabled
+                && state != ButtonVisualState.Disabled
+                && !IsEnabled
+            )
                 return;
 
-            if (IsRadioButton && _visualState == ButtonVisualState.Pressed && state != ButtonVisualState.Disabled)
+            if (
+                IsRadioButton
+                && _visualState == ButtonVisualState.Pressed
+                && state != ButtonVisualState.Disabled
+            )
                 return;
 
-            ButtonVisualState effectiveState = _fadeStoryboard != null ? _fadeTargetState : _visualState;
+            ButtonVisualState effectiveState =
+                _fadeStoryboard != null ? _fadeTargetState : _visualState;
 
-            if (effectiveState == state) return;
+            if (effectiveState == state)
+                return;
 
             bool shouldFade =
-    HoverTransition
-    && !IsAnimation
-    && HoverIndex != DefaultIndex
-    && (
-        state == ButtonVisualState.Hover
-        || (state == ButtonVisualState.Default && _visualState == ButtonVisualState.Hover)
-    );
+                HoverTransition
+                && !IsAnimation
+                && HoverIndex != DefaultIndex
+                && (
+                    state == ButtonVisualState.Hover
+                    || (
+                        state == ButtonVisualState.Default
+                        && _visualState == ButtonVisualState.Hover
+                    )
+                );
 
             if (shouldFade)
                 BeginFadeTransition(state);
@@ -595,9 +616,12 @@ namespace Skymu
 
             _fadeTargetState = targetState;
 
-            if (_overlayLeftBrush == null) _overlayLeftBrush = MakeBrush();
-            if (_overlayMidBrush == null) _overlayMidBrush = MakeBrush();
-            if (_overlayRightBrush == null) _overlayRightBrush = MakeBrush();
+            if (_overlayLeftBrush == null)
+                _overlayLeftBrush = MakeBrush();
+            if (_overlayMidBrush == null)
+                _overlayMidBrush = MakeBrush();
+            if (_overlayRightBrush == null)
+                _overlayRightBrush = MakeBrush();
 
             // Paint the OLD state onto the overlay (was: targetState)
             PaintOverlay(_visualState);
@@ -619,7 +643,7 @@ namespace Skymu
                 To = toOpacity,
                 Duration = new Duration(duration),
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut },
-                FillBehavior = FillBehavior.Stop
+                FillBehavior = FillBehavior.Stop,
             };
 
             var newSb = new Storyboard();
@@ -627,7 +651,8 @@ namespace Skymu
 
             foreach (var rect in new[] { OverlayLeft, OverlayMiddle, OverlayRight })
             {
-                if (rect.Visibility != Visibility.Visible) continue;
+                if (rect.Visibility != Visibility.Visible)
+                    continue;
                 var anim = animation.Clone();
                 Storyboard.SetTarget(anim, rect);
                 Storyboard.SetTargetProperty(anim, new PropertyPath(UIElement.OpacityProperty));
@@ -636,7 +661,8 @@ namespace Skymu
 
             newSb.Completed += (s, e) =>
             {
-                if (_fadeStoryboard != newSb) return;
+                if (_fadeStoryboard != newSb)
+                    return;
                 OverlayLeft.Opacity = OverlayMiddle.Opacity = OverlayRight.Opacity = 0;
                 _fadeStoryboard = null;
                 // No SetState call needed here — base was already set above
@@ -668,8 +694,16 @@ namespace Skymu
 
             if (SliceMode == 0)
             {
-                if (_overlayMidBrush == null) _overlayMidBrush = MakeBrush();
-                ApplyBrush(_overlayMidBrush, OverlayMiddle, stateBox.X, stateBox.Y, stateBox.Width, stateBox.Height);
+                if (_overlayMidBrush == null)
+                    _overlayMidBrush = MakeBrush();
+                ApplyBrush(
+                    _overlayMidBrush,
+                    OverlayMiddle,
+                    stateBox.X,
+                    stateBox.Y,
+                    stateBox.Width,
+                    stateBox.Height
+                );
                 return;
             }
 
@@ -706,21 +740,20 @@ namespace Skymu
         }
 
         private void SyncOverlayLayout()
-        {                
+        {
             OverlayMiddle.Width = MiddleSlice.ActualWidth;
             OverlayMiddle.Height = MiddleSlice.ActualHeight;
             OverlayMiddle.Visibility = MiddleSlice.Visibility;
 
             if (SliceMode > 0)
             {
-
                 OverlayLeft.Width = LeftSlice.ActualWidth;
                 OverlayLeft.Height = LeftSlice.ActualHeight;
                 OverlayRight.Width = RightSlice.ActualWidth;
                 OverlayRight.Height = RightSlice.ActualHeight;
                 OverlayLeft.Visibility = LeftSlice.Visibility;
                 OverlayRight.Visibility = RightSlice.Visibility;
-            }     
+            }
         }
 
         public void UpdateHitTestState()
@@ -814,7 +847,7 @@ namespace Skymu
             return new ImageBrush
             {
                 Stretch = Stretch.Fill,
-                ViewboxUnits = BrushMappingMode.RelativeToBoundingBox
+                ViewboxUnits = BrushMappingMode.RelativeToBoundingBox,
             };
         }
 
@@ -869,8 +902,8 @@ namespace Skymu
                 return ActualHeight;
 
             return StackDirection == SpriteStackDirection.Vertical
-              ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
-              : bmp.PixelHeight;
+                ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
+                : bmp.PixelHeight;
         }
 
         private void UpdateSlices()
@@ -896,7 +929,6 @@ namespace Skymu
                 MiddleSlice.Fill = _middleBrush;
                 return;
             }
-
             else
             {
                 if (_leftBrush == null)
@@ -971,7 +1003,6 @@ namespace Skymu
                 ApplyBrush(_botMidBrush, BotMidSlice, x1, y2, midWRel, botHRel);
                 ApplyBrush(_botRightBrush, BotRightSlice, x2, y2, rightWRel, botHRel);
             }
-
             else
             {
                 SetNineSliceVisibility(false);

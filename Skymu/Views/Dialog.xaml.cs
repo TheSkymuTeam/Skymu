@@ -22,7 +22,20 @@ namespace Skymu.Views
         private Action BRAction;
         public string TextBoxText { get; private set; }
 
-        public Dialog(WindowBase.IconType type, string content, string header, string title = null, Action brAction = null, string brText = null, bool blEnabled = false, Action blAction = null, string blText = null, bool enableTextBox = false, BitmapImage img = null, Size? customDimensions = null)
+        public Dialog(
+            WindowBase.IconType type,
+            string content,
+            string header,
+            string title = null,
+            Action brAction = null,
+            string brText = null,
+            bool blEnabled = false,
+            Action blAction = null,
+            string blText = null,
+            bool enableTextBox = false,
+            BitmapImage img = null,
+            Size? customDimensions = null
+        )
         {
             try
             {
@@ -41,9 +54,21 @@ namespace Skymu.Views
                     this.Height = customDimensions.Value.Height;
                 }
 
-                if (brAction == null) brAction = () => Close();
-                if (blAction == null) blAction = () => { Close(); Universal.Terminate(); };
-                if (blEnabled) { ButtonLeft.Visibility = Visibility.Visible; ButtonLeft.IsDefault = true; ButtonRight.IsDefault = false; };
+                if (brAction == null)
+                    brAction = () => Close();
+                if (blAction == null)
+                    blAction = () =>
+                    {
+                        Close();
+                        Universal.Terminate();
+                    };
+                if (blEnabled)
+                {
+                    ButtonLeft.Visibility = Visibility.Visible;
+                    ButtonLeft.IsDefault = true;
+                    ButtonRight.IsDefault = false;
+                }
+                ;
                 if (enableTextBox)
                 {
                     DialogTextBox.Visibility = Visibility.Visible;
@@ -53,19 +78,32 @@ namespace Skymu.Views
                         DialogResult = true;
                     };
                     brText = brText ?? "Save";
-
                 }
                 if (title == null)
                 {
                     title = Properties.Settings.Default.BrandingName;
                     switch (type)
                     {
-                        case WindowBase.IconType.Information: title += " - Information"; break;
-                        case WindowBase.IconType.Error: title += " - Error"; break;
-                        case WindowBase.IconType.Question: title += " - Confirm action"; break;
-                        case WindowBase.IconType.Picture: title += " - Media"; break;
-                        case WindowBase.IconType.PackageCheckmark: case WindowBase.IconType.PackageStar: case WindowBase.IconType.PackageWarning: title += "™ - Update"; break;
-                        default: case WindowBase.IconType.Skype: break;
+                        case WindowBase.IconType.Information:
+                            title += " - Information";
+                            break;
+                        case WindowBase.IconType.Error:
+                            title += " - Error";
+                            break;
+                        case WindowBase.IconType.Question:
+                            title += " - Confirm action";
+                            break;
+                        case WindowBase.IconType.Picture:
+                            title += " - Media";
+                            break;
+                        case WindowBase.IconType.PackageCheckmark:
+                        case WindowBase.IconType.PackageStar:
+                        case WindowBase.IconType.PackageWarning:
+                            title += "™ - Update";
+                            break;
+                        default:
+                        case WindowBase.IconType.Skype:
+                            break;
                     }
                 }
 
@@ -75,16 +113,27 @@ namespace Skymu.Views
                 BRAction = brAction;
                 BLAction = blAction;
                 DialogImage.DefaultIndex = (int)type;
-                if (blText != null) ButtonLeft.Content = blText;
-                if (brText != null) ButtonRight.Content = brText;
+                if (blText != null)
+                    ButtonLeft.Content = blText;
+                if (brText != null)
+                    ButtonRight.Content = brText;
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
-
-            catch { Universal.Terminate(); }
+            catch
+            {
+                Universal.Terminate();
+            }
         }
 
-        private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
-        private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }
+        private void bLClick(object sender, RoutedEventArgs e)
+        {
+            BLAction.Invoke();
+        }
+
+        private void bRClick(object sender, RoutedEventArgs e)
+        {
+            BRAction.Invoke();
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace Skymu.Views
             eBay,
             Facebook,
             MultipleContactVideoCall,
-            TelephoneFlat
+            TelephoneFlat,
         }
 
         public WindowBase(Page page)
@@ -95,16 +95,25 @@ namespace Skymu.Views
             set => BRAction = value;
         }
 
-        private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
-        private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }
+        private void bLClick(object sender, RoutedEventArgs e)
+        {
+            BLAction.Invoke();
+        }
+
+        private void bRClick(object sender, RoutedEventArgs e)
+        {
+            BRAction.Invoke();
+        }
 
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
-            Left = (SystemParameters.WorkArea.Width - ActualWidth) / 2 + SystemParameters.WorkArea.Left;
-            Top = (SystemParameters.WorkArea.Height - ActualHeight) / 2 + SystemParameters.WorkArea.Top;
+            Left =
+                (SystemParameters.WorkArea.Width - ActualWidth) / 2
+                + SystemParameters.WorkArea.Left;
+            Top =
+                (SystemParameters.WorkArea.Height - ActualHeight) / 2
+                + SystemParameters.WorkArea.Top;
         }
-
     }
-
 }

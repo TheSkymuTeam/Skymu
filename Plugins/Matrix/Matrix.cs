@@ -9,16 +9,16 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http;
+using MiddleMan;
 
 namespace Matrix
 {
@@ -27,15 +27,30 @@ namespace Matrix
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
-        public string Name { get { return "Matrix"; } }
-        public string InternalName { get { return "matrix"; } }
-        public bool SupportsServers { get { return false; } }
+        public string Name
+        {
+            get { return "Matrix"; }
+        }
+        public string InternalName
+        {
+            get { return "matrix"; }
+        }
+        public bool SupportsServers
+        {
+            get { return false; }
+        }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
             {
-                return new[] { new AuthTypeInfo(AuthenticationMethod.Password, "Identifier (@username:homeserver.com)"),
-            new AuthTypeInfo(AuthenticationMethod.Passwordless, "Email", "Beeper") };
+                return new[]
+                {
+                    new AuthTypeInfo(
+                        AuthenticationMethod.Password,
+                        "Identifier (@username:homeserver.com)"
+                    ),
+                    new AuthTypeInfo(AuthenticationMethod.Passwordless, "Email", "Beeper"),
+                };
             }
         }
 
@@ -47,7 +62,8 @@ namespace Matrix
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
 
-        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } =
+            new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations
         {
             get
@@ -55,7 +71,7 @@ namespace Matrix
                 return new ClickableConfiguration[]
                 {
                     new ClickableConfiguration(ClickableItemType.User, "@", " "),
-                    new ClickableConfiguration(ClickableItemType.ServerChannel, "#", " ")
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "#", " "),
                 };
             }
         }
@@ -63,7 +79,8 @@ namespace Matrix
         private string _activeRoomId;
         private SavedCredential credData;
         private Dictionary<string, string> _displayNameCache = new Dictionary<string, string>();
-        public readonly Dictionary<string, string> _recentRoomMap = new Dictionary<string, string>();
+        public readonly Dictionary<string, string> _recentRoomMap =
+            new Dictionary<string, string>();
         private string _beeperRequestToken;
 
         public Task<string> GetQRCode()
@@ -71,13 +88,20 @@ namespace Matrix
             return Task.FromResult(String.Empty);
         }
 
-        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        public async Task<LoginResult> Authenticate(
+            AuthenticationMethod authType,
+            string username,
+            string password = null
+        )
         {
             if (authType == AuthenticationMethod.Password)
             {
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Username and password are required."));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs("Username and password are required.")
+                    );
                     return LoginResult.Failure;
                 }
 
@@ -85,7 +109,11 @@ namespace Matrix
                 {
                     if (username.Contains(":"))
                     {
-                        string[] parts = username.Split(new char[] { ':' }, 2, StringSplitOptions.None);
+                        string[] parts = username.Split(
+                            new char[] { ':' },
+                            2,
+                            StringSplitOptions.None
+                        );
                         if (parts.Length == 2)
                             _homeserver = $"https://{parts[1]}";
                     }
@@ -96,21 +124,29 @@ namespace Matrix
                         identifier = new
                         {
                             type = "m.id.user",
-                            user = username.TrimStart('@').Split(':')[0]
+                            user = username.TrimStart('@').Split(':')[0],
                         },
-                        password = password
+                        password = password,
                     };
 
                     string loginJson = JsonSerializer.Serialize(loginData);
                     var content = new StringContent(loginJson, Encoding.UTF8, "application/json");
 
-                    using (var response = await _httpClient.PostAsync($"{_homeserver}/_matrix/client/r0/login", content))
+                    using (
+                        var response = await _httpClient.PostAsync(
+                            $"{_homeserver}/_matrix/client/r0/login",
+                            content
+                        )
+                    )
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
 
                         if (!response.IsSuccessStatusCode)
                         {
-                            OnError?.Invoke(this, new PluginMessageEventArgs($"Login failed: {responseBody}"));
+                            OnError?.Invoke(
+                                this,
+                                new PluginMessageEventArgs($"Login failed: {responseBody}")
+                            );
                             return LoginResult.Failure;
                         }
 
@@ -119,15 +155,22 @@ namespace Matrix
                         string userid = loginResponse.GetProperty("user_id").GetString();
 
                         string displayName = userid;
-                        var profileUrl = $"{_homeserver}/_matrix/client/v3/profile/{Uri.EscapeDataString(userid)}/displayname";
+                        var profileUrl =
+                            $"{_homeserver}/_matrix/client/v3/profile/{Uri.EscapeDataString(userid)}/displayname";
 
-                        using (var profileRequest = await _httpClient.GetAsync(
-                   $"{_homeserver}/_matrix/client/r0/profile/{userid}?access_token={_accessToken}"))
+                        using (
+                            var profileRequest = await _httpClient.GetAsync(
+                                $"{_homeserver}/_matrix/client/r0/profile/{userid}?access_token={_accessToken}"
+                            )
+                        )
                         {
                             string responseProf;
                             if (!response.IsSuccessStatusCode)
                             {
-                                OnError?.Invoke(this, new PluginMessageEventArgs("Failed to fetch user profile."));
+                                OnError?.Invoke(
+                                    this,
+                                    new PluginMessageEventArgs("Failed to fetch user profile.")
+                                );
                                 return LoginResult.Failure;
                             }
                             responseProf = await response.Content.ReadAsStringAsync();
@@ -135,11 +178,16 @@ namespace Matrix
                             displayName = profileData.TryGetProperty("displayname", out var dnProp)
                                 ? dnProp.GetString()
                                 : userid;
-                        }  
+                        }
 
                         _user = new User(displayName, userid, userid);
 
-                        credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
+                        credData = new SavedCredential(
+                            _user,
+                            _accessToken,
+                            AuthenticationMethod.Token,
+                            InternalName
+                        );
                         return await StartClient();
                     }
                 }
@@ -159,20 +207,35 @@ namespace Matrix
                 try
                 {
                     // Request 1 get request token
-                    Debug.WriteLine("[Beeper] Sending request 1: POST https://api.beeper.com/user/login");
-                    using (var req1 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login"))
+                    Debug.WriteLine(
+                        "[Beeper] Sending request 1: POST https://api.beeper.com/user/login"
+                    );
+                    using (
+                        var req1 = new HttpRequestMessage(
+                            HttpMethod.Post,
+                            "https://api.beeper.com/user/login"
+                        )
+                    )
                     {
-                        req1.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
+                        req1.Headers.Add(
+                            "Authorization",
+                            "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE"
+                        );
                         req1.Content = new StringContent("", Encoding.UTF8, "application/json");
                         using (var res1 = await _httpClient.SendAsync(req1))
                         {
                             string res1Body = await res1.Content.ReadAsStringAsync();
-                            Debug.WriteLine($"[Beeper] Request 1 response: {(int)res1.StatusCode} {res1.StatusCode}");
+                            Debug.WriteLine(
+                                $"[Beeper] Request 1 response: {(int)res1.StatusCode} {res1.StatusCode}"
+                            );
                             Debug.WriteLine($"[Beeper] Request 1 body: {res1Body}");
                             if (!res1.IsSuccessStatusCode)
                             {
                                 Debug.WriteLine("[Beeper] Request 1 failed, aborting login.");
-                                OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login failed: {res1Body}"));
+                                OnError?.Invoke(
+                                    this,
+                                    new PluginMessageEventArgs($"Beeper login failed: {res1Body}")
+                                );
                                 return LoginResult.Failure;
                             }
                             var res1Data = JsonSerializer.Deserialize<JsonElement>(res1Body);
@@ -182,21 +245,44 @@ namespace Matrix
                     }
 
                     // Request 2 submit email
-                    Debug.WriteLine($"[Beeper] Sending request 2: POST https://api.beeper.com/user/login/email (email: {username})");
-                    var req2Payload = JsonSerializer.Serialize(new { request = _beeperRequestToken, email = username });
-                    using (var req2 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login/email"))
+                    Debug.WriteLine(
+                        $"[Beeper] Sending request 2: POST https://api.beeper.com/user/login/email (email: {username})"
+                    );
+                    var req2Payload = JsonSerializer.Serialize(
+                        new { request = _beeperRequestToken, email = username }
+                    );
+                    using (
+                        var req2 = new HttpRequestMessage(
+                            HttpMethod.Post,
+                            "https://api.beeper.com/user/login/email"
+                        )
+                    )
                     {
-                        req2.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
-                        req2.Content = new StringContent(req2Payload, Encoding.UTF8, "application/json");
+                        req2.Headers.Add(
+                            "Authorization",
+                            "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE"
+                        );
+                        req2.Content = new StringContent(
+                            req2Payload,
+                            Encoding.UTF8,
+                            "application/json"
+                        );
                         using (var res2 = await _httpClient.SendAsync(req2))
                         {
                             string res2Body = await res2.Content.ReadAsStringAsync();
-                            Debug.WriteLine($"[Beeper] Request 2 response: {(int)res2.StatusCode} {res2.StatusCode}");
+                            Debug.WriteLine(
+                                $"[Beeper] Request 2 response: {(int)res2.StatusCode} {res2.StatusCode}"
+                            );
                             Debug.WriteLine($"[Beeper] Request 2 body: {res2Body}");
                             if (!res2.IsSuccessStatusCode)
                             {
                                 Debug.WriteLine("[Beeper] Request 2 failed, aborting login.");
-                                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send login email: {res2Body}"));
+                                OnError?.Invoke(
+                                    this,
+                                    new PluginMessageEventArgs(
+                                        $"Failed to send login email: {res2Body}"
+                                    )
+                                );
                                 return LoginResult.Failure;
                             }
                         }
@@ -208,7 +294,10 @@ namespace Matrix
                 {
                     Debug.WriteLine($"[Beeper] Exception during Passwordless login: {ex.Message}");
                     Debug.WriteLine($"[Beeper] Stack trace: {ex.StackTrace}");
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs($"Beeper login error: {ex.Message}")
+                    );
                     return LoginResult.Failure;
                 }
             }
@@ -220,24 +309,42 @@ namespace Matrix
             try
             {
                 // Request 3 submit OTP code
-                Debug.WriteLine($"[Beeper] Sending request 3: POST https://api.beeper.com/user/login/response (code: {code})");
-                var req3Payload = JsonSerializer.Serialize(new { request = _beeperRequestToken, response = code });
+                Debug.WriteLine(
+                    $"[Beeper] Sending request 3: POST https://api.beeper.com/user/login/response (code: {code})"
+                );
+                var req3Payload = JsonSerializer.Serialize(
+                    new { request = _beeperRequestToken, response = code }
+                );
                 string res3Body;
                 JsonElement res3Data;
 
-                using (var req3 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login/response"))
+                using (
+                    var req3 = new HttpRequestMessage(
+                        HttpMethod.Post,
+                        "https://api.beeper.com/user/login/response"
+                    )
+                )
                 {
                     req3.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
-                    req3.Content = new StringContent(req3Payload, Encoding.UTF8, "application/json");
+                    req3.Content = new StringContent(
+                        req3Payload,
+                        Encoding.UTF8,
+                        "application/json"
+                    );
                     using (var res3 = await _httpClient.SendAsync(req3))
                     {
                         res3Body = await res3.Content.ReadAsStringAsync();
-                        Debug.WriteLine($"[Beeper] Request 3 response: {(int)res3.StatusCode} {res3.StatusCode}");
+                        Debug.WriteLine(
+                            $"[Beeper] Request 3 response: {(int)res3.StatusCode} {res3.StatusCode}"
+                        );
                         Debug.WriteLine($"[Beeper] Request 3 body: {res3Body}");
                         if (!res3.IsSuccessStatusCode)
                         {
                             Debug.WriteLine("[Beeper] Request 3 failed, invalid OTP.");
-                            OnError?.Invoke(this, new PluginMessageEventArgs($"Invalid code: {res3Body}"));
+                            OnError?.Invoke(
+                                this,
+                                new PluginMessageEventArgs($"Invalid code: {res3Body}")
+                            );
                             return LoginResult.Failure;
                         }
                     }
@@ -245,12 +352,16 @@ namespace Matrix
 
                 res3Data = JsonSerializer.Deserialize<JsonElement>(res3Body);
                 string jwt = res3Data.GetProperty("token").GetString();
-                Debug.WriteLine($"[Beeper] Got JWT (first 20 chars): {jwt.Substring(0, Math.Min(20, jwt.Length))}...");
+                Debug.WriteLine(
+                    $"[Beeper] Got JWT (first 20 chars): {jwt.Substring(0, Math.Min(20, jwt.Length))}..."
+                );
 
                 // Request 4 exchange JWT for Matrix session
-                if (res3Data.TryGetProperty("whoami", out var whoami) &&
-                    whoami.TryGetProperty("userInfo", out var userInfo) &&
-                    userInfo.TryGetProperty("hungryUrl", out var hungryUrl))
+                if (
+                    res3Data.TryGetProperty("whoami", out var whoami)
+                    && whoami.TryGetProperty("userInfo", out var userInfo)
+                    && userInfo.TryGetProperty("hungryUrl", out var hungryUrl)
+                )
                 {
                     _homeserver = hungryUrl.GetString();
                     Debug.WriteLine($"[Beeper] Homeserver from whoami: {_homeserver}");
@@ -258,35 +369,54 @@ namespace Matrix
                 else
                 {
                     _homeserver = "https://matrix.beeper.com";
-                    Debug.WriteLine($"[Beeper] Homeserver not found in whoami, using fallback: {_homeserver}");
+                    Debug.WriteLine(
+                        $"[Beeper] Homeserver not found in whoami, using fallback: {_homeserver}"
+                    );
                 }
 
-                Debug.WriteLine($"[Beeper] Sending request 4: POST {_homeserver}/_matrix/client/v3/login");
-                var req4Payload = JsonSerializer.Serialize(new
-                {
-                    type = "org.matrix.login.jwt",
-                    token = jwt,
-                    initial_device_display_name = "Skymu"
-                });
+                Debug.WriteLine(
+                    $"[Beeper] Sending request 4: POST {_homeserver}/_matrix/client/v3/login"
+                );
+                var req4Payload = JsonSerializer.Serialize(
+                    new
+                    {
+                        type = "org.matrix.login.jwt",
+                        token = jwt,
+                        initial_device_display_name = "Skymu",
+                    }
+                );
 
-                using (var res4 = await _httpClient.PostAsync(
-                    $"{_homeserver}/_matrix/client/v3/login",
-                    new StringContent(req4Payload, Encoding.UTF8, "application/json")))
+                using (
+                    var res4 = await _httpClient.PostAsync(
+                        $"{_homeserver}/_matrix/client/v3/login",
+                        new StringContent(req4Payload, Encoding.UTF8, "application/json")
+                    )
+                )
                 {
                     string res4Body = await res4.Content.ReadAsStringAsync();
-                    Debug.WriteLine($"[Beeper] Request 4 response: {(int)res4.StatusCode} {res4.StatusCode}");
+                    Debug.WriteLine(
+                        $"[Beeper] Request 4 response: {(int)res4.StatusCode} {res4.StatusCode}"
+                    );
                     Debug.WriteLine($"[Beeper] Request 4 body: {res4Body}");
                     if (!res4.IsSuccessStatusCode)
                     {
                         Debug.WriteLine("[Beeper] Request 4 failed, Matrix login rejected.");
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Matrix login failed: {res4Body}"));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs($"Matrix login failed: {res4Body}")
+                        );
                         return LoginResult.Failure;
                     }
                     var res4Data = JsonSerializer.Deserialize<JsonElement>(res4Body);
                     _accessToken = res4Data.GetProperty("access_token").GetString();
                     _user.Identifier = res4Data.GetProperty("user_id").GetString();
                     Debug.WriteLine($"[Beeper] Logged in as {_user.Identifier} on {_homeserver}");
-                    credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
+                    credData = new SavedCredential(
+                        _user,
+                        _accessToken,
+                        AuthenticationMethod.Token,
+                        InternalName
+                    );
                     Debug.WriteLine("[Beeper] Credentials stored, starting client.");
                     return await StartClient();
                 }
@@ -295,14 +425,23 @@ namespace Matrix
             {
                 Debug.WriteLine($"[Beeper] Exception during LoginOptStep: {ex.Message}");
                 Debug.WriteLine($"[Beeper] Stack trace: {ex.StackTrace}");
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Beeper login error: {ex.Message}")
+                );
                 return LoginResult.Failure;
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment = null, string parent_message_identifier = null)
+        public async Task<bool> SendMessage(
+            string identifier,
+            string text,
+            Attachment attachment = null,
+            string parent_message_identifier = null
+        )
         {
-            if (string.IsNullOrEmpty(identifier)) return false;
+            if (string.IsNullOrEmpty(identifier))
+                return false;
 
             try
             {
@@ -312,25 +451,45 @@ namespace Matrix
                 {
                     if (attachment.Type != AttachmentType.Image)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Unsupported attachment type: {attachment.Type}. Matrix currently supports Image attachments only."));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs(
+                                $"Unsupported attachment type: {attachment.Type}. Matrix currently supports Image attachments only."
+                            )
+                        );
                         return false;
                     }
-                    success = await SendImageMessage(identifier, attachment.File, attachment.Name ?? "image.jpg");
+                    success = await SendImageMessage(
+                        identifier,
+                        attachment.File,
+                        attachment.Name ?? "image.jpg"
+                    );
                 }
 
                 if (!string.IsNullOrEmpty(text))
                 {
                     if (parent_message_identifier != null)
-                        success = await SendReplyMessage(identifier, text, parent_message_identifier);
+                        success = await SendReplyMessage(
+                            identifier,
+                            text,
+                            parent_message_identifier
+                        );
                     else
                     {
                         var messageData = new { msgtype = "m.text", body = text };
                         string messageJson = JsonSerializer.Serialize(messageData);
-                        var content = new StringContent(messageJson, Encoding.UTF8, "application/json");
+                        var content = new StringContent(
+                            messageJson,
+                            Encoding.UTF8,
+                            "application/json"
+                        );
                         string txnId = Guid.NewGuid().ToString();
-                        using (var response = await _httpClient.PutAsync(
-                            $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
-                            content))
+                        using (
+                            var response = await _httpClient.PutAsync(
+                                $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
+                                content
+                            )
+                        )
                         {
                             success = response.IsSuccessStatusCode;
                         }
@@ -341,7 +500,10 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to send message: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -373,16 +535,22 @@ namespace Matrix
                 var body = new { presence = presenceStr };
                 string bodyJson = JsonSerializer.Serialize(body);
                 var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
-                using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
-                    content))
+                using (
+                    var response = await _httpClient.PutAsync(
+                        $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
+                        content
+                    )
+                )
                 {
                     return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set presence: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to set presence: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -394,21 +562,31 @@ namespace Matrix
                 var body = new { presence = "online", status_msg = status ?? "" };
                 string bodyJson = JsonSerializer.Serialize(body);
                 var content = new StringContent(bodyJson, Encoding.UTF8, "application/json");
-                using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
-                    content))
+                using (
+                    var response = await _httpClient.PutAsync(
+                        $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
+                        content
+                    )
+                )
                 {
                     return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set text status: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to set text status: {ex.Message}")
+                );
                 return false;
             }
         }
 
-        public async Task<bool> SendImageMessage(string identifier, byte[] imageData, string filename = "image.jpg")
+        public async Task<bool> SendImageMessage(
+            string identifier,
+            byte[] imageData,
+            string filename = "image.jpg"
+        )
         {
             if (string.IsNullOrEmpty(identifier) || imageData == null || imageData.Length == 0)
                 return false;
@@ -416,16 +594,24 @@ namespace Matrix
             try
             {
                 var imageContent = new ByteArrayContent(imageData);
-                imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+                imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(
+                    "image/jpeg"
+                );
 
                 string contentUri;
-                using (var uploadResponse = await _httpClient.PostAsync(
-                    $"{_homeserver}/_matrix/media/r0/upload?filename={filename}&access_token={_accessToken}",
-                    imageContent))
+                using (
+                    var uploadResponse = await _httpClient.PostAsync(
+                        $"{_homeserver}/_matrix/media/r0/upload?filename={filename}&access_token={_accessToken}",
+                        imageContent
+                    )
+                )
                 {
                     if (!uploadResponse.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs("Failed to upload image."));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs("Failed to upload image.")
+                        );
                         return false;
                     }
 
@@ -439,29 +625,43 @@ namespace Matrix
                     msgtype = "m.image",
                     body = filename,
                     url = contentUri,
-                    info = new { mimetype = "image/jpeg", size = imageData.Length }
+                    info = new { mimetype = "image/jpeg", size = imageData.Length },
                 };
 
                 string messageJson = JsonSerializer.Serialize(messageData);
                 var content = new StringContent(messageJson, Encoding.UTF8, "application/json");
                 string txnId = Guid.NewGuid().ToString();
-                using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
-                    content))
+                using (
+                    var response = await _httpClient.PutAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
+                        content
+                    )
+                )
                 {
                     return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send image: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to send image: {ex.Message}")
+                );
                 return false;
             }
         }
 
-        public async Task<bool> SendReplyMessage(string identifier, string text, string replyToEventId)
+        public async Task<bool> SendReplyMessage(
+            string identifier,
+            string text,
+            string replyToEventId
+        )
         {
-            if (string.IsNullOrEmpty(identifier) || string.IsNullOrEmpty(text) || string.IsNullOrEmpty(replyToEventId))
+            if (
+                string.IsNullOrEmpty(identifier)
+                || string.IsNullOrEmpty(text)
+                || string.IsNullOrEmpty(replyToEventId)
+            )
                 return false;
 
             try
@@ -472,23 +672,32 @@ namespace Matrix
                     ["body"] = text,
                     ["m.relates_to"] = new Dictionary<string, object>
                     {
-                        ["m.in_reply_to"] = new Dictionary<string, object> { ["event_id"] = replyToEventId }
-                    }
+                        ["m.in_reply_to"] = new Dictionary<string, object>
+                        {
+                            ["event_id"] = replyToEventId,
+                        },
+                    },
                 };
 
                 string messageJson = JsonSerializer.Serialize(replyData);
                 var content = new StringContent(messageJson, Encoding.UTF8, "application/json");
                 string txnId = Guid.NewGuid().ToString();
-                using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
-                    content))
+                using (
+                    var response = await _httpClient.PutAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/send/m.room.message/{txnId}?access_token={_accessToken}",
+                        content
+                    )
+                )
                 {
                     return response.IsSuccessStatusCode;
                 }
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send reply: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to send reply: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -503,9 +712,12 @@ namespace Matrix
                 var typingData = new { typing = isTyping, timeout = 30000 };
                 string typingJson = JsonSerializer.Serialize(typingData);
                 var content = new StringContent(typingJson, Encoding.UTF8, "application/json");
-                using (var response = await _httpClient.PutAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/typing/{_user.Identifier}?access_token={_accessToken}",
-                    content))
+                using (
+                    var response = await _httpClient.PutAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{identifier}/typing/{_user.Identifier}?access_token={_accessToken}",
+                        content
+                    )
+                )
                 {
                     return response.IsSuccessStatusCode;
                 }
@@ -517,7 +729,12 @@ namespace Matrix
             }
         }
 
-        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public async Task<ConversationItem[]> FetchMessages(
+            Conversation conversation,
+            Fetch fetch_type,
+            int message_count,
+            string identifier
+        )
         {
             TypingUsersList.Clear();
             List<ConversationItem> messageList = new List<ConversationItem>();
@@ -533,12 +750,20 @@ namespace Matrix
             try
             {
                 string responseBody;
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{conversation.Identifier}/messages?access_token={_accessToken}&dir=b&limit=100"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{conversation.Identifier}/messages?access_token={_accessToken}&dir=b&limit=100"
+                    )
+                )
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs(
+                                $"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"
+                            )
+                        );
                         return new ConversationItem[0];
                     }
                     responseBody = await response.Content.ReadAsStringAsync();
@@ -562,13 +787,24 @@ namespace Matrix
                     string eventId = message.GetProperty("event_id").GetString();
                     string sender = message.GetProperty("sender").GetString();
                     long originServerTs = message.GetProperty("origin_server_ts").GetInt64();
-                    DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
-                    string displayName = _displayNameCache.TryGetValue(sender, out var cachedName) ? cachedName : sender;
+                    DateTime timestamp = DateTimeOffset
+                        .FromUnixTimeMilliseconds(originServerTs)
+                        .DateTime;
+                    string displayName = _displayNameCache.TryGetValue(sender, out var cachedName)
+                        ? cachedName
+                        : sender;
                     var senderData = new User(displayName, sender, sender);
 
                     if (eventType == "m.room.encrypted")
                     {
-                        var encryptedItem = new Message(eventId, senderData, timestamp, "`This message is encrypted and cannot currently be read by Skymu.`", null, null);
+                        var encryptedItem = new Message(
+                            eventId,
+                            senderData,
+                            timestamp,
+                            "`This message is encrypted and cannot currently be read by Skymu.`",
+                            null,
+                            null
+                        );
                         eventItemCache[eventId] = encryptedItem;
                         messageList.Add(encryptedItem);
                         continue;
@@ -583,17 +819,30 @@ namespace Matrix
                         continue;
 
                     string msgtype = msgtypeProp.GetString();
-                    string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                    string body = content.TryGetProperty("body", out var bodyProp)
+                        ? bodyProp.GetString()
+                        : "";
 
                     Attachment[] attachments = null;
 
                     if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
                     {
                         string mxcUrl = urlProp.GetString();
-                        byte[] imageBytes = await MatrixOOTBStuff.DownloadMatrixContent(mxcUrl, _homeserver, _httpClient);
+                        byte[] imageBytes = await MatrixOOTBStuff.DownloadMatrixContent(
+                            mxcUrl,
+                            _homeserver,
+                            _httpClient
+                        );
                         if (imageBytes != null)
                         {
-                            attachments = new[] { new Attachment(imageBytes, body ?? "image.jpg", AttachmentType.Image) };
+                            attachments = new[]
+                            {
+                                new Attachment(
+                                    imageBytes,
+                                    body ?? "image.jpg",
+                                    AttachmentType.Image
+                                ),
+                            };
                             body = null;
                         }
                     }
@@ -611,19 +860,31 @@ namespace Matrix
                     }
 
                     Message parentMessage = null;
-                    if (content.TryGetProperty("m.relates_to", out var relatesTo) &&
-                        relatesTo.TryGetProperty("m.in_reply_to", out var inReplyTo))
+                    if (
+                        content.TryGetProperty("m.relates_to", out var relatesTo)
+                        && relatesTo.TryGetProperty("m.in_reply_to", out var inReplyTo)
+                    )
                     {
                         string replyToId = inReplyTo.GetProperty("event_id").GetString();
                         if (!eventItemCache.TryGetValue(replyToId, out parentMessage))
                         {
-                            var replyInfo = await GetMessageById(conversation.Identifier, replyToId);
+                            var replyInfo = await GetMessageById(
+                                conversation.Identifier,
+                                replyToId
+                            );
                             if (replyInfo != null)
                                 parentMessage = replyInfo;
                         }
                     }
 
-                    var messageItem = new Message(eventId, senderData, timestamp, body, attachments, parentMessage);
+                    var messageItem = new Message(
+                        eventId,
+                        senderData,
+                        timestamp,
+                        body,
+                        attachments,
+                        parentMessage
+                    );
                     eventItemCache[eventId] = messageItem;
                     messageList.Add(messageItem);
                 }
@@ -632,7 +893,10 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}")
+                );
                 _activeRoomId = null;
                 return new ConversationItem[0];
             }
@@ -660,8 +924,10 @@ namespace Matrix
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+            new ObservableCollection<DirectMessage>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+            new ObservableCollection<Conversation>();
 
         public Task<bool> PopulateSidebarInformation()
         {
@@ -671,24 +937,35 @@ namespace Matrix
             return Task.FromResult(true);
         }
 
-        public async Task<bool> PopulateContactsList() => await PopulateListsBackend(ListType.Contacts);
-        public async Task<bool> PopulateRecentsList() => await PopulateListsBackend(ListType.Recents);
+        public async Task<bool> PopulateContactsList() =>
+            await PopulateListsBackend(ListType.Contacts);
+
+        public async Task<bool> PopulateRecentsList() =>
+            await PopulateListsBackend(ListType.Recents);
 
         public ObservableCollection<Server> ServerList { get; private set; }
+
         public Task<bool> PopulateServerList()
         {
             return Task.FromResult(false);
         }
 
-        private enum ListType { Contacts, Recents }
+        private enum ListType
+        {
+            Contacts,
+            Recents,
+        }
 
         private async Task<bool> PopulateListsBackend(ListType lType)
         {
             try
             {
                 string responseBody;
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/joined_rooms?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/joined_rooms?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (!response.IsSuccessStatusCode)
                     {
@@ -718,9 +995,28 @@ namespace Matrix
 
                     Conversation conversation;
                     if (isDirect)
-                        conversation = new DirectMessage(new User(roomName, roomIdStr, roomIdStr, String.Empty, UserConnectionStatus.Online, roomAvatar), 0, roomIdStr, lastMessageTime);
+                        conversation = new DirectMessage(
+                            new User(
+                                roomName,
+                                roomIdStr,
+                                roomIdStr,
+                                String.Empty,
+                                UserConnectionStatus.Online,
+                                roomAvatar
+                            ),
+                            0,
+                            roomIdStr,
+                            lastMessageTime
+                        );
                     else
-                        conversation = new Group(roomName, roomIdStr, 0, members, roomAvatar, lastMessageTime);
+                        conversation = new Group(
+                            roomName,
+                            roomIdStr,
+                            0,
+                            members,
+                            roomAvatar,
+                            lastMessageTime
+                        );
 
                     if (lType == ListType.Recents)
                         RecentsList.Add(conversation);
@@ -732,7 +1028,10 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to populate lists: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to populate lists: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -750,14 +1049,23 @@ namespace Matrix
                     _homeserver = "https://matrix.beeper.com";
                 else if (_user.Identifier.Contains(":"))
                 {
-                    string[] parts = _user.Identifier.Split(new char[] { ':' }, 2, StringSplitOptions.None);
+                    string[] parts = _user.Identifier.Split(
+                        new char[] { ':' },
+                        2,
+                        StringSplitOptions.None
+                    );
                     if (parts.Length == 2)
                         _homeserver = $"https://{parts[1]}";
                 }
 
                 if (string.IsNullOrWhiteSpace(_accessToken))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Saved credentials are invalid. Please log in again."));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "Saved credentials are invalid. Please log in again."
+                        )
+                    );
                     return LoginResult.Failure;
                 }
 
@@ -765,7 +1073,10 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Auto-login failed: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Auto-login failed: {ex.Message}")
+                );
                 return LoginResult.Failure;
             }
         }
@@ -774,12 +1085,20 @@ namespace Matrix
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/account/whoami?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/account/whoami?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs("Authentication failed. Please log in again."));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs(
+                                "Authentication failed. Please log in again."
+                            )
+                        );
                         return LoginResult.Failure;
                     }
                 }
@@ -789,7 +1108,10 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to start client: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to start client: {ex.Message}")
+                );
                 return LoginResult.Failure;
             }
         }
@@ -807,7 +1129,8 @@ namespace Matrix
             {
                 try
                 {
-                    string syncUrl = $"{_homeserver}/_matrix/client/r0/sync?access_token={_accessToken}&timeout=30000";
+                    string syncUrl =
+                        $"{_homeserver}/_matrix/client/r0/sync?access_token={_accessToken}&timeout=30000";
                     if (!string.IsNullOrEmpty(_nextBatch))
                         syncUrl += $"&since={_nextBatch}";
 
@@ -825,22 +1148,28 @@ namespace Matrix
                     var syncData = JsonSerializer.Deserialize<JsonElement>(responseBody);
                     _nextBatch = syncData.GetProperty("next_batch").GetString();
 
-                    if (syncData.TryGetProperty("rooms", out var rooms) &&
-                        rooms.TryGetProperty("join", out var joinedRooms))
+                    if (
+                        syncData.TryGetProperty("rooms", out var rooms)
+                        && rooms.TryGetProperty("join", out var joinedRooms)
+                    )
                     {
                         foreach (var room in joinedRooms.EnumerateObject())
                         {
                             string roomId = room.Name;
 
-                            if (room.Value.TryGetProperty("timeline", out var timeline) &&
-                                timeline.TryGetProperty("events", out var events))
+                            if (
+                                room.Value.TryGetProperty("timeline", out var timeline)
+                                && timeline.TryGetProperty("events", out var events)
+                            )
                             {
                                 foreach (var evt in events.EnumerateArray())
                                     await ProcessTimelineEvent(roomId, evt);
                             }
 
-                            if (room.Value.TryGetProperty("ephemeral", out var ephemeral) &&
-                                ephemeral.TryGetProperty("events", out var ephemeralEvents))
+                            if (
+                                room.Value.TryGetProperty("ephemeral", out var ephemeral)
+                                && ephemeral.TryGetProperty("events", out var ephemeralEvents)
+                            )
                             {
                                 foreach (var ephEvent in ephemeralEvents.EnumerateArray())
                                     await ProcessEphemeralEvent(roomId, ephEvent);
@@ -863,9 +1192,11 @@ namespace Matrix
         private Conversation GetConversationById(string roomId)
         {
             foreach (var c in RecentsList)
-                if (c.Identifier == roomId) return c;
+                if (c.Identifier == roomId)
+                    return c;
             foreach (var c in ContactsList)
-                if (c.Identifier == roomId) return c;
+                if (c.Identifier == roomId)
+                    return c;
             return null;
         }
 
@@ -880,21 +1211,34 @@ namespace Matrix
                     string eventId = evt.GetProperty("event_id").GetString();
                     string sender = evt.GetProperty("sender").GetString();
                     long originServerTs = evt.GetProperty("origin_server_ts").GetInt64();
-                    DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
+                    DateTime timestamp = DateTimeOffset
+                        .FromUnixTimeMilliseconds(originServerTs)
+                        .DateTime;
 
                     string displayName = _displayNameCache.TryGetValue(sender, out var cachedName)
                         ? cachedName
                         : await GetDisplayNameForUser(sender, roomId);
 
                     var senderData = new User(displayName, sender, sender);
-                    var encryptedItem = new Message(eventId, senderData, timestamp, "[encrypted message]", null, null);
+                    var encryptedItem = new Message(
+                        eventId,
+                        senderData,
+                        timestamp,
+                        "[encrypted message]",
+                        null,
+                        null
+                    );
 
                     if (_recentRoomMap.ContainsKey(roomId))
                     {
-                        _uiContext?.Post(_ =>
-                            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
-                                roomId, encryptedItem, false)),
-                            null);
+                        _uiContext?.Post(
+                            _ =>
+                                MessageEvent?.Invoke(
+                                    this,
+                                    new MessageRecievedEventArgs(roomId, encryptedItem, false)
+                                ),
+                            null
+                        );
                     }
                     return;
                 }
@@ -912,7 +1256,9 @@ namespace Matrix
                 string senderMsg = evt.GetProperty("sender").GetString();
                 long ts = evt.GetProperty("origin_server_ts").GetInt64();
                 DateTime timestampMsg = DateTimeOffset.FromUnixTimeMilliseconds(ts).DateTime;
-                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                string body = content.TryGetProperty("body", out var bodyProp)
+                    ? bodyProp.GetString()
+                    : "";
 
                 // AFTER
                 if (_recentRoomMap.ContainsKey(roomId))
@@ -927,10 +1273,17 @@ namespace Matrix
                     if (msgtype == "m.image" && content.TryGetProperty("url", out var urlPropEvt))
                     {
                         string mxcUrl = urlPropEvt.GetString();
-                        byte[] imageBytes = await MatrixOOTBStuff.DownloadMatrixContent(mxcUrl, _homeserver, _httpClient);
+                        byte[] imageBytes = await MatrixOOTBStuff.DownloadMatrixContent(
+                            mxcUrl,
+                            _homeserver,
+                            _httpClient
+                        );
                         if (imageBytes != null)
                         {
-                            attachments = new[] { new Attachment(imageBytes, "image.jpg", AttachmentType.Image) };
+                            attachments = new[]
+                            {
+                                new Attachment(imageBytes, "image.jpg", AttachmentType.Image),
+                            };
                             body = null;
                         }
                     }
@@ -941,12 +1294,23 @@ namespace Matrix
                     else if (msgtype == "m.emote")
                         body = $"* {displayName} {body}";
 
-                    var messageItem = new Message(eventIdMsg, senderData, timestampMsg, body, attachments, null);
+                    var messageItem = new Message(
+                        eventIdMsg,
+                        senderData,
+                        timestampMsg,
+                        body,
+                        attachments,
+                        null
+                    );
 
-                    _uiContext?.Post(_ =>
-                        MessageEvent?.Invoke(this, new MessageRecievedEventArgs(
-                            roomId, messageItem, false)),
-                        null);
+                    _uiContext?.Post(
+                        _ =>
+                            MessageEvent?.Invoke(
+                                this,
+                                new MessageRecievedEventArgs(roomId, messageItem, false)
+                            ),
+                        null
+                    );
                 }
             }
             catch (Exception ex)
@@ -970,21 +1334,28 @@ namespace Matrix
                         foreach (var userId in userIds.EnumerateArray())
                         {
                             string userIdStr = userId.GetString();
-                            if (userIdStr == _user.Identifier) continue;
+                            if (userIdStr == _user.Identifier)
+                                continue;
 
-                            string displayName = _displayNameCache.TryGetValue(userIdStr, out var name)
+                            string displayName = _displayNameCache.TryGetValue(
+                                userIdStr,
+                                out var name
+                            )
                                 ? name
                                 : await GetDisplayNameForUser(userIdStr, roomId);
 
                             typingUsers.Add(new User(displayName, userIdStr, userIdStr));
                         }
 
-                        _uiContext?.Post(_ =>
-                        {
-                            TypingUsersList.Clear();
-                            foreach (var user in typingUsers)
-                                TypingUsersList.Add(user);
-                        }, null);
+                        _uiContext?.Post(
+                            _ =>
+                            {
+                                TypingUsersList.Clear();
+                                foreach (var user in typingUsers)
+                                    TypingUsersList.Add(user);
+                            },
+                            null
+                        );
                     }
                 }
             }
@@ -999,8 +1370,11 @@ namespace Matrix
             try
             {
                 string responseBody;
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/event/{eventId}?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/event/{eventId}?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (!response.IsSuccessStatusCode)
                         return null;
@@ -1011,15 +1385,28 @@ namespace Matrix
                 string eventType = eventData.GetProperty("type").GetString();
                 string sender = eventData.GetProperty("sender").GetString();
                 long originServerTs = eventData.GetProperty("origin_server_ts").GetInt64();
-                DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(originServerTs).DateTime;
-                string displayName = _displayNameCache.TryGetValue(sender, out var name) ? name : sender;
+                DateTime timestamp = DateTimeOffset
+                    .FromUnixTimeMilliseconds(originServerTs)
+                    .DateTime;
+                string displayName = _displayNameCache.TryGetValue(sender, out var name)
+                    ? name
+                    : sender;
                 var senderData = new User(displayName, sender, sender);
 
                 if (eventType == "m.room.encrypted")
-                    return new Message(eventId, senderData, timestamp, "`This message is encrypted and cannot currently be read by Skymu.`", null, null);
+                    return new Message(
+                        eventId,
+                        senderData,
+                        timestamp,
+                        "`This message is encrypted and cannot currently be read by Skymu.`",
+                        null,
+                        null
+                    );
 
                 var content = eventData.GetProperty("content");
-                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                string body = content.TryGetProperty("body", out var bodyProp)
+                    ? bodyProp.GetString()
+                    : "";
 
                 return new Message(eventId, senderData, timestamp, body, null, null);
             }
@@ -1034,8 +1421,11 @@ namespace Matrix
             var displayNames = new Dictionary<string, string>();
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1068,8 +1458,11 @@ namespace Matrix
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.name?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.name?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1081,35 +1474,51 @@ namespace Matrix
                 }
                 return roomId;
             }
-            catch { return roomId; }
+            catch
+            {
+                return roomId;
+            }
         }
 
         private async Task<byte[]> GetRoomAvatar(string roomId)
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.avatar?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.avatar?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var avatarData = JsonSerializer.Deserialize<JsonElement>(responseBody);
                         if (avatarData.TryGetProperty("url", out var urlProp))
-                            return await MatrixOOTBStuff.DownloadMatrixContent(urlProp.GetString(), _homeserver, _httpClient);
+                            return await MatrixOOTBStuff.DownloadMatrixContent(
+                                urlProp.GetString(),
+                                _homeserver,
+                                _httpClient
+                            );
                     }
                     return null;
                 }
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
 
         private async Task<bool> IsDirectMessage(string roomId)
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1118,22 +1527,29 @@ namespace Matrix
                         if (membersData.TryGetProperty("joined", out var joined))
                         {
                             int count = 0;
-                            foreach (var _ in joined.EnumerateObject()) count++;
+                            foreach (var _ in joined.EnumerateObject())
+                                count++;
                             return count <= 2;
                         }
                     }
                 }
                 return false;
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
         }
 
         private async Task<int> GetRoomMemberCount(string roomId)
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1142,22 +1558,29 @@ namespace Matrix
                         if (membersData.TryGetProperty("joined", out var joined))
                         {
                             int count = 0;
-                            foreach (var _ in joined.EnumerateObject()) count++;
+                            foreach (var _ in joined.EnumerateObject())
+                                count++;
                             return count;
                         }
                     }
                 }
                 return 0;
             }
-            catch { return 0; }
+            catch
+            {
+                return 0;
+            }
         }
 
         private async Task<User[]> GetRoomMembers(string roomId)
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/joined_members?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -1170,7 +1593,9 @@ namespace Matrix
                             {
                                 string identifier = member.Name;
                                 string displayName = identifier;
-                                if (member.Value.TryGetProperty("display_name", out var nameElement))
+                                if (
+                                    member.Value.TryGetProperty("display_name", out var nameElement)
+                                )
                                     displayName = nameElement.GetString() ?? identifier;
                                 membersList.Add(new User(displayName, identifier, identifier));
                             }
@@ -1180,33 +1605,48 @@ namespace Matrix
                 }
                 return new User[0];
             }
-            catch { return new User[0]; }
+            catch
+            {
+                return new User[0];
+            }
         }
 
         private async Task<string> GetDisplayNameForUser(string userId, string roomId)
         {
             try
             {
-                using (var response = await _httpClient.GetAsync(
-                    $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.member/{userId}?access_token={_accessToken}"))
+                using (
+                    var response = await _httpClient.GetAsync(
+                        $"{_homeserver}/_matrix/client/r0/rooms/{roomId}/state/m.room.member/{userId}?access_token={_accessToken}"
+                    )
+                )
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         string responseBody = await response.Content.ReadAsStringAsync();
                         var memberData = JsonSerializer.Deserialize<JsonElement>(responseBody);
-                        if (memberData.TryGetProperty("content", out var content) &&
-                            content.TryGetProperty("displayname", out var displayname))
+                        if (
+                            memberData.TryGetProperty("content", out var content)
+                            && content.TryGetProperty("displayname", out var displayname)
+                        )
                             return displayname.GetString();
                     }
                 }
                 return userId;
             }
-            catch { return userId; }
+            catch
+            {
+                return userId;
+            }
         }
 
         public static class MatrixOOTBStuff
         {
-            public static async Task<byte[]> DownloadMatrixContent(string mxcUrl, string homeserver, HttpClient client)
+            public static async Task<byte[]> DownloadMatrixContent(
+                string mxcUrl,
+                string homeserver,
+                HttpClient client
+            )
             {
                 try
                 {
@@ -1219,10 +1659,14 @@ namespace Matrix
 
                     string serverName = parts[0];
                     string mediaId = parts[1];
-                    string httpUrl = $"{homeserver}/_matrix/media/r0/download/{serverName}/{mediaId}";
+                    string httpUrl =
+                        $"{homeserver}/_matrix/media/r0/download/{serverName}/{mediaId}";
                     return await client.GetByteArrayAsync(httpUrl);
                 }
-                catch { return null; }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }

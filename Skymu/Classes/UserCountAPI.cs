@@ -28,7 +28,7 @@ namespace Skymu
         // REST API variables
         private static readonly HttpClient httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://" + DOMAIN_NAME)
+            BaseAddress = new Uri("https://" + DOMAIN_NAME),
         };
         public static string ApiTkn = null;
 
@@ -58,7 +58,12 @@ namespace Skymu
             return sb.ToString();
         }
 
-        public static async Task<bool> SetUsrStatus(bool online, string dn = null, string user = null, string id = null)
+        public static async Task<bool> SetUsrStatus(
+            bool online,
+            string dn = null,
+            string user = null,
+            string id = null
+        )
         {
             string anon_random = "skymu-user-" + GenerateRandomNumberString(10);
             var payload = new
@@ -70,13 +75,15 @@ namespace Skymu
                 skymu_build_codename = Properties.Settings.Default.BuildName,
                 skymu_build_version = Properties.Settings.Default.BuildVersion,
                 token = ApiTkn,
-                online
+                online,
             };
 
             var json = JsonSerializer.Serialize(payload);
 
             using (StringContent content = new StringContent(json))
-            using (HttpResponseMessage response = await httpClient.PostAsync("/set_status", content))
+            using (
+                HttpResponseMessage response = await httpClient.PostAsync("/set_status", content)
+            )
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
             }
@@ -86,14 +93,13 @@ namespace Skymu
 
         public static async Task<bool> SendPingToServ()
         {
-            var payload = new
-            {
-                token = ApiTkn
-            };
+            var payload = new { token = ApiTkn };
 
             var json = JsonSerializer.Serialize(payload);
 
-            using (StringContent content = new StringContent(json, Encoding.UTF8, "application/json"))
+            using (
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json")
+            )
             using (HttpResponseMessage response = await httpClient.PostAsync("/ping", content))
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
@@ -110,11 +116,15 @@ namespace Skymu
 
             var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
             var initBytes = Encoding.UTF8.GetBytes(initMsg);
-            await ws.SendAsync(new ArraySegment<byte>(initBytes), WebSocketMessageType.Text, true, cts.Token);
+            await ws.SendAsync(
+                new ArraySegment<byte>(initBytes),
+                WebSocketMessageType.Text,
+                true,
+                cts.Token
+            );
 
             _ = Task.Run(ReceiveLoop);
         }
-
 
         private static async Task ReceiveLoop()
         {
@@ -125,7 +135,11 @@ namespace Skymu
                 var result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                    await ws.CloseAsync(
+                        WebSocketCloseStatus.NormalClosure,
+                        "",
+                        CancellationToken.None
+                    );
                 }
                 else if (result.MessageType == WebSocketMessageType.Text)
                 {
@@ -146,7 +160,12 @@ namespace Skymu
             {
                 var msg = JsonSerializer.Serialize(new { action = "get_count" });
                 var bytes = Encoding.UTF8.GetBytes(msg);
-                await ws.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, cts.Token);
+                await ws.SendAsync(
+                    new ArraySegment<byte>(bytes),
+                    WebSocketMessageType.Text,
+                    true,
+                    cts.Token
+                );
             }
         }
 
@@ -155,7 +174,11 @@ namespace Skymu
             await SetUsrStatus(false);
             if (ws.State == WebSocketState.Open)
             {
-                await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client is being closed", CancellationToken.None);
+                await ws.CloseAsync(
+                    WebSocketCloseStatus.NormalClosure,
+                    "Client is being closed",
+                    CancellationToken.None
+                );
             }
         }
     }

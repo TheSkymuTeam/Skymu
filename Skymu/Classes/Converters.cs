@@ -9,20 +9,20 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using Skymu.Skyaeris;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using MiddleMan;
+using Skymu.Helpers;
+using Skymu.Skyaeris;
 
 namespace Skymu.Converters
 {
-
     public class StringToDoubleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -34,9 +34,22 @@ namespace Skymu.Converters
             return "30";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
-            if (value is string stringValue && double.TryParse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture, out double result))
+            if (
+                value is string stringValue
+                && double.TryParse(
+                    stringValue,
+                    NumberStyles.Float,
+                    CultureInfo.InvariantCulture,
+                    out double result
+                )
+            )
             {
                 return result;
             }
@@ -46,30 +59,33 @@ namespace Skymu.Converters
 
     public class ByteArrayToImageSourceConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             var bytes = values[0] as byte[];
             var type = values[1] as string;
 
             if (bytes != null && bytes.Length > 0)
             {
-                var bmp = new BitmapImage();
-                using (var stream = new MemoryStream(bytes))
-                {
-                    bmp.BeginInit();
-                    bmp.CacheOption = BitmapCacheOption.OnLoad;
-                    bmp.StreamSource = stream;
-                    bmp.EndInit();
-                }
-                bmp.Freeze();
-                return bmp;
+                return FrozenImage.GenerateFromArray(bytes);
             }
 
-            if (type == "group") return Main.GroupAvatar;
-            else return Main.AnonymousAvatar;
+            if (type == "group")
+                return Main.GroupAvatar;
+            else
+                return Main.AnonymousAvatar;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing };
         }
@@ -85,22 +101,20 @@ namespace Skymu.Converters
 
             try
             {
-                var bmp = new BitmapImage();
-                using (var stream = new MemoryStream(bytes))
-                {
-                    bmp.BeginInit();
-                    bmp.CacheOption = BitmapCacheOption.OnLoad;
-                    bmp.StreamSource = stream;
-                    bmp.EndInit();
-                }
-                bmp.Freeze();
-
-                return bmp;
+                return FrozenImage.GenerateFromArray(bytes);
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
@@ -115,37 +129,60 @@ namespace Skymu.Converters
             return (isPreview ^ invert) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => throw new NotSupportedException();
     }
+
     public class SenderToColorConverter : IMultiValueConverter
     {
-        private static readonly SolidColorBrush MyColor =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#999999"));
+        private static readonly SolidColorBrush MyColor = new SolidColorBrush(
+            (Color)ColorConverter.ConvertFromString("#999999")
+        );
 
-        private static readonly SolidColorBrush OtherUserColor =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3399ff"));
+        private static readonly SolidColorBrush OtherUserColor = new SolidColorBrush(
+            (Color)ColorConverter.ConvertFromString("#3399ff")
+        );
 
-        private static readonly SolidColorBrush ForwardedMessageColor =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00cc88"));
+        private static readonly SolidColorBrush ForwardedMessageColor = new SolidColorBrush(
+            (Color)ColorConverter.ConvertFromString("#00cc88")
+        );
 
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
-            if (values[0] is string identifier && identifier == Main.CurrentUser?.Identifier) return MyColor;
-            else if (values[1] is bool isForwarded && isForwarded) return ForwardedMessageColor;
-            else return OtherUserColor;
+            if (values[0] is string identifier && identifier == Main.CurrentUser?.Identifier)
+                return MyColor;
+            else if (values[1] is bool isForwarded && isForwarded)
+                return ForwardedMessageColor;
+            else
+                return OtherUserColor;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return new object[] { Binding.DoNothing, Binding.DoNothing };
         }
     }
 
-
     public class StatusToTextConverter : IValueConverter
     {
-        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<UserConnectionStatus, string>()
+        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<
+            UserConnectionStatus,
+            string
+        >()
         {
             { UserConnectionStatus.Online, Universal.Lang["sSTATUS_ONLINE"] },
             { UserConnectionStatus.OnlineMobile, Universal.Lang["sSTATUS_ONLINE_MOBILE"] },
@@ -155,8 +192,12 @@ namespace Skymu.Converters
             { UserConnectionStatus.DoNotDisturbMobile, Universal.Lang["sSTATUS_DND_MOBILE"] },
             { UserConnectionStatus.Blocked, Universal.Lang["sSTATUS_BLOCKED"] },
             { UserConnectionStatus.Offline, Universal.Lang["sSTATUS_OFFLINE"] },
-            { UserConnectionStatus.Unknown, Universal.Lang["sSTATUS_UNKNOWN"] /* fallback */ }
+            {
+                UserConnectionStatus.Unknown,
+                Universal.Lang["sSTATUS_UNKNOWN"] /* fallback */
+            },
         };
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             UserConnectionStatus statInt;
@@ -166,10 +207,17 @@ namespace Skymu.Converters
 
             statInt = (UserConnectionStatus)value;
 
-            return StatusMap.TryGetValue(statInt, out var statusText) ? statusText : Universal.Lang["sSTATUS_UNKNOWN"];
+            return StatusMap.TryGetValue(statInt, out var statusText)
+                ? statusText
+                : Universal.Lang["sSTATUS_UNKNOWN"];
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
@@ -177,15 +225,27 @@ namespace Skymu.Converters
 
     public class ForwardedChecker : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             if (values[1] is bool isForwarded && isForwarded)
-                return !String.IsNullOrEmpty(values[0] as string) ? values[0] + " (forwarded message)" : "Forwarded message";
+                return !String.IsNullOrEmpty(values[0] as string)
+                    ? values[0] + " (forwarded message)"
+                    : "Forwarded message";
 
             return values[0];
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -204,8 +264,12 @@ namespace Skymu.Converters
             return MessageTools.FormTextblock(text, false, ViewerStyle);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => throw new NotSupportedException();
     }
 
     public class MsgIDToVisibilityConverter : IValueConverter
@@ -215,11 +279,17 @@ namespace Skymu.Converters
             return value == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
     }
+
     public class PresenceStatusConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -231,7 +301,12 @@ namespace Skymu.Converters
             return 0;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
@@ -248,7 +323,12 @@ namespace Skymu.Converters
             return 0;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
@@ -256,16 +336,27 @@ namespace Skymu.Converters
 
     public class TextStatusConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             if (values[1] is int count)
             {
                 return count.ToString() + " members";
             }
-            else return values[0] ?? String.Empty;
+            else
+                return values[0] ?? String.Empty;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotSupportedException();
         }
@@ -275,12 +366,18 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (String.IsNullOrEmpty(value as string)) return "[media]";
+            if (String.IsNullOrEmpty(value as string))
+                return "[media]";
             string s = value.ToString();
             return s.Replace("\r", " ").Replace("\n", " ");
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -288,16 +385,27 @@ namespace Skymu.Converters
 
     public class MsgIDMultiToVisibilityConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(
+            object[] values,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
-            if (values.Length < 2) return Visibility.Collapsed;
+            if (values.Length < 2)
+                return Visibility.Collapsed;
 
             return values[0] as string == values[1] as string
                 ? Visibility.Hidden
                 : Visibility.Visible;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(
+            object value,
+            Type[] targetTypes,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotSupportedException();
         }
@@ -307,12 +415,20 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string s && String.IsNullOrEmpty(s)) return Visibility.Collapsed;
-            else if (value == null) return Visibility.Collapsed;
-            else return Visibility.Visible;
+            if (value is string s && String.IsNullOrEmpty(s))
+                return Visibility.Collapsed;
+            else if (value == null)
+                return Visibility.Collapsed;
+            else
+                return Visibility.Visible;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -322,12 +438,20 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is string s && String.IsNullOrEmpty(s)) return false;
-            else if (value == null) return false;
-            else return true;
+            if (value is string s && String.IsNullOrEmpty(s))
+                return false;
+            else if (value == null)
+                return false;
+            else
+                return true;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -342,10 +466,16 @@ namespace Skymu.Converters
             {
                 return null;
             }
-            else return Helpers.AssetPathGenerator(image_path, false);
+            else
+                return Helpers.AssetPathGenerator(image_path, false);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -358,12 +488,16 @@ namespace Skymu.Converters
             var image_path = value as string;
             if (image_path == null)
                 return null;
-
-
-            else return Helpers.AssetPathGenerator(image_path, true);
+            else
+                return Helpers.AssetPathGenerator(image_path, true);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -384,7 +518,12 @@ namespace Skymu.Converters
             return 0; // unknown status icon index
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             return Binding.DoNothing;
         }
@@ -395,15 +534,19 @@ namespace Skymu.Converters
         internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared)
         {
             string theme_root;
-            if (is_shared) theme_root = "Universal";
-            else theme_root = Properties.Settings.Default.ThemeRoot;
+            if (is_shared)
+                theme_root = "Universal";
+            else
+                theme_root = Properties.Settings.Default.ThemeRoot;
 
-            string fullPath = $"/{Universal.SkypeEra}/Assets/{theme_root}/{image_path}".Replace("//", "/");
+            string fullPath = $"/{Universal.SkypeEra}/Assets/{theme_root}/{image_path}".Replace(
+                "//",
+                "/"
+            );
 
             string packUri = $"pack://application:,,,/Skymu;component{fullPath}";
 
-            return FrameworkExtensions.FreezeImage(packUri);
+            return FrozenImage.Generate(packUri);
         }
     }
-
 }

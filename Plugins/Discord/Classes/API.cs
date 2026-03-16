@@ -21,9 +21,9 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Discord.Classes 
+namespace Discord.Classes
 {
-    internal class API 
+    internal class API
     {
         private readonly ConfigMgr configMgr = new ConfigMgr();
 
@@ -32,7 +32,8 @@ namespace Discord.Classes
 
         // Configuration (Firefox 115 ESR on Windows 10)
         public string XSuperProperties = null;
-        public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
+        public const string UserAgent =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
 
         internal API()
         {
@@ -52,18 +53,30 @@ namespace Discord.Classes
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
-        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
+        public async Task<string> SendAPI(
+            string endpoint,
+            HttpMethod httpMethod,
+            string token = null,
+            object data = null,
+            byte[] fileData = null,
+            string fileName = null,
+            Dictionary<string, string> headers = null
+        )
         {
-            string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint.TrimStart('/');
+            string url =
+                "https://discord.com/api/v"
+                + Discord.Core.API_VERSION
+                + "/"
+                + endpoint.TrimStart('/');
             // Debug.WriteLine(url);
             using (var request = new HttpRequestMessage(httpMethod, url))
             {
-
                 if (!string.IsNullOrEmpty(token))
                 {
                     try
                     {
-                        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(token);
+                        request.Headers.Authorization =
+                            new System.Net.Http.Headers.AuthenticationHeaderValue(token);
                     }
                     catch (Exception ex)
                     {
@@ -82,14 +95,24 @@ namespace Discord.Classes
                 if (fileData != null && !string.IsNullOrEmpty(fileName))
                 {
                     var content = new MultipartFormDataContent
-                {
-                    { new ByteArrayContent(fileData) { Headers = { { "Content-Type", "application/octet-stream" } } }, "file", fileName }
-                };
+                    {
+                        {
+                            new ByteArrayContent(fileData)
+                            {
+                                Headers = { { "Content-Type", "application/octet-stream" } },
+                            },
+                            "file",
+                            fileName
+                        },
+                    };
 
                     if (data != null)
                     {
                         string jsonData = JsonSerializer.Serialize(data);
-                        content.Add(new StringContent(jsonData, Encoding.UTF8, "application/json"), "payload_json");
+                        content.Add(
+                            new StringContent(jsonData, Encoding.UTF8, "application/json"),
+                            "payload_json"
+                        );
                     }
 
                     request.Content = content;
@@ -97,7 +120,11 @@ namespace Discord.Classes
                 else if ((httpMethod != HttpMethod.Get) && data != null)
                 {
                     string jsonData = JsonSerializer.Serialize(data);
-                    request.Content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    request.Content = new StringContent(
+                        jsonData,
+                        Encoding.UTF8,
+                        "application/json"
+                    );
                 }
 
                 try

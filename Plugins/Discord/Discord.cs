@@ -9,10 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using Discord.Classes;
-using DiscordProtos.DiscordUsers.V1;
-using Google.Protobuf;
-using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +20,10 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Discord.Classes;
+using DiscordProtos.DiscordUsers.V1;
+using Google.Protobuf;
+using MiddleMan;
 
 namespace Discord
 {
@@ -33,9 +33,18 @@ namespace Discord
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
-        public string Name { get { return "Discord"; } }
-        public string InternalName { get { return "discord"; } }
-        public bool SupportsServers { get { return true; } }
+        public string Name
+        {
+            get { return "Discord"; }
+        }
+        public string InternalName
+        {
+            get { return "discord"; }
+        }
+        public bool SupportsServers
+        {
+            get { return true; }
+        }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
@@ -43,7 +52,7 @@ namespace Discord
                 return new[]
                 {
                     new AuthTypeInfo(AuthenticationMethod.Token, "Token"),
-                    new AuthTypeInfo(AuthenticationMethod.QRCode, "Username")
+                    new AuthTypeInfo(AuthenticationMethod.QRCode, "Username"),
                 };
             }
         }
@@ -52,14 +61,18 @@ namespace Discord
         // The Discord token used by all of the Discord plugin
         private string DscToken;
         private PreloadedUserSettings _proto;
+
         // We reuse this to avoid creating more API instances, which is quite heavy
         internal static readonly API api = new API();
         internal AuthSocket socket = new AuthSocket();
+
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
         public SynchronizationContext _uiContext;
+
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
         public Dictionary<string, string> _recentChannelMap = new();
+
         // The current user
         private User _currentUser;
 
@@ -73,7 +86,8 @@ namespace Discord
         private const string USERS_ME = "users/@me";
         private const string PROTO_ENDPOINT = USERS_ME + "/settings-proto/1";
 
-        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } =
+            new ObservableCollection<User>();
         public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -85,13 +99,13 @@ namespace Discord
                     new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
                     new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
                     new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
-                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">")
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">"),
                 };
             }
         }
 
-        public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
-
+        public ObservableCollection<Server> ServerList { get; private set; } =
+            new ObservableCollection<Server>();
 
         public async Task<bool> PopulateServerList()
         {
@@ -109,9 +123,14 @@ namespace Discord
                     int memberCount = 0;
                     int.TryParse(guildNode["member_count"]?.ToString(), out memberCount);
 
-                    if (string.IsNullOrWhiteSpace(guildId)) continue;
+                    if (string.IsNullOrWhiteSpace(guildId))
+                        continue;
 
-                    byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, HelperMethods.DiscordChannelType.Server);
+                    byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(
+                        guildId,
+                        iconHash,
+                        HelperMethods.DiscordChannelType.Server
+                    );
 
                     var channelList = new List<ServerChannel>();
                     var categoryMap = new Dictionary<string, string>();
@@ -128,7 +147,10 @@ namespace Discord
                             {
                                 string categoryId = ch["id"]?.GetValue<string>();
                                 string categoryName = ch["name"]?.GetValue<string>();
-                                if (!string.IsNullOrWhiteSpace(categoryId) && !string.IsNullOrWhiteSpace(categoryName))
+                                if (
+                                    !string.IsNullOrWhiteSpace(categoryId)
+                                    && !string.IsNullOrWhiteSpace(categoryName)
+                                )
                                 {
                                     categoryMap[categoryId] = categoryName;
                                 }
@@ -139,7 +161,8 @@ namespace Discord
                         {
                             string channelId = ch["id"]?.GetValue<string>();
                             string channelName = ch["name"]?.GetValue<string>();
-                            if (string.IsNullOrWhiteSpace(channelId)) continue;
+                            if (string.IsNullOrWhiteSpace(channelId))
+                                continue;
 
                             int position = 0;
                             int.TryParse(ch["position"]?.ToString(), out position);
@@ -162,7 +185,8 @@ namespace Discord
                                         foreach (var perm in perms.OfType<JsonObject>())
                                         {
                                             string permId = perm["id"]?.GetValue<string>() ?? "";
-                                            if (permId != guildId) continue;
+                                            if (permId != guildId)
+                                                continue;
 
                                             int deny = 0;
                                             int.TryParse(perm["deny"]?.ToString(), out deny);
@@ -197,31 +221,57 @@ namespace Discord
                                     break;
                             }
 
-                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
+                            channelList.Add(
+                                new ServerChannel(
+                                    channelName,
+                                    channelId,
+                                    guildId,
+                                    0,
+                                    channelType,
+                                    parentId,
+                                    position
+                                )
+                            );
                         }
                     }
 
-                    ServerList.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar, categoryMap, memberCount));
+                    ServerList.Add(
+                        new Server(
+                            guildName,
+                            guildId,
+                            null,
+                            channelList.ToArray(),
+                            guildAvatar,
+                            categoryMap,
+                            memberCount
+                        )
+                    );
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to populate servers: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to populate servers: {ex.Message}")
+                );
                 return false;
             }
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+            new ObservableCollection<DirectMessage>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+            new ObservableCollection<Conversation>();
 
         private enum ListType
         {
             Contacts,
-            Recents
+            Recents,
         }
+
         public void Dispose()
         {
             WebSocketMgr.Socket = null;
@@ -232,11 +282,18 @@ namespace Discord
             UserIdToChannelId = new Dictionary<string, string>();
         }
 
-        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        public async Task<LoginResult> Authenticate(
+            AuthenticationMethod authType,
+            string username,
+            string password = null
+        )
         {
-            if (authType == AuthenticationMethod.Token) DscToken = username;
-            else if (authType == AuthenticationMethod.QRCode) return LoginResult.TwoFARequired;
-            else return LoginResult.UnsupportedAuthType;
+            if (authType == AuthenticationMethod.Token)
+                DscToken = username;
+            else if (authType == AuthenticationMethod.QRCode)
+                return LoginResult.TwoFARequired;
+            else
+                return LoginResult.UnsupportedAuthType;
 
             return await StartClient();
         }
@@ -292,12 +349,27 @@ namespace Discord
 
         public Task<SavedCredential> StoreCredential()
         {
-            return Task.FromResult(new SavedCredential(_currentUser, DscToken, AuthenticationMethod.Token, InternalName));
+            return Task.FromResult(
+                new SavedCredential(
+                    _currentUser,
+                    DscToken,
+                    AuthenticationMethod.Token,
+                    InternalName
+                )
+            );
         }
 
         public async Task<LoginResult> StartClient()
         {
-            string userCheckTkn = await api.SendAPI(USERS_ME, HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
+            string userCheckTkn = await api.SendAPI(
+                    USERS_ME,
+                    HttpMethod.Get,
+                    DscToken,
+                    null,
+                    null,
+                    null
+                )
+                .ConfigureAwait(false);
             if (userCheckTkn.Contains("username"))
             {
                 // Parse and store details
@@ -307,27 +379,60 @@ namespace Discord
                 string username = parsedUser["username"]?.GetValue<string>() ?? "Anonymous";
                 string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
                 string avatarHash = parsedUser["avatar"]?.GetValue<string>();
-                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
-                _currentUser = new User(displayName, username, id, null, UserConnectionStatus.Offline, avatar); // temp just for StoreCredential
+                byte[] avatar = await HelperMethods.GetCachedAvatarAsync(
+                    id,
+                    avatarHash,
+                    HelperMethods.DiscordChannelType.DirectMessage
+                );
+                _currentUser = new User(
+                    displayName,
+                    username,
+                    id,
+                    null,
+                    UserConnectionStatus.Offline,
+                    avatar
+                ); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."
+                        )
+                    );
                 }
                 else if (userCheckTkn.Contains("[API/ParseError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("The provided token has an invalid format. Please ensure that you are entering it correctly."));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "The provided token has an invalid format. Please ensure that you are entering it correctly."
+                        )
+                    );
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", "")));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n"
+                                + userCheckTkn.Replace("[API/RequestError]", "")
+                        )
+                    );
                 }
                 else
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "An unknown error occurred during the login process. Please try again.\n\n"
+                                + userCheckTkn
+                        )
+                    );
                 }
                 return LoginResult.Failure;
             }
@@ -342,10 +447,14 @@ namespace Discord
             try
             {
                 string userDetails = await api.SendAPI(
-                    USERS_ME,
-                    HttpMethod.Get,
-                    DscToken,
-                    null, null, null).ConfigureAwait(false);
+                        USERS_ME,
+                        HttpMethod.Get,
+                        DscToken,
+                        null,
+                        null,
+                        null
+                    )
+                    .ConfigureAwait(false);
 
                 parsedDetails = JsonNode.Parse(userDetails).AsObject();
 
@@ -354,19 +463,28 @@ namespace Discord
 
                 if (await Task.WhenAny(readyTask, delayTask) == delayTask)
                 {
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs(
-                        "The WebSocket is taking an unusually long time to initialize. " +
-                        "This could be due to slow internet speeds or Discord throttling the connection."));
+                    OnWarning?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "The WebSocket is taking an unusually long time to initialize. "
+                                + "This could be due to slow internet speeds or Discord throttling the connection."
+                        )
+                    );
                 }
 
                 if (!await readyTask)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs(
-                        "The WebSocket failed to initialize. This could be due to network errors, an outdated network stack, or Discord forcibly closing the connection."));
+                    OnError?.Invoke(
+                        this,
+                        new PluginMessageEventArgs(
+                            "The WebSocket failed to initialize. This could be due to network errors, an outdated network stack, or Discord forcibly closing the connection."
+                        )
+                    );
                     return false;
                 }
 
-                _currentUser.PresenceStatus = UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
+                _currentUser.PresenceStatus =
+                    UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
                 MyInformation = _currentUser;
@@ -375,26 +493,28 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs(
-                    $"Parse error: {ex.Message}\nResponse from server:\n{parsedDetails?.ToJsonString() ?? "null"}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs(
+                        $"Parse error: {ex.Message}\nResponse from server:\n{parsedDetails?.ToJsonString() ?? "null"}"
+                    )
+                );
                 return false;
             }
         }
 
-        public Task<bool> PopulateContactsList()
-            => PopulateListsBackend(ListType.Contacts);
+        public Task<bool> PopulateContactsList() => PopulateListsBackend(ListType.Contacts);
 
-        public Task<bool> PopulateRecentsList()
-            => PopulateListsBackend(ListType.Recents);
+        public Task<bool> PopulateRecentsList() => PopulateListsBackend(ListType.Recents);
 
-        internal static Dictionary<string, string> UserIdToChannelId = new Dictionary<string, string>();
+        internal static Dictionary<string, string> UserIdToChannelId =
+            new Dictionary<string, string>();
 
         private async Task<bool> PopulateListsBackend(ListType lType)
         {
             try
             {
-                var dscChannels = HelperMethods.GetUserChannels(
-                    lType == ListType.Recents);
+                var dscChannels = HelperMethods.GetUserChannels(lType == ListType.Recents);
 
                 foreach (var channel in dscChannels)
                 {
@@ -403,10 +523,12 @@ namespace Discord
                     if (type == DM_CHANNEL_TYPE)
                     {
                         var recipients = channel["recipients"] as JsonArray;
-                        if (recipients == null || recipients.Count == 0) continue;
+                        if (recipients == null || recipients.Count == 0)
+                            continue;
 
                         var recipient = recipients[0] as JsonObject;
-                        if (recipient == null) continue;
+                        if (recipient == null)
+                            continue;
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
@@ -425,12 +547,21 @@ namespace Discord
                             _recentChannelMap[channelId] = userId;
                         }
 
-                        var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
+                        var profileData = await UserStore.GetOrCreateWithAvatar(
+                            userId,
+                            displayName ?? dscUserName,
+                            dscUserName,
+                            avatarHash
+                        );
 
-                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(
+                            channel["last_message_id"]?.GetValue<string>()
+                        );
 
                         if (lType == ListType.Recents)
-                            RecentsList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
+                            RecentsList.Add(
+                                new DirectMessage(profileData, 0, channelId, lastMessageTime)
+                            );
                         else
                             ContactsList.Add(new DirectMessage(profileData, 0, channelId));
                     }
@@ -444,14 +575,18 @@ namespace Discord
                         if (recipients != null && recipients.Count > 0)
                         {
                             User[] temp = await Task.WhenAll(
-     recipients
-         .OfType<JsonObject>()
-         .Select(async r => await UserStore.GetOrCreateWithAvatar(
-             r["id"]?.GetValue<string>() ?? "0",
-             r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
-             r["username"]?.GetValue<string>() ?? "Unknown"
-         ))
- );
+                                recipients
+                                    .OfType<JsonObject>()
+                                    .Select(async r =>
+                                        await UserStore.GetOrCreateWithAvatar(
+                                            r["id"]?.GetValue<string>() ?? "0",
+                                            r["global_name"]?.GetValue<string>()
+                                                ?? r["username"]?.GetValue<string>()
+                                                ?? "Unknown",
+                                            r["username"]?.GetValue<string>() ?? "Unknown"
+                                        )
+                                    )
+                            );
 
                             members = new User[temp.Length + 1];
 
@@ -472,24 +607,45 @@ namespace Discord
                         {
                             try
                             {
-                                var recipientNames = recipients?
-                                    .OfType<JsonObject>()
+                                var recipientNames = recipients
+                                    ?.OfType<JsonObject>()
                                     .Select(r =>
-                                        r["global_name"]?.GetValue<string>() ??
-                                        r["username"]?.GetValue<string>())
+                                        r["global_name"]?.GetValue<string>()
+                                        ?? r["username"]?.GetValue<string>()
+                                    )
                                     .Where(n => !string.IsNullOrWhiteSpace(n));
 
-                                groupName = recipientNames != null
-                                            ? string.Join(", ", recipientNames)
-                                            : "N/A";
+                                groupName =
+                                    recipientNames != null
+                                        ? string.Join(", ", recipientNames)
+                                        : "N/A";
                             }
-                            catch { OnError?.Invoke(this, new PluginMessageEventArgs("Error constructing group name.")); }
+                            catch
+                            {
+                                OnError?.Invoke(
+                                    this,
+                                    new PluginMessageEventArgs("Error constructing group name.")
+                                );
+                            }
                         }
 
-                        byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
+                        byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(
+                            channelId,
+                            avatarHash,
+                            HelperMethods.DiscordChannelType.Group
+                        );
 
-                        DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
-                        var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
+                        DateTime lastMessageTime = GetTimestampFromSnowflake(
+                            channel["last_message_id"]?.GetValue<string>()
+                        );
+                        var profileData = new Group(
+                            groupName,
+                            channelId,
+                            0,
+                            members,
+                            avatarImage,
+                            lastMessageTime
+                        );
 
                         if (lType == ListType.Recents)
                             RecentsList.Add(profileData);
@@ -498,7 +654,10 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Error while populating lists: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Error while populating lists: {ex.Message}")
+                );
                 return false;
             }
             return true;
@@ -507,24 +666,34 @@ namespace Discord
         private DateTime GetTimestampFromSnowflake(string snowflake)
         {
             if (string.IsNullOrEmpty(snowflake) || !long.TryParse(snowflake, out long snowflakeId))
-              return DateTime.MinValue;
+                return DateTime.MinValue;
             const long discordEpoch = 1420070400000L;
             long timestamp = (snowflakeId >> 22) + discordEpoch;
             return DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
         }
 
-        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public async Task<ConversationItem[]> FetchMessages(
+            Conversation conversation,
+            Fetch fetch_type,
+            int message_count,
+            string identifier
+        )
         {
             TypingUsersList.Clear();
             List<ConversationItem> messageList = new List<ConversationItem>();
 
-            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId) || fetch_type == Fetch.Oldest) // not implemented in discord
+            if (
+                !HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId)
+                || fetch_type == Fetch.Oldest
+            ) // not implemented in discord
                 return new ConversationItem[0];
 
             _activeChannelId = channelId;
             string parameters = $"/channels/{channelId}/messages?limit={message_count}";
-            if (fetch_type == Fetch.AfterIdentifier) parameters += "&after=" + identifier;
-            else if (fetch_type == Fetch.BeforeIdentifier) parameters += "&before=" + identifier;
+            if (fetch_type == Fetch.AfterIdentifier)
+                parameters += "&after=" + identifier;
+            else if (fetch_type == Fetch.BeforeIdentifier)
+                parameters += "&before=" + identifier;
 
             try
             {
@@ -532,7 +701,10 @@ namespace Discord
                     parameters,
                     HttpMethod.Get,
                     DscToken,
-                    null, null, null);
+                    null,
+                    null,
+                    null
+                );
 
                 var parsed = JsonNode.Parse(json);
 
@@ -547,14 +719,18 @@ namespace Discord
                                 text = "You do not have access to this channel.";
                                 break;
                             default:
-                                text = $"Discord says: {msg["message"].GetValue<string>()}\n\nError code {msg["code"].GetValue<string>()}";
+                                text =
+                                    $"Discord says: {msg["message"].GetValue<string>()}\n\nError code {msg["code"].GetValue<string>()}";
                                 break;
                         }
                         OnWarning?.Invoke(this, new PluginMessageEventArgs(text));
                     }
                     else
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {json}"));
+                        OnError?.Invoke(
+                            this,
+                            new PluginMessageEventArgs($"Unexpected response format: {json}")
+                        );
                     }
                     return new ConversationItem[0];
                 }
@@ -571,16 +747,26 @@ namespace Discord
             catch (Exception ex)
             {
                 string message = $"Failed to load conversation: {ex.Message}";
-                if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
+                if (message.Contains("is an invalid start of a value"))
+                    message =
+                        "You are not connected to the internet, or Discord's servers are down.";
                 OnError?.Invoke(this, new PluginMessageEventArgs(message));
                 _activeChannelId = null;
                 return new ConversationItem[0];
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
+        public async Task<bool> SendMessage(
+            string identifier,
+            string text,
+            Attachment attachment,
+            string parent_message_identifier
+        )
         {
-            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment == null))
+            if (
+                string.IsNullOrWhiteSpace(identifier)
+                || (string.IsNullOrWhiteSpace(text) && attachment == null)
+            )
                 return false;
 
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
@@ -597,31 +783,54 @@ namespace Discord
                     { "X-Context-Properties", OptEncoded },
                 };
 
-
                 string fileName = null;
                 object payloadJson = null;
 
                 if (parent_message_identifier != null)
-                    payloadJson = new { content = text ?? "", message_reference = new { message_id = parent_message_identifier } };
+                    payloadJson = new
+                    {
+                        content = text ?? "",
+                        message_reference = new { message_id = parent_message_identifier },
+                    };
                 else
                     payloadJson = new { content = text ?? "" };
 
                 if (attachment != null)
                 {
                     fileName = attachment?.Name ?? "file";
-                    if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File)
+                    if (
+                        attachment.Type != AttachmentType.Image
+                        && attachment.Type != AttachmentType.File
+                    )
                     {
-                        OnWarning?.Invoke(this, new PluginMessageEventArgs($"Unsupported attachment type: {attachment.Type}. Discord supports image and file attachments.\n\nSending message without attachment."));
+                        OnWarning?.Invoke(
+                            this,
+                            new PluginMessageEventArgs(
+                                $"Unsupported attachment type: {attachment.Type}. Discord supports image and file attachments.\n\nSending message without attachment."
+                            )
+                        );
                         attachment = null;
                     }
                 }
 
-                string response = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, payloadJson, attachment != null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
+                string response = await api.SendAPI(
+                        $"/channels/{channelId}/messages",
+                        HttpMethod.Post,
+                        DscToken,
+                        payloadJson,
+                        attachment != null ? attachment.File : null,
+                        fileName,
+                        discordOpts
+                    )
+                    .ConfigureAwait(false);
                 return !string.IsNullOrEmpty(response) && !response.Contains("error");
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to send message: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -632,10 +841,14 @@ namespace Discord
             {
                 // get current proto blob from Discord
                 string current = await api.SendAPI(
-                    PROTO_ENDPOINT,
-                    HttpMethod.Get,
-                    DscToken,
-                    null, null, null).ConfigureAwait(false);
+                        PROTO_ENDPOINT,
+                        HttpMethod.Get,
+                        DscToken,
+                        null,
+                        null,
+                        null
+                    )
+                    .ConfigureAwait(false);
 
                 if (string.IsNullOrWhiteSpace(current))
                     return new PreloadedUserSettings();
@@ -650,29 +863,39 @@ namespace Discord
                 byte[] bytes = Convert.FromBase64String(base64);
                 return PreloadedUserSettings.Parser.ParseFrom(bytes);
             }
-            catch { OnError?.Invoke(this, new PluginMessageEventArgs("Failed to fetch Protobuf settings from Discord. Falling back to blank settings object.")); return new PreloadedUserSettings(); } // just in case
+            catch
+            {
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs(
+                        "Failed to fetch Protobuf settings from Discord. Falling back to blank settings object."
+                    )
+                );
+                return new PreloadedUserSettings();
+            } // just in case
         }
 
-        internal async Task<bool> UpdateProtoSettings(PreloadedUserSettings settings) // updates the server proto settings blob 
+        internal async Task<bool> UpdateProtoSettings(PreloadedUserSettings settings) // updates the server proto settings blob
         {
             // encode proto
             byte[] updatedBytes = settings.ToByteArray();
             string updatedBase64 = Convert.ToBase64String(updatedBytes);
 
-            var body = new
-            {
-                settings = updatedBase64
-            };
+            var body = new { settings = updatedBase64 };
 
             HttpMethod Patch = new HttpMethod("PATCH"); // net standard compat
 
             // send updated proto
             string response = await api.SendAPI(
-                PROTO_ENDPOINT,
-                Patch,
-                DscToken,
-                body,
-                null, null, null).ConfigureAwait(false);
+                    PROTO_ENDPOINT,
+                    Patch,
+                    DscToken,
+                    body,
+                    null,
+                    null,
+                    null
+                )
+                .ConfigureAwait(false);
 
             Debug.WriteLine(response);
             return !response.Contains("message");
@@ -689,16 +912,16 @@ namespace Discord
                 UserConnectionStatus.DoNotDisturb => "dnd",
                 UserConnectionStatus.Invisible => "invisible",
                 UserConnectionStatus.Offline => "offline",
-                _ => "offline"
+                _ => "offline",
             };
 
             return await UpdateProtoSettings(_proto); // try push
         }
 
-
         public async Task<bool> SetTextStatus(string status)
         {
-            if (String.IsNullOrEmpty(status)) return false;
+            if (String.IsNullOrEmpty(status))
+                return false;
 
             _proto = await FetchProtoSettings();
             _proto.Status.CustomStatus.Text = status; // set text of status
@@ -725,19 +948,23 @@ namespace Discord
             return true;
         }
 
-
-        private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
+        private void OnWebSocketMessageReceived(
+            object sender,
+            HelperClasses.DiscordMessageReceivedEventArgs e
+        )
         {
-            _uiContext?.Post(_ =>
-            {
-                try
+            _uiContext?.Post(
+                _ =>
                 {
-                    switch (e.EventType)
+                    try
                     {
-                        case MessageEventType.Create:
+                        switch (e.EventType)
+                        {
+                            case MessageEventType.Create:
                             {
-                                var typingUser = TypingUsersList
-                                    .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
+                                var typingUser = TypingUsersList.FirstOrDefault(u =>
+                                    u.Identifier == e.Sender.Identifier
+                                );
                                 if (typingUser != null)
                                     TypingUsersList.Remove(typingUser);
                                 if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
@@ -751,11 +978,18 @@ namespace Discord
                                     e.Attachments,
                                     e.ParentMessage
                                 );
-                                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message, CheckIfGuildChannel(e))); 
+                                MessageEvent?.Invoke(
+                                    this,
+                                    new MessageRecievedEventArgs(
+                                        e.ChannelId,
+                                        message,
+                                        CheckIfGuildChannel(e)
+                                    )
+                                );
                                 break;
                             }
 
-                        case MessageEventType.Update:
+                            case MessageEventType.Update:
                             {
                                 var message = new Message(
                                     e.Identifier,
@@ -765,31 +999,40 @@ namespace Discord
                                     e.Attachments,
                                     e.ParentMessage
                                 );
-                                MessageEvent?.Invoke(this, new MessageEditedEventArgs(e.ChannelId, e.Identifier, message));
+                                MessageEvent?.Invoke(
+                                    this,
+                                    new MessageEditedEventArgs(e.ChannelId, e.Identifier, message)
+                                );
                                 break;
                             }
 
-                        case MessageEventType.Delete:
+                            case MessageEventType.Delete:
                             {
-                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
+                                MessageEvent?.Invoke(
+                                    this,
+                                    new MessageDeletedEventArgs(e.ChannelId, e.Identifier)
+                                );
                                 break;
                             }
 
-                        case MessageEventType.BulkDelete:
+                            case MessageEventType.BulkDelete:
                             {
                                 foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
-                                    MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
+                                    MessageEvent?.Invoke(
+                                        this,
+                                        new MessageDeletedEventArgs(e.ChannelId, id)
+                                    );
                                 break;
                             }
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Message event handling error: {ex.Message}");
-                }
-
-            }, null);
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Message event handling error: {ex.Message}");
+                    }
+                },
+                null
+            );
         }
-
     }
 }

@@ -1,23 +1,75 @@
-﻿<Window x:Class="Skymu.Views.About" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:global="clr-namespace:Skymu" xmlns:converters="clr-namespace:Skymu.Converters"  Style="{StaticResource Window}" WindowStartupLocation="CenterScreen" mc:Ignorable="d" xmlns:properties="clr-namespace:Skymu.Properties" WindowStyle="None" AllowsTransparency="True" Title="About" Height="454" Width="501">
+﻿<Window
+    x:Class="Skymu.Views.About"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:Skymu.Properties"
+    Title="About"
+    Width="501"
+    Height="454"
+    AllowsTransparency="True"
+    Style="{StaticResource Window}"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
     <Window.Resources>
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator"/>
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator"/>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='backgrounds/aboutBackground.png'}" Stretch="Uniform"/>
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='backgrounds/about.png'}" Stretch="Uniform" />
     </Window.Background>
     <StackPanel>
-        <Image Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/skymu-about-logo.png'}" Height="108" Margin="0,115,0,3"/>
-        <TextBlock Text="Take another breath" HorizontalAlignment="Center" FontFamily="Arial" FontWeight="Bold" Foreground="#333333" FontSize="20" Margin="0,1,9,0"/>
-        <TextBlock HorizontalAlignment="Center" FontFamily="Arial"  FontWeight="Bold" Foreground="#555555" FontSize="13" Margin="0,3,9,-6">
+        <Image
+            Height="108"
+            Margin="0,115,0,3"
+            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/skymu-about-logo.png'}" />
+        <TextBlock
+            Margin="0,1,9,0"
+            HorizontalAlignment="Center"
+            FontFamily="Arial"
+            FontSize="20"
+            FontWeight="Bold"
+            Foreground="#333333"
+            Text="Take another breath" />
+        <TextBlock
+            Margin="0,3,9,-6"
+            HorizontalAlignment="Center"
+            FontFamily="Arial"
+            FontSize="13"
+            FontWeight="Bold"
+            Foreground="#555555">
             <TextBlock.Text>
                 <MultiBinding StringFormat="v{0} {1}">
-                    <Binding Source="{x:Static properties:Settings.Default}" Path="BuildVersion"/>
-                    <Binding Source="{x:Static properties:Settings.Default}" Path="BuildName"/>
+                    <Binding Path="BuildVersion" Source="{x:Static properties:Settings.Default}" />
+                    <Binding Path="BuildName" Source="{x:Static properties:Settings.Default}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>
-        <TextBlock Text="Open-source software: http://skymu.app/legal/licenses/standard.txt&#x0a;You can find our repository over at GitHub listed under the Skymu name.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and employed under fair use." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,23,10,0" FontFamily="Tahoma" FontSize="11"/>
-        <TextBlock Text="Skymu is a multi-protocol chat client that faithfully recreates the user interface of older Skype versions. As far as we know, no comparable product exists, and the Skype branding has been completely retired. You are running the .NET Framework build of Skymu, which is compatible with Windows Vista and above." LineHeight="16" Width="390" TextWrapping="Wrap" Foreground="#363636" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,16,10,0" FontFamily="Tahoma" FontSize="11"/>
+        <TextBlock
+            Width="390"
+            Margin="0,23,10,0"
+            HorizontalAlignment="Center"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="#363636"
+            LineHeight="16"
+            Text="Open-source software: http://skymu.app/legal/licenses/standard.txt&#x0a;You can find our repository over at GitHub listed under the Skymu name.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and employed under fair use."
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Width="390"
+            Margin="0,16,10,0"
+            HorizontalAlignment="Center"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="#363636"
+            LineHeight="16"
+            Text="Skymu is a multi-protocol chat client that faithfully recreates the user interface of older Skype versions. As far as we know, no comparable product exists, and the Skype branding has been completely retired. You are running the .NET Framework build of Skymu, which is compatible with Windows Vista and above."
+            TextAlignment="Center"
+            TextWrapping="Wrap" />
     </StackPanel>
 </Window>
