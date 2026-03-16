@@ -1,5 +1,6 @@
-![Skymu Logo](Images/skymu-logo-3d.png) the multiprotocol client you'll love 
+![Skymu Logo](Images/skymu-logo-3d.png) 
 ---
+the multiprotocol client you'll love 
 
 # Build Guide
 
