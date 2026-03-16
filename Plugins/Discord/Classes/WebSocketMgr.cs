@@ -21,7 +21,11 @@ namespace Discord.Classes
         // Also, marked as static so WebSocketMgr helper classes can be called throughout the app
         internal static WebSocket Socket;
 
-        public static void EnsureConnected(string token, EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler, Core core)
+        public static void EnsureConnected(
+            string token,
+            EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler,
+            Core core
+        )
         {
             if (Socket != null)
                 return;
@@ -37,22 +41,25 @@ namespace Discord.Classes
             EventHandler readyHandler = null;
             readyHandler = (s, e) =>
             {
-                Socket.Ready -= readyHandler; 
-                tcs.TrySetResult(true);       
+                Socket.Ready -= readyHandler;
+                tcs.TrySetResult(true);
             };
 
             Socket.Ready += readyHandler;
 
-            return tcs.Task; 
+            return tcs.Task;
         }
 
         public static async Task SendPayload(string payload)
         {
-            if (Socket == null) return;
+            if (Socket == null)
+                return;
             await Socket.SendPayload(payload);
         }
 
-        public static void SubscribeMessageReceived(EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler)
+        public static void SubscribeMessageReceived(
+            EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler
+        )
         {
             if (Socket == null)
                 return;

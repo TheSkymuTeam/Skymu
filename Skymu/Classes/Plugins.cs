@@ -9,11 +9,11 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MiddleMan;
 
 namespace Skymu
 {
@@ -37,9 +37,7 @@ namespace Skymu
 
                     foreach (Type t in asm.GetTypes())
                     {
-                        if (typeof(ICore).IsAssignableFrom(t) &&
-                        !t.IsInterface &&
-                        !t.IsAbstract)
+                        if (typeof(ICore).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                         {
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;
@@ -64,7 +62,9 @@ namespace Skymu
             if (pluginCount < 1)
             {
                 Universal.ExceptionHandler(
-                    new Exception("No plugins detected in the plugin folder. You are most likely getting this error because you extracted the .7z archive with Windows Explorer. Use 7-Zip instead.")
+                    new Exception(
+                        "No plugins detected in the plugin folder. You are most likely getting this error because you extracted the .7z archive with Windows Explorer. Use 7-Zip instead."
+                    )
                 );
             }
             return PluginList.ToArray();
@@ -72,8 +72,10 @@ namespace Skymu
 
         public static void DisposeAll()
         {
-            if (Universal.Plugin != null) Universal.Plugin.Dispose();
-            if (Universal.PluginList == null) return;
+            if (Universal.Plugin != null)
+                Universal.Plugin.Dispose();
+            if (Universal.PluginList == null)
+                return;
 
             foreach (var plugin in Universal.PluginList)
             {
@@ -88,10 +90,7 @@ namespace Skymu
                         disposable.Dispose();
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
             Universal.PluginList = null;
             Universal.Plugin = null;

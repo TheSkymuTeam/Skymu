@@ -21,10 +21,7 @@ namespace Skymu.Views
             InitializeComponent();
         }
 
-        private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
+        private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
@@ -48,5 +45,5 @@ namespace Skymu.Views
             Properties.Settings.Default.Reset();
             Properties.Settings.Default.Save();
         }
-    }  
+    }
 }

@@ -18,19 +18,14 @@
 
 #pragma warning disable 4014
 
-using MiddleMan;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System.Net.WebSockets;
-using System.Net.WebSockets.Managed;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -38,6 +33,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Zip.Compression;
 
 namespace Discord.Classes
 {
@@ -63,7 +59,9 @@ namespace Discord.Classes
         private string identifyPayloadJson;
 
         // Used for the heartbeat payloads
-        private readonly string heartbeatPayloadJson = JsonSerializer.Serialize(new { op = 1, d = (object)null });
+        private readonly string heartbeatPayloadJson = JsonSerializer.Serialize(
+            new { op = 1, d = (object)null }
+        );
         private Task heartbeatTask;
         private CancellationTokenSource heartbeatCts;
 
@@ -82,10 +80,13 @@ namespace Discord.Classes
 
         // Event for new messages
         public event EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> MessageReceived;
+
         // Event for new guilds
         public event EventHandler<JsonNode> GuildCreated;
+
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
-        private readonly Channel<HelperClasses.DiscordMessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.DiscordMessageReceivedEventArgs>();
+        private readonly Channel<HelperClasses.DiscordMessageReceivedEventArgs> _messageQueue =
+            Channel.CreateUnbounded<HelperClasses.DiscordMessageReceivedEventArgs>();
 
         public WebSocket(string token, Core core)
         {
@@ -102,34 +103,36 @@ namespace Discord.Classes
             gatewayUrl = "wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            identifyPayloadJson = JsonSerializer.Serialize(new
-            {
-                op = 2,
-                d = new
+            identifyPayloadJson = JsonSerializer.Serialize(
+                new
                 {
-                    token = token,
-                    properties = new
+                    op = 2,
+                    d = new
                     {
-                        os = config.OperatingSystem,
-                        browser = config.BrowserName,
-                        device = string.Empty,
-                        system_locale = config.SystemLocale,
-                        has_client_mods = config.HasClientMods,
-                        browser_user_agent = config.BrowserUA,
-                        browser_version = config.BrowserVer,
-                        os_version = config.OSVersion,
-                        referrer = config.DCReferrer,
-                        referring_domain = config.DCReferringDomain,
-                        referrer_current = config.DCReferringCurrent,
-                        referring_domain_current = config.DCReferringCurrentDomain,
-                        release_channel = config.DCClientState,
-                        client_event_source = config.DCClientEvtSrc,
-                        client_launch_id = config.ClientLaunchId,
-                        is_fast_connect = true
-                    }
-                },
-                client_state = new { guild_versions = new { } }
-            });
+                        token = token,
+                        properties = new
+                        {
+                            os = config.OperatingSystem,
+                            browser = config.BrowserName,
+                            device = string.Empty,
+                            system_locale = config.SystemLocale,
+                            has_client_mods = config.HasClientMods,
+                            browser_user_agent = config.BrowserUA,
+                            browser_version = config.BrowserVer,
+                            os_version = config.OSVersion,
+                            referrer = config.DCReferrer,
+                            referring_domain = config.DCReferringDomain,
+                            referrer_current = config.DCReferringCurrent,
+                            referring_domain_current = config.DCReferringCurrentDomain,
+                            release_channel = config.DCClientState,
+                            client_event_source = config.DCClientEvtSrc,
+                            client_launch_id = config.ClientLaunchId,
+                            is_fast_connect = true,
+                        },
+                    },
+                    client_state = new { guild_versions = new { } },
+                }
+            );
 
             Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
 
@@ -161,11 +164,17 @@ namespace Discord.Classes
 
         internal async Task SendPayload(string payload = null)
         {
-            if (WSClient?.State != WebSocketState.Open) return;
+            if (WSClient?.State != WebSocketState.Open)
+                return;
 
             if (payload == null)
             {
-                await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                await WSClient.SendAsync(
+                    _identifyBuffer,
+                    WebSocketMessageType.Text,
+                    true,
+                    CancellationToken.None
+                );
                 return;
             }
 
@@ -175,7 +184,12 @@ namespace Discord.Classes
             try
             {
                 int bytesWritten = Encoding.UTF8.GetBytes(payload, 0, payload.Length, buffer, 0);
-                await WSClient.SendAsync(new ArraySegment<byte>(buffer, 0, bytesWritten), WebSocketMessageType.Text, true, CancellationToken.None);
+                await WSClient.SendAsync(
+                    new ArraySegment<byte>(buffer, 0, bytesWritten),
+                    WebSocketMessageType.Text,
+                    true,
+                    CancellationToken.None
+                );
             }
             finally
             {
@@ -190,7 +204,10 @@ namespace Discord.Classes
             {
                 while (WSClient.State == WebSocketState.Open)
                 {
-                    var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
+                    var result = await WSClient.ReceiveAsync(
+                        new ArraySegment<byte>(_receiveBuffer),
+                        cancellationToken
+                    );
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
                         Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
@@ -231,7 +248,8 @@ namespace Discord.Classes
 
         public string DecodeZStream(byte[] compressed)
         {
-            if (!EndsWithFlushSuffix(compressed)) return null;
+            if (!EndsWithFlushSuffix(compressed))
+                return null;
             _inflater.SetInput(compressed);
             using (var output = new MemoryStream())
             {
@@ -241,11 +259,15 @@ namespace Discord.Classes
                 return Encoding.UTF8.GetString(output.ToArray());
             }
         }
+
         private bool EndsWithFlushSuffix(byte[] data)
         {
-            if (data.Length < 4) return false;
-            return data[data.Length - 4] == 0x00 && data[data.Length - 3] == 0x00 &&
-                   data[data.Length - 2] == 0xFF && data[data.Length - 1] == 0xFF;
+            if (data.Length < 4)
+                return false;
+            return data[data.Length - 4] == 0x00
+                && data[data.Length - 3] == 0x00
+                && data[data.Length - 2] == 0xFF
+                && data[data.Length - 1] == 0xFF;
         }
 
         private void HandleMessage(string data)
@@ -266,10 +288,11 @@ namespace Discord.Classes
                                 // Only uncomment this if you need to debug the READY event from Discord.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
                                 UserStatusMgr.HandleUserStatus(json["d"]);
-                                
+
                                 var readyData = json["d"];
 
-                                _privateChannelsJson = readyData["private_channels"]?.ToJsonString() ?? "[]"; // Store as strings to save memory
+                                _privateChannelsJson =
+                                    readyData["private_channels"]?.ToJsonString() ?? "[]"; // Store as strings to save memory
                                 _guildsJson = readyData["guilds"]?.ToJsonString() ?? "[]";
                                 //_recipientsJson = readyData["relationships"]?.ToJsonString() ?? "[]"; // unused in code as of yet. TODO: add friends list
                                 readyData = null;
@@ -277,7 +300,9 @@ namespace Discord.Classes
                                 Ready?.Invoke(this, EventArgs.Empty);
                                 break;
                             case "READY_SUPPLEMENTAL":
-                                Debug.WriteLine($"[WebSocket] READY_SUPPLEMENTAL received: {json["d"]?.ToJsonString()}");
+                                Debug.WriteLine(
+                                    $"[WebSocket] READY_SUPPLEMENTAL received: {json["d"]?.ToJsonString()}"
+                                );
                                 break;
                             case "MESSAGE_CREATE":
                                 HandleMessageCreate(json["d"]);
@@ -295,7 +320,9 @@ namespace Discord.Classes
                                 HandleTypingEvent(json["d"]);
                                 break;
                             case "USER_SETTINGS_UPDATE":
-                                Debug.WriteLine($"[WebSocket] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
+                                Debug.WriteLine(
+                                    $"[WebSocket] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}"
+                                );
                                 break;
                             case "PRESENCE_UPDATE":
                                 UserStatusMgr.HandleUserStatus(json["d"]);
@@ -320,10 +347,12 @@ namespace Discord.Classes
 
         private async Task HandleMessageCreate(JsonNode messageData)
         {
-            if (messageData == null) return;
+            if (messageData == null)
+                return;
 
             var messageItem = await DiscordMsgParser.ParseMessage(messageData);
-            if (messageItem == null) return;
+            if (messageItem == null)
+                return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
 
@@ -336,7 +365,7 @@ namespace Discord.Classes
                 Timestamp = messageItem.Time,
                 Text = messageItem.Text,
                 Attachments = messageItem.Attachments,
-                ParentMessage = messageItem.ParentMessage
+                ParentMessage = messageItem.ParentMessage,
             };
 
             _ = _messageQueue.Writer.WriteAsync(args);
@@ -344,9 +373,11 @@ namespace Discord.Classes
 
         private async Task HandleMessageUpdate(JsonNode messageData) // omega
         {
-            if (messageData == null) return;
+            if (messageData == null)
+                return;
             var messageItem = await DiscordMsgParser.ParseMessage(messageData);
-            if (messageItem == null) return;
+            if (messageItem == null)
+                return;
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
             var args = new HelperClasses.DiscordMessageReceivedEventArgs
             {
@@ -357,7 +388,7 @@ namespace Discord.Classes
                 Timestamp = messageItem.Time,
                 Text = messageItem.Text,
                 Attachments = messageItem.Attachments,
-                ParentMessage = messageItem.ParentMessage
+                ParentMessage = messageItem.ParentMessage,
             };
             _ = _messageQueue.Writer.WriteAsync(args);
         }
@@ -374,7 +405,7 @@ namespace Discord.Classes
             {
                 EventType = MessageEventType.Delete,
                 ChannelId = channelId,
-                Identifier = messageId
+                Identifier = messageId,
             };
 
             _ = _messageQueue.Writer.WriteAsync(args);
@@ -394,10 +425,9 @@ namespace Discord.Classes
             {
                 EventType = MessageEventType.BulkDelete,
                 ChannelId = channelId,
-                BulkIdentifiers = ids
-                    .Select(x => x?.GetValue<string>())
+                BulkIdentifiers = ids.Select(x => x?.GetValue<string>())
                     .Where(x => x != null)!
-                    .ToList()
+                    .ToList(),
             };
 
             _ = _messageQueue.Writer.WriteAsync(args);
@@ -405,16 +435,20 @@ namespace Discord.Classes
             return Task.CompletedTask;
         }
 
-
-
         private void StartMessageProcessor()
         {
             _ = Task.Run(async () =>
             {
                 await foreach (var msg in _messageQueue.Reader.ReadAllAsync())
                 {
-                    try { MessageReceived?.Invoke(this, msg); }
-                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
+                    try
+                    {
+                        MessageReceived?.Invoke(this, msg);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
                 }
             });
         }
@@ -424,29 +458,36 @@ namespace Discord.Classes
             string userId = typingData["user_id"]?.GetValue<string>();
             string channelId = typingData["channel_id"]?.GetValue<string>();
 
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(channelId)) return;
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(channelId))
+                return;
 
             if (channelId != _core.GetActiveChannelID())
                 return;
 
             _ = Task.Run(async () =>
             {
-                string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, DscToken);
+                string globalName = await HelperMethods.ReplaceIDWithNameForTyping(
+                    userId,
+                    DscToken
+                );
 
                 var typingUser = UserStore.GetOrCreate(userId, globalName, globalName);
 
-                _core?._uiContext?.Post(_ =>
-                {
-                    if (!_core.TypingUsersList.Any(u => u.Identifier == typingUser.Identifier))
-                        _core.TypingUsersList.Add(typingUser);
-
-                    if (!_core._typingUsersPerChannel.TryGetValue(channelId, out var users))
+                _core?._uiContext?.Post(
+                    _ =>
                     {
-                        users = new HashSet<string>();
-                        _core._typingUsersPerChannel[channelId] = users;
-                    }
-                    users.Add(userId);
-                }, null);
+                        if (!_core.TypingUsersList.Any(u => u.Identifier == typingUser.Identifier))
+                            _core.TypingUsersList.Add(typingUser);
+
+                        if (!_core._typingUsersPerChannel.TryGetValue(channelId, out var users))
+                        {
+                            users = new HashSet<string>();
+                            _core._typingUsersPerChannel[channelId] = users;
+                        }
+                        users.Add(userId);
+                    },
+                    null
+                );
             });
         }
 
@@ -461,7 +502,12 @@ namespace Discord.Classes
                 {
                     await Task.Delay(heartbeatInterval, token);
                     if (WSClient.State == WebSocketState.Open)
-                        await WSClient.SendAsync(_heartbeatBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                        await WSClient.SendAsync(
+                            _heartbeatBuffer,
+                            WebSocketMessageType.Text,
+                            true,
+                            CancellationToken.None
+                        );
                 }
             });
         }
@@ -499,7 +545,9 @@ namespace Discord.Classes
             {
                 WSClient?.Abort();
             }
-            catch { /* This ignores any abort errors */ }
+            catch
+            { /* This ignores any abort errors */
+            }
             WSClient?.Dispose();
         }
     }

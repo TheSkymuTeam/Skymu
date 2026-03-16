@@ -9,13 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Text.Json.Nodes;
 using System.Threading.Channels;
-using System.IO;
 using System.Threading.Tasks;
-using System.Diagnostics;
+using MiddleMan;
 
 namespace Discord.Classes
 {
@@ -23,7 +23,8 @@ namespace Discord.Classes
     {
         public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
         {
-            if (message == null) return null;
+            if (message == null)
+                return null;
 
             if (message["message_snapshots"] != null)
                 return await ParseMessage(message["message_snapshots"][0]["message"], true);
@@ -32,9 +33,17 @@ namespace Discord.Classes
             string authorId = message["author"]?["id"]?.GetValue<string>() ?? "0";
             string content = HelperMethods.ReplaceIDWithName(
                 message["mentions"] as JsonArray,
-                message["content"]?.GetValue<string>() ?? string.Empty);
+                message["content"]?.GetValue<string>() ?? string.Empty
+            );
             DateTime timestamp = ParseTimestamp(message["timestamp"]?.GetValue<string>());
-            Attachment[] media = new Attachment[1] { new Attachment(await ParseMessageMedia(message), "discord-image", AttachmentType.Image) };
+            Attachment[] media = new Attachment[1]
+            {
+                new Attachment(
+                    await ParseMessageMedia(message),
+                    "discord-image",
+                    AttachmentType.Image
+                ),
+            };
             Message parent = ParseReply(message["referenced_message"]);
             User sender = UserStore.Get(authorId);
             var (displayName, username) = GetAuthorInfo(message);
@@ -42,26 +51,24 @@ namespace Discord.Classes
             {
                 sender = UserStore.GetOrCreate(authorId, displayName, username);
             }
-            else if (string.IsNullOrEmpty(sender.DisplayName) || string.IsNullOrEmpty(sender.Username))
+            else if (
+                string.IsNullOrEmpty(sender.DisplayName) || string.IsNullOrEmpty(sender.Username)
+            )
             {
                 sender = UserStore.GetOrCreate(authorId, displayName, username);
             }
 
-            return new Message(
-                messageId,
-                sender,
-                timestamp,
-                content,
-                media,
-                parent,
-                isForwarded
-            );
+            return new Message(messageId, sender, timestamp, content, media, parent, isForwarded);
         }
 
         public static Message ParseReply(JsonNode refMsg)
         {
-            if (refMsg == null) return null;
-            string replyContent = HelperMethods.ReplaceIDWithName(refMsg["mentions"] as JsonArray, refMsg["content"]?.GetValue<string>() ?? "[unavailable]");
+            if (refMsg == null)
+                return null;
+            string replyContent = HelperMethods.ReplaceIDWithName(
+                refMsg["mentions"] as JsonArray,
+                refMsg["content"]?.GetValue<string>() ?? "[unavailable]"
+            );
             var (displayName, username) = GetAuthorInfo(refMsg);
             string authorId = refMsg["author"]?["id"]?.GetValue<string>() ?? "0";
             return new Message(
@@ -77,7 +84,8 @@ namespace Discord.Classes
             var member = node?["member"];
             var author = node?["author"];
 
-            string displayName = member?["nick"]?.GetValue<string>()
+            string displayName =
+                member?["nick"]?.GetValue<string>()
                 ?? author?["global_name"]?.GetValue<string>()
                 ?? author?["username"]?.GetValue<string>()
                 ?? "Anonymous";
@@ -111,7 +119,7 @@ namespace Discord.Classes
             }
         }
 
-        public static DateTime ParseTimestamp(string ts)
-            => DateTime.TryParse(ts, out var dt) ? dt : DateTime.UtcNow;
+        public static DateTime ParseTimestamp(string ts) =>
+            DateTime.TryParse(ts, out var dt) ? dt : DateTime.UtcNow;
     }
 }

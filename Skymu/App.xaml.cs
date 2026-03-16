@@ -9,14 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
-using Skymu.Views;
-
 using System.Windows.Threading;
+using MiddleMan;
+using Skymu.Views;
 
 namespace Skymu
 {
@@ -28,36 +27,52 @@ namespace Skymu
         public const string Name = "Skymu";
         public static readonly string SkypeEra = Skymu.Properties.Settings.Default.SkypeEra;
 
-        public static LanguageManager Lang =>
-        (LanguageManager)Current.Resources["Lang"];
+        public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                new Action(delegate
-                {
-                    var core = (ICore)sender;
-                    new Dialog(WindowBase.IconType.Error, e.Message, "Error in plugin " + core.Name).ShowDialog();
-                }));
+                new Action(
+                    delegate
+                    {
+                        var core = (ICore)sender;
+                        new Dialog(
+                            WindowBase.IconType.Error,
+                            e.Message,
+                            "Error in plugin " + core.Name
+                        ).ShowDialog();
+                    }
+                )
+            );
         }
 
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.BeginInvoke(
-                new Action(delegate
-                {
-                    var core = (ICore)sender;
-                    new Dialog(WindowBase.IconType.Information, e.Message, "Warning from plugin " + core.Name).ShowDialog();
-                }));
+                new Action(
+                    delegate
+                    {
+                        var core = (ICore)sender;
+                        new Dialog(
+                            WindowBase.IconType.Information,
+                            e.Message,
+                            "Warning from plugin " + core.Name
+                        ).ShowDialog();
+                    }
+                )
+            );
         }
 
         public static void PluginNotificationHandler(object sender, MessageEventArgs e)
         {
             Current.Dispatcher.BeginInvoke(
-                new Action(delegate
-                {
-                    MessageTools.HandleIncoming(e);
-                }));
+                new Action(
+                    delegate
+                    {
+                        MessageTools.HandleIncoming(e);
+                    }
+                )
+            );
         }
 
         static Universal()
@@ -79,9 +94,13 @@ namespace Skymu
 
         internal static readonly HttpClient HttpClient = new HttpClient
         {
-            Timeout = TimeSpan.FromSeconds(10)
+            Timeout = TimeSpan.FromSeconds(10),
         };
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs ev)
+
+        private void App_DispatcherUnhandledException(
+            object sender,
+            DispatcherUnhandledExceptionEventArgs ev
+        )
         {
             ExceptionHandler(ev.Exception);
             ev.Handled = true;
@@ -95,10 +114,14 @@ namespace Skymu
             {
                 ExceptionHandler(exception);
             }
-
             else
             {
-                ExceptionHandler(new Exception("Skymu Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n" + ev.ToString()));
+                ExceptionHandler(
+                    new Exception(
+                        "Skymu Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n"
+                            + ev.ToString()
+                    )
+                );
             }
         }
 
@@ -111,16 +134,35 @@ namespace Skymu
                     ev.Cancel = true;
                 }
                 string brand = Skymu.Properties.Settings.Default.BrandingName;
-                new Dialog(WindowBase.IconType.Question, Lang["sQUIT_PROMPT"], Lang["sQUIT_PROMPT_CAP"], Lang["sQUIT_PROMPT_TITLE"], null, Lang["sZAPBUTTON_CANCEL"], true, null, Lang["sF_CONFIRM_QUIT"]).ShowDialog();
+                new Dialog(
+                    WindowBase.IconType.Question,
+                    Lang["sQUIT_PROMPT"],
+                    Lang["sQUIT_PROMPT_CAP"],
+                    Lang["sQUIT_PROMPT_TITLE"],
+                    null,
+                    Lang["sZAPBUTTON_CANCEL"],
+                    true,
+                    null,
+                    Lang["sF_CONFIRM_QUIT"]
+                ).ShowDialog();
             }
-            catch { Universal.Terminate(); } // in case app is already too dead to show dialog by the time this is called
+            catch
+            {
+                Universal.Terminate();
+            } // in case app is already too dead to show dialog by the time this is called
         }
 
         public static void Terminate()
         {
-            try { Tray.DisposeIcon(); }
-            catch { }  // in case app is already too dead to clear icon by the time this is called
-            finally { Application.Current.Shutdown(); }
+            try
+            {
+                Tray.DisposeIcon();
+            }
+            catch { } // in case app is already too dead to clear icon by the time this is called
+            finally
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         public static void ExceptionHandler(Exception ex)
@@ -140,12 +182,29 @@ namespace Skymu
 
         public static void MessageBox(string content, string title = "Information")
         {
-            new Dialog(WindowBase.IconType.Information, content, title, null, null, "OK").ShowDialog();
+            new Dialog(
+                WindowBase.IconType.Information,
+                content,
+                title,
+                null,
+                null,
+                "OK"
+            ).ShowDialog();
         }
 
         public static void NotImplemented(string feature)
         {
-            new Dialog(WindowBase.IconType.Information, feature + " hasn't been added to " + Skymu.Properties.Settings.Default.BrandingName + " yet.", "Feature not implemented", null, null, "OK").ShowDialog();
+            new Dialog(
+                WindowBase.IconType.Information,
+                feature
+                    + " hasn't been added to "
+                    + Skymu.Properties.Settings.Default.BrandingName
+                    + " yet.",
+                "Feature not implemented",
+                null,
+                null,
+                "OK"
+            ).ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs ev)
@@ -163,7 +222,6 @@ namespace Skymu
                     ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
                 }
             };
-
         }
 
         private void ApplyPresentationFramework(string frameworkName)
@@ -195,7 +253,10 @@ namespace Skymu
 
             try
             {
-                var themeUri = new Uri($"/{assemblyName};component/themes/{frameworkName}.xaml", UriKind.Relative);
+                var themeUri = new Uri(
+                    $"/{assemblyName};component/themes/{frameworkName}.xaml",
+                    UriKind.Relative
+                );
                 var theme = new ResourceDictionary { Source = themeUri };
 
                 // keep custom resources
@@ -218,15 +279,21 @@ namespace Skymu
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Failed to apply presentation framework: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to apply presentation framework: {ex.Message}"
+                );
             }
         }
 
         protected override void OnExit(ExitEventArgs ev)
         {
-            try { _ = UserCountAPI.CloseWS(); } // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
-            catch { }                           // If it doesn't work, too bad.
-            if (HasLoggedIn) Sounds.PlaySynchronous("logout");
+            try
+            {
+                _ = UserCountAPI.CloseWS();
+            } // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+            catch { } // If it doesn't work, too bad.
+            if (HasLoggedIn)
+                Sounds.PlaySynchronous("logout");
             base.OnExit(ev);
         }
     }

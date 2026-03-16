@@ -1,9 +1,9 @@
-using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using MiddleMan;
 
 namespace Skymu
 {
@@ -19,18 +19,21 @@ namespace Skymu
 
     public class CompactRecentsHelper
     {
-        public static ObservableCollection<object> GroupByDate(ObservableCollection<Conversation> conversations)
+        public static ObservableCollection<object> GroupByDate(
+            ObservableCollection<Conversation> conversations
+        )
         {
             var result = new ObservableCollection<object>();
             if (conversations == null || conversations.Count == 0)
                 return result;
 
             var sorted = conversations.OrderByDescending(c => c.LastMessageTime).ToList();
-            var groups = sorted.GroupBy(c => GetDateKey(c.LastMessageTime))
+            var groups = sorted
+                .GroupBy(c => GetDateKey(c.LastMessageTime))
                 .ToDictionary(g => g.Key, g => g.ToList());
 
-            var sortedKeys = groups.Keys
-                .OrderByDescending(k => ParseDateKey(k, sorted[0].LastMessageTime))
+            var sortedKeys = groups
+                .Keys.OrderByDescending(k => ParseDateKey(k, sorted[0].LastMessageTime))
                 .ToList();
 
             foreach (var key in sortedKeys)
@@ -63,7 +66,15 @@ namespace Skymu
                 return today;
             if (key == Universal.Lang["sYESTERDAY"])
                 return today.AddDays(-1);
-            if (DateTime.TryParseExact(key, "dddd, MMMM d, yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime parsed))
+            if (
+                DateTime.TryParseExact(
+                    key,
+                    "dddd, MMMM d, yyyy",
+                    CultureInfo.CurrentCulture,
+                    DateTimeStyles.None,
+                    out DateTime parsed
+                )
+            )
                 return parsed;
 
             return reference;
@@ -72,7 +83,10 @@ namespace Skymu
 
     public class ServerChannelHelper
     {
-        public static ObservableCollection<object> GroupByCategory(ServerChannel[] channels, Dictionary<string, string> categoryMap)
+        public static ObservableCollection<object> GroupByCategory(
+            ServerChannel[] channels,
+            Dictionary<string, string> categoryMap
+        )
         {
             var result = new ObservableCollection<object>();
             if (channels == null || channels.Length == 0)
@@ -92,15 +106,16 @@ namespace Skymu
                 {
                     CategoryId = g.Key,
                     Channels = g.OrderBy(c => c.Position).ToList(),
-                    Position = g.Min(c => c.Position)
+                    Position = g.Min(c => c.Position),
                 })
                 .OrderBy(g => g.Position);
 
             foreach (var group in categorized)
             {
-                string categoryName = categoryMap != null && categoryMap.TryGetValue(group.CategoryId, out var name)
-                    ? name
-                    : "Unknown Category";
+                string categoryName =
+                    categoryMap != null && categoryMap.TryGetValue(group.CategoryId, out var name)
+                        ? name
+                        : "Unknown Category";
 
                 result.Add(new CategoryHeaderItem { CategoryName = categoryName });
 

@@ -9,8 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using Skymu.Skyaeris;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +18,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MiddleMan;
+using Skymu.Skyaeris;
 
 namespace Skymu.Views
 {
@@ -33,10 +33,11 @@ namespace Skymu.Views
 
         public Notification(MessageRecievedEventArgs e, int durationSeconds = 5)
         {
-            if (!Properties.Settings.Default.EnableNotifications) return;
+            if (!Properties.Settings.Default.EnableNotifications)
+                return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
-            
+
             if (Main.CurrentUser != null)
             {
                 if (Main.CurrentUser.PresenceStatus == UserConnectionStatus.DoNotDisturb)
@@ -49,7 +50,6 @@ namespace Skymu.Views
             {
                 // Do not do anything, the app will crash
             }
-
 
             if (_activeNotification != null && !_activeNotification.IsLoaded)
             {
@@ -65,7 +65,10 @@ namespace Skymu.Views
                 {
                     if (blue_background == null)
                     {
-                        blue_background = Converters.Helpers.AssetPathGenerator("Notifications/bubble-blue.png", false);
+                        blue_background = Converters.Helpers.AssetPathGenerator(
+                            "Notifications/bubble-blue.png",
+                            false
+                        );
                     }
                     _activeNotification.bubble.Source = blue_background;
                 }
@@ -74,7 +77,7 @@ namespace Skymu.Views
 
                 notif._closeTimer = new DispatcherTimer
                 {
-                    Interval = TimeSpan.FromSeconds(durationSeconds)
+                    Interval = TimeSpan.FromSeconds(durationSeconds),
                 };
 
                 notif._closeTimer.Tick += (s, ev) =>
@@ -82,7 +85,7 @@ namespace Skymu.Views
                     if (notif.close.Visibility == Visibility.Visible)
                     {
                         notif._closeTimer.Stop();
-                        notif._closeTimer.Start();   
+                        notif._closeTimer.Start();
                         return;
                     }
 
@@ -93,10 +96,7 @@ namespace Skymu.Views
                         From = notif.Opacity,
                         To = 0,
                         Duration = TimeSpan.FromMilliseconds(250),
-                        EasingFunction = new QuadraticEase
-                        {
-                            EasingMode = EasingMode.EaseOut
-                        }
+                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
                     };
 
                     fadeOut.Completed += (_, __) =>
@@ -138,17 +138,17 @@ namespace Skymu.Views
             }
 
             Sounds.Play("message-recieved");
-
         }
 
-        private Notification()
-        {
-        }
+        private Notification() { }
 
         private void AddMessage(Message message, MessageRecievedEventArgs e)
         {
-            Conversation conversation = Universal.Plugin.RecentsList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
-                ?? Universal.Plugin.ContactsList?.FirstOrDefault(c => c.Identifier == e.ConversationId);
+            Conversation conversation =
+                Universal.Plugin.RecentsList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
+                ?? Universal.Plugin.ContactsList?.FirstOrDefault(c =>
+                    c.Identifier == e.ConversationId
+                );
 
             bool isGroupChat = conversation is Group;
 
@@ -157,7 +157,11 @@ namespace Skymu.Views
             {
                 foreach (var attachment in message.Attachments)
                 {
-                    if (attachment != null && attachment.Type == AttachmentType.Image && (attachment.File != null || !string.IsNullOrWhiteSpace(attachment.Url)))
+                    if (
+                        attachment != null
+                        && attachment.Type == AttachmentType.Image
+                        && (attachment.File != null || !string.IsNullOrWhiteSpace(attachment.Url))
+                    )
                     {
                         hasImage = true;
                         break;
@@ -169,22 +173,31 @@ namespace Skymu.Views
 
             Grid messageGrid = new Grid();
             messageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            messageGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            messageGrid.ColumnDefinitions.Add(
+                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+            );
             messageGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             messageGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = new BitmapImage(new Uri("pack://application:,,,/Skyaeris/Assets/Universal/Icon Bitmap/skype-status.png", UriKind.Absolute)),
+                Source = new BitmapImage(
+                    new Uri(
+                        "pack://application:,,,/Skyaeris/Assets/Universal/Icon Bitmap/skype-status.png",
+                        UriKind.Absolute
+                    )
+                ),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
-                DefaultIndex = isGroupChat ? 21 : Main.GetIntFromStatus(message.Sender.PresenceStatus),
+                DefaultIndex = isGroupChat
+                    ? 21
+                    : Main.GetIntFromStatus(message.Sender.PresenceStatus),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 0, 4, 0),
                 HoverIndex = -1,
                 PressedIndex = -1,
                 SliceMode = 0,
-                Width = 16
+                Width = 16,
             };
             Grid.SetRow(statusIcon, 0);
             Grid.SetColumn(statusIcon, 0);
@@ -194,7 +207,7 @@ namespace Skymu.Views
             {
                 FontWeight = FontWeights.Normal,
                 Foreground = Brushes.Black,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
             if (isGroupChat)
@@ -216,13 +229,22 @@ namespace Skymu.Views
                 if (hasImage)
                 {
                     if (hasMessage)
-                        messageText = MessageTools.FormTextblock(message.Sender.DisplayName + $" {SHARED_PHOTO}: \"" + message.Text + "\"");
+                        messageText = MessageTools.FormTextblock(
+                            message.Sender.DisplayName
+                                + $" {SHARED_PHOTO}: \""
+                                + message.Text
+                                + "\""
+                        );
                     else
-                        messageText = MessageTools.FormTextblock(message.Sender.DisplayName + $" {SHARED_PHOTO}");
+                        messageText = MessageTools.FormTextblock(
+                            message.Sender.DisplayName + $" {SHARED_PHOTO}"
+                        );
                 }
                 else if (hasMessage)
                 {
-                    messageText = MessageTools.FormTextblock(message.Sender.DisplayName + ": \"" + message.Text + "\"");
+                    messageText = MessageTools.FormTextblock(
+                        message.Sender.DisplayName + ": \"" + message.Text + "\""
+                    );
                 }
                 else
                 {
@@ -234,7 +256,9 @@ namespace Skymu.Views
                 if (hasImage)
                 {
                     if (hasMessage)
-                        messageText = MessageTools.FormTextblock($"{SHARED_PHOTO}: \"" + message.Text + "\"");
+                        messageText = MessageTools.FormTextblock(
+                            $"{SHARED_PHOTO}: \"" + message.Text + "\""
+                        );
                     else
                         messageText = MessageTools.FormTextblock($"{SHARED_PHOTO}");
                 }
@@ -288,7 +312,10 @@ namespace Skymu.Views
             Close();
         }
 
-        private void Window_MouseRightButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Window_MouseRightButtonDown(
+            object sender,
+            System.Windows.Input.MouseButtonEventArgs e
+        )
         {
             Close();
         }

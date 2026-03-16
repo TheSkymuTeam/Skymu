@@ -1,28 +1,64 @@
-﻿<Page x:Class="Skymu.Views.Pages.Updater"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Skymu.Views.Pages"
-      Title="Updater"
-      FontFamily="Tahoma" FontSize="11"
-      Style="{StaticResource Page}">
+﻿<Page
+    x:Class="Skymu.Views.Pages.Updater"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Skymu.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Updater"
+    FontFamily="Tahoma"
+    FontSize="11"
+    Style="{StaticResource Page}">
 
-   
-        <StackPanel Orientation="Vertical" VerticalAlignment="Top" Height="210">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="210">
-                <TextBlock VerticalAlignment="Stretch" TextWrapping="Wrap" Name="Description" Text="There's a new version of Skype available. Update now to get the latest features and improvements." LineHeight="16" />
-            </ScrollViewer>
-            <Grid Name="ProgressGrid" HorizontalAlignment="Left" Visibility="Collapsed" Width="370" Margin="0,30,0,0">
+
+    <StackPanel
+        Height="210"
+        VerticalAlignment="Top"
+        Orientation="Vertical">
+        <ScrollViewer
+            MaxHeight="210"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <TextBlock
+                Name="Description"
+                VerticalAlignment="Stretch"
+                LineHeight="16"
+                Text="There's a new version of Skype available. Update now to get the latest features and improvements."
+                TextWrapping="Wrap" />
+        </ScrollViewer>
+        <Grid
+            Name="ProgressGrid"
+            Width="370"
+            Margin="0,30,0,0"
+            HorizontalAlignment="Left"
+            Visibility="Collapsed">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Name="UpdateStatusText" Grid.Row="0" Text="Update progress goes here" FontFamily="Tahoma" FontSize="11"/>
-            <ProgressBar x:Name="ProgBar" Margin="0,10,0,0" Grid.Row="1" Height="15" HorizontalAlignment="Stretch"/>
-            <TextBlock Name="FileSize" Grid.Row="2" Text="File size 3233.5 KB" Visibility="Collapsed" HorizontalAlignment="Right" FontFamily="Tahoma" FontSize="11" Margin="0,4,0,0"/>
-            </Grid>
-        </StackPanel>
-   
+            <TextBlock
+                Name="UpdateStatusText"
+                Grid.Row="0"
+                FontFamily="Tahoma"
+                FontSize="11"
+                Text="Update progress goes here" />
+            <ProgressBar
+                x:Name="ProgBar"
+                Grid.Row="1"
+                Height="15"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Stretch" />
+            <TextBlock
+                Name="FileSize"
+                Grid.Row="2"
+                Margin="0,4,0,0"
+                HorizontalAlignment="Right"
+                FontFamily="Tahoma"
+                FontSize="11"
+                Text="File size 3233.5 KB"
+                Visibility="Collapsed" />
+        </Grid>
+    </StackPanel>
+
 </Page>

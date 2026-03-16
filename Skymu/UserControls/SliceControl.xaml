@@ -1,35 +1,101 @@
-﻿<UserControl x:Class="Skymu.SliceControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor" Background="Transparent">
+﻿<UserControl
+    x:Class="Skymu.SliceControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Name="Root"
+    Background="Transparent"
+    RenderOptions.BitmapScalingMode="NearestNeighbor"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Rectangle x:Name="TopLeftSlice"  Grid.Row="0" Grid.Column="0" Visibility="Collapsed"/>
-        <Rectangle x:Name="TopMidSlice"   Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-        <Rectangle x:Name="TopRightSlice" Grid.Row="0" Grid.Column="2" Visibility="Collapsed"/>
+        <Rectangle
+            x:Name="TopLeftSlice"
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="Collapsed" />
+        <Rectangle
+            x:Name="TopMidSlice"
+            Grid.Row="0"
+            Grid.Column="1"
+            Visibility="Collapsed" />
+        <Rectangle
+            x:Name="TopRightSlice"
+            Grid.Row="0"
+            Grid.Column="2"
+            Visibility="Collapsed" />
 
-        <Rectangle x:Name="LeftSlice"   Grid.Row="1" Grid.Column="0" Width="20"/>
-        <Rectangle x:Name="MiddleSlice" Grid.Row="1" Grid.Column="1"/>
-        <Rectangle x:Name="RightSlice"  Grid.Row="1" Grid.Column="2" Width="20"/>
+        <Rectangle
+            x:Name="LeftSlice"
+            Grid.Row="1"
+            Grid.Column="0"
+            Width="20" />
+        <Rectangle
+            x:Name="MiddleSlice"
+            Grid.Row="1"
+            Grid.Column="1" />
+        <Rectangle
+            x:Name="RightSlice"
+            Grid.Row="1"
+            Grid.Column="2"
+            Width="20" />
 
-        <!-- overlay -->
-        <Rectangle x:Name="OverlayLeft"   Grid.Row="1" Grid.Column="0" Opacity="0" IsHitTestVisible="False"/>
-        <Rectangle x:Name="OverlayMiddle" Grid.Row="1" Grid.Column="1" Opacity="0" IsHitTestVisible="False"/>
-        <Rectangle x:Name="OverlayRight"  Grid.Row="1" Grid.Column="2" Opacity="0" IsHitTestVisible="False"/>
+        <!--  overlay  -->
+        <Rectangle
+            x:Name="OverlayLeft"
+            Grid.Row="1"
+            Grid.Column="0"
+            IsHitTestVisible="False"
+            Opacity="0" />
+        <Rectangle
+            x:Name="OverlayMiddle"
+            Grid.Row="1"
+            Grid.Column="1"
+            IsHitTestVisible="False"
+            Opacity="0" />
+        <Rectangle
+            x:Name="OverlayRight"
+            Grid.Row="1"
+            Grid.Column="2"
+            IsHitTestVisible="False"
+            Opacity="0" />
 
-        <Rectangle x:Name="BotLeftSlice"  Grid.Row="2" Grid.Column="0" Visibility="Collapsed"/>
-        <Rectangle x:Name="BotMidSlice"   Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
-        <Rectangle x:Name="BotRightSlice" Grid.Row="2" Grid.Column="2" Visibility="Collapsed"/>
+        <Rectangle
+            x:Name="BotLeftSlice"
+            Grid.Row="2"
+            Grid.Column="0"
+            Visibility="Collapsed" />
+        <Rectangle
+            x:Name="BotMidSlice"
+            Grid.Row="2"
+            Grid.Column="1"
+            Visibility="Collapsed" />
+        <Rectangle
+            x:Name="BotRightSlice"
+            Grid.Row="2"
+            Grid.Column="2"
+            Visibility="Collapsed" />
 
-        <TextBlock x:Name="OverlayText" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="3"
-                   VerticalAlignment="Center" HorizontalAlignment="Left"
-                   TextTrimming="CharacterEllipsis" IsHitTestVisible="False" Panel.ZIndex="10"/>
+        <TextBlock
+            x:Name="OverlayText"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Panel.ZIndex="10"
+            IsHitTestVisible="False"
+            TextTrimming="CharacterEllipsis" />
     </Grid>
 </UserControl>

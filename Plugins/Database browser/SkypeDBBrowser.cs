@@ -9,14 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
-using System.IO;
-
+using MiddleMan;
 
 namespace SkypeDBBrowser
 {
@@ -25,7 +24,7 @@ namespace SkypeDBBrowser
         private string _databasePath;
         private User _currentUser;
 
-        // configurable message limit 
+        // configurable message limit
         private static readonly byte[] JpegMagic = new byte[] { 0xFF, 0xD8, 0xFF };
         private static readonly byte[] PngMagic = new byte[] { 0x89, 0x50, 0x4E, 0x47 }; // \x89PNG
 
@@ -36,57 +35,79 @@ namespace SkypeDBBrowser
         public string Name => "Skype DB Browser";
         public string InternalName => "db-browser";
 
-        public bool SupportsServers { get { return false; } }
+        public bool SupportsServers
+        {
+            get { return false; }
+        }
         public AuthTypeInfo[] AuthenticationTypes
         {
             get
             {
-                return new[] { new AuthTypeInfo(AuthenticationMethod.Token, "Database path (e.g., C:\\Skype\\main.db)") };
+                return new[]
+                {
+                    new AuthTypeInfo(
+                        AuthenticationMethod.Token,
+                        "Database path (e.g., C:\\Skype\\main.db)"
+                    ),
+                };
             }
         }
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+            new ObservableCollection<DirectMessage>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+            new ObservableCollection<Conversation>();
 
         public ObservableCollection<Server> ServerList { get; private set; }
+
         public Task<bool> PopulateServerList()
         {
             return Task.FromResult(false);
         }
 
-        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
+        public ObservableCollection<User> TypingUsersList { get; private set; } =
+            new ObservableCollection<User>();
         public ClickableConfiguration[] ClickableConfigurations => new ClickableConfiguration[0];
 
-        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        public async Task<LoginResult> Authenticate(
+            AuthenticationMethod authType,
+            string username,
+            string password = null
+        )
         {
-            
-                if (authType != AuthenticationMethod.Token)
-                    return LoginResult.UnsupportedAuthType;
+            if (authType != AuthenticationMethod.Token)
+                return LoginResult.UnsupportedAuthType;
 
-                if (string.IsNullOrWhiteSpace(username))
-                {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Database path cannot be empty."));
-                    return LoginResult.Failure;
-                }
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs("Database path cannot be empty."));
+                return LoginResult.Failure;
+            }
 
-                if (!File.Exists(username))
-                {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Database file not found: {username}"));
-                    return LoginResult.Failure;
-                }
+            if (!File.Exists(username))
+            {
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Database file not found: {username}")
+                );
+                return LoginResult.Failure;
+            }
 
-                _databasePath = username;
+            _databasePath = username;
 
-                // test database connection and get current user
-                using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
-                {
-                    await connection.OpenAsync();
+            // test database connection and get current user
+            using (
+                var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly")
+            )
+            {
+                await connection.OpenAsync();
 
                 // try to get the current user's Skype Name from Accounts table
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "SELECT skypename, displayname, avatar_image FROM Accounts LIMIT 1";
+                    command.CommandText =
+                        "SELECT skypename, displayname, avatar_image FROM Accounts LIMIT 1";
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -94,14 +115,20 @@ namespace SkypeDBBrowser
                             string identifier = reader.IsDBNull(0) ? null : reader.GetString(0);
                             string displayName = reader.IsDBNull(1) ? null : reader.GetString(1);
                             byte[] avatar = reader.IsDBNull(2) ? null : (byte[])reader.GetValue(2);
-                            _currentUser = new User(displayName, identifier, identifier, null, UserConnectionStatus.Offline, avatar);
+                            _currentUser = new User(
+                                displayName,
+                                identifier,
+                                identifier,
+                                null,
+                                UserConnectionStatus.Offline,
+                                avatar
+                            );
                         }
                     }
                 }
             }
 
-                return LoginResult.Success;
-            
+            return LoginResult.Success;
         }
 
         public Task<string> GetQRCode()
@@ -114,23 +141,44 @@ namespace SkypeDBBrowser
             return Task.FromResult(LoginResult.Success);
         }
 
-        public Task<bool> SetPresenceStatus(UserConnectionStatus status) { return Task.FromResult(false); }
-        public Task<bool> SetTextStatus(string status) { return Task.FromResult(false); }
+        public Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        {
+            return Task.FromResult(false);
+        }
 
-        public Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent) // nice try
+        public Task<bool> SetTextStatus(string status)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> SendMessage(
+            string identifier,
+            string text,
+            Attachment attachment,
+            string parent
+        ) // nice try
         {
             OnWarning?.Invoke(this, new PluginMessageEventArgs("Databases are read-only."));
             return Task.FromResult(false);
         }
 
-        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public async Task<ConversationItem[]> FetchMessages(
+            Conversation conversation,
+            Fetch fetch_type,
+            int message_count,
+            string identifier
+        )
         {
             try
             {
                 TypingUsersList.Clear();
                 List<ConversationItem> messageList = new List<ConversationItem>();
 
-                using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
+                using (
+                    var connection = new SqliteConnection(
+                        $"Data Source={_databasePath};Mode=ReadOnly"
+                    )
+                )
                 {
                     await connection.OpenAsync();
 
@@ -140,7 +188,8 @@ namespace SkypeDBBrowser
 
                         if (fetch_type == Fetch.Newest)
                         {
-                            fetchQuery = @"
+                            fetchQuery =
+                                @"
         SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
         FROM (
             SELECT * FROM Messages
@@ -152,7 +201,8 @@ namespace SkypeDBBrowser
                         }
                         else if (fetch_type == Fetch.Oldest)
                         {
-                            fetchQuery = @"
+                            fetchQuery =
+                                @"
         SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
         FROM Messages
         WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
@@ -161,7 +211,8 @@ namespace SkypeDBBrowser
                         }
                         else if (fetch_type == Fetch.BeforeIdentifier)
                         {
-                            fetchQuery = @"
+                            fetchQuery =
+                                @"
         SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
         FROM (
             SELECT * FROM Messages
@@ -174,7 +225,8 @@ namespace SkypeDBBrowser
                         }
                         else if (fetch_type == Fetch.AfterIdentifier)
                         {
-                            fetchQuery = @"
+                            fetchQuery =
+                                @"
         SELECT id, author, from_dispname, body_xml, timestamp, type, chatmsg_type
         FROM Messages
         WHERE convo_id = (SELECT id FROM Conversations WHERE identity = @convoIdentifier OR displayname = @convoIdentifier)
@@ -188,7 +240,10 @@ namespace SkypeDBBrowser
                         }
 
                         command.CommandText = fetchQuery;
-                        command.Parameters.AddWithValue("@convoIdentifier", conversation.Identifier);
+                        command.Parameters.AddWithValue(
+                            "@convoIdentifier",
+                            conversation.Identifier
+                        );
                         command.Parameters.AddWithValue("@message_count", message_count);
 
                         command.Parameters.AddWithValue("@identifier", identifier ?? string.Empty);
@@ -203,12 +258,18 @@ namespace SkypeDBBrowser
                                 if (messageType == 61 || chatMsgType == 1)
                                 {
                                     var messageId = reader.GetInt64(0).ToString();
-                                    var author = reader.IsDBNull(1) ? "Unknown" : reader.GetString(1);
-                                    var displayName = reader.IsDBNull(2) ? author : reader.GetString(2);
+                                    var author = reader.IsDBNull(1)
+                                        ? "Unknown"
+                                        : reader.GetString(1);
+                                    var displayName = reader.IsDBNull(2)
+                                        ? author
+                                        : reader.GetString(2);
                                     var body = reader.IsDBNull(3) ? "" : reader.GetString(3);
                                     var timestamp = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
 
-                                    var dateTime = DateTimeOffset.FromUnixTimeSeconds(timestamp).LocalDateTime;
+                                    var dateTime = DateTimeOffset
+                                        .FromUnixTimeSeconds(timestamp)
+                                        .LocalDateTime;
 
                                     body = CleanSkypeMessageBody(body);
 
@@ -230,7 +291,10 @@ namespace SkypeDBBrowser
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}")
+                );
                 return new ConversationItem[0];
             }
         }
@@ -247,14 +311,19 @@ namespace SkypeDBBrowser
             {
                 ContactsList.Clear();
 
-                using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
+                using (
+                    var connection = new SqliteConnection(
+                        $"Data Source={_databasePath};Mode=ReadOnly"
+                    )
+                )
                 {
                     await connection.OpenAsync();
 
                     using (var command = connection.CreateCommand())
                     {
                         // query contacts from Contacts table, including avatar_image
-                        command.CommandText = @"
+                        command.CommandText =
+                            @"
                             SELECT 
                                 skypename,
                                 displayname,
@@ -273,22 +342,34 @@ namespace SkypeDBBrowser
                         {
                             while (await reader.ReadAsync())
                             {
-                                var skypename = reader.IsDBNull(0) ? "unknown" : reader.GetString(0);
-                                var displayName = reader.IsDBNull(1) ? skypename : reader.GetString(1);
+                                var skypename = reader.IsDBNull(0)
+                                    ? "unknown"
+                                    : reader.GetString(0);
+                                var displayName = reader.IsDBNull(1)
+                                    ? skypename
+                                    : reader.GetString(1);
                                 var mood = reader.IsDBNull(2) ? "" : reader.GetString(2);
                                 var availability = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
-                                var avatarBytes = reader.IsDBNull(4) ? null : ExtractImageFromAvatarBlob((byte[])reader.GetValue(4));
+                                var avatarBytes = reader.IsDBNull(4)
+                                    ? null
+                                    : ExtractImageFromAvatarBlob((byte[])reader.GetValue(4));
 
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
-                                ContactsList.Add(new DirectMessage(new User(
-                                    displayName,
-                                    skypename,
-                                    skypename,
-                                    mood,
-                                    status,
-                                    avatarBytes
-                                ), 0, skypename));
+                                ContactsList.Add(
+                                    new DirectMessage(
+                                        new User(
+                                            displayName,
+                                            skypename,
+                                            skypename,
+                                            mood,
+                                            status,
+                                            avatarBytes
+                                        ),
+                                        0,
+                                        skypename
+                                    )
+                                );
                             }
                         }
                     }
@@ -298,7 +379,10 @@ namespace SkypeDBBrowser
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load contacts: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to load contacts: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -311,15 +395,23 @@ namespace SkypeDBBrowser
 
                 // build a lookup of contact data (avatar + mood) keyed by skypename so we
                 // can enrich individual conversations that belong to a known contact
-                var contactInfo = new System.Collections.Generic.Dictionary<string, (string Mood, byte[] Avatar, UserConnectionStatus Status)>(StringComparer.OrdinalIgnoreCase);
+                var contactInfo = new System.Collections.Generic.Dictionary<
+                    string,
+                    (string Mood, byte[] Avatar, UserConnectionStatus Status)
+                >(StringComparer.OrdinalIgnoreCase);
 
-                using (var connection = new SqliteConnection($"Data Source={_databasePath};Mode=ReadOnly"))
+                using (
+                    var connection = new SqliteConnection(
+                        $"Data Source={_databasePath};Mode=ReadOnly"
+                    )
+                )
                 {
                     await connection.OpenAsync();
 
                     using (var contactCmd = connection.CreateCommand())
                     {
-                        contactCmd.CommandText = @"
+                        contactCmd.CommandText =
+                            @"
                             SELECT 
                                 skypename,
                                 mood_text,
@@ -333,11 +425,14 @@ namespace SkypeDBBrowser
                             while (await reader.ReadAsync())
                             {
                                 var skypename = reader.IsDBNull(0) ? null : reader.GetString(0);
-                                if (string.IsNullOrEmpty(skypename)) continue;
+                                if (string.IsNullOrEmpty(skypename))
+                                    continue;
 
                                 var mood = reader.IsDBNull(1) ? "" : reader.GetString(1);
                                 var availability = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
-                                var avatarBytes = reader.IsDBNull(3) ? null : ExtractImageFromAvatarBlob((byte[])reader.GetValue(3));
+                                var avatarBytes = reader.IsDBNull(3)
+                                    ? null
+                                    : ExtractImageFromAvatarBlob((byte[])reader.GetValue(3));
                                 var status = ConvertSkypeAvailabilityToStatus(availability);
 
                                 contactInfo[skypename] = (mood, avatarBytes, status);
@@ -348,7 +443,8 @@ namespace SkypeDBBrowser
                     using (var command = connection.CreateCommand())
                     {
                         // get recent conversations
-                        command.CommandText = @"
+                        command.CommandText =
+                            @"
                             SELECT 
                                 c.identity,
                                 c.displayname,
@@ -367,43 +463,65 @@ namespace SkypeDBBrowser
                             while (await reader.ReadAsync())
                             {
                                 var identity = reader.IsDBNull(0) ? "unknown" : reader.GetString(0);
-                                var displayName = reader.IsDBNull(1) ? identity : reader.GetString(1);
+                                var displayName = reader.IsDBNull(1)
+                                    ? identity
+                                    : reader.GetString(1);
                                 var type = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                                 var dialogPartner = reader.IsDBNull(3) ? null : reader.GetString(3);
-                                var lastMessageTimestamp = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
+                                var lastMessageTimestamp = reader.IsDBNull(4)
+                                    ? 0
+                                    : reader.GetInt64(4);
 
-                                DateTime lastMessageTime = lastMessageTimestamp > 0
-                                    ? DateTimeOffset.FromUnixTimeSeconds(lastMessageTimestamp).LocalDateTime
-                                    : DateTime.Now;
+                                DateTime lastMessageTime =
+                                    lastMessageTimestamp > 0
+                                        ? DateTimeOffset
+                                            .FromUnixTimeSeconds(lastMessageTimestamp)
+                                            .LocalDateTime
+                                        : DateTime.Now;
 
                                 // type 1 = one-on-one, 2 = group chat, 4 = ???
                                 if (type == 2)
                                 {
                                     // group conversation,  look up participants and hydrate member data
-                                    var members = await GetGroupMembersAsync(connection, identity, contactInfo);
-
-                                    RecentsList.Add(new Group(
-                                        displayName,
+                                    var members = await GetGroupMembersAsync(
+                                        connection,
                                         identity,
-                                        0,
-                                        members,
-                                        null,
-                                        lastMessageTime
-                                    ));
+                                        contactInfo
+                                    );
+
+                                    RecentsList.Add(
+                                        new Group(
+                                            displayName,
+                                            identity,
+                                            0,
+                                            members,
+                                            null,
+                                            lastMessageTime
+                                        )
+                                    );
                                 }
                                 else
                                 {
                                     // individual conversation — enrich with contact data if available
                                     string identifier = dialogPartner ?? identity;
                                     contactInfo.TryGetValue(identifier, out var info);
-                                    RecentsList.Add(new DirectMessage(new User(
-                                        displayName,
-                                        identifier,
-                                        identifier,
-                                        info.Mood,
-                                        info.Status == default ? UserConnectionStatus.Offline : info.Status,
-                                        info.Avatar
-                                    ), 0, identity, lastMessageTime));
+                                    RecentsList.Add(
+                                        new DirectMessage(
+                                            new User(
+                                                displayName,
+                                                identifier,
+                                                identifier,
+                                                info.Mood,
+                                                info.Status == default
+                                                    ? UserConnectionStatus.Offline
+                                                    : info.Status,
+                                                info.Avatar
+                                            ),
+                                            0,
+                                            identity,
+                                            lastMessageTime
+                                        )
+                                    );
                                 }
                             }
                         }
@@ -414,7 +532,10 @@ namespace SkypeDBBrowser
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load recents: {ex.Message}"));
+                OnError?.Invoke(
+                    this,
+                    new PluginMessageEventArgs($"Failed to load recents: {ex.Message}")
+                );
                 return false;
             }
         }
@@ -422,7 +543,14 @@ namespace SkypeDBBrowser
         public Task<SavedCredential> StoreCredential()
         {
             // save the database path for auto-login
-            return Task.FromResult(new SavedCredential(_currentUser, _databasePath, AuthenticationMethod.Token, InternalName));
+            return Task.FromResult(
+                new SavedCredential(
+                    _currentUser,
+                    _databasePath,
+                    AuthenticationMethod.Token,
+                    InternalName
+                )
+            );
         }
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
@@ -446,14 +574,19 @@ namespace SkypeDBBrowser
         private async Task<User[]> GetGroupMembersAsync(
             SqliteConnection connection,
             string conversationIdentity,
-            System.Collections.Generic.Dictionary<string, (string Mood, byte[] Avatar, UserConnectionStatus Status)> contactInfo)
+            System.Collections.Generic.Dictionary<
+                string,
+                (string Mood, byte[] Avatar, UserConnectionStatus Status)
+            > contactInfo
+        )
         {
             var members = new System.Collections.Generic.List<User>();
 
             using (var cmd = connection.CreateCommand())
             {
                 // Participants links to Conversations by convo_id; identity holds the skypename
-                cmd.CommandText = @"
+                cmd.CommandText =
+                    @"
                     SELECT 
                         p.identity,
                         COALESCE(ct.displayname, p.identity) AS displayname
@@ -471,21 +604,24 @@ namespace SkypeDBBrowser
                     while (await reader.ReadAsync())
                     {
                         var skypename = reader.IsDBNull(0) ? null : reader.GetString(0);
-                        if (string.IsNullOrEmpty(skypename)) continue;
+                        if (string.IsNullOrEmpty(skypename))
+                            continue;
 
                         var displayName = reader.IsDBNull(1) ? skypename : reader.GetString(1);
 
                         // enrich with avatar + mood if we have this person in contacts
                         contactInfo.TryGetValue(skypename, out var info);
 
-                        members.Add(new User(
-                            displayName,
-                            skypename,
-                            skypename,
-                            info.Mood,
-                            info.Status == default ? UserConnectionStatus.Offline : info.Status,
-                            info.Avatar
-                        ));
+                        members.Add(
+                            new User(
+                                displayName,
+                                skypename,
+                                skypename,
+                                info.Mood,
+                                info.Status == default ? UserConnectionStatus.Offline : info.Status,
+                                info.Avatar
+                            )
+                        );
                     }
                 }
             }
@@ -507,10 +643,12 @@ namespace SkypeDBBrowser
             for (int i = 0; i <= blob.Length - 4; i++)
             {
                 // JPEG
-                if (i <= blob.Length - JpegMagic.Length &&
-                    blob[i] == JpegMagic[0] &&
-                    blob[i + 1] == JpegMagic[1] &&
-                    blob[i + 2] == JpegMagic[2])
+                if (
+                    i <= blob.Length - JpegMagic.Length
+                    && blob[i] == JpegMagic[0]
+                    && blob[i + 1] == JpegMagic[1]
+                    && blob[i + 2] == JpegMagic[2]
+                )
                 {
                     var img = new byte[blob.Length - i];
                     Array.Copy(blob, i, img, 0, img.Length);
@@ -518,11 +656,13 @@ namespace SkypeDBBrowser
                 }
 
                 // PNG
-                if (i <= blob.Length - PngMagic.Length &&
-                    blob[i] == PngMagic[0] &&
-                    blob[i + 1] == PngMagic[1] &&
-                    blob[i + 2] == PngMagic[2] &&
-                    blob[i + 3] == PngMagic[3])
+                if (
+                    i <= blob.Length - PngMagic.Length
+                    && blob[i] == PngMagic[0]
+                    && blob[i + 1] == PngMagic[1]
+                    && blob[i + 2] == PngMagic[2]
+                    && blob[i + 3] == PngMagic[3]
+                )
                 {
                     var img = new byte[blob.Length - i];
                     Array.Copy(blob, i, img, 0, img.Length);
@@ -540,13 +680,18 @@ namespace SkypeDBBrowser
 
             body = System.Net.WebUtility.HtmlDecode(body);
 
-            var ssPattern = new System.Text.RegularExpressions.Regex(@"<ss type=""([^""]+)"">([^<]*)</ss>");
-            body = ssPattern.Replace(body, m =>
-            {
-                var emoticonName = m.Groups[1].Value;
-                var emoticonText = m.Groups[2].Value;
-                return string.IsNullOrEmpty(emoticonText) ? $"({emoticonName})" : emoticonText;
-            });
+            var ssPattern = new System.Text.RegularExpressions.Regex(
+                @"<ss type=""([^""]+)"">([^<]*)</ss>"
+            );
+            body = ssPattern.Replace(
+                body,
+                m =>
+                {
+                    var emoticonName = m.Groups[1].Value;
+                    var emoticonText = m.Groups[2].Value;
+                    return string.IsNullOrEmpty(emoticonText) ? $"({emoticonName})" : emoticonText;
+                }
+            );
 
             // remove quote tags
             body = body.Replace("<quote>", "");

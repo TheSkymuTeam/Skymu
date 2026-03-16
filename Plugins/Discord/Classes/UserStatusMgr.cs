@@ -9,13 +9,8 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Text.Json.Nodes;
-using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord.Classes
 {
@@ -37,7 +32,7 @@ namespace Discord.Classes
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
                 ApplyPresence(presence);
 
-            // PRESENCE_UPDATE 
+            // PRESENCE_UPDATE
             if (messageData["user"] is JsonObject)
                 ApplyPresence(messageData);
         }
@@ -45,7 +40,8 @@ namespace Discord.Classes
         private static void ApplyPresence(JsonNode presence)
         {
             string userId = presence["user"]?["id"]?.GetValue<string>();
-            if (userId == null) return;
+            if (userId == null)
+                return;
 
             string status = presence["status"]?.GetValue<string>() ?? "unknown";
             string customStatus = string.Empty;
@@ -56,15 +52,33 @@ namespace Discord.Classes
                 foreach (var activity in activities)
                 {
                     int type = activity["type"]?.GetValue<int>() ?? -1;
-                    if (type == 0) { customStatus = $"Playing {activity["name"]?.GetValue<string>()}"; break; }
-                    else if (type == 1) { customStatus = $"Streaming {activity["details"]?.GetValue<string>()}"; break; }
-                    else if (type == 2) { customStatus = $"Listening to {activity["name"]?.GetValue<string>()}"; break; }
-                    else if (type == 4) { customStatus = activity["state"]?.GetValue<string>() ?? string.Empty; break; }
+                    if (type == 0)
+                    {
+                        customStatus = $"Playing {activity["name"]?.GetValue<string>()}";
+                        break;
+                    }
+                    else if (type == 1)
+                    {
+                        customStatus = $"Streaming {activity["details"]?.GetValue<string>()}";
+                        break;
+                    }
+                    else if (type == 2)
+                    {
+                        customStatus = $"Listening to {activity["name"]?.GetValue<string>()}";
+                        break;
+                    }
+                    else if (type == 4)
+                    {
+                        customStatus = activity["state"]?.GetValue<string>() ?? string.Empty;
+                        break;
+                    }
                 }
             }
 
             UserStore.UpdatePresence(userId, status, customStatus);
-            Debug.WriteLine($"[Presence status updated] {UserStore.Get(userId)?.DisplayName ?? userId} → {status} | {customStatus}");
+            Debug.WriteLine(
+                $"[Presence status updated] {UserStore.Get(userId)?.DisplayName ?? userId} → {status} | {customStatus}"
+            );
         }
 
         public class StatusData

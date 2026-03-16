@@ -9,9 +9,9 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using System;
 
 namespace Skymu
 {
@@ -40,21 +40,6 @@ namespace Skymu
                 if (char.IsHighSurrogate(str[i]))
                     i++; // skip the low surrogate
             }
-        }
-
-        public static BitmapImage FreezeImage(string uri)
-        {
-            BitmapImage img = new BitmapImage();
-
-            img.BeginInit();
-            img.UriSource = new Uri(uri, UriKind.RelativeOrAbsolute);
-            img.CacheOption = BitmapCacheOption.OnLoad;
-            img.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            img.EndInit();
-
-            img.Freeze();
-
-            return img;
         }
     }
 }
