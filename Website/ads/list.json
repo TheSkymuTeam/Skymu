@@ -29,7 +29,7 @@
     "Name": "ChrisRLillo",
     "Creator": "ChrisRLillo",
 	"Format": "png",
-    "Dimensions": ["300x250", "640x420"],
+    "Dimensions": ["300x250", "640x420", "650x90"],
 	"Link": "https://www.chrisrlillo.com",
 "Enabled": true
 
@@ -40,7 +40,7 @@
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
 	"Link": "https://skymu.app",
-"Enabled": true
+"Enabled": false
 
   },
   {
@@ -95,7 +95,7 @@
 	"Format": "png",
     "Dimensions": ["640x420"],
 	"Link": "https://skymu.app/wiki",
-"Enabled": true
+"Enabled": false
 
   }
 ]
