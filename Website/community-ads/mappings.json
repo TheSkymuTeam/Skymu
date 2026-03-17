@@ -1,0 +1,65 @@
+[
+  {
+    "Name": "Aerochat",
+    "Creator": "Maschinenpistole5",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://web.archive.org/web/20251124155415id_/https://aerochat.live"
+  },
+  {
+    "Name": "Example",
+    "Creator": "Wineliko",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://example.com"
+  },
+  {
+    "Name": "Gallons",
+    "Creator": "HUBAXE-SYS",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://gallons.io"
+  },
+  {
+    "Name": "Skymu Flat",
+    "Creator": "Maschinenpistole5",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://skymu.app"
+  },
+  {
+    "Name": "Skymu Memphis",
+    "Creator": "cybxrhxzard",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://skymu.app"
+  },
+  {
+    "Name": "Skymu Skeuo",
+    "Creator": "lolguy",
+	"Format": "png",
+    "Dimensions": ["300x250", "650x90"],
+	"Link": "https://skymu.app"
+  },
+  {
+    "Name": "Classic7",
+    "Creator": "patricktbp",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://classic7.lol"
+  },
+  {
+    "Name": "UnderscoreAngel",
+    "Creator": "UnderscoreAngel",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420", "650x90"],
+	"Link": "https://underscoreangel.neocities.org"
+  },
+  {
+    "Name": "Skymu Wiki",
+    "Creator": "lolguy",
+	"Format": "png",
+    "Dimensions": ["640x420"],
+	"Link": "https://skymu.app/wiki"
+  }
+]

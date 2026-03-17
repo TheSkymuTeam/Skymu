@@ -26,7 +26,7 @@
         <Image
             Height="108"
             Margin="0,115,0,3"
-            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/skymu-about-logo.png'}" />
+            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-about.png'}" />
         <TextBlock
             Margin="0,1,9,0"
             HorizontalAlignment="Center"

@@ -863,14 +863,14 @@ namespace Discord
                 byte[] bytes = Convert.FromBase64String(base64);
                 return PreloadedUserSettings.Parser.ParseFrom(bytes);
             }
-            catch
+            catch (Exception ex)
             {
                 OnError?.Invoke(
                     this,
                     new PluginMessageEventArgs(
-                        "Failed to fetch Protobuf settings from Discord. Falling back to blank settings object."
+                        "Failed to fetch Protobuf settings from Discord. Falling back to blank settings object. Here is the error.\n\n" + ex.ToString()
                     )
-                );
+                ); 
                 return new PreloadedUserSettings();
             } // just in case
         }
