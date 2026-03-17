@@ -4818,7 +4818,7 @@ SH.Promotions = function() {
 
     var buildImageUrl = function(dimension, ad) {
         var slug = ad.Name.toLowerCase().replace(/\s+/g, "-");
-        return "https://skymu.app/community-ads/" + dimension + "/" + slug + "." + ad.Format;
+        return "https://skymu.app/ads/" + dimension + "/" + slug + "." + ad.Format;
     };
 
     var showAd = function(ad, dimension) {
@@ -4920,7 +4920,7 @@ imgWrapper.border = "0";
             }
         }
 
-        xhr.open("GET", "https://skymu.app/community-ads/mappings.json?" + new Date().getTime(), true);
+        xhr.open("GET", "https://skymu.app/ads/list.json?" + new Date().getTime(), true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -4928,7 +4928,7 @@ imgWrapper.border = "0";
                     try {
                         data = $.parseJSON(xhr.responseText);
                     } catch(e) {
-                        printDebug("Failed to parse mappings.json: " + e);
+                        printDebug("Failed to parse list.json: " + e);
                         adShown = false;
                         return;
                     }

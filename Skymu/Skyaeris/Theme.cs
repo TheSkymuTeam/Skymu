@@ -45,14 +45,16 @@ namespace Skymu.Skyaeris
                 EndPoint = new Point(0, 1),
                 GradientStops = new GradientStopCollection
                 {
-                    new GradientStop((Color)ColorConverter.ConvertFromString("#c5defe"), 0.0),
-                    new GradientStop((Color)ColorConverter.ConvertFromString("#8cbeff"), 0.12),
+                    new GradientStop((Color)ColorConverter.ConvertFromString("#c5deff"), 0.0),
                     new GradientStop((Color)ColorConverter.ConvertFromString("#8cbeff"), 1.0),
                 },
             };
 
-            public static SolidColorBrush Fill = new SolidColorBrush(
-                (Color)ColorConverter.ConvertFromString("#8cbeff")
+            public static SolidColorBrush MenuBar = new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString("#c6dfff")
+            );
+            public static SolidColorBrush Standard = new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString("#c6dfff")
             );
         }
 
