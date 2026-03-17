@@ -6,6 +6,7 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using MiddleMan;
 
 namespace Skymu

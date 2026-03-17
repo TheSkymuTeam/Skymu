@@ -5,4 +5,5 @@
 * [Creators and maintainers](?page=credits)
 * [Project history](?page=history)
 * [Features and capabilities](?page=features)
+* [Source code documentation using DeepWiki](https://deepwiki.com/TheSkymuTeam/Skymu)
 

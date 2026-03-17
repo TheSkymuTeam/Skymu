@@ -822,7 +822,7 @@
                 Height="20"
                 Margin="0"
                 Padding="0"
-                Background="Transparent"
+                Background="#c5defe"
                 FontFamily="Tahoma"
                 FontSize="11">
                 <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">

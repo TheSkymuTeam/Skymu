@@ -4,62 +4,98 @@
     "Creator": "Maschinenpistole5",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://web.archive.org/web/20251124155415id_/https://aerochat.live"
+	"Link": "https://web.archive.org/web/20251124155415id_/https://aerochat.live",
+"Enabled": true
   },
   {
     "Name": "Example",
     "Creator": "Wineliko",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://example.com"
+	"Link": "https://example.com",
+"Enabled": true
+
   },
   {
     "Name": "Gallons",
     "Creator": "HUBAXE-SYS",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://gallons.io"
+	"Link": "https://gallons.io",
+"Enabled": true
+
+  },
+  {
+    "Name": "ChrisRLillo",
+    "Creator": "ChrisRLillo",
+	"Format": "png",
+    "Dimensions": ["300x250", "640x420"],
+	"Link": "https://www.chrisrlillo.com",
+"Enabled": true
+
   },
   {
     "Name": "Skymu Flat",
     "Creator": "Maschinenpistole5",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://skymu.app"
+	"Link": "https://skymu.app",
+"Enabled": true
+
   },
   {
     "Name": "Skymu Memphis",
     "Creator": "cybxrhxzard",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://skymu.app"
+	"Link": "https://skymu.app",
+"Enabled": false
+
   },
+{
+    "Name": "Skymu vs Escargot",
+    "Creator": "lolguy",
+	"Format": "png",
+    "Dimensions": ["640x420"],
+	"Link": "https://wink.messengergeek.com/t/nina-escargot-from-the-inside/26336",
+"Enabled": false
+
+  },
+
   {
     "Name": "Skymu Skeuo",
     "Creator": "lolguy",
 	"Format": "png",
     "Dimensions": ["300x250", "650x90"],
-	"Link": "https://skymu.app"
+	"Link": "https://skymu.app",
+"Enabled": true
+
   },
   {
     "Name": "Classic7",
     "Creator": "patricktbp",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://classic7.lol"
+	"Link": "https://classic7.lol",
+"Enabled": true
+
   },
   {
     "Name": "UnderscoreAngel",
     "Creator": "UnderscoreAngel",
 	"Format": "png",
     "Dimensions": ["300x250", "640x420", "650x90"],
-	"Link": "https://underscoreangel.neocities.org"
+	"Link": "https://underscoreangel.neocities.org",
+"Enabled": true
+
   },
   {
     "Name": "Skymu Wiki",
     "Creator": "lolguy",
 	"Format": "png",
     "Dimensions": ["640x420"],
-	"Link": "https://skymu.app/wiki"
+	"Link": "https://skymu.app/wiki",
+"Enabled": true
+
   }
 ]
