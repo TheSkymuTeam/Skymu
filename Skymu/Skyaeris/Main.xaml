@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:Skymu.Skyaeris"
     xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
     xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"
     Height="856"
@@ -1631,13 +1632,17 @@
                                         <DataTemplate DataType="{x:Type plugin:DirectMessage}">
                                             <Grid>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="18" />
-                                                    <RowDefinition Height="14" />
-                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition x:Name="TopPaddingRow" Height="9" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition x:Name="MoodGapRow" Height="9" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition x:Name="TimeGapRow" Height="9" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="15" />
                                                 </Grid.RowDefinitions>
                                                 <Image
                                                     x:Name="CPAProfilePic"
-                                                    Grid.RowSpan="6"
+                                                    Grid.RowSpan="7"
                                                     Width="100"
                                                     Height="100"
                                                     Margin="5,5,5,5"
@@ -1662,11 +1667,47 @@
                                                 </Image>
                                                 <StackPanel
                                                     Grid.Row="1"
-                                                    Margin="125,0,0,0"
+                                                    Margin="121,0,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Orientation="Horizontal"
+                                                    Visibility="{Binding Partner.Status, Converter={StaticResource NullDependentVisibilityConverter}}">
+                                                    <Image
+                                                        Width="16"
+                                                        Height="16"
+                                                        Source="Assets/Universal/Chat/mood.png" />
+                                                    <TextBlock
+                                                        Margin="9,0,0,0"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Text="{Binding Partner.Status, TargetNullValue=''}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <StackPanel
+                                                    x:Name="TimeRow"
+                                                    Grid.Row="3"
+                                                    Margin="121,-1,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Orientation="Horizontal">
+                                                    <Image
+                                                        Width="16"
+                                                        Height="16"
+                                                        Source="Assets/Universal/Chat/clock.png" />
+                                                    <TextBlock
+                                                        Margin="9,0,0,0"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <StackPanel
+                                                    x:Name="StatusRow"
+                                                    Grid.Row="5"
+                                                    Margin="121,-1,0,0"
                                                     HorizontalAlignment="Left"
                                                     Orientation="Horizontal">
                                                     <global:SliceControl
                                                         Width="14"
+                                                        Height="14"
                                                         DefaultIndex="{Binding Partner.PresenceStatus, Converter={StaticResource PresenceStatusConverter}}"
                                                         ElementCount="22"
                                                         HoverIndex="-1"
@@ -1675,13 +1716,22 @@
                                                         Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
                                                         StackDirection="Horizontal" />
                                                     <TextBlock
-                                                        Margin="9,0,0,0"
+                                                        Margin="11,0,0,0"
                                                         FontFamily="Tahoma"
                                                         FontSize="11"
                                                         Text="{Binding Partner.PresenceStatus, Converter={StaticResource StatIntToText}}"
                                                         TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </Grid>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding Partner.Status, Converter={StaticResource NullDependentBoolean}}" Value="False">
+                                                    <Setter TargetName="TopPaddingRow" Property="RowDefinition.Height" Value="0" />
+                                                    <Setter TargetName="MoodGapRow" Property="RowDefinition.Height" Value="0" />
+                                                    <Setter TargetName="TimeGapRow" Property="RowDefinition.Height" Value="0" />
+                                                    <Setter TargetName="TimeRow" Property="Grid.Row" Value="1" />
+                                                    <Setter TargetName="StatusRow" Property="Grid.Row" Value="3" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
                                         </DataTemplate>
                                         <DataTemplate DataType="{x:Type plugin:Group}">
                                             <Grid>
