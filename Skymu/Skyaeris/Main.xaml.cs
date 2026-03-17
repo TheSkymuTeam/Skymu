@@ -1218,25 +1218,29 @@ namespace Skymu.Skyaeris
             var animTask = Task.Run(
                 async () =>
                 {
+                    int frameCount = 5;
                     int index = 0;
+
                     while (!token.IsCancellationRequested)
                     {
                         string icon_filename = FILENAME_PREFIX + (index + 1);
+
                         string icon_uri =
                             "pack://application:,,,/"
                             + Universal.SkypeEra
                             + "/Assets/"
                             + Properties.Settings.Default.ThemeRoot
                             + "/Chat/"
-                            + icon_filename;
+                            + icon_filename + ".png";
 
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             WifiButton.Source = FrozenImage.Generate(icon_uri);
                         });
 
-                        index++;
-                        await Task.Delay(100); // 100ms per frame
+                        index = (index + 1) % frameCount;
+
+                        await Task.Delay(100);
                     }
                 },
                 token
@@ -1288,7 +1292,7 @@ namespace Skymu.Skyaeris
                 + "/Assets/"
                 + Properties.Settings.Default.ThemeRoot
                 + "/Chat/"
-                + final_icon;
+                + final_icon + ".png";
             WifiButton.Source = FrozenImage.Generate(final_uri);
         }
 
