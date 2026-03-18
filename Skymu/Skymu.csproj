@@ -100,18 +100,22 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 
-		<!-- Skype Home as Content -->
-		<None Remove="skypehome\**\*" />
-		<Page Remove="skypehome\**\*" />
-		<EmbeddedResource Remove="skypehome\**\*" />
-		<Compile Remove="skypehome\**\*" />
-		<Content Include="skypehome\**\*">
+		<!-- Skymu Home as Content -->
+		<None Remove="Home\**\*" />
+		<Page Remove="Home\**\*" />
+		<EmbeddedResource Remove="Home\**\*" />
+		<Compile Remove="Home\**\*" />
+		<Content Include="Home\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <None Remove="english.lang" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Remove="Themes\default.xaml" />
 	</ItemGroup>
 
 	<!-- Packages -->
@@ -183,6 +187,13 @@
 
 	<ItemGroup>
 	  <Folder Include="Pontis\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Themes\default.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 
