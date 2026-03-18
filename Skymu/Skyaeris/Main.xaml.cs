@@ -80,6 +80,9 @@ namespace Skymu.Skyaeris
         );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
+		
+		private CancellationTokenSource _tbliHoldTokenSource;
+		private readonly Random _random = new Random(); // what is this bro
 
         private enum WindowType
         {
@@ -781,16 +784,37 @@ namespace Skymu.Skyaeris
             HandleWindowDeactivated();
         }
 
-        private void tbli_Click(object sender, MouseEventArgs e)
-        {
-            Process.Start(
-                new ProcessStartInfo
-                {
-                    FileName = "https://www.youtube.com/watch?v=kVsH_ySm5_E",
-                    UseShellExecute = true,
-                }
-            );
-        }
+		private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+		{
+			_tbliHoldTokenSource = new CancellationTokenSource();
+			
+			try
+			{
+				await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
+		
+				string url;
+				if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+					url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+				else
+					url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+				
+				Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+			}
+			catch (TaskCanceledException)
+			{
+				// ass
+			}
+		}
+		
+		// Method triggered if the user lets go of the click OR moves their mouse away
+		private void tbli_CancelHold(object sender, MouseEventArgs e)
+		{
+			// If a timer is currently running, cancel it
+			if (_tbliHoldTokenSource != null && !_tbliHoldTokenSource.IsCancellationRequested)
+			{
+				_tbliHoldTokenSource.Cancel();
+			}
+		}
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
         {
