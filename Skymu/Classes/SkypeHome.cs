@@ -16,7 +16,7 @@ namespace Skymu
         private static WebBrowser _browser;
         private static User _user;
         private static DirectMessage[] _contacts;
-        private const string SKHOME_DIR = "skypehome";
+        private const string SKHOME_DIR = "Home";
         private const string PAGENAME = "index.html";
 
         public static void Generate(WebBrowser browser, User user, DirectMessage[] contacts)

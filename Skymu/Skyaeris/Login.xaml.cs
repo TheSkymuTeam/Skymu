@@ -37,12 +37,12 @@ namespace Skymu.Skyaeris
         private Main _Main;
         internal bool noCloseEvent;
         private SavedCredential pendingAutoLogin = null;
-        private const string DISCORD_SERVER_INVITE = "https://discord.gg/VnGdqRNfSr/";
+        private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
 
         public Login()
         {
             InitializeComponent();
-
+            ThemeManager.Load("default");
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.MouseLeftButtonUp += buttonLaunch;

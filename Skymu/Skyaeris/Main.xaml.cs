@@ -366,42 +366,46 @@ namespace Skymu.Skyaeris
             }
         }
 
+        private void HandleWindowActivated()
+        {
+            IsWindowActive = true;
+
+            ContentBgTop.Fill = (Brush)Application.Current.Resources["Active.WindowBrush"];
+            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
+            MainMenuBar.Background = (Brush)Application.Current.Resources["Active.MenuBarBrush"];
+            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
+
+            foreach (var button in new[] { close, minimize, maximize, split })
+            {
+                button.DefaultIndex = 0;
+            }
+
+            if (border == WindowFrame.SkypeBasic)
+            {
+                TitleBar.Background = (Brush)Application.Current.Resources["Active.TitlebarBrush"];
+                this.Background = (Brush)Application.Current.Resources["Active.StandardBrush"];
+            }
+        }
+
         private void HandleWindowDeactivated()
         {
             IsWindowActive = false;
 
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Inactive.Window;
+            ContentBgTop.Fill = (Brush)Application.Current.Resources["Inactive.WindowBrush"];
+            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
+            MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.MenuBarBrush"];
+            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
 
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillSecondary
-                : (Brush)Theme.Inactive.Fill;
-
-            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
-                return;
-
-            menu1.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)new SolidColorBrush(Colors.Transparent);
-
-            SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
-            foreach (SliceControl button in buttons)
+            foreach (var button in new[] { close, minimize, maximize, split })
             {
-                button.DefaultIndex = 1;
-                button.Effect = null;
+                button.DefaultIndex = 0;
             }
 
-            if (border != WindowFrame.SkypeBasic)
-                return;
-
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Inactive.Titlebar;
-
-            this.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Inactive.Fill;
+            if (border == WindowFrame.SkypeBasic)
+            {
+                this.Background = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
+                TitleBar.Background = (Brush)Application.Current.Resources["Inactive.TitlebarBrush"];
+            }
         }
 
         private void HandleWindowButtonClick(SliceControl button)
@@ -427,43 +431,6 @@ namespace Skymu.Skyaeris
                         break;
                 }
             }
-        }
-
-        private void HandleWindowActivated()
-        {
-            IsWindowActive = true;
-
-            WindowArea.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Active.Window;
-
-            MBDivider.Fill = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillSecondary
-                : (Brush)Theme.Active.Fill;
-
-            menu1.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)new SolidColorBrush(Colors.Transparent);
-
-            if ((WindowFrame)Properties.Settings.Default.WindowFrame == WindowFrame.Native)
-                return;
-
-            SliceControl[] buttons = new SliceControl[] { close, minimize, maximize, split };
-            foreach (SliceControl button in buttons)
-            {
-                button.DefaultIndex = 0;
-            }
-
-            if (border != WindowFrame.SkypeBasic)
-                return;
-
-            TitleBar.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Active.Titlebar;
-
-            this.Background = Properties.Settings.Default.FallbackFillColors
-                ? (Brush)Theme.Fallback.FillPrimary
-                : (Brush)Theme.Active.Fill;
         }
 
         #endregion
