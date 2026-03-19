@@ -19,6 +19,40 @@ namespace Skymu.Views
         public Options()
         {
             InitializeComponent();
+            LoadVisualSettings(); // Initialize radio buttons on startup
+        }
+
+        /// <summary>
+        /// Checks current settings and selects the appropriate RadioButton.
+        /// </summary>
+        private void LoadVisualSettings()
+        {
+            var settings = Properties.Settings.Default;
+
+            // "Skype" logic: WindowFrame 0 (Aero) and Fallback OFF
+            if (settings.WindowFrame == 0 && !settings.FallbackFillColors)
+            {
+                RadioSkype.IsChecked = true;
+            }
+            // "Classic Windows" logic: WindowFrame 2 (System) and Fallback ON
+            else if (settings.WindowFrame == 2 && settings.FallbackFillColors)
+            {
+                RadioClassic.IsChecked = true;
+            }
+        }
+
+        private void RadioSkype_Checked(object sender, RoutedEventArgs e)
+        {
+            // Set Skype Aero (0) and disable fallback colors
+            Properties.Settings.Default.WindowFrame = 0;
+            Properties.Settings.Default.FallbackFillColors = false;
+        }
+
+        private void RadioClassic_Checked(object sender, RoutedEventArgs e)
+        {
+            // Set System frame (2) and enable fallback colors
+            Properties.Settings.Default.WindowFrame = 2;
+            Properties.Settings.Default.FallbackFillColors = true;
         }
 
         private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
@@ -30,7 +64,7 @@ namespace Skymu.Views
 
         private void SaveButtonClick(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.Save(); // Saves the changes made by RadioButtons
             this.Close();
         }
 
@@ -44,6 +78,7 @@ namespace Skymu.Views
         {
             Properties.Settings.Default.Reset();
             Properties.Settings.Default.Save();
+            LoadVisualSettings(); // Refresh UI after reset
         }
     }
 }

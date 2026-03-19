@@ -804,10 +804,11 @@
                 <Image
                     x:Name="tbli"
                     Margin="8,0,0,0"
-                    Cursor="Hand"
-                    MouseLeftButtonUp="tbli_Click"
+                    MouseLeftButtonDown="tbli_MouseDown"
+                    MouseLeftButtonUp="tbli_CancelHold"
+                    MouseLeave="tbli_CancelHold"
                     Source="Assets/Universal/Window Frame/long-icon.png"
-                    Style="{StaticResource LongIconStyle}" />
+                    Style="{StaticResource LongIconStyle}" /> <!-- Cursor="Hand" why????? -->
             </Grid>
         </Grid>
         <Grid
