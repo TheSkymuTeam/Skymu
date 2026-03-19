@@ -290,7 +290,7 @@ namespace Skymu.Converters
         }
     }
 
-    public class PresenceStatusConverter : IValueConverter
+    public class ConnectionStatusConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -509,7 +509,7 @@ namespace Skymu.Converters
         {
             if (value is DirectMessage dm)
             {
-                return Main.GetIntFromStatus(dm.Partner.PresenceStatus);
+                return Main.GetIntFromStatus(dm.Partner.ConnectionStatus);
             }
             else if (value is Group)
             {

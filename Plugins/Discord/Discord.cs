@@ -483,8 +483,8 @@ namespace Discord
                     return false;
                 }
 
-                _currentUser.PresenceStatus =
-                    UserStore.Get("0")?.PresenceStatus ?? UserConnectionStatus.Offline;
+                _currentUser.ConnectionStatus =
+                    UserStore.Get("0")?.ConnectionStatus ?? UserConnectionStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
                 MyInformation = _currentUser;
@@ -901,7 +901,7 @@ namespace Discord
             return !response.Contains("message");
         }
 
-        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
             _proto = await FetchProtoSettings();
             // map to proto enum

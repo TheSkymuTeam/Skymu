@@ -120,10 +120,10 @@ namespace MiddleMan
             set => Set(ref _username, value, nameof(Username));
         }
 
-        public UserConnectionStatus PresenceStatus
+        public UserConnectionStatus ConnectionStatus
         {
             get => _presence_status;
-            set => Set(ref _presence_status, value, nameof(PresenceStatus));
+            set => Set(ref _presence_status, value, nameof(ConnectionStatus));
         }
 
         public User(
@@ -640,7 +640,7 @@ namespace MiddleMan
         void Dispose(); // disposes or cleans up static objects, fields, etc. This is called when signing out.
         ClickableConfiguration[] ClickableConfigurations { get; } // configurations for various types of clickable items
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation.
-        Task<bool> SetPresenceStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
+        Task<bool> SetConnectionStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
         Task<bool> SetTextStatus(string status); // sets text status, sometimes referred to as "custom" status
     }
 

@@ -300,14 +300,16 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private DropShadowEffect CreateDropShadow(Color color) =>
-            new DropShadowEffect()
+        private DropShadowEffect CreateDropShadow(string hexColor)
+        {
+            return new DropShadowEffect()
             {
-                Color = color,
-                BlurRadius = 16,
+                Color = (Color)ColorConverter.ConvertFromString(hexColor),
+                BlurRadius = 15,
                 ShadowDepth = 0,
-                Opacity = 0.8,
+                Opacity = 1,
             };
+        }
 
         private void SetClickable(params IInputElement[] buttons)
         {
@@ -342,11 +344,11 @@ namespace Skymu.Skyaeris
             {
                 if (button.Name == "close")
                 {
-                    button.Effect = CreateDropShadow(Colors.Red);
+                    button.Effect = CreateDropShadow("#FF0000");
                 }
                 else
                 {
-                    button.Effect = CreateDropShadow(Colors.Cyan);
+                    button.Effect = CreateDropShadow("#00C3FF");
                 }
             }
         }
@@ -470,7 +472,7 @@ namespace Skymu.Skyaeris
             this.Title = WindowTitle;
 
             StatusBox.Text = CurrentUser.DisplayName;
-            StatusIcon.DefaultIndex = GetIntFromStatus(CurrentUser.PresenceStatus);
+            StatusIcon.DefaultIndex = GetIntFromStatus(CurrentUser.ConnectionStatus);
 
             setupcompactrecentsview();
 
@@ -1847,8 +1849,8 @@ namespace Skymu.Skyaeris
                 return;
             StatusIcon.DefaultIndex = GetIntFromStatus(status);
             Tray.PushIcon(status);
-            CurrentUser.PresenceStatus = status;
-            if (!await Universal.Plugin.SetPresenceStatus(status))
+            CurrentUser.ConnectionStatus = status;
+            if (!await Universal.Plugin.SetConnectionStatus(status))
             {
                 StatusIcon.DefaultIndex = old_default_index;
                 Tray.PushIcon(GetStatusFromInt(old_default_index));
