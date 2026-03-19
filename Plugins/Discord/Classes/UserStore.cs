@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using MiddleMan;
 
 namespace Discord.Classes
@@ -10,24 +10,14 @@ namespace Discord.Classes
     {
         private static readonly ConcurrentDictionary<string, User> _users = new();
 
-        public static async Task<User> GetOrCreateWithAvatar(
-            string userId,
-            string displayName,
-            string username,
-            string avatarHash = null
-        )
+        public static async Task<User> GetOrCreateWithAvatar(string userId, string displayName, string username, string avatarHash = null)
         {
             var user = GetOrCreate(userId, displayName, username);
 
             if (user.ProfilePicture == null && avatarHash != null)
             {
-                var avatar = await HelperMethods.GetCachedAvatarAsync(
-                    userId,
-                    avatarHash,
-                    HelperMethods.DiscordChannelType.DirectMessage
-                );
-                if (avatar != null)
-                    user.ProfilePicture = avatar;
+                var avatar = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
+                if (avatar != null) user.ProfilePicture = avatar;
             }
 
             return user;
@@ -45,7 +35,8 @@ namespace Discord.Classes
             return user;
         }
 
-        public static User Get(string userId) => _users.TryGetValue(userId, out var u) ? u : null;
+        public static User Get(string userId)
+            => _users.TryGetValue(userId, out var u) ? u : null;
 
         public static void Clear() => _users.Clear();
 
