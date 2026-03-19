@@ -438,7 +438,7 @@ namespace Stub
             _uiContext?.Post(
                 _ =>
                 {
-                    user.PresenceStatus = newStatus;
+                    user.ConnectionStatus = newStatus;
                     user.Status = newText;
                 },
                 null
@@ -464,7 +464,7 @@ namespace Stub
             return Task.FromResult<SavedCredential>(null);
         }
 
-        public Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        public Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
             return Task.FromResult(true);
         }

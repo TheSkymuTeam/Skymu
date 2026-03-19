@@ -508,7 +508,7 @@ namespace Matrix
             }
         }
 
-        public async Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
             try
             {

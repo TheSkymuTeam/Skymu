@@ -52,7 +52,7 @@ namespace Discord.Classes
         public static void UpdatePresence(string userId, string status, string customStatus = null)
         {
             var user = _users.GetOrAdd(userId, _ => new User(null, null, userId));
-            user.PresenceStatus = HelperMethods.MapStatus(status);
+            user.ConnectionStatus = HelperMethods.MapStatus(status);
             user.Status = customStatus;
         }
     }

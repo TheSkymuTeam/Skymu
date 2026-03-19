@@ -163,7 +163,7 @@ namespace Skymu.Skyaeris
         private void Main_Ready(object sender, EventArgs e)
         {
             _Main.Ready -= Main_Ready;
-            Tray.PushIcon(Main.CurrentUser.PresenceStatus);
+            Tray.PushIcon(Main.CurrentUser.ConnectionStatus);
             Universal.HasLoggedIn = true;
             _Main.Show();
             Sounds.Play("login", true);

@@ -38,7 +38,7 @@ namespace Skymu.Views
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
 
-            if (Main.CurrentUser?.PresenceStatus == UserConnectionStatus.DoNotDisturb)
+            if (Main.CurrentUser?.ConnectionStatus == UserConnectionStatus.DoNotDisturb)
             {
                 Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
                 return;
@@ -184,7 +184,7 @@ namespace Skymu.Views
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat
                     ? 21
-                    : Main.GetIntFromStatus(message.Sender.PresenceStatus),
+                    : Main.GetIntFromStatus(message.Sender.ConnectionStatus),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 0, 4, 0),
                 HoverIndex = -1,

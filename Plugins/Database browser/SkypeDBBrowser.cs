@@ -141,7 +141,7 @@ namespace SkypeDBBrowser
             return Task.FromResult(LoginResult.Success);
         }
 
-        public Task<bool> SetPresenceStatus(UserConnectionStatus status)
+        public Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
             return Task.FromResult(false);
         }
