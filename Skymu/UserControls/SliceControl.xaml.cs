@@ -965,8 +965,9 @@ namespace Skymu
                 double topH = TopHeight;
                 double botH = BottomHeight;
                 double midH = Math.Max(0, Height - topH - botH);
-                double topHRel = topH / bmp.PixelHeight * stateBox.Height;
-                double botHRel = botH / bmp.PixelHeight * stateBox.Height;
+                double elemHeightPx = GetElementHeight();
+                double topHRel = topH / elemHeightPx * stateBox.Height;
+                double botHRel = botH / elemHeightPx * stateBox.Height;
                 double midHRel = Math.Max(0, stateBox.Height - topHRel - botHRel);
 
                 double x0 = stateBox.X;
