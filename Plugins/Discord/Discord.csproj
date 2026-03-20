@@ -10,7 +10,7 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <LangVersion>latest</LangVersion>
 	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
+	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\Plugins\</OutputPath>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

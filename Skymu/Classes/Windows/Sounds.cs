@@ -49,7 +49,7 @@ namespace Skymu
                 ms.Position = 0;
 
                 var sp = new SoundPlayer(ms);
-                sp.Load(); // preload into memory
+                sp.Load(); 
                 players[key] = sp;
             }
         }

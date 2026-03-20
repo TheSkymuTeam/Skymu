@@ -10,9 +10,8 @@
 /*==========================================================*/
 // Important Notice
 /*==========================================================*/
-// Full credits go to Erki Suurjaak, Skyperious, for his
+// Credits go to Erki Suurjaak, Skyperious, for his
 // extensive documentation of the Skype SQL database format.
-// This is simply a port of their own implementation.
 // Heads up: This database includes over 90% redundant
 // columns and all tables except 5 are redundant, this
 // is to ensure maximum compatibility with old Skype tooling.
@@ -20,7 +19,8 @@
 /*==========================================================*/
 // Some new columns have been added, though, such as:
 // username (for storage of a mutable username; skypename is
-// now used for the identifier, as tools expect immutability)
+// now used for the identifier, as tools expect immutability),
+// conversation_id (to track DM conversation wrappers),
 // and plugin (plugin this account is associated with)
 // This has been done to make sure that Skymu doesn't cause
 // incompatibiliies with old Skype database-reading software.

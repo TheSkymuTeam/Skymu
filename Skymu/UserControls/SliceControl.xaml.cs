@@ -574,6 +574,7 @@ namespace Skymu
             if (
                 IsRadioButton
                 && _visualState == ButtonVisualState.Pressed
+                && state != ButtonVisualState.Pressed
                 && state != ButtonVisualState.Disabled
             )
                 return;
@@ -758,10 +759,7 @@ namespace Skymu
 
         public void UpdateHitTestState()
         {
-            IsHitTestVisible =
-                IsEnabled
-                && Interactive
-                && !(IsRadioButton && _visualState == ButtonVisualState.Pressed);
+            IsHitTestVisible = IsEnabled && Interactive;
         }
 
         public void SetState(ButtonVisualState state)

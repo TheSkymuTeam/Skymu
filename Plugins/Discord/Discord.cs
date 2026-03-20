@@ -742,6 +742,9 @@ namespace Discord
                         messageList.Add(item);
                 }
 
+                if (fetch_type == Fetch.NewestAfterIdentifier && identifier != null)
+                    return messageList.Where(m => ulong.Parse(m.Identifier) > ulong.Parse(identifier)).ToArray();
+
                 return messageList.ToArray();
             }
             catch (Exception ex)

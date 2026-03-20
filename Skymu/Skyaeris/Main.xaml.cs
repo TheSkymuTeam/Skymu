@@ -1393,7 +1393,7 @@ namespace Skymu.Skyaeris
         {
             ConversationItem[] items = await Universal.Plugin.FetchMessages(
                 conversation,
-                Fetch.Newest, // TODO: Make fetch all
+                Fetch.NewestAfterIdentifier, // TODO: Make fetch all
                 MESSAGE_LIMIT,
                 afterId
             );
@@ -1810,6 +1810,9 @@ namespace Skymu.Skyaeris
 
         internal static int GetIntFromChannelType(ChannelType channel) =>
             channel_type_map.TryGetValue(channel, out int value) ? value : 0;
+
+
+
 
         internal static int GetIntFromStatus(UserConnectionStatus status) =>
             status_map.TryGetValue(status, out int value) ? value : 0;
