@@ -804,11 +804,12 @@
                 <Image
                     x:Name="tbli"
                     Margin="8,0,0,0"
+                    MouseLeave="tbli_CancelHold"
                     MouseLeftButtonDown="tbli_MouseDown"
                     MouseLeftButtonUp="tbli_CancelHold"
-                    MouseLeave="tbli_CancelHold"
                     Source="Assets/Universal/Window Frame/long-icon.png"
-                    Style="{StaticResource LongIconStyle}" /> <!-- Cursor="Hand" why????? -->
+                    Style="{StaticResource LongIconStyle}" />
+                <!--  Cursor="Hand" why?????  -->
             </Grid>
         </Grid>
         <Grid
@@ -2094,18 +2095,23 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
+                                        <global:SliceControl
+                                            Grid.Column="1"
+                                            BottomHeight="4"
+                                            DefaultIndex="0"
+                                            ElementCount="7"
+                                            SliceMode="2"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/message-box.png'}"
+                                            StackDirection="Vertical"
+                                            TopHeight="41" />
                                         <StackPanel
                                             x:Name="MessageBoxPanel"
                                             Grid.Column="1"
                                             Width="430"
                                             HorizontalAlignment="Center"
                                             Orientation="Vertical">
-                                            <Grid>
-                                                <Image
-                                                    Height="25"
-                                                    SnapsToDevicePixels="True"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/msg-box-top.png'}"
-                                                    UseLayoutRounding="True" />
+                                            <!--  Message box header  -->
+                                            <Grid Height="25">
                                                 <StackPanel
                                                     Margin="5,0,0,0"
                                                     VerticalAlignment="Center"
@@ -2204,34 +2210,29 @@
                                                         Foreground="#666666" />
                                                 </StackPanel>
                                             </Grid>
-                                            <Border
+                                            <!--  Message box typing area  -->
+                                            <RichTextBox
+                                                x:Name="MessageTextBox"
                                                 MinHeight="35"
-                                                Background="White"
-                                                BorderBrush="#CCCCCC"
-                                                BorderThickness="1,0,1,1"
-                                                CornerRadius="0,0,4,4">
-                                                <RichTextBox
-                                                    x:Name="MessageTextBox"
-                                                    Padding="4,5,4,4"
-                                                    AcceptsReturn="True"
-                                                    Background="Transparent"
-                                                    BorderThickness="0"
-                                                    FontFamily="Tahoma"
-                                                    FontSize="11"
-                                                    GotKeyboardFocus="MessageTextBox_Focused"
-                                                    LostKeyboardFocus="MessageTextBox_Unfocused"
-                                                    PreviewKeyDown="MessageTextBox_PreviewKeyDown"
-                                                    SnapsToDevicePixels="True"
-                                                    TextChanged="MessageTextBox_TextChanged"
-                                                    UseLayoutRounding="True"
-                                                    VerticalScrollBarVisibility="Auto">
-                                                    <RichTextBox.Document>
-                                                        <FlowDocument>
-                                                            <Paragraph Margin="0" />
-                                                        </FlowDocument>
-                                                    </RichTextBox.Document>
-                                                </RichTextBox>
-                                            </Border>
+                                                Padding="4,5,4,4"
+                                                AcceptsReturn="True"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                FontFamily="Tahoma"
+                                                FontSize="11"
+                                                GotKeyboardFocus="MessageTextBox_Focused"
+                                                LostKeyboardFocus="MessageTextBox_Unfocused"
+                                                PreviewKeyDown="MessageTextBox_PreviewKeyDown"
+                                                SnapsToDevicePixels="True"
+                                                TextChanged="MessageTextBox_TextChanged"
+                                                UseLayoutRounding="True"
+                                                VerticalScrollBarVisibility="Auto">
+                                                <RichTextBox.Document>
+                                                    <FlowDocument>
+                                                        <Paragraph Margin="0" />
+                                                    </FlowDocument>
+                                                </RichTextBox.Document>
+                                            </RichTextBox>
                                         </StackPanel>
                                         <global:SliceControl
                                             x:Name="SendMsgButton"

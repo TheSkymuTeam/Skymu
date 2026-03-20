@@ -11,6 +11,7 @@
     Height="600"
     HorizontalAlignment="Left"
     VerticalAlignment="Top"
+    Background="#d4e2f2"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
@@ -29,321 +30,369 @@
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
     </Window.Resources>
-    <Grid Background="#d4e2f2">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="195" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0">
-            <Grid Margin="9,9,9,0">
-                <global:SliceControl
-                    HorizontalAlignment="Stretch"
-                    DefaultIndex="0"
-                    ElementCount="5"
-                    HoverIndex="+1"
-                    IsHitTestVisible="False"
-                    PressedIndex="+2"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/correct_texture.png}"
-                    StackDirection="Vertical"
-                    Text="general kys"
-                    TextColor="#666666"
-                    TextFont="Tahoma"
-                    TextLeftMargin="38"
-                    TextSize="11" />
-                <Image
-                    Height="24"
-                    Margin="8,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
-            </Grid>
-            <ListBox
-                Margin="9,0,9,0"
-                BorderBrush="#26000000"
-                BorderThickness="1,0,1,1">
-                <ListBox.Resources>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="FontSize" Value="11" />
-                        <Setter Property="Foreground" Value="#FF6E6E73" />
-                        <Setter Property="Height" Value="38" />
-                        <Setter Property="Padding" Value="10,1,8,1" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border
-                                        x:Name="Border"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="Transparent"
-                                        BorderThickness="0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image
-                                                Height="24"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Source="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
-                                            <ContentPresenter
-                                                Margin="6,0,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#84c0fc" />
-                                            <Setter Property="Foreground" Value="#666666" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.Resources>
-                <ListBoxItem
-                    Content="general settings"
-                    IsSelected="True"
-                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
-            </ListBox>
-            <Grid Margin="9,9,9,0">
-                <global:SliceControl
-                    HorizontalAlignment="Stretch"
-                    DefaultIndex="0"
-                    ElementCount="5"
-                    HoverIndex="+1"
-                    IsHitTestVisible="False"
-                    PressedIndex="+2"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/correct_texture.png}"
-                    StackDirection="Vertical"
-                    Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}"
-                    TextColor="#666666"
-                    TextFont="Tahoma"
-                    TextLeftMargin="38"
-                    TextSize="11" />
-                <Image
-                    Height="24"
-                    Margin="8,0,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/action.png}" />
-            </Grid>
-            <ListBox
-                Margin="9,0,9,0"
-                BorderBrush="#26000000"
-                BorderThickness="1,0,1,1">
-                <ListBox.Resources>
-                    <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="FontSize" Value="11" />
-                        <Setter Property="Foreground" Value="#FF6E6E73" />
-                        <Setter Property="Height" Value="38" />
-                        <Setter Property="Padding" Value="10,1,8,1" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border
-                                        x:Name="Border"
-                                        Padding="{TemplateBinding Padding}"
-                                        Background="Transparent"
-                                        BorderThickness="0">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image
-                                                Height="24"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Source="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
-                                            <ContentPresenter
-                                                Margin="6,0,0,0"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="Border" Property="Background" Value="#84c0fc" />
-                                            <Setter Property="Foreground" Value="#666666" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListBox.Resources>
-                <ListBoxItem
-                    Content="Skymu Customization"
-                    IsSelected="True"
-                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/personalize.png}" />
-            </ListBox>
-        </StackPanel>
-        <Grid Grid.Column="1" Margin="-4,9,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TabControl Margin="-5,16,4,40" Grid.RowSpan="2" Background="{x:Null}">
-                <TabItem Header="TabItem" Opacity="0" Background="{x:Null}">
-                    <Grid>
+    <Border BorderThickness="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="195" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--  Sidebar area  -->
+            <StackPanel Grid.Column="0" Margin="0,0,5,0">
+                <Grid>
+                    <global:SliceControl
+                        HorizontalAlignment="Stretch"
+                        DefaultIndex="0"
+                        ElementCount="5"
+                        HoverIndex="+1"
+                        IsHitTestVisible="False"
+                        PressedIndex="+2"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
+                        StackDirection="Vertical"
+                        Text="general kys"
+                        TextColor="#666666"
+                        TextFont="Tahoma"
+                        TextLeftMargin="38"
+                        TextSize="11" />
+                    <Image
+                        Height="24"
+                        Margin="8,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
+                </Grid>
+                <ListBox BorderBrush="#26000000" BorderThickness="1,0,1,1">
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="FontSize" Value="11" />
+                            <Setter Property="Foreground" Value="#FF6E6E73" />
+                            <Setter Property="Height" Value="38" />
+                            <Setter Property="Padding" Value="10,1,8,1" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border
+                                            x:Name="Border"
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image
+                                                    Height="24"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Source="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                                                <ContentPresenter
+                                                    Margin="6,0,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#84c0fc" />
+                                                <Setter Property="Foreground" Value="#666666" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBoxItem
+                        Content="general settings"
+                        IsSelected="True"
+                        Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
+                </ListBox>
+                <Grid Margin="0,9,0,0">
+                    <global:SliceControl
+                        HorizontalAlignment="Stretch"
+                        DefaultIndex="0"
+                        ElementCount="5"
+                        HoverIndex="+1"
+                        IsHitTestVisible="False"
+                        PressedIndex="+2"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
+                        StackDirection="Vertical"
+                        Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}"
+                        TextColor="#666666"
+                        TextFont="Tahoma"
+                        TextLeftMargin="38"
+                        TextSize="11" />
+                    <Image
+                        Height="24"
+                        Margin="8,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/action.png}" />
+                </Grid>
+                <ListBox BorderBrush="#26000000" BorderThickness="1,0,1,1">
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="FontSize" Value="11" />
+                            <Setter Property="Foreground" Value="#FF6E6E73" />
+                            <Setter Property="Height" Value="38" />
+                            <Setter Property="Padding" Value="10,1,8,1" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border
+                                            x:Name="Border"
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image
+                                                    Height="24"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Source="{Binding Tag, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                                                <ContentPresenter
+                                                    Margin="6,0,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Border" Property="Background" Value="#84c0fc" />
+                                                <Setter Property="Foreground" Value="#666666" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBoxItem
+                        Content="Skymu Customization"
+                        IsSelected="True"
+                        Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/personalize.png}" />
+                </ListBox>
+            </StackPanel>
+            <!--  Content area  -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--  Header of the selected page  -->
+                <Grid Grid.Row="0">
+                    <global:SliceControl
+                        HorizontalAlignment="Stretch"
+                        Panel.ZIndex="2"
+                        DefaultIndex="0"
+                        ElementCount="5"
+                        HoverIndex="0"
+                        IsHitTestVisible="False"
+                        PressedIndex="0"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
+                        StackDirection="Vertical" />
+                    <StackPanel
+                        Margin="9,0,0,0"
+                        VerticalAlignment="Center"
+                        Panel.ZIndex="2"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Grid.Row="0"
+                            FontFamily="Tahoma"
+                            FontSize="11"
+                            FontWeight="Bold"
+                            Foreground="#666666"
+                            Text="Skymu Customization:" />
+                        <TextBlock
+                            Grid.Row="0"
+                            Margin="7,0"
+                            FontFamily="Tahoma"
+                            FontSize="11"
+                            Foreground="#666666"
+                            Text="Modify the way Skymu looks, feels, and behaves" />
+                    </StackPanel>
+                </Grid>
+                <!--  Content of the selected page  -->
+                <TabControl
+                    Grid.Row="1"
+                    Margin="0,-18,0,0"
+                    Padding="0"
+                    Background="Transparent"
+                    BorderThickness="0">
+                    <TabItem
+                        Padding="0"
+                        Background="Transparent"
+                        Header="TabItem"
+                        Opacity="0">
                         <Border
                             x:Name="OptionCategoryContainer1"
-                            Margin="0,0,9,45"
                             Background="White"
                             BorderBrush="#26000000"
                             BorderThickness="1,0,1,1">
                             <ScrollViewer>
                                 <StackPanel Margin="15,15,15,15" Orientation="Vertical">
-                                    <Label Content="Visual style of the window" FontWeight="Bold"/>
+                                    <Label Content="Visual style of the window" FontWeight="Bold" />
                                     <StackPanel Margin="0,5">
-                                        <RadioButton x:Name="RadioSkype" 
-                     Content="Skype" 
-                     GroupName="VisualStyle" 
-                     Margin="0,5"
-                     Checked="RadioSkype_Checked"/>
+                                        <RadioButton
+                                            x:Name="RadioSkype"
+                                            Margin="0,5"
+                                            Checked="RadioSkype_Checked"
+                                            Content="Skype"
+                                            GroupName="VisualStyle" />
 
-                                        <RadioButton x:Name="RadioClassic" 
-                     Content="Classic Windows" 
-                     GroupName="VisualStyle" 
-                     Margin="0,5"
-                     Checked="RadioClassic_Checked"/>
+                                        <RadioButton
+                                            x:Name="RadioClassic"
+                                            Margin="0,5"
+                                            Checked="RadioClassic_Checked"
+                                            Content="Classic Windows"
+                                            GroupName="VisualStyle" />
                                     </StackPanel>
                                 </StackPanel>
                             </ScrollViewer>
                         </Border>
-                    </Grid>
-                </TabItem>
-                <TabItem Header="TabItem" Opacity="0" Background="{x:Null}">
-                    <Grid>
-            <Border
-                x:Name="OptionCategoryContainer"
-                Margin="0,0,9,45"
-                Background="White"
-                BorderBrush="#26000000"
-                BorderThickness="1,0,1,1">
-                <ScrollViewer>
-                    <StackPanel Margin="15,15,15,15" Orientation="Vertical">
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="Universal branding name" />
-                            <TextBox
-                                x:Name="SC_BrandingNameBox"
-                                Width="250"
-                                FontFamily="Tahoma"
-                                Text="{Binding BrandingName, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" />
-                            <ComboBox
-                                Width="250"
-                                DisplayMemberPath="Key"
-                                ItemsSource="{Binding Languages}"
-                                SelectedValue="{Binding Language, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
-                                SelectedValuePath="Key" />
-                        </StackPanel>
-                        <StackPanel Margin="0,5" Orientation="Horizontal" Visibility="Collapsed">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="Main window frame" />
-                            <ComboBox Width="250" SelectedIndex="{Binding WindowFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
-                                <ComboBoxItem Content="Skype Aero" />
-                                <ComboBoxItem Content="Skype Basic" />
-                                <ComboBoxItem Content="Use the system window frame" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="Application theme (experimental)" />
-                            <ComboBox
-                                Width="250"
-                                SelectedValue="{Binding ThemeRoot, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
-                                SelectedValuePath="Tag">
-                                <ComboBoxItem Content="Light" Tag="Light" />
-                                <ComboBoxItem Content="Dark" Tag="Dark" />
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="Base theme (scrollbar, buttons, etc)" />
-                            <ComboBox
-                                Width="250"
-                                SelectedValue="{Binding PresFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
-                                SelectedValuePath="Tag">
-                                <ComboBoxItem Content="Windows XP" Tag="Luna.NormalColor" />
-                                <ComboBoxItem Content="Windows XP (Olive)" Tag="Luna.Homestead" />
-                                <ComboBoxItem Content="Windows XP (Silver)" Tag="Luna.Metallic" />
-                                <ComboBoxItem Content="Windows XP Media Center" Tag="Royale.NormalColor" />
-                                <ComboBoxItem Content="Windows Vista" Tag="Aero.NormalColor" />
-                                <ComboBoxItem Content="Windows 8" Tag="Aero2.NormalColor" />
-                                <ComboBoxItem Content="Windows 8 Basic" Tag="AeroLite.NormalColor" />
-                                <ComboBoxItem Content="Windows Classic" Tag="Classic" />
-                            </ComboBox>
-                        </StackPanel>
+                    </TabItem>
+                    <TabItem
+                        Background="{x:Null}"
+                        Header="TabItem"
+                        Opacity="0">
+                        <Grid>
+                            <Border
+                                x:Name="OptionCategoryContainer"
+                                Margin="0,0,9,45"
+                                Background="White"
+                                BorderBrush="#26000000"
+                                BorderThickness="1,0,1,1">
+                                <ScrollViewer>
+                                    <StackPanel Margin="15,15,15,15" Orientation="Vertical">
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Universal branding name" />
+                                            <TextBox
+                                                x:Name="SC_BrandingNameBox"
+                                                Width="250"
+                                                FontFamily="Tahoma"
+                                                Text="{Binding BrandingName, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" />
+                                            <ComboBox
+                                                Width="250"
+                                                DisplayMemberPath="Key"
+                                                ItemsSource="{Binding Languages}"
+                                                SelectedValue="{Binding Language, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValuePath="Key" />
+                                        </StackPanel>
+                                        <StackPanel
+                                            Margin="0,5"
+                                            Orientation="Horizontal"
+                                            Visibility="Collapsed">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Main window frame" />
+                                            <ComboBox Width="250" SelectedIndex="{Binding WindowFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                                <ComboBoxItem Content="Skype Aero" />
+                                                <ComboBoxItem Content="Skype Basic" />
+                                                <ComboBoxItem Content="Use the system window frame" />
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Application theme (experimental)" />
+                                            <ComboBox
+                                                Width="250"
+                                                SelectedValue="{Binding ThemeRoot, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Light" Tag="Light" />
+                                                <ComboBoxItem Content="Dark" Tag="Dark" />
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Base theme (scrollbar, buttons, etc)" />
+                                            <ComboBox
+                                                Width="250"
+                                                SelectedValue="{Binding PresFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Windows XP" Tag="Luna.NormalColor" />
+                                                <ComboBoxItem Content="Windows XP (Olive)" Tag="Luna.Homestead" />
+                                                <ComboBoxItem Content="Windows XP (Silver)" Tag="Luna.Metallic" />
+                                                <ComboBoxItem Content="Windows XP Media Center" Tag="Royale.NormalColor" />
+                                                <ComboBoxItem Content="Windows Vista" Tag="Aero.NormalColor" />
+                                                <ComboBoxItem Content="Windows 8" Tag="Aero2.NormalColor" />
+                                                <ComboBoxItem Content="Windows 8 Basic" Tag="AeroLite.NormalColor" />
+                                                <ComboBoxItem Content="Windows Classic" Tag="Classic" />
+                                            </ComboBox>
+                                        </StackPanel>
 
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Enable auto-login for accounts with valid credentials saved"
-                            IsChecked="{Binding AutoLogin, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                            <TextBlock
-                                Padding="0,0,10,0"
-                                VerticalAlignment="Center"
-                                Text="Emoji animation speed (FPS)" />
-                            <TextBox
-                                Width="40"
-                                FontFamily="Tahoma"
-                                Text="{Binding EmojiFps, Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Display a notification when you recieve a message"
-                            IsChecked="{Binding EnableNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Make notifications blue instead of the accurate orange"
-                            IsChecked="{Binding AccurateNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Dynamically resize sidebar tabs based on selection (accurate)"
-                            IsChecked="{Binding DynamicSidebarTabs, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Enable auto-login for accounts with valid credentials saved"
+                                            IsChecked="{Binding AutoLogin, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Emoji animation speed (FPS)" />
+                                            <TextBox
+                                                Width="40"
+                                                FontFamily="Tahoma"
+                                                Text="{Binding EmojiFps, Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Display a notification when you recieve a message"
+                                            IsChecked="{Binding EnableNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Make notifications blue instead of the accurate orange"
+                                            IsChecked="{Binding AccurateNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Dynamically resize sidebar tabs based on selection (accurate)"
+                                            IsChecked="{Binding DynamicSidebarTabs, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
 
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Use GDI+ text rendering pipeline on Windows"
-                            IsChecked="{Binding UseClearType, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox Margin="0,5" IsChecked="{Binding FallbackFillColors, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" Visibility="Collapsed">
-                                <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly."/></TextBlock>
-                        </CheckBox>
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Enable the 'Skype Home' feature (experimental, may use 20-60 MB of additional RAM)"
-                            IsChecked="{Binding EnableSkypeHome, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            Margin="0,5"
-                            Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
-                            IsChecked="{Binding StartOnStartup, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Retain original versions of edited and deleted messages (MessageLogger)"
-                            IsChecked="{Binding MessageLogger, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            Margin="0,5"
-                            Content="Do not reveal my username and display name in Skymu's connected user statistics"
-                            IsChecked="{Binding Anonymize, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
-                        <CheckBox
-                            MaxWidth="450"
-                            Margin="0,5"
-                            HorizontalAlignment="Left"
-                            IsChecked="{Binding DisablePingbacks, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
-                                <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server (warning: not recommended, doing this breaks features in the Skymu client!)"/></TextBlock>
-                        </CheckBox>
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Use GDI+ text rendering pipeline on Windows"
+                                            IsChecked="{Binding UseClearType, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            IsChecked="{Binding FallbackFillColors, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                            Visibility="Collapsed">
+                                            <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>
+                                        </CheckBox>
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Enable the 'Skype Home' feature (experimental, may use 20-60 MB of additional RAM)"
+                                            IsChecked="{Binding EnableSkypeHome, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
+                                            IsChecked="{Binding StartOnStartup, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Retain original versions of edited and deleted messages (MessageLogger)"
+                                            IsChecked="{Binding MessageLogger, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Do not reveal my username and display name in Skymu's connected user statistics"
+                                            IsChecked="{Binding Anonymize, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                        <CheckBox
+                                            MaxWidth="450"
+                                            Margin="0,5"
+                                            HorizontalAlignment="Left"
+                                            IsChecked="{Binding DisablePingbacks, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                            <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
+                                        </CheckBox>
 
-                        <!--<StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <!--<StackPanel Orientation="Horizontal" Margin="0,5">
                             <TextBlock Text="Use port" VerticalAlignment="Center" Width="80"/>
                             <TextBox Width="80"/>
                             <TextBlock Text="for incoming connections" VerticalAlignment="Center" Margin="10,0,0,0"/>
@@ -372,84 +421,54 @@
                             <TextBlock Text="Password" Margin="10,0,0,0" Width="60"/>
                             <TextBox Width="150"/>
                         </StackPanel>-->
-                    </StackPanel>
-                </ScrollViewer>
-            </Border>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-            <global:SliceControl
-                Grid.Row="0"
-                Margin="0,0,9,0"
-                HorizontalAlignment="Stretch"
-                DefaultIndex="0"
-                ElementCount="5"
-                HoverIndex="0"
-                IsHitTestVisible="False"
-                PressedIndex="0"
-                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/correct_texture.png}"
-                StackDirection="Vertical" d:IsHidden="True" />
-            <StackPanel
-                Grid.Row="0"
-                Margin="9,0,0,0"
-                VerticalAlignment="Center"
-                Orientation="Horizontal" d:IsHidden="True">
-                <TextBlock
-                    Grid.Row="0"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    FontWeight="Bold"
-                    Foreground="#666666"
-                    Text="Skymu Customization:" />
-                <TextBlock
-                    Grid.Row="0"
-                    Margin="7,0"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    Foreground="#666666"
-                    Text="Modify the way Skymu looks, feels, and behaves" />
-            </StackPanel>
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="1"
-                Height="23"
-                Margin="0,0,9,11"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Orientation="Horizontal"
-                RenderTransformOrigin="0.362,-3.031" d:IsHidden="True">
-                <Button
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+                <!--  Buttons (Save, Cancel, etc.)  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Grid.Column="1"
                     Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    Click="SaveButtonClick"
-                    Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}"
-                    FontSize="11" />
-                <Button
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    Click="RestartButtonClick"
-                    Content="Save and restart"
-                    FontSize="11" />
-                <Button
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    Click="ResetButtonClick"
-                    Content="{Binding [sF_OPTIONS_BTN_RESET]}"
-                    FontSize="11" />
-                <Button
-                    Height="23"
-                    MinWidth="73"
-                    Padding="12,0"
-                    Click="CancelButtonClick"
-                    Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}"
-                    FontSize="11" />
-            </StackPanel>
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal">
+                    <Button
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        Click="SaveButtonClick"
+                        Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}"
+                        FontSize="11" />
+                    <Button
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        Click="RestartButtonClick"
+                        Content="Save and restart"
+                        FontSize="11" />
+                    <Button
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        Click="ResetButtonClick"
+                        Content="{Binding [sF_OPTIONS_BTN_RESET]}"
+                        FontSize="11" />
+                    <Button
+                        Height="23"
+                        MinWidth="73"
+                        Padding="12,0"
+                        Click="CancelButtonClick"
+                        Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}"
+                        FontSize="11" />
+                </StackPanel>
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </Window>

@@ -1393,7 +1393,7 @@ namespace Skymu.Skyaeris
         {
             ConversationItem[] items = await Universal.Plugin.FetchMessages(
                 conversation,
-                Fetch.AfterIdentifier,
+                Fetch.Newest, // TODO: Make fetch all
                 MESSAGE_LIMIT,
                 afterId
             );
