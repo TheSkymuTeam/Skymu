@@ -19,7 +19,6 @@ namespace Discord.Classes
     internal class ConfigMgr
     {
         private static readonly Random _rng = new Random();
-
         // Launch info
         public string LaunchSignature { get; private set; }
         public string ClientLaunchId { get; private set; }
@@ -43,8 +42,7 @@ namespace Discord.Classes
         public string DCClientState { get; set; } = "unfocused";
 
         // Browser related options
-        public string BrowserUA { get; set; } =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
+        public string BrowserUA { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
         public string BrowserVer { get; set; } = "115.0";
 
         public string GetXSPJson()
@@ -78,7 +76,7 @@ namespace Discord.Classes
                 { "client_event_source", DCClientEvtSrc },
                 { "client_launch_id", ClientLaunchId },
                 { "launch_signature", LaunchSignature },
-                { "client_app_state", DCClientState },
+                { "client_app_state", DCClientState }
             };
 
             // Returns the finished XSP!
@@ -91,15 +89,11 @@ namespace Discord.Classes
         public static string FormatUUID(ulong partLeft, ulong partRight)
         {
             string buffer = partLeft.ToString("x16") + partRight.ToString("x16");
-            return buffer.Substring(0, 8)
-                + "-"
-                + buffer.Substring(8, 4)
-                + "-"
-                + buffer.Substring(12, 4)
-                + "-"
-                + buffer.Substring(16, 4)
-                + "-"
-                + buffer.Substring(20, 12);
+            return buffer.Substring(0, 8) + "-" +
+                   buffer.Substring(8, 4) + "-" +
+                   buffer.Substring(12, 4) + "-" +
+                   buffer.Substring(16, 4) + "-" +
+                   buffer.Substring(20, 12);
         }
 
         private static ulong RandU64()
@@ -115,11 +109,21 @@ namespace Discord.Classes
             ulong launchUuidPart2 = RandU64();
 
             launchUuidPart1 &= ~(
-                (1UL << 11) | (1UL << 24) | (1UL << 38) | (1UL << 48) | (1UL << 55) | (1UL << 61)
-            );
+               (1UL << 11) |
+               (1UL << 24) |
+               (1UL << 38) |
+               (1UL << 48) |
+               (1UL << 55) |
+               (1UL << 61)
+           );
 
             launchUuidPart2 &= ~(
-                (1UL << 11) | (1UL << 20) | (1UL << 27) | (1UL << 36) | (1UL << 44) | (1UL << 55)
+                (1UL << 11) |
+                (1UL << 20) |
+                (1UL << 27) |
+                (1UL << 36) |
+                (1UL << 44) |
+                (1UL << 55)
             );
 
             LaunchSignature = ConfigMgr.FormatUUID(launchUuidPart1, launchUuidPart2);
