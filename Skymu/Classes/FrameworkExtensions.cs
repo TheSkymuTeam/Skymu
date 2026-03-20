@@ -38,7 +38,7 @@ namespace Skymu
                 yield return new Rune(codePoint);
 
                 if (char.IsHighSurrogate(str[i]))
-                    i++; // skip the low surrogate
+                    i++; 
             }
         }
     }

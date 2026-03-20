@@ -548,6 +548,7 @@ namespace MiddleMan
         Oldest,
         BeforeIdentifier,
         AfterIdentifier,
+        NewestAfterIdentifier,
     }
 
     public enum CallState

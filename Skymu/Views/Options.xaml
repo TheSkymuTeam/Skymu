@@ -48,7 +48,7 @@
                         PressedIndex="+2"
                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
                         StackDirection="Vertical"
-                        Text="general kys"
+                        Text="General"
                         TextColor="#666666"
                         TextFont="Tahoma"
                         TextLeftMargin="38"
@@ -58,7 +58,7 @@
                         Margin="8,0,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/action.png}" />
                 </Grid>
                 <ListBox BorderBrush="#26000000" BorderThickness="1,0,1,1">
                     <ListBox.Resources>
@@ -101,7 +101,7 @@
                     <ListBoxItem
                         Content="general settings"
                         IsSelected="True"
-                        Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/imgoingtokillmyself.png}" />
+                        Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/action.png}" />
                 </ListBox>
                 <Grid Margin="0,9,0,0">
                     <global:SliceControl
@@ -215,7 +215,8 @@
                     Margin="0,-18,0,0"
                     Padding="0"
                     Background="Transparent"
-                    BorderThickness="0">
+                    BorderThickness="0"
+                    SelectedIndex="1">
                     <TabItem
                         Padding="0"
                         Background="Transparent"
@@ -255,7 +256,6 @@
                         <Grid>
                             <Border
                                 x:Name="OptionCategoryContainer"
-                                Margin="0,0,9,45"
                                 Background="White"
                                 BorderBrush="#26000000"
                                 BorderThickness="1,0,1,1">

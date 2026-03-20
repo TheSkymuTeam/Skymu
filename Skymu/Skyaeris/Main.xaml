@@ -49,6 +49,7 @@
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
         <converters:ForwardedChecker x:Key="ForwardedChecker" />
+        <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <converters:ChannelTypeConverter x:Key="ChannelTypeConverter" />
@@ -807,7 +808,7 @@
                     MouseLeave="tbli_CancelHold"
                     MouseLeftButtonDown="tbli_MouseDown"
                     MouseLeftButtonUp="tbli_CancelHold"
-                    Source="Assets/Universal/Window Frame/long-icon.png"
+                    Source="Assets/Universal/Branding/logo-window-frame.png"
                     Style="{StaticResource LongIconStyle}" />
                 <!--  Cursor="Hand" why?????  -->
             </Grid>
@@ -987,9 +988,9 @@
                                     ButtonStateOnInit="Pressed"
                                     DefaultIndex="0"
                                     ElementCount="5"
-                                    HoverIndex="-1"
-                                    Interactive="False"
+                                    HoverIndex="1"
                                     IsRadioButton="True"
+                                    MouseLeftButtonUp="Chat_Close"
                                     PressedIndex="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-top.png', diag:PresentationTraceSources.TraceLevel=High}"
                                     StackDirection="Vertical"
@@ -1183,7 +1184,7 @@
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     LeftWidth="25"
-                                    MouseLeftButtonDown="SidebarTab_BtnDown"
+                                    MouseLeftButtonUp="SidebarTab_BtnDown"
                                     PressedIndex="2"
                                     RightWidth="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/contacts.png'}"
@@ -1198,12 +1199,12 @@
                                     x:Name="btnServers"
                                     Grid.Column="1"
                                     HorizontalAlignment="Stretch"
-                                    DefaultIndex="1"
+                                    DefaultIndex="0"
                                     ElementCount="5"
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     LeftWidth="25"
-                                    MouseLeftButtonDown="SidebarTab_BtnDown"
+                                    MouseLeftButtonUp="SidebarTab_BtnDown"
                                     PressedIndex="2"
                                     RightWidth="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/servers.png'}"
@@ -1224,7 +1225,7 @@
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     LeftWidth="25"
-                                    MouseLeftButtonDown="SidebarTab_BtnDown"
+                                    MouseLeftButtonUp="SidebarTab_BtnDown"
                                     PressedIndex="2"
                                     RightWidth="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/recents.png'}"
@@ -1510,7 +1511,7 @@
                                     HorizontalAlignment="Stretch"
                                     DefaultIndex="0"
                                     ElementCount="5"
-                                    HoverIndex="-1"
+                                    HoverIndex="1"
                                     MouseLeftButtonUp="Chat_Close"
                                     PressedIndex="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-right.png'}"
@@ -2101,9 +2102,9 @@
                                             DefaultIndex="0"
                                             ElementCount="7"
                                             SliceMode="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/message-box.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/message-box-header25.png'}"
                                             StackDirection="Vertical"
-                                            TopHeight="41" />
+                                            TopHeight="25" />
                                         <StackPanel
                                             x:Name="MessageBoxPanel"
                                             Grid.Column="1"
@@ -2214,7 +2215,8 @@
                                             <RichTextBox
                                                 x:Name="MessageTextBox"
                                                 MinHeight="35"
-                                                Padding="4,5,4,4"
+                                                MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
+                                                Padding="2,3"
                                                 AcceptsReturn="True"
                                                 Background="Transparent"
                                                 BorderThickness="0"

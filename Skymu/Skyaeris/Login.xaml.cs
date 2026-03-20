@@ -308,7 +308,7 @@ namespace Skymu.Skyaeris
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
             Plugins.DisposeAll();
-            Universal.PluginList = Plugins.Load("plugins");
+            Universal.PluginList = Plugins.Load("Plugins");
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = Credentials.GetAll();
             foreach (var plugin in Universal.PluginList)

@@ -7,7 +7,7 @@
 	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	  <FileVersion>1.0.0.0</FileVersion>
 	  <Platforms>AnyCPU;x86;x64</Platforms>
-	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\plugins\</OutputPath>
+	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\Plugins\</OutputPath>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
