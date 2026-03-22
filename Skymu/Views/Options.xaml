@@ -330,7 +330,25 @@
                                                 <ComboBoxItem Content="Windows Classic" Tag="Classic" />
                                             </ComboBox>
                                         </StackPanel>
-
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Main window frame" />
+                                            <ComboBox Width="250" SelectedIndex="{Binding Source={x:Static properties:Settings.Default}, Path=WindowFrame, Mode=TwoWay}">
+                                                <ComboBoxItem Content="Skype Aero" />
+                                                <ComboBoxItem Content="Skype Basic" />
+                                                <ComboBoxItem Content="Use the system window frame" />
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <CheckBox Margin="0,5" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=FallbackFillColors, Mode=TwoWay}">
+                                            <CheckBox.Content>
+                                                <TextBlock TextWrapping="Wrap">
+                                                    Use Skype fallback window colors, and do not switch the color scheme based on window activation state.
+                                                    Useful for users with visual motion sickness or if you think the colors are ugly.
+                                                </TextBlock>
+                                            </CheckBox.Content>
+                                        </CheckBox>
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Enable auto-login for accounts with valid credentials saved"

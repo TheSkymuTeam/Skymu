@@ -153,6 +153,7 @@ namespace Skymu.Skyaeris
             switch (type)
             {
                 case WindowType.Home:
+                    ActiveConversation.Clear();
                     ToggleStatusBoxSelection(true);
 
                     HomeTopbar.Visibility = Visibility.Visible;
@@ -1439,6 +1440,7 @@ namespace Skymu.Skyaeris
                                 if (
                                     message.Identifier != null
                                     && !message.Identifier.StartsWith(SKYMU_SENDING)
+                                    && !is_loading_conversation
                                 )
                                 {
                                     var msg = new ConversationItem[] { message };

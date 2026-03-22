@@ -29,18 +29,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Data.Sqlite;
 using MiddleMan;
-using System.Linq;
-
 
 namespace Skymu
 {
     internal class DatabaseManager
     {
         // WHOEVER IS READING THIS: Bump this number whenever a breaking schema change is made.
-        // DO NOT include migration functions etc. 
-        private const int RequiredDatabaseVersion = 1;
+        // DO NOT include migration functions etc. Originally started at: 1.
+        private const int DatabaseVersion = 2;
 
         public DatabaseManager(User user)
         {
@@ -88,7 +87,7 @@ namespace Skymu
                 {
                     var doc = System.Xml.Linq.XDocument.Load(configPath);
                     int version = (int)doc.Root.Element("DatabaseVersion");
-                    if (version < RequiredDatabaseVersion)
+                    if (version < DatabaseVersion)
                         wipe = true;
                 }
                 catch
@@ -109,13 +108,14 @@ namespace Skymu
         private static void WriteConfigInternal(string configPath)
         {
             new System.Xml.Linq.XDocument(
-                new System.Xml.Linq.XElement("SkymuDatabase",
-                    new System.Xml.Linq.XElement("DatabaseVersion", RequiredDatabaseVersion)
+                new System.Xml.Linq.XElement(
+                    "SkymuDatabase",
+                    new System.Xml.Linq.XElement("DatabaseVersion", DatabaseVersion)
                 )
             ).Save(configPath);
         }
 
-        private string DbPath;
+        internal string DbPath;
         public AccountsTable Accounts { get; private set; }
         public ContactsTable Contacts { get; private set; }
         public ConversationsTable Conversations { get; private set; }
@@ -149,9 +149,11 @@ namespace Skymu
 
         private static byte[] PrepareAvatarBytes(byte[] imageBytes)
         {
-            if (imageBytes == null || imageBytes.Length == 0) return imageBytes;
+            if (imageBytes == null || imageBytes.Length == 0)
+                return imageBytes;
             // already has 0x00 skoipe prefix
-            if (imageBytes[0] == 0x00) return imageBytes;
+            if (imageBytes[0] == 0x00)
+                return imageBytes;
             var result = new byte[imageBytes.Length + 1];
             result[0] = 0x00;
             Buffer.BlockCopy(imageBytes, 0, result, 1, imageBytes.Length);
@@ -1066,13 +1068,13 @@ namespace Skymu
             }
         }
 
-
-
         // Shared helper: reconstruct a User from a reader row.
         // Expected column order: skypename, username, displayname, avatar_image, mood_text
         private static User UserFromReader(SqliteDataReader reader, int offset = 0)
         {
-            string identifier = reader.IsDBNull(offset + 0) ? null : UnconvertIdentifier(reader.GetString(offset + 0));
+            string identifier = reader.IsDBNull(offset + 0)
+                ? null
+                : UnconvertIdentifier(reader.GetString(offset + 0));
             string username = reader.IsDBNull(offset + 1) ? null : reader.GetString(offset + 1);
             string displayName = reader.IsDBNull(offset + 2) ? null : reader.GetString(offset + 2);
             byte[] avatar = reader.IsDBNull(offset + 3) ? null : (byte[])reader[offset + 3];
@@ -1224,7 +1226,9 @@ namespace Skymu
                 {
                     cmd.CommandText =
                         "SELECT skypename, username, displayname, avatar_image, mood_text FROM Contacts WHERE skypename = @skypename LIMIT 1;";
-                    cmd.Parameters.Add("@skypename", SqliteType.Text).Value = ConvertIdentifier(identifier);
+                    cmd.Parameters.Add("@skypename", SqliteType.Text).Value = ConvertIdentifier(
+                        identifier
+                    );
                     using (SqliteDataReader reader = cmd.ExecuteReader())
                         return reader.Read() ? UserFromReader(reader) : null;
                 }
@@ -1315,7 +1319,8 @@ namespace Skymu
                                     (object)dm.Partner?.DisplayName ?? DBNull.Value;
                                 cmd.Parameters["@given_displayname"].Value = DBNull.Value; // TODO add nickname support
                                 cmd.Parameters["@avatar_image"].Value =
-                                    (object)PrepareAvatarBytes(dm.Partner?.ProfilePicture) ?? DBNull.Value;
+                                    (object)PrepareAvatarBytes(dm.Partner?.ProfilePicture)
+                                    ?? DBNull.Value;
                                 cmd.Parameters["@mood_text"].Value =
                                     (object)dm.Partner?.Status ?? DBNull.Value;
                                 cmd.Parameters["@isauthorized"].Value = 1;
@@ -1369,10 +1374,14 @@ namespace Skymu
                         while (reader.Read())
                         {
                             long dbId = reader.GetInt64(0);
-                            string convoId = reader.IsDBNull(1) ? null : UnconvertIdentifier(reader.GetString(1));
+                            string convoId = reader.IsDBNull(1)
+                                ? null
+                                : UnconvertIdentifier(reader.GetString(1));
                             int type = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                             string displayName = reader.IsDBNull(3) ? null : reader.GetString(3);
-                            string dlgPartner = reader.IsDBNull(4) ? null : UnconvertIdentifier(reader.GetString(4));
+                            string dlgPartner = reader.IsDBNull(4)
+                                ? null
+                                : UnconvertIdentifier(reader.GetString(4));
                             long lastActivity = reader.IsDBNull(5) ? 0 : reader.GetInt64(5);
                             int unread = reader.IsDBNull(6) ? 0 : reader.GetInt32(6);
 
@@ -1428,7 +1437,8 @@ namespace Skymu
                             SELECT id, type, displayname, dialog_partner,
                                    last_activity_timestamp, unconsumed_normal_messages
                             FROM Conversations WHERE skymu_convo_id = @skymu_convo_id LIMIT 1;";
-                        cmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value = ConvertIdentifier(skymuConvoId);
+                        cmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
+                            ConvertIdentifier(skymuConvoId);
 
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
@@ -1437,7 +1447,9 @@ namespace Skymu
                             dbId = reader.GetInt64(0);
                             type = reader.IsDBNull(1) ? 0 : reader.GetInt32(1);
                             displayName = reader.IsDBNull(2) ? null : reader.GetString(2);
-                            dlgPartner = reader.IsDBNull(3) ? null : UnconvertIdentifier(reader.GetString(3));
+                            dlgPartner = reader.IsDBNull(3)
+                                ? null
+                                : UnconvertIdentifier(reader.GetString(3));
                             lastActivity = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
                             unread = reader.IsDBNull(5) ? 0 : reader.GetInt32(5);
                         }
@@ -1607,15 +1619,17 @@ namespace Skymu
 
                                 // identity: for DMs use the partner's skypename (Skype compat);
                                 // for groups/channels use the platform conversation ID.
-                                string skypeIdentity = (conversation is DirectMessage)
-                                    ? dialogPartner
-                                    : conversation.Identifier;
+                                string skypeIdentity =
+                                    (conversation is DirectMessage)
+                                        ? dialogPartner
+                                        : conversation.Identifier;
 
                                 cmd.Parameters["@is_permanent"].Value = 1;
                                 cmd.Parameters["@identity"].Value =
                                     (object)ConvertIdentifier(skypeIdentity) ?? DBNull.Value;
                                 cmd.Parameters["@skymu_convo_id"].Value =
-                                    (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
+                                    (object)ConvertIdentifier(conversation.Identifier)
+                                    ?? DBNull.Value;
                                 cmd.Parameters["@type"].Value = type;
                                 cmd.Parameters["@displayname"].Value =
                                     (object)conversation.DisplayName ?? DBNull.Value;
@@ -1679,7 +1693,8 @@ namespace Skymu
                             foreach (Conversation conversation in conversations)
                             {
                                 idCmd.Parameters["@skymu_convo_id"].Value =
-                                    (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
+                                    (object)ConvertIdentifier(conversation.Identifier)
+                                    ?? DBNull.Value;
                                 object result = idCmd.ExecuteScalar();
                                 if (result == null || result == DBNull.Value)
                                     continue;
@@ -1699,7 +1714,9 @@ namespace Skymu
                                     if (member?.Identifier == null)
                                         continue;
                                     cmd.Parameters["@convo_id"].Value = convoId;
-                                    cmd.Parameters["@identity"].Value = ConvertIdentifier(member.Identifier);
+                                    cmd.Parameters["@identity"].Value = ConvertIdentifier(
+                                        member.Identifier
+                                    );
                                     cmd.Parameters["@rank"].Value = 0;
                                     cmd.ExecuteNonQuery();
                                 }
@@ -1726,6 +1743,191 @@ namespace Skymu
             public MessagesTable(DatabaseManager db)
             {
                 _db = db;
+            }
+
+            private string GetMediaFolder()
+            {
+                string mediaDir = Path.Combine(Path.GetDirectoryName(_db.DbPath), "Media");
+                Directory.CreateDirectory(mediaDir);
+                return mediaDir;
+            }
+
+            private static string ResolveImageExtension(byte[] bytes, string existingName)
+            {
+                string ext = Path.GetExtension(existingName)?.ToLowerInvariant();
+                if (
+                    ext == ".png"
+                    || ext == ".jpg"
+                    || ext == ".jpeg"
+                    || ext == ".gif"
+                    || ext == ".webp"
+                )
+                    return existingName;
+
+                if (bytes.Length >= 4)
+                {
+                    if (
+                        bytes[0] == 0x89
+                        && bytes[1] == 0x50
+                        && bytes[2] == 0x4E
+                        && bytes[3] == 0x47
+                    )
+                        return existingName + ".png";
+                    if (bytes[0] == 0xFF && bytes[1] == 0xD8)
+                        return existingName + ".jpg";
+                    if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
+                        return existingName + ".gif";
+                    if (
+                        bytes[0] == 0x52
+                        && bytes[1] == 0x49
+                        && bytes[2] == 0x46
+                        && bytes[3] == 0x46
+                    )
+                        return existingName + ".webp";
+                }
+
+                return existingName;
+            }
+
+            private void WriteImageAttachments(
+                ConversationItem[] items,
+                Conversation conversation,
+                long conversationIncrementalId,
+                SqliteConnection connection,
+                SqliteTransaction transaction
+            )
+            {
+                string dialogPartner =
+                    (conversation is DirectMessage dm) ? dm.Partner?.Identifier : null;
+                string mediaDir = GetMediaFolder();
+
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.Transaction = transaction;
+                    cmd.CommandText =
+                        @"INSERT INTO Transfers (
+                is_permanent, type, partner_handle, partner_dispname,
+                status, starttime, finishtime,
+                filepath, filename, filesize,
+                bytestransferred, convo_id, pk_id, chatmsg_index,
+                last_activity, flags
+            )
+            VALUES (
+                1, @type, @partner_handle, @partner_dispname,
+                8, @starttime, @finishtime,
+                @filepath, @filename, @filesize,
+                @filesize, @convo_id, @pk_id, @chatmsg_index,
+                @finishtime, 0
+            )
+            ON CONFLICT DO NOTHING;";
+
+                    cmd.Parameters.Add("@type", SqliteType.Integer);
+                    cmd.Parameters.Add("@partner_handle", SqliteType.Text);
+                    cmd.Parameters.Add("@partner_dispname", SqliteType.Text);
+                    cmd.Parameters.Add("@starttime", SqliteType.Integer);
+                    cmd.Parameters.Add("@finishtime", SqliteType.Integer);
+                    cmd.Parameters.Add("@filepath", SqliteType.Text);
+                    cmd.Parameters.Add("@filename", SqliteType.Text);
+                    cmd.Parameters.Add("@filesize", SqliteType.Text);
+                    cmd.Parameters.Add("@convo_id", SqliteType.Integer);
+                    cmd.Parameters.Add("@pk_id", SqliteType.Integer);
+                    cmd.Parameters.Add("@chatmsg_index", SqliteType.Integer);
+
+                    foreach (ConversationItem item in items)
+                    {
+                        if (!(item is Message message))
+                            continue;
+                        if (message.Attachments == null)
+                            continue;
+
+                        long tsSeconds = new DateTimeOffset(message.Time).ToUnixTimeSeconds();
+
+                        int attachmentIndex = 0;
+                        foreach (Attachment attachment in message.Attachments)
+                        {
+                            if (attachment?.Type != AttachmentType.Image)
+                                continue;
+                            if (attachment.File == null || attachment.File.Length == 0)
+                                continue;
+
+                            string rawName = string.IsNullOrWhiteSpace(attachment.Name)
+                                ? "image"
+                                : string.Concat(
+                                    attachment.Name.Split(Path.GetInvalidFileNameChars())
+                                );
+                            string safeName = ResolveImageExtension(attachment.File, rawName);
+
+                            string fileName = $"{message.Identifier}_{attachmentIndex}_{safeName}";
+                            string filePath = Path.Combine(mediaDir, fileName);
+
+                            File.WriteAllBytes(filePath, attachment.File);
+
+                            cmd.Parameters["@type"].Value = 1; // incoming image
+                            cmd.Parameters["@partner_handle"].Value =
+                                (object)ConvertIdentifier(dialogPartner) ?? DBNull.Value;
+                            cmd.Parameters["@partner_dispname"].Value =
+                                (object)(
+                                    conversation is DirectMessage dmConvo
+                                        ? dmConvo.Partner?.DisplayName
+                                        : conversation.DisplayName
+                                ) ?? DBNull.Value;
+                            cmd.Parameters["@starttime"].Value = tsSeconds;
+                            cmd.Parameters["@finishtime"].Value = tsSeconds;
+                            cmd.Parameters["@filepath"].Value = filePath;
+                            cmd.Parameters["@filename"].Value = safeName;
+                            cmd.Parameters["@filesize"].Value = attachment.File.Length.ToString();
+                            cmd.Parameters["@convo_id"].Value = conversationIncrementalId;
+                            cmd.Parameters["@pk_id"].Value =
+                                (object)message.Identifier ?? DBNull.Value;
+                            cmd.Parameters["@chatmsg_index"].Value = attachmentIndex;
+
+                            cmd.ExecuteNonQuery();
+                            attachmentIndex++;
+                        }
+                    }
+                }
+            }
+
+            private Dictionary<string, Attachment[]> ReadImageAttachmentsInternal(
+                long convoId,
+                SqliteConnection connection
+            )
+            {
+                var result = new Dictionary<string, List<Attachment>>();
+
+                using (SqliteCommand cmd = connection.CreateCommand())
+                {
+                    cmd.CommandText =
+                        @"SELECT pk_id, filepath, filename
+              FROM Transfers
+              WHERE convo_id = @convo_id AND type = 1
+              ORDER BY pk_id ASC, chatmsg_index ASC;";
+                    cmd.Parameters.Add("@convo_id", SqliteType.Integer).Value = convoId;
+
+                    using (SqliteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string pkId = reader.IsDBNull(0) ? null : reader.GetInt64(0).ToString();
+                            string filePath = reader.IsDBNull(1) ? null : reader.GetString(1);
+                            string fileName = reader.IsDBNull(2) ? null : reader.GetString(2);
+
+                            if (pkId == null || filePath == null)
+                                continue;
+                            if (!File.Exists(filePath))
+                                continue;
+
+                            byte[] bytes = File.ReadAllBytes(filePath);
+                            var attachment = new Attachment(bytes, fileName, AttachmentType.Image);
+
+                            if (!result.TryGetValue(pkId, out var list))
+                                result[pkId] = list = new List<Attachment>();
+                            list.Add(attachment);
+                        }
+                    }
+                }
+
+                return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
             }
 
             public ConversationItem[] Read(Conversation conversation, int limit = 0)
@@ -1759,6 +1961,8 @@ namespace Skymu
                             return items.ToArray();
                         convoId = Convert.ToInt64(result);
                     }
+
+                    var attachmentMap = ReadImageAttachmentsInternal(convoId, connection);
 
                     using (SqliteCommand cmd = connection.CreateCommand())
                     {
@@ -1795,7 +1999,9 @@ namespace Skymu
                             while (reader.Read())
                             {
                                 int msgType = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-                                string authorId = reader.IsDBNull(1) ? null : UnconvertIdentifier(reader.GetString(1));
+                                string authorId = reader.IsDBNull(1)
+                                    ? null
+                                    : UnconvertIdentifier(reader.GetString(1));
                                 string authorUser = reader.IsDBNull(2) ? null : reader.GetString(2);
                                 string authorDisp = reader.IsDBNull(3) ? null : reader.GetString(3);
                                 string bodyXml = reader.IsDBNull(4) ? null : reader.GetString(4);
@@ -1826,6 +2032,8 @@ namespace Skymu
                                     case 61: // Ordinary message
                                     case 68: // File transfer, body present
                                         var msg = new Message(pkId, sender, time, text: bodyXml);
+                                        if (attachmentMap.TryGetValue(pkId, out var attachments))
+                                            msg.Attachments = attachments;
                                         if (parentId != null)
                                             msg.ParentMessage =
                                                 ReadRow(parentId, convoId, contact_map, connection)
@@ -1856,7 +2064,7 @@ namespace Skymu
                                         );
                                         break;
 
-                                        // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
+                                    // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
                                 }
                             }
                         }
@@ -1894,7 +2102,9 @@ namespace Skymu
                             if (!r.Read())
                                 return null;
 
-                            string authorId = r.IsDBNull(1) ? null : UnconvertIdentifier(r.GetString(1));
+                            string authorId = r.IsDBNull(1)
+                                ? null
+                                : UnconvertIdentifier(r.GetString(1));
                             string authorUser = r.IsDBNull(2) ? null : r.GetString(2);
                             string authorDisp = r.IsDBNull(3) ? null : r.GetString(3);
                             string body = r.IsDBNull(4) ? null : r.GetString(4);
@@ -2031,7 +2241,8 @@ namespace Skymu
                                     cmd.Parameters["@chatname"].Value = DBNull.Value;
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value =
-                                        (object)ConvertIdentifier(message.Sender?.Identifier) ?? DBNull.Value;
+                                        (object)ConvertIdentifier(message.Sender?.Identifier)
+                                        ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value =
                                         (object)message.Sender?.Username ?? DBNull.Value;
                                     cmd.Parameters["@from_dispname"].Value =
@@ -2064,7 +2275,8 @@ namespace Skymu
                                     cmd.Parameters["@chatname"].Value = DBNull.Value;
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value =
-                                        (object)ConvertIdentifier(callStarted.StartedBy?.Identifier) ?? DBNull.Value;
+                                        (object)ConvertIdentifier(callStarted.StartedBy?.Identifier)
+                                        ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value =
                                         (object)callStarted.StartedBy?.Username ?? DBNull.Value;
                                     cmd.Parameters["@from_dispname"].Value =
@@ -2095,7 +2307,8 @@ namespace Skymu
                                     cmd.Parameters["@chatname"].Value = DBNull.Value;
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value =
-                                        (object)ConvertIdentifier(callEnded.StartedBy?.Identifier) ?? DBNull.Value;
+                                        (object)ConvertIdentifier(callEnded.StartedBy?.Identifier)
+                                        ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value =
                                         (object)callEnded.StartedBy?.Username ?? DBNull.Value;
                                     cmd.Parameters["@from_dispname"].Value =
@@ -2122,7 +2335,13 @@ namespace Skymu
                                 cmd.ExecuteNonQuery();
                             }
                         }
-
+                        WriteImageAttachments(
+                            items,
+                            conversation,
+                            conversation_incremental_id,
+                            connection,
+                            transaction
+                        );
                         if (ownsTransaction && items.Length > 0)
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
@@ -2140,7 +2359,8 @@ namespace Skymu
                                     .Parameters.Add("@last_activity_timestamp", SqliteType.Integer)
                                     .Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                                 updateCmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
-                                    (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
+                                    (object)ConvertIdentifier(conversation.Identifier)
+                                    ?? DBNull.Value;
                                 updateCmd.ExecuteNonQuery();
                             }
                         }
