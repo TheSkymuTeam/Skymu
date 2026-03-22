@@ -33,10 +33,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.3.18</Value>
+      <Value Profile="(Default)">0.3.19</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Sean Kevin Philophobia</Value>
+      <Value Profile="(Default)">Drocea Steve's Lava Chicken</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
