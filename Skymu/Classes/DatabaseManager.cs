@@ -37,9 +37,16 @@ namespace Skymu
 {
     internal class DatabaseManager
     {
+        #region Definitions
         // WHOEVER IS READING THIS: Bump this number whenever a breaking schema change is made.
         // DO NOT include migration functions etc. Originally started at: 1.
         private const int DatabaseVersion = 2;
+        internal string DbPath;
+        public AccountsTable Accounts { get; private set; }
+        public ContactsTable Contacts { get; private set; }
+        public ConversationsTable Conversations { get; private set; }
+        public ParticipantsTable Participants { get; private set; }
+        public MessagesTable Messages { get; private set; }
 
         public DatabaseManager(User user)
         {
@@ -53,7 +60,7 @@ namespace Skymu
             DbPath = Path.Combine(folderPath, "main.db");
             string configPath = Path.Combine(folderPath, "config.xml");
 
-            EnsureDatabaseVersionInternal(folderPath, configPath);
+            EnsureDatabaseVersion(folderPath, configPath);
 
             Accounts = new AccountsTable(this);
             Contacts = new ContactsTable(this);
@@ -65,15 +72,17 @@ namespace Skymu
             {
                 using (var cmd = connection.CreateCommand())
                 {
-                    cmd.CommandText = "PRAGMA journal_mode=DELETE;"; // .db-journal files accurate to skype
+                    cmd.CommandText = "PRAGMA journal_mode=DELETE;";
                     cmd.ExecuteNonQuery();
                 }
 
                 EnsureTablesInternal(connection);
             }
         }
+        #endregion
 
-        private void EnsureDatabaseVersionInternal(string folderPath, string configPath)
+        #region Helper methods
+        private void EnsureDatabaseVersion(string folderPath, string configPath)
         {
             bool wipe = false;
 
@@ -115,13 +124,6 @@ namespace Skymu
             ).Save(configPath);
         }
 
-        internal string DbPath;
-        public AccountsTable Accounts { get; private set; }
-        public ContactsTable Contacts { get; private set; }
-        public ConversationsTable Conversations { get; private set; }
-        public ParticipantsTable Participants { get; private set; }
-        public MessagesTable Messages { get; private set; }
-
         private SqliteConnection CreateConnection()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(DbPath));
@@ -151,7 +153,7 @@ namespace Skymu
         {
             if (imageBytes == null || imageBytes.Length == 0)
                 return imageBytes;
-            // already has 0x00 skoipe prefix
+            // already has 0x00 skoipe prefix ??
             if (imageBytes[0] == 0x00)
                 return imageBytes;
             var result = new byte[imageBytes.Length + 1];
@@ -160,6 +162,28 @@ namespace Skymu
             return result;
         }
 
+        private static User UserFromReader(SqliteDataReader reader, int offset = 0)
+        {
+            string identifier = reader.IsDBNull(offset + 0)
+                ? null
+                : UnconvertIdentifier(reader.GetString(offset + 0));
+            string username = reader.IsDBNull(offset + 1) ? null : reader.GetString(offset + 1);
+            string displayName = reader.IsDBNull(offset + 2) ? null : reader.GetString(offset + 2);
+            byte[] avatar = reader.IsDBNull(offset + 3) ? null : (byte[])reader[offset + 3];
+            if (avatar != null && avatar.Length > 0 && avatar[0] == 0x00)
+                avatar = avatar.Skip(1).ToArray();
+            string status = reader.IsDBNull(offset + 4) ? null : reader.GetString(offset + 4);
+            return new User(displayName, username, identifier, status, profilePicture: avatar);
+        }
+
+        private static User StubUser(string identifier)
+        {
+            return new User(identifier, identifier, identifier);
+        }
+
+        #endregion
+
+        #region Database table creation
         private void EnsureTablesInternal(SqliteConnection connection)
         {
             using (SqliteCommand cmd = connection.CreateCommand())
@@ -1067,28 +1091,9 @@ namespace Skymu
                 cmd.ExecuteNonQuery();
             }
         }
+        #endregion
 
-        // Shared helper: reconstruct a User from a reader row.
-        // Expected column order: skypename, username, displayname, avatar_image, mood_text
-        private static User UserFromReader(SqliteDataReader reader, int offset = 0)
-        {
-            string identifier = reader.IsDBNull(offset + 0)
-                ? null
-                : UnconvertIdentifier(reader.GetString(offset + 0));
-            string username = reader.IsDBNull(offset + 1) ? null : reader.GetString(offset + 1);
-            string displayName = reader.IsDBNull(offset + 2) ? null : reader.GetString(offset + 2);
-            byte[] avatar = reader.IsDBNull(offset + 3) ? null : (byte[])reader[offset + 3];
-            if (avatar != null && avatar.Length > 0 && avatar[0] == 0x00)
-                avatar = avatar.Skip(1).ToArray();
-            string status = reader.IsDBNull(offset + 4) ? null : reader.GetString(offset + 4);
-            return new User(displayName, username, identifier, status, profilePicture: avatar);
-        }
-
-        // minimal stub User when only identifier available
-        private static User StubUser(string identifier)
-        {
-            return new User(identifier, identifier, identifier);
-        }
+        #region Accounts
 
         public class AccountsTable
         {
@@ -1099,7 +1104,7 @@ namespace Skymu
                 _db = db;
             }
 
-            public bool Write(User user)
+            public bool Write(User user) // JUMP accounts write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1195,6 +1200,10 @@ namespace Skymu
             }
         }
 
+        #endregion Accounts
+
+        #region Contacts
+
         public class ContactsTable
         {
             private readonly DatabaseManager _db;
@@ -1219,7 +1228,7 @@ namespace Skymu
                 return users.ToArray();
             }
 
-            public User Read(string identifier)
+            public User Read(string identifier) // JUMP contacts read
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 using (SqliteCommand cmd = connection.CreateCommand())
@@ -1234,7 +1243,7 @@ namespace Skymu
                 }
             }
 
-            public bool Write(Conversation[] conversations)
+            public bool Write(Conversation[] conversations) // JUMP contacts write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1344,6 +1353,10 @@ namespace Skymu
             }
         }
 
+        #endregion
+
+        #region Conversations
+
         public class ConversationsTable
         {
             private readonly DatabaseManager _db;
@@ -1353,7 +1366,7 @@ namespace Skymu
                 _db = db;
             }
 
-            public Conversation[] Read()
+            public Conversation[] Read() // JUMP conversation read
             {
                 var contact_map = BuildContactMap();
                 var participantMap = LoadParticipantMap();
@@ -1417,7 +1430,7 @@ namespace Skymu
                 return result.ToArray();
             }
 
-            public Conversation Read(string skymuConvoId)
+            public Conversation Read(string skymuConvoId) // JUMP conversation read one
             {
                 var contact_map = BuildContactMap();
 
@@ -1560,7 +1573,7 @@ namespace Skymu
                 );
             }
 
-            public bool Write(Conversation[] conversations)
+            public bool Write(Conversation[] conversations) // JUMP conversation write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1657,6 +1670,10 @@ namespace Skymu
             }
         }
 
+        #endregion
+
+        #region Participants
+
         public class ParticipantsTable
         {
             private readonly DatabaseManager _db;
@@ -1666,7 +1683,7 @@ namespace Skymu
                 _db = db;
             }
 
-            public bool Write(Conversation[] conversations)
+            public bool Write(Conversation[] conversations) // JUMP participants write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1735,6 +1752,9 @@ namespace Skymu
                 return true;
             }
         }
+        #endregion
+
+        #region Messages
 
         public class MessagesTable
         {
@@ -1888,7 +1908,7 @@ namespace Skymu
                 }
             }
 
-            private Dictionary<string, Attachment[]> ReadImageAttachmentsInternal(
+            private Dictionary<string, Attachment[]> ReadImageAttachments(
                 long convoId,
                 SqliteConnection connection
             )
@@ -1935,7 +1955,7 @@ namespace Skymu
                 return Read(conversation, limit, beforeTimestampMs: null);
             }
 
-            public ConversationItem[] Read(
+            public ConversationItem[] Read( // JUMP messages read
                 Conversation conversation,
                 int limit,
                 long? beforeTimestampMs
@@ -1962,7 +1982,7 @@ namespace Skymu
                         convoId = Convert.ToInt64(result);
                     }
 
-                    var attachmentMap = ReadImageAttachmentsInternal(convoId, connection);
+                    var attachmentMap = ReadImageAttachments(convoId, connection);
 
                     using (SqliteCommand cmd = connection.CreateCommand())
                     {
@@ -2074,7 +2094,7 @@ namespace Skymu
                 return items.ToArray();
             }
 
-            private ConversationItem ReadRow(
+            private ConversationItem ReadRow( // JUMP messages read row
                 string pkId,
                 long convoId,
                 Dictionary<string, User> contactMap,
@@ -2132,7 +2152,7 @@ namespace Skymu
                 }
             }
 
-            public bool Write(
+            public bool Write( // JUMP messages write
                 ConversationItem[] items,
                 Conversation conversation,
                 SqliteConnection existingConnection = null
@@ -2385,5 +2405,7 @@ namespace Skymu
                 return true;
             }
         }
+
+        #endregion
     }
 }
