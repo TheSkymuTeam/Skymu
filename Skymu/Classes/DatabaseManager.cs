@@ -38,15 +38,21 @@ namespace Skymu
     internal class DatabaseManager
     {
         #region Definitions
-        // WHOEVER IS READING THIS: Bump this number whenever a breaking schema change is made.
-        // DO NOT include migration functions etc. Originally started at: 1.
-        private const int DatabaseVersion = 2;
+
+        // WHOEVER IS READING THIS: bump this number whenever a breaking schema change is made
+        // or just when you feel like your changes could cause incompatibilities with old databases.
+        // Increment this number liberally. DO NOT use migration functions etc as an alternative to
+        // incrementing the number. Originally started at: 1.
+        private const int Version = 3;
+
         internal string DbPath;
         public AccountsTable Accounts { get; private set; }
         public ContactsTable Contacts { get; private set; }
         public ConversationsTable Conversations { get; private set; }
         public ParticipantsTable Participants { get; private set; }
         public MessagesTable Messages { get; private set; }
+
+        internal Dictionary<string, User> _contactMap;
 
         public DatabaseManager(User user)
         {
@@ -96,7 +102,7 @@ namespace Skymu
                 {
                     var doc = System.Xml.Linq.XDocument.Load(configPath);
                     int version = (int)doc.Root.Element("DatabaseVersion");
-                    if (version < DatabaseVersion)
+                    if (version < Version)
                         wipe = true;
                 }
                 catch
@@ -113,13 +119,20 @@ namespace Skymu
                 WriteConfigInternal(configPath);
             }
         }
-
+        private void BuildContactMap()
+        {
+            if (_contactMap != null) return;
+            _contactMap = new Dictionary<string, User>();
+            foreach (User u in Contacts.Read())
+                if (u.Identifier != null)
+                    _contactMap[u.Identifier] = u;
+        }
         private static void WriteConfigInternal(string configPath)
         {
             new System.Xml.Linq.XDocument(
                 new System.Xml.Linq.XElement(
                     "SkymuDatabase",
-                    new System.Xml.Linq.XElement("DatabaseVersion", DatabaseVersion)
+                    new System.Xml.Linq.XElement("DatabaseVersion", Version)
                 )
             ).Save(configPath);
         }
@@ -688,8 +701,8 @@ namespace Skymu
                     CREATE TABLE IF NOT EXISTS Conversations (
                         id                                      INTEGER NOT NULL PRIMARY KEY,
                         is_permanent                            INTEGER,
-                        identity                                TEXT UNIQUE,
-                        skymu_convo_id                          TEXT UNIQUE,
+                        identity                                TEXT,
+                        conversation_id                         TEXT UNIQUE,
                         type                                    INTEGER,
                         live_host                               TEXT,
                         live_is_hostless                        INTEGER,
@@ -1368,7 +1381,7 @@ namespace Skymu
 
             public Conversation[] Read() // JUMP conversation read
             {
-                var contact_map = BuildContactMap();
+                _db.BuildContactMap();
                 var participantMap = LoadParticipantMap();
                 var result = new List<Conversation>();
 
@@ -1377,7 +1390,7 @@ namespace Skymu
                 {
                     cmd.CommandText =
                         @"
-                        SELECT id, skymu_convo_id, type, displayname, dialog_partner,
+                        SELECT id, conversation_id, type, displayname, dialog_partner,
                                last_activity_timestamp, unconsumed_normal_messages
                         FROM Conversations
                         ORDER BY last_activity_timestamp DESC;";
@@ -1412,7 +1425,7 @@ namespace Skymu
                                         dlgPartner,
                                         unread,
                                         lastTime,
-                                        contact_map
+                                        _db._contactMap
                                     )
                                     : BuildGroup(
                                         convoId,
@@ -1420,7 +1433,7 @@ namespace Skymu
                                         unread,
                                         lastTime,
                                         memberIds,
-                                        contact_map
+                                        _db._contactMap
                                     )
                             );
                         }
@@ -1432,7 +1445,7 @@ namespace Skymu
 
             public Conversation Read(string skymuConvoId) // JUMP conversation read one
             {
-                var contact_map = BuildContactMap();
+                _db.BuildContactMap();
 
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1449,8 +1462,8 @@ namespace Skymu
                             @"
                             SELECT id, type, displayname, dialog_partner,
                                    last_activity_timestamp, unconsumed_normal_messages
-                            FROM Conversations WHERE skymu_convo_id = @skymu_convo_id LIMIT 1;";
-                        cmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
+                            FROM Conversations WHERE conversation_id = @conversation_id LIMIT 1;";
+                        cmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
                             ConvertIdentifier(skymuConvoId);
 
                         using (SqliteDataReader reader = cmd.ExecuteReader())
@@ -1486,26 +1499,19 @@ namespace Skymu
                     }
 
                     return type == 1
-                        ? BuildDM(skymuConvoId, dlgPartner, unread, lastTime, contact_map)
+                        ? BuildDM(skymuConvoId, dlgPartner, unread, lastTime, _db._contactMap)
                         : (Conversation)BuildGroup(
                             skymuConvoId,
                             displayName,
                             unread,
                             lastTime,
                             memberIds,
-                            contact_map
+                            _db._contactMap
                         );
                 }
             }
 
-            private Dictionary<string, User> BuildContactMap()
-            {
-                var map = new Dictionary<string, User>();
-                foreach (User u in _db.Contacts.Read())
-                    if (u.Identifier != null)
-                        map[u.Identifier] = u;
-                return map;
-            }
+         
 
             private Dictionary<long, List<string>> LoadParticipantMap()
             {
@@ -1586,20 +1592,20 @@ namespace Skymu
                             cmd.CommandText =
                                 @"
                                 INSERT INTO Conversations (
-                                    is_permanent, identity, skymu_convo_id, type, displayname, given_displayname,
+                                    is_permanent, identity, conversation_id, type, displayname, given_displayname,
                                     meta_topic, dialog_partner, 
                                     creator, creation_timestamp,
                                     last_message_id, last_activity_timestamp,
                                     is_bookmarked, is_blocked, my_status
                                 )
                                 VALUES (
-                                    @is_permanent, @identity, @skymu_convo_id, @type, @displayname, @given_displayname,
+                                    @is_permanent, @identity, @conversation_id, @type, @displayname, @given_displayname,
                                     @meta_topic, @dialog_partner,
                                     NULL, NULL,
                                     NULL, NULL,
                                     0, 0, 0
                                 )
-                                ON CONFLICT(skymu_convo_id) DO UPDATE SET
+                                ON CONFLICT(conversation_id) DO UPDATE SET
                                     displayname             = excluded.displayname,
                                     given_displayname       = excluded.given_displayname,
                                     meta_topic              = excluded.meta_topic,
@@ -1607,7 +1613,7 @@ namespace Skymu
 
                             cmd.Parameters.Add("@is_permanent", SqliteType.Integer);
                             cmd.Parameters.Add("@identity", SqliteType.Text);
-                            cmd.Parameters.Add("@skymu_convo_id", SqliteType.Text);
+                            cmd.Parameters.Add("@conversation_id", SqliteType.Text);
                             cmd.Parameters.Add("@type", SqliteType.Integer);
                             cmd.Parameters.Add("@displayname", SqliteType.Text);
                             cmd.Parameters.Add("@given_displayname", SqliteType.Text);
@@ -1640,7 +1646,7 @@ namespace Skymu
                                 cmd.Parameters["@is_permanent"].Value = 1;
                                 cmd.Parameters["@identity"].Value =
                                     (object)ConvertIdentifier(skypeIdentity) ?? DBNull.Value;
-                                cmd.Parameters["@skymu_convo_id"].Value =
+                                cmd.Parameters["@conversation_id"].Value =
                                     (object)ConvertIdentifier(conversation.Identifier)
                                     ?? DBNull.Value;
                                 cmd.Parameters["@type"].Value = type;
@@ -1695,8 +1701,8 @@ namespace Skymu
                         {
                             cmd.Transaction = transaction;
                             idCmd.CommandText =
-                                "SELECT id FROM Conversations WHERE skymu_convo_id = @skymu_convo_id LIMIT 1;";
-                            idCmd.Parameters.Add("@skymu_convo_id", SqliteType.Text);
+                                "SELECT id FROM Conversations WHERE conversation_id = @conversation_id LIMIT 1;";
+                            idCmd.Parameters.Add("@conversation_id", SqliteType.Text);
 
                             cmd.CommandText =
                                 @"
@@ -1709,7 +1715,7 @@ namespace Skymu
 
                             foreach (Conversation conversation in conversations)
                             {
-                                idCmd.Parameters["@skymu_convo_id"].Value =
+                                idCmd.Parameters["@conversation_id"].Value =
                                     (object)ConvertIdentifier(conversation.Identifier)
                                     ?? DBNull.Value;
                                 object result = idCmd.ExecuteScalar();
@@ -1775,38 +1781,40 @@ namespace Skymu
             private static string ResolveImageExtension(byte[] bytes, string existingName)
             {
                 string ext = Path.GetExtension(existingName)?.ToLowerInvariant();
-                if (
+                if ( // does the file already have the extension? (unlikely)
                     ext == ".png"
                     || ext == ".jpg"
                     || ext == ".jpeg"
                     || ext == ".gif"
                     || ext == ".webp"
                 )
-                    return existingName;
-
-                if (bytes.Length >= 4)
                 {
-                    if (
+                    return existingName; // just save as is, the file has the extension already
+                }
+
+                if (bytes.Length >= 4) // are there magic bytes?
+                {
+                    if ( // do they match up with any of the formats we know?
                         bytes[0] == 0x89
                         && bytes[1] == 0x50
                         && bytes[2] == 0x4E
                         && bytes[3] == 0x47
                     )
-                        return existingName + ".png";
+                        return existingName + ".png"; // save as PNG
                     if (bytes[0] == 0xFF && bytes[1] == 0xD8)
-                        return existingName + ".jpg";
+                        return existingName + ".jpg"; // save as JPEG
                     if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
-                        return existingName + ".gif";
+                        return existingName + ".gif"; // save as GIF
                     if (
                         bytes[0] == 0x52
                         && bytes[1] == 0x49
                         && bytes[2] == 0x46
                         && bytes[3] == 0x46
                     )
-                        return existingName + ".webp";
+                        return existingName + ".webp"; // save as WebP
                 }
 
-                return existingName;
+                return existingName; // couldn't find proper extension, just save without an extension
             }
 
             private void WriteImageAttachments(
@@ -1962,10 +1970,7 @@ namespace Skymu
             )
             {
                 var items = new List<ConversationItem>();
-                var contact_map = new Dictionary<string, User>();
-                foreach (User u in _db.Contacts.Read())
-                    if (u.Identifier != null)
-                        contact_map[u.Identifier] = u;
+                _db.BuildContactMap();
 
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1973,8 +1978,8 @@ namespace Skymu
                     using (SqliteCommand idCmd = connection.CreateCommand())
                     {
                         idCmd.CommandText =
-                            "SELECT id FROM Conversations WHERE skymu_convo_id = @skymu_convo_id LIMIT 1;";
-                        idCmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
+                            "SELECT id FROM Conversations WHERE conversation_id = @conversation_id LIMIT 1;";
+                        idCmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
                             (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
                         object result = idCmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
@@ -2035,7 +2040,7 @@ namespace Skymu
                                 User sender = null;
                                 if (authorId != null)
                                 {
-                                    contact_map.TryGetValue(authorId, out sender);
+                                    _db._contactMap.TryGetValue(authorId, out sender);
                                     if (sender == null)
                                         sender = new User(authorDisp, authorUser, authorId);
                                 }
@@ -2056,7 +2061,7 @@ namespace Skymu
                                             msg.Attachments = attachments;
                                         if (parentId != null)
                                             msg.ParentMessage =
-                                                ReadRow(parentId, convoId, contact_map, connection)
+                                                ReadRow(parentId, convoId, _db._contactMap, connection)
                                                 as Message;
                                         items.Add(msg);
                                         break;
@@ -2084,7 +2089,7 @@ namespace Skymu
                                         );
                                         break;
 
-                                    // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
+                                        // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
                                 }
                             }
                         }
@@ -2169,8 +2174,8 @@ namespace Skymu
                     using (SqliteCommand idCmd = connection.CreateCommand())
                     {
                         idCmd.CommandText =
-                            "SELECT id FROM Conversations WHERE skymu_convo_id = @skymu_convo_id LIMIT 1;";
-                        idCmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
+                            "SELECT id FROM Conversations WHERE conversation_id = @conversation_id LIMIT 1;";
+                        idCmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
                             (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
                         object result = idCmd.ExecuteScalar();
                         if (result != null && result != DBNull.Value)
@@ -2372,13 +2377,13 @@ namespace Skymu
                         UPDATE Conversations
                         SET last_message_id         = (SELECT id FROM Messages WHERE convo_id = @convo_id ORDER BY timestamp DESC LIMIT 1),
                             last_activity_timestamp = @last_activity_timestamp
-                        WHERE skymu_convo_id = @skymu_convo_id;";
+                        WHERE conversation_id = @conversation_id;";
                                 updateCmd.Parameters.Add("@convo_id", SqliteType.Integer).Value =
                                     conversation_incremental_id;
                                 updateCmd
                                     .Parameters.Add("@last_activity_timestamp", SqliteType.Integer)
                                     .Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                updateCmd.Parameters.Add("@skymu_convo_id", SqliteType.Text).Value =
+                                updateCmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
                                     (object)ConvertIdentifier(conversation.Identifier)
                                     ?? DBNull.Value;
                                 updateCmd.ExecuteNonQuery();
