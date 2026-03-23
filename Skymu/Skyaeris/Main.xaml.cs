@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,8 +50,7 @@ namespace Skymu.Skyaeris
         private const int MESSAGE_LIMIT = 50;
 
         // Other file-level variables
-        internal static ObservableCollection<ConversationItem> ActiveConversation =
-            new ObservableCollection<ConversationItem>();
+        internal static ObservableCollection<ConversationItem> ActiveConversation;
         private DatabaseManager Database;
         private Action<int> _userCountHandler;
         private NotifyCollectionChangedEventHandler _conversationItemsChangedHandler;
@@ -80,9 +80,9 @@ namespace Skymu.Skyaeris
         );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
-		
-		private CancellationTokenSource _tbliHoldTokenSource;
-		private readonly Random _random = new Random(); // what is this bro
+
+        private CancellationTokenSource _tbliHoldTokenSource;
+        private readonly Random _random = new Random(); // what is this bro
 
         private enum WindowType
         {
@@ -149,11 +149,10 @@ namespace Skymu.Skyaeris
                 return;
 
             current_window = type;
-
             switch (type)
             {
                 case WindowType.Home:
-                    ActiveConversation.Clear();
+                    ClearConversation();
                     ToggleStatusBoxSelection(true);
 
                     HomeTopbar.Visibility = Visibility.Visible;
@@ -400,7 +399,8 @@ namespace Skymu.Skyaeris
             ContentBgTop.Fill = (Brush)Application.Current.Resources["Inactive.WindowBrush"];
             ContentBgBottom.Fill = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
             MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.MenuBarBrush"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
+            MainMenuBarDivider.Fill = (Brush)
+                Application.Current.Resources["Inactive.StandardBrush"];
 
             foreach (var button in new[] { close, minimize, maximize, split })
             {
@@ -410,7 +410,8 @@ namespace Skymu.Skyaeris
             if (border == WindowFrame.SkypeBasic)
             {
                 this.Background = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
-                TitleBar.Background = (Brush)Application.Current.Resources["Inactive.TitlebarBrush"];
+                TitleBar.Background = (Brush)
+                    Application.Current.Resources["Inactive.TitlebarBrush"];
             }
         }
 
@@ -787,37 +788,37 @@ namespace Skymu.Skyaeris
             HandleWindowDeactivated();
         }
 
-		private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
-		{
-			_tbliHoldTokenSource = new CancellationTokenSource();
-			
-			try
-			{
-				await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
-		
-				string url;
-				if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-					url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-				else
-					url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
-				
-				Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
-			}
-			catch (TaskCanceledException)
-			{
-				// ass
-			}
-		}
-		
-		// Method triggered if the user lets go of the click OR moves their mouse away
-		private void tbli_CancelHold(object sender, MouseEventArgs e)
-		{
-			// If a timer is currently running, cancel it
-			if (_tbliHoldTokenSource != null && !_tbliHoldTokenSource.IsCancellationRequested)
-			{
-				_tbliHoldTokenSource.Cancel();
-			}
-		}
+        private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+        {
+            _tbliHoldTokenSource = new CancellationTokenSource();
+
+            try
+            {
+                await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
+
+                string url;
+                if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                    url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                else
+                    url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+            }
+            catch (TaskCanceledException)
+            {
+                // ass
+            }
+        }
+
+        // Method triggered if the user lets go of the click OR moves their mouse away
+        private void tbli_CancelHold(object sender, MouseEventArgs e)
+        {
+            // If a timer is currently running, cancel it
+            if (_tbliHoldTokenSource != null && !_tbliHoldTokenSource.IsCancellationRequested)
+            {
+                _tbliHoldTokenSource.Cancel();
+            }
+        }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
         {
@@ -973,7 +974,9 @@ namespace Skymu.Skyaeris
 
         private void VideoCallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            Universal.NotImplemented("Video calling");
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+            //Universal.NotImplemented("Video calling");
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1225,7 +1228,8 @@ namespace Skymu.Skyaeris
                             + "/Assets/"
                             + Properties.Settings.Default.ThemeRoot
                             + "/Chat/"
-                            + icon_filename + ".png";
+                            + icon_filename
+                            + ".png";
 
                         Application.Current.Dispatcher.Invoke(() =>
                         {
@@ -1286,7 +1290,8 @@ namespace Skymu.Skyaeris
                 + "/Assets/"
                 + Properties.Settings.Default.ThemeRoot
                 + "/Chat/"
-                + final_icon + ".png";
+                + final_icon
+                + ".png";
             WifiButton.Source = FrozenImage.Generate(final_uri);
         }
 
@@ -1294,11 +1299,20 @@ namespace Skymu.Skyaeris
 
         #region Conversation
 
+        private void ClearConversation()
+        {
+            _pendingPreviewMessages.Clear();
+            Universal.Plugin.TypingUsersList.Clear();
+            ConversationItemsList.ItemsSource = null;
+            if (ActiveConversation != null && _activeConversationChangedHandler != null)
+                ActiveConversation.CollectionChanged -= _activeConversationChangedHandler;
+            ActiveConversation = new ObservableCollection<ConversationItem>();
+        }
+
         private async Task SetConversation()
         {
             _userScrolledUp = false;
-            ActiveConversation.Clear();
-            Universal.Plugin.TypingUsersList.Clear();
+            ClearConversation();
             SetWindow(WindowType.Chat);
             PlaceholderTextMTB = Universal.Lang.Format(
                 "sCHAT_TYPE_HERE_DIALOG",
@@ -1356,9 +1370,6 @@ namespace Skymu.Skyaeris
                         }
                     }
                 }
-
-                if (_activeConversationChangedHandler != null)
-                    ActiveConversation.CollectionChanged -= _activeConversationChangedHandler;
 
                 _activeConversationChangedHandler = (s, args) =>
                 {
@@ -1812,9 +1823,6 @@ namespace Skymu.Skyaeris
 
         internal static int GetIntFromChannelType(ChannelType channel) =>
             channel_type_map.TryGetValue(channel, out int value) ? value : 0;
-
-
-
 
         internal static int GetIntFromStatus(UserConnectionStatus status) =>
             status_map.TryGetValue(status, out int value) ? value : 0;
