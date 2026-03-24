@@ -11,6 +11,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Threading;
@@ -214,7 +216,6 @@ namespace Skymu
             ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
             OS.Initialize();
             base.OnStartup(ev);
-            // Listen for changes
             Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "PresFrame")

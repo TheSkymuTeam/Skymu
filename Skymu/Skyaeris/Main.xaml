@@ -32,7 +32,6 @@
     mc:Ignorable="d">
     <Window.Resources>
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
-            <Setter Property="Width" Value="420" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="FontSize" Value="11" />
@@ -45,6 +44,7 @@
         <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
         <converters:SenderToColorConverter x:Key="SenderToColorConverter" />
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter" />
+        <converters:NullDependentMargin x:Key="NullDependentMargin" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
@@ -508,62 +508,29 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!--  COMPACT RECENTS TEMPLATES END  -->
-
-
-        <!--  SERVER CHANNEL TEMPLATES END  -->
         <!--  CONVERSATION ITEM TEMPLATES START  -->
         <!--  MessageItem Template  -->
         <DataTemplate DataType="{x:Type plugin:Message}">
-            <Grid x:Name="ConversationGrid" Margin="0,9.5,0,0">
+            <Grid x:Name="ConversationGrid" Margin="0,10,65,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="98" />
-                    <ColumnDefinition Width="16" />
-                    <ColumnDefinition Width="430" />
-                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="148" />
+                    <ColumnDefinition Width="428" />
+                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
-                <!--  Reply header  -->
-                <VirtualizingStackPanel
-                    Grid.Row="0"
-                    Grid.ColumnSpan="4"
-                    Margin="114,0,0,2"
-                    HorizontalAlignment="Left"
-                    Orientation="Horizontal"
-                    Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
-                    <Image
-                        Width="12"
-                        Margin="0,0,6,0"
-                        VerticalAlignment="Center"
-                        SnapsToDevicePixels="True"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/reply-arrow.png'}" />
-                    <TextBlock
-                        Width="400"
-                        FontFamily="Tahoma"
-                        FontSize="11"
-                        Foreground="#999999"
-                        LineHeight="1"
-                        TextTrimming="CharacterEllipsis"
-                        TextWrapping="NoWrap">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-                                <Binding Path="ParentMessage.Sender.DisplayName" />
-                                <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                </VirtualizingStackPanel>
                 <!--  Sender name  -->
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"
-                    Margin="-1000,0,0,0"
+                    Margin="0,0,16,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     FontFamily="Tahoma"
-                    FontSize="11">
+                    FontSize="11"
+                    TextTrimming="CharacterEllipsis">
                     <TextBlock.Foreground>
                         <MultiBinding Converter="{StaticResource SenderToColorConverter}">
                             <Binding Path="Sender.Identifier" />
@@ -583,26 +550,61 @@
                         </MultiBinding>
                     </TextBlock.Visibility>
                 </TextBlock>
+                <!--  Center area  -->
+                <!--  Reply header  -->
+                <Grid
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="0,0,20,2"
+                    Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        Width="12"
+                        Margin="0,0,6,0"
+                        VerticalAlignment="Center"
+                        SnapsToDevicePixels="True"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/reply-arrow.png'}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        FontFamily="Tahoma"
+                        FontSize="11"
+                        Foreground="#999999"
+                        LineHeight="1"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+                                <Binding Path="ParentMessage.Sender.DisplayName" />
+                                <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
                 <!--  Message body + attachment  -->
                 <StackPanel
                     Grid.Row="1"
-                    Grid.Column="2"
+                    Grid.Column="1"
+                    Margin="0,0,20,0"
                     Orientation="Vertical">
                     <ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
                     <Image
                         MaxWidth="300"
                         MaxHeight="300"
-                        Margin="0,0,0,0"
+                        Margin="{Binding Text, Converter={StaticResource NullDependentMargin}}"
                         HorizontalAlignment="Left"
                         RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="{Binding Attachments[0].File, Converter={StaticResource MsgByteArrayToImageConverter}}"
+                        Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
                         Stretch="Uniform"
                         Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}" />
                 </StackPanel>
                 <!--  Timestamp  -->
                 <Grid
                     Grid.Row="1"
-                    Grid.Column="3"
+                    Grid.Column="2"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
                     <TextBlock
@@ -992,7 +994,7 @@
                                     IsRadioButton="True"
                                     MouseLeftButtonUp="Chat_Close"
                                     PressedIndex="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-top.png', diag:PresentationTraceSources.TraceLevel=High}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-top.png'}"
                                     StackDirection="Vertical"
                                     TextColor="#FFFFFF"
                                     TextFont="Arial"
@@ -1933,7 +1935,7 @@
                                         <RowDefinition Height="34" />
                                         <RowDefinition Height="1" />
                                         <RowDefinition Height="*" />
-                                        <RowDefinition Height="23" />
+                                        <RowDefinition Height="20" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <StackPanel
@@ -2108,7 +2110,7 @@
                                         <StackPanel
                                             x:Name="MessageBoxPanel"
                                             Grid.Column="1"
-                                            Width="430"
+                                            Width="429"
                                             HorizontalAlignment="Center"
                                             Orientation="Vertical">
                                             <!--  Message box header  -->
@@ -2215,7 +2217,6 @@
                                             <RichTextBox
                                                 x:Name="MessageTextBox"
                                                 MinHeight="35"
-                                                MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
                                                 Padding="2,3"
                                                 AcceptsReturn="True"
                                                 Background="Transparent"

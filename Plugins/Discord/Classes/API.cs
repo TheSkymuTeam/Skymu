@@ -10,7 +10,7 @@
 /*==========================================================*/
 
 // Copied from Naticord which is found here: https://github.com/Naticord/naticord/blob/dev/Naticord/Networking/API.cs
-// This is done by, and with permission from, the original creator (patricktbp).
+// This is done with permission from the original creator (patricktbp). Later modified by OmegaAOL.
 
 using System;
 using System.Collections.Generic;

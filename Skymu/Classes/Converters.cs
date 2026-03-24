@@ -95,7 +95,8 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((double)value / 2) - 30;
+            double height = value is double d ? d : 0;
+            return Math.Max((height / 2) - 30, 0);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -108,13 +109,12 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var bytes = value as byte[];
-            if (bytes == null || bytes.Length == 0)
-                return null;
+            byte[] raw = Helpers.RetrieveImageAttachment(value);
+            if (raw == null) return null;
 
             try
             {
-                return FrozenImage.GenerateFromArray(bytes);
+                return FrozenImage.GenerateFromArray(raw);
             }
             catch
             {
@@ -303,6 +303,28 @@ namespace Skymu.Converters
         }
     }
 
+    public class NullDependentMargin : IValueConverter
+    {
+        public Thickness NotNullMargin { get; set; } = new Thickness(0, 5, 0, 0);
+
+        public Thickness NullMargin { get; set; } = new Thickness(0);
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string s && String.IsNullOrEmpty(s))
+                return NullMargin;
+            else if (value == null)
+                return NullMargin;
+            else
+                return NotNullMargin;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ConnectionStatusConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -430,6 +452,8 @@ namespace Skymu.Converters
         {
             if (value is string s && String.IsNullOrEmpty(s))
                 return Visibility.Collapsed;
+            else if (value is Attachment[] && Helpers.RetrieveImageAttachment(value) == null) 
+                return Visibility.Collapsed;
             else if (value == null)
                 return Visibility.Collapsed;
             else
@@ -542,8 +566,20 @@ namespace Skymu.Converters
         }
     }
 
-    class Helpers
+    internal class Helpers
     {
+        internal static byte[] RetrieveImageAttachment(object value)
+        {
+            Attachment[] arr = value as Attachment[];
+            if (arr == null || arr.Length < 1 || arr[0].Type != AttachmentType.Image) return null;
+
+            byte[] bytes = arr[0].File;
+            if (bytes == null || bytes.Length == 0)
+                return null;
+
+            return bytes;
+        }
+
         internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared)
         {
             string theme_root;

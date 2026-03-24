@@ -99,16 +99,17 @@
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
-            <StackPanel
-                x:Name="BottomControlsGrid"
-                Width="Auto"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
+            <Grid x:Name="BottomControlsGrid" Width="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
                 <TextBox
                     x:Name="DialogTextBox"
-                    Width="250"
+                    Grid.Column="0"
+                    Width="255"
                     Height="23"
-                    Margin="10,0,0,0"
+                    Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Center"
@@ -119,33 +120,38 @@
                     TextOptions.TextHintingMode="Fixed"
                     TextWrapping="Wrap"
                     Visibility="Collapsed" />
-                <Button
-                    x:Name="ButtonLeft"
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
+                <StackPanel
+                    Grid.Column="1"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Click="bLClick"
-                    Content="Exit"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    Visibility="Collapsed" />
-                <Button
-                    x:Name="ButtonRight"
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Click="bRClick"
-                    Content="OK"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    IsDefault="True" />
-            </StackPanel>
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="ButtonLeft"
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Click="bLClick"
+                        Content="Exit"
+                        FontFamily="Tahoma"
+                        FontSize="11"
+                        Visibility="Collapsed" />
+                    <Button
+                        x:Name="ButtonRight"
+                        Height="23"
+                        MinWidth="73"
+                        Margin="0,0,10,0"
+                        Padding="12,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Click="bRClick"
+                        Content="OK"
+                        FontFamily="Tahoma"
+                        FontSize="11"
+                        IsDefault="True" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
