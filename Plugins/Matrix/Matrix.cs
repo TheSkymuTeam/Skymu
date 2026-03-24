@@ -65,15 +65,9 @@ namespace Matrix
         private string _beeperRequestToken;
         private User _pendingBeeperUser;
 
-        // Tracks whether the initial sync has already populated the lists,
-        // so PopulateRecentsList (called separately by InitSidebar) is a no-op.
         private bool _initialSyncDone = false;
 
         public Task<string> GetQRCode() => Task.FromResult(string.Empty);
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Authentication
-        // ─────────────────────────────────────────────────────────────────────
 
         public async Task<LoginResult> Authenticate(
             AuthenticationMethod authType,
@@ -366,10 +360,6 @@ namespace Matrix
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // Sidebar population
-        // ─────────────────────────────────────────────────────────────────────
-
         public User MyInformation { get; private set; }
         public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
             new ObservableCollection<DirectMessage>();
@@ -383,12 +373,8 @@ namespace Matrix
             MyInformation = _user;
             return Task.FromResult(true);
         }
-
-        // PopulateContactsList does the initial sync and populates both lists.
         public async Task<bool> PopulateContactsList() => await PopulateFromInitialSync();
 
-        // PopulateRecentsList is called separately by InitSidebar; by that point
-        // the initial sync has already filled RecentsList, so this is a no-op.
         public Task<bool> PopulateRecentsList() => Task.FromResult(true);
 
         public Task<bool> PopulateServerList() => Task.FromResult(false);
@@ -400,8 +386,6 @@ namespace Matrix
 
             try
             {
-                // Filter: only the state events we need + 1 timeline event for
-                // last-message-time, no ephemeral noise.
                 string filterJson = Uri.EscapeDataString(JsonSerializer.Serialize(new
                 {
                     room = new
@@ -494,7 +478,6 @@ namespace Matrix
                         }
                     }
 
-                    // Direct = 2 or fewer members (you + one other)
                     bool isDirect = memberUsers.Count <= 2;
                     _recentRoomMap[roomId] = roomId;
 
@@ -507,7 +490,6 @@ namespace Matrix
                         conversation = new Group(
                             roomName, roomId, 0, memberUsers.ToArray(), null, DateTime.Now);
 
-                    // Post to UI thread immediately so the list appears as it fills
                     _uiContext?.Post(_ =>
                     {
                         RecentsList.Add(conversation);
@@ -515,7 +497,7 @@ namespace Matrix
                             ContactsList.Add(dm);
                     }, null);
 
-                    // Download avatar in background; doesn't block list population
+                    // download avatar in background; doesn't block list population
                     if (pendingAvatarUrl != null)
                     {
                         string capturedUrl = pendingAvatarUrl;
@@ -525,8 +507,7 @@ namespace Matrix
                             byte[] bytes = await MatrixOOTBStuff.DownloadMatrixContent(
                                 capturedUrl, _homeserver, _httpClient);
                             if (bytes == null) return;
-                            // Avatars would need a setter on the model to apply here;
-                            // left as a hook for future implementation.
+                            // TODO add setter
                         });
                     }
                 }
@@ -543,10 +524,6 @@ namespace Matrix
                 return false;
             }
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Messaging
-        // ─────────────────────────────────────────────────────────────────────
 
         public async Task<bool> SendMessage(
             string identifier,
@@ -572,8 +549,8 @@ namespace Matrix
                         OnWarning?.Invoke(this, new PluginMessageEventArgs(
                             $"Attachment type '{attachment.Type}' is not yet fully supported; sending filename only."));
                         text = string.IsNullOrEmpty(text)
-                            ? $"📎 {attachment.Name}"
-                            : $"📎 {attachment.Name}\n{text}";
+                            ? $"==Generic file:== {attachment.Name}"
+                            : $"==Generic file:== {attachment.Name}\n{text}";
                     }
                 }
 
@@ -711,10 +688,6 @@ namespace Matrix
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // Presence / status
-        // ─────────────────────────────────────────────────────────────────────
-
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
             try
@@ -774,10 +747,6 @@ namespace Matrix
                 return false;
             }
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Message fetching
-        // ─────────────────────────────────────────────────────────────────────
 
         public async Task<ConversationItem[]> FetchMessages(
             Conversation conversation,
@@ -905,15 +874,7 @@ namespace Matrix
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // Credentials
-        // ─────────────────────────────────────────────────────────────────────
-
         public Task<SavedCredential> StoreCredential() => Task.FromResult(_credData);
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Dispose
-        // ─────────────────────────────────────────────────────────────────────
 
         public void Dispose()
         {
@@ -937,10 +898,6 @@ namespace Matrix
             _initialSyncDone = false;
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // Sync loop
-        // ─────────────────────────────────────────────────────────────────────
-
         private void StartSyncLoop()
         {
             _syncCancellationTokenSource?.Cancel();
@@ -954,8 +911,6 @@ namespace Matrix
             {
                 try
                 {
-                    // _nextBatch is already set from the initial sync, so the
-                    // loop only receives events that arrived after that point.
                     string syncUrl = $"{_homeserver}/_matrix/client/r0/sync?access_token={_accessToken}&timeout=30000";
                     if (!string.IsNullOrEmpty(_nextBatch))
                         syncUrl += $"&since={_nextBatch}";
@@ -1009,10 +964,6 @@ namespace Matrix
             }
         }
 
-        // ─────────────────────────────────────────────────────────────────────
-        // Event processors
-        // ─────────────────────────────────────────────────────────────────────
-
         private async Task ProcessTimelineEvent(string roomId, JsonElement evt)
         {
             try
@@ -1063,14 +1014,14 @@ namespace Matrix
                         urlPropEvt.GetString(), _homeserver, _httpClient);
                     if (imageBytes != null)
                     {
-                        attachments = new[] { new Attachment(imageBytes, "image.jpg", AttachmentType.Image) };
+                        attachments = new[] { new Attachment(imageBytes, "IMG", AttachmentType.Image) };
                         body = null;
                     }
                 }
                 else if (msgtype == "m.video") body = $"==Video file:== {body}";
                 else if (msgtype == "m.audio") body = $"==Audio file:== {body}";
-                else if (msgtype == "m.file") body = $"==Video file:== {body}";
-                else if (msgtype == "m.notice") body = $"ℹ️ {body}";
+                else if (msgtype == "m.file") body = $"==Generic file:== {body}";
+                else if (msgtype == "m.notice") body = $"==Information:== {body}";
                 else if (msgtype == "m.emote") body = $"* {dName} {body}";
 
                 var messageItem = new Message(eventIdMsg, senderData, timestampMsg, body, attachments, null);
@@ -1122,10 +1073,6 @@ namespace Matrix
                 Debug.WriteLine($"Error processing ephemeral event: {ex.Message}");
             }
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Helpers
-        // ─────────────────────────────────────────────────────────────────────
 
         private async Task<Message> GetMessageById(string roomId, string eventId)
         {
@@ -1216,10 +1163,6 @@ namespace Matrix
             catch { }
             return userId;
         }
-
-        // ─────────────────────────────────────────────────────────────────────
-        // Static utilities
-        // ─────────────────────────────────────────────────────────────────────
 
         public static class MatrixOOTBStuff
         {
