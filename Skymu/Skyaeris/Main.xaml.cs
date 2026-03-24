@@ -448,7 +448,7 @@ namespace Skymu.Skyaeris
             await Universal.Plugin.PopulateSidebarInformation();
             await Universal.Plugin.PopulateRecentsList();
             CurrentUser = Universal.Plugin.MyInformation;
-
+            if (String.IsNullOrEmpty(CurrentUser?.Identifier)) throw new Exception("Plugin did not return a valid user object to initialize the database.");
             Database = new DatabaseManager(CurrentUser);
             Database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
@@ -479,7 +479,7 @@ namespace Skymu.Skyaeris
             StatusBox.Text = CurrentUser.DisplayName;
             StatusIcon.DefaultIndex = GetIntFromStatus(CurrentUser.ConnectionStatus);
 
-            setupcompactrecentsview();
+            ConfigureCompactRecentsList();
 
             SpeedTester();
 
@@ -515,7 +515,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void setupcompactrecentsview()
+        private void ConfigureCompactRecentsList()
         {
             var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList);
             var selector = new CompactRecentsTemplateSelector
@@ -539,7 +539,7 @@ namespace Skymu.Skyaeris
                     is CompactRecentsTemplateSelector
             )
             {
-                mainWindow.Dispatcher.Invoke(mainWindow.setupcompactrecentsview);
+                mainWindow.Dispatcher.Invoke(mainWindow.ConfigureCompactRecentsList);
             }
         }
 
@@ -611,7 +611,7 @@ namespace Skymu.Skyaeris
                         || Universal.Plugin.RecentsList.Count < 1
                     )
                         await Universal.Plugin.PopulateRecentsList();
-                    setupcompactrecentsview();
+                    ConfigureCompactRecentsList();
                     break;
             }
         }
@@ -674,11 +674,6 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SidebarColumn.MaxWidth = this.ActualWidth / 2;
-        }
-
         #endregion
 
         #region User count API
@@ -723,6 +718,14 @@ namespace Skymu.Skyaeris
         #endregion
 
         #region Event handlers
+
+        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SidebarColumn.MaxWidth = this.ActualWidth / 2;
+
+            if (e.HeightChanged)
+                MessageTextBox.MaxHeight = Math.Max((MessageWindow.ActualHeight / 2) - 30, 0);
+        }
 
         private void ServersList_SelectedItemChanged(
             object sender,
@@ -974,9 +977,13 @@ namespace Skymu.Skyaeris
 
         private void VideoCallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            // press this button, call the garbage collector (debug)
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce; 
             GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
-            //Universal.NotImplemented("Video calling");
+            GC.WaitForPendingFinalizers();
+            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+
+            Universal.NotImplemented("Video calling");
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1124,33 +1131,13 @@ namespace Skymu.Skyaeris
 
         private bool HasAnyContent(RichTextBox rtb)
         {
-            if (rtb?.Document == null)
-                return false;
+            if (rtb?.Document == null) return false;
+            if (rtb.Tag as string == TAG_PLACEHOLDER) return false;
 
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-                return false;
+            var start = rtb.Document.ContentStart;
+            var end = rtb.Document.ContentEnd;
 
-            var flowDoc = rtb.Document;
-
-            foreach (var block in flowDoc.Blocks)
-            {
-                if (block is Paragraph para)
-                {
-                    foreach (var inline in para.Inlines)
-                    {
-                        if (inline is Run run && !string.IsNullOrWhiteSpace(run.Text))
-                        {
-                            return true;
-                        }
-                        else if (inline is InlineUIContainer)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return start.GetOffsetToPosition(end) > 2;
         }
 
         private string ExtractMessageFromRichTextBox()
@@ -1772,6 +1759,8 @@ namespace Skymu.Skyaeris
             {
                 UpdateTypingIndicator();
             };
+
+            MessageTextBox.MaxHeight = Math.Max((MessageWindow.ActualHeight / 2) - 30, 0);
 
             SetWindow(WindowType.Home);
         }

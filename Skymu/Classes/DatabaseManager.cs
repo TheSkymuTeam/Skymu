@@ -60,7 +60,7 @@ namespace Skymu
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "Skymu",
                 Universal.Plugin.InternalName,
-                user.Identifier
+                SanitizeFolderName(user.Identifier)
             );
 
             DbPath = Path.Combine(folderPath, "main.db");
@@ -118,6 +118,22 @@ namespace Skymu
                 Directory.CreateDirectory(folderPath);
                 WriteConfigInternal(configPath);
             }
+        }
+
+        public static string SanitizeFolderName(string name, string replacement = "_")
+        {
+            if (string.IsNullOrEmpty(name))
+                return "GenericAccount";
+
+            var invalidChars = Path.GetInvalidFileNameChars(); 
+            string sanitized = string.Concat(name.Select(c => invalidChars.Contains(c) ? replacement[0] : c));
+
+            sanitized = sanitized.TrimEnd(' ', '.');
+
+            if (string.IsNullOrEmpty(sanitized))
+                return "GenericAccount";
+
+            return sanitized;
         }
         private void BuildContactMap()
         {
