@@ -722,9 +722,6 @@ namespace Skymu.Skyaeris
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
-
-            if (e.HeightChanged)
-                MessageTextBox.MaxHeight = Math.Max((MessageWindow.ActualHeight / 2) - 30, 0);
         }
 
         private void ServersList_SelectedItemChanged(
@@ -1759,8 +1756,6 @@ namespace Skymu.Skyaeris
             {
                 UpdateTypingIndicator();
             };
-
-            MessageTextBox.MaxHeight = Math.Max((MessageWindow.ActualHeight / 2) - 30, 0);
 
             SetWindow(WindowType.Home);
         }

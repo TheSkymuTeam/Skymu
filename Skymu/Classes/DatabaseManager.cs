@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.IO;
 using System.Linq;
 using Microsoft.Data.Sqlite;
@@ -88,6 +89,7 @@ namespace Skymu
         #endregion
 
         #region Helper methods
+
         private void EnsureDatabaseVersion(string folderPath, string configPath)
         {
             bool wipe = false;
@@ -125,7 +127,7 @@ namespace Skymu
             if (string.IsNullOrEmpty(name))
                 return "GenericAccount";
 
-            var invalidChars = Path.GetInvalidFileNameChars(); 
+            var invalidChars = Path.GetInvalidFileNameChars();
             string sanitized = string.Concat(name.Select(c => invalidChars.Contains(c) ? replacement[0] : c));
 
             sanitized = sanitized.TrimEnd(' ', '.');
@@ -1527,7 +1529,7 @@ namespace Skymu
                 }
             }
 
-         
+
 
             private Dictionary<long, List<string>> LoadParticipantMap()
             {
