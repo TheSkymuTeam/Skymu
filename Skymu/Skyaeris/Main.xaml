@@ -2217,6 +2217,7 @@
                                             <RichTextBox
                                                 x:Name="MessageTextBox"
                                                 MinHeight="35"
+                                                MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
                                                 Padding="2,3"
                                                 AcceptsReturn="True"
                                                 Background="Transparent"

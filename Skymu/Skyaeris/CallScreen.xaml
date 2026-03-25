@@ -88,7 +88,7 @@
                     You might be wondering why Column 1 is 156px and Column 2 is 164px,
                     and why both aren't 160px for an equally aligned UI. The answer to this
                     question is: Ask the Skype designers, it's their fault. If I fixed this
-                    visual bug, it wouldn't look accurate, and this is why the columns are
+                    visual bug, it wouldn't be accurate, and this is why the columns are
                     going to remain misaligned.
                 -->
                 <ColumnDefinition Width="156" />

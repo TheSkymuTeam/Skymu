@@ -116,7 +116,7 @@ namespace Skymu.Skyaeris
                     else
                     {
                         var dlg = new Dialog(
-                            WindowBase.IconType.Information,
+                            WindowBase.IconType.ContactRequest,
                             Universal.Plugin.Name
                                 + " has requested that you provide a 2FA code to log in. Please enter it below.",
                             "Two-factor authentication required",

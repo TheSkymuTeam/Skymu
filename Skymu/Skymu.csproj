@@ -100,7 +100,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 
-		<!-- Skymu Home as Content -->
+		<!-- Home as Content -->
 		<None Remove="Home\**\*" />
 		<Page Remove="Home\**\*" />
 		<EmbeddedResource Remove="Home\**\*" />
