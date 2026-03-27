@@ -11,11 +11,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Net.Http;
-using System.Windows;
 using System.Windows.Threading;
 using MiddleMan;
 using Skymu.Views;
@@ -85,7 +85,7 @@ namespace Skymu
 
         static Universal()
         {
-            AppDomain.CurrentDomain.ProcessExit += (_, __) =>
+            AppDomain.CurrentDomain.ProcessExit += (e, s) =>
             {
                 Tray.DisposeIcon();
             };

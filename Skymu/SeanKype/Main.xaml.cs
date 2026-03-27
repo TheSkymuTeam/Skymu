@@ -40,21 +40,35 @@ namespace Skymu.SeanKype
 
         #region Win32 menu P/Invoke
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr CreateMenu();
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr CreatePopupMenu();
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern bool AppendMenu(IntPtr hMenu, uint uFlags, IntPtr uIDNewItem, string lpNewItem);
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern bool SetMenu(IntPtr hWnd, IntPtr hMenu);
-        [DllImport("user32.dll")] private static extern bool DrawMenuBar(IntPtr hWnd);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr CreateMenu();
 
-        private const uint MF_STRING    = 0x00000000;
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr CreatePopupMenu();
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern bool AppendMenu(
+            IntPtr hMenu,
+            uint uFlags,
+            IntPtr uIDNewItem,
+            string lpNewItem
+        );
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern bool SetMenu(IntPtr hWnd, IntPtr hMenu);
+
+        [DllImport("user32.dll")]
+        private static extern bool DrawMenuBar(IntPtr hWnd);
+
+        private const uint MF_STRING = 0x00000000;
         private const uint MF_SEPARATOR = 0x00000800;
-        private const uint MF_POPUP     = 0x00000010;
-        private const uint MF_GRAYED    = 0x00000001;
+        private const uint MF_POPUP = 0x00000010;
+        private const uint MF_GRAYED = 0x00000001;
 
-        private const int IDM_SKYPE_SIGNOUT  = 102;
-        private const int IDM_SKYPE_EXIT     = 103;
-        private const int IDM_TOOLS_OPTIONS  = 301;
-        private const int IDM_HELP_ABOUT     = 401;
+        private const int IDM_SKYPE_SIGNOUT = 102;
+        private const int IDM_SKYPE_EXIT = 103;
+        private const int IDM_TOOLS_OPTIONS = 301;
+        private const int IDM_HELP_ABOUT = 401;
 
         #endregion
 
@@ -65,7 +79,7 @@ namespace Skymu.SeanKype
             InitializeComponent();
             Application.Current.MainWindow = this;
 
-            Universal.GroupAvatar   = GenerateAvatarImage("group");
+            Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
 
             vmodel = new MainViewModel();
@@ -74,12 +88,17 @@ namespace Skymu.SeanKype
             vmodel.Ready += (s, e) =>
             {
                 LabelUsername.Content = Universal.CurrentUser?.DisplayName;
-                LabelStatus.Text      = Universal.CurrentUser?.Status;
-                this.Title = Properties.Settings.Default.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                LabelStatus.Text = Universal.CurrentUser?.Status;
+                this.Title =
+                    Properties.Settings.Default.BrandingName
+                    + "\u2122 - "
+                    + Universal.CurrentUser?.Username;
                 ConversationList.ItemsSource = Universal.Plugin.RecentsList;
                 GlobalUserCount.Text = string.Empty;
                 if (Universal.CurrentUser?.ProfilePicture?.Length > 0)
-                    UserPicture.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
+                    UserPicture.Source = FrozenImage.GenerateFromArray(
+                        Universal.CurrentUser.ProfilePicture
+                    );
                 else
                     UserPicture.Source = Universal.AnonymousAvatar;
                 _ = vmodel.RunSpeedTest();
@@ -114,8 +133,11 @@ namespace Skymu.SeanKype
                 if (e.PropertyName == nameof(MainViewModel.TypingText))
                     Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
-                    Dispatcher.Invoke(() => TypingIndicator.Visibility =
-                        vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
+                    Dispatcher.Invoke(() =>
+                        TypingIndicator.Visibility = vmodel.IsTypingVisible
+                            ? Visibility.Visible
+                            : Visibility.Collapsed
+                    );
             };
 
             vmodel.SubscribeTypingIndicator();
@@ -157,7 +179,8 @@ namespace Skymu.SeanKype
             if (conv?.ProfilePicture?.Length > 0)
                 ChatHeaderAvatar.Source = FrozenImage.GenerateFromArray(conv.ProfilePicture);
             else
-                ChatHeaderAvatar.Source = (conv is Group) ? Universal.GroupAvatar : Universal.AnonymousAvatar;
+                ChatHeaderAvatar.Source =
+                    (conv is Group) ? Universal.GroupAvatar : Universal.AnonymousAvatar;
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -165,7 +188,6 @@ namespace Skymu.SeanKype
             if (vmodel.SelectedConversation == null)
                 return;
 
- 
             ConversationItemsList.ItemsSource = vmodel.GroupedConversation;
             throbber.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
@@ -195,46 +217,106 @@ namespace Skymu.SeanKype
             var hMenu = CreateMenu();
 
             var hSkypeMenu = CreatePopupMenu();
-            AppendMenu(hSkypeMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_SKYPE_ONLINESTATUS"));
-            AppendMenu(hSkypeMenu, MF_SEPARATOR,          IntPtr.Zero, null);
-            AppendMenu(hSkypeMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_SKYPE_PRIVACY"));
-            AppendMenu(hSkypeMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_SKYPE_ACCOUNT"));
-            AppendMenu(hSkypeMenu, MF_SEPARATOR,          IntPtr.Zero, null);
-            AppendMenu(hSkypeMenu, MF_STRING,             (IntPtr)IDM_SKYPE_SIGNOUT, L("sMAINMENU_SKYPE_SIGN_OUT"));
-            AppendMenu(hSkypeMenu, MF_STRING,             (IntPtr)IDM_SKYPE_EXIT,    L("sMAINMENU_SKYPE_CLOSE"));
+            AppendMenu(
+                hSkypeMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_SKYPE_ONLINESTATUS")
+            );
+            AppendMenu(hSkypeMenu, MF_SEPARATOR, IntPtr.Zero, null);
+            AppendMenu(
+                hSkypeMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_SKYPE_PRIVACY")
+            );
+            AppendMenu(
+                hSkypeMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_SKYPE_ACCOUNT")
+            );
+            AppendMenu(hSkypeMenu, MF_SEPARATOR, IntPtr.Zero, null);
+            AppendMenu(
+                hSkypeMenu,
+                MF_STRING,
+                (IntPtr)IDM_SKYPE_SIGNOUT,
+                L("sMAINMENU_SKYPE_SIGN_OUT")
+            );
+            AppendMenu(hSkypeMenu, MF_STRING, (IntPtr)IDM_SKYPE_EXIT, L("sMAINMENU_SKYPE_CLOSE"));
             AppendMenu(hMenu, MF_POPUP, hSkypeMenu, L("sMAINMENU_SKYPE"));
 
             var hContactsMenu = CreatePopupMenu();
-            AppendMenu(hContactsMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CONTACTS_ADD_CONTACT"));
-            AppendMenu(hContactsMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CONTACTS_NEW_GROUP"));
+            AppendMenu(
+                hContactsMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CONTACTS_ADD_CONTACT")
+            );
+            AppendMenu(
+                hContactsMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CONTACTS_NEW_GROUP")
+            );
             AppendMenu(hMenu, MF_POPUP, hContactsMenu, L("sMAINMENU_CONTACTS"));
 
             var hConversationMenu = CreatePopupMenu();
-            AppendMenu(hConversationMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CONVERSATION_ADD_TO_CONTACTS"));
-            AppendMenu(hConversationMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CONVERSATION_RENAME"));
-            AppendMenu(hConversationMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CONVERSATION_BLOCK"));
+            AppendMenu(
+                hConversationMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CONVERSATION_ADD_TO_CONTACTS")
+            );
+            AppendMenu(
+                hConversationMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CONVERSATION_RENAME")
+            );
+            AppendMenu(
+                hConversationMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CONVERSATION_BLOCK")
+            );
             AppendMenu(hMenu, MF_POPUP, hConversationMenu, L("sMAINMENU_CONVERSATION"));
 
             var hCallMenu = CreatePopupMenu();
             AppendMenu(hCallMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CALL"));
-            AppendMenu(hCallMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CALL_START_VIDEO"));
-            AppendMenu(hCallMenu, MF_SEPARATOR,          IntPtr.Zero, null);
+            AppendMenu(
+                hCallMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_CALL_START_VIDEO")
+            );
+            AppendMenu(hCallMenu, MF_SEPARATOR, IntPtr.Zero, null);
             AppendMenu(hCallMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_CALL_HANG_UP"));
             AppendMenu(hMenu, MF_POPUP, hCallMenu, L("sMAINMENU_CALL"));
 
             var hViewMenu = CreatePopupMenu();
             AppendMenu(hViewMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_VIEW_CONTACTS"));
-            AppendMenu(hViewMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_VIEW_CONVERSATIONS"));
+            AppendMenu(
+                hViewMenu,
+                MF_STRING | MF_GRAYED,
+                IntPtr.Zero,
+                L("sMAINMENU_VIEW_CONVERSATIONS")
+            );
             AppendMenu(hMenu, MF_POPUP, hViewMenu, L("sMAINMENU_VIEW"));
 
             var hToolsMenu = CreatePopupMenu();
-            AppendMenu(hToolsMenu, MF_STRING, (IntPtr)IDM_TOOLS_OPTIONS, L("sMAINMENU_TOOLS_OPTIONS"));
+            AppendMenu(
+                hToolsMenu,
+                MF_STRING,
+                (IntPtr)IDM_TOOLS_OPTIONS,
+                L("sMAINMENU_TOOLS_OPTIONS")
+            );
             AppendMenu(hMenu, MF_POPUP, hToolsMenu, L("sMAINMENU_TOOLS"));
 
             var hHelpMenu = CreatePopupMenu();
             AppendMenu(hHelpMenu, MF_STRING | MF_GRAYED, IntPtr.Zero, L("sMAINMENU_HELP_HELP"));
-            AppendMenu(hHelpMenu, MF_SEPARATOR,          IntPtr.Zero, null);
-            AppendMenu(hHelpMenu, MF_STRING,             (IntPtr)IDM_HELP_ABOUT, L("sMAINMENU_HELP_ABOUT"));
+            AppendMenu(hHelpMenu, MF_SEPARATOR, IntPtr.Zero, null);
+            AppendMenu(hHelpMenu, MF_STRING, (IntPtr)IDM_HELP_ABOUT, L("sMAINMENU_HELP_ABOUT"));
             AppendMenu(hMenu, MF_POPUP, hHelpMenu, L("sMAINMENU_HELP"));
 
             SetMenu(hwnd, hMenu);
@@ -314,7 +396,8 @@ namespace Skymu.SeanKype
                 _conversationScrollViewer.ScrollChanged += (sv, se) =>
                 {
                     if (se.ExtentHeightChange == 0)
-                        _userScrolledUp = _conversationScrollViewer.VerticalOffset
+                        _userScrolledUp =
+                            _conversationScrollViewer.VerticalOffset
                             < _conversationScrollViewer.ScrollableHeight - 10;
                 };
             }
@@ -326,7 +409,8 @@ namespace Skymu.SeanKype
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string avatarPath = Converters.Helpers.GetAssetBasePrefix() + "Profile Pictures/" + avatar + ".png";
+            string avatarPath =
+                Converters.Helpers.GetAssetBasePrefix() + "Profile Pictures/" + avatar + ".png";
             return FrozenImage.Generate(avatarPath);
         }
 
@@ -340,8 +424,11 @@ namespace Skymu.SeanKype
             {
                 var border = new Border
                 {
-                    Width = 28, Height = 28, Margin = new Thickness(1),
-                    Background = Brushes.Transparent, Cursor = Cursors.Hand,
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(1),
+                    Background = Brushes.Transparent,
+                    Cursor = Cursors.Hand,
                     ToolTip = vmodel.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
@@ -350,8 +437,10 @@ namespace Skymu.SeanKype
                     sc.Tag = emojiFilename;
                     border.Child = sc;
                     border.MouseLeftButtonUp += EmojiBox_Click;
-                    border.MouseEnter += (s, ev) => ((Border)s).Background =
-                        new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
+                    border.MouseEnter += (s, ev) =>
+                        ((Border)s).Background = new SolidColorBrush(
+                            Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
+                        );
                     border.MouseLeave += (s, ev) => ((Border)s).Background = Brushes.Transparent;
                     EmojiWrapPanel.Children.Add(border);
                 }
@@ -365,13 +454,15 @@ namespace Skymu.SeanKype
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var sc = (sender as Border)?.Child as SliceControl;
-            if (sc == null) return;
+            if (sc == null)
+                return;
 
             EmojiFlyout.IsOpen = false;
 
             string filename = sc.Tag as string;
             string key = EmojiDictionary.Map.FirstOrDefault(kvp => kvp.Value == filename).Key;
-            if (string.IsNullOrEmpty(key)) return;
+            if (string.IsNullOrEmpty(key))
+                return;
 
             string unicode = vmodel.ConvertHexKeyToUnicode(key);
             int caret = TextBoxMessage.CaretIndex;
@@ -403,7 +494,8 @@ namespace Skymu.SeanKype
         private async void StatusMenuItemClick(object sender, RoutedEventArgs e)
         {
             var item = sender as MenuItem;
-            if (item == null) return;
+            if (item == null)
+                return;
 
             string name = item.Name.Substring(3); // strip "sm_" prefix → "online", "away", "dnd", "invisible", "offline"
             var current = vmodel.GetStatusFromInt(_currentStatusIndex);
@@ -420,7 +512,8 @@ namespace Skymu.SeanKype
             }
 
             var result = await vmodel.HandleStatusChangeByName(name, current);
-            if (result == null) return;
+            if (result == null)
+                return;
 
             _currentStatusIndex = MainViewModel.GetIntFromStatus(result.Value);
             LabelStatus.Text = result.Value.ToString();
@@ -435,15 +528,18 @@ namespace Skymu.SeanKype
             var blue = (Brush)FindResource("SkDarkBlue");
             var black = (Brush)FindResource("SkBlack");
             TabContactsText.Foreground = tab == 0 ? blue : black;
-            TabRecentText.Foreground   = tab == 1 ? blue : black;
-            TabServersText.Foreground  = tab == 2 ? blue : black;
+            TabRecentText.Foreground = tab == 1 ? blue : black;
+            TabServersText.Foreground = tab == 2 ? blue : black;
             // CONTACTS centre ≈ 48px  → leftMargin = 48-280 = -232
             // RECENT   centre ≈ 135px → leftMargin = -141.5 (original)
             // SERVERS  centre ≈ 216px → leftMargin = 216-280 = -64
             double waveLeft;
-            if (tab == 0)      waveLeft = -232;
-            else if (tab == 1) waveLeft = -141.5;
-            else               waveLeft = -64;
+            if (tab == 0)
+                waveLeft = -232;
+            else if (tab == 1)
+                waveLeft = -141.5;
+            else
+                waveLeft = -64;
             TabWave.Margin = new Thickness(waveLeft, 185, 0, 0);
         }
 
@@ -470,6 +566,5 @@ namespace Skymu.SeanKype
         }
 
         #endregion
-
     }
 }

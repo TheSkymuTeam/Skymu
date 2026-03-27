@@ -49,7 +49,8 @@ namespace Skymu.SeanKype
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (comboProtocolBox.SelectedIndex == -1) return;
+            if (comboProtocolBox.SelectedIndex == -1)
+                return;
             await _viewModel.Login(
                 usernameBox.Text,
                 passwordTokenBox.Password,
@@ -147,25 +148,39 @@ namespace Skymu.SeanKype
                 PlatformType platform = Platform.Detect();
 
                 if (platform == PlatformType.Unknown)
-                    message = brand + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
+                    message =
+                        brand
+                        + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
                 else if (platform < PlatformType.Windows2000)
                 {
                     if (platform == PlatformType.WineLegacy)
-                        message = brand + " does not support Wine versions below 10.0. You may encounter significant bugs.";
+                        message =
+                            brand
+                            + " does not support Wine versions below 10.0. You may encounter significant bugs.";
                     else if (platform == PlatformType.Wine10)
-                        message = brand + " has limited support for Wine 10. Some features may not work as expected.";
+                        message =
+                            brand
+                            + " has limited support for Wine 10. Some features may not work as expected.";
                     else if (platform == PlatformType.Wine11)
-                        message = brand + " does not have complete support for Wine 11. Some features may not work as expected.";
+                        message =
+                            brand
+                            + " does not have complete support for Wine 11. Some features may not work as expected.";
                 }
                 else if (platform < PlatformType.WindowsVista)
                 {
                     if (platform == PlatformType.WindowsXP)
-                        message = brand + " does not officially support Windows XP or the One Core API, and you may encounter significant bugs.";
+                        message =
+                            brand
+                            + " does not officially support Windows XP or the One Core API, and you may encounter significant bugs.";
                     else if (platform == PlatformType.Windows2000)
-                        message = brand + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
+                        message =
+                            brand
+                            + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
                 }
                 else if (platform > PlatformType.Windows11)
-                    message = brand + " has not yet been tested on your version of Windows. You may encounter bugs.";
+                    message =
+                        brand
+                        + " has not yet been tested on your version of Windows. You may encounter bugs.";
 
                 if (message != null)
                     Universal.MessageBox(message, "Compatibility warning");
@@ -183,9 +198,13 @@ namespace Skymu.SeanKype
         private void CheckEnableLoginButton()
         {
             if (
-                (usernameBox.Text.Trim() != string.Empty
-                    && (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled))
-                || (!passwordTokenBox.IsEnabled && !usernameBox.IsEnabled)
+                (
+                    usernameBox.Text.Trim() != string.Empty
+                    && (
+                        passwordTokenBox.Password.Trim() != string.Empty
+                        || !passwordTokenBox.IsEnabled
+                    )
+                ) || (!passwordTokenBox.IsEnabled && !usernameBox.IsEnabled)
             )
             {
                 LoginButton.IsEnabled = true;
@@ -245,13 +264,17 @@ namespace Skymu.SeanKype
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo { FileName = e.Uri.AbsoluteUri, UseShellExecute = true });
+            Process.Start(
+                new ProcessStartInfo { FileName = e.Uri.AbsoluteUri, UseShellExecute = true }
+            );
             e.Handled = true;
         }
 
         private void FooterLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(new ProcessStartInfo { FileName = DISCORD_SERVER_INVITE, UseShellExecute = true });
+            Process.Start(
+                new ProcessStartInfo { FileName = DISCORD_SERVER_INVITE, UseShellExecute = true }
+            );
         }
 
         private void Login_Closing(object sender, CancelEventArgs e)
