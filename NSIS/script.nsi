@@ -18,8 +18,8 @@ RequestExecutionLevel admin
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-!define MUI_ICON "..\Skymu\Skype.ico"
-!define MUI_UNICON "..\Skymu\Skype.ico"
+!define MUI_ICON "..\Skymu\Icons\skype.ico"
+!define MUI_UNICON "..\Skymu\Icons\skype.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "header.bmp"
 !define MUI_HEADERIMAGE_BITMAP_STRETCH "AspectFitHeight"
@@ -27,7 +27,6 @@ RequestExecutionLevel admin
 
 
 Function HideHeaderText
-    ; Hide the header title (ID 1037) and subtitle (ID 1038)
     GetDlgItem $0 $HWNDPARENT 1037
     ShowWindow $0 ${SW_HIDE}
     GetDlgItem $0 $HWNDPARENT 1038
@@ -69,6 +68,21 @@ SetOutPath "$INSTDIR"
 SetOverwrite ifnewer
 
 File /r "${SOURCE_DIR}\*"
+
+WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Skymu.exe"
+WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconIndex" "-911"
+
+; --- AppData folder icon ---
+CreateDirectory "$APPDATA\Skymu"
+
+WriteIniStr "$APPDATA\Skymu\desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Skymu.exe"
+WriteIniStr "$APPDATA\Skymu\desktop.ini" ".ShellClassInfo" "IconIndex" "-911"
+
+SetFileAttributes "$APPDATA\Skymu\desktop.ini" HIDDEN|SYSTEM
+SetFileAttributes "$APPDATA\Skymu" READONLY
+
+SetFileAttributes "$INSTDIR\desktop.ini" HIDDEN|SYSTEM
+SetFileAttributes "$INSTDIR" READONLY
 
 CreateDirectory "$SMPROGRAMS\Skymu"
 CreateShortCut "$SMPROGRAMS\Skymu\Skymu.lnk" "$INSTDIR\Skymu.exe"

@@ -2889,7 +2889,7 @@ SH.Utils = function() {
         },
         videoPlayer: {
             write: function(d, g, b, f, c) {
-                var e = "http://download.skype.com/share/videos/player.swf";
+                var e = "i/videos/player.swf";
                 if (typeof SWFObject == "undefined" || arguments.length < 4 || typeof f != "object") {
                     return
                 }
@@ -4863,17 +4863,33 @@ imgWrapper.border = "0";
         var $container = $(container);
 
         closeBtn.onclick = function(e) {
-            e = e || window.event;
-            if (e.preventDefault) { e.preventDefault(); } else { e.returnValue = false; }
-            SH.Promotions.promoCallbacks[placement].onClose($container);
-            return false;
-        };
-
+    e = e || window.event;
+    if (e.preventDefault) { 
+        e.preventDefault(); 
+    } else { 
+        e.returnValue = false; 
+    }
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    } else {
+        e.cancelBubble = true;
+    }
+    try {
+        SH.Promotions.promoCallbacks[placement].onClose($container);
+    } catch(err) {}
+    return false;
+};
         imgWrapper.onclick = function() {
-            window.open(link);
-            return false;
-        };
-
+    var e = window.event;
+    if (e) {
+        e.cancelBubble = true;
+        e.returnValue = false;
+    }
+    try {
+        window.open(link, '_blank', '');
+    } catch(err) {}
+    return false;
+};
         SH.Promotions.promoCallbacks[placement].onShow($container, ad);
         printDebug("Showing community ad: " + ad.Name + " at " + dimension);
     };
@@ -4920,7 +4936,7 @@ imgWrapper.border = "0";
             }
         }
 
-        xhr.open("GET", "https://skymu.app/ads/list.json?" + new Date().getTime(), true);
+        xhr.open("GET", "https://skymu.app/ads/list.json", true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -5052,9 +5068,9 @@ SH.Ads = function() {
 }();
 SH.VideoRosterData = [{
     id: 1,
-    thumbnailUrl: "http://www.skype.com/content/dam/skype/videos/voice-call.jpg",
+    thumbnailUrl: "i/videos/thumbnails/voice-call.jpg",
     videoParams: {
-        videoUrl: "http://download.skype.com/share/videos/skype-demo/voice-call.flv",
+        videoUrl: "i/videos/voice-call.flv",
         duration: "1:02",
         tracking: false,
         subtitlesVisible: false,
@@ -5062,9 +5078,9 @@ SH.VideoRosterData = [{
     }
 }, {
     id: 2,
-    thumbnailUrl: "http://www.skype.com/content/dam/skype/videos/landline.jpg",
+    thumbnailUrl: "i/videos/thumbnails/landline.jpg",
     videoParams: {
-        videoUrl: "http://download.skype.com/share/videos/skype-demo/landline.flv",
+        videoUrl: "i/videos/landline.flv",
         duration: "0:50",
         tracking: false,
         subtitlesVisible: false,
@@ -5072,9 +5088,9 @@ SH.VideoRosterData = [{
     }
 }, {
     id: 3,
-    thumbnailUrl: "http://www.skype.com/content/dam/skype/images/Video_image.png",
+    thumbnailUrl: "i/videos/thumbnails/voice-call.jpg",
     videoParams: {
-        videoUrl: "http://download.skype.com/share/videos/skype-demo/video-call.flv",
+        videoUrl: "i/videos/video-call.flv",
         duration: "1:13",
         tracking: false,
         subtitlesVisible: false,
@@ -5082,7 +5098,7 @@ SH.VideoRosterData = [{
     }
 }, {
     id: 4,
-    thumbnailUrl: "http://www.skype.com/content/dam/skype/videos/voice-call.jpg",
+    thumbnailUrl: "i/videos/thumbnails/voice-call.jpg",
     videoParams: {
         videoUrl: "http://download.skype.com/share/videos/skype-home/v1/adding-friends.flv",
         duration: "1:02",

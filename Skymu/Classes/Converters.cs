@@ -33,7 +33,7 @@ namespace Skymu.Converters
             {
                 return doubleValue.ToString(CultureInfo.InvariantCulture);
             }
-            return "30";
+            return "0";
         }
 
         public object ConvertBack(
@@ -55,7 +55,30 @@ namespace Skymu.Converters
             {
                 return result;
             }
-            return 30.0; // Default fallback
+            return 0.0;
+        }
+    }
+
+    public class StringToIntegerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int intValue)
+            {
+                return intValue.ToString(CultureInfo.InvariantCulture);
+            }
+            return "0";
+        }
+
+    
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue
+                && int.TryParse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
+            {
+                return result;
+            }
+            return 0;
         }
     }
 
@@ -454,7 +477,7 @@ namespace Skymu.Converters
         {
             if (value is string s && String.IsNullOrEmpty(s))
                 return Visibility.Collapsed;
-            else if (value is Attachment[] && Helpers.RetrieveImageAttachment(value) == null) 
+            else if (value is Attachment[] && Helpers.RetrieveImageAttachment(value) == null)
                 return Visibility.Collapsed;
             else if (value == null)
                 return Visibility.Collapsed;
@@ -573,7 +596,9 @@ namespace Skymu.Converters
         internal static byte[] RetrieveImageAttachment(object value)
         {
             Attachment[] arr = value as Attachment[];
-            if (arr == null || arr.Length < 1 || arr[0].Type != AttachmentType.Image) return null;
+            if (arr == null || arr.Length < 1 ||
+     (arr[0].Type != AttachmentType.Image && arr[0].Type != AttachmentType.ThumbnailImage))
+                return null;
 
             byte[] bytes = arr[0].File;
             if (bytes == null || bytes.Length == 0)
@@ -594,7 +619,7 @@ namespace Skymu.Converters
             int slash = theme_root.IndexOf('/');
             if (slash >= 0)
             {
-                string baseFolder  = theme_root.Substring(0, slash);
+                string baseFolder = theme_root.Substring(0, slash);
                 string themeFolder = theme_root.Substring(slash + 1);
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{themeFolder}/";
             }
@@ -734,7 +759,7 @@ namespace Skymu.Converters
             {
                 if (Messages.Count != 1 || Messages[0].Attachments == null) return false;
                 foreach (var a in Messages[0].Attachments)
-                    if (a.Type == AttachmentType.Image) return true;
+                    if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage) return true;
                 return false;
             }
         }

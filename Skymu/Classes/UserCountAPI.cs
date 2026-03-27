@@ -44,7 +44,6 @@ namespace Skymu
             JsonNode node = JsonNode.Parse(json);
             ApiTkn = node?["token"]?.ToString();
         }
-
         private static string GenerateRandomNumberString(int length)
         {
             Random random = new Random();

@@ -36,7 +36,11 @@ namespace Discord.Classes
 
         internal API()
         {
-            var handler = new HttpClientHandler();
+            var handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
             ServicePointManager.DefaultConnectionLimit = 10;
 
             client = new HttpClient(handler);
@@ -44,6 +48,7 @@ namespace Discord.Classes
             // Set default headers once
             client.DefaultRequestHeaders.Add("Accept", "*/*");
             client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate"); // TODO maybe add brotli decompression? that's supposed to be better
 
             XSuperProperties = configMgr.GetXSPJson();
             client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);

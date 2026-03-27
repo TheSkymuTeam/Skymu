@@ -44,7 +44,7 @@ namespace Skymu
         // or just when you feel like your changes could cause incompatibilities with old databases.
         // Increment this number liberally. DO NOT use migration functions etc as an alternative to
         // incrementing the number. Originally started at: 1.
-        private const int Version = 3;
+        private const int Version = 4;
 
         internal string DbPath;
         public AccountsTable Accounts { get; private set; }
@@ -1033,6 +1033,7 @@ namespace Skymu
                         chatmsg_index                   INTEGER,
                         convo_id                        INTEGER,
                         pk_id                           INTEGER,
+                        fullsize_url                    TEXT,
                         nodeid                          BLOB,
                         last_activity                   INTEGER,
                         flags                           INTEGER,
@@ -1796,7 +1797,7 @@ namespace Skymu
                 return mediaDir;
             }
 
-            private static string ResolveImageExtension(byte[] bytes, string existingName)
+            internal static string ResolveImageExtension(byte[] bytes, string existingName)
             {
                 string ext = Path.GetExtension(existingName)?.ToLowerInvariant();
                 if ( // does the file already have the extension? (unlikely)
@@ -1855,14 +1856,14 @@ namespace Skymu
                 is_permanent, type, partner_handle, partner_dispname,
                 status, starttime, finishtime,
                 filepath, filename, filesize,
-                bytestransferred, convo_id, pk_id, chatmsg_index,
+                bytestransferred, convo_id, pk_id, fullsize_url, chatmsg_index,
                 last_activity, flags
             )
             VALUES (
                 1, @type, @partner_handle, @partner_dispname,
                 8, @starttime, @finishtime,
                 @filepath, @filename, @filesize,
-                @filesize, @convo_id, @pk_id, @chatmsg_index,
+                @filesize, @convo_id, @pk_id, @fullsize_url, @chatmsg_index,
                 @finishtime, 0
             )
             ON CONFLICT DO NOTHING;";
@@ -1877,6 +1878,7 @@ namespace Skymu
                     cmd.Parameters.Add("@filesize", SqliteType.Text);
                     cmd.Parameters.Add("@convo_id", SqliteType.Integer);
                     cmd.Parameters.Add("@pk_id", SqliteType.Integer);
+                    cmd.Parameters.Add("@fullsize_url", SqliteType.Text);
                     cmd.Parameters.Add("@chatmsg_index", SqliteType.Integer);
 
                     foreach (ConversationItem item in items)
@@ -1891,7 +1893,7 @@ namespace Skymu
                         int attachmentIndex = 0;
                         foreach (Attachment attachment in message.Attachments)
                         {
-                            if (attachment?.Type != AttachmentType.Image)
+                            if ((attachment?.Type != AttachmentType.Image) && (attachment?.Type != AttachmentType.ThumbnailImage))
                                 continue;
                             if (attachment.File == null || attachment.File.Length == 0)
                                 continue;
@@ -1925,6 +1927,8 @@ namespace Skymu
                             cmd.Parameters["@convo_id"].Value = conversationIncrementalId;
                             cmd.Parameters["@pk_id"].Value =
                                 (object)message.Identifier ?? DBNull.Value;
+                            cmd.Parameters["@fullsize_url"].Value =
+                                attachment.Url ?? String.Empty;
                             cmd.Parameters["@chatmsg_index"].Value = attachmentIndex;
 
                             cmd.ExecuteNonQuery();
@@ -1944,7 +1948,7 @@ namespace Skymu
                 using (SqliteCommand cmd = connection.CreateCommand())
                 {
                     cmd.CommandText =
-                        @"SELECT pk_id, filepath, filename
+                        @"SELECT pk_id, filepath, filename, fullsize_url
               FROM Transfers
               WHERE convo_id = @convo_id AND type = 1
               ORDER BY pk_id ASC, chatmsg_index ASC;";
@@ -1957,6 +1961,7 @@ namespace Skymu
                             string pkId = reader.IsDBNull(0) ? null : reader.GetInt64(0).ToString();
                             string filePath = reader.IsDBNull(1) ? null : reader.GetString(1);
                             string fileName = reader.IsDBNull(2) ? null : reader.GetString(2);
+                            string url = reader.IsDBNull(3) ? null : reader.GetString(3);
 
                             if (pkId == null || filePath == null)
                                 continue;
@@ -1964,7 +1969,14 @@ namespace Skymu
                                 continue;
 
                             byte[] bytes = File.ReadAllBytes(filePath);
-                            var attachment = new Attachment(bytes, fileName, AttachmentType.Image);
+                            Attachment attachment;
+                            if (!String.IsNullOrEmpty(url)) {
+                                attachment = new Attachment(bytes, fileName, url, AttachmentType.ThumbnailImage);
+                            }
+                            else
+                            {
+                                attachment = new Attachment(bytes, fileName, null, AttachmentType.Image);
+                            }
 
                             if (!result.TryGetValue(pkId, out var list))
                                 result[pkId] = list = new List<Attachment>();

@@ -106,9 +106,9 @@ namespace Skymu
             Process.Start(exePath);
 
             Universal.Terminate();
-        }
+        } 
 
-        internal static readonly HttpClient HttpClient = new HttpClient
+        internal static readonly HttpClient WebClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(10),
         };

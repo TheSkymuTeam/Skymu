@@ -595,10 +595,18 @@
                         MaxHeight="300"
                         Margin="{Binding Text, Converter={StaticResource NullDependentMargin}}"
                         HorizontalAlignment="Left"
+                        Cursor="Hand"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
                         Stretch="Uniform"
-                        Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}" />
+                        Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+                        <Image.InputBindings>
+                            <MouseBinding
+                                Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding Attachments}"
+                                MouseAction="LeftClick" />
+                        </Image.InputBindings>
+                    </Image>
                 </StackPanel>
                 <!--  Timestamp  -->
                 <Grid

@@ -27,6 +27,7 @@
     </Window.Title>
     <Window.Resources>
         <converters:StringToDoubleConverter x:Key="StringToDoubleConverter" />
+        <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
     </Window.Resources>
@@ -313,8 +314,8 @@
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"
-                                                Foreground="#FF888888"
                                                 VerticalAlignment="Center"
+                                                Foreground="#FF888888"
                                                 Text="(Requires restart)" />
                                         </StackPanel>
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -382,6 +383,16 @@
                                                 Width="40"
                                                 FontFamily="Tahoma"
                                                 Text="{Binding EmojiFps, Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Amount of messages to fetch during initial conversation load" />
+                                            <TextBox
+                                                Width="40"
+                                                FontFamily="Tahoma"
+                                                Text="{Binding MsgLoadCount, Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
                                         <CheckBox
                                             Margin="0,5"

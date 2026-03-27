@@ -303,6 +303,7 @@ namespace MiddleMan
     public enum AttachmentType
     {
         Image,
+        ThumbnailImage,
         Video,
         Audio,
         File,
@@ -315,11 +316,12 @@ namespace MiddleMan
         public byte[] File { get; set; }
         public string Url { get; set; }
 
-        public Attachment(byte[] file, string name, AttachmentType type)
+        public Attachment(byte[] file, string name, string url, AttachmentType type)
         {
             File = file;
             Name = name;
             Type = type;
+            Url = url;
         }
 
         public Attachment(string location_url, string name)

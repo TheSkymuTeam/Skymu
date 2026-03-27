@@ -153,7 +153,7 @@ namespace Skymu.Views
                 {
                     if (
                         attachment != null
-                        && attachment.Type == AttachmentType.Image
+                        && attachment.Type == AttachmentType.Image || attachment.Type == AttachmentType.ThumbnailImage
                         && (attachment.File != null || !string.IsNullOrWhiteSpace(attachment.Url))
                     )
                     {

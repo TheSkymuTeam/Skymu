@@ -78,6 +78,7 @@
                         <Setter Property="Height" Value="22" />
                         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}" />
                         <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MessageFontSizeKey}}" />
+                        <Setter Property="Foreground" Value="Black" />
                     </Trigger>
                     <Trigger Property="Role" Value="SubmenuItem">
                         <Setter Property="Padding" Value="6,3,0,0" />
@@ -85,6 +86,7 @@
                         <Setter Property="Height" Value="22" />
                         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}" />
                         <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MessageFontSizeKey}}" />
+                        <Setter Property="Foreground" Value="Black" />
                     </Trigger>
                 </Style.Triggers>
             </Style>

@@ -840,7 +840,7 @@ namespace Matrix
                             urlProp.GetString(), _homeserver, _httpClient);
                         if (imageBytes != null)
                         {
-                            attachments = new[] { new Attachment(imageBytes, body ?? "image.jpg", AttachmentType.Image) };
+                            attachments = new[] { new Attachment(imageBytes, body ?? "image.jpg", null, AttachmentType.Image) };
                             body = null;
                         }
                     }
@@ -1014,7 +1014,7 @@ namespace Matrix
                         urlPropEvt.GetString(), _homeserver, _httpClient);
                     if (imageBytes != null)
                     {
-                        attachments = new[] { new Attachment(imageBytes, "IMG", AttachmentType.Image) };
+                        attachments = new[] { new Attachment(imageBytes, "IMG", null, AttachmentType.Image) };
                         body = null;
                     }
                 }

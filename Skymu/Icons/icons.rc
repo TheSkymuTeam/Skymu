@@ -1,0 +1,27 @@
+#include <windows.h>
+
+#define MAINICON         1
+#define CHATICON         2
+#define IDI_SKYPE_ACCESS      102
+#define IDI_STATUS_AWAY        103
+#define IDI_STATUS_BLOCKED     104
+#define IDI_STATUS_DND         105
+#define IDI_STATUS_OFFLINE     106
+#define IDI_STATUS_ONCALL      107
+#define IDI_STATUS_ONLINE      108
+#define IDI_STATUS_UNKNOWN    109
+#define IDI_FOLDER_XP   110
+#define IDI_FOLDER_AERO 911
+
+MAINICON        ICON "skype.ico"
+CHATICON        ICON "chat.ico"
+IDI_SKYPE_ACCESS      ICON "skype-access.ico"
+IDI_STATUS_AWAY        ICON "skype-away.ico"
+IDI_STATUS_BLOCKED     ICON "skype-blocked.ico"
+IDI_STATUS_DND         ICON "skype-dnd.ico"
+IDI_STATUS_OFFLINE     ICON "skype-offline.ico"
+IDI_STATUS_ONCALL      ICON "skype-oncall.ico"
+IDI_STATUS_ONLINE      ICON "skype-online.ico"
+IDI_STATUS_UNKNOWN    ICON "skype-unknown.ico"
+IDI_FOLDER_XP   ICON "skype-folder-xp.ico"
+IDI_FOLDER_AERO ICON "skype-folder-aero.ico"

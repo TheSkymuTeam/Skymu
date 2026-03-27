@@ -17,6 +17,7 @@ using Skymu.Converters;
 using Skymu.Helpers;
 using Skymu.Views;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -118,6 +119,36 @@ namespace Skymu.ViewModels
         public IAsyncRelayCommand<string> SendMessageCommand { get; }
         public IAsyncRelayCommand RunSpeedTestCommand { get; }
         public IRelayCommand SignOutCommand { get; }
+        private bool _isDownloading = false;
+        public ICommand OpenImageCommand => new RelayCommand<Attachment[]>(async attachments =>
+        {
+            if (attachments == null || attachments.Length == 0 || _isDownloading) return;
+            _isDownloading = true;
+
+            try
+            {
+                string url = attachments[0].Url;
+                string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
+                using (var response = await Universal.WebClient.GetStreamAsync(url))
+                using (var fileStream = File.Create(tempPath))
+                {
+                    await response.CopyToAsync(fileStream);
+                }
+                string ext = DatabaseManager.MessagesTable.ResolveImageExtension(File.ReadAllBytes(tempPath), attachments[0].Name); // TODO spin off to helper method
+                string finalPath = tempPath + ext;
+                if (File.Exists(finalPath)) File.Delete(finalPath);
+                File.Move(tempPath, finalPath);
+                Process.Start(new ProcessStartInfo(finalPath) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                _isDownloading = false;
+            }
+        });
         public IRelayCommand VideoCallCommand { get; }
         public IAsyncRelayCommand CallCommand { get; }
         public IAsyncRelayCommand CallToggleCommand { get; }
@@ -134,7 +165,6 @@ namespace Skymu.ViewModels
         private bool _synchronizing;
         private bool _typingIndicatorSubscribed;
 
-        private const int MESSAGE_LIMIT = 30;
         private const string SKYMU_PREFIX = "@skymu/";
         private const string SKYMU_SENDING = SKYMU_PREFIX + "sending";
 
@@ -250,7 +280,7 @@ namespace Skymu.ViewModels
             ConversationOpened?.Invoke(this, EventArgs.Empty);
             IsLoadingConversation = true;
 
-            ConversationItem[] cached = _database?.Messages.Read(SelectedConversation, MESSAGE_LIMIT);
+            ConversationItem[] cached = _database?.Messages.Read(SelectedConversation, Properties.Settings.Default.MsgLoadCount);
             ConversationItem[] items;
 
             if (cached != null && cached.Length > 0)
@@ -262,7 +292,7 @@ namespace Skymu.ViewModels
             else
             {
                 items = await Universal.Plugin.FetchMessages(
-                    SelectedConversation, Fetch.Newest, MESSAGE_LIMIT, null
+                    SelectedConversation, Fetch.Newest, Properties.Settings.Default.MsgLoadCount, null
                 );
                 _database?.Messages.Write(items, SelectedConversation);
             }
@@ -387,7 +417,7 @@ namespace Skymu.ViewModels
         private async Task SyncMessagesInBackground(Conversation conversation, string afterId)
         {
             ConversationItem[] items = await Universal.Plugin.FetchMessages(
-                conversation, Fetch.NewestAfterIdentifier, MESSAGE_LIMIT, afterId
+                conversation, Fetch.NewestAfterIdentifier, Properties.Settings.Default.MsgLoadCount, afterId
             );
 
             if (items == null || items.Length == 0) return;
@@ -403,7 +433,15 @@ namespace Skymu.ViewModels
 
         #endregion
 
-# region Message sending 
+        #region Image viewer
+        private void OpenImageViewer()
+        {
+
+        }
+
+        #endregion
+
+        #region Message sending 
 
         public async Task SendMessage(string text)
         {
@@ -606,7 +644,7 @@ namespace Skymu.ViewModels
             try
             {
                 var sw = Stopwatch.StartNew();
-                var data = await Universal.HttpClient.GetByteArrayAsync(TEST_URL);
+                var data = await Universal.WebClient.GetByteArrayAsync(TEST_URL);
                 sw.Stop();
                 double mbps = (data.Length * 8.0) / 1_000_000 / sw.Elapsed.TotalSeconds;
                 if      (mbps >= 50) final += "5";
@@ -754,7 +792,7 @@ namespace Skymu.ViewModels
                 bool isSelf  = firstMsg.Sender?.Identifier == Universal.CurrentUser?.Identifier;
                 bool showName = !isSelf && isGroupOrServer;
                 bool isImage  = firstMsg.Attachments != null &&
-                                firstMsg.Attachments.Any(a => a.Type == AttachmentType.Image);
+                                firstMsg.Attachments.Any(a => a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage);
                 if (isImage)
                 {
                     GroupedConversation.Add(new MessageGroup(new[] { firstMsg }, showName));
@@ -769,7 +807,7 @@ namespace Skymu.ViewModels
                     if (nextMsg.Sender?.Identifier != firstMsg.Sender?.Identifier) break;
                     if ((nextMsg.Time - batch[batch.Count - 1].Time).TotalSeconds >= 60) break;
                     if (nextMsg.Attachments != null &&
-                        nextMsg.Attachments.Any(a => a.Type == AttachmentType.Image)) break;
+                        nextMsg.Attachments.Any(a => a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage)) break;
                     batch.Add(nextMsg);
                     j++;
                 }
@@ -784,7 +822,7 @@ namespace Skymu.ViewModels
             bool isSelf   = message.Sender?.Identifier == Universal.CurrentUser?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage  = message.Attachments != null &&
-                            message.Attachments.Any(a => a.Type == AttachmentType.Image);
+                            message.Attachments.Any(a => a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage);
 
             if (!isImage && GroupedConversation.Count > 0)
             {
