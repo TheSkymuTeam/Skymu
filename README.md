@@ -9,6 +9,12 @@ Be warned, every project has to be set to build as either x86 or x64. Any CPU is
 
 <img width="1476" height="897" alt="image" src="https://github.com/user-attachments/assets/ad15b3bb-2eb0-4ade-901b-65da7d0c821a" />
 
+# How to create the installer
+
+1: Install NSIS (Nullsoft Scriptable Install System) on your computer
+2: Build Skymu in the "Release, x86" configuration (Important!)
+3: Right click script.nsi and click "Compile NSIS Script"
+
 # Open-source software used
 
 | Software | Version | License | Source code |
