@@ -9,6 +9,7 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using System.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,6 +117,16 @@ namespace Skymu
                         return;
                     SetStateInternal(newState);
                 }
+
+                if (Command != null)
+                {
+                    object parameter = CommandParameter;
+
+                    if (Command.CanExecute(parameter))
+                    {
+                        Command.Execute(parameter);
+                    }
+                }
             };
 
             IsEnabledChanged += (s, e) =>
@@ -201,6 +212,32 @@ namespace Skymu
                 typeof(SliceControl),
                 new PropertyMetadata(ButtonVisualState.Default)
             );
+
+        public static readonly DependencyProperty CommandProperty =
+    DependencyProperty.Register(
+        "Command",
+        typeof(ICommand),
+        typeof(SliceControl),
+        new PropertyMetadata(null));
+
+        public ICommand Command
+        {
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register(
+                "CommandParameter",
+                typeof(object),
+                typeof(SliceControl),
+                new PropertyMetadata(null));
+
+        public object CommandParameter
+        {
+            get { return GetValue(CommandParameterProperty); }
+            set { SetValue(CommandParameterProperty, value); }
+        }
 
         public bool IsRadioButton
         {

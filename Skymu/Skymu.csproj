@@ -63,6 +63,13 @@
 	<!-- Resource Handling -->
 
 	<ItemGroup>
+		<!-- SeanKype -->
+		<None Remove="SeanKype\Assets\**\*" />
+		<Page Remove="SeanKype\Assets\**\*" />
+		<EmbeddedResource Remove="SeanKype\Assets\**\*" />
+		<Compile Remove="SeanKype\Assets\**\*" />
+		<Resource Include="SeanKype\Assets\**\*" />
+
 		<!-- Skyaeris -->
 		<None Remove="Skyaeris\Assets\**\*" />
 		<Page Remove="Skyaeris\Assets\**\*" />

@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Threading;
@@ -28,6 +29,11 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public const string Name = "Skymu";
         public static readonly string SkypeEra = Skymu.Properties.Settings.Default.SkypeEra;
+
+        public static User CurrentUser;
+        public static BitmapImage AnonymousAvatar;
+        public static BitmapImage GroupAvatar;
+        public static ViewModels.MainViewModel ActiveViewModel;
 
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
@@ -83,6 +89,14 @@ namespace Skymu
             {
                 Tray.DisposeIcon();
             };
+        }
+
+        private void App_Startup(object sender, StartupEventArgs e)
+        {
+            if (SkypeEra == "SeanKype")
+                new SeanKype.Login().Show();
+            else
+                new Skyaeris.Login().Show();
         }
 
         public static void Restart()

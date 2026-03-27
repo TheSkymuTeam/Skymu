@@ -1,0 +1,1262 @@
+﻿<Window
+    x:Class="Skymu.SeanKype.Main"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Skymu.Converters"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mm="clr-namespace:MiddleMan;assembly=MiddleMan"
+    Title="Skype"
+    Width="960"
+    Height="560"
+    MinWidth="800"
+    MinHeight="565"
+    Activated="Window_Activated"
+    Closing="Window_Closing"
+    Deactivated="Window_Deactivated"
+    SourceInitialized="Window_SourceInitialized"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+
+        <!--  skype early 7 default  -->
+        <SolidColorBrush x:Key="SkBlue" Color="#00AFF0" />
+        <SolidColorBrush x:Key="SkCustomTint" Color="#00AFF0" />
+        <SolidColorBrush x:Key="SkWashedBlue" Color="#ABD4E3" />
+        <SolidColorBrush x:Key="SkMidGray" Color="#6E6E73" />
+        <SolidColorBrush x:Key="SkLightGraySep" Color="#D3E6EA" />
+        <SolidColorBrush x:Key="SkLightGraySep2" Color="#E4ECEF" />
+        <SolidColorBrush x:Key="SkLight" Color="#F5FCFE" />
+        <SolidColorBrush x:Key="SkLight2" Color="#F5FCFE" />
+        <SolidColorBrush x:Key="SkWhite" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="SkWhite2" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="SkDarkBlue" Color="#0095CC" />
+        <SolidColorBrush x:Key="SkBlack" Color="#2B2B30" />
+        <SolidColorBrush x:Key="SkBlack2" Color="#2B2B30" />
+        <SolidColorBrush x:Key="SkBubble" Color="#C7EDFC" />
+        <SolidColorBrush x:Key="SkSteelBlue" Color="#A0B7C8" />
+        <SolidColorBrush x:Key="SkBubbleLight" Color="#E5F7FD" />
+
+        <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontFamily" Value="Tahoma" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Focusable" Value="True" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <converters:ByteArrayToImageSourceConverter x:Key="ProfilePictureConverter" />
+        <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
+        <converters:SenderToColorConverter x:Key="SenderToColorConverter" />
+        <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter" />
+        <converters:NullDependentMargin x:Key="NullDependentMargin" />
+        <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
+        <converters:StatusToTextConverter x:Key="StatIntToText" />
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:ForwardedChecker x:Key="ForwardedChecker" />
+        <converters:HalfValueConverter x:Key="HalfValueConverter" />
+        <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
+        <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+        <converters:ChannelTypeConverter x:Key="ChannelTypeConverter" />
+        <converters:TextStatusConverter x:Key="TextStatusConverter" />
+        <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
+        <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
+        <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
+        <converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
+
+        <DrawingImage x:Key="UserHolderDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V36 H130 V0 H0 Z">
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.40000000596046448" Y="1.6000000238418579" />
+                    </DrawingGroup.Transform>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="#FFB2E7FA" Geometry="F1 M130,36z M0,0z M128.7,0.8Q128.725,0.8169921875 128.75,0.8 130.7,-0.55 132.7,-1.6L-0.4,-1.6 -0.4,30.8 10.65,34.7Q12.4,28.85 17.1,24.2 24.7,16.65 35.45,16.65 46.15,16.65 53.75,24.2 54.2,24.65 54.6,25.1 56.25,22.75 58.3,20.55 59.05,19.7 59.9,18.85 60.8,18 61.7,17.2 63.65,15.4 65.75,13.9L65.75,14Q66.907421875,13.15546875 68.1,12.4 78.6642578125,5.7 92,5.7 105.75,5.7 116.5,12.75 118.8,9.55 121.75,6.6 125.027734375,3.322265625 128.7,0.8z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="#FF8EDCF8" Geometry="F1 M130,36z M0,0z M59.9,18.85Q60.8,18 61.7,17.2 61.45,16.95 61.25,16.75 50.55,6.1 35.4,6.1 20.3,6.1 9.6,16.75 3.15,23.15 0.55,31.15L10.65,34.7Q12.4,28.85 17.1,24.2 24.7,16.65 35.45,16.65 46.15,16.65 53.75,24.2 54.2,24.65 54.6,25.1 56.25,22.75 58.3,20.55 59.05,19.7 59.9,18.85z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="#FF55CAF5" Geometry="F1 M130,36z M0,0z M58.3,20.55Q58.05,20.3 57.8,20.1 48.55,10.9 35.4,10.9 22.3,10.9 13,20.1 7.35,25.7 5.15,32.75L10.65,34.7Q12.4,28.85 17.1,24.2 24.7,16.65 35.45,16.65 46.15,16.65 53.75,24.2 54.2,24.65 54.6,25.1 56.25,22.75 58.3,20.55z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="UserHolder_Custom1DrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V36 H130 V0 H0 Z">
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.40000000596046448" Y="1.6000000238418579" />
+                    </DrawingGroup.Transform>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M121.75,6.6Q125.027734375,3.322265625 128.7,0.8 128.725,0.8169921875 128.75,0.8 130.7,-0.55 132.7,-1.6L-0.4,-1.6 -0.4,31 0.55,31.35Q3.15,23.3 9.6,16.85 20.3,6.15 35.4,6.15 50.55,6.15 61.25,16.85 61.45,17.05 61.7,17.3 63.6677734375,15.5095703125 65.75,14 66.907421875,13.15546875 68.1,12.4 78.6642578125,5.7 92,5.7 105.75,5.7 116.5,12.75 118.8,9.55 121.75,6.6z" />
+                        </DrawingGroup>
+                        <DrawingGroup Opacity="0.333">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M58.3,20.7Q58.05,20.45 57.8,20.25 48.55,10.95 35.4,10.95 22.3,10.95 13,20.25 7.35,25.9 5.15,33L10.65,34.95Q12.4,29.05 17.1,24.35 24.7,16.75 35.45,16.75 46.15,16.75 53.75,24.35 54.2,24.8 54.6,25.25 56.25,22.9 58.3,20.7z" />
+                        </DrawingGroup>
+                        <DrawingGroup Opacity="0.666">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M57.8,20.25Q58.05,20.45 58.3,20.7 59.05,19.85 59.9,19 60.8,18.1 61.7,17.3 61.45,17.05 61.25,16.85 50.55,6.15 35.4,6.15 20.3,6.15 9.6,16.85 3.15,23.3 0.55,31.35L5.15,33Q7.35,25.9 13,20.25 22.3,10.95 35.4,10.95 48.55,10.95 57.8,20.25z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="UserHolder_Custom2DrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V36 H130 V0 H0 Z">
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="0.40000000596046448" Y="1.6000000238418579" />
+                    </DrawingGroup.Transform>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M58.3,20.7Q58.05,20.45 57.8,20.25 48.55,10.95 35.4,10.95 22.3,10.95 13,20.25 7.35,25.9 5.15,33L10.65,34.95Q12.4,29.05 17.1,24.35 24.7,16.75 35.45,16.75 46.15,16.75 53.75,24.35 54.2,24.8 54.6,25.25 56.25,22.9 58.3,20.7z" />
+                        </DrawingGroup>
+                        <DrawingGroup Opacity="0.666">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M61.7,17.3Q61.45,17.05 61.25,16.85 50.55,6.15 35.4,6.15 20.3,6.15 9.6,16.85 3.15,23.3 0.55,31.35L5.15,33Q7.35,25.9 13,20.25 22.3,10.95 35.4,10.95 48.55,10.95 57.8,20.25 58.05,20.45 58.3,20.7 59.05,19.85 59.9,19 60.8,18.1 61.7,17.3z" />
+                        </DrawingGroup>
+                        <DrawingGroup Opacity="0.333">
+                            <GeometryDrawing Brush="{DynamicResource SkCustomTint}" Geometry="F1 M130,36z M0,0z M128.7,0.8Q128.725,0.8169921875 128.75,0.8 130.7,-0.55 132.7,-1.6L-0.4,-1.6 -0.4,31 0.55,31.35Q3.15,23.3 9.6,16.85 20.3,6.15 35.4,6.15 50.55,6.15 61.25,16.85 61.45,17.05 61.7,17.3 63.6677734375,15.5095703125 65.75,14 66.907421875,13.15546875 68.1,12.4 78.6642578125,5.7 92,5.7 105.75,5.7 116.5,12.75 118.8,9.55 121.75,6.6 125.027734375,3.322265625 128.7,0.8z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="SeparatorWaveDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V19 H1121 V0 H0 Z">
+                    <DrawingGroup.Transform>
+                        <TranslateTransform X="1.8999999761581421" Y="0.60000002384185791" />
+                    </DrawingGroup.Transform>
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkLight}" Geometry="F1 M1121,19z M0,0z M1119.25,18.15L1119.25,-0.6 -1.5,-0.6 -1.5,18.15 528.55,18.15 533.85,17Q536.65,16.15 539.8,14.5 540.65,14.05 541.5,13.55 542.65,12.9 543.8,12.3L543.85,12.3Q546,10.85 547.75,9.45 550.5,7.3 552.15,5.15 555.35,1 558,1.2 560.05,1.35 561.05,1.85 562,2.35 565.05,5.4 567,7.35 569.55,9.45 570.95,10.6 572.5,11.9 572.75,12.1 573.1,12.3 574.8,13.45 576.5,14.5 578.8,15.8 581,16.6 584.9107421875,18.08515625 587.4,18.15L1119.25,18.15z" />
+                        </DrawingGroup>
+                        <GeometryDrawing Geometry="F1 M1121,19z M0,0z M-1.5,18.15L528.55,18.15 533.85,17Q536.65,16.15 539.8,14.5 540.65,14.05 541.5,13.55 542.65,12.9 543.8,12.3L543.85,12.3Q546,10.85 547.75,9.45 550.5,7.3 552.15,5.15 555.35,1 558,1.2 560.05,1.35 561.05,1.85 562,2.35 565.05,5.4 567,7.35 569.55,9.45 570.95,10.6 572.5,11.9 572.75,12.1 573.1,12.3 574.8,13.45 576.5,14.5 578.8,15.8 581,16.6 584.9107421875,18.08515625 587.4,18.15L1119.25,18.15 M-1.9,18.15L-1.5,18.15">
+                            <GeometryDrawing.Pen>
+                                <Pen
+                                    Brush="{DynamicResource SkLightGraySep}"
+                                    EndLineCap="Round"
+                                    LineJoin="Miter"
+                                    MiterLimit="2"
+                                    StartLineCap="Round"
+                                    Thickness="2.5" />
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="BubbleArrowLeftDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V76 H23 V0 H0 Z">
+                    <DrawingGroup Opacity="1" Transform="4.5999755859375,0,0,4.5999755859375,4.55,1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkBubble}" Geometry="F1 M23,76z M0,0z M4,0.25Q3.9328125,3.221875,1.85,5.45L0.85,6.35Q0.25,6.9,0.05,7.4L0,8 0.05,8.65Q0.25,9.15,0.85,9.7L1.85,10.6Q3.9328125,12.828125,4,15.8L4,0.25z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="BubbleArrowRightDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V76 H23 V0 H0 Z">
+                    <DrawingGroup Opacity="1" Transform="4.5999755859375,0,0,4.5999755859375,0,1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkBubbleLight}" Geometry="F1 M23,76z M0,0z M2.1,5.45Q0.065625,3.2703125,0,0.25L0,15.8Q0.065625,12.7796875,2.1,10.6L3.1,9.7Q3.7,9.15,3.9,8.65L4,8 3.9,7.4Q3.7,6.9,3.1,6.35L2.1,5.45z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="DefaultProfileDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V80 H80 V0 H0 Z">
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Geometry="F1 M80,80z M0,0z M47.5,41.8Q46.4337890625,41.80390625,45.45,42.05L45.45,42.05 43.2,42.7 43.25,42.7Q41.8033203125,42.9943359375,40.55,43L40.5,43Q39.294921875,42.9943359375,37.8,42.7L37.85,42.7Q37.5458984375,42.626953125 35.55,42.05 34.616015625,41.80390625 33.55,41.8 29.9279296875,41.7904296875 27.35,44.8 24.8005859375,47.7564453125 24.8,52L24.8,53.35Q24.792578125,54.3716796875,25.55,55.05L25.55,55.05Q26.26171875,55.701953125,27.2,55.7L53.85,55.7Q54.84296875,55.69765625 55.5,55.05 55.5513671875,55.050390625 55.55,55 56.2580078125,54.220703125 56.25,53.35L56.25,52Q56.2421875,47.8111328125 53.7,44.8 51.119921875,41.791796875 47.5,41.8 M46.15,23.95Q43.8712890625,21.4541015625 40.55,21.45 37.230859375,21.4427734375 34.85,23.95L34.85,23.95Q32.5986328125,26.50390625 32.6,30.25 32.5970703125,34.0357421875 34.85,36.8L34.85,36.8Q37.2806640625,39.71484375 40.55,39.7 43.8337890625,39.7166015625 46.2,36.8L46.15,36.8Q48.492578125,34.036328125 48.5,30.25 48.4974609375,26.55859375 46.15,23.95z">
+                                <GeometryDrawing.Brush>
+                                    <SolidColorBrush Opacity="0.0666666666666667" Color="#FF022533" />
+                                </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingGroup>
+                    <DrawingGroup Opacity="1" Transform="1,0,0,1,25.3,21.95">
+                        <DrawingGroup Opacity="1" Transform="0.338333129882813,0,0,0.338333129882813,-25.35,-22.55">
+                            <DrawingGroup Opacity="1">
+                                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M80,80z M0,0z M104.4,73.6Q98,80.75 98,91.2 98,101.85 104.4,109.7 110.95,117.7 120,117.7 129,117.7 135.55,109.7 142,101.8 142,91.2 142,80.8 135.55,73.6 129.1,66.6 120,66.6 110.8,66.6 104.4,73.6z" />
+                            </DrawingGroup>
+                        </DrawingGroup>
+                        <DrawingGroup Opacity="1" Transform="0.338333129882813,0,0,0.338333129882813,-25.35,-22.55">
+                            <DrawingGroup Opacity="1">
+                                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M80,80z M0,0z M165,159.4L165,155.45Q165,143.6 157.85,135.15 150.6,126.75 140.6,126.75 137.65,126.75 135,127.6L135,127.5 128.25,129.4Q123.8,130.4,120,130.4L119.9,130.4Q116.1,130.4 111.65,129.4 110.65,129.2 104.9,127.5L104.9,127.6Q102.25,126.75 99.3,126.75 89.25,126.75 82.15,135.15 75,143.5 75,155.45L75,159.4Q75,161.8 76.65,163.4 78.35,165 80.55,165L159.35,165Q161.7,165 163.35,163.4 165,161.6 165,159.4z" />
+                            </DrawingGroup>
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="SearchDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                    <DrawingGroup Opacity="1" Transform="0.226730346679688,0,0,0.233123779296875,-15,-15.75">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkBlue}" Geometry="F1 M24,24z M0,0z M172.1,160.05Q172.1,155.45,167.7,151.5L141.55,127.2Q146.55,118.2 146.55,107.8 146.55,91.15 134.8,79.4 123.05,67.65 106.4,67.65 89.8,67.65 78,79.4 66.25,91.15 66.25,107.8 66.25,124.45 78,136.2 89.8,147.95 106.4,147.95 117.35,147.95 126.8,142.4 131.35,146.6 154.75,168.15 157.8,170.6 161.5,170.6 165.9,170.6 169,167.5 172.1,164.45 172.1,160.05 M88.3,89.65Q95.8,82.15 106.4,82.15 117,82.15 124.55,89.65 132.05,97.2 132.05,107.8 132.05,118.4 124.55,125.95 117,133.45 106.4,133.45 95.8,133.45 88.3,125.95 80.8,118.4 80.8,107.8 80.8,97.2 88.3,89.65z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="AddDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V80 H80 V0 H0 Z">
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkBlue}" Geometry="F1 M80,80z M0,0z M54.55,23.05Q53.8,23.05 53.2,23.6 52.65,24.15 52.65,24.95L52.65,30 47.65,30Q46.85,30 46.3,30.55 45.7,31.1 45.7,31.85 45.7,32.65 46.3,33.25 46.85,33.8 47.65,33.8L52.65,33.8 52.65,38.8Q52.65,39.55 53.2,40.1 53.8,40.65 54.55,40.65 55.35,40.65 55.9,40.1 56.45,39.55 56.45,38.8L56.45,33.8 61.45,33.8Q62.25,33.8 62.8,33.25 63.35,32.65 63.35,31.85 63.35,31.1 62.8,30.55 62.25,30 61.45,30L56.45,30 56.45,24.95Q56.45,24.15 55.9,23.6 55.35,23.05 54.55,23.05 M26.55,41.5Q23.55,41.5 21.45,44 19.35,46.45 19.35,50L19.35,51.15Q19.35,51.85 19.85,52.35 20.3,52.85 21,52.85L44.2,52.85Q44.9,52.85 45.4,52.35 45.85,51.85 45.85,51.15L45.85,50Q45.9,46.5 43.8,44 41.7,41.5 38.7,41.5 37.9,41.5 37.05,41.7 35.4,42.2 35.05,42.25 33.7,42.6 32.65,42.6L32.6,42.6Q31.55,42.6 30.15,42.25 29.85,42.2 28.2,41.7 27.3,41.5 26.55,41.5 M37.15,36.75Q39.05,34.4 39.05,31.25 39.05,28.15 37.15,26.05 35.3,23.95 32.6,23.95 29.85,23.95 28,26.05 26.1,28.15 26.1,31.25 26.1,34.4 28,36.75 29.9,39.1 32.6,39.1 35.2,39.1 37.15,36.75z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="HomeDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V26 H28 V0 H0 Z">
+                    <GeometryDrawing Brush="{DynamicResource SkBlue}" Geometry="F1 M28,26z M0,0z M26.7,14.5Q27.2,14.5 27.6,14.2 28,13.6 28,13.2 28,12.6 27.6,12.4L15.3,0.5Q14.8,0 14.1,0 14.0494140625,0 14,0 13.268359375,0.031640625 12.8,0.5L0.4,12.4Q0,12.5 0,13.2 0,13.8 0.4,14.2 0.7,14.5 1.3,14.5L4,14.5 4,24.8Q4,25.3,4.5,25.8L5.5,26 10.75,26 11.75,25.8Q12.05,24.9,12.05,24.8L12.05,19.2Q12.05,18.5 12.35,18.3 12.85,17.8 13.35,17.8L14.85,17.8Q15.45,17.8 15.75,18.3 15.95,18.5 15.95,19.2L15.95,24.8Q15.95,25.3,16.45,25.8L17.45,26 22.7,26 23.7,25.8Q24.1,25.2,24.1,24.8L24.1,14.5 26.7,14.5z" />
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="CollapseExpandArrowDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V11 H18 V0 H0 Z">
+                    <DrawingGroup Opacity="1" Transform="0.208694458007813,0,0,0.202392578125,-16.05,-20.1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="#FF00AFF0" Geometry="F1 M18,11z M0,0z M76.85,110.65Q76.85,115.3,80.15,118.6L112.1,150.5Q115.35,153.75 120.05,153.75 124.7,153.75 128,150.45L159.8,118.6Q163.1,115.3 163.1,110.65 163.1,106 159.8,102.7 156.5,99.4 151.85,99.4 147.2,99.4 143.9,102.7L120,126.6 96.05,102.7Q92.75,99.4 88.1,99.4 83.45,99.4 80.15,102.7 76.85,106 76.85,110.65z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="PlusDrawingImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V24 H24 V0 H0 Z">
+                    <DrawingGroup Opacity="1">
+                        <DrawingGroup Opacity="1">
+                            <GeometryDrawing Brush="{DynamicResource SkBlue}" Geometry="F1 M24,24z M0,0z M23.2,10.6Q22.6,10,21.8,10L14,10 14,2.2Q14,1.35 13.4,0.8 12.8,0.2 12,0.2 11.15,0.2 10.6,0.8 10,1.35 10,2.2L10,10 2.2,10Q1.35,10 0.8,10.6 0.2,11.15 0.2,12 0.2,12.85 0.8,13.4 1.35,14 2.2,14L10,14 10,21.8Q10,22.65 10.6,23.2 11.15,23.8 12,23.8 12.8,23.8 13.4,23.2 14,22.65 14,21.8L14,14 21.8,14Q22.6,14 23.2,13.4 23.8,12.85 23.8,12 23.8,11.15 23.2,10.6z" />
+                        </DrawingGroup>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <Style x:Key="SidebarThumbStyle" TargetType="Thumb">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border
+                            Background="#BBD6E0"
+                            BorderThickness="0"
+                            CornerRadius="0" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType=ScrollBar}}" Value="Vertical">
+                    <Setter Property="Width" Value="10" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Orientation, RelativeSource={RelativeSource AncestorType=ScrollBar}}" Value="Horizontal">
+                    <Setter Property="Height" Value="10" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SidebarScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="#00F5FCFE" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid x:Name="RootGrid">
+                            <Border
+                                x:Name="Rail"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="0" />
+                            <Track
+                                x:Name="PART_Track"
+                                Margin="-8,9,0,0"
+                                IsDirectionReversed="True"
+                                Maximum="{TemplateBinding Maximum}"
+                                Minimum="{TemplateBinding Minimum}"
+                                Orientation="{TemplateBinding Orientation}"
+                                ViewportSize="{TemplateBinding ViewportSize}"
+                                Value="{TemplateBinding Value}">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource SidebarThumbStyle}" />
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter TargetName="RootGrid" Property="Width" Value="10" />
+                                <Setter TargetName="Rail" Property="Width" Value="10" />
+                                <Setter TargetName="PART_Track" Property="Width" Value="10" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="RootGrid" Property="Height" Value="10" />
+                                <Setter TargetName="Rail" Property="Height" Value="10" />
+                                <Setter TargetName="PART_Track" Property="Height" Value="10" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <conv:SenderToHAlignConverter x:Key="SenderToHAlign" />
+        <conv:SenderToBubbleColorConverter x:Key="SenderToBubbleColor" />
+        <conv:SenderToSentVisibilityConverter x:Key="SenderToSentVis" />
+        <conv:SenderToReceivedVisibilityConverter x:Key="SenderToReceivedVis" />
+        <conv:ByteArrayToImageSourceConverter x:Key="ByteArrayToImage" />
+        <conv:BoolToHiddenVisibilityConverter x:Key="BoolToHiddenVis" />
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBoolToVisibilityConverter x:Key="BoolToInverseVis" />
+        <conv:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImage" />
+
+        <!--  SIDEBAR CONVERSATION DATA TEMPLATES  -->
+        <DataTemplate x:Key="DirectMessageTemplate" DataType="{x:Type mm:DirectMessage}">
+            <Grid
+                Height="50"
+                Margin="0,0,4,0"
+                Background="Transparent"
+                Cursor="Hand">
+                <Ellipse
+                    Width="40"
+                    Height="40"
+                    Margin="15,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                    <Ellipse.Fill>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Grid Background="{DynamicResource SkWashedBlue}">
+                                    <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource ByteArrayToImage}">
+                                                <Binding Path="Partner.ProfilePicture" />
+                                                <Binding Source="user" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </Grid>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Label
+                    Height="49"
+                    Margin="64.7,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    VerticalContentAlignment="Center"
+                    Content="{Binding Partner.DisplayName}"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="13"
+                    Foreground="{DynamicResource SkBlack}">
+                    <Label.LayoutTransform>
+                        <ScaleTransform ScaleX="1.0" />
+                    </Label.LayoutTransform>
+                </Label>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupTemplate" DataType="{x:Type mm:Group}">
+            <Grid
+                Height="50"
+                Margin="0,0,4,0"
+                Background="Transparent"
+                Cursor="Hand">
+                <Ellipse
+                    Width="40"
+                    Height="40"
+                    Margin="15,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                    <Ellipse.Fill>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Grid Background="{DynamicResource SkWashedBlue}">
+                                    <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource ByteArrayToImage}">
+                                                <Binding Path="ProfilePicture" />
+                                                <Binding Source="group" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </Grid>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Label
+                    Height="49"
+                    Margin="64.7,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    VerticalContentAlignment="Center"
+                    Content="{Binding DisplayName}"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="13"
+                    Foreground="{DynamicResource SkBlack}" />
+            </Grid>
+        </DataTemplate>
+
+        <!--  Chat message DataTemplate...one group represnents one bubble  -->
+        <DataTemplate x:Key="MessageTemplate" DataType="{x:Type conv:MessageGroup}">
+            <Grid Margin="0,12,0,0" HorizontalAlignment="Stretch">
+
+                <!--  RECIEVED BUBBLE  -->
+                <StackPanel
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Visibility="{Binding Sender.Identifier, Converter={StaticResource SenderToReceivedVis}}">
+                    <Ellipse
+                        Width="36"
+                        Height="36"
+                        Margin="18,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Grid Background="{DynamicResource SkWashedBlue}">
+                                        <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{StaticResource ByteArrayToImage}">
+                                                    <Binding Path="Sender.ProfilePicture" />
+                                                    <Binding Source="user" />
+                                                </MultiBinding>
+                                            </Image.Source>
+                                        </Image>
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <StackPanel Orientation="Vertical">
+                        <!--  (sender name above bubble in groups)  -->
+                        <TextBlock
+                            Margin="18,0,0,2"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="11"
+                            Foreground="{DynamicResource SkSteelBlue}"
+                            Text="{Binding Sender.DisplayName}"
+                            Visibility="{Binding ShowSenderName, Converter={StaticResource BoolToVis}}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Image
+                                Width="4.9"
+                                Height="20"
+                                Margin="13,7.5,0,0"
+                                VerticalAlignment="Top"
+                                RenderOptions.BitmapScalingMode="Fant"
+                                Source="{DynamicResource BubbleArrowLeftDrawingImage}"
+                                Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToInverseVis}}" />
+                            <!--  border for the entire group of messages  -->
+                            <Border
+                                MaxWidth="415"
+                                Padding="17,9,17,6"
+                                Background="{DynamicResource SkBubble}"
+                                CornerRadius="4.5"
+                                Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToInverseVis}}">
+                                <ItemsControl ItemsSource="{Binding Messages}">
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="ContentPresenter">
+                                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="-1,0,0,3"
+                                                FontFamily="Segoe UI Historic"
+                                                FontSize="13"
+                                                Foreground="{DynamicResource SkBlack2}"
+                                                LineHeight="22"
+                                                Text="{Binding Text}"
+                                                TextWrapping="Wrap" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                            <!--  Image attachment (received)  -->
+                            <Border
+                                Margin="13,0,0,0"
+                                ClipToBounds="True"
+                                CornerRadius="8"
+                                Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToVis}}">
+                                <Image
+                                    MaxWidth="300"
+                                    MaxHeight="300"
+                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                    Source="{Binding Messages[0].Attachments, Converter={StaticResource MsgByteArrayToImage}}"
+                                    Stretch="Uniform" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!--  SENT BUBBLE  -->
+                <StackPanel
+                    Margin="0,0,78,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Visibility="{Binding Sender.Identifier, Converter={StaticResource SenderToSentVis}}">
+                    <!--  Image attachment (sent)  -->
+                    <Border
+                        ClipToBounds="True"
+                        CornerRadius="8"
+                        Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToVis}}">
+                        <Image
+                            MaxWidth="300"
+                            MaxHeight="300"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding Messages[0].Attachments, Converter={StaticResource MsgByteArrayToImage}}"
+                            Stretch="Uniform" />
+                    </Border>
+                    <!--  Single border for the entire group of messages  -->
+                    <Border
+                        MaxWidth="415"
+                        Padding="17,9,17,6"
+                        Background="{DynamicResource SkBubbleLight}"
+                        CornerRadius="4.5"
+                        Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToInverseVis}}">
+                        <ItemsControl ItemsSource="{Binding Messages}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Margin="-1,0,0,3"
+                                        FontFamily="Segoe UI Historic"
+                                        FontSize="13"
+                                        Foreground="{DynamicResource SkBlack2}"
+                                        LineHeight="22"
+                                        Text="{Binding Text}"
+                                        TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                    <Image
+                        Width="6"
+                        Height="20"
+                        Margin="0,7.8,0,0"
+                        VerticalAlignment="Top"
+                        RenderOptions.BitmapScalingMode="Fant"
+                        Source="{DynamicResource BubbleArrowRightDrawingImage}"
+                        Visibility="{Binding IsImageGroup, Converter={StaticResource BoolToInverseVis}}" />
+                </StackPanel>
+
+                <!--  TimeStamp  -->
+                <TextBlock
+                    Margin="0,15,12,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="11"
+                    Foreground="{DynamicResource SkSteelBlue}"
+                    Text="{Binding Time, StringFormat=HH:mm}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServerTemplate" DataType="{x:Type mm:Server}">
+            <Grid
+                Height="50"
+                Margin="0,0,4,0"
+                Background="Transparent"
+                Cursor="Hand">
+                <Ellipse
+                    Width="40"
+                    Height="40"
+                    Margin="15,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                    <Ellipse.Fill>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Grid Background="{DynamicResource SkWashedBlue}">
+                                    <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource ByteArrayToImage}">
+                                                <Binding Path="ProfilePicture" />
+                                                <Binding Source="group" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </Grid>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Label
+                    Height="49"
+                    Margin="64.7,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    VerticalContentAlignment="Center"
+                    Content="{Binding DisplayName}"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="13"
+                    Foreground="{DynamicResource SkBlack}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ServerChannelTemplate" DataType="{x:Type mm:ServerChannel}">
+            <Grid
+                Height="25"
+                Margin="0,0,4,0"
+                Background="Transparent"
+                Cursor="Hand">
+                <TextBlock
+                    Margin="44,0,8,0"
+                    VerticalAlignment="Center"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="12"
+                    Foreground="{DynamicResource SkBlack}"
+                    Text="{Binding DisplayName}"
+                    TextTrimming="CharacterEllipsis" />
+            </Grid>
+        </DataTemplate>
+
+        <!--  Sidebar Template Selector  -->
+        <conv:SeanKypeSidebarTemplateSelector
+            x:Key="SidebarSelector"
+            DirectMessageTemplate="{StaticResource DirectMessageTemplate}"
+            GroupTemplate="{StaticResource GroupTemplate}"
+            ServerChannelTemplate="{StaticResource ServerChannelTemplate}"
+            ServerTemplate="{StaticResource ServerTemplate}" />
+
+        <!--  transparent bg, subtle hover / select highlight  -->
+        <Style x:Key="SidebarItemStyle" TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="ItemBorder" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Stretch" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SkWashedBlue}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SkLightGraySep2}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                x:Name="LeftColumnDefinition"
+                Width="277"
+                MinWidth="240"
+                MaxWidth="360" />
+            <ColumnDefinition Width="6" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  ====== LEFT COLUMN ======  -->
+        <Grid x:Name="LeftColumn" Grid.Column="0">
+            <Grid
+                MinWidth="240"
+                MaxWidth="360"
+                Background="{DynamicResource SkLight}"
+                ClipToBounds="True">
+
+                <!--  Header area (height 110)  -->
+                <Grid
+                    Width="auto"
+                    Height="110"
+                    VerticalAlignment="Top"
+                    Background="{DynamicResource SkLight2}">
+                    <Image
+                        x:Name="UserHousing"
+                        Width="130"
+                        Height="36"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="{DynamicResource UserHolderDrawingImage}"
+                        StretchDirection="DownOnly" />
+                    <Ellipse
+                        Width="40"
+                        Height="40"
+                        Margin="15,24,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Cursor="Hand">
+                        <Ellipse.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem
+                                    x:Name="sm_online"
+                                    Click="StatusMenuItemClick"
+                                    Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}" />
+                                <MenuItem
+                                    x:Name="sm_away"
+                                    Click="StatusMenuItemClick"
+                                    Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}" />
+                                <MenuItem
+                                    x:Name="sm_dnd"
+                                    Click="StatusMenuItemClick"
+                                    Header="{Binding [sSTATUSMENU_CAPTION_DND]}" />
+                                <MenuItem
+                                    x:Name="sm_invisible"
+                                    Click="StatusMenuItemClick"
+                                    Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}" />
+                                <MenuItem
+                                    x:Name="sm_offline"
+                                    Click="StatusMenuItemClick"
+                                    Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}"
+                                    IsEnabled="False" />
+                            </ContextMenu>
+                        </Ellipse.ContextMenu>
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Grid Background="{DynamicResource SkWashedBlue}">
+                                        <Image
+                                            x:Name="UserPicture"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{DynamicResource DefaultProfileDrawingImage}"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Label
+                        x:Name="LabelUsername"
+                        Width="207"
+                        Height="27"
+                        Margin="64.5,19.8,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content=""
+                        FontFamily="Segoe UI Historic"
+                        FontSize="13"
+                        Foreground="{DynamicResource SkBlack}">
+                        <Label.LayoutTransform>
+                            <ScaleTransform ScaleX="1.01" />
+                        </Label.LayoutTransform>
+                    </Label>
+                    <TextBlock
+                        x:Name="LabelStatus"
+                        Margin="70,47,20,47"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="11"
+                        Foreground="{DynamicResource SkMidGray}"
+                        Text=""
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap">
+                        <TextBlock.LayoutTransform>
+                            <ScaleTransform ScaleX="1.0748" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                    <!--  user count online  -->
+                    <TextBlock
+                        x:Name="GlobalUserCount"
+                        Margin="0,0,17,8"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="9"
+                        Foreground="{DynamicResource SkMidGray}" />
+                    <TextBox
+                        x:Name="TextBoxSearch"
+                        Margin="38.15,81,34,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="13"
+                        Foreground="{DynamicResource SkMidGray}"
+                        Text="Search">
+                        <TextBox.LayoutTransform>
+                            <ScaleTransform ScaleX="1.02" />
+                        </TextBox.LayoutTransform>
+                    </TextBox>
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Margin="17,85,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="{DynamicResource SearchDrawingImage}" />
+                </Grid>
+
+                <!--  separator dividr  -->
+                <Rectangle
+                    Height="1"
+                    Margin="15,110,15,0"
+                    VerticalAlignment="Top"
+                    Fill="{DynamicResource SkLightGraySep}"
+                    Stroke="{DynamicResource SkLightGraySep}" />
+
+                <!--  CONTACTS / RECENT / SERVERS tab bar  -->
+                <Grid
+                    Width="auto"
+                    Height="75"
+                    Margin="1,110,0,0"
+                    VerticalAlignment="Top">
+                    <Image
+                        Width="14"
+                        Height="13"
+                        Margin="15,15,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="{DynamicResource HomeDrawingImage}" />
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Margin="176,15,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="{DynamicResource PlusDrawingImage}" />
+                    <TextBlock
+                        x:Name="TabContactsText"
+                        Width="87"
+                        Height="30"
+                        Margin="4,46,0,0"
+                        Padding="14,0,0,0.5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Cursor="Hand"
+                        FontFamily="Segoe UI Historic"
+                        Foreground="{DynamicResource SkBlack}"
+                        MouseLeftButtonUp="TabContacts_Click"
+                        Text="CONTACTS"
+                        TextAlignment="Left"
+                        TextWrapping="NoWrap">
+                        <TextBlock.LayoutTransform>
+                            <ScaleTransform ScaleX="1.09" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="TabRecentText"
+                        Width="87"
+                        Height="30"
+                        Margin="91,46,0,0"
+                        Padding="0,0,0,0.5"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Cursor="Hand"
+                        FontFamily="Segoe UI Historic"
+                        Foreground="{DynamicResource SkDarkBlue}"
+                        MouseLeftButtonUp="TabRecent_Click"
+                        Text="RECENT"
+                        TextAlignment="Center"
+                        TextWrapping="NoWrap">
+                        <TextBlock.LayoutTransform>
+                            <ScaleTransform ScaleX="1.09" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="TabServersText"
+                        Height="30"
+                        Margin="195,45,3,0"
+                        VerticalAlignment="Top"
+                        Cursor="Hand"
+                        FontFamily="Segoe UI Historic"
+                        Foreground="{DynamicResource SkBlack}"
+                        MouseLeftButtonUp="TabServers_Click"
+                        Text="SERVERS"
+                        TextAlignment="Left"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap">
+                        <TextBlock.LayoutTransform>
+                            <ScaleTransform ScaleX="1.09" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                </Grid>
+
+                <Image
+                    x:Name="TabWave"
+                    Width="560"
+                    Height="9"
+                    Margin="-141.5,185,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Panel.ZIndex="2"
+                    Source="{DynamicResource SeparatorWaveDrawingImage}"
+                    Stretch="Fill" />
+                <Grid
+                    Width="auto"
+                    Margin="0,185,-1,0"
+                    HorizontalAlignment="Stretch">
+                    <ListBox
+                        x:Name="ConversationList"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ItemContainerStyle="{StaticResource SidebarItemStyle}"
+                        ItemTemplateSelector="{StaticResource SidebarSelector}"
+                        ScrollViewer.CanContentScroll="False"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.IsDeferredScrollingEnabled="False"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        SelectionChanged="ConversationList_SelectionChanged">
+                        <ListBox.Resources>
+                            <Style BasedOn="{StaticResource SidebarScrollBarStyle}" TargetType="ScrollBar" />
+                        </ListBox.Resources>
+                    </ListBox>
+                </Grid>
+
+            </Grid>
+        </Grid>
+
+        <!--  ====== GRID SPLITTER ======  -->
+        <GridSplitter
+            Grid.Column="1"
+            Width="6"
+            Margin="-5,-2.5,0,-2.5"
+            HorizontalAlignment="Center"
+            Panel.ZIndex="2"
+            Background="{DynamicResource SkLightGraySep2}"
+            BorderBrush="Transparent"
+            BorderThickness="2.5"
+            ResizeBehavior="PreviousAndNext"
+            ShowsPreview="False" />
+
+        <!--  ====== RIGHT COLUMN ======  -->
+        <Grid
+            x:Name="RightColumn"
+            Grid.Column="2"
+            Margin="-5,0,0,0">
+
+            <!--  Chat header  -->
+            <Border
+                VerticalAlignment="Top"
+                Panel.ZIndex="2"
+                Background="{DynamicResource SkLight}"
+                BorderBrush="{DynamicResource SkLightGraySep2}"
+                BorderThickness="0,0,0,1">
+                <Grid
+                    Width="auto"
+                    Height="100"
+                    VerticalAlignment="Top"
+                    Background="{DynamicResource SkWhite2}">
+                    <Ellipse
+                        Width="60"
+                        Height="60"
+                        Margin="10,10,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Grid Background="{DynamicResource SkWashedBlue}">
+                                        <Image
+                                            x:Name="ChatHeaderAvatar"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{DynamicResource DefaultProfileDrawingImage}"
+                                            Stretch="UniformToFill" />
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Label
+                        x:Name="LabelUsername1"
+                        Width="250"
+                        Height="39"
+                        Margin="99.3,11,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content=""
+                        FontSize="21"
+                        FontWeight="UltraLight"
+                        Foreground="{DynamicResource SkBlack}">
+                        <Label.LayoutTransform>
+                            <ScaleTransform ScaleX="1.05" />
+                        </Label.LayoutTransform>
+                    </Label>
+                    <TextBlock
+                        x:Name="LabelStatus1"
+                        Margin="104,47,305,37"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="11"
+                        Foreground="{DynamicResource SkMidGray}"
+                        Text=""
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap">
+                        <TextBlock.LayoutTransform>
+                            <ScaleTransform ScaleX="1.09" />
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
+                    <!--  add contact button  -->
+                    <Ellipse
+                        Width="40"
+                        Height="40"
+                        Margin="0,20,20,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Stroke="{DynamicResource SkBlue}"
+                        StrokeThickness="2">
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Image
+                                        RenderOptions.BitmapScalingMode="LowQuality"
+                                        Source="{DynamicResource AddDrawingImage}"
+                                        Stretch="Uniform" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <!--  speed indicator  -->
+                    <global:SliceControl
+                        x:Name="WifiButton"
+                        Width="44"
+                        Margin="10,0,0,0"
+                        Command="{Binding DataContext.RunSpeedTestCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        DefaultIndex="0"
+                        ElementCount="5"
+                        HoverIndex="1"
+                        PressedIndex="2"
+                        SliceMode="0"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/network-none.png'}"
+                        StackDirection="Vertical" />
+                    <!--  Video call button  -->
+                    <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->
+                    <Ellipse
+                        x:Name="VideoCallButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0,20,130,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Cursor="Hand">
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Grid Background="{DynamicResource SkBlue}">
+                                        <Image
+                                            RenderOptions.BitmapScalingMode="LowQuality"
+                                            Source="/SeanKype/Assets/VideoCall.png"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <!--  Voice call button  -->
+                    <!--  TODO change to SliceControl "{Binding CallCommand}"  -->
+                    <Ellipse
+                        x:Name="VoiceCallButton"
+                        Width="40"
+                        Height="40"
+                        Margin="0,20,75,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Cursor="Hand">
+                        <Ellipse.Fill>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Grid Background="{DynamicResource SkBlue}">
+                                        <Image
+                                            RenderOptions.BitmapScalingMode="LowQuality"
+                                            Source="/SeanKype/Assets/VoiceCall.png"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <!--  Loading throbber  for loadimg. TODO make spin  -->
+                    <Grid
+                        x:Name="throbber"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="Collapsed">
+                        <Ellipse
+                            Width="28"
+                            Height="28"
+                            Stroke="{DynamicResource SkBlue}"
+                            StrokeThickness="3">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="ThrobberRotate" Angle="0" CenterX="14" CenterY="14" />
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                RepeatBehavior="Forever"
+                                                Storyboard.TargetName="ThrobberRotate"
+                                                Storyboard.TargetProperty="Angle"
+                                                From="0"
+                                                To="360"
+                                                Duration="0:0:1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!--  message feed  -->
+            <ScrollViewer
+                x:Name="MessageScrollFeed"
+                Margin="0,101,0,130"
+                Loaded="MessageScrollFeed_Loaded">
+                <ItemsControl
+                    x:Name="ConversationItemsList"
+                    HorizontalAlignment="Stretch"
+                    ItemTemplate="{StaticResource MessageTemplate}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!--  message input area  -->
+            <Grid
+                Width="auto"
+                Height="130"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource SkWhite2}">
+                <StackPanel
+                    x:Name="TypingIndicator"
+                    Height="16"
+                    Margin="15,5,115,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Visibility="Collapsed">
+                    <TextBlock
+                        x:Name="TypingIndicatorText"
+                        VerticalAlignment="Center"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="10"
+                        FontStyle="Italic"
+                        Foreground="{DynamicResource SkMidGray}" />
+                </StackPanel>
+                <Image
+                    x:Name="EmojiButton"
+                    Width="20"
+                    Height="20"
+                    Margin="15,28,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="EmojiButton_Click"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="/Skyaeris/Assets/Light/Chat/emoji.png"
+                    ToolTip="Emoji" />
+                <Popup
+                    x:Name="EmojiFlyout"
+                    AllowsTransparency="True"
+                    HorizontalOffset="-20"
+                    Placement="Top"
+                    PlacementTarget="{Binding ElementName=EmojiButton}"
+                    StaysOpen="False">
+                    <Border
+                        Padding="2"
+                        Background="#CC202020"
+                        BorderBrush="#666666"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <ScrollViewer
+                            MaxWidth="257"
+                            MaxHeight="278"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Visible">
+                            <WrapPanel x:Name="EmojiWrapPanel" Orientation="Horizontal" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+                <Rectangle
+                    Height="1"
+                    Margin="17,57,17,0"
+                    VerticalAlignment="Top"
+                    Fill="{DynamicResource SkDarkBlue}"
+                    Stroke="{DynamicResource SkDarkBlue}" />
+                <Ellipse
+                    Width="32"
+                    Height="32"
+                    Margin="0,87,17,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="SendButton_Click">
+                    <Ellipse.Fill>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Grid Background="{DynamicResource SkBlue}">
+                                    <Image
+                                        RenderOptions.BitmapScalingMode="LowQuality"
+                                        Source="/SeanKype/Assets/Send.png"
+                                        Stretch="Uniform" />
+                                </Grid>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBox
+                    x:Name="TextBoxMessage"
+                    Margin="15,65,117,17"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="13"
+                    FontStretch="Normal"
+                    Foreground="{DynamicResource SkBlack}"
+                    KeyDown="TextBoxMessage_KeyDown" />
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Window>
+

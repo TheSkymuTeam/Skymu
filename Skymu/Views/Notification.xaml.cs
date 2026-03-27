@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MiddleMan;
 using Skymu.Skyaeris;
+using Skymu.ViewModels;
 
 namespace Skymu.Views
 {
@@ -33,12 +34,12 @@ namespace Skymu.Views
 
         public Notification(MessageRecievedEventArgs e, int durationSeconds = 5)
         {
-            if (!Properties.Settings.Default.EnableNotifications || Main.CurrentUser is null)
+            if (!Properties.Settings.Default.EnableNotifications || Universal.CurrentUser is null)
                 return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
 
-            if (Main.CurrentUser?.ConnectionStatus == UserConnectionStatus.DoNotDisturb)
+            if (Universal.CurrentUser?.ConnectionStatus == UserConnectionStatus.DoNotDisturb)
             {
                 Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
                 return;
@@ -184,7 +185,7 @@ namespace Skymu.Views
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat
                     ? 21
-                    : Main.GetIntFromStatus(message.Sender.ConnectionStatus),
+                    : MainViewModel.GetIntFromStatus(message.Sender.ConnectionStatus),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 0, 4, 0),
                 HoverIndex = -1,

@@ -302,6 +302,25 @@
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
+                                                Text="Interface era" />
+                                            <ComboBox
+                                                Width="250"
+                                                SelectedValue="{Binding SkypeEra, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Skype 5" Tag="Skyaeris" />
+                                                <ComboBoxItem Content="Skype 6" Tag="Skyaeris6" />
+                                                <ComboBoxItem Content="Skype 7" Tag="SeanKype" />
+                                            </ComboBox>
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                Foreground="#FF888888"
+                                                VerticalAlignment="Center"
+                                                Text="(Requires restart)" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
                                                 Text="Application theme (experimental)" />
                                             <ComboBox
                                                 Width="250"
@@ -309,6 +328,7 @@
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Light" Tag="Light" />
                                                 <ComboBoxItem Content="Dark" Tag="Dark" />
+                                                <ComboBoxItem Content="Skype 6" Tag="Pontis/Light" />
                                             </ComboBox>
                                         </StackPanel>
                                         <StackPanel Margin="0,5" Orientation="Horizontal">

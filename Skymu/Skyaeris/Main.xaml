@@ -20,7 +20,6 @@
     AllowsTransparency="True"
     Background="#8cbeff"
     Closing="Main_Closing"
-    DataContext="{StaticResource Lang}"
     Deactivated="Window_Deactivated"
     FontFamily="Tahoma"
     FontSize="11"
@@ -80,7 +79,7 @@
             <Setter Property="Width" Value="36" />
         </Style>
         <!--  CONTACT ITEM TEMPLATE START  -->
-        <!--  Shared style for both targeted templates  -->
+        <!--  shared style for both targeted templates  -->
         <Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
@@ -830,108 +829,108 @@
                     Background="#c6dfff"
                     FontFamily="Tahoma"
                     FontSize="11">
-                    <MenuItem Header="{Binding [sMAINMENU_SKYPE]}">
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD]}" />
-                        <MenuItem Click="mn_SignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER]}" />
-                        <MenuItem Click="mn_Close" Header="{Binding [sMAINMENU_SKYPE_CLOSE]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" />
+                        <MenuItem Click="mn_SignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
+                        <MenuItem Click="mn_Close" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS]}">
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sBUDDYMENU_REMOVE]}" />
+                        <MenuItem Header="{Binding [sBUDDYMENU_REMOVE], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_CONVERSATION]}">
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_PROFILE_PANEL]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_TO_CONTACTS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_PEOPLE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_RENAME]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_LEAVE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_BLOCK]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_UNBLOCK]}" />
-                        <MenuItem Header="{Binding [sCONVERSATION_MENU_NOTIFICATIONS]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_CONVERSATION], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_PROFILE_PANEL], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_TO_CONTACTS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_PEOPLE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_RENAME], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_LEAVE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_BLOCK], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_UNBLOCK], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sCONVERSATION_MENU_NOTIFICATIONS], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_SEARCH]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_OLD_MESSAGES]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_SEARCH], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_OLD_MESSAGES], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sCONVERSATION_MARK_UNREAD]}" />
-                        <MenuItem Header="{Binding [sCONVERSATION_MARK_READ]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE]}" />
+                        <MenuItem Header="{Binding [sCONVERSATION_MARK_UNREAD], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sCONVERSATION_MARK_READ], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_CALL]}">
-                        <MenuItem Header="{Binding [sMAINMENU_CALL]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_ANSWER]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_ANSWER], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_IGNORE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_MUTE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_UNMUTE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_HOLD]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_RESUME]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_TRANSFER]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_HANG_UP]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_IGNORE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_MUTE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_UNMUTE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_HOLD], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_RESUME], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_TRANSFER], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_HANG_UP], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_CALL_A_PHONE_NUMBER]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_CALL_A_PHONE_NUMBER], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_AUDIO]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SETTINGS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SNAPSHOT]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_AUDIO], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SETTINGS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SNAPSHOT], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_CALL_QUALITY]}" />
-                        <MenuItem Header="{Binding [sCALL_TOOLBAR_TECHNICAL_INFO]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_CALL_QUALITY], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sCALL_TOOLBAR_TECHNICAL_INFO], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_VIEW]}">
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CONTACTS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CONVERSATIONS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_VOICEMAILS]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_FILESSENT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SMSMESSAGES]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_INSTANT_MESSAGES]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_VIEW], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CONTACTS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CONVERSATIONS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_VOICEMAILS], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_FILESSENT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SMSMESSAGES], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_INSTANT_MESSAGES], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_HOME]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_PROFILE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CALL_PHONES]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SNAPSHOTS_GALLERY]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_HOME], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_PROFILE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_CALL_PHONES], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SNAPSHOTS_GALLERY], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SINGLE_WINDOW_MODE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_MULTI_WINDOW_MODE]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_FULLSCREEN]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_SINGLE_WINDOW_MODE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_MULTI_WINDOW_MODE], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_VIEW_FULLSCREEN], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_SHOW_HIDDEN_CONV]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_SHOW_HIDDEN_CONV], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_TOOLS]}">
-                        <MenuItem Click="mn_Apps" Header="{Binding [sMAINMENU_TOOLS_EXTRAS]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
+                        <MenuItem Click="mn_Apps" Header="{Binding [sMAINMENU_TOOLS_EXTRAS], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Click="mn_Language" Header="{Binding [sMAINMENU_TOOLS_LANGUAGE]}" />
+                        <MenuItem Click="mn_Language" Header="{Binding [sMAINMENU_TOOLS_LANGUAGE], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Click="mn_Accessibility" Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY]}" />
-                        <MenuItem Click="mn_ShareWithFriend" Header="{Binding [sMAINMENU_TOOLS_SHARE]}" />
+                        <MenuItem Click="mn_Accessibility" Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY], Source={StaticResource Lang}}" />
+                        <MenuItem Click="mn_ShareWithFriend" Header="{Binding [sMAINMENU_TOOLS_SHARE], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Click="mn_Options" Header="{Binding [sMAINMENU_TOOLS_OPTIONS]}" />
+                        <MenuItem Click="mn_Options" Header="{Binding [sMAINMENU_TOOLS_OPTIONS], Source={StaticResource Lang}}" />
                     </MenuItem>
-                    <MenuItem Header="{Binding [sMAINMENU_HELP]}">
-                        <MenuItem Header="{Binding [sMAINMENU_HELP_HELP]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT]}" />
+                    <MenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
+                        <MenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY]}" />
-                        <MenuItem Click="mn_CheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES]}" />
-                        <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK]}" />
+                        <MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY], Source={StaticResource Lang}}" />
+                        <MenuItem Click="mn_CheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK], Source={StaticResource Lang}}" />
                         <Separator />
-                        <MenuItem Click="mn_About" Header="{Binding [sMAINMENU_HELP_ABOUT]}" />
-                        <MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY]}" />
+                        <MenuItem Click="mn_About" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
+                        <MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
                     </MenuItem>
                 </Menu>
                 <Rectangle
@@ -1158,7 +1157,7 @@
                                     PressedIndex="-1"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-bottom.png'}"
                                     StackDirection="Vertical"
-                                    Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], StringFormat=$ 0.00 - {0}}"
+                                    Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
                                     TextColor="#333333"
                                     TextFont="Tahoma"
                                     TextLeftMargin="34"
@@ -1191,7 +1190,7 @@
                                     RightWidth="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/contacts.png'}"
                                     StackDirection="Vertical"
-                                    Text="{Binding [sZAPBUTTON_CONTACTS]}"
+                                    Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                     TextColor="#333333"
                                     TextFont="Arial"
                                     TextLeftMargin="30"
@@ -1232,7 +1231,7 @@
                                     RightWidth="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/recents.png'}"
                                     StackDirection="Vertical"
-                                    Text="{Binding [sRECENTS_TAB_TEXT]}"
+                                    Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
                                     TextColor="#333333"
                                     TextFont="Arial"
                                     TextLeftMargin="30"
@@ -1395,7 +1394,7 @@
                                         PressedIndex="2"
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/add-contact.png'}"
                                         StackDirection="Vertical"
-                                        Text="{Binding [sADD_CONTACT_LONG]}"
+                                        Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
                                         TextColor="#333333"
                                         TextFont="Tahoma"
                                         TextLeftMargin="41"
@@ -1411,7 +1410,7 @@
                                         PressedIndex="2"
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/create-group.png'}"
                                         StackDirection="Vertical"
-                                        Text="{Binding [sCREATE_GROUP_LONG]}"
+                                        Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
                                         TextColor="#333333"
                                         TextFont="Tahoma"
                                         TextLeftMargin="41"
@@ -1433,7 +1432,7 @@
                                             PressedIndex="2"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/call-phones.png'}"
                                             StackDirection="Vertical"
-                                            Text="{Binding [sZAPBUTTON_SKYPEOUT]}"
+                                            Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                             TextColor="#333333"
                                             TextFont="Arial"
                                             TextLeftMargin="32"
@@ -1945,11 +1944,11 @@
                                         Orientation="Horizontal">
                                         <global:SliceControl
                                             Width="Auto"
+                                            Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="1"
                                             LeftWidth="22"
-                                            MouseLeftButtonUp="VideoCallButtonClick"
                                             PressedIndex="2"
                                             RightWidth="22"
                                             Source="Assets/Universal/Chat/btn_video_call.png"
@@ -1965,11 +1964,11 @@
                                             x:Name="CallButton"
                                             Width="Auto"
                                             Margin="10,0,0,0"
+                                            Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="1"
                                             LeftWidth="23"
-                                            MouseLeftButtonUp="CallButtonClick"
                                             PressedIndex="2"
                                             RightWidth="4"
                                             Source="Assets/Universal/Chat/btn_call_left.png"
@@ -2007,10 +2006,10 @@
                                             x:Name="WifiButton"
                                             Width="44"
                                             Margin="10,0,0,0"
+                                            Command="{Binding DataContext.RunSpeedTestCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="1"
-                                            MouseLeftButtonUp="WifiButton_Click"
                                             PressedIndex="2"
                                             SliceMode="0"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/network-none.png'}"

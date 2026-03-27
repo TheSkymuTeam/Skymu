@@ -765,8 +765,8 @@ namespace Skymu
             if (e is MessageRecievedEventArgs eR)
             {
                 // TODO: have creation, editing and deletion affect all conversations in database, not just the current
-                if (Skyaeris.Main.SelectedConversation?.Identifier == eR.ConversationId)
-                    Skyaeris.Main.ActiveConversation.Add(eR.Item);
+                if (Universal.ActiveViewModel?.SelectedConversation?.Identifier == eR.ConversationId)
+                    Universal.ActiveViewModel?.ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
@@ -778,14 +778,14 @@ namespace Skymu
 
                         if (
                             message.ParentMessage?.Sender?.Identifier
-                            == Skyaeris.Main.CurrentUser?.Identifier
+                            == Universal.CurrentUser?.Identifier
                         )
                         { /* case 1 is true, continue */
                         }
                         else if (
                             !string.IsNullOrEmpty(message.Text)
-                            && !string.IsNullOrEmpty(Skyaeris.Main.CurrentUser?.DisplayName)
-                            && message.Text.Contains($"<@{Skyaeris.Main.CurrentUser.DisplayName}>")
+                            && !string.IsNullOrEmpty(Universal.CurrentUser?.DisplayName)
+                            && message.Text.Contains($"<@{Universal.CurrentUser.DisplayName}>")
                         )
                         { /* case 2 is true, continue */
                         }
@@ -795,11 +795,11 @@ namespace Skymu
                         }
                     }
 
-                    if (message.Sender.Identifier != Skyaeris.Main.CurrentUser?.Identifier)
+                    if (message.Sender.Identifier != Universal.CurrentUser?.Identifier)
                     {
                         if (
-                            !Skyaeris.Main.IsWindowActive
-                            || Skyaeris.Main.SelectedConversation?.Identifier != eR.ConversationId
+                            !(Universal.ActiveViewModel?.IsWindowActive ?? false)
+                            || Universal.ActiveViewModel?.SelectedConversation?.Identifier != eR.ConversationId
                         )
                         {
                             new Views.Notification(eR);
@@ -809,31 +809,31 @@ namespace Skymu
             }
             else if (
                 e is MessageDeletedEventArgs eD
-                && Skyaeris.Main.SelectedConversation?.Identifier == e.ConversationId
+                && Universal.ActiveViewModel?.SelectedConversation?.Identifier == e.ConversationId
             )
             {
-                var item = Skyaeris.Main.ActiveConversation.FirstOrDefault(x =>
+                var item = Universal.ActiveViewModel.ActiveConversation.FirstOrDefault(x =>
                     x.Identifier == eD.DeletedItemId
                 );
                 if (item is Message deleted_msg)
                 {
-                    int index = Skyaeris.Main.ActiveConversation.IndexOf(deleted_msg);
-                    Skyaeris.Main.ActiveConversation.RemoveAt(index);
+                    int index = Universal.ActiveViewModel.ActiveConversation.IndexOf(deleted_msg);
+                    Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
                     if (Properties.Settings.Default.MessageLogger)
                     {
                         deleted_msg.Text += " ==[deleted]==";
-                        Skyaeris.Main.ActiveConversation.Insert(index, deleted_msg);
+                        Universal.ActiveViewModel.ActiveConversation.Insert(index, deleted_msg);
                     }
                 }
             }
             else if (
                 e is MessageEditedEventArgs eE
-                && Skyaeris.Main.SelectedConversation?.Identifier == e.ConversationId
+                && Universal.ActiveViewModel?.SelectedConversation?.Identifier == e.ConversationId
             )
             {
                 var index =
-                    Skyaeris
-                        .Main.ActiveConversation.Select((item, i) => new { item, i })
+                    Universal.ActiveViewModel
+                        .ActiveConversation.Select((item, i) => new { item, i })
                         .LastOrDefault(x => x.item.Identifier == eE.OldItemId)
                         ?.i
                     ?? -1;
@@ -843,17 +843,17 @@ namespace Skymu
                     Message edited_msg = eE.NewItem as Message;
                     if (!Properties.Settings.Default.MessageLogger)
                     {
-                        Skyaeris.Main.ActiveConversation.RemoveAt(index);
+                        Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
                     }
 
                     edited_msg.Text += " ==[edited]==";
 
                     int insertIndex = Math.Min(
                         index + (Properties.Settings.Default.MessageLogger ? 1 : 0),
-                        Skyaeris.Main.ActiveConversation.Count
+                        Universal.ActiveViewModel.ActiveConversation.Count
                     );
 
-                    Skyaeris.Main.ActiveConversation.Insert(insertIndex, edited_msg);
+                    Universal.ActiveViewModel.ActiveConversation.Insert(insertIndex, edited_msg);
                 }
             }
         }
