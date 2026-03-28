@@ -1022,7 +1022,7 @@
                                             <MenuItem
                                                 x:Name="sm_online"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_ONLINE]}">
+                                                Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
                                                         Width="14"
@@ -1038,7 +1038,7 @@
                                             <MenuItem
                                                 x:Name="sm_away"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_AWAY]}">
+                                                Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
                                                         Width="14"
@@ -1054,7 +1054,7 @@
                                             <MenuItem
                                                 x:Name="sm_dnd"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_DND]}">
+                                                Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
                                                         Width="14"
@@ -1070,7 +1070,7 @@
                                             <MenuItem
                                                 x:Name="sm_invisible"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE]}">
+                                                Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
                                                         Width="14"
@@ -1086,7 +1086,7 @@
                                             <MenuItem
                                                 x:Name="sm_offline"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE]}"
+                                                Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
                                                 IsEnabled="False">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
@@ -1104,7 +1104,7 @@
                                             <MenuItem
                                                 x:Name="sm_call_forwarding"
                                                 Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2]}">
+                                                Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
                                                 <MenuItem.Icon>
                                                     <global:SliceControl
                                                         Width="14"

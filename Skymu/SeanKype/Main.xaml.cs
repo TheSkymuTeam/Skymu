@@ -511,12 +511,20 @@ namespace Skymu.SeanKype
                 ).ShowDialog();
             }
 
-            var result = await vmodel.HandleStatusChangeByName(name, current);
-            if (result == null)
-                return;
+            UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
+            if (status == UserConnectionStatus.Unknown) return;
 
-            _currentStatusIndex = MainViewModel.GetIntFromStatus(result.Value);
-            LabelStatus.Text = result.Value.ToString();
+            _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
+            Tray.PushIcon(status);
+            LabelStatus.Text = status.ToString();
+
+            if (!await Universal.Plugin.SetConnectionStatus(status))
+            {
+                status = current;
+                _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
+                Tray.PushIcon(status);
+                LabelStatus.Text = status.ToString();
+            }
         }
 
         #endregion

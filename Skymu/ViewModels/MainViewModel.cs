@@ -534,16 +534,10 @@ namespace Skymu.ViewModels
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, EventArgs.Empty);
 
-           
+
         }
         #endregion
 
-        // ------ Connection status ------
-
-        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
-        {
-            return await Universal.Plugin.SetConnectionStatus(status);
-        }
 
         // ------ Skymu API / user count ------
 
@@ -606,9 +600,9 @@ namespace Skymu.ViewModels
             string text;
             switch (count)
             {
-                case 1:  text = $"{profiles[0].DisplayName} is typing..."; break;
-                case 2:  text = $"{profiles[0].DisplayName} and {profiles[1].DisplayName} are typing..."; break;
-                case 3:  text = $"{profiles[0].DisplayName}, {profiles[1].DisplayName}, and {profiles[2].DisplayName} are typing..."; break;
+                case 1: text = $"{profiles[0].DisplayName} is typing..."; break;
+                case 2: text = $"{profiles[0].DisplayName} and {profiles[1].DisplayName} are typing..."; break;
+                case 3: text = $"{profiles[0].DisplayName}, {profiles[1].DisplayName}, and {profiles[2].DisplayName} are typing..."; break;
                 default: text = "Multiple people are typing..."; break;
             }
             Application.Current?.Dispatcher.BeginInvoke(new Action(() =>
@@ -623,7 +617,7 @@ namespace Skymu.ViewModels
         public async Task RunSpeedTest()
         {
             const string TEST_URL = "https://speed.cloudflare.com/__down?bytes=10485760";
-            const string PREFIX   = "network-";
+            const string PREFIX = "network-";
 
             var cts = new CancellationTokenSource();
             var token = cts.Token;
@@ -647,11 +641,11 @@ namespace Skymu.ViewModels
                 var data = await Universal.WebClient.GetByteArrayAsync(TEST_URL);
                 sw.Stop();
                 double mbps = (data.Length * 8.0) / 1_000_000 / sw.Elapsed.TotalSeconds;
-                if      (mbps >= 50) final += "5";
+                if (mbps >= 50) final += "5";
                 else if (mbps >= 20) final += "4";
                 else if (mbps >= 10) final += "3";
-                else if (mbps >= 5)  final += "2";
-                else                 final += "1";
+                else if (mbps >= 5) final += "2";
+                else final += "1";
             }
             catch
             {
@@ -746,37 +740,23 @@ namespace Skymu.ViewModels
                 .Select(kvp => (kvp.Key, kvp.Value));
         }
 
-        // ------ Status change ------
-
-        /// <summary>
-        /// Handles a status change by item name (e.g. "online", "dnd").
-        /// Returns the resulting status on success/revert, or null if skipped / not-implemented.
-        /// DND confirmation dialog should be shown by the calling view before invoking.
-        /// </summary>
-        public async Task<UserConnectionStatus?> HandleStatusChangeByName(
-            string menuItemName, UserConnectionStatus currentStatus)
+        public UserConnectionStatus GetConnectionStatusFromName(string menuItemName)
         {
-            UserConnectionStatus newStatus;
+            UserConnectionStatus status;
             switch (menuItemName)
             {
-                case "online":         newStatus = UserConnectionStatus.Online;        break;
-                case "offline":        newStatus = UserConnectionStatus.Offline;       break;
-                case "invisible":      newStatus = UserConnectionStatus.Invisible;     break;
-                case "away":           newStatus = UserConnectionStatus.Away;          break;
-                case "dnd":            newStatus = UserConnectionStatus.DoNotDisturb;  break;
+                case "online": status = UserConnectionStatus.Online; break;
+                case "offline": status = UserConnectionStatus.Offline; break;
+                case "invisible": status = UserConnectionStatus.Invisible; break;
+                case "away": status = UserConnectionStatus.Away; break;
+                case "dnd": status = UserConnectionStatus.DoNotDisturb; break;
                 case "call_forwarding":
                     Universal.NotImplemented(Universal.Lang["sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL"]);
-                    return null;
+                    status = UserConnectionStatus.Unknown; break;
                 default:
-                    return null;
+                    status = UserConnectionStatus.Unknown; break;
             }
-            if (newStatus == currentStatus) return null;
-            Universal.CurrentUser.ConnectionStatus = newStatus;
-            if (await Universal.Plugin.SetConnectionStatus(newStatus))
-                return newStatus;
-            // Revert on API failure
-            Universal.CurrentUser.ConnectionStatus = currentStatus;
-            return currentStatus;
+            return status;
         }
 
         // ------ GroupedConversation management ------
@@ -789,9 +769,9 @@ namespace Skymu.ViewModels
             while (i < ActiveConversation.Count)
             {
                 if (!(ActiveConversation[i] is Message firstMsg)) { i++; continue; }
-                bool isSelf  = firstMsg.Sender?.Identifier == Universal.CurrentUser?.Identifier;
+                bool isSelf = firstMsg.Sender?.Identifier == Universal.CurrentUser?.Identifier;
                 bool showName = !isSelf && isGroupOrServer;
-                bool isImage  = firstMsg.Attachments != null &&
+                bool isImage = firstMsg.Attachments != null &&
                                 firstMsg.Attachments.Any(a => a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage);
                 if (isImage)
                 {
@@ -819,9 +799,9 @@ namespace Skymu.ViewModels
         private void AppendToGroupedConversation(Message message)
         {
             bool isGroupOrServer = SelectedConversation is Group || SelectedConversation is ServerChannel;
-            bool isSelf   = message.Sender?.Identifier == Universal.CurrentUser?.Identifier;
+            bool isSelf = message.Sender?.Identifier == Universal.CurrentUser?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
-            bool isImage  = message.Attachments != null &&
+            bool isImage = message.Attachments != null &&
                             message.Attachments.Any(a => a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage);
 
             if (!isImage && GroupedConversation.Count > 0)

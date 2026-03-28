@@ -131,7 +131,7 @@ namespace Discord.Classes
                 client_state = new { guild_versions = new { } }
             });
 
-            Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
+           // Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
 
             _heartbeatBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(heartbeatPayloadJson));
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));

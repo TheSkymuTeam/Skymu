@@ -31,8 +31,7 @@
             DefaultIndex="0"
             ElementCount="1"
             SliceMode="2"
-            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/bubble-orange.png'}"
-            StackDirection="Vertical" />
+            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/bubble-orange.png'}" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="26" />

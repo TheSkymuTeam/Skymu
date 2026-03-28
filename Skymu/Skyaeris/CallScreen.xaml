@@ -11,6 +11,7 @@
     Height="700"
     FontFamily="Arial"
     FontSize="15.5"
+    SizeChanged="Resized"
     Style="{StaticResource Page}"
     mc:Ignorable="d">
     <Page.Resources>
@@ -78,7 +79,7 @@
         </Grid>
 
         <Grid
-            x:Name="actionbar"
+            x:Name="ActionBar"
             Grid.Row="1"
             Margin="0,0,0,16"
             HorizontalAlignment="Center"
@@ -96,12 +97,12 @@
                 <ColumnDefinition Width="164" />
             </Grid.ColumnDefinitions>
             <global:SliceControl
+                x:Name="ActionBarContainer"
                 Grid.ColumnSpan="3"
-                Width="Auto"
-                BottomHeight="10"
+                BottomHeight="33"
                 SliceMode="1"
                 Source="Assets/Universal/Call Screen/pill.png"
-                TopHeight="10" />
+                TopHeight="3" />
             <StackPanel
                 Grid.Column="0"
                 Margin="24,0,0,0"

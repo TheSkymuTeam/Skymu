@@ -1289,10 +1289,18 @@ namespace Skymu.Skyaeris
                 ).ShowDialog();
             }
 
-            var result = await vmodel.HandleStatusChangeByName(name, currentStatus);
-            if (result == null) return;
-            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(result.Value);
-            Tray.PushIcon(result.Value);
+            UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
+            if (status == UserConnectionStatus.Unknown) return;
+
+            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
+            Tray.PushIcon(status);
+
+            if (!await Universal.Plugin.SetConnectionStatus(status))
+            {
+                status = currentStatus;
+                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
+                Tray.PushIcon(status);
+            }
         }
 
         #endregion
