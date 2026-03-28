@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using BrotliSharpLib;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -49,7 +48,7 @@ namespace Discord.Classes
             // Set default headers once
             client.DefaultRequestHeaders.Add("Accept", "*/*");
             client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br"); 
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate"); // TODO maybe add brotli decompression? that's supposed to be better
 
             XSuperProperties = configMgr.GetXSPJson();
             client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
@@ -110,13 +109,6 @@ namespace Discord.Classes
                 {
                     using (HttpResponseMessage response = await client.SendAsync(request))
                     {
-                        if (response.Content.Headers.ContentEncoding.Contains("br"))
-                        {
-                            var bytes = await response.Content.ReadAsByteArrayAsync();
-                            var decompressed = Brotli.DecompressBuffer(bytes, 0, bytes.Length);
-                            return Encoding.UTF8.GetString(decompressed);
-                        }
-
                         return await response.Content.ReadAsStringAsync();
                     }
                 }
