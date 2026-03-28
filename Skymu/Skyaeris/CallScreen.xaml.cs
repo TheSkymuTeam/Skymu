@@ -18,37 +18,66 @@ namespace Skymu.Skyaeris
 {
     public partial class CallScreen : Page
     {
-        private BitmapImage pill;
-        private BitmapImage rectangle;
+        private BitmapImage pill, rectangle, logo_small, logo_big;
+        private bool isPillMode;       
+        private bool isLogoBig;
+
         public CallScreen()
         {
             InitializeComponent();
-            rectangle = FrozenImage.Generate("pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/Call Screen/rectangle.png");
-            pill = FrozenImage.Generate("pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/Call Screen/pill.png");
-        }
 
-        private void SliceControl_Loaded(object sender, RoutedEventArgs e)
-        {
+            const string prefix = "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
 
+            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
+            pill = FrozenImage.Generate(prefix + "Call Screen/pill.png");
+            logo_small = FrozenImage.Generate(prefix + "Branding/logo-call-small.png");
+            logo_big = FrozenImage.Generate(prefix + "Branding/logo-call-big.png");
+
+            isPillMode = !(this.ActualWidth >= 1025.0);
+            isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
+            Resized(null, null);
         }
 
         private void Resized(object sender, RoutedEventArgs e)
         {
-            if (this.ActualWidth >= 1025.0) // pill
+            bool newPillMode = this.ActualWidth >= 1025.0;
+            if (newPillMode != isPillMode)
             {
-                ActionBar.Margin = new Thickness(0, 0, 0, 16);
-                ActionBar.HorizontalAlignment = HorizontalAlignment.Center;
-                ActionBarContainer.Source = pill;
-                ActionBarContainer.SliceMode = 1;
-                ActionBarContainer.ClearValue(HeightProperty);
+                if (newPillMode) // pill
+                {
+                    ActionBar.Margin = new Thickness(0, 0, 0, 16);
+                    ActionBar.HorizontalAlignment = HorizontalAlignment.Center;
+                    ActionBarContainer.Source = pill;
+                    ActionBarContainer.SliceMode = 1;
+                    ActionBarContainer.ClearValue(HeightProperty);
+                }
+                else // rectangle
+                {
+                    ActionBar.Margin = new Thickness(0);
+                    ActionBar.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    ActionBarContainer.Source = rectangle;
+                    ActionBarContainer.SliceMode = 2;
+                    ActionBarContainer.Height = 88;
+                }
+
+                isPillMode = newPillMode;
             }
-            else // rectangle
+
+            bool newLogoBig = this.ActualWidth >= 700 && this.ActualHeight >= 700;
+            if (newLogoBig != isLogoBig)
             {
-                ActionBar.Margin = new Thickness(0);
-                ActionBar.HorizontalAlignment = HorizontalAlignment.Stretch;
-                ActionBarContainer.Source = rectangle;
-                ActionBarContainer.SliceMode = 2;
-                ActionBarContainer.Height = 88;
+                if (newLogoBig) // big logo
+                {
+                    Logo.Width = 169;
+                    Logo.Source = logo_big;
+                }
+                else // small logo
+                {
+                    Logo.Width = 52;
+                    Logo.Source = logo_small;
+                }
+
+                isLogoBig = newLogoBig;
             }
         }
     }

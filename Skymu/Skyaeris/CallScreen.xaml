@@ -37,10 +37,11 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Image
+                x:Name="Logo"
                 Width="169"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Source="Assets/Universal/Branding/logo-call-screen.png" />
+                Source="Assets/Universal/Branding/logo-call-big.png" />
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -134,7 +135,6 @@
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
-                    Loaded="SliceControl_Loaded"
                     Source="Assets/Universal/Call Screen/btn_hangup.png"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
