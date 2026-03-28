@@ -16,6 +16,7 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BrotliSharpLib" Version="0.3.3" />
     <PackageReference Include="Google.Protobuf" Version="3.34.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />

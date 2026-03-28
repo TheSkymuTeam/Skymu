@@ -47,6 +47,7 @@ namespace Skymu
         private double _frameAccumulator = 0;
         private Storyboard _fadeStoryboard;
         private ButtonVisualState _fadeTargetState;
+        private Rectangle[] _overlayRects;
 
         private ImageBrush _leftBrush;
         private ImageBrush _middleBrush;
@@ -69,6 +70,7 @@ namespace Skymu
         public SliceControl()
         {
             InitializeComponent();
+            _overlayRects = new[] { OverlayLeft, OverlayMiddle, OverlayRight };
 
             // Mouse events
             MouseEnter += (s, e) =>
@@ -186,7 +188,18 @@ namespace Skymu
                 UpdateHitTestState();
                 UpdateTextOffset();
                 SetStateInternal(IsEnabled ? ButtonStateOnInit : ButtonVisualState.Disabled);
+                _animatingControls.Remove(this);
                 UpdateAnimation();
+            };
+
+            IsVisibleChanged += (s, e) =>
+            {
+                if (!(bool)e.NewValue)
+                {
+                    _animatingControls.Remove(this);
+                    if (_animatingControls.Count == 0)
+                        _sharedAnimationTimer?.Stop();
+                }
             };
 
             Unloaded += (s, e) =>
@@ -687,7 +700,7 @@ namespace Skymu
             var newSb = new Storyboard();
             _fadeStoryboard = newSb;
 
-            foreach (var rect in new[] { OverlayLeft, OverlayMiddle, OverlayRight })
+            foreach (var rect in _overlayRects)
             {
                 if (rect.Visibility != Visibility.Visible)
                     continue;
@@ -1079,18 +1092,17 @@ namespace Skymu
             }
         }
 
-        private void ApplyBrush(
-            ImageBrush brush,
-            Rectangle rect,
-            double x,
-            double y,
-            double w,
-            double h
-        )
+        private void ApplyBrush(ImageBrush brush, Rectangle rect, double x, double y, double w, double h)
         {
-            brush.ImageSource = Source;
-            brush.Viewbox = new Rect(x, y, Math.Max(0, w), Math.Max(0, h));
-            rect.Fill = brush;
+            if (!ReferenceEquals(brush.ImageSource, Source))
+                brush.ImageSource = Source;
+
+            var newViewbox = new Rect(x, y, Math.Max(0, w), Math.Max(0, h));
+            if (brush.Viewbox != newViewbox)
+                brush.Viewbox = newViewbox;
+
+            if (!ReferenceEquals(rect.Fill, brush))
+                rect.Fill = brush;
         }
 
         private void SetNineSliceVisibility(bool visible)
