@@ -1748,63 +1748,71 @@
                                                 </Grid>
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type plugin:Group}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <!--  Profile picture column  -->
-                                                    <Image
-                                                        x:Name="CPAProfilePic"
-                                                        Grid.Column="0"
-                                                        Margin="4,4,5,9"
-                                                        HorizontalAlignment="Left"
-                                                        VerticalAlignment="Top"
-                                                        RenderOptions.BitmapScalingMode="HighQuality"
-                                                        Stretch="UniformToFill">
-                                                        <Image.Source>
-                                                            <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                                                <Binding Path="ProfilePicture" />
-                                                                <Binding Source="group" />
-                                                            </MultiBinding>
-                                                        </Image.Source>
-                                                        <Image.Effect>
-                                                            <DropShadowEffect
-                                                                BlurRadius="4"
-                                                                Direction="270"
-                                                                Opacity="0.5"
-                                                                ShadowDepth="1"
-                                                                Color="#FFA0A0A0" />
-                                                        </Image.Effect>
-                                                    </Image>
-                                                    <!--  Information column  -->
-                                                    <StackPanel
-                                                        Grid.Column="1"
-                                                        Margin="12,12"
-                                                        Orientation="Vertical">
-                                                        <!--  Group member count row  -->
-                                                        <StackPanel
-                                                            x:Name="StatusRow"
-                                                            HorizontalAlignment="Left"
-                                                            Orientation="Horizontal">
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                Height="14"
-                                                                DefaultIndex="21"
-                                                                ElementCount="22"
-                                                                Interactive="False"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                            <TextBlock
-                                                                Margin="11,0,0,0"
-                                                                FontFamily="Tahoma"
-                                                                FontSize="11"
-                                                                Text="{Binding Members.Length, StringFormat='{}{0} members'}"
-                                                                TextTrimming="CharacterEllipsis" />
-                                                        </StackPanel>
-                                                    </StackPanel>
-                                                </Grid>
+                                                <ItemsControl ItemsSource="{Binding Members}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Orientation="Horizontal" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type plugin:User}">
+                                                            <StackPanel
+                                                                Width="120"
+                                                                Margin="10,0"
+                                                                Orientation="Vertical">
+                                                                <!--  Name row with status icon  -->
+                                                                <StackPanel
+                                                                    Margin="0,0,0,2"
+                                                                    HorizontalAlignment="Center"
+                                                                    Orientation="Horizontal">
+                                                                    <global:SliceControl
+                                                                        Width="16"
+                                                                        Height="16"
+                                                                        VerticalAlignment="Center"
+                                                                        DefaultIndex="{Binding ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
+                                                                        ElementCount="22"
+                                                                        Interactive="False"
+                                                                        SliceMode="0"
+                                                                        Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                                                        StackDirection="Horizontal" />
+                                                                    <TextBlock
+                                                                        MaxWidth="100"
+                                                                        Margin="5,0,0,1"
+                                                                        VerticalAlignment="Center"
+                                                                        FontFamily="Tahoma"
+                                                                        FontSize="11"
+                                                                        Text="{Binding DisplayName}"
+                                                                        TextTrimming="CharacterEllipsis"
+                                                                        TextWrapping="NoWrap" />
+                                                                </StackPanel>
+                                                                <!--  Profile picture  -->
+                                                                <Image
+                                                                    Width="85"
+                                                                    Margin="0,3,0,0"
+                                                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                                                    Stretch="UniformToFill">
+                                                                    <Image.Source>
+                                                                        <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                                                            <Binding Path="ProfilePicture" />
+                                                                            <Binding Source="user" />
+                                                                        </MultiBinding>
+                                                                    </Image.Source>
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect
+                                                                            BlurRadius="4"
+                                                                            Direction="270"
+                                                                            Opacity="0.5"
+                                                                            ShadowDepth="1"
+                                                                            Color="#FFA0A0A0" />
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
                                             </DataTemplate>
                                             <DataTemplate DataType="{x:Type plugin:Server}">
                                                 <Grid>
