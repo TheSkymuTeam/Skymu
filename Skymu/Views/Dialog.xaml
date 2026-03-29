@@ -30,7 +30,7 @@
             VerticalAlignment="Top"
             Panel.ZIndex="10"
             DefaultIndex="0"
-            ElementCount="29"
+            ElementCount="36"
             HoverIndex="-1"
             IsHitTestVisible="False"
             PressedIndex="-1"

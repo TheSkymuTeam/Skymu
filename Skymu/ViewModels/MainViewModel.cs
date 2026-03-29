@@ -9,6 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+/*==========================================================*/
+// This code is EXPIREMENTAL and has not been reviewed by
+// persfidious, patricktbp, or HUBAXE.
+// It is a port of logic that previously lived in Main.xaml.cs.
+// Please do not judge us on it.
+/*==========================================================*/
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
@@ -538,8 +545,7 @@ namespace Skymu.ViewModels
         }
         #endregion
 
-
-        // ------ Skymu API / user count ------
+        #region User count API
 
         private async Task SkymuApiStatusHandler()
         {
@@ -575,7 +581,7 @@ namespace Skymu.ViewModels
             }
         }
 
-        // ------ Typing indicator ------
+        #endregion
 
         public void SubscribeTypingIndicator()
         {
@@ -611,8 +617,6 @@ namespace Skymu.ViewModels
                 IsTypingVisible = true;
             }));
         }
-
-        // ------ Internet speed test ------
 
         public async Task RunSpeedTest()
         {
@@ -660,8 +664,6 @@ namespace Skymu.ViewModels
             SpeedTestIconUpdated?.Invoke(Converters.Helpers.GetAssetBasePrefix() + "Chat/" + final + ".png");
         }
 
-        // ------ Call toggle ------
-
         private async Task HandleCallToggle()
         {
             if (IsCallActive)
@@ -682,6 +684,7 @@ namespace Skymu.ViewModels
 
         private async Task HandleCall()
         {
+            Universal.NotImplemented("Voice calling");
             /*if (IsCallActive)
             {
                 await HandleCallToggle();
@@ -709,16 +712,8 @@ namespace Skymu.ViewModels
 
         public void HandleVideoCall()
         {
-            // press this button, call the garbage collector (debug)
-            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
-            GC.WaitForPendingFinalizers();
-            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
-
             Universal.NotImplemented("Video calling");
         }
-
-        // ------ Emoji helpers ------
 
         public string ConvertHexKeyToUnicode(string hexKey)
         {
@@ -758,8 +753,6 @@ namespace Skymu.ViewModels
             }
             return status;
         }
-
-        // ------ GroupedConversation management ------
 
         public void BuildGroupedConversation()
         {

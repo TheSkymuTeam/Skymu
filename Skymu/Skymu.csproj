@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
 	<PropertyGroup>
 		<TargetFramework>net461</TargetFramework>
 		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
 		<OutputType>WinExe</OutputType>
-
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
-
 		<IsWebBootstrapper>false</IsWebBootstrapper>
 		<PublishUrl>publish\</PublishUrl>
 		<Install>true</Install>
@@ -26,10 +23,8 @@
 		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<StartupObject />
-
-
 		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
-		<Platforms>AnyCPU;x86;x64</Platforms>
+		<Platforms>x86;x64</Platforms>
 	</PropertyGroup>
 	<PropertyGroup>
 		<AssemblyTitle>Sky Multiprotocol</AssemblyTitle>

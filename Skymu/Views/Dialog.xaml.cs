@@ -112,7 +112,7 @@ namespace Skymu.Views
                 Description.Text = content;
                 BRAction = brAction;
                 BLAction = blAction;
-                DialogImage.DefaultIndex = (int)type;
+                DialogImage.DefaultIndex = Properties.Settings.Default.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
                 if (blText != null)
                     ButtonLeft.Content = blText;
                 if (brText != null)

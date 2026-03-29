@@ -28,9 +28,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Linq;
+using Skymu.Views;
+using System.Text;
 using Microsoft.Data.Sqlite;
 using MiddleMan;
 
@@ -103,9 +104,33 @@ namespace Skymu
                 try
                 {
                     var doc = System.Xml.Linq.XDocument.Load(configPath);
-                    int version = (int)doc.Root.Element("DatabaseVersion");
-                    if (version < Version)
+                    int LastUsedVersion = (int)doc.Root.Element("DatabaseVersion");
+                    if (LastUsedVersion < Version)
                         wipe = true;
+                    else if (LastUsedVersion > Version)
+                    {
+                        Dialog dlg = null;
+                        dlg = new Dialog(
+                            WindowBase.IconType.Question,
+                            $"{Properties.Settings.Default.BrandingName} found a database associated with this user account, but it was made by a newer version of the database manager (v{LastUsedVersion}) " +
+                            $"than the existing one (v{Version}).\n\nWould you like to delete the database and start fresh, or download the latest version of {Properties.Settings.Default.BrandingName}?",
+                            "Purge database?",
+                            $"{Properties.Settings.Default.BrandingName} Database Manager",
+                            new Action(() =>
+                            {
+                                new Views.Pages.Updater();
+                            }),
+                            $"Update {Properties.Settings.Default.BrandingName}",
+                            true,
+                            new Action(() =>
+                            {
+                                wipe = true;
+                                dlg.Close();
+                            }),
+                            "Purge database"
+                        );
+                        dlg.ShowDialog();
+                    }
                 }
                 catch
                 {
@@ -128,7 +153,9 @@ namespace Skymu
                 return "GenericAccount";
 
             var invalidChars = Path.GetInvalidFileNameChars();
-            string sanitized = string.Concat(name.Select(c => invalidChars.Contains(c) ? replacement[0] : c));
+            string sanitized = string.Concat(
+                name.Select(c => invalidChars.Contains(c) ? replacement[0] : c)
+            );
 
             sanitized = sanitized.TrimEnd(' ', '.');
 
@@ -137,14 +164,17 @@ namespace Skymu
 
             return sanitized;
         }
+
         private void BuildContactMap()
         {
-            if (_contactMap != null) return;
+            if (_contactMap != null)
+                return;
             _contactMap = new Dictionary<string, User>();
             foreach (User u in Contacts.Read())
                 if (u.Identifier != null)
                     _contactMap[u.Identifier] = u;
         }
+
         private static void WriteConfigInternal(string configPath)
         {
             new System.Xml.Linq.XDocument(
@@ -1530,8 +1560,6 @@ namespace Skymu
                 }
             }
 
-
-
             private Dictionary<long, List<string>> LoadParticipantMap()
             {
                 var map = new Dictionary<long, List<string>>();
@@ -1893,7 +1921,10 @@ namespace Skymu
                         int attachmentIndex = 0;
                         foreach (Attachment attachment in message.Attachments)
                         {
-                            if ((attachment?.Type != AttachmentType.Image) && (attachment?.Type != AttachmentType.ThumbnailImage))
+                            if (
+                                (attachment?.Type != AttachmentType.Image)
+                                && (attachment?.Type != AttachmentType.ThumbnailImage)
+                            )
                                 continue;
                             if (attachment.File == null || attachment.File.Length == 0)
                                 continue;
@@ -1927,8 +1958,7 @@ namespace Skymu
                             cmd.Parameters["@convo_id"].Value = conversationIncrementalId;
                             cmd.Parameters["@pk_id"].Value =
                                 (object)message.Identifier ?? DBNull.Value;
-                            cmd.Parameters["@fullsize_url"].Value =
-                                attachment.Url ?? String.Empty;
+                            cmd.Parameters["@fullsize_url"].Value = attachment.Url ?? String.Empty;
                             cmd.Parameters["@chatmsg_index"].Value = attachmentIndex;
 
                             cmd.ExecuteNonQuery();
@@ -1970,12 +2000,23 @@ namespace Skymu
 
                             byte[] bytes = File.ReadAllBytes(filePath);
                             Attachment attachment;
-                            if (!String.IsNullOrEmpty(url)) {
-                                attachment = new Attachment(bytes, fileName, url, AttachmentType.ThumbnailImage);
+                            if (!String.IsNullOrEmpty(url))
+                            {
+                                attachment = new Attachment(
+                                    bytes,
+                                    fileName,
+                                    url,
+                                    AttachmentType.ThumbnailImage
+                                );
                             }
                             else
                             {
-                                attachment = new Attachment(bytes, fileName, null, AttachmentType.Image);
+                                attachment = new Attachment(
+                                    bytes,
+                                    fileName,
+                                    null,
+                                    AttachmentType.Image
+                                );
                             }
 
                             if (!result.TryGetValue(pkId, out var list))
@@ -2091,8 +2132,12 @@ namespace Skymu
                                             msg.Attachments = attachments;
                                         if (parentId != null)
                                             msg.ParentMessage =
-                                                ReadRow(parentId, convoId, _db._contactMap, connection)
-                                                as Message;
+                                                ReadRow(
+                                                    parentId,
+                                                    convoId,
+                                                    _db._contactMap,
+                                                    connection
+                                                ) as Message;
                                         items.Add(msg);
                                         break;
 
@@ -2119,7 +2164,7 @@ namespace Skymu
                                         );
                                         break;
 
-                                        // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
+                                    // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
                                 }
                             }
                         }
@@ -2413,7 +2458,9 @@ namespace Skymu
                                 updateCmd
                                     .Parameters.Add("@last_activity_timestamp", SqliteType.Integer)
                                     .Value = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                                updateCmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
+                                updateCmd
+                                    .Parameters.Add("@conversation_id", SqliteType.Text)
+                                    .Value =
                                     (object)ConvertIdentifier(conversation.Identifier)
                                     ?? DBNull.Value;
                                 updateCmd.ExecuteNonQuery();

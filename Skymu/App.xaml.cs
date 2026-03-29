@@ -186,7 +186,7 @@ namespace Skymu
             string brand = Skymu.Properties.Settings.Default.BrandingName;
             Views.Pages.ErrorWindow page = new Views.Pages.ErrorWindow(ex.ToString());
             WindowBase frame = new WindowBase(page);
-            frame.HeaderIcon = WindowBase.IconType.Error;
+            frame.HeaderIcon = WindowBase.IconType.Crash;
             frame.HeaderText = "That wasn't supposed to happen...";
             frame.Title = brand + " Error";
             frame.ButtonRightAction = () => frame.Close();

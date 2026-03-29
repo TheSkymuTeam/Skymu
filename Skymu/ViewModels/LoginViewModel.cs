@@ -9,6 +9,12 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+/*==========================================================*/
+// This code is EXPIREMENTAL and has not been reviewed by
+// persfidious, patricktbp, or HUBAXE.
+// It is a port of logic that previously lived in Login.xaml.cs.
+// Please do not judge us on it.
+/*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using MiddleMan;
@@ -26,21 +32,10 @@ namespace Skymu.ViewModels
         private PluginListing _selectedListing;
         private readonly Func<IMainWindowHolder> _createMainWindow;
 
-        // ------ Events for view to react to ------
-
-        /// <summary>true = show spinner/throbber, false = show login controls</summary>
         public event Action<bool> AnimationToggleRequested;
-
-        /// <summary>View should update the header/status label text.</summary>
         public event Action<string> HeaderTextRequested;
-
-        /// <summary>Fired when a plugin selection changes so the view can update its own UI.</summary>
         public event Action<PluginListing> PluginSelectionUpdated;
-
-        /// <summary>Fired when the main window is ready to be shown.  The view should show it and close itself.</summary>
         public event Action<IMainWindowHolder> MainWindowReady;
-
-        // ------ Observable state ------
 
         private ObservableCollection<PluginListing> _pluginItems;
         public ObservableCollection<PluginListing> PluginItems
@@ -59,20 +54,14 @@ namespace Skymu.ViewModels
             }
         }
 
-        /// <summary>Non-null while an auto-login credential is pending.</summary>
         public SavedCredential PendingAutoLogin { get; private set; }
 
-        // ------ Constructor ------
 
         public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
         {
             _createMainWindow = createMainWindow;
             _pluginItems = new ObservableCollection<PluginListing>();
         }
-
-        // ------ Methods ------
-
-        /// <summary>Load plugins and detect auto-login.  Call from the view's Loaded handler.</summary>
         public void LoadPlugins()
         {
             Plugins.DisposeAll();
@@ -150,8 +139,6 @@ namespace Skymu.ViewModels
                 pluginIndex++;
             }
         }
-
-        /// <summary>Call when the user selects a different protocol/plugin.</summary>
         public void HandleProtocolSelected(PluginListing listing)
         {
             if (listing == null) return;
@@ -160,7 +147,6 @@ namespace Skymu.ViewModels
             PluginSelectionUpdated?.Invoke(listing);
         }
 
-        /// <summary>Attempt auto-login if a saved credential exists.  Call from ContentRendered.</summary>
         public async Task TryAutoLogin()
         {
             if (PendingAutoLogin == null)
@@ -185,10 +171,6 @@ namespace Skymu.ViewModels
             }
         }
 
-        /// <summary>
-        /// Authenticate with the currently selected plugin.
-        /// <paramref name="saveCredentials"/> — whether to persist credentials after success.
-        /// </summary>
         public async Task Login(string username, string password, bool saveCredentials = false)
         {
             if (_selectedListing == null) return;
@@ -294,7 +276,6 @@ namespace Skymu.ViewModels
             _ = mainWindow.BeginLoading();
         }
 
-        // The PluginListing class (previously inner class in Login.xaml.cs)
         public class PluginListing
         {
             public PluginListing(string name, int index, AuthenticationMethod authType, string textUsername)

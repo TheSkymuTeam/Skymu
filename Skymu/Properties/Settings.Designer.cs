@@ -286,5 +286,17 @@ namespace Skymu.Properties {
                 this["MsgLoadCount"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NikoIcons {
+            get {
+                return ((bool)(this["NikoIcons"]));
+            }
+            set {
+                this["NikoIcons"] = value;
+            }
+        }
     }
 }

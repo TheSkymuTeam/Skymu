@@ -50,7 +50,14 @@ namespace Skymu.Views
             eBay,
             Facebook,
             MultipleContactVideoCall,
-            TelephoneFlat
+            TelephoneFlat,
+            Crash,
+            Niko,
+            NikoHappy,
+            NikoSad,
+            KentuckyFriedBadge,
+            KentuckyFriedSkymu,
+            kentuckyFriedCrosstalk
         }
 
         public WindowBase(Page page)
@@ -67,8 +74,8 @@ namespace Skymu.Views
 
         public IconType HeaderIcon
         {
-            get => (IconType)HeaderImage.DefaultIndex;
-            set => HeaderImage.DefaultIndex = (int)value;
+            get => Properties.Settings.Default.NikoIcons ? IconType.Niko : (IconType)HeaderImage.DefaultIndex;
+            set => HeaderImage.DefaultIndex = Properties.Settings.Default.NikoIcons ? (int)IconType.Niko : (int)value;
         }
 
         public string ButtonLeftText
