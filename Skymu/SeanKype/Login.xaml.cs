@@ -9,6 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+/*==========================================================*/
+// This code is EXPIREMENTAL and has not been reviewed by
+// persfidious, patricktbp, or HUBAXE.
+// This also applies to the associated XAML file.
+// Please do not judge us on it.
+/*==========================================================*/
+
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

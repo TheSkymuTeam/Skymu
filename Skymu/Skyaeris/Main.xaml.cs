@@ -838,8 +838,6 @@ namespace Skymu.Skyaeris
         {
             if (e.Key != Key.Enter)
                 return;
-
-            // Shift+Enter for newline
             if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
                 return;
 
@@ -998,11 +996,6 @@ namespace Skymu.Skyaeris
             return sb.ToString();
         }
 
-        #endregion
-
-        #region Internet speed tester
-        // Speed test logic is now in MainViewModel.RunSpeedTest().
-        // WifiButton.Source is updated via the SpeedTestIconUpdated event subscribed in the constructor.
         #endregion
 
         #region Conversation
@@ -1215,13 +1208,11 @@ namespace Skymu.Skyaeris
                     _conversationScrollViewer?.ScrollToEnd();
             };
 
-            // Speed test icon updates WifiButton
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = FrozenImage.Generate(uri));
             };
 
-            // Typing indicator driven by ViewModel properties
             vmodel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MainViewModel.TypingText))
