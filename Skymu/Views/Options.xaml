@@ -262,18 +262,16 @@
                                                 SelectedValuePath="Key" />
                                         </StackPanel>
 
-                                        <StackPanel
-                                            Margin="0,5"
-                                            Orientation="Horizontal"
-                                            Visibility="Collapsed">
+
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
                                                 Text="Main window frame" />
                                             <ComboBox Width="250" SelectedIndex="{Binding WindowFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                                <ComboBoxItem Content="Use the system window frame" />
                                                 <ComboBoxItem Content="Skype Aero" />
                                                 <ComboBoxItem Content="Skype Basic" />
-                                                <ComboBoxItem Content="Use the system window frame" />
                                             </ComboBox>
                                         </StackPanel>
 
@@ -332,17 +330,6 @@
                                             </ComboBox>
                                         </StackPanel>
 
-                                        <StackPanel Margin="0,5" Orientation="Horizontal">
-                                            <TextBlock
-                                                Padding="0,0,10,0"
-                                                VerticalAlignment="Center"
-                                                Text="Main window frame" />
-                                            <ComboBox Width="250" SelectedIndex="{Binding WindowFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
-                                                <ComboBoxItem Content="Skype Aero" />
-                                                <ComboBoxItem Content="Skype Basic" />
-                                                <ComboBoxItem Content="Use the system window frame" />
-                                            </ComboBox>
-                                        </StackPanel>
 
                                         <CheckBox Margin="0,5" IsChecked="{Binding FallbackFillColors, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>

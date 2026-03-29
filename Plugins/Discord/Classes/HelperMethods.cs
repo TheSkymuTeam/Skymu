@@ -30,7 +30,8 @@ namespace Discord.Classes
 
         private static string GetPath(string dir)
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dir);
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            return Path.Combine(appData, "Skymu", "LegacyDiscordAvatarsCache", dir);
         }
 
         public enum DiscordChannelType
@@ -43,9 +44,9 @@ namespace Discord.Classes
         // So we don't have to fetch the data everytime
         public static async Task<byte[]> GetCachedAvatarAsync(string userId, string hash, DiscordChannelType channel_type)
         {
-            string cacheDirName = channel_type == DiscordChannelType.Group ? "discord-group-avatar-cache"
-                    : channel_type == DiscordChannelType.Server ? "discord-server-avatar-cache"
-                    : "discord-user-avatar-cache";
+            string cacheDirName = channel_type == DiscordChannelType.Group ? "group"
+                    : channel_type == DiscordChannelType.Server ? "server"
+                    : "user";
 
             string avatar_cache_dir = GetPath(cacheDirName);
             if (!Directory.Exists(avatar_cache_dir)) Directory.CreateDirectory(avatar_cache_dir);
