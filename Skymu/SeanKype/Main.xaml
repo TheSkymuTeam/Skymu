@@ -547,7 +547,6 @@
                             Source="{Binding Messages[0].Attachments, Converter={StaticResource MsgByteArrayToImage}}"
                             Stretch="Uniform" />
                     </Border>
-                    <!--  Single border for the entire group of messages  -->
                     <Border
                         MaxWidth="415"
                         Padding="17,9,17,6"

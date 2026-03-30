@@ -2069,19 +2069,16 @@
                                         </Image.Triggers>
                                     </Image>
                                     <ListBox
-                                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                         x:Name="ConversationItemsList"
                                         Grid.Row="2"
                                         Margin="0,0,0,0"
-                                        VerticalAlignment="Bottom"
                                         BorderThickness="0"
                                         Loaded="ConversationItemsList_Loaded"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                         Style="{StaticResource NoInsetListBox}"
                                         VirtualizingPanel.IsVirtualizing="True"
                                         VirtualizingPanel.ScrollUnit="Pixel"
-                                        VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.VirtualizationMode="Standard"
                                         mc:Ignorable="d">
                                         <ListBox.ItemsPanel>
                                             <ItemsPanelTemplate>

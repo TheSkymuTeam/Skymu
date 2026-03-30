@@ -11,6 +11,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Interop;
@@ -106,7 +107,7 @@ namespace Skymu
             Process.Start(exePath);
 
             Universal.Terminate();
-        } 
+        }
 
         internal static readonly HttpClient WebClient = new HttpClient
         {
@@ -141,7 +142,7 @@ namespace Skymu
             }
         }
 
-        public static void Close(System.ComponentModel.CancelEventArgs ev = null)
+        public static void Hide(System.ComponentModel.CancelEventArgs ev = null)
         {
             try
             {
@@ -149,6 +150,19 @@ namespace Skymu
                 {
                     ev.Cancel = true;
                 }
+                foreach (Window window in Application.Current.Windows.OfType<Window>().ToList())
+                    window.Hide();
+            }
+            catch
+            {
+                // butt
+            }
+        }
+
+        public static void Close()
+        {
+            try
+            {
                 string brand = Skymu.Properties.Settings.Default.BrandingName;
                 new Dialog(
                     WindowBase.IconType.Question,

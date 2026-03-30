@@ -1,19 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>plugin-Stub</AssemblyName>
-    <AssemblyTitle>Stub Plugin</AssemblyTitle>
-	  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	  <FileVersion>1.0.0.0</FileVersion>
-	  <Platforms>AnyCPU;x86;x64</Platforms>
-	  <OutputPath>..\..\Skymu\bin\$(Platform)\$(Configuration)\Plugins\</OutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>plugin-Stub</AssemblyName>
+		<AssemblyTitle>Stub Plugin</AssemblyTitle>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<FileVersion>1.0.0.0</FileVersion>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
 	</PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj" />
+	</ItemGroup>
 </Project>

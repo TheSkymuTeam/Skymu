@@ -392,7 +392,7 @@ namespace Skymu.SeanKype
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs ev)
         {
             if (!noCloseEvent)
-                Universal.Close(ev);
+                Universal.Hide(ev);
         }
 
         private void MessageScrollFeed_Loaded(object sender, RoutedEventArgs e)

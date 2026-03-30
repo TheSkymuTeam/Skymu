@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<!-- Main thingy -->
 	<PropertyGroup>
-		<TargetFramework>net461</TargetFramework>
-		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
 		<OutputType>WinExe</OutputType>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -11,6 +11,7 @@
 		<InstallFrom>Disk</InstallFrom>
 		<UpdateEnabled>false</UpdateEnabled>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<IntermediateOutputPath>obj\$(TargetFramework)\$(Configuration)\</IntermediateOutputPath>
 		<UpdateMode>Foreground</UpdateMode>
 		<UpdateInterval>7</UpdateInterval>
 		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -24,41 +25,66 @@
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<StartupObject />
 		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
-		<Platforms>x86;x64</Platforms>
 	</PropertyGroup>
+
+	<!-- Assembly information -->
 	<PropertyGroup>
-		<AssemblyTitle>Sky Multiprotocol</AssemblyTitle>
+		<AssemblyTitle>Skymu</AssemblyTitle>
 		<Description>Sky Multiprotocol</Description>
 		<FileDescription>Sky Multiprotocol</FileDescription>
 		<Company>The Skymu Team</Company>
-		<Product>Sky Multiprotocol</Product>
+		<Product>Skymu</Product>
 	</PropertyGroup>
-	<Target Name="MoveNetStandardLibs" AfterTargets="Build">
+
+	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME INSTEAD) -->
+	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0'))">
+		<TargetFrameworks>net461;net10.0-windows</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(NETCoreSdkVersion)' == '' Or $([MSBuild]::VersionLessThan('$(NETCoreSdkVersion)', '10.0'))">
+		<TargetFrameworks>net461</TargetFrameworks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
+		<PlatformTarget>x86</PlatformTarget>
+		<OutputPath>bin\SkymuFramework\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+		<PlatformTarget>x64</PlatformTarget>
+		<OutputPath>bin\SkymuCore\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<!-- Build configurations -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+
+	<!-- Some functions to deal with this building hell -->
+	<Target Name="MoveNetStandardLibs" AfterTargets="Build" Condition="'$(TargetFramework)' == 'net461'">
 		<ItemGroup>
 			<NetStandardAssemblies Include="$(OutDir)System.*.dll" />
 			<NetStandardAssemblies Include="$(OutDir)netstandard.dll" />
 			<NetStandardAssemblies Include="$(OutDir)Microsoft.Bcl.AsyncInterfaces.dll" />
 		</ItemGroup>
-
-		<MakeDir Directories="$(OutDir)netstandard2.0" />
-
-		<Move SourceFiles="@(NetStandardAssemblies)" DestinationFolder="$(OutDir)netstandard2.0" OverwriteReadOnlyFiles="true" />
+		<ItemGroup>
+			<NetStandardAssemblies Remove="@(NetStandardAssemblies)" Condition="!Exists('%(FullPath)')" />
+		</ItemGroup>
+		<MakeDir Directories="$(OutDir)netstandard2.0" Condition="@(NetStandardAssemblies-&gt;Count()) &gt; 0" />
+		<Move SourceFiles="@(NetStandardAssemblies)" DestinationFolder="$(OutDir)netstandard2.0" OverwriteReadOnlyFiles="true" Condition="@(NetStandardAssemblies-&gt;Count()) &gt; 0" />
 	</Target>
 
-	<!-- Build Configurations -->
+	<Target Name="CopyPluginsToSkymuCore" AfterTargets="Build">
+		<ItemGroup>
+			<PluginFiles Include="bin\SkymuFramework\$(Configuration)\Plugins\**\*" />
+		</ItemGroup>
+		<MakeDir Directories="bin\SkymuCore\$(Configuration)\Plugins\" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\SkymuCore\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<DebugType>none</DebugType>
-	</PropertyGroup>
-
-
-	<PropertyGroup>
-		<OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-	</PropertyGroup>
-	
 	<!-- Resource Handling -->
-	
-
 	<ItemGroup>
 		<!-- SeanKype -->
 		<None Remove="SeanKype\Assets\**\*" />
@@ -115,15 +141,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="english.lang" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Remove="Themes\default.xaml" />
+		<Page Remove="Themes\default.xaml" />
 	</ItemGroup>
 
 	<!-- Packages -->
-
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Markdig" Version="1.1.0" />
@@ -151,7 +172,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-
 		<None Update="Properties\Settings.settings">
 			<Generator>SettingsSingleFileGenerator</Generator>
 			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -163,46 +183,45 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="PresentationFramework.Aero">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="PresentationFramework.Aero2">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="PresentationFramework.AeroLite">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="PresentationFramework.Classic">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="PresentationFramework.Luna">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="PresentationFramework.Royale">
-	    <Private>True</Private>
-	  </Reference>
-	  <Reference Include="System.Security" />
-	  <Reference Include="System.Web" />
+		<Reference Include="PresentationFramework.Aero">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Aero2">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.AeroLite">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Classic">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Luna">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Royale">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="System.Security" />
+		<Reference Include="System.Web" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Pontis\" />
+		<Folder Include="Pontis\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Themes\default.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Include="Themes\default.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
-
 	<ItemGroup>
-	  <Compile Update="Properties\Settings.Designer.cs">
-	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Settings.settings</DependentUpon>
-	  </Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 </Project>

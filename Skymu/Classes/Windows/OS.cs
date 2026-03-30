@@ -63,7 +63,7 @@ namespace Skymu
             }
         }
 
-        private static void SetSkymuStartOnComputerStart(bool toggle)
+        private static void SetSkymuStartOnComputerStart(bool yes)
         {
             using (
                 RegistryKey key = Registry.CurrentUser.OpenSubKey(
@@ -72,7 +72,7 @@ namespace Skymu
                 )
             )
             {
-                if (toggle)
+                if (yes)
                     key.SetValue(
                         Universal.Name,
                         "\"" + Process.GetCurrentProcess().MainModule.FileName + "\""

@@ -130,12 +130,15 @@ namespace Skymu
             switch (commandId)
             {
                 case MENU_OPEN_SKYPE:
-                    if (System.Windows.Application.Current.Windows != null)
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
-                    }
-                    else
-                    {
-                    }
+                        foreach (System.Windows.Window window in System.Windows.Application.Current.Windows)
+                        {
+                            window.Show();
+                            window.WindowState = System.Windows.WindowState.Normal;
+                            window.Activate();
+                        }
+                    });
                     break;
 
                 case MENU_SIGN_IN:
@@ -148,31 +151,27 @@ namespace Skymu
                     break;
 
                 case MENU_QUIT:
-                    Universal.Close(null);
+                    Universal.Close();
                     break;
             }
         }
 
         private static void ShowContextMenu()
         {
-            // get cursor position
             var cursorPos = System.Windows.Forms.Cursor.Position;
 
-            // create menu if it doesn't exist
             if (hMenu == IntPtr.Zero)
             {
                 hMenu = CreatePopupMenu();
 
-                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_OPEN_SKYPE, Universal.Lang["sTRAYMENU_SHOWFRIENDS"]);
+                AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_OPEN_SKYPE, Universal.Lang["sTRAYMENU_SHOWFRIENDS"]);
                 AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_SIGN_IN, Universal.Lang["sTRAYMENU_LOGIN"]);
                 AppendMenu(hMenu, MF_SEPARATOR, UIntPtr.Zero, null);
                 AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_QUIT, Universal.Lang["sTRAYMENU_QUIT"]);
             }
 
-            // required for context menu to work properly
             SetForegroundWindow(messageWindow.Handle);
 
-            // show menu and get selected command
             uint command = TrackPopupMenu(
                 hMenu,
                 TPM_LEFTALIGN | TPM_RETURNCMD,
@@ -188,7 +187,6 @@ namespace Skymu
                 HandleMenuCommand(command);
             }
 
-            // post a null message to clear menu state
             if (messageWindow != null) { PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero); }
         }
 
@@ -217,7 +215,6 @@ namespace Skymu
             }
             else
             {
-                // create message window for handling menu commands
                 messageWindow = new NativeWindow(HandleMenuCommand);
 
                 Icon = new Winforms.NotifyIcon();
@@ -225,9 +222,12 @@ namespace Skymu
                 Icon.MouseClick += (s, e) =>
                 {
                     if (e.Button == Winforms.MouseButtons.Right)
-                    {
                         ShowContextMenu();
-                    }
+                };
+                Icon.MouseDoubleClick += (s, e) =>
+                {
+                    if (e.Button == Winforms.MouseButtons.Left)
+                        HandleMenuCommand(MENU_OPEN_SKYPE);
                 };
                 Icon.Visible = true;
             }

@@ -487,7 +487,7 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private async void SelectTab(SliceControl tab_to_select)
+        private async Task SelectTab(SliceControl tab_to_select)
         {
             if (tab_to_select.Name == "btnServers")
             {
@@ -673,9 +673,9 @@ namespace Skymu.Skyaeris
             OpenStatusMenu();
         }
 
-        private void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
+        private async void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
         {
-            SelectTab(sender as SliceControl);
+            await SelectTab(sender as SliceControl);
         }
 
         private void TitleButton_Click(object sender, MouseButtonEventArgs e)
@@ -710,23 +710,25 @@ namespace Skymu.Skyaeris
 
         private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-            _tbliHoldTokenSource = new CancellationTokenSource();
-
-            try
+            using (_tbliHoldTokenSource = new CancellationTokenSource())
             {
-                await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
 
-                string url;
-                if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                    url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                else
-                    url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+                try
+                {
+                    await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
 
-                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
-            }
-            catch (TaskCanceledException)
-            {
-                // ass
+                    string url;
+                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                    else
+                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+
+                    Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                }
+                catch (TaskCanceledException)
+                {
+                    // ass
+                }
             }
         }
 
@@ -748,7 +750,7 @@ namespace Skymu.Skyaeris
         private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs ev)
         {
             if (!noCloseEvent)
-                Universal.Close(ev);
+                Universal.Hide(ev);
         }
 
         private void mn_New(object sender, RoutedEventArgs e) { }
@@ -881,7 +883,7 @@ namespace Skymu.Skyaeris
         }
 
         private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
-        { 
+        {
             Universal.NotImplemented("Voice calling");
         }
 
@@ -1033,16 +1035,19 @@ namespace Skymu.Skyaeris
         private void HandleConversationItems()
         {
             ConversationItemsList.ApplyTemplate();
-            _conversationScrollViewer =
-                ConversationItemsList.Template.FindName("ScrollViewer", ConversationItemsList)
-                as ScrollViewer;
-            _conversationScrollViewer.ScrollChanged += (s, e) =>
-            {
-                if (e.ExtentHeightChange == 0)
-                    _userScrolledUp =
-                        _conversationScrollViewer.VerticalOffset
-                        < _conversationScrollViewer.ScrollableHeight - 10;
-            };
+            if (_conversationScrollViewer != null)
+                _conversationScrollViewer.ScrollChanged -= ConversationScrollChanged;
+
+            _conversationScrollViewer = ConversationItemsList.Template
+                .FindName("ScrollViewer", ConversationItemsList) as ScrollViewer;
+            _conversationScrollViewer.ScrollChanged += ConversationScrollChanged;
+        }
+
+        private void ConversationScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.ExtentHeightChange == 0)
+                _userScrolledUp = _conversationScrollViewer.VerticalOffset
+                    < _conversationScrollViewer.ScrollableHeight - 10;
         }
 
         #endregion
@@ -1111,8 +1116,11 @@ namespace Skymu.Skyaeris
             {
                 var border = new Border
                 {
-                    Width = 28, Height = 28, Margin = new Thickness(1),
-                    Background = Brushes.Transparent, Cursor = Cursors.Hand,
+                    Width = 28,
+                    Height = 28,
+                    Margin = new Thickness(1),
+                    Background = Brushes.Transparent,
+                    Cursor = Cursors.Hand,
                     ToolTip = vmodel.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
@@ -1128,6 +1136,17 @@ namespace Skymu.Skyaeris
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"Failed to load emoji: {emojiFilename} - {ex.Message}");
+                }
+            }
+        }
+
+        private void SetEmojiPickerAnimation(bool animate)
+        {
+            foreach (var child in EmojiWrapPanel.Children)
+            {
+                if (child is Border border && border.Child is SliceControl sc)
+                {
+                    sc.IsAnimation = animate;
                 }
             }
         }
@@ -1227,6 +1246,9 @@ namespace Skymu.Skyaeris
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
 
+            EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
+            EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
+
             this.MouseLeftButtonUp += MouseRelease;
             this.SizeChanged += Main_SizeChanged;
             buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
@@ -1235,7 +1257,7 @@ namespace Skymu.Skyaeris
                 { btnServers, ServersColumn },
                 { btnRecents, RecentsColumn },
             };
-            SelectTab(btnRecents);
+            _ = SelectTab(btnRecents);
             ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 

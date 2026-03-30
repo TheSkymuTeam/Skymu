@@ -19,17 +19,21 @@ namespace Skymu.Helpers
 {
     class FrozenImage
     {
+        private static readonly Dictionary<string, BitmapImage> _cache = new Dictionary<string, BitmapImage>();
+
         public static BitmapImage Generate(string uri)
         {
-            BitmapImage img = new BitmapImage();
+            if (_cache.TryGetValue(uri, out var cached))
+                return cached;
 
+            BitmapImage img = new BitmapImage();
             img.BeginInit();
             img.UriSource = new Uri(uri, UriKind.RelativeOrAbsolute);
             img.CacheOption = BitmapCacheOption.OnLoad;
             img.EndInit();
-
             img.Freeze();
 
+            _cache[uri] = img;
             return img;
         }
 
@@ -44,7 +48,6 @@ namespace Skymu.Helpers
                 img.EndInit();
             }
             img.Freeze();
-
             return img;
         }
     }

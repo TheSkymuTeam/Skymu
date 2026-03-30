@@ -283,7 +283,7 @@ namespace Skymu.Skyaeris
         private void Login_Closing(object sender, CancelEventArgs ev)
         {
             if (!noCloseEvent)
-                Universal.Close(ev);
+                Universal.Hide(ev);
         }
     }
 }
