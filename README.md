@@ -30,3 +30,5 @@ Be warned, every project has to be set to build as either x86 or x64. Any CPU is
 | System.Runtime.CompilerServices.Unsafe | 6.1.2 | [MIT](https://choosealicense.com/licenses/mit/) | [GitHub repository](https://github.com/dotnet/runtime) |
 | System.Text.Json | 10.0.3 | [MIT](https://choosealicense.com/licenses/mit/) | [GitHub repository](https://github.com/dotnet/dotnet) |
 | System.Threading.Channels | 10.0.3 | [MIT](https://choosealicense.com/licenses/mit/) | [GitHub repository](https://github.com/dotnet/dotnet) |
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
