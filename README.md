@@ -1,5 +1,4 @@
-![Skymu Logo](logo.png) 
-
+![Skymu Logo](Images/logo.png) 
 
 # Build Guide
 
@@ -7,7 +6,7 @@ Use any version of Visual Studio from 2019 Community (recommended) onwards. Buil
 
 Be warned, every project has to be set to build as either x86 or x64. Any CPU is not possible due to native code dependencies (the SQLite DLL)
 
-<img width="1476" height="897" alt="image" src="https://github.com/user-attachments/assets/ad15b3bb-2eb0-4ade-901b-65da7d0c821a" />
+![Client](Images/client.png) 
 
 # How to create the installer
 
