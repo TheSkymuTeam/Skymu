@@ -1,4 +1,4 @@
-![Skymu Logo](Images/skymu-logo-3d.png) 
+![Skymu Logo](logo.png) 
 
 
 # Build Guide
