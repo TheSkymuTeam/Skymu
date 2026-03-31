@@ -285,7 +285,7 @@
                                                 SelectedValue="{Binding SkypeEra, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Skype 5" Tag="Skyaeris" />
-                                                <ComboBoxItem Content="Skype 6" Tag="Skyaeris6" />
+                                                <ComboBoxItem Content="Skype 6" Tag="Pontis" />
                                                 <ComboBoxItem Content="Skype 7" Tag="SeanKype" />
                                             </ComboBox>
                                             <TextBlock

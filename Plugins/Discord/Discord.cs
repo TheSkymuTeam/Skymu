@@ -554,13 +554,14 @@ namespace Discord
             try
             {
                 // Necessary for later, you'll see why
+                // WHY, PATRICK????? 
                 var locationOpt = new { location = "chat_input" };
                 string jsonOpt = JsonSerializer.Serialize(locationOpt);
                 string OptEncoded = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonOpt));
 
                 // This is done just in case Discord tries to get our asses
-                // I'm pretty sure this is only required because if you add someone and then chat to them immediately
-                // It will ban you on a 3rd-party client, like Skymu or Naticord
+                // I'm pretty sure this is only required because if you add someone and then chat to them immediately,
+                // it will ban you on a 3rd-party client, like Skymu or Naticord
                 var discordOpts = new Dictionary<string, string> { { "X-Context-Properties", OptEncoded }, };
 
                 // Set the file name and file content properties

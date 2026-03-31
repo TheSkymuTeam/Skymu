@@ -608,12 +608,12 @@ namespace Skymu.Converters
         }
 
         // Returns "pack://application:,,,/Skymu;component/{base}/Assets/{theme}/"
-        // SkypeEra="Skyaeris6" always routes to Pontis/Assets/Light/.
+        // SkypeEra="Pontis" always routes to Pontis/Assets/Light/.
         // Otherwise, ThemeRoot="Pontis/Light" routes to Pontis/Assets/Light/,
         // and a plain ThemeRoot like "Light" routes to Skyaeris/Assets/Light/.
         internal static string GetAssetBasePrefix()
         {
-            if (Properties.Settings.Default.SkypeEra == "Skyaeris6")
+            if (Properties.Settings.Default.SkypeEra == "Pontis")
                 return "pack://application:,,,/Skymu;component/Pontis/Assets/Light/";
             string theme_root = Properties.Settings.Default.ThemeRoot;
             int slash = theme_root.IndexOf('/');
