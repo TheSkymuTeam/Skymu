@@ -204,7 +204,7 @@ namespace Skymu.Skyaeris
             MenuBar.MenuInit(this);
             MenuBar.MenuCreator(
                 "&" + Universal.Lang["sMAINMENU_SKYPE"],
-                Universal.Lang["sMAINMENU_SKYPE_CLOSE"]
+                new MenuItemDef { subtitle = Universal.Lang["sMAINMENU_SKYPE_CLOSE"], action = Skymu.Universal.Close }
             );
             MenuBar.MenuCreator(
                 "&" + Universal.Lang["sMAINMENU_TOOLS"],
@@ -216,12 +216,12 @@ namespace Skymu.Skyaeris
             );
             MenuBar.MenuCreator(
                 "&" + Universal.Lang["sMAINMENU_HELP"],
-                Universal.Lang["sMAINMENU_HELP_HELP"],
-                "$",
-                Universal.Lang["sMAINMENU_HELP_UPDATES"],
-                "$",
-                Universal.Lang["sMAINMENU_HELP_PRIVACY"],
-                Universal.Lang["sMAINMENU_HELP_ABOUT"]
+                new MenuItemDef { subtitle = Universal.Lang["sMAINMENU_HELP_HELP"] },
+                MenuItemDef.Sep(),
+                new MenuItemDef { subtitle = Universal.Lang["sMAINMENU_HELP_UPDATES"] },
+                MenuItemDef.Sep(),
+                new MenuItemDef { subtitle = Universal.Lang["sMAINMENU_HELP_PRIVACY"], action = MenuBar.OpenPrivacyPolicy },
+                new MenuItemDef { subtitle = Universal.Lang["sMAINMENU_HELP_ABOUT"], action = MenuBar.ShowAbout }
             );
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";

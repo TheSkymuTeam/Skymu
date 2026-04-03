@@ -10,6 +10,8 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -75,6 +77,15 @@ namespace Skymu
 
     }
 
+    public class MenuItemDef
+    {
+        public string subtitle;
+        public Action action;
+        public bool isSeparator;
+
+        public static MenuItemDef Sep() => new MenuItemDef { isSeparator = true };
+    }
+
     public class MenuBar
     {
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -101,6 +112,8 @@ namespace Skymu
         public static IntPtr hwnd;
         public static IntPtr hMenu;
 
+        static Dictionary<uint, Action> menuActions;
+        static uint nextMenuId = 1;
 
         public static void MenuInit(Window window)
         {
@@ -115,6 +128,45 @@ namespace Skymu
             hMenu = CreateMenu();
             SetMenu(hwnd, hMenu);
         }
+
+        public static bool Append(IntPtr hMenu, uint flags, string text, Action action)
+        {
+            if ((flags & MF_SEPARATOR) != 0)
+                return AppendMenu(hMenu, flags, UIntPtr.Zero, null);
+
+            uint id = nextMenuId++;
+            if (menuActions == null)
+            {
+                menuActions = new Dictionary<uint, Action>();
+            }
+            menuActions[id] = action;
+
+            return AppendMenu(hMenu, flags | MF_STRING, (UIntPtr)id, text);
+        }
+
+        public static void MenuCreator(string title, params MenuItemDef[] items)
+        {
+            IntPtr menu = CreatePopupMenu();
+
+            int id = 1;
+
+            foreach (MenuItemDef item in items)
+            {
+                if (item.isSeparator)
+                {
+                    Append(menu, MF_SEPARATOR, null, null);
+                }
+                else
+                {
+                    Append(menu, MF_STRING, item.subtitle, item.action);
+                    id++;
+                }
+
+            }
+
+            AppendMenu(hMenu, MF_POPUP, new UIntPtr((uint)menu.ToInt32()), title);
+        }
+
         public static void MenuCreator(string title, params string[] subtitles)
         {
             IntPtr menu = CreatePopupMenu();
@@ -123,12 +175,11 @@ namespace Skymu
             {
                 if (subtitle.Contains("$"))
                 {
-                    AppendMenu(menu, MF_SEPARATOR, UIntPtr.Zero, null);
+                    Append(menu, MF_SEPARATOR, null, null);
                 }
                 else
                 {
-
-                    AppendMenu(menu, MF_STRING, (UIntPtr)1, subtitle);
+                    Append(menu, MF_STRING, subtitle, ShowAbout);
                 }
 
             }
@@ -138,32 +189,25 @@ namespace Skymu
 
         private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            const int WM_COMMAND = 0x0111;
-
             if (msg == WM_COMMAND)
             {
-                int id = wParam.ToInt32() & 0xFFFF;
-
-                /*switch (id)
+                if (menuActions.TryGetValue((uint)(wParam.ToInt64() & 0xFFFF), out var action))
                 {
-                    case 1:
-                        MessageBox.Show("New clicked");
-                        handled = true;
-                        break;
-                    case 2:
-                        MessageBox.Show("Open clicked");
-                        handled = true;
-                        break;
-                    case 3:
-                        Universal.Close();
-                        handled = true;
-                        break;
-                }*/
-
-                new Views.About().Show();
-                //Universal.NotImplemented("Windows Native Menu Bar");
+                    action?.Invoke();
+                    return IntPtr.Zero;
+                }
             }
             return IntPtr.Zero;
+        }
+
+        public static void ShowAbout()
+        {
+            new Views.About().Show();
+        }
+
+        public static void OpenPrivacyPolicy()
+        {
+            Process.Start(new ProcessStartInfo("https://skymu.app/legal/privacy/") { UseShellExecute = true });
         }
     }
 
