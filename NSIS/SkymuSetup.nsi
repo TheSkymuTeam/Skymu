@@ -129,6 +129,11 @@ ${EndIf}
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\Skymu.exe"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
+	SetRegView 64
+WriteRegDWORD HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_LOCALMACHINE_LOCKDOWN" "Skymu.exe" 0
+WriteRegDWORD HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BLOCK_LMZ_SCRIPT" "Skymu.exe" 0
+WriteRegDWORD HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_SECURITYBAND" "Skymu.exe" 0
+SetRegView 32
 SectionEnd
 
 Function un.onUninstSuccess
@@ -152,5 +157,8 @@ Section Uninstall
     RMDir /r "$INSTDIR"
     DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
     DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+	DeleteRegValue HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_LOCALMACHINE_LOCKDOWN" "Skymu.exe"
+	DeleteRegValue HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BLOCK_LMZ_SCRIPT" "Skymu.exe"
+	DeleteRegValue HKLM "Software\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_SECURITYBAND" "Skymu.exe"
     SetAutoClose true
 SectionEnd

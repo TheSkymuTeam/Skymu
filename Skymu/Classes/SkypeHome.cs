@@ -26,9 +26,24 @@ namespace Skymu
             _contacts = contacts;
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
-            _browser.Navigate(
-                new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SKHOME_DIR, PAGENAME))
-            );
+            //_browser.Navigate(new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SKHOME_DIR, PAGENAME))); // TODO rectify access zone for local thing going to /ads
+            _browser.Navigate(new Uri("https://skymu.app/home")); // temporary workaround to avoid IE permissions issues
+        }
+
+        private static void InvokeEval(string script)
+        {
+            try
+            {
+                _browser.InvokeScript("eval", new object[] { script });
+            }
+            catch (COMException)
+            {
+                dynamic doc = _browser.Document;
+                dynamic el = doc.createElement("script");
+                el.type = "text/javascript";
+                el.text = script;
+                doc.body.appendChild(el);
+            }
         }
 
         private static void OnLoadCompleted(
@@ -78,20 +93,14 @@ namespace Skymu
             // The local user's avatar has class 'user{username}' (set by SH.MyselfPanel markup).
             // Contact avatars in SH.AvatarViewItem have no username class; their src is set to
             // httpfe://avatar.local/{username} so we match on that instead.
-            _browser.InvokeScript(
-                "eval",
-                new object[]
-                {
-                    $"(function(){{"
-                        + $"var imgs=document.getElementsByTagName('img');"
-                        + $"for(var i=0;i<imgs.length;i++){{"
-                        + $"var s=imgs[i].src||'',c=imgs[i].className||'';"
-                        + $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)"
-                        + $"imgs[i].src='{src}';"
-                        + $"}}"
-                        + $"}})();",
-                }
-            );
+            InvokeEval($"(function(){{"
+    + $"var imgs=document.getElementsByTagName('img');"
+    + $"for(var i=0;i<imgs.length;i++){{"
+    + $"var s=imgs[i].src||'',c=imgs[i].className||'';"
+    + $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)"
+    + $"imgs[i].src='{src}';"
+    + $"}}"
+    + $"}})();");
         }
     }
 
