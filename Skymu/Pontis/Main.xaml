@@ -849,7 +849,7 @@
                                     HoverIndex="1"
                                     IsRadioButton="False"
                                     PressedIndex="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/status.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/header.png'}"
                                     StackDirection="Vertical"
                                     Text="Sensei Wu"
                                     TextColor="#333333"
@@ -1297,59 +1297,35 @@
                             <RowDefinition x:Name="TopbarWindowRow" Height="120" />
                             <RowDefinition x:Name="MessageWindowRow" Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid
-                            x:Name="ChatTopbar"
-                            Grid.Row="0"
-                            Visibility="Visible">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <global:SliceControl
-                                x:Name="chatHeader"
-                                Grid.Column="0"
-                                HorizontalAlignment="Stretch"
-                                DefaultIndex="0"
-                                ElementCount="5"
-                                HoverIndex="-1"
-                                Loaded="chatHeader_Loaded"
-                                PressedIndex="-1"
-                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/tab-left.png'}"
-                                StackDirection="Vertical"
-                                Text="{Binding DisplayName}"
-                                TextColor="#333333"
-                                TextFont="Arial"
-                                TextLeftMargin="13"
-                                TextSize="13"
-                                TextWeight="Bold" />
-                            <global:SliceControl
-                                x:Name="ChatCloseButton"
-                                Grid.Column="1"
-                                Width="Auto"
-                                HorizontalAlignment="Stretch"
-                                DefaultIndex="0"
-                                ElementCount="5"
-                                HoverIndex="1"
-                                MouseLeftButtonUp="Chat_Close"
-                                PressedIndex="2"
-                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/tab-right.png'}"
-                                StackDirection="Vertical"
-                                Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
-                                TextColor="#333333"
-                                TextFont="Arial"
-                                TextLeftMargin="27"
-                                TextRightMargin="16"
-                                TextSize="13"
-                                TextWeight="Bold" />
-                            <Image
-                                Grid.Column="1"
-                                Width="16"
-                                Height="16"
-                                Margin="7,0,0,0"
-                                HorizontalAlignment="Left"
-                                IsHitTestVisible="False"
-                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/close.png'}" />
-                        </Grid>
+                        <Border BorderBrush="#d9d9d9" BorderThickness="0,0,0,1">
+                            <Grid
+                                x:Name="ChatTopbar"
+                                Grid.Row="0"
+                                Visibility="Visible">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <global:SliceControl
+                                    x:Name="chatHeader"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
+                                    DefaultIndex="0"
+                                    ElementCount="5"
+                                    HoverIndex="-1"
+                                    Loaded="chatHeader_Loaded"
+                                    PressedIndex="-1"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/header.png'}"
+                                    StackDirection="Vertical"
+                                    Text="{Binding DisplayName}"
+                                    TextColor="#333333"
+                                    TextFont="Arial"
+                                    TextLeftMargin="13"
+                                    TextSize="13"
+                                    TextWeight="Bold" />
+
+                            </Grid>
+                        </Border>
                         <Grid
                             x:Name="HomeTopbar"
                             Grid.Row="0"
@@ -1754,7 +1730,8 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="34" />
                                     <RowDefinition Height="1" />
-                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="181*" />
+                                    <RowDefinition Height="367*" />
                                     <RowDefinition Height="20" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
@@ -1842,9 +1819,10 @@
                                     Fill="#d9e1e8" />
                                 <Image
                                     x:Name="throbber"
-                                    Grid.Row="2"
+                                    Grid.Row="3"
                                     Width="90"
                                     Height="90"
+                                    Margin="523,48.333,523,229"
                                     RenderOptions.BitmapScalingMode="HighQuality"
                                     RenderTransformOrigin="0.5,0.5"
                                     Source="Assets/Universal/Animations/spinner.png"
@@ -1876,6 +1854,7 @@
                                 <ListBox
                                     x:Name="ConversationItemsList"
                                     Grid.Row="2"
+                                    Grid.RowSpan="2"
                                     Margin="0,0,0,0"
                                     BorderThickness="0"
                                     Loaded="ConversationItemsList_Loaded"
@@ -1907,7 +1886,7 @@
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
                                 <Grid
-                                    Grid.Row="4"
+                                    Grid.Row="5"
                                     Margin="0,0,0,5"
                                     VerticalAlignment="Bottom">
                                     <Grid.ColumnDefinitions>
@@ -2023,7 +2002,7 @@
                                                     x:Name="MessageTextBox"
                                                     MinHeight="37"
                                                     MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
-                                                    Padding="2,4"
+                                                    Padding="2,4,30,4"
                                                     AcceptsReturn="True"
                                                     Background="Transparent"
                                                     BorderThickness="0"

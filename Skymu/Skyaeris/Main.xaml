@@ -2105,7 +2105,7 @@
                                             DefaultIndex="0"
                                             ElementCount="7"
                                             SliceMode="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/message-box-header25.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/message-box-header25.png'}"
                                             StackDirection="Vertical"
                                             TopHeight="25" />
                                         <StackPanel
@@ -2131,7 +2131,7 @@
                                                         MouseLeftButtonUp="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/emoji.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/emoji.png'}"
                                                         StackDirection="Vertical" />
                                                 </StackPanel>
                                                 <Popup
