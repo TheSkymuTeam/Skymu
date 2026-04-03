@@ -1,0 +1,119 @@
+﻿<Window
+    x:Class="Skymu.Views.WindowBase"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:local="clr-namespace:Skymu"
+    Title="Skype™ - Window"
+    Width="518"
+    Height="394"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    Style="{StaticResource Window}"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="SingleBorderWindow">
+    <Window.Resources>
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <local:SliceControl
+            x:Name="HeaderImage"
+            Grid.RowSpan="2"
+            Width="48"
+            Margin="11,10,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Panel.ZIndex="10"
+            DefaultIndex="0"
+            ElementCount="36"
+            HoverIndex="-1"
+            IsHitTestVisible="False"
+            PressedIndex="-1"
+            SliceMode="0"
+            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Dialog/icons.png'}"
+            StackDirection="Horizontal" />
+        <!--  Top Header Section  -->
+        <Grid
+            Grid.Row="0"
+            Height="45"
+            Panel.ZIndex="0">
+            <Border
+                Name="GradientTop"
+                BorderBrush="#DADADA"
+                BorderThickness="0,0,0,1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#F2F2F2" />
+                        <GradientStop Offset="1" Color="#E6E6E6" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <TextBlock
+                x:Name="Header"
+                Height="23"
+                Margin="70,3,0,0"
+                FontFamily="Arial"
+                FontSize="13"
+                FontWeight="Bold"
+                Foreground="#333333"
+                Text="Caption goes here" />
+        </Grid>
+        <Frame
+            x:Name="PageHost"
+            Grid.Row="1"
+            Margin="77,23,35,7"
+            NavigationUIVisibility="Hidden" />
+
+        <!--  Bottom Button Section  -->
+        <Grid Grid.Row="2" Height="44">
+            <Border
+                Name="GradientBottom"
+                BorderBrush="#DADADA"
+                BorderThickness="0,1,0,0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Offset="0" Color="#F2F2F2" />
+                        <GradientStop Offset="1" Color="#E6E6E6" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+            <StackPanel
+                x:Name="BottomControlsGrid"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="ButtonLeft"
+                    Height="23"
+                    MinWidth="73"
+                    Margin="0,0,10,0"
+                    Padding="12,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="bLClick"
+                    Content="OK"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    IsDefault="True"
+                    Visibility="Visible" />
+                <Button
+                    x:Name="ButtonRight"
+                    Height="23"
+                    MinWidth="73"
+                    Margin="0,0,10,0"
+                    Padding="12,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="bRClick"
+                    Content="Cancel"
+                    FontFamily="Tahoma"
+                    FontSize="11" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</Window>

@@ -1,0 +1,610 @@
+<Window
+    x:Class="Skymu.SeanKype.Login"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Skype"
+    Background="#FF00AFF0"
+    Closing="Login_Closing"
+    ContentRendered="Login_ContentRendered"
+    Loaded="Login_Loaded"
+    ResizeMode="NoResize"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+
+        <DrawingImage x:Key="DiscordIcon">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V128 H180 V0 H0 Z">
+                    <GeometryDrawing Brush="#FFCCEFFC" Geometry="F1 M180,128z M0,0z M163.8,28.75L163.75,28.75 157.9,16.15Q136.95,1,115.15,0L113.75,2.05Q136.25,8.2 153,21.55 127.85,7.5 94.75,6.45L85.2,6.45Q52.15,7.5 26.9,21.55 43.8,8.2 66.25,2.05L64.85,0Q43.1,1,22.05,16.15L16.2,28.75 16.15,28.75Q16.1,28.8 16.1,28.9 8.75,48.9 7.6,53.5 6.45,58.1 5.15,63.35 3.85,68.6 2.65,75.85 1.4,83.15 0.85,92.45 0.25,101.7 0,104.75 6.95,114.1 17.5,120.35 27.95,126.55 46.55,128L56.85,115.15Q40.55,110.3 30.3,97.4 44.95,107.3 58.9,111.9L58.8,111.9Q66.65,114.1 73.6,115.3 82.35,116.75 90,116.55 97.65,116.75 106.45,115.3 113.35,114.1 121.2,111.9L121.15,111.9Q135,107.3 149.7,97.4 139.35,110.3 123.15,115.15L133.4,128Q152.1,126.55 162.55,120.35 173,114.1 180,104.75 179.7,101.7 179.15,92.45 178.6,83.15 177.35,75.85 176.1,68.6 174.85,63.35 173.55,58.1 172.4,53.5 171.3,48.9 163.85,28.9 163.85,28.8 163.8,28.75 M103.4,72.15Q103.9,66.15 108.1,61.75 112.75,56.7 119.4,56.7 119.65,56.7 119.9,56.7 126.2,56.9 130.65,61.75 135.35,66.75 135.35,73.75 135.35,75.95 134.85,78 133.9,82.35 130.65,85.85 126.2,90.55 119.9,90.75 119.65,90.75 119.4,90.75 112.75,90.75 108.1,85.85 103.35,80.8 103.35,73.75 103.35,72.95 103.4,72.15 M71.9,61.75Q76.05,66.15 76.6,72.15 76.65,72.95 76.65,73.75 76.65,80.8 71.9,85.85 67.25,90.75 60.6,90.75 60.35,90.75 60.05,90.75 53.85,90.55 49.25,85.85 46.1,82.35 45.1,78 44.65,75.95 44.65,73.75 44.65,66.75 49.25,61.75 53.85,56.9 60.05,56.7 60.35,56.7 60.6,56.7 67.25,56.7 71.9,61.75z" />
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="BlueskyIcon">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V136.00954 H154.4882 V0 H0 Z">
+                    <DrawingGroup Opacity="1" Transform="1,0,0,1,-221.0349,-26.972274">
+                        <GeometryDrawing Brush="#FFCCEFFC" Geometry="F1 M154.4882,136.00954z M0,0z M272.25197,162.84012C262.63197,163.91895 255.84769,158.66813 249.10066,152.81146 239.45673,144.44017 233.51372,131.96879 241.55522,122.19951 249.34449,112.73666 264.84087,110.42038 264.84087,110.42038 264.84087,110.42038 245.94464,112.90361 234.18096,102.4362 228.1818,97.098095 224.81683,90.117652 223.98265,82.041872 222.90961,71.653711 221.15962,50.39885 221.0389,42.551787 220.90243,33.680542 224.26529,27.750181 230.12525,27.097526 244.14729,25.535817 260.61915,38.72895 276.62601,58.238403 292.18378,77.200502 298.27902,90.613944 298.27902,90.613944 298.27902,90.613944 304.37423,77.200502 319.93202,58.238403 335.93886,38.72895 352.41072,25.535817 366.43276,27.097526 372.29273,27.750181 375.65558,33.680542 375.51912,42.551787 375.39846,50.39885 373.6484,71.653711 372.57536,82.041872 371.74118,90.117652 368.37622,97.098095 362.37705,102.4362 350.61337,112.90361 331.71714,110.42038 331.71714,110.42038 331.71714,110.42038 347.21352,112.73666 355.00281,122.19951 363.0443,131.96879 357.10128,144.44017 347.45735,152.81146 340.71033,158.66813 333.92604,163.91895 324.30605,162.84012 306.80788,160.87782 298.27902,128.26924 298.27902,128.26924 298.27902,128.26924 289.75014,160.87782 272.25197,162.84012z" />
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DrawingImage x:Key="SkypeIconWhite">
+            <DrawingImage.Drawing>
+                <DrawingGroup ClipGeometry="M0,0 V384 H384 V0 H0 Z">
+                    <GeometryDrawing Brush="#FFCCEFFC" Geometry="F1 M384,384z M0,0z M373.1,191.35Q373.1,153.6 359.05,120.95 343.7,86.4 320,62.7 295.7,38.4 262.4,23.7 227.2,9.6 192,9.6 176.65,9.6 157.45,12.8 133.75,0 106.9,0 62.1,0 31.35,32 0,63.35 0,108.15 0,136.3 13.45,160 10.25,177.3 10.25,191.35 10.25,227.85 24.95,262.4 39.05,295.7 63.35,320 87.05,343.7 120.95,359.05 153.6,373.1 192,373.1 209.9,373.1 223.35,370.55 247.7,384 276.5,384 321.9,384 352,352.65 384,321.9 384,276.5 384,248.95 369.9,224.65 373.1,206.7 373.1,191.35 M227.85,128Q212.5,111.35 185.6,111.35 168.3,111.35 158.7,118.4 149.1,125.45 149.1,136.95 149.1,153.6 183.7,160.65L225.9,170.25Q284.15,183.05 284.15,233.6 284.15,264.95 261.75,282.9 237.45,302.7 192.65,302.7 147.85,302.7 121.6,283.5 99.2,267.5 99.2,247.05 99.2,238.1 105.6,232.3 111.35,226.55 120.95,226.55 131.85,226.55 147.85,246.4 163.85,266.25 192.65,266.25 211.2,266.25 222.7,257.3 233.6,248.95 233.6,237.45 233.6,219.5 211.85,214.4L154.25,199.7Q99.85,186.25 99.85,139.5 99.85,105.6 128,88.3 152.3,72.95 188.8,72.95 220.15,72.95 247.05,87.7 275.2,103.05 275.2,124.15 275.2,133.1 268.15,138.9 261.75,144 252.15,144 243.2,144 227.85,128z" />
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+
+        <DropShadowEffect
+            x:Key="SkypeDropShadow"
+            BlurRadius="2"
+            Opacity="0.20"
+            RenderingBias="Quality"
+            ShadowDepth="1.5"
+            Color="Black" />
+        <DropShadowEffect
+            x:Key="FakeSlightSharpen"
+            BlurRadius="2.25"
+            Opacity="0.3"
+            RenderingBias="Quality"
+            ShadowDepth="0"
+            Color="#FF0088DE" />
+        <GradientStop x:Key="AnimatedStop" Offset="0.95" Color="#FF00AFF0" />
+
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard BeginTime="0:0:1.15">
+                    <!--  N1  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.0"
+                        Storyboard.TargetName="N1Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <!--  N2  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.0333333"
+                        Storyboard.TargetName="N2Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.0333333"
+                        Storyboard.TargetName="N2"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!--  N3  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.0666666"
+                        Storyboard.TargetName="N3Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.0666666"
+                        Storyboard.TargetName="N3"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!--  N4  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.0999999"
+                        Storyboard.TargetName="N4Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.0999999"
+                        Storyboard.TargetName="N4"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!--  N5  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.1333333"
+                        Storyboard.TargetName="N5Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.1333333"
+                        Storyboard.TargetName="N5"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!--  N6  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.1666666"
+                        Storyboard.TargetName="N6Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="-15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.1666666"
+                        Storyboard.TargetName="N6"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <!--  N7  -->
+                    <DoubleAnimationUsingKeyFrames
+                        BeginTime="0:0:0.1999999"
+                        Storyboard.TargetName="N7Transform"
+                        Storyboard.TargetProperty="Y">
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="15">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="1.0,0.0" ControlPoint2="0.667,0.9" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                        <SplineDoubleKeyFrame KeyTime="0:0:0.8" Value="20">
+                            <SplineDoubleKeyFrame.KeySpline>
+                                <KeySpline ControlPoint1="0.0,0.5" ControlPoint2="0.5,1.0" />
+                            </SplineDoubleKeyFrame.KeySpline>
+                        </SplineDoubleKeyFrame>
+                    </DoubleAnimationUsingKeyFrames>
+                    <DoubleAnimation
+                        BeginTime="0:0:0.1999999"
+                        Storyboard.TargetName="N7"
+                        Storyboard.TargetProperty="Opacity"
+                        From="0"
+                        To="1"
+                        Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseIn" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid
+        x:Name="MainGrid"
+        Background="#FF00AFF0"
+        ClipToBounds="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  selector strip  -->
+        <Grid Grid.Row="0" Background="#33000000">
+            <StackPanel
+                Margin="12,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    x:Name="protocolText"
+                    Margin="0,0,8,0"
+                    VerticalAlignment="Center"
+                    Effect="{StaticResource SkypeDropShadow}"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="12"
+                    Foreground="White"
+                    Text="Sign in with" />
+                <ComboBox
+                    x:Name="comboProtocolBox"
+                    Width="180"
+                    Height="26"
+                    Background="White"
+                    BorderBrush="White"
+                    FontFamily="Segoe UI Historic"
+                    FontSize="12"
+                    SelectionChanged="ProtocolSelectionChanged" />
+            </StackPanel>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Width="720"
+            Height="472"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            ClipToBounds="False">
+            <Grid>
+
+                <!--  N1 logo  -->
+                <Image
+                    x:Name="N1"
+                    Height="61.75"
+                    Margin="1,40,0,0"
+                    VerticalAlignment="Top"
+                    RenderTransformOrigin="0.5,0.5"
+                    Source="{StaticResource SkypeIconWhite}">
+                    <Image.RenderTransform>
+                        <TranslateTransform x:Name="N1Transform" Y="152" />
+                    </Image.RenderTransform>
+                    <Image.Effect>
+                        <StaticResource ResourceKey="FakeSlightSharpen" />
+                    </Image.Effect>
+                </Image>
+
+                <!--  N2 Header  -->
+                <Grid
+                    x:Name="N2"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="N2Transform" Y="152" />
+                    </Grid.RenderTransform>
+
+                    <Label
+                        Margin="0,125,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Background="{x:Null}"
+                        Content="Sign in"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="20"
+                        Foreground="#FF38C4F9">
+                        <Label.Effect>
+                            <StaticResource ResourceKey="SkypeDropShadow" />
+                        </Label.Effect>
+                    </Label>
+
+                    <Grid
+                        x:Name="throbber"
+                        Margin="0,120,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Visibility="Collapsed">
+                        <Ellipse
+                            Width="28"
+                            Height="28"
+                            Stroke="White"
+                            StrokeThickness="3">
+                            <Ellipse.RenderTransform>
+                                <RotateTransform x:Name="SpinnerRotate" Angle="0" CenterX="14" CenterY="14" />
+                            </Ellipse.RenderTransform>
+                            <Ellipse.Triggers>
+                                <EventTrigger RoutedEvent="Ellipse.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                RepeatBehavior="Forever"
+                                                Storyboard.TargetName="SpinnerRotate"
+                                                Storyboard.TargetProperty="Angle"
+                                                From="0"
+                                                To="360"
+                                                Duration="0:0:1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Ellipse.Triggers>
+                        </Ellipse>
+                    </Grid>
+                    <TextBlock
+                        x:Name="header"
+                        Margin="0,125,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Background="{x:Null}"
+                        Effect="{StaticResource SkypeDropShadow}"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="20"
+                        Foreground="White" />
+                </Grid>
+
+                <!--  N3 pill  -->
+                <Grid
+                    x:Name="N3"
+                    Margin="0,170,0,0"
+                    VerticalAlignment="Top"
+                    Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="N3Transform" Y="152" />
+                    </Grid.RenderTransform>
+                    <Grid x:Name="LoginControls">
+                        <Border
+                            Width="290"
+                            Height="35"
+                            HorizontalAlignment="Center"
+                            Background="#FF0C7DAF"
+                            CornerRadius="18">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="14"
+                                Foreground="White"
+                                Text="Token">
+                                <TextBlock.Effect>
+                                    <StaticResource ResourceKey="SkypeDropShadow" />
+                                </TextBlock.Effect>
+                            </TextBlock>
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <!--  N4 Login form  -->
+                <Grid
+                    x:Name="N4"
+                    Margin="0,210,0,0"
+                    VerticalAlignment="Top"
+                    Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="N4Transform" Y="152" />
+                    </Grid.RenderTransform>
+                    <StackPanel Width="290" HorizontalAlignment="Center">
+                        <TextBlock
+                            x:Name="SkypeName"
+                            Margin="4,0,0,3"
+                            Effect="{StaticResource SkypeDropShadow}"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="12"
+                            Foreground="White"
+                            Text="Skype Name" />
+                        <Border
+                            Height="33"
+                            Margin="0,0,0,6"
+                            Background="White"
+                            CornerRadius="4">
+                            <TextBox
+                                x:Name="usernameBox"
+                                Margin="8,0,8,0"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="13"
+                                Foreground="#333" />
+                        </Border>
+                        <TextBlock
+                            x:Name="Password"
+                            Margin="4,0,0,3"
+                            Effect="{StaticResource SkypeDropShadow}"
+                            FontFamily="Segoe UI Historic"
+                            FontSize="12"
+                            Foreground="White"
+                            Text="Password" />
+                        <Border
+                            Height="33"
+                            Margin="0,0,0,4"
+                            Background="White"
+                            CornerRadius="4">
+                            <PasswordBox
+                                x:Name="passwordTokenBox"
+                                Margin="8,0,8,0"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="13"
+                                Foreground="#333" />
+                        </Border>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <CheckBox
+                                x:Name="SaveCredentials"
+                                VerticalAlignment="Center"
+                                Content="Remember me"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="12"
+                                Foreground="White" />
+                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                                <Hyperlink
+                                    x:Name="forgotPasswordLink"
+                                    FontFamily="Segoe UI Historic"
+                                    FontSize="12"
+                                    Foreground="White"
+                                    NavigateUri="https://account.live.com/password/reset"
+                                    RequestNavigate="Hyperlink_RequestNavigate">
+                                    Forgot?
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <Border
+                            Height="35"
+                            Background="#FF0C7DAF"
+                            CornerRadius="18">
+                            <Button
+                                x:Name="LoginButton"
+                                Height="35"
+                                Background="Transparent"
+                                BorderBrush="{x:Null}"
+                                BorderThickness="0"
+                                Click="LoginButton_Click"
+                                Content="Sign in"
+                                Cursor="Hand"
+                                FontFamily="Segoe UI Historic"
+                                FontSize="14"
+                                Foreground="White"
+                                IsEnabled="False"
+                                Opacity="0.4">
+                                <Button.Effect>
+                                    <StaticResource ResourceKey="SkypeDropShadow" />
+                                </Button.Effect>
+                            </Button>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <!--  N5 Protocol icons  -->
+                <Grid
+                    x:Name="N5"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="N5Transform" Y="152" />
+                    </Grid.RenderTransform>
+                    <Image
+                        Width="25"
+                        Height="25"
+                        Margin="1,133,0,0"
+                        HorizontalAlignment="Center"
+                        Opacity="1"
+                        Source="{StaticResource SkypeIconWhite}">
+                        <Image.Effect>
+                            <StaticResource ResourceKey="FakeSlightSharpen" />
+                        </Image.Effect>
+                    </Image>
+                    <Image
+                        Width="25"
+                        Height="25"
+                        Margin="-77,132,0,0"
+                        HorizontalAlignment="Center"
+                        Opacity="1"
+                        Source="{StaticResource DiscordIcon}">
+                        <Image.Effect>
+                            <StaticResource ResourceKey="FakeSlightSharpen" />
+                        </Image.Effect>
+                    </Image>
+                    <Image
+                        Width="25"
+                        Height="25"
+                        Margin="77,132,0,0"
+                        HorizontalAlignment="Center"
+                        Opacity="1"
+                        Source="{StaticResource BlueskyIcon}">
+                        <Image.Effect>
+                            <StaticResource ResourceKey="FakeSlightSharpen" />
+                        </Image.Effect>
+                    </Image>
+                </Grid>
+
+                <!--  N6 Hyperlink footer  -->
+                <Button
+                    x:Name="N6"
+                    Margin="313,339,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Background="Transparent"
+                    BorderBrush="{x:Null}"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Effect="{StaticResource SkypeDropShadow}"
+                    Opacity="0"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Button.RenderTransform>
+                        <TranslateTransform x:Name="N6Transform" Y="152" />
+                    </Button.RenderTransform>
+                    <TextBlock
+                        x:Name="footerPanel"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="13"
+                        Foreground="White"
+                        MouseLeftButtonUp="FooterLink_Click"
+                        Text="Join our Discord"
+                        TextDecorations="Underline" />
+                </Button>
+
+                <!--  N7 Bottom  bar  -->
+                <Grid
+                    x:Name="N7"
+                    Height="128"
+                    Margin="0,388,0,0"
+                    VerticalAlignment="Top"
+                    Background="#FF0095CC"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="N7Transform" Y="172" />
+                    </Grid.RenderTransform>
+                    <Button
+                        Margin="307,23,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderBrush="{x:Null}"
+                        BorderThickness="0"
+                        Content="Create an account"
+                        Cursor="Hand"
+                        Effect="{StaticResource SkypeDropShadow}"
+                        FontFamily="Segoe UI Historic"
+                        FontSize="13"
+                        Foreground="White" />
+                </Grid>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

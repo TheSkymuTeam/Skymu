@@ -1,0 +1,229 @@
+﻿<Window
+    x:Class="Skymu.Skyaeris.Login"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+    Title="{Binding [sMAINMENU_SKYPE]}"
+    Width="526"
+    Height="429"
+    Closing="Login_Closing"
+    DataContext="{StaticResource Lang}"
+    FontFamily="Tahoma"
+    FontSize="11"
+    Loaded="Login_Loaded"
+    ResizeMode="NoResize"
+    Style="{StaticResource Window}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
+            <Setter Property="Foreground" Value="{StaticResource SkBlue}" />
+            <Setter Property="TextDecorations" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='backgrounds/login.png'}" Stretch="Fill" />
+    </Window.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="MenuBarRow" Height="20" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Rectangle Grid.Row="0" Fill="{StaticResource SkBlue}" /> 
+        <!--  placeholder for menu bar so designer donesnt mess up  -->
+        <Grid Grid.Row="1">
+            <Image
+                x:Name="BackgroundImg"
+                Width="510"
+                Height="371"
+                Stretch="Fill" />
+            <Image
+                x:Name="throbber"
+                Width="128"
+                Height="128"
+                Margin="0,0,0,48"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                RenderTransformOrigin="0.50785,0.5001"
+                Source="Assets/Universal/Animations/spinner.png"
+                Visibility="Collapsed">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                        <RotateTransform x:Name="SpinnerRotate" Angle="0" />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </Image.RenderTransform>
+                <Image.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard RepeatBehavior="Forever">
+                                <DoubleAnimation
+                                    RepeatBehavior="Forever"
+                                    Storyboard.TargetName="SpinnerRotate"
+                                    Storyboard.TargetProperty="Angle"
+                                    From="0"
+                                    To="360"
+                                    Duration="0:0:2.133333" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Image.Triggers>
+            </Image>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="270" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="68" />
+                    <RowDefinition Height="18" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    x:Name="header"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    FontFamily="Arial"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Foreground="{StaticResource SkBlue}"
+                    Text="{Binding [sF_LOGIN_WELCOME]}" />
+                <Grid
+                    x:Name="LoginControls"
+                    Grid.Row="2"
+                    Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="71" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Width="240">
+                        <!--  Protocol box  -->
+                        <TextBlock
+                            x:Name="protocolText"
+                            Margin="0,10,0,4"
+                            FontWeight="Normal"
+                            Text="Messaging service" />
+                        <ComboBox
+                            x:Name="comboProtocolBox"
+                            Width="240"
+                            Height="21"
+                            Margin="0,0,0,6"
+                            Padding="6,3"
+                            IsEditable="False"
+                            SelectionChanged="ProtocolSelectionChanged" />
+
+                        <!--  Username box  -->
+                        <TextBlock
+                            x:Name="SkypeName"
+                            Margin="0,0,0,4"
+                            FontWeight="Normal"
+                            Text="{Binding [sF_USERENTRY_LABEL_USERNAME]}" />
+                        <TextBox
+                            x:Name="usernameBox"
+                            Width="240"
+                            Height="21"
+                            Margin="0,0,0,6" />
+
+                        <!--  Password box  -->
+                        <TextBlock
+                            x:Name="Password"
+                            Margin="0,0,0,4"
+                            FontWeight="Normal"
+                            Text="{Binding [sF_USERENTRY_LABEL_PASSWORD]}" />
+                        <PasswordBox
+                            x:Name="passwordTokenBox"
+                            Width="240"
+                            Height="21"
+                            Margin="0,0,0,7" />
+                        <TextBlock
+                            x:Name="forgotPasswordLink"
+                            Height="28"
+                            Margin="0,0,0,0"
+                            FontWeight="Normal">
+                            <Hyperlink
+                                NavigateUri="#"
+                                RequestNavigate="Hyperlink_RequestNavigate"
+                                Style="{StaticResource HoverUnderlineHyperlink}">
+                                <Run Text="Unable to login? Ask for help here!" />
+                            </Hyperlink>
+                        </TextBlock>
+
+                        <!--  Sign-in button  -->
+
+
+                    </StackPanel>
+                    <global:SliceControl
+                        x:Name="LoginButton"
+                        Grid.Row="1"
+                        Width="240"
+                        Margin="0,0,0,20"
+                        Cursor="Hand"
+                        DefaultIndex="0"
+                        DisabledIndex="0"
+                        ElementCount="5"
+                        HoverIndex="1"
+                        IsEnabled="False"
+                        LeftWidth="15"
+                        PressedIndex="4"
+                        RightWidth="15"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Login/pill.png'}"
+                        StackDirection="Vertical"
+                        Text="{Binding [sZAPBUTTON_SIGNIN]}"
+                        TextColor="#FF393A48"
+                        TextFont="Tahoma"
+                        TextHorizontalAlignment="Center"
+                        TextSize="11"
+                        TextWeight="Bold" />
+                    <!--  Footer panel  -->
+                    <Border
+                        x:Name="footerPanel"
+                        Grid.Row="3"
+                        Width="270"
+                        Height="55"
+                        VerticalAlignment="Top"
+                        Background="#FFE5F7FD"
+                        CornerRadius="5">
+                        <StackPanel
+                            Grid.Row="1"
+                            Margin="15,0"
+                            VerticalAlignment="Center">
+                            <CheckBox
+                                x:Name="SaveCredentials"
+                                Height="16"
+                                Margin="0,0,0,5"
+                                Padding="5,0,0,0"
+                                Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
+                                FontFamily="Tahoma"
+                                FontSize="11"
+                                IsChecked="True" />
+                            <CheckBox
+                                x:Name="StartOnWinStart"
+                                Height="16"
+                                Padding="5,0,0,0"
+                                Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
+                                FontFamily="Tahoma"
+                                FontSize="11"
+                                IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=StartOnStartup, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
