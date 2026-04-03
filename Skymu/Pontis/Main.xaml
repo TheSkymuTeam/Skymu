@@ -825,13 +825,13 @@
                             x:Name="SidebarColumn"
                             Width="300"
                             MinWidth="190" />
-                        <ColumnDefinition Width="3" />
+                        <ColumnDefinition Width="4" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid
                         x:Name="Sidebar"
                         Grid.Column="0"
-                        Margin="8,4,8,8">
+                        Margin="8,4,4,8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -847,7 +847,7 @@
                                     DefaultIndex="0"
                                     ElementCount="4"
                                     HoverIndex="1"
-                                    IsRadioButton="True"
+                                    IsRadioButton="False"
                                     PressedIndex="2"
                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/status.png'}"
                                     StackDirection="Vertical"
@@ -1953,7 +1953,7 @@
                                                     x:Name="EmojiButton"
                                                     Width="18"
                                                     Height="17"
-                                                    Margin="0,6,4,0"
+                                                    Margin="0,4,4,0"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Top"
                                                     DefaultIndex="0"
@@ -2023,7 +2023,7 @@
                                                     x:Name="MessageTextBox"
                                                     MinHeight="37"
                                                     MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
-                                                    Padding="2,3"
+                                                    Padding="2,4"
                                                     AcceptsReturn="True"
                                                     Background="Transparent"
                                                     BorderThickness="0"

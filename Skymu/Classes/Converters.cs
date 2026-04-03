@@ -604,16 +604,19 @@ namespace Skymu.Converters
             return bytes;
         }
 
-        internal static string GetAssetBasePrefix(string era = null)
+        internal static string GetAssetBasePrefix(string era = null, bool universal = false)
         {
             string theme_root = Properties.Settings.Default.ThemeRoot;
+            if (universal) theme_root = "Universal";
+
             if (!String.IsNullOrEmpty(theme_root))
             {
                 string baseFolder = Properties.Settings.Default.SkypeEra;
                 if (!String.IsNullOrEmpty(era)) baseFolder = era;
-                return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{Properties.Settings.Default.ThemeRoot}/";
+                return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
 
             }
+
             return $"pack://application:,,,/Skymu;component/Skyaeris/Assets/{theme_root}/";
         }
 
