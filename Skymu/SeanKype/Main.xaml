@@ -276,10 +276,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Border
-                            Background="#BBD6E0"
-                            BorderThickness="0"
-                            CornerRadius="0" />
+                        <Border Background="#BBD6E0" BorderThickness="0" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -299,10 +296,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
                         <Grid x:Name="RootGrid">
-                            <Border
-                                x:Name="Rail"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="0" />
+                            <Border x:Name="Rail" Background="{TemplateBinding Background}" />
                             <Track
                                 x:Name="PART_Track"
                                 Margin="-8,9,0,0"
@@ -1060,7 +1054,7 @@
                         HoverIndex="1"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/network-none.png'}"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/network-none.png'}"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->
                     <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->

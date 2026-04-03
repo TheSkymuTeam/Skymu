@@ -120,7 +120,7 @@ namespace Skymu.Skyaeris
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = Converters.Helpers.GetAssetBasePrefix() + "Profile Pictures/" + avatar + ".png";
+            string AvatarPath = Converters.Helpers.GetAssetBasePrefix("Skyaeris") + "Profile Pictures/" + avatar + ".png";
             return FrozenImage.Generate(AvatarPath);
         }
 

@@ -70,7 +70,7 @@ namespace Skymu.Converters
             return "0";
         }
 
-    
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string stringValue
@@ -524,12 +524,9 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var image_path = value as string;
-            if (image_path == null)
-            {
-                return null;
-            }
-            else
-                return Helpers.AssetPathGenerator(image_path, false);
+            if (image_path == null) return null;
+            else if (parameter is string era && !String.IsNullOrEmpty(era)) return Helpers.AssetPathGenerator(image_path, false, era);
+            else return Helpers.AssetPathGenerator(image_path, false);
         }
 
         public object ConvertBack(
@@ -607,26 +604,20 @@ namespace Skymu.Converters
             return bytes;
         }
 
-        // Returns "pack://application:,,,/Skymu;component/{base}/Assets/{theme}/"
-        // SkypeEra="Pontis" always routes to Pontis/Assets/Light/.
-        // Otherwise, ThemeRoot="Pontis/Light" routes to Pontis/Assets/Light/,
-        // and a plain ThemeRoot like "Light" routes to Skyaeris/Assets/Light/.
-        internal static string GetAssetBasePrefix()
+        internal static string GetAssetBasePrefix(string era = null)
         {
-            if (Properties.Settings.Default.SkypeEra == "Pontis")
-                return "pack://application:,,,/Skymu;component/Pontis/Assets/Light/";
             string theme_root = Properties.Settings.Default.ThemeRoot;
-            int slash = theme_root.IndexOf('/');
-            if (slash >= 0)
+            if (!String.IsNullOrEmpty(theme_root))
             {
-                string baseFolder = theme_root.Substring(0, slash);
-                string themeFolder = theme_root.Substring(slash + 1);
-                return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{themeFolder}/";
+                string baseFolder = Properties.Settings.Default.SkypeEra;
+                if (!String.IsNullOrEmpty(era)) baseFolder = era;
+                return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{Properties.Settings.Default.ThemeRoot}/";
+
             }
             return $"pack://application:,,,/Skymu;component/Skyaeris/Assets/{theme_root}/";
         }
 
-        internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared)
+        internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared, string era = null)
         {
             string packUri;
             if (is_shared)
@@ -635,7 +626,7 @@ namespace Skymu.Converters
             }
             else
             {
-                packUri = GetAssetBasePrefix() + image_path;
+                packUri = GetAssetBasePrefix(era) + image_path;
             }
             return FrozenImage.Generate(packUri);
         }

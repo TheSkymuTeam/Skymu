@@ -417,7 +417,7 @@ namespace Skymu.SeanKype
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string avatarPath =
-                Converters.Helpers.GetAssetBasePrefix() + "Profile Pictures/" + avatar + ".png";
+                "Pontis/Profile Pictures/" + avatar + ".png";
             return FrozenImage.Generate(avatarPath);
         }
 

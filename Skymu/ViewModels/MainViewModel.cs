@@ -87,7 +87,6 @@ namespace Skymu.ViewModels
             set => SetProperty(ref _isCallActive, value);
         }
 
-        /// <summary>Set by the view when the window activates/deactivates (used for sound effects).</summary>
         public bool IsWindowActive { get; set; }
 
         #endregion
@@ -96,27 +95,22 @@ namespace Skymu.ViewModels
 
         public event EventHandler Ready;
 
-        /// <summary>Fired when conversation data is fully loaded.  View should scroll to bottom.</summary>
         public event EventHandler ConversationLoaded;
 
-        /// <summary>Fired when a conversation should be "opened" in the UI.  
-        /// Skyaeris: switch to Chat panel.  SeanKype: show chat area.</summary>
         public event EventHandler ConversationOpened;
 
-        /// <summary>Fired when a new item is added to ActiveConversation AFTER initial load 
-        /// (for scroll-to-end in the view if not scrolled up).</summary>
         public event EventHandler ConversationItemChanged;
 
-        /// <summary>Fired when the user signs out.  View should open a new Login and close itself.</summary>
+
         public event EventHandler SignOutRequested;
 
-        /// <summary>Fired when user count text changes (e.g. from API).</summary>
+       
         public event Action<string> UserCountUpdated;
 
-        /// <summary>Fired during speed test animation and on completion with the icon pack URI.</summary>
+ 
         public event Action<string> SpeedTestIconUpdated;
 
-        /// <summary>Fired when dummy call starts (true) or ends (false).</summary>
+     
         public event Action<bool> CallActiveChanged;
 
         #endregion
@@ -491,7 +485,6 @@ namespace Skymu.ViewModels
 
         #region Sidebar tab data
 
-        /// <summary>Returns items for the Contacts tab (populates plugin list if needed).</summary>
         public async Task<IList<object>> GetContactsItems()
         {
             if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1)
@@ -499,7 +492,7 @@ namespace Skymu.ViewModels
             return Universal.Plugin.ContactsList.Cast<object>().ToList();
         }
 
-        /// <summary>Returns grouped items for the Recents tab.</summary>
+
         public async Task<IList<object>> GetRecentsItems()
         {
             if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1)
@@ -508,7 +501,7 @@ namespace Skymu.ViewModels
                 .Cast<object>().ToList();
         }
 
-        /// <summary>Returns grouped server/channel items for the Servers tab.</summary>
+      
         public async Task<IList<object>> GetServerItems()
         {
             if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1)
@@ -523,7 +516,7 @@ namespace Skymu.ViewModels
             return Universal.Plugin.ServerList.Cast<object>().ToList();
         }
 
-        /// <summary>Returns raw recents list grouped by date (Skyaeris CompactRecents helper).</summary>
+     
         public IList<object> GetGroupedRecents()
         {
             return CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList)

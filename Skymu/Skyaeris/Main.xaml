@@ -113,7 +113,7 @@
                     Width="32"
                     Height="32"
                     Margin="2,0,0,0">
-                    <Border Background="Transparent" CornerRadius="0">
+                    <Border Background="Transparent">
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
@@ -131,10 +131,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border
-                                BorderBrush="#80BBBBBB"
-                                BorderThickness="1"
-                                CornerRadius="0" />
+                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -195,7 +192,7 @@
                     Width="32"
                     Height="32"
                     Margin="2,0,0,0">
-                    <Border Background="Transparent" CornerRadius="0">
+                    <Border Background="Transparent">
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
@@ -213,10 +210,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border
-                                BorderBrush="#80BBBBBB"
-                                BorderThickness="1"
-                                CornerRadius="0" />
+                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -332,7 +326,7 @@
                     Width="32"
                     Height="32"
                     Margin="2,0,0,0">
-                    <Border Background="Transparent" CornerRadius="0">
+                    <Border Background="Transparent">
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
@@ -350,10 +344,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border
-                                BorderBrush="#80BBBBBB"
-                                BorderThickness="1"
-                                CornerRadius="0" />
+                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -566,7 +557,7 @@
                         Margin="0,0,6,0"
                         VerticalAlignment="Center"
                         SnapsToDevicePixels="True"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/reply-arrow.png'}" />
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/reply-arrow.png'}" />
                     <TextBlock
                         Grid.Column="1"
                         FontFamily="Tahoma"
@@ -976,278 +967,276 @@
                         </Grid.ColumnDefinitions>
                         <Grid x:Name="Sidebar" Grid.Column="0">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="64" />
-                                <RowDefinition Height="4" />
-                                <RowDefinition Height="32" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid
-                                x:Name="SidebarStatus"
-                                Grid.Row="0"
-                                VerticalAlignment="Top">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="32" />
-                                    <RowDefinition Height="32" />
-                                </Grid.RowDefinitions>
-                                <global:SliceControl
-                                    x:Name="StatusBox"
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Stretch"
-                                    ButtonStateOnInit="Pressed"
-                                    DefaultIndex="0"
-                                    ElementCount="5"
-                                    HoverIndex="1"
-                                    IsRadioButton="True"
-                                    MouseLeftButtonUp="Chat_Close"
-                                    PressedIndex="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-top.png'}"
-                                    StackDirection="Vertical"
-                                    TextColor="#FFFFFF"
-                                    TextFont="Arial"
-                                    TextLeftMargin="43"
-                                    TextSize="13"
-                                    TextWeight="Bold" />
-                                <StackPanel
-                                    x:Name="StatusArea"
-                                    Grid.Row="0"
-                                    Height="20"
-                                    Margin="9,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    IsHitTestVisible="True"
-                                    MouseLeftButtonUp="StatusArea_Click"
-                                    Orientation="Horizontal">
-                                    <StackPanel.Resources>
-                                        <ContextMenu x:Key="StatusMenu">
-                                            <MenuItem
-                                                x:Name="sm_online"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="2"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem
-                                                x:Name="sm_away"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="3"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem
-                                                x:Name="sm_dnd"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="5"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem
-                                                x:Name="sm_invisible"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="14"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem
-                                                x:Name="sm_offline"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
-                                                IsEnabled="False">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="14"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <Separator />
-                                            <MenuItem
-                                                x:Name="sm_call_forwarding"
-                                                Click="StatusMenuItemClick"
-                                                Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
-                                                <MenuItem.Icon>
-                                                    <global:SliceControl
-                                                        Width="14"
-                                                        DefaultIndex="13"
-                                                        ElementCount="22"
-                                                        HoverIndex="-1"
-                                                        PressedIndex="-1"
-                                                        SliceMode="0"
-                                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                        StackDirection="Horizontal" />
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                        </ContextMenu>
-                                    </StackPanel.Resources>
+                            <StackPanel Grid.Row="0">
+                                <Grid x:Name="SidebarStatus" VerticalAlignment="Top">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="32" />
+                                        <RowDefinition Height="32" />
+                                    </Grid.RowDefinitions>
                                     <global:SliceControl
-                                        x:Name="StatusIcon"
+                                        x:Name="StatusBox"
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Stretch"
+                                        ButtonStateOnInit="Pressed"
+                                        DefaultIndex="0"
+                                        ElementCount="5"
+                                        HoverIndex="1"
+                                        IsRadioButton="True"
+                                        MouseLeftButtonUp="Chat_Close"
+                                        PressedIndex="2"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/status-top.png'}"
+                                        StackDirection="Vertical"
+                                        Text="Sensei Wu"
+                                        TextColor="#FFFFFF"
+                                        TextFont="Arial"
+                                        TextLeftMargin="43"
+                                        TextSize="13"
+                                        TextWeight="Bold" />
+                                    <StackPanel
+                                        x:Name="StatusArea"
+                                        Grid.Row="0"
+                                        Height="20"
+                                        Margin="9,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        IsHitTestVisible="True"
+                                        MouseLeftButtonUp="StatusArea_Click"
+                                        Orientation="Horizontal">
+                                        <StackPanel.Resources>
+                                            <ContextMenu x:Key="StatusMenu">
+                                                <MenuItem
+                                                    x:Name="sm_online"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="2"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    x:Name="sm_away"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="3"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    x:Name="sm_dnd"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="5"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    x:Name="sm_invisible"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="14"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem
+                                                    x:Name="sm_offline"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
+                                                    IsEnabled="False">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="14"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <Separator />
+                                                <MenuItem
+                                                    x:Name="sm_call_forwarding"
+                                                    Click="StatusMenuItemClick"
+                                                    Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
+                                                    <MenuItem.Icon>
+                                                        <global:SliceControl
+                                                            Width="14"
+                                                            DefaultIndex="13"
+                                                            ElementCount="22"
+                                                            HoverIndex="-1"
+                                                            PressedIndex="-1"
+                                                            SliceMode="0"
+                                                            Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                            StackDirection="Horizontal" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </StackPanel.Resources>
+                                        <global:SliceControl
+                                            x:Name="StatusIcon"
+                                            Grid.Row="0"
+                                            Width="16"
+                                            HorizontalAlignment="Left"
+                                            DefaultIndex="0"
+                                            ElementCount="22"
+                                            HoverIndex="-1"
+                                            PressedIndex="-1"
+                                            SliceMode="0"
+                                            Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                            StackDirection="Horizontal" />
+                                        <Image
+                                            Grid.Row="0"
+                                            Width="12"
+                                            Height="16"
+                                            Margin="0,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/dropdown.png'}" />
+                                    </StackPanel>
+                                    <global:SliceControl
+                                        x:Name="SBHomeButton"
                                         Grid.Row="0"
                                         Width="16"
-                                        HorizontalAlignment="Left"
+                                        Margin="0,0,11,0"
+                                        HorizontalAlignment="Right"
+                                        ButtonStateOnInit="Pressed"
                                         DefaultIndex="0"
-                                        ElementCount="22"
-                                        HoverIndex="-1"
-                                        PressedIndex="-1"
+                                        ElementCount="3"
+                                        HoverIndex="1"
+                                        Interactive="False"
+                                        PressedIndex="2"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/home.png'}"
                                         StackDirection="Horizontal" />
+                                    <global:SliceControl
+                                        x:Name="SkypeCreditBox"
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Stretch"
+                                        DefaultIndex="0"
+                                        ElementCount="5"
+                                        HoverIndex="-1"
+                                        Interactive="False"
+                                        PressedIndex="-1"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/status-bottom.png'}"
+                                        StackDirection="Vertical"
+                                        Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
+                                        TextColor="#333333"
+                                        TextFont="Tahoma"
+                                        TextLeftMargin="34"
+                                        TextSize="11" />
                                     <Image
-                                        Grid.Row="0"
-                                        Width="12"
+                                        Grid.Row="1"
+                                        Width="16"
                                         Height="16"
-                                        Margin="0,0,0,0"
+                                        Margin="9,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/dropdown.png'}" />
-                                </StackPanel>
-                                <global:SliceControl
-                                    x:Name="SBHomeButton"
-                                    Grid.Row="0"
-                                    Width="16"
-                                    Margin="0,0,11,0"
-                                    HorizontalAlignment="Right"
-                                    ButtonStateOnInit="Pressed"
-                                    DefaultIndex="0"
-                                    ElementCount="3"
-                                    HoverIndex="1"
-                                    Interactive="False"
-                                    PressedIndex="2"
-                                    SliceMode="0"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/home.png'}"
-                                    StackDirection="Horizontal" />
-                                <global:SliceControl
-                                    x:Name="SkypeCreditBox"
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Stretch"
-                                    DefaultIndex="0"
-                                    ElementCount="5"
-                                    HoverIndex="-1"
-                                    Interactive="False"
-                                    PressedIndex="-1"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/status-bottom.png'}"
-                                    StackDirection="Vertical"
-                                    Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
-                                    TextColor="#333333"
-                                    TextFont="Tahoma"
-                                    TextLeftMargin="34"
-                                    TextSize="11" />
-                                <Image
-                                    Grid.Row="1"
-                                    Width="16"
-                                    Height="16"
-                                    Margin="9,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    Source="Assets/Universal/Sidebar/credit.png" />
-                            </Grid>
-                            <Grid x:Name="SidebarTabs" Grid.Row="2">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition x:Name="ContactsColumn" Width="*" />
-                                    <ColumnDefinition x:Name="ServersColumn" Width="*" />
-                                    <ColumnDefinition x:Name="RecentsColumn" Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <global:SliceControl
-                                    x:Name="btnContacts"
-                                    Grid.Column="0"
-                                    HorizontalAlignment="Stretch"
-                                    DefaultIndex="1"
-                                    ElementCount="5"
-                                    HoverIndex="-1"
-                                    IsRadioButton="True"
-                                    LeftWidth="25"
-                                    MouseLeftButtonUp="SidebarTab_BtnDown"
-                                    PressedIndex="2"
-                                    RightWidth="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/contacts.png'}"
-                                    StackDirection="Vertical"
-                                    Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
-                                    TextColor="#333333"
-                                    TextFont="Arial"
-                                    TextLeftMargin="30"
-                                    TextSize="13"
-                                    TextWeight="Bold" />
-                                <global:SliceControl
-                                    x:Name="btnServers"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Stretch"
-                                    DefaultIndex="0"
-                                    ElementCount="5"
-                                    HoverIndex="-1"
-                                    IsRadioButton="True"
-                                    LeftWidth="25"
-                                    MouseLeftButtonUp="SidebarTab_BtnDown"
-                                    PressedIndex="2"
-                                    RightWidth="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/servers.png'}"
-                                    StackDirection="Vertical"
-                                    Text="Servers"
-                                    TextColor="#333333"
-                                    TextFont="Arial"
-                                    TextLeftMargin="28"
-                                    TextSize="13"
-                                    TextWeight="Bold" />
-                                <global:SliceControl
-                                    x:Name="btnRecents"
-                                    Grid.Column="2"
-                                    HorizontalAlignment="Stretch"
-                                    ButtonStateOnInit="Pressed"
-                                    DefaultIndex="1"
-                                    ElementCount="5"
-                                    HoverIndex="-1"
-                                    IsRadioButton="True"
-                                    LeftWidth="25"
-                                    MouseLeftButtonUp="SidebarTab_BtnDown"
-                                    PressedIndex="2"
-                                    RightWidth="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/recents.png'}"
-                                    StackDirection="Vertical"
-                                    Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
-                                    TextColor="#333333"
-                                    TextFont="Arial"
-                                    TextLeftMargin="30"
-                                    TextSize="13"
-                                    TextWeight="Bold" />
-                            </Grid>
+                                        Source="Assets/Universal/Sidebar/credit.png" />
+                                </Grid>
+                                <Grid x:Name="SidebarTabs" Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="ContactsColumn" Width="*" />
+                                        <ColumnDefinition x:Name="ServersColumn" Width="*" />
+                                        <ColumnDefinition x:Name="RecentsColumn" Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <global:SliceControl
+                                        x:Name="btnContacts"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Stretch"
+                                        DefaultIndex="1"
+                                        ElementCount="5"
+                                        HoverIndex="-1"
+                                        IsRadioButton="True"
+                                        LeftWidth="25"
+                                        MouseLeftButtonUp="SidebarTab_BtnDown"
+                                        PressedIndex="2"
+                                        RightWidth="2"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/contacts.png'}"
+                                        StackDirection="Vertical"
+                                        Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
+                                        TextColor="#333333"
+                                        TextFont="Arial"
+                                        TextLeftMargin="30"
+                                        TextSize="13"
+                                        TextWeight="Bold" />
+                                    <global:SliceControl
+                                        x:Name="btnServers"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Stretch"
+                                        DefaultIndex="0"
+                                        ElementCount="5"
+                                        HoverIndex="-1"
+                                        IsRadioButton="True"
+                                        LeftWidth="25"
+                                        MouseLeftButtonUp="SidebarTab_BtnDown"
+                                        PressedIndex="2"
+                                        RightWidth="2"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/servers.png'}"
+                                        StackDirection="Vertical"
+                                        Text="Servers"
+                                        TextColor="#333333"
+                                        TextFont="Arial"
+                                        TextLeftMargin="28"
+                                        TextSize="13"
+                                        TextWeight="Bold" />
+                                    <global:SliceControl
+                                        x:Name="btnRecents"
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Stretch"
+                                        ButtonStateOnInit="Pressed"
+                                        DefaultIndex="1"
+                                        ElementCount="5"
+                                        HoverIndex="-1"
+                                        IsRadioButton="True"
+                                        LeftWidth="25"
+                                        MouseLeftButtonUp="SidebarTab_BtnDown"
+                                        PressedIndex="2"
+                                        RightWidth="2"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/recents.png'}"
+                                        StackDirection="Vertical"
+                                        Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
+                                        TextColor="#333333"
+                                        TextFont="Arial"
+                                        TextLeftMargin="30"
+                                        TextSize="13"
+                                        TextWeight="Bold" />
+                                </Grid>
+                            </StackPanel>
                             <Border
-                                Grid.Row="3"
+                                Grid.Row="1"
                                 Background="White"
                                 BorderBrush="#26000000"
                                 BorderThickness="1,0,1,0">
@@ -1267,7 +1256,7 @@
                                         HoverIndex="-1"
                                         Interactive="False"
                                         PressedIndex="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/search-box.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/search-box.png'}"
                                         StackDirection="Vertical" />
                                     <TextBox
                                         x:Name="SearchBox"
@@ -1318,7 +1307,7 @@
                                                                 <Trigger Property="IsSelected" Value="True">
                                                                     <Setter TargetName="ItemBorder" Property="Background">
                                                                         <Setter.Value>
-                                                                            <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                            <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                         </Setter.Value>
                                                                     </Setter>
                                                                 </Trigger>
@@ -1369,7 +1358,7 @@
                                                                 <Trigger Property="IsSelected" Value="True">
                                                                     <Setter TargetName="ItemBorder" Property="Background">
                                                                         <Setter.Value>
-                                                                            <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                            <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                         </Setter.Value>
                                                                     </Setter>
                                                                 </Trigger>
@@ -1385,7 +1374,7 @@
                                 </Grid>
                             </Border>
 
-                            <StackPanel Grid.Row="4" Orientation="Vertical">
+                            <StackPanel Grid.Row="2" Orientation="Vertical">
                                 <Grid x:Name="SidebarAddButtons" Grid.Row="4">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -1400,7 +1389,7 @@
                                         HoverIndex="-1"
                                         MouseLeftButtonUp="AddContact_Click"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/add-contact.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/add-contact.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
                                         TextColor="#333333"
@@ -1416,7 +1405,7 @@
                                         HoverIndex="-1"
                                         MouseLeftButtonUp="MakeGroup_Click"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/create-group.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/create-group.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
                                         TextColor="#333333"
@@ -1438,7 +1427,7 @@
                                             HoverIndex="1"
                                             MouseLeftButtonUp="CallPhones_Click"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/call-phones.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/call-phones.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                             TextColor="#333333"
@@ -1458,9 +1447,9 @@
                                     DefaultIndex="0"
                                     ElementCount="1"
                                     Interactive="False"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Sidebar/user-count-background.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/user-count-background.png'}"
                                     StackDirection="Vertical"
-                                    Text="Skymu Beta. All rights reserved."
+                                    Text="Sky Multiprotocol. All rights reserved."
                                     TextColor="#999999"
                                     TextFont="Tahoma"
                                     TextLeftMargin="7"
@@ -1505,7 +1494,7 @@
                                     HoverIndex="-1"
                                     Loaded="chatHeader_Loaded"
                                     PressedIndex="-1"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-left.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-left.png'}"
                                     StackDirection="Vertical"
                                     Text="{Binding DisplayName}"
                                     TextColor="#333333"
@@ -1523,7 +1512,7 @@
                                     HoverIndex="1"
                                     MouseLeftButtonUp="Chat_Close"
                                     PressedIndex="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-right.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-right.png'}"
                                     StackDirection="Vertical"
                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
                                     TextColor="#333333"
@@ -1539,7 +1528,7 @@
                                     Margin="7,0,0,0"
                                     HorizontalAlignment="Left"
                                     IsHitTestVisible="False"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/close.png'}" />
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/close.png'}" />
                             </Grid>
                             <Grid
                                 x:Name="HomeTopbar"
@@ -1561,7 +1550,7 @@
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     PressedIndex="2"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-left.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-left.png'}"
                                     StackDirection="Vertical"
                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"
                                     TextColor="#333333"
@@ -1587,7 +1576,7 @@
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     PressedIndex="-1"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-middle.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-middle.png'}"
                                     StackDirection="Vertical"
                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"
                                     TextColor="#333333"
@@ -1613,7 +1602,7 @@
                                     HoverIndex="-1"
                                     IsRadioButton="True"
                                     PressedIndex="-1"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-middle.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-middle.png'}"
                                     StackDirection="Vertical"
                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}"
                                     TextColor="#333333"
@@ -1637,7 +1626,7 @@
                                     ElementCount="5"
                                     HoverIndex="-1"
                                     PressedIndex="-1"
-                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/tab-right.png'}"
+                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-right.png'}"
                                     StackDirection="Vertical" />
                             </Grid>
                             <Border
@@ -2016,7 +2005,7 @@
                                             MouseLeftButtonUp="AddButtonClick"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/add.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/add.png'}"
                                             StackDirection="Vertical" />
                                         <global:SliceControl
                                             x:Name="WifiButton"
@@ -2028,7 +2017,7 @@
                                             HoverIndex="1"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/network-none.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/network-none.png'}"
                                             StackDirection="Vertical" />
                                     </StackPanel>
                                     <Rectangle
@@ -2116,7 +2105,7 @@
                                             DefaultIndex="0"
                                             ElementCount="7"
                                             SliceMode="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/message-box-header25.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/message-box-header25.png'}"
                                             StackDirection="Vertical"
                                             TopHeight="25" />
                                         <StackPanel
@@ -2142,7 +2131,7 @@
                                                         MouseLeftButtonUp="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Chat/emoji.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/emoji.png'}"
                                                         StackDirection="Vertical" />
                                                 </StackPanel>
                                                 <Popup

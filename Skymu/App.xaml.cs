@@ -96,6 +96,8 @@ namespace Skymu
         {
             if (SkypeEra == "SeanKype")
                 new SeanKype.Login().Show();
+            else if (SkypeEra == "Pontis")
+                new Pontis.Login().Show();
             else
                 new Skyaeris.Login().Show();
         }

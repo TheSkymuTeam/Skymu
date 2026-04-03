@@ -175,12 +175,7 @@ namespace Skymu.Views
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = new BitmapImage(
-                    new Uri(
-                        "pack://application:,,,/Skyaeris/Assets/Universal/Icon Bitmap/skype-status.png",
-                        UriKind.Absolute
-                    )
-                ),
+                Source = Helpers.FrozenImage.Generate("pack://application:,,,/Skyaeris/Assets/Universal/Icon Bitmap/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat

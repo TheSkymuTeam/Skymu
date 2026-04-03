@@ -33,7 +33,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='backgrounds/login.png'}" Stretch="Fill" />
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='backgrounds/login.png'}" Stretch="Fill" />
     </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
@@ -182,7 +182,7 @@
                         LeftWidth="15"
                         PressedIndex="4"
                         RightWidth="15"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Login/pill.png'}"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Login/pill.png'}"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"
                         TextColor="#FF393A48"
