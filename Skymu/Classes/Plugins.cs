@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 using MiddleMan;
 
 namespace Skymu
@@ -51,11 +52,11 @@ namespace Skymu
                 catch (ReflectionTypeLoadException ex)
                 {
                     foreach (var loaderEx in ex.LoaderExceptions)
-                        Console.WriteLine(loaderEx);
+                        Debug.WriteLine(loaderEx);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex);
+                    Debug.WriteLine(ex);
                 }
             }
 

@@ -11,7 +11,7 @@
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
-    Background="#F5F5F5"
+    Background="{StaticResource SkBlue}"
     Closing="Login_Closing"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
@@ -46,7 +46,7 @@
             HorizontalAlignment="Center"
             Fill="#FFF"
             Stretch="Fill" />
-        <Rectangle Grid.Row="0" Fill="{StaticResource SkBlue}" />
+        <Rectangle Grid.Row="0" Fill="#EEE" />
         <!--  placeholder for menu bar so designer donesnt mess up  -->
         <Grid Grid.Row="1">
             <Image
