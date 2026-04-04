@@ -16,8 +16,6 @@ namespace Skymu
         private static WebBrowser _browser;
         private static User _user;
         private static DirectMessage[] _contacts;
-        private const string SKHOME_DIR = "Home";
-        private const string PAGENAME = "index.html";
 
         public static void Generate(WebBrowser browser, User user, DirectMessage[] contacts)
         {
@@ -26,8 +24,7 @@ namespace Skymu
             _contacts = contacts;
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
-            //_browser.Navigate(new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, SKHOME_DIR, PAGENAME))); // TODO rectify access zone for local thing going to /ads
-            _browser.Navigate(new Uri("https://skymu.app/home")); // temporary workaround to avoid IE permissions issues
+            _browser.Navigate(new Uri("https://skymu.app/home")); 
         }
 
         private static void InvokeEval(string script)

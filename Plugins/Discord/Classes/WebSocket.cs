@@ -85,7 +85,10 @@ namespace Discord.Classes
         // Event for new guilds
         public event EventHandler<JsonNode> GuildCreated;
         // Provides a method for asynchronous background processing of messages, makes the app smoother.
-        private readonly Channel<HelperClasses.DiscordMessageReceivedEventArgs> _messageQueue = Channel.CreateUnbounded<HelperClasses.DiscordMessageReceivedEventArgs>();
+        private readonly Channel<HelperClasses.DiscordMessageReceivedEventArgs> _messageQueue =
+    Channel.CreateUnbounded<HelperClasses.DiscordMessageReceivedEventArgs>(
+        new UnboundedChannelOptions { SingleReader = true }
+    ); // fixed for net core - omega
 
         public WebSocket(string token, Core core)
         {
@@ -411,10 +414,13 @@ namespace Discord.Classes
         {
             _ = Task.Run(async () =>
             {
-                await foreach (var msg in _messageQueue.Reader.ReadAllAsync())
+                while (await _messageQueue.Reader.WaitToReadAsync())
                 {
-                    try { MessageReceived?.Invoke(this, msg); }
-                    catch (Exception ex) { Debug.WriteLine(ex.Message); }
+                    while (_messageQueue.Reader.TryRead(out var msg))
+                    {
+                        try { MessageReceived?.Invoke(this, msg); }
+                        catch (Exception ex) { Debug.WriteLine(ex.Message); }
+                    }
                 }
             });
         }

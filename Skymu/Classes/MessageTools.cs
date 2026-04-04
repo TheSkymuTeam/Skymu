@@ -772,9 +772,9 @@ namespace Skymu
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (eR.SentInServerChannel)
                     {
-                        // For server channels (guild channels), only notify if:
-                        // 1. User is replied to
-                        // 2. User is mentioned in the content
+                        // for server channels (guild channels), only notify if:
+                        // 1. replied to
+                        // 2. pinged
 
                         if (
                             message.ParentMessage?.Sender?.Identifier
