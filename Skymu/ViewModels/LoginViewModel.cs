@@ -142,6 +142,7 @@ namespace Skymu.ViewModels
         public void HandleProtocolSelected(PluginListing listing)
         {
             if (listing == null) return;
+            if (PendingAutoLogin != null) return;
             _selectedListing = listing;
             Universal.Plugin = Universal.PluginList[listing.PluginIndex];
             PluginSelectionUpdated?.Invoke(listing);
