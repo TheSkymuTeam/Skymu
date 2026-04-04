@@ -324,7 +324,10 @@ namespace Skymu
             } // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
             catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)
+            {
+                Plugins.DisposeAll();
                 Sounds.PlaySynchronous("logout");
+            }
             base.OnExit(ev);
         }
     }
