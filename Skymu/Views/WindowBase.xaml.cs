@@ -18,6 +18,7 @@ namespace Skymu.Views
     public partial class WindowBase : Window
     {
         private Action BLAction;
+        private Action BMAction;
         private Action BRAction;
 
         public enum IconType
@@ -84,6 +85,12 @@ namespace Skymu.Views
             set => ButtonLeft.Content = value;
         }
 
+        public string ButtonMiddleText
+        {
+            get => ButtonMiddle.Content.ToString();
+            set => ButtonMiddle.Content = value;
+        }
+
         public string ButtonRightText
         {
             get => ButtonRight.Content.ToString();
@@ -96,6 +103,18 @@ namespace Skymu.Views
             set => BLAction = value;
         }
 
+        public Action ButtonMiddleAction
+        {
+            get => BMAction;
+            set => BMAction = value;
+        }
+
+        public bool ButtonMiddleEnabled
+        {
+            get => ButtonMiddle.Visibility == Visibility.Visible ? true : false;
+            set => ButtonMiddle.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         public Action ButtonRightAction
         {
             get => BRAction;
@@ -103,6 +122,7 @@ namespace Skymu.Views
         }
 
         private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
+        private void bMClick(object sender, RoutedEventArgs e) { BMAction.Invoke(); }
         private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }
 
         protected override void OnContentRendered(EventArgs e)
