@@ -97,12 +97,18 @@ namespace Skymu
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            if (SkypeEra == "SeanKype")
-                new SeanKype.Login().Show();
-            else if (SkypeEra == "Pontis")
-                new Pontis.Login().Show();
-            else
-                new Skyaeris.Login().Show();
+            switch (SkypeEra)
+            {
+                case "SeanKype":
+                    new SeanKype.Login().Show();
+                    break;
+                case "Pontis":
+                    new Pontis.Login().Show();
+                    break;
+                case "Skyaeris":
+                    new Skyaeris.Login().Show();
+                    break;
+            }
         }
 
         public static void Restart()
