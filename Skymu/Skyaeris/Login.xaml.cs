@@ -277,9 +277,7 @@ namespace Skymu.Skyaeris
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(
-                new ProcessStartInfo { FileName = DISCORD_SERVER_INVITE, UseShellExecute = true }
-            );
+            Universal.OpenUrl(Universal.DISCORD_SERVER_INVITE);
             e.Handled = true;
         }
 
