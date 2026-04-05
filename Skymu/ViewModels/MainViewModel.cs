@@ -320,10 +320,10 @@ namespace Skymu.ViewModels
                         }
                     }
                 }
-
-                SubscribeConversationCollectionChanges();
-                Application.Current.Dispatcher.Invoke(() => BuildGroupedConversation());
             }
+
+            SubscribeConversationCollectionChanges();
+            Application.Current.Dispatcher.Invoke(() => BuildGroupedConversation());
 
             IsLoadingConversation = false;
             ConversationLoaded?.Invoke(this, EventArgs.Empty);
