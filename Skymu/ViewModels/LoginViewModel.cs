@@ -21,8 +21,10 @@ using MiddleMan;
 using QRCoder;
 using Skymu.Helpers;
 using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Skymu.ViewModels
@@ -147,6 +149,122 @@ namespace Skymu.ViewModels
             Universal.Plugin = Universal.PluginList[listing.PluginIndex];
             PluginSelectionUpdated?.Invoke(listing);
         }
+
+        public void RunPostLogin(IMainWindowHolder mainWindow)
+        {
+            Tray.PushIcon(Universal.CurrentUser.ConnectionStatus);
+            Universal.HasLoggedIn = true;
+            mainWindow.Show();
+            Sounds.Play("login", true);
+            new Updater();
+
+            string brand = Properties.Settings.Default.BrandingName;
+            PlatformType platform = Runtime.DetectOS();
+
+            if (!Properties.Settings.Default.FirstRunCompleted)
+            {
+                Properties.Settings.Default.FirstRunCompleted = true;
+                Properties.Settings.Default.Save();
+
+                Dialog dlg = null;
+                dlg = new Dialog(
+                    WindowBase.IconType.Question,
+                    brand + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
+                        + "count at the bottom of the sidebar, and also to form a searchable list of online users.\n\nYour data is not retained, stored, cached, sold, or otherwise used by Skymu in any way. "
+                        + "Your username and display name are only used to populate the list.\n\nTo improve the accuracy of the public list, it is recommended that you click 'Yes'.",
+                    "Publicly display user statistics?",
+                    "Skymu User Statistics",
+                    new Action(() =>
+                    {
+                        Properties.Settings.Default.Anonymize = true;
+                        Properties.Settings.Default.Save();
+                        dlg.Close();
+                    }),
+                    Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
+                    true,
+                    new Action(() =>
+                    {
+                        Properties.Settings.Default.Anonymize = false;
+                        Properties.Settings.Default.Save();
+                        dlg.Close();
+                    }),
+                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+                );
+                dlg.ShowDialog();
+
+                string message = null;
+
+                if (platform == PlatformType.Unknown)
+                    message = brand + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
+                else if (platform < PlatformType.Windows2000)
+                {
+                    if (platform == PlatformType.WineLegacy)
+                        message = brand + " does not support Wine versions below 10.0. You may encounter significant bugs.";
+                    else if (platform == PlatformType.Wine10)
+                        message = brand + " has limited support for Wine 10. Some features may not work as expected.";
+                    else if (platform == PlatformType.Wine11)
+                        message = brand + " does not have complete support for Wine 11. Some features may not work as expected.";
+                }
+                else if (platform < PlatformType.WindowsVista)
+                {
+                    if (platform == PlatformType.WindowsXP)
+                        message = brand + " does not officially support Windows XP or the One Core API, and you may encounter significant bugs. However, if you are using Projek01, you should not expect any problems.";
+                    else if (platform == PlatformType.Windows2000)
+                        message = brand + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
+                }
+                else if (platform > PlatformType.Windows11)
+                    message = brand + " has not yet been tested on your version of Windows. You may encounter bugs.";
+
+                if (message != null)
+                    Universal.MessageBox(message, "Compatibility warning");
+            }
+
+            if (!Properties.Settings.Default.SuppressOldRuntimeWarnings)
+            {
+                string newNetLink = String.Empty;
+                int netVersion = Runtime.DetectNetVersion();
+                if (netVersion < 5) return; // framework or early core (former is to be ignored, latter is impossible)
+                else if (netVersion < 10)
+                {
+                    newNetLink = "https://dotnet.microsoft.com/en-us/download/dotnet";
+                    // 6 is the last version to reliably support Windows 8.1 and below, so it's the best we can recommend
+                    if (platform < PlatformType.Windows10) newNetLink += "/6.0";
+
+                }
+                if (!String.IsNullOrEmpty(newNetLink))
+                {
+                    Dialog dlg = null;
+                    dlg = new Dialog(
+                        WindowBase.IconType.Question,
+                        brand + $" has detected that you have an older version of .NET installed ({netVersion}) than the latest supported for your platform. " +
+                        $"It is recommended that you download the latest .NET Desktop Runtime for performance improvements, reduction in memory usage, " +
+                        $"and critical security fixes.",
+                        "Update your .NET runtime?",
+                        "Skymu",
+                        new Action(() =>
+                        {
+                            Properties.Settings.Default.SuppressOldRuntimeWarnings = true;
+                            Properties.Settings.Default.Save();
+                            dlg.Close();
+                        }),
+                        Universal.Lang["sZAPBUTTON_DONTSHOW"],
+                        true,
+                        new Action(() =>
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = newNetLink,
+                                UseShellExecute = true
+                            });
+                            dlg.Close();
+                        }),
+                        Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+                    );
+                    dlg.ShowDialog();
+                }
+            }
+        }
+
 
         public async Task TryAutoLogin()
         {

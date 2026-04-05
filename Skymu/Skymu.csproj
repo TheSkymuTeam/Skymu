@@ -17,6 +17,7 @@
 		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
 		<UpdatePeriodically>false</UpdatePeriodically>
 		<UpdateRequired>false</UpdateRequired>
+		<RollForward>LatestMajor</RollForward>
 		<MapFileExtensions>true</MapFileExtensions>
 		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
@@ -38,7 +39,7 @@
 
 	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME INSTEAD) -->
 	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0'))">
-		<TargetFrameworks>net461;net10.0-windows</TargetFrameworks>
+		<TargetFrameworks>net461;net5.0-windows</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(NETCoreSdkVersion)' == '' Or $([MSBuild]::VersionLessThan('$(NETCoreSdkVersion)', '10.0'))">
 		<TargetFrameworks>net461</TargetFrameworks>
@@ -47,7 +48,7 @@
 		<PlatformTarget>x86</PlatformTarget>
 		<OutputPath>bin\SkymuFramework\$(Configuration)\</OutputPath>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
 		<PlatformTarget>x64</PlatformTarget>
 		<OutputPath>bin\SkymuCore\$(Configuration)\</OutputPath>
 	</PropertyGroup>
