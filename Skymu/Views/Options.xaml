@@ -412,7 +412,7 @@
                                             Margin="0,5"
                                             HorizontalAlignment="Left"
                                             IsChecked="{Binding DisablePingbacks, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
-                                            <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
+                                            <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server and the updater (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
                                         </CheckBox>
 
                                     </StackPanel>
