@@ -494,9 +494,7 @@ namespace Skymu
                         var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri };
                         hyperlink.RequestNavigate += (s, e) =>
                         {
-                            Process.Start(
-                                new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }
-                            );
+                            Universal.OpenUrl(e.Uri.AbsoluteUri);
                         };
                         inlines.Add(hyperlink);
                         if (displayLooksLikeUrl)
@@ -611,12 +609,7 @@ namespace Skymu
                             var hyperlink = new Hyperlink(new Run(url)) { NavigateUri = uri };
                             hyperlink.RequestNavigate += (s, e) =>
                             {
-                                Process.Start(
-                                    new ProcessStartInfo(e.Uri.AbsoluteUri)
-                                    {
-                                        UseShellExecute = true,
-                                    }
-                                );
+                                Universal.OpenUrl(e.Uri.AbsoluteUri);
                             };
                             inlines.Add(hyperlink);
                         }

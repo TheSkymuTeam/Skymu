@@ -624,7 +624,7 @@ namespace Skymu.Pontis
                     else
                         url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
 
-                    Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                    Universal.OpenUrl(url);
                 }
                 catch (TaskCanceledException)
                 {
