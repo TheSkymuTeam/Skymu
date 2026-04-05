@@ -201,9 +201,9 @@ namespace Skymu.Pontis
         private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
         private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
-        private void OnHelp(object sender, EventArgs e) { Process.Start(new ProcessStartInfo("https://skymu.app/help") { UseShellExecute = true }); }
+        private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
-        private void OnPrivacy(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_HELP_PRIVACY"]); }
+        private void OnPrivacy(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY); }
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
         private void OnClose(object sender, EventArgs e) { Universal.Close(); }
 
