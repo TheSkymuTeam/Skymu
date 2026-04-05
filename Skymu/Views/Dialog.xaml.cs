@@ -19,6 +19,7 @@ namespace Skymu.Views
     public partial class Dialog : Window
     {
         private Action BLAction;
+        private Action BMAction;
         private Action BRAction;
         public string TextBoxText { get; private set; }
 
@@ -34,7 +35,10 @@ namespace Skymu.Views
             string blText = null,
             bool enableTextBox = false,
             BitmapImage img = null,
-            Size? customDimensions = null
+            Size? customDimensions = null,
+            bool bmEnabled = false,
+            Action bmAction = null,
+            string bmText = null
         )
         {
             try
@@ -56,19 +60,26 @@ namespace Skymu.Views
 
                 if (brAction == null)
                     brAction = () => Close();
+                if (bmAction == null)
+                    bmAction = () =>
+                    {
+                        Close();
+                        Universal.Terminate();
+                    };
                 if (blAction == null)
                     blAction = () =>
                     {
                         Close();
                         Universal.Terminate();
                     };
+                if (bmEnabled)
+                    ButtonMiddle.Visibility = Visibility.Visible;
                 if (blEnabled)
                 {
                     ButtonLeft.Visibility = Visibility.Visible;
                     ButtonLeft.IsDefault = true;
                     ButtonRight.IsDefault = false;
                 }
-                ;
                 if (enableTextBox)
                 {
                     DialogTextBox.Visibility = Visibility.Visible;
@@ -111,10 +122,13 @@ namespace Skymu.Views
                 Header.Text = header;
                 Description.Text = content;
                 BRAction = brAction;
+                BMAction = bmAction;
                 BLAction = blAction;
                 DialogImage.DefaultIndex = Properties.Settings.Default.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
                 if (blText != null)
                     ButtonLeft.Content = blText;
+                if (bmText != null)
+                    ButtonMiddle.Content = bmText;
                 if (brText != null)
                     ButtonRight.Content = brText;
 
@@ -129,6 +143,11 @@ namespace Skymu.Views
         private void bLClick(object sender, RoutedEventArgs e)
         {
             BLAction.Invoke();
+        }
+
+        private void bMClick(object sender, RoutedEventArgs e)
+        {
+            BMAction.Invoke();
         }
 
         private void bRClick(object sender, RoutedEventArgs e)
