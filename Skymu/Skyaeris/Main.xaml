@@ -994,6 +994,7 @@
                                         TextColor="#FFFFFF"
                                         TextFont="Arial"
                                         TextLeftMargin="43"
+                                        TextRightMargin="30"
                                         TextSize="13"
                                         TextWeight="Bold" />
                                     <StackPanel
