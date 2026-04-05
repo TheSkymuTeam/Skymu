@@ -408,9 +408,8 @@ namespace Skymu.SeanKype
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string avatarPath =
-                "Pontis/Profile Pictures/" + avatar + ".png";
-            return FrozenImage.Generate(avatarPath);
+            string AvatarPath = Converters.Helpers.GetAssetBasePrefix("SeanKype") + "Profile Pictures/" + avatar + ".png";
+            return FrozenImage.Generate(AvatarPath);
         }
 
         #endregion
