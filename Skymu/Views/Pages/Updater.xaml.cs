@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection.Emit;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -23,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -58,7 +60,7 @@ namespace Skymu.Views.Pages
         {
             update_info = await GetUpdateInfo();
 
-            if (update_info.Length > 0) // not up to date, must show window
+            if (update_info.Length > 0 && update_info[0] != Properties.Settings.Default.SkippedVersion) // not up to date, must show window
             {
                 if (exwin != null)
                     window = exwin;
@@ -91,8 +93,11 @@ namespace Skymu.Views.Pages
                     window.HeaderText =
                         Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info[0];
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
-                    window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                     window.ButtonLeftAction = () => InitiateUpdate();
+                    window.ButtonMiddleText = "Skip this version";
+                    window.ButtonMiddleEnabled = true;
+                    window.ButtonMiddleAction = () => { SkipUpdate(update_info[0]); window.Close(); };
+                    window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                     Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
                     string changelog = update_info[1];
                     if (!string.IsNullOrEmpty(changelog))
@@ -274,6 +279,7 @@ namespace Skymu.Views.Pages
 
         internal static async Task<string[]> GetUpdateInfo()
         {
+            if (Properties.Settings.Default.DisablePingbacks) return new string[0];
             try
             {
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
@@ -309,8 +315,8 @@ namespace Skymu.Views.Pages
                         if (!Version.TryParse(latestTag, out updateVer))
                             return new string[0];
 
-                        if (currentVer >= updateVer)
-                            return new string[0];
+                        /*if (currentVer >= updateVer)
+                            return new string[0]; UNCOMMENTME */
 
                         string releaseName =
                             doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
@@ -344,6 +350,12 @@ namespace Skymu.Views.Pages
             {
                 return new string[2] { "UPDATE_CHECK_ERROR", ex.Message };
             }
+        }
+
+        internal static async void SkipUpdate(string tag)
+        {
+            Properties.Settings.Default.SkippedVersion = tag;
+            Properties.Settings.Default.Save();
         }
     }
 }
