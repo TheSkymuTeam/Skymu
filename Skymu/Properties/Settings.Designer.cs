@@ -154,18 +154,6 @@ namespace Skymu.Properties {
                 this["BuildVersion"] = value;
             }
         }
-
-                [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("NONE")]
-        public string SkippedVersion {
-            get {
-                return ((string)(this["SkippedVersion"]));
-            }
-            set {
-                this["SkippedVersion"] = value;
-            }
-        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -308,6 +296,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["NikoIcons"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool SuppressOldRuntimeWarnings {
+            get {
+                return ((bool)(this["SuppressOldRuntimeWarnings"]));
+            }
+            set {
+                this["SuppressOldRuntimeWarnings"] = value;
             }
         }
     }
