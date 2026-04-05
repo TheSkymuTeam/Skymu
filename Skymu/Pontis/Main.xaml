@@ -1643,6 +1643,7 @@
                                     Loaded="ConversationItemsList_Loaded"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     Style="{StaticResource NoInsetListBox}"
+                                    VerticalAlignment="Bottom"
                                     VirtualizingPanel.IsVirtualizing="True"
                                     VirtualizingPanel.ScrollUnit="Pixel"
                                     VirtualizingPanel.VirtualizationMode="Standard"
