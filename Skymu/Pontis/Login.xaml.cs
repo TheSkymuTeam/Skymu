@@ -278,9 +278,7 @@ namespace Skymu.Pontis
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(
-                new ProcessStartInfo { FileName = DISCORD_SERVER_INVITE, UseShellExecute = true }
-            );
+            Universal.OpenUrl(DISCORD_SERVER_INVITE);
             e.Handled = true;
         }
 

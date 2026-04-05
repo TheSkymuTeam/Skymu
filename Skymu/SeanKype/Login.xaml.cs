@@ -271,17 +271,13 @@ namespace Skymu.SeanKype
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(
-                new ProcessStartInfo { FileName = e.Uri.AbsoluteUri, UseShellExecute = true }
-            );
+            Universal.OpenUrl(e.Uri.AbsoluteUri);
             e.Handled = true;
         }
 
         private void FooterLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            Process.Start(
-                new ProcessStartInfo { FileName = DISCORD_SERVER_INVITE, UseShellExecute = true }
-            );
+            Universal.OpenUrl(DISCORD_SERVER_INVITE);
         }
 
         private void Login_Closing(object sender, CancelEventArgs e)
