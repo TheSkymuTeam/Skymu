@@ -142,7 +142,7 @@ namespace Skymu.Views.Pages
             {
                 try
                 {
-                    Process.Start(new ProcessStartInfo(file_path) { UseShellExecute = true });
+                    Universal.OpenUrl(file_path);
                 }
                 catch (Exception ex)
                 {

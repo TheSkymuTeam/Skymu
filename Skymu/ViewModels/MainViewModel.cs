@@ -139,7 +139,7 @@ namespace Skymu.ViewModels
                 string finalPath = tempPath + ext;
                 if (File.Exists(finalPath)) File.Delete(finalPath);
                 File.Move(tempPath, finalPath);
-                Process.Start(new ProcessStartInfo(finalPath) { UseShellExecute = true });
+                Universal.OpenUrl(finalPath);
             }
             catch (Exception ex)
             {
@@ -533,8 +533,6 @@ namespace Skymu.ViewModels
             Sounds.Play("logout");
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, EventArgs.Empty);
-
-
         }
         #endregion
 

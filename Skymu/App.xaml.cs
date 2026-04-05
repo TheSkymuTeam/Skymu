@@ -29,6 +29,9 @@ namespace Skymu
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
         public const string Name = "Skymu";
+        public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
+        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
+        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy/";
         public static readonly string SkypeEra = Skymu.Properties.Settings.Default.SkypeEra;
 
         public static User CurrentUser;
@@ -314,6 +317,11 @@ namespace Skymu
                     $"Failed to apply presentation framework: {ex.Message}"
                 );
             }
+        }
+
+        public static void OpenUrl(string url)
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
         protected override void OnExit(ExitEventArgs ev)
