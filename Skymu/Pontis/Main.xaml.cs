@@ -9,6 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Helpers;
+using Skymu.Properties;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,11 +35,6 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.Helpers;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 
 namespace Skymu.Pontis
 {
@@ -654,6 +656,11 @@ namespace Skymu.Pontis
                 Universal.Hide(ev);
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            WindowPlacementHelper.Save(this, SidebarColumn);
+        }
+
         private void OnClose(object sender, RoutedEventArgs e)
         {
             Universal.Close();
@@ -1153,6 +1160,20 @@ namespace Skymu.Pontis
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
+
+            SourceInitialized += (s, e) =>
+            {
+	            WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                if (wplc != null)
+                {
+                    WindowPlacement wp = (WindowPlacement)wplc;
+                    this.Top = wp.Top;
+                    this.Left = wp.Left;
+                    this.Width = wp.Width;
+                    this.Height = wp.Height;
+                    SidebarColumn.Width = new GridLength(wp.sidebarWidth);
+                }
+            };
         }
 
         private void InitiateSignOut() => vmodel.InitiateSignOut();

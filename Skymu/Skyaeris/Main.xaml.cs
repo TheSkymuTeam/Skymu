@@ -9,30 +9,37 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Helpers;
+using Skymu.Properties;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.Helpers;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 
 namespace Skymu.Skyaeris
 {
@@ -107,6 +114,14 @@ namespace Skymu.Skyaeris
             get { return (string)GetValue(WindowTitleProperty); }
             set { SetValue(WindowTitleProperty, value); }
         }
+
+        private BitmapImage sendBtnSmall = FrozenImage.Generate(
+                    "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
+                );
+
+        private BitmapImage sendBtnFull = FrozenImage.Generate(
+                    "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
+                );
 
         #endregion
 
@@ -642,6 +657,17 @@ namespace Skymu.Skyaeris
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
+
+            if (MessageWindow.ActualWidth <= 720 && MessageWindow.ActualWidth != 0)
+            {
+                SendMsgButton.Text = "";
+                SendMsgButton.Source = sendBtnSmall;
+            }
+            else
+            {
+                SendMsgButton.Text = Universal.Lang["sZAPBUTTON_SENDMESSAGE"];
+                SendMsgButton.Source = sendBtnFull;
+            }
         }
 
         private void ServersList_SelectedItemChanged(
@@ -753,7 +779,10 @@ namespace Skymu.Skyaeris
                 Universal.Hide(ev);
         }
 
-
+        protected override void OnClosed(EventArgs e)
+        {
+            WindowPlacementHelper.Save(this, SidebarColumn);
+        }
 
         private void OnClose(object sender, RoutedEventArgs e)
         {
@@ -1257,6 +1286,20 @@ namespace Skymu.Skyaeris
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
+
+            SourceInitialized += (s, e) =>
+            {
+	            WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                if (wplc != null)
+                {
+                    WindowPlacement wp = (WindowPlacement)wplc;
+                    this.Top = wp.Top;
+                    this.Left = wp.Left;
+                    this.Width = wp.Width;
+                    this.Height = wp.Height;
+                    SidebarColumn.Width = new GridLength(wp.sidebarWidth);
+                }
+            };
         }
 
         private void InitiateSignOut() => vmodel.InitiateSignOut();

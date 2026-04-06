@@ -14,7 +14,7 @@
     Title="Skymu"
     Width="1448"
     Height="856"
-    MinWidth="800"
+    MinWidth="600"
     MinHeight="450"
     Activated="Window_Activated"
     AllowsTransparency="False"
