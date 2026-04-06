@@ -60,7 +60,7 @@ namespace Skymu.Views.Pages
         {
             update_info = await GetUpdateInfo();
 
-            if (update_info.Length > 0 && update_info[0] != Properties.Settings.Default.SkippedVersion) // not up to date, must show window
+            if (update_info.Length > 0 && (manual || update_info[0] != Properties.Settings.Default.SkippedVersion)) // not up to date, must show window
             {
                 if (exwin != null)
                     window = exwin;

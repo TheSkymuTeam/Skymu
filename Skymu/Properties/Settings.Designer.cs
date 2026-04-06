@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Skymu.Classes;
+using System.Configuration;
+
 namespace Skymu.Properties {
     
     
@@ -145,7 +148,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.3.23")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3.22")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -157,7 +160,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Xavier")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Walnut Cake")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -218,12 +221,12 @@ namespace Skymu.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Skyaeris")]
-        public string Interface {
+        public string SkypeEra {
             get {
-                return ((string)(this["Interface"]));
+                return ((string)(this["SkypeEra"]));
             }
             set {
-                this["Interface"] = value;
+                this["SkypeEra"] = value;
             }
         }
         
@@ -313,7 +316,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("NONE")]
         public string SkippedVersion {
             get {
                 return ((string)(this["SkippedVersion"]));
@@ -321,6 +324,16 @@ namespace Skymu.Properties {
             set {
                 this["SkippedVersion"] = value;
             }
+        }
+        
+        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public WindowPlacement WindowPlacement
+        {
+               get => (WindowPlacement)this["WindowPlacement"];
+               set => this["WindowPlacement"] = value;
         }
     }
 }

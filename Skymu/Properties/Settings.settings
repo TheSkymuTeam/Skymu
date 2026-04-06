@@ -33,10 +33,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.3.23</Value>
+      <Value Profile="(Default)">0.3.22</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Xavier</Value>
+      <Value Profile="(Default)">Drocea Walnut Cake</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
@@ -50,7 +50,7 @@
     <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Interface" Type="System.String" Scope="User">
+    <Setting Name="SkypeEra" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skyaeris</Value>
     </Setting>
     <Setting Name="Anonymize" Type="System.Boolean" Scope="User">
@@ -75,7 +75,18 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SkippedVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">NONE</Value>
+    </Setting>
+    <Setting Name="WindowPlacement" Type="Classes.WindowPlacement" Scope="User">
+      <Value Profile="(Default)">
+		&lt;WindowPlacement&gt;
+			&lt;Left&gt;0&lt;/Left&gt;
+			&lt;Top&gt;0&lt;/Top&gt;
+			&lt;Right&gt;0&lt;/Right&gt;
+			&lt;Bottom&gt;0&lt;/Bottom&gt;
+			&lt;sidebarWidth&gt;0&lt;/sidebarWidth&gt;
+		&lt;/WindowPlacement&gt;
+	</Value>
     </Setting>
   </Settings>
 </SettingsFile>
