@@ -145,7 +145,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.3.22")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.3.23")]
         public string BuildVersion {
             get {
                 return ((string)(this["BuildVersion"]));
@@ -157,7 +157,7 @@ namespace Skymu.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Walnut Cake")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Drocea Xavier")]
         public string BuildName {
             get {
                 return ((string)(this["BuildName"]));
@@ -218,12 +218,12 @@ namespace Skymu.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Skyaeris")]
-        public string SkypeEra {
+        public string Interface {
             get {
-                return ((string)(this["SkypeEra"]));
+                return ((string)(this["Interface"]));
             }
             set {
-                this["SkypeEra"] = value;
+                this["Interface"] = value;
             }
         }
         
@@ -308,6 +308,18 @@ namespace Skymu.Properties {
             }
             set {
                 this["SuppressOldRuntimeWarnings"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SkippedVersion {
+            get {
+                return ((string)(this["SkippedVersion"]));
+            }
+            set {
+                this["SkippedVersion"] = value;
             }
         }
     }

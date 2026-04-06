@@ -33,10 +33,10 @@
       <Value Profile="(Default)">Aero.NormalColor</Value>
     </Setting>
     <Setting Name="BuildVersion" Type="System.String" Scope="User">
-      <Value Profile="(Default)">0.3.22</Value>
+      <Value Profile="(Default)">0.3.23</Value>
     </Setting>
     <Setting Name="BuildName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Drocea Walnut Cake</Value>
+      <Value Profile="(Default)">Drocea Xavier</Value>
     </Setting>
     <Setting Name="Language" Type="System.String" Scope="User">
       <Value Profile="(Default)">English</Value>
@@ -50,7 +50,7 @@
     <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SkypeEra" Type="System.String" Scope="User">
+    <Setting Name="Interface" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skyaeris</Value>
     </Setting>
     <Setting Name="Anonymize" Type="System.Boolean" Scope="User">
@@ -73,6 +73,9 @@
     </Setting>
     <Setting Name="SuppressOldRuntimeWarnings" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SkippedVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

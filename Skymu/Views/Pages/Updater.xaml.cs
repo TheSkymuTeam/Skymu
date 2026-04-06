@@ -315,8 +315,8 @@ namespace Skymu.Views.Pages
                         if (!Version.TryParse(latestTag, out updateVer))
                             return new string[0];
 
-                        /*if (currentVer >= updateVer)
-                            return new string[0]; UNCOMMENTME */
+                        if (currentVer >= updateVer)
+                            return new string[0]; 
 
                         string releaseName =
                             doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
@@ -352,7 +352,7 @@ namespace Skymu.Views.Pages
             }
         }
 
-        internal static async void SkipUpdate(string tag)
+        internal static void SkipUpdate(string tag)
         {
             Properties.Settings.Default.SkippedVersion = tag;
             Properties.Settings.Default.Save();

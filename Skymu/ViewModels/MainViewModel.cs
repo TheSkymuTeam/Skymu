@@ -126,8 +126,7 @@ namespace Skymu.ViewModels
             if (attachments == null || attachments.Length == 0 || _isDownloading) return;
             _isDownloading = true;
 
-            try
-            {
+            
                 string url = attachments[0].Url;
                 string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
                 using (var response = await Universal.WebClient.GetStreamAsync(url))
@@ -140,15 +139,11 @@ namespace Skymu.ViewModels
                 if (File.Exists(finalPath)) File.Delete(finalPath);
                 File.Move(tempPath, finalPath);
                 Universal.OpenUrl(finalPath);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
+            
+
+            
                 _isDownloading = false;
-            }
+            
         });
         public IRelayCommand VideoCallCommand { get; }
         public IAsyncRelayCommand CallCommand { get; }

@@ -34,6 +34,10 @@ Function HideHeaderText
     ShowWindow $0 ${SW_HIDE}
 FunctionEnd
 
+Function KillSkymuProcesses
+    nsExec::ExecToLog 'taskkill /F /IM Skymu.exe /T'
+FunctionEnd
+
 Function VersionSelectPage
     Call HideHeaderText
     nsDialogs::Create 1018
@@ -47,7 +51,7 @@ Function VersionSelectPage
     Pop $VersionRadio_Modern
     ${NSD_Check} $VersionRadio_Modern
 
-    ${NSD_CreateLabel} 10u 38u 90% 20u ".NET 10 version. Better performance and memory usage on supported systems."
+    ${NSD_CreateLabel} 10u 38u 90% 20u ".NET Core version. Better performance, memory usage, and security."
     Pop $ModernDesc
     SetCtlColors $ModernDesc 0x808080 transparent
 
@@ -55,7 +59,7 @@ Function VersionSelectPage
     ${NSD_CreateRadioButton} 0 60u 100% 12u "Skymu Legacy"
     Pop $VersionRadio_Legacy
 
-    ${NSD_CreateLabel} 10u 73u 90% 20u "For Windows 8.1 or older, or 32-bit systems. Uses .NET Framework 4.6.1."
+    ${NSD_CreateLabel} 10u 73u 90% 20u "For Windows Vista or 32-bit systems. Uses .NET Framework 4.6.1."
     Pop $LegacyDesc
     SetCtlColors $LegacyDesc 0x808080 transparent
 	
@@ -99,6 +103,7 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section "Install"
+    Call KillSkymuProcesses
     SetOutPath "$INSTDIR"
     SetOverwrite ifnewer
     ${If} $IsLegacy == ${BST_CHECKED}
