@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Skymu.Classes;
+using System.Configuration;
+
 namespace Skymu.Properties {
     
     
@@ -321,6 +324,16 @@ namespace Skymu.Properties {
             set {
                 this["SkippedVersion"] = value;
             }
+        }
+        
+        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public WindowPlacement WindowPlacement
+        {
+               get => (WindowPlacement)this["WindowPlacement"];
+               set => this["WindowPlacement"] = value;
         }
     }
 }
