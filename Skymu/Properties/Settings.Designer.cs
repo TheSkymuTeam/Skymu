@@ -310,5 +310,17 @@ namespace Skymu.Properties {
                 this["SuppressOldRuntimeWarnings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NONE")]
+        public string SkippedVersion {
+            get {
+                return ((string)(this["SkippedVersion"]));
+            }
+            set {
+                this["SkippedVersion"] = value;
+            }
+        }
     }
 }
