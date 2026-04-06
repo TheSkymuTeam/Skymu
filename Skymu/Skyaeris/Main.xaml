@@ -14,7 +14,7 @@
     Title="Skymu"
     Width="1448"
     Height="856"
-    MinWidth="800"
+    MinWidth="584"
     MinHeight="450"
     Activated="Window_Activated"
     AllowsTransparency="True"
@@ -1928,7 +1928,7 @@
                             <Border
                                 x:Name="MessageWindow"
                                 Grid.Row="2"
-                                MinWidth="710"
+                                MinWidth="510"
                                 Margin="0,4,0,0"
                                 Background="#FFF"
                                 BorderBrush="#26000000"
