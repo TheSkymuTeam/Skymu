@@ -11,6 +11,9 @@
 *.sln.docstates
 *.env
 
+# installer
+NSIS/*.exe
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
