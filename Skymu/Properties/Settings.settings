@@ -77,5 +77,16 @@
     <Setting Name="SkippedVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)">NONE</Value>
     </Setting>
+    <Setting Name="WindowPlacement" Type="Classes.WindowPlacement" Scope="User">
+      <Value Profile="(Default)">
+		&lt;WindowPlacement&gt;
+			&lt;Left&gt;0&lt;/Left&gt;
+			&lt;Top&gt;0&lt;/Top&gt;
+			&lt;Right&gt;0&lt;/Right&gt;
+			&lt;Bottom&gt;0&lt;/Bottom&gt;
+			&lt;sidebarWidth&gt;0&lt;/sidebarWidth&gt;
+		&lt;/WindowPlacement&gt;
+	</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -10,7 +10,9 @@
 /*==========================================================*/
 
 using MiddleMan;
+using Skymu.Classes;
 using Skymu.Helpers;
+using Skymu.Properties;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -23,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +34,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -775,7 +779,10 @@ namespace Skymu.Skyaeris
                 Universal.Hide(ev);
         }
 
-
+        protected override void OnClosed(EventArgs e)
+        {
+            WindowPlacementHelper.Save(this, SidebarColumn);
+        }
 
         private void OnClose(object sender, RoutedEventArgs e)
         {
@@ -1279,6 +1286,20 @@ namespace Skymu.Skyaeris
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
+
+            SourceInitialized += (s, e) =>
+            {
+	            WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                if (wplc != null)
+                {
+                    WindowPlacement wp = (WindowPlacement)wplc;
+                    this.Top = wp.Top;
+                    this.Left = wp.Left;
+                    this.Width = wp.Width;
+                    this.Height = wp.Height;
+                    SidebarColumn.Width = new GridLength(wp.sidebarWidth);
+                }
+            };
         }
 
         private void InitiateSignOut() => vmodel.InitiateSignOut();
