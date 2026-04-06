@@ -38,10 +38,10 @@
 	</PropertyGroup>
 
 	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME INSTEAD) -->
-	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '10.0'))">
+	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '5.0'))">
 		<TargetFrameworks>net461;net5.0-windows</TargetFrameworks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(NETCoreSdkVersion)' == '' Or $([MSBuild]::VersionLessThan('$(NETCoreSdkVersion)', '10.0'))">
+	<PropertyGroup Condition="'$(NETCoreSdkVersion)' == '' Or $([MSBuild]::VersionLessThan('$(NETCoreSdkVersion)', '5.0'))">
 		<TargetFrameworks>net461</TargetFrameworks>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net461'">

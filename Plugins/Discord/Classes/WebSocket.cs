@@ -57,7 +57,6 @@ namespace Discord.Classes
 
         internal string _privateChannelsJson;
         internal string _guildsJson;
-        internal string _recipientsJson;
 
         // Used for sending the first payload required
         private string identifyPayloadJson;

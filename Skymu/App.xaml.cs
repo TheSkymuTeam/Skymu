@@ -32,7 +32,7 @@ namespace Skymu
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy/";
-        public static readonly string SkypeEra = Skymu.Properties.Settings.Default.SkypeEra;
+        public static readonly string Interface = Skymu.Properties.Settings.Default.Interface;
 
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;
@@ -97,7 +97,7 @@ namespace Skymu
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            switch (SkypeEra)
+            switch (Interface)
             {
                 case "SeanKype":
                     new SeanKype.Login().Show();

@@ -611,7 +611,7 @@ namespace Skymu.Converters
 
             if (!String.IsNullOrEmpty(theme_root))
             {
-                string baseFolder = Properties.Settings.Default.SkypeEra;
+                string baseFolder = Properties.Settings.Default.Interface;
                 if (!String.IsNullOrEmpty(era)) baseFolder = era;
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
 
@@ -623,7 +623,7 @@ namespace Skymu.Converters
         internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared, string era = null)
         {
             string packUri;
-            if (era == null) era = Properties.Settings.Default.SkypeEra;
+            if (era == null) era = Properties.Settings.Default.Interface;
             if (is_shared)
             {
                 packUri = $"pack://application:,,,/Skymu;component/{era}/Assets/Universal/{image_path}";
