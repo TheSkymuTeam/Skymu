@@ -11,14 +11,16 @@
 
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Skymu.Views
 {
     public partial class Options : Window
     {
-        public Options()
+        public Options(string background_hex)
         {
             InitializeComponent();
+            Background = (Brush)new BrushConverter().ConvertFrom(background_hex);
             LoadVisualSettings();
         }
 

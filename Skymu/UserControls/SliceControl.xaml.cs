@@ -9,12 +9,12 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System.Windows.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
@@ -213,6 +213,18 @@ namespace Skymu
 
         #region Properties
 
+        public int ElementSpan
+        {
+            get { return (int)GetValue(ElementSpanProperty); }
+            set { SetValue(ElementSpanProperty, value); }
+        }
+        public static readonly DependencyProperty ElementSpanProperty = DependencyProperty.Register(
+            nameof(ElementSpan),
+            typeof(int),
+            typeof(SliceControl),
+            new PropertyMetadata(1, OnAnyPropertyChanged)
+        );
+
         public ButtonVisualState ButtonStateOnInit
         {
             get { return (ButtonVisualState)GetValue(ButtonStateOnInitProperty); }
@@ -226,12 +238,12 @@ namespace Skymu
                 new PropertyMetadata(ButtonVisualState.Default)
             );
 
-        public static readonly DependencyProperty CommandProperty =
-    DependencyProperty.Register(
-        "Command",
-        typeof(ICommand),
-        typeof(SliceControl),
-        new PropertyMetadata(null));
+        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
+            "Command",
+            typeof(ICommand),
+            typeof(SliceControl),
+            new PropertyMetadata(null)
+        );
 
         public ICommand Command
         {
@@ -244,7 +256,8 @@ namespace Skymu
                 "CommandParameter",
                 typeof(object),
                 typeof(SliceControl),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null)
+            );
 
         public object CommandParameter
         {
@@ -930,9 +943,10 @@ namespace Skymu
 
             if (StackDirection == SpriteStackDirection.Vertical)
             {
-                double spriteHeightPx = GetElementHeight();
-                double yPx = index * (spriteHeightPx + SpriteSpacing);
-                return new Rect(0, yPx / bmp.PixelHeight, 1, spriteHeightPx / bmp.PixelHeight);
+                double singleHeightPx = (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount;
+                double spannedHeightPx = singleHeightPx * ElementSpan + SpriteSpacing * (ElementSpan - 1);
+                double yPx = index * (singleHeightPx + SpriteSpacing);
+                return new Rect(0, yPx / bmp.PixelHeight, 1, spannedHeightPx / bmp.PixelHeight);
             }
             else
             {
@@ -949,9 +963,14 @@ namespace Skymu
             if (bmp == null || ElementCount <= 0)
                 return ActualHeight;
 
-            return StackDirection == SpriteStackDirection.Vertical
+            double singleHeight = StackDirection == SpriteStackDirection.Vertical
                 ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
                 : bmp.PixelHeight;
+
+            int span = Math.Max(1, ElementSpan);
+            return StackDirection == SpriteStackDirection.Vertical
+                ? singleHeight * span + SpriteSpacing * (span - 1)
+                : singleHeight;
         }
 
         private void UpdateSlices()
@@ -1092,7 +1111,14 @@ namespace Skymu
             }
         }
 
-        private void ApplyBrush(ImageBrush brush, Rectangle rect, double x, double y, double w, double h)
+        private void ApplyBrush(
+            ImageBrush brush,
+            Rectangle rect,
+            double x,
+            double y,
+            double w,
+            double h
+        )
         {
             if (!ReferenceEquals(brush.ImageSource, Source))
                 brush.ImageSource = Source;
