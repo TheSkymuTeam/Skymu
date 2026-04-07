@@ -900,7 +900,7 @@ namespace Skymu.Skyaeris
 
         private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
         {
-            Universal.NotImplemented("Voice calling");
+            HandleCallInit();
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1012,6 +1012,72 @@ namespace Skymu.Skyaeris
             }
 
             return sb.ToString();
+        }
+
+        #endregion
+
+        #region Calls
+
+        private Frame callFrame;
+
+        private void HandleCallInit()
+        {
+            var dm = vmodel.SelectedConversation as DirectMessage;
+            if (dm == null) return; // group calls not supported yet
+
+            CallScreen screen = new CallScreen(dm.Partner);
+            screen.HangUpRequested += OnHangUp;
+            callFrame = new Frame();
+            callFrame.Navigate(screen);
+            SetCallPageLocation(CallPageLocation.FillWindow);
+            Sounds.Play("call-init");
+        }
+
+        private void OnHangUp(object sender, EventArgs e)
+        {
+            SetCallPageLocation(CallPageLocation.Hidden);
+            Sounds.Play("call-end");
+        }
+
+        private enum CallPageLocation
+        {
+            MessagePanel,
+            FillMessagePanel,
+            FillWindow,
+            Fullscreen,
+            Hidden
+        }
+
+        private void SetCallPageLocation(CallPageLocation location)
+        {
+            callFrame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            callFrame.VerticalContentAlignment = VerticalAlignment.Stretch;
+            callFrame.HorizontalAlignment = HorizontalAlignment.Stretch;
+            callFrame.VerticalAlignment = VerticalAlignment.Stretch;
+            //if (MessagePanelHost.Content == frame) MessagePanelHost.Content = null;
+            //if (FillMessagePanelHost.Content == frame) FillMessagePanelHost.Content = null;
+            if (FillWindowHost.Content == callFrame) FillWindowHost.Content = null;
+            //if (FullscreenHost.Content == frame) FullscreenHost.Content = null;
+
+            switch (location)
+            {
+                case CallPageLocation.FillWindow:
+                    ContentArea.Visibility = Visibility.Collapsed;
+                    FillWindowHost.Content = callFrame;
+                    break;
+                case CallPageLocation.Hidden:
+                    ContentArea.Visibility = Visibility.Visible;
+                    break;
+                case CallPageLocation.FillMessagePanel:
+                    //FillMessagePanelHost.Content = frame;
+                    break;
+                case CallPageLocation.MessagePanel:
+                    //MessagePanelHost.Content = frame;
+                    break;
+                case CallPageLocation.Fullscreen:
+                    //FullscreenHost.Content = frame;
+                    break;
+            }
         }
 
         #endregion
