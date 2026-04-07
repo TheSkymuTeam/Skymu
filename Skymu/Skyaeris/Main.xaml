@@ -1642,6 +1642,7 @@
                                             x:Name="browser"
                                             Grid.Row="1"
                                             Visibility="Collapsed" />
+                                        <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
                                         <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                             <ContentControl.Resources>
                                                 <DataTemplate DataType="{x:Type plugin:DirectMessage}">

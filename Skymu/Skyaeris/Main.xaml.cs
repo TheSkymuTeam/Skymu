@@ -1035,11 +1035,11 @@ namespace Skymu.Skyaeris
             CallScreen screen = new CallScreen(dm.Partner, Universal.CallPlugin);
             screen.HangUpRequested += OnHangUp;
 
-            if (!await screen.StartCall(vmodel.SelectedConversation, false))
+            if (!await screen.StartCall(vmodel.SelectedConversation, false)) // no video calling for now
             {
                 screen.HangUpRequested -= OnHangUp;
                 screen = null;
-                return; // no video calling for now
+                return; 
             }
 
             callFrame = new Frame();
@@ -1069,11 +1069,11 @@ namespace Skymu.Skyaeris
             callFrame.VerticalContentAlignment = VerticalAlignment.Stretch;
             callFrame.HorizontalAlignment = HorizontalAlignment.Stretch;
             callFrame.VerticalAlignment = VerticalAlignment.Stretch;
-            //if (MessagePanelHost.Content == frame) MessagePanelHost.Content = null;
-            //if (FillMessagePanelHost.Content == frame) FillMessagePanelHost.Content = null;
+            //if (MessagePanelHost.Content == callFrame) MessagePanelHost.Content = null;
+            if (FillMessagePanelHost.Content == callFrame) FillMessagePanelHost.Content = null;
             if (FillWindowHost.Content == callFrame)
                 FillWindowHost.Content = null;
-            //if (FullscreenHost.Content == frame) FullscreenHost.Content = null;
+            //if (FullscreenHost.Content == callFrame) FullscreenHost.Content = null;
 
             switch (location)
             {
@@ -1085,13 +1085,17 @@ namespace Skymu.Skyaeris
                     ContentArea.Visibility = Visibility.Visible;
                     break;
                 case CallPageLocation.FillMessagePanel:
-                    //FillMessagePanelHost.Content = frame;
+                    ChatProfileArea.Visibility = Visibility.Collapsed;
+                    FillMessagePanelHost.Visibility = Visibility.Visible;
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    FillMessagePanelHost.Content = callFrame;
                     break;
                 case CallPageLocation.MessagePanel:
-                    //MessagePanelHost.Content = frame;
+                    //MessagePanelHost.Content = callFrame;
                     break;
                 case CallPageLocation.Fullscreen:
-                    //FullscreenHost.Content = frame;
+                    //FullscreenHost.Content = callFrame;
                     break;
             }
         }
