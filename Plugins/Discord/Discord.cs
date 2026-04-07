@@ -26,8 +26,22 @@ using Discord.Protobuf;
 
 namespace Discord
 {
-    public class Core : ICore
+    public class Core : ICore, ICall
     {
+        // HELLO PATRICK. THESE ARE STUB METHODS. MOVE THEM WHERE YOU WANT
+
+        public event EventHandler<CallEventArgs> OnIncomingCall;
+        public event EventHandler<CallEventArgs> OnCallStateChanged;
+        public bool SupportsVideoCalls => false;
+        public Task<ActiveCall> StartCall(string conversationIdentifier, bool isVideo, bool startMuted) => Task.FromResult<ActiveCall>(new ActiveCall("dasd", "dasdsad", false, new User[1] { new User("Das", "dasdf", "Dasda") }));
+        public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
+        public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
+        public Task<bool> EndCall(ActiveCall call) => Task.FromResult(false);
+        public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
+        public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
+
+        // BYE PATRICK LOVE YOU
+
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;

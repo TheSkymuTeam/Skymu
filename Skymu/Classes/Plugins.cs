@@ -95,6 +95,7 @@ namespace Skymu
             }
             Universal.PluginList = null;
             Universal.Plugin = null;
+            Universal.CallPlugin = null;
         }
     }
 }

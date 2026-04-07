@@ -26,6 +26,7 @@ namespace Skymu
     public partial class Universal : Application
     {
         public static ICore Plugin;
+        public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
         public const string Name = "Skymu";

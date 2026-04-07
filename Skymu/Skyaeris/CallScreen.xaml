@@ -125,7 +125,9 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
                 <global:SliceControl
+                    x:Name="MuteButton"
                     Margin="4,0"
+                    MouseLeftButtonUp="OnMuteToggled"
                     Source="Assets/Universal/Call Screen/btn_mic.png"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
