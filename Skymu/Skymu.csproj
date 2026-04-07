@@ -155,6 +155,29 @@
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
 		<PackageReference Include="System.Text.Json" Version="10.0.3" />
 	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+  <Reference Include="PresentationFramework.Aero">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="PresentationFramework.Aero2">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="PresentationFramework.AeroLite">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="PresentationFramework.Classic">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="PresentationFramework.Luna">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="PresentationFramework.Royale">
+    <Private>True</Private>
+  </Reference>
+  <Reference Include="System.Security" />
+  <Reference Include="System.Web" />
+</ItemGroup>
 
 	<ItemGroup>
 		<AppDesigner Include="Properties\" />
@@ -181,29 +204,6 @@
 
 	<ItemGroup>
 		<Page Include="App.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="PresentationFramework.Aero">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Aero2">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.AeroLite">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Classic">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Luna">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Royale">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="System.Security" />
-		<Reference Include="System.Web" />
 	</ItemGroup>
 
 	<ItemGroup>
