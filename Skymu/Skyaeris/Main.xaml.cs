@@ -32,6 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -127,6 +128,8 @@ namespace Skymu.Skyaeris
         private BitmapImage contactsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/contacts-empty.png", false);
         private BitmapImage recentsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/recents-empty.png", false);
 
+        private Metadata SelectedContact;
+
         #endregion
 
         #region BitmapImage generators
@@ -173,6 +176,7 @@ namespace Skymu.Skyaeris
                     browser.Visibility = Visibility.Visible;
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ConversationList.SelectedItem = null;
+                    SelectedContact = null;
                     ClearTreeSelection(ServersList);
                     break;
 
@@ -542,7 +546,7 @@ namespace Skymu.Skyaeris
                         : dynamic;
             }
 
-            SetWindow(WindowType.Home);
+            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -580,6 +584,18 @@ namespace Skymu.Skyaeris
                         await Universal.Plugin.PopulateRecentsList();
                     ConfigureCompactRecentsList();
                     break;
+            }
+            if (tab_to_select.Name != "btnServers" &&
+                SelectedContact != null &&
+                SelectedContact is Metadata)
+            {
+                foreach (object item in ConversationList.Items)
+                {
+                    if (item is Conversation && ((Metadata)item).Identifier == ((Metadata)SelectedContact).Identifier)
+                    {
+                        ConversationList.SelectedItem = item;
+                    }
+                }
             }
         }
 
@@ -731,12 +747,15 @@ namespace Skymu.Skyaeris
             RoutedPropertyChangedEventArgs<object> e
         )
         {
+            SelectedContact = null;
             HandleServerItemSelection(e);
         }
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selected = ((ListBox)sender).SelectedItem;
+            if (selected != null && selected is Metadata)
+                SelectedContact = (Metadata)selected;
             if (selected is DateHeaderItem)
             {
                 ((ListBox)sender).SelectedItem = null;
