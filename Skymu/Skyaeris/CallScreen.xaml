@@ -113,9 +113,15 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <global:SliceControl Source="Assets/Universal/Call Screen/btn_sidebar_expand.png" Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
+                    x:Name="SidebarButton"
+                    MouseLeftButtonUp="OnSidebarToggled"
+                    Source="Assets/Universal/Call Screen/btn_sidebar_expand.png"
+                    Style="{StaticResource ActionButtonStyle}" />
+                <global:SliceControl
+                    x:Name="ChatButton"
                     Margin="8,0,0,0"
+                    MouseLeftButtonUp="OnChatToggled"
                     Source="Assets/Universal/Call Screen/btn_chat_inactive.png"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
@@ -154,7 +160,11 @@
                     Margin="0,0,8,0"
                     Source="Assets/Universal/Call Screen/btn_connection_4.png"
                     Style="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl Source="Assets/Universal/Call Screen/btn_screen_expand.png" Style="{StaticResource ActionButtonStyle}" />
+                <global:SliceControl
+                    x:Name="FullscreenButton"
+                    MouseLeftButtonUp="OnFullscreenToggled"
+                    Source="Assets/Universal/Call Screen/btn_screen_expand.png"
+                    Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
         </Grid>
     </Grid>

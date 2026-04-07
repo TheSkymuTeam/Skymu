@@ -1032,38 +1032,38 @@ namespace Skymu.Skyaeris
             if (dm == null)
                 return; // group calls not supported yet
 
-            CallScreen screen = new CallScreen(dm.Partner, Universal.CallPlugin);
+            CallScreen.LocationChangeEventArgs initial_location = new CallScreen.LocationChangeEventArgs(false, false, false);
+            CallScreen screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
             screen.HangUpRequested += OnHangUp;
+            screen.LocationChangeRequested += OnLocationChanged;
 
             if (!await screen.StartCall(vmodel.SelectedConversation, false)) // no video calling for now
             {
                 screen.HangUpRequested -= OnHangUp;
+                screen.LocationChangeRequested -= OnLocationChanged;
                 screen = null;
                 return; 
             }
 
             callFrame = new Frame();
             callFrame.Navigate(screen);
-            SetCallPageLocation(CallPageLocation.FillWindow);
+            SetCallPageLocation(initial_location);
             Sounds.Play("call-init");
+        }
+
+        private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
+        {
+            SetCallPageLocation(e);
         }
 
         private void OnHangUp(object sender, EventArgs e)
         {
-            SetCallPageLocation(CallPageLocation.Hidden);
+            SetCallPageLocation(null);
             Sounds.Play("call-end");
         }
 
-        private enum CallPageLocation
-        {
-            MessagePanel,
-            FillMessagePanel,
-            FillWindow,
-            Fullscreen,
-            Hidden,
-        }
 
-        private void SetCallPageLocation(CallPageLocation location)
+        private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
         {
             callFrame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
             callFrame.VerticalContentAlignment = VerticalAlignment.Stretch;
@@ -1071,32 +1071,22 @@ namespace Skymu.Skyaeris
             callFrame.VerticalAlignment = VerticalAlignment.Stretch;
             //if (MessagePanelHost.Content == callFrame) MessagePanelHost.Content = null;
             if (FillMessagePanelHost.Content == callFrame) FillMessagePanelHost.Content = null;
-            if (FillWindowHost.Content == callFrame)
-                FillWindowHost.Content = null;
             //if (FullscreenHost.Content == callFrame) FullscreenHost.Content = null;
-
-            switch (location)
+            if (location.SidebarToggle)
             {
-                case CallPageLocation.FillWindow:
-                    ContentArea.Visibility = Visibility.Collapsed;
-                    FillWindowHost.Content = callFrame;
-                    break;
-                case CallPageLocation.Hidden:
-                    ContentArea.Visibility = Visibility.Visible;
-                    break;
-                case CallPageLocation.FillMessagePanel:
-                    ChatProfileArea.Visibility = Visibility.Collapsed;
-                    FillMessagePanelHost.Visibility = Visibility.Visible;
-                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    MessageWindowRow.Height = new GridLength(0);
-                    FillMessagePanelHost.Content = callFrame;
-                    break;
-                case CallPageLocation.MessagePanel:
-                    //MessagePanelHost.Content = callFrame;
-                    break;
-                case CallPageLocation.Fullscreen:
-                    //FullscreenHost.Content = callFrame;
-                    break;
+                if (FillWindowHost.Content == callFrame) FillWindowHost.Content = null;
+                ContentArea.Visibility = Visibility.Visible;
+                ChatProfileArea.Visibility = Visibility.Collapsed;
+                FillMessagePanelHost.Visibility = Visibility.Visible;
+                TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                MessageWindowRow.Height = new GridLength(0);
+                FillMessagePanelHost.Content = callFrame;
+            }
+            else if (!location.SidebarToggle)
+            {
+                if (FillMessagePanelHost.Content == callFrame) FillMessagePanelHost.Content = null;
+                ContentArea.Visibility = Visibility.Collapsed;
+                FillWindowHost.Content = callFrame;
             }
         }
 
