@@ -9,13 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using Skymu.Classes;
-using Skymu.Helpers;
-using Skymu.Properties;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,6 +33,13 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Helpers;
+using Skymu.Properties;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 
 namespace Skymu.Skyaeris
 {
@@ -116,12 +116,12 @@ namespace Skymu.Skyaeris
         }
 
         private BitmapImage sendBtnSmall = FrozenImage.Generate(
-                    "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
-                );
+            "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
+        );
 
         private BitmapImage sendBtnFull = FrozenImage.Generate(
-                    "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
-                );
+            "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
+        );
 
         #endregion
 
@@ -135,7 +135,11 @@ namespace Skymu.Skyaeris
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = Converters.Helpers.GetAssetBasePrefix("Skyaeris") + "Profile Pictures/" + avatar + ".png";
+            string AvatarPath =
+                Converters.Helpers.GetAssetBasePrefix("Skyaeris")
+                + "Profile Pictures/"
+                + avatar
+                + ".png";
             return FrozenImage.Generate(AvatarPath);
         }
 
@@ -738,7 +742,6 @@ namespace Skymu.Skyaeris
         {
             using (_tbliHoldTokenSource = new CancellationTokenSource())
             {
-
                 try
                 {
                     await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
@@ -798,7 +801,6 @@ namespace Skymu.Skyaeris
         {
             new Views.About().Show();
         }
-
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
         {
@@ -900,7 +902,7 @@ namespace Skymu.Skyaeris
 
         private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
         {
-            HandleCallInit();
+            StartCall();
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -957,8 +959,10 @@ namespace Skymu.Skyaeris
 
         private bool HasAnyContent(RichTextBox rtb)
         {
-            if (rtb?.Document == null) return false;
-            if (rtb.Tag as string == TAG_PLACEHOLDER) return false;
+            if (rtb?.Document == null)
+                return false;
+            if (rtb.Tag as string == TAG_PLACEHOLDER)
+                return false;
 
             var start = rtb.Document.ContentStart;
             var end = rtb.Document.ContentEnd;
@@ -1020,13 +1024,24 @@ namespace Skymu.Skyaeris
 
         private Frame callFrame;
 
-        private void HandleCallInit()
+        private async void StartCall()
         {
+            if (Universal.CallPlugin == null)
+                return;
             var dm = vmodel.SelectedConversation as DirectMessage;
-            if (dm == null) return; // group calls not supported yet
+            if (dm == null)
+                return; // group calls not supported yet
 
-            CallScreen screen = new CallScreen(dm.Partner);
+            CallScreen screen = new CallScreen(dm.Partner, Universal.CallPlugin);
             screen.HangUpRequested += OnHangUp;
+
+            if (!await screen.StartCall(vmodel.SelectedConversation, false))
+            {
+                screen.HangUpRequested -= OnHangUp;
+                screen = null;
+                return; // no video calling for now
+            }
+
             callFrame = new Frame();
             callFrame.Navigate(screen);
             SetCallPageLocation(CallPageLocation.FillWindow);
@@ -1045,7 +1060,7 @@ namespace Skymu.Skyaeris
             FillMessagePanel,
             FillWindow,
             Fullscreen,
-            Hidden
+            Hidden,
         }
 
         private void SetCallPageLocation(CallPageLocation location)
@@ -1056,7 +1071,8 @@ namespace Skymu.Skyaeris
             callFrame.VerticalAlignment = VerticalAlignment.Stretch;
             //if (MessagePanelHost.Content == frame) MessagePanelHost.Content = null;
             //if (FillMessagePanelHost.Content == frame) FillMessagePanelHost.Content = null;
-            if (FillWindowHost.Content == callFrame) FillWindowHost.Content = null;
+            if (FillWindowHost.Content == callFrame)
+                FillWindowHost.Content = null;
             //if (FullscreenHost.Content == frame) FullscreenHost.Content = null;
 
             switch (location)
@@ -1120,15 +1136,17 @@ namespace Skymu.Skyaeris
             if (_conversationScrollViewer != null)
                 _conversationScrollViewer.ScrollChanged -= ConversationScrollChanged;
 
-            _conversationScrollViewer = ConversationItemsList.Template
-                .FindName("ScrollViewer", ConversationItemsList) as ScrollViewer;
+            _conversationScrollViewer =
+                ConversationItemsList.Template.FindName("ScrollViewer", ConversationItemsList)
+                as ScrollViewer;
             _conversationScrollViewer.ScrollChanged += ConversationScrollChanged;
         }
 
         private void ConversationScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.ExtentHeightChange == 0)
-                _userScrolledUp = _conversationScrollViewer.VerticalOffset
+                _userScrolledUp =
+                    _conversationScrollViewer.VerticalOffset
                     < _conversationScrollViewer.ScrollableHeight - 10;
         }
 
@@ -1211,7 +1229,10 @@ namespace Skymu.Skyaeris
                     sliceControl.Tag = emojiFilename;
                     border.Child = sliceControl;
                     border.MouseLeftButtonUp += EmojiBox_Click;
-                    border.MouseEnter += (s, ev) => ((Border)s).Background = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
+                    border.MouseEnter += (s, ev) =>
+                        ((Border)s).Background = new SolidColorBrush(
+                            Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
+                        );
                     border.MouseLeave += (s, ev) => ((Border)s).Background = Brushes.Transparent;
                     EmojiWrapPanel.Children.Add(border);
                 }
@@ -1237,7 +1258,8 @@ namespace Skymu.Skyaeris
         {
             var border = sender as Border;
             var sliceControlInside = border?.Child as SliceControl;
-            if (sliceControlInside == null) return;
+            if (sliceControlInside == null)
+                return;
 
             EmojiFlyout.IsOpen = false;
             RemovePlaceholder(MessageTextBox);
@@ -1281,11 +1303,20 @@ namespace Skymu.Skyaeris
             vmodel.Ready += (s, e) =>
             {
                 StatusBox.Text = Universal.CurrentUser.DisplayName;
-                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
+                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
+                    Universal.CurrentUser.ConnectionStatus
+                );
                 ConfigureCompactRecentsList();
                 if (Properties.Settings.Default.EnableSkypeHome)
-                    SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
-                WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + Universal.CurrentUser.Username;
+                    SkypeHome.Generate(
+                        browser,
+                        Universal.CurrentUser,
+                        Universal.Plugin.ContactsList.ToArray()
+                    );
+                WindowTitle =
+                    Properties.Settings.Default.BrandingName
+                    + "™ - "
+                    + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
                 Ready?.Invoke(this, EventArgs.Empty);
@@ -1319,8 +1350,11 @@ namespace Skymu.Skyaeris
                 if (e.PropertyName == nameof(MainViewModel.TypingText))
                     Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
-                    Dispatcher.Invoke(() => TypingIndicator.Visibility =
-                        vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
+                    Dispatcher.Invoke(() =>
+                        TypingIndicator.Visibility = vmodel.IsTypingVisible
+                            ? Visibility.Visible
+                            : Visibility.Collapsed
+                    );
             };
 
             InitializeWindowFrame();
@@ -1355,7 +1389,7 @@ namespace Skymu.Skyaeris
 
             SourceInitialized += (s, e) =>
             {
-	            WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
                 if (wplc != null)
                 {
                     WindowPlacement wp = (WindowPlacement)wplc;
@@ -1399,7 +1433,8 @@ namespace Skymu.Skyaeris
             }
 
             UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == UserConnectionStatus.Unknown) return;
+            if (status == UserConnectionStatus.Unknown)
+                return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
             Tray.PushIcon(status);

@@ -607,14 +607,10 @@ namespace MiddleMan
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
         event EventHandler<MessageEventArgs> MessageEvent;
-        // event EventHandler<CallEventArgs> OnIncomingCall;
-        // event EventHandler<CallEventArgs> OnCallStateChanged; // ringing → active → ended/failed
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         bool SupportsServers { get; } // Does the plugin support servers or not? (Most don't)
-        //bool SupportsCalls { get; }
-        //bool SupportsVideoCalls { get; }
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> Authenticate(
@@ -649,13 +645,21 @@ namespace MiddleMan
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation.
         Task<bool> SetConnectionStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
         Task<bool> SetTextStatus(string status); // sets text status
-        //Task<ActiveCall> StartCall(string conversationIdentifier, bool isVideo);
-        //Task<bool> AnswerCall(string callId);
-        //Task<bool> DeclineCall(string callId);
-        //Task<bool> EndCall(string callId);
-        //Task<bool> SetMuted(string callId, bool muted);
-        //Task<bool> SetVideoEnabled(string callId, bool enabled);
-        //ActiveCall GetActiveCall(string callId); // null if no such call
+    }
+
+    public interface ICall
+    {
+        bool SupportsVideoCalls { get; }
+
+        event EventHandler<CallEventArgs> OnIncomingCall;
+        event EventHandler<CallEventArgs> OnCallStateChanged;
+
+        Task<ActiveCall> StartCall(string conversationIdentifier, bool isVideo, bool startMuted);
+        Task<bool> AnswerCall(ActiveCall call);
+        Task<bool> DeclineCall(ActiveCall call);
+        Task<bool> EndCall(ActiveCall call);
+        Task<bool> SetMuted(ActiveCall call, bool muted);
+        Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);
     }
 
     public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.

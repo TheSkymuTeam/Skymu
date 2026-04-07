@@ -87,6 +87,7 @@ namespace Skymu.ViewModels
                 {
                     PendingAutoLogin = match;
                     Universal.Plugin = plugin;
+                    Universal.CallPlugin = Universal.Plugin as ICall;
                 }
 
                 if (plugin.AuthenticationTypes.Length <= 1)
@@ -147,6 +148,7 @@ namespace Skymu.ViewModels
             if (PendingAutoLogin != null) return;
             _selectedListing = listing;
             Universal.Plugin = Universal.PluginList[listing.PluginIndex];
+            Universal.CallPlugin = Universal.Plugin as ICall;
             PluginSelectionUpdated?.Invoke(listing);
         }
 
