@@ -708,7 +708,7 @@
                         <ColumnDefinition
                             x:Name="SidebarColumn"
                             Width="300"
-                            MinWidth="190" />
+                            MinWidth="172" />
                         <ColumnDefinition Width="4" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
