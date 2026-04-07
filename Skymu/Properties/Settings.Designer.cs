@@ -226,6 +226,18 @@ namespace Skymu.Properties {
                 this["Interface"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sounds")]
+        public string SoundPack {
+            get {
+                return ((string)(this["SoundPack"]));
+            }
+            set {
+                this["SoundPack"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
