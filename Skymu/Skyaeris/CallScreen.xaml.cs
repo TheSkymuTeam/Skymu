@@ -19,38 +19,42 @@ namespace Skymu.Skyaeris
 {
     public partial class CallScreen : Page
     {
-        private BitmapImage pill, rectangle, logo_small, logo_big, unmuted, muted;
+        private BitmapImage pill, rectangle, logo_small, logo_big, unmuted, muted, chat_active, chat_inactive, sidebar_expand, sidebar_collapse, screen_contract, screen_expand;
         private bool isPillMode;       
         private bool isLogoBig;
         private bool isMuted;
         private ActiveCall _call;
         private ICall plugin;
+        private LocationChangeEventArgs location;
 
-        public CallScreen(User partner, ICall call_plugin)
+        public CallScreen(User partner, ICall call_plugin, CallScreen.LocationChangeEventArgs initial_location)
         {
             InitializeComponent();
             plugin = call_plugin;
             MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
-            const string prefix = "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
-
             isMuted = false;
-            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
+
+            const string prefix = "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
+            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png"); // TODO make loop
             pill = FrozenImage.Generate(prefix + "Call Screen/pill.png");
             logo_small = FrozenImage.Generate(prefix + "Branding/logo-call-small.png");
             logo_big = FrozenImage.Generate(prefix + "Branding/logo-call-big.png");
             unmuted = FrozenImage.Generate(prefix + "Call Screen/btn_mic.png");
             muted = FrozenImage.Generate(prefix + "Call Screen/btn_mic_off.png");
+            chat_active = FrozenImage.Generate(prefix + "Call Screen/btn_chat_active.png");
+            chat_inactive = FrozenImage.Generate(prefix + "Call Screen/btn_chat_inactive.png");
+            sidebar_expand = FrozenImage.Generate(prefix + "Call Screen/btn_sidebar_expand.png");
+            sidebar_collapse = FrozenImage.Generate(prefix + "Call Screen/btn_sidebar_collapse.png");
+            screen_contract = FrozenImage.Generate(prefix + "Call Screen/btn_screen_contract.png");
+            screen_expand = FrozenImage.Generate(prefix + "Call Screen/btn_screen_expand.png");
 
             isPillMode = !(this.ActualWidth >= 1025.0);
             isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
             Resized(null, null);
+            location = initial_location; 
         }
-
-        #region Events / event handlers
-
-        public event EventHandler HangUpRequested;
 
         public async Task<bool> StartCall(Conversation conversation, bool is_video)
         {
@@ -64,10 +68,22 @@ namespace Skymu.Skyaeris
             return false;
         }
 
-        private async void OnHangUp(object sender, MouseButtonEventArgs e)
+        #region Events / event handlers
+
+        public event EventHandler HangUpRequested;
+        public event EventHandler<LocationChangeEventArgs> LocationChangeRequested;
+        public class LocationChangeEventArgs : EventArgs
         {
-            await plugin.EndCall(_call);
-            if (HangUpRequested != null) HangUpRequested(this, EventArgs.Empty);
+            public bool SidebarToggle;
+            public bool ChatToggle;
+            public bool FullscreenToggle;
+
+            public LocationChangeEventArgs(bool sidebar, bool chat, bool fullscreen)
+            {
+                SidebarToggle = sidebar;
+                ChatToggle = chat;
+                FullscreenToggle = fullscreen;
+            }
         }
 
         private async void OnMuteToggled(object sender, MouseButtonEventArgs e)
@@ -76,6 +92,49 @@ namespace Skymu.Skyaeris
             if (isMuted) MuteButton.Source = muted;
             else MuteButton.Source = unmuted;
             await plugin.SetMuted(_call, isMuted);
+        }
+
+        private async void OnSidebarToggled(object sender, MouseButtonEventArgs e)
+        {
+            location.SidebarToggle = !location.SidebarToggle;
+            SetButtonSource(SidebarButton, location.SidebarToggle);
+            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+        }
+
+        private async void OnChatToggled(object sender, MouseButtonEventArgs e)
+        {
+            location.ChatToggle = !location.ChatToggle;
+            SetButtonSource(ChatButton, location.ChatToggle);
+            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+        }
+
+        private async void OnFullscreenToggled(object sender, MouseButtonEventArgs e)
+        {
+            location.FullscreenToggle = !location.FullscreenToggle;
+            SetButtonSource(FullscreenButton, location.FullscreenToggle);
+            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+        }
+
+        private void SetButtonSource(SliceControl button, bool active)
+        {
+            if (button == SidebarButton)
+            {
+                button.Source = active ? sidebar_collapse : sidebar_expand;
+            }
+            else if (button == ChatButton)
+            {
+                button.Source = active ? chat_active : chat_inactive;
+            }
+            else if (button == FullscreenButton)
+            {
+                button.Source = active ? screen_contract : screen_expand;
+            }
+        }
+
+        private async void OnHangUp(object sender, MouseButtonEventArgs e)
+        {
+            await plugin.EndCall(_call);
+            if (HangUpRequested != null) HangUpRequested(this, EventArgs.Empty);
         }
 
         #endregion
