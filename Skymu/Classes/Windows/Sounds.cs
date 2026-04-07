@@ -9,6 +9,7 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,8 +38,10 @@ namespace Skymu
             Load("logout", "LOGOUT.WAV");
         }
         
-        static void Load(string key, string filename, string path = "Sounds", string fallback = "Sounds")
+        static void Load(string key, string filename, string path = "", string fallback = "Sounds")
         {
+            if (path == "")
+                path = Settings.Default.SoundPack;
             var uri = new Uri($"pack://application:,,,/{path}/{filename}", UriKind.Absolute);
             bool suc = false;
             System.Windows.Resources.StreamResourceInfo streamInfo = null;
