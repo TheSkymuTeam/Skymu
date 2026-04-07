@@ -1114,7 +1114,6 @@ namespace Skymu.Skyaeris
             Sounds.Play("call-end");
         }
 
-
         private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
         {
             callFrame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
