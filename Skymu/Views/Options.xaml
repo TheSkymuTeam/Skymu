@@ -299,6 +299,27 @@
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
+                                                Text="Sound pack (exp.)" />
+                                            <ComboBox
+                                                x:Name="ComboSoundPack"
+                                                Width="250"
+                                                SelectedValue="{Binding SoundPack, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValuePath="Tag">
+                                                <ComboBoxItem Content="Standard" Tag="Sounds" />
+                                                <ComboBoxItem Content="Classic" Tag="SoundsClassic" />
+                                                <ComboBoxItem Content="Skype 8" Tag="SoundsModern" />
+                                            </ComboBox>
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="#FF888888"
+                                                Text="(Requires restart)" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
                                                 Text="Application theme (experimental)" />
                                             <ComboBox
                                                 Width="250"

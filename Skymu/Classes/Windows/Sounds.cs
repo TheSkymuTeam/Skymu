@@ -9,11 +9,11 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
-using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -37,20 +37,33 @@ namespace Skymu
             Load("login", "LOGIN.WAV");
             Load("logout", "LOGOUT.WAV");
         }
-
-        static void Load(string key, string relativePath)
+        
+        static void Load(string key, string filename, string path = "", string fallback = "Sounds")
         {
-            var uri = new Uri($"pack://application:,,,/Sounds/{relativePath}", UriKind.Absolute);
-            var streamInfo = Application.GetResourceStream(uri);
-            if (streamInfo?.Stream != null)
+            if (path == "")
+                path = Settings.Default.SoundPack;
+            var uri = new Uri($"pack://application:,,,/{path}/{filename}", UriKind.Absolute);
+            bool suc = false;
+            System.Windows.Resources.StreamResourceInfo streamInfo = null;
+            try
+            {
+                streamInfo = Application.GetResourceStream(uri);
+                suc = true;
+            }
+            catch (IOException) { }
+            if (suc && streamInfo?.Stream != null)
             {
                 var ms = new MemoryStream();
                 streamInfo.Stream.CopyTo(ms);
                 ms.Position = 0;
 
                 var sp = new SoundPlayer(ms);
-                sp.Load(); 
+                sp.Load();
                 players[key] = sp;
+            }
+            else if (fallback != String.Empty && path != fallback)
+            {
+                Load(key, filename, fallback, "Sounds");
             }
         }
 
@@ -63,7 +76,7 @@ namespace Skymu
             if (force)
             {
                 forcelock = true;
-                System.Threading.Tasks.Task.Run(() =>
+                Task.Run(() =>
                 {
                     sp.PlaySync(); 
                     forcelock = false;
@@ -95,7 +108,6 @@ namespace Skymu
         public static void PlaySynchronous(string key)
         {
             if (players.TryGetValue(key, out var sp)) sp.PlaySync();
-
         }
     }
 }
