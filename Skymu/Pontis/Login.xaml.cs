@@ -134,7 +134,7 @@ namespace Skymu.Pontis
         }
 
         private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
-        private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
+        private void OnConnectionOptions(object sender, EventArgs e) { new Options("#FFF").Show(); }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
         private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }

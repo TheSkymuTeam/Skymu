@@ -7,8 +7,8 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:properties="clr-namespace:Skymu.Properties"
-    Width="708"
-    Height="600"
+    Width="716"
+    Height="612"
     HorizontalAlignment="Left"
     VerticalAlignment="Top"
     Background="#d4e2f2"
@@ -32,6 +32,38 @@
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <Style x:Key="SidebarHeaderStyle" TargetType="ContentControl">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContentControl">
+                        <Grid Margin="0,0,0,3">
+                            <global:SliceControl
+                                HorizontalAlignment="Stretch"
+                                DefaultIndex="0"
+                                ElementCount="5"
+                                HoverIndex="1"
+                                PressedIndex="2"
+                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
+                                StackDirection="Vertical" />
+                            <TextBlock
+                                Margin="39,12,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                FontFamily="Tahoma"
+                                FontSize="11"
+                                Foreground="#666666"
+                                Text="{TemplateBinding Content}" />
+                            <Image
+                                Height="24"
+                                Margin="10,7,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Source="{TemplateBinding Tag}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Border BorderThickness="8">
@@ -42,129 +74,51 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="0,0,3,0">
-                <Grid>
-                    <global:SliceControl
-                        HorizontalAlignment="Stretch"
-                        DefaultIndex="0"
-                        ElementCount="5"
-                        HoverIndex="+1"
-                        IsHitTestVisible="False"
-                        PressedIndex="+2"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                        StackDirection="Vertical" />
-                    <TextBlock
-                        Margin="39,12,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        FontFamily="Tahoma"
-                        FontSize="11"
-                        Foreground="#666666"
-                        Text="General (change)" />
-                    <Image
-                        Height="24"
-                        Margin="10,7,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/general.png}" />
-                </Grid>
-
-                <Grid Margin="0,3,0,0">
-                    <StackPanel>
-                        <global:SliceControl
-                            Width="179"
-                            Height="40"
-                            DefaultIndex="3"
-                            ElementCount="5"
-                            HoverIndex="3"
-                            IsHitTestVisible="False"
-                            PressedIndex="3"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                            StackDirection="Vertical"
-                            Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}"
-                            TextColor="#666666"
-                            TextFont="Tahoma"
-                            TextLeftMargin="38"
-                            TextSize="11" />
-                        <global:SliceControl
-                            Width="179"
-                            Height="40"
-                            Panel.ZIndex="2"
-                            DefaultIndex="4"
-                            ElementCount="5"
-                            HoverIndex="4"
-                            IsHitTestVisible="False"
-                            PressedIndex="4"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                            StackDirection="Vertical" />
-                    </StackPanel>
-                    <Image
-                        Height="24"
-                        Margin="10,7,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}" />
-                </Grid>
-
-                <Grid Margin="0,3,0,0">
-                    <global:SliceControl
-                        HorizontalAlignment="Stretch"
-                        DefaultIndex="0"
-                        ElementCount="5"
-                        HoverIndex="+1"
-                        IsHitTestVisible="False"
-                        PressedIndex="+2"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                        StackDirection="Vertical" />
-                    <TextBlock
-                        Margin="39,12,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        FontFamily="Tahoma"
-                        FontSize="11"
-                        Foreground="#666666"
-                        Text="crap" />
-                    <Image
-                        Height="24"
-                        Margin="10,7,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}" />
-                </Grid>
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_PAGE_GENERAL]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/general.png}" />
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_PAGE_PRIVACY]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/privacy.png}" />
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/notifications.png}" />
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_CALLS]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/calls.png}" />
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_CHATS_SMS]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/im_and_sms.png}" />
+                <ContentControl
+                    Content="{Binding [sF_OPTIONS_PAGE_DEBUG]}"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Tag="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}" />
             </StackPanel>
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <StackPanel>
-                        <global:SliceControl
-                            Width="510"
-                            Height="40"
-                            Panel.ZIndex="2"
-                            DefaultIndex="3"
-                            ElementCount="5"
-                            HoverIndex="3"
-                            IsHitTestVisible="False"
-                            PressedIndex="3"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                            StackDirection="Vertical" />
-                        <global:SliceControl
-                            Width="510"
-                            Height="40"
-                            Panel.ZIndex="2"
-                            DefaultIndex="4"
-                            ElementCount="5"
-                            HoverIndex="4"
-                            IsHitTestVisible="False"
-                            PressedIndex="4"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                            StackDirection="Vertical" />
-                    </StackPanel>
-
+                    <global:SliceControl
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        BottomHeight="3"
+                        DefaultIndex="3"
+                        ElementCount="5"
+                        ElementSpan="2"
+                        Interactive="False"
+                        SliceMode="2"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
+                        StackDirection="Vertical"
+                        TopHeight="37" />
                     <StackPanel
                         Margin="10,12,0,6"
                         HorizontalAlignment="Left"
@@ -184,58 +138,49 @@
                             Foreground="#FF393A48"
                             Text="Modify the way Skymu looks, feels, and behaves" />
                     </StackPanel>
-                </Grid>
-
-                <TabControl
-                    Grid.Row="1"
-                    Padding="0"
-                    VerticalAlignment="Top"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    SelectedIndex="1">
-
-                    <TabItem
+                    <TabControl
+                        Margin="15,25"
                         Padding="0"
+                        VerticalAlignment="Top"
                         Background="Transparent"
-                        Header="TabItem"
-                        Opacity="0">
-                        <Border
-                            x:Name="OptionCategoryContainer1"
-                            BorderBrush="#26000000"
-                            BorderThickness="1,0,1,1">
-                            <ScrollViewer>
-                                <StackPanel Margin="15" Orientation="Vertical">
-                                    <Label Content="Visual style of the window" FontWeight="Bold" />
-                                    <StackPanel Margin="0,5">
-                                        <RadioButton
-                                            x:Name="RadioSkype"
-                                            Margin="0,5"
-                                            Checked="RadioSkype_Checked"
-                                            Content="Skype"
-                                            GroupName="VisualStyle" />
-                                        <RadioButton
-                                            x:Name="RadioClassic"
-                                            Margin="0,5"
-                                            Checked="RadioClassic_Checked"
-                                            Content="Classic Windows"
-                                            GroupName="VisualStyle" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </ScrollViewer>
-                        </Border>
-                    </TabItem>
-
-                    <TabItem
-                        Background="{x:Null}"
-                        Header="TabItem"
-                        Opacity="0">
-                        <Grid>
+                        BorderThickness="0"
+                        SelectedIndex="1">
+                        <TabItem
+                            Background="Transparent"
+                            Header="TabItem"
+                            Opacity="0">
                             <Border
-                                x:Name="OptionCategoryContainer"
+                                x:Name="OptionCategoryContainer1"
                                 BorderBrush="#26000000"
                                 BorderThickness="1,0,1,1">
                                 <ScrollViewer>
-                                    <StackPanel Margin="15" Orientation="Vertical">
+                                    <StackPanel Orientation="Vertical">
+                                        <Label Content="Visual style of the window" FontWeight="Bold" />
+                                        <StackPanel Margin="0,5">
+                                            <RadioButton
+                                                x:Name="RadioSkype"
+                                                Margin="0,5"
+                                                Checked="RadioSkype_Checked"
+                                                Content="Skype"
+                                                GroupName="VisualStyle" />
+                                            <RadioButton
+                                                x:Name="RadioClassic"
+                                                Margin="0,5"
+                                                Checked="RadioClassic_Checked"
+                                                Content="Classic Windows"
+                                                GroupName="VisualStyle" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+                        <TabItem
+                            Background="{x:Null}"
+                            Header="TabItem"
+                            Opacity="0">
+                            <Grid>
+                                <ScrollViewer>
+                                    <StackPanel Orientation="Vertical">
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
@@ -438,23 +383,21 @@
 
                                     </StackPanel>
                                 </ScrollViewer>
-                            </Border>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
-
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
                 <StackPanel
                     Grid.Row="2"
                     Height="23"
-                    Margin="0,12,0,0"
+                    Margin="0,10,3,3"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Horizontal">
-
                     <Button
                         Height="23"
                         MinWidth="73"
-                        Margin="0,0,10,0"
+                        Margin="0,0,12,0"
                         Padding="12,0"
                         Click="SaveButtonClick"
                         Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}"
@@ -462,7 +405,7 @@
                     <Button
                         Height="23"
                         MinWidth="73"
-                        Margin="0,0,10,0"
+                        Margin="0,0,12,0"
                         Padding="12,0"
                         Click="RestartButtonClick"
                         Content="Save and restart"
@@ -470,7 +413,7 @@
                     <Button
                         Height="23"
                         MinWidth="73"
-                        Margin="0,0,10,0"
+                        Margin="0,0,12,0"
                         Padding="12,0"
                         Click="ResetButtonClick"
                         Content="{Binding [sF_OPTIONS_BTN_RESET]}"

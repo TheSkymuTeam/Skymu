@@ -9,14 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using Skymu.Classes;
-using Skymu.Converters;
-using Skymu.Helpers;
-using Skymu.Properties;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,6 +34,15 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Converters;
+using Skymu.Helpers;
+using Skymu.Properties;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
+
 namespace Skymu.Skyaeris
 {
     public partial class Main : Window, IMainWindowHolder
@@ -123,10 +124,22 @@ namespace Skymu.Skyaeris
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
         );
 
-        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
-        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
-        private BitmapImage contactsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/contacts-empty.png", false);
-        private BitmapImage recentsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/recents-empty.png", false);
+        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator(
+            "Sidebar/contacts.png",
+            false
+        );
+        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator(
+            "Sidebar/recents.png",
+            false
+        );
+        private BitmapImage contactsBtnImageEmpty = Converters.Helpers.AssetPathGenerator(
+            "Sidebar/contacts-empty.png",
+            false
+        );
+        private BitmapImage recentsBtnImageEmpty = Converters.Helpers.AssetPathGenerator(
+            "Sidebar/recents-empty.png",
+            false
+        );
 
         private Metadata SelectedContact;
 
@@ -585,13 +598,18 @@ namespace Skymu.Skyaeris
                     ConfigureCompactRecentsList();
                     break;
             }
-            if (tab_to_select.Name != "btnServers" &&
-                SelectedContact != null &&
-                SelectedContact is Metadata)
+            if (
+                tab_to_select.Name != "btnServers"
+                && SelectedContact != null
+                && SelectedContact is Metadata
+            )
             {
                 foreach (object item in ConversationList.Items)
                 {
-                    if (item is Conversation && ((Metadata)item).Identifier == ((Metadata)SelectedContact).Identifier)
+                    if (
+                        item is Conversation
+                        && ((Metadata)item).Identifier == ((Metadata)SelectedContact).Identifier
+                    )
                     {
                         ConversationList.SelectedItem = item;
                     }
@@ -865,7 +883,7 @@ namespace Skymu.Skyaeris
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.Options().Show();
+            new Views.Options("#d4e2f2").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)
@@ -1093,7 +1111,8 @@ namespace Skymu.Skyaeris
 
         #region Calls
 
-        private Frame callFrame;
+        private Frame frame;
+        private CallScreen screen;
 
         private async void StartCall()
         {
@@ -1103,8 +1122,9 @@ namespace Skymu.Skyaeris
             if (dm == null)
                 return; // group calls not supported yet
 
-            CallScreen.LocationChangeEventArgs initial_location = new CallScreen.LocationChangeEventArgs(false, false, false);
-            CallScreen screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
+            CallScreen.LocationChangeEventArgs initial_location =
+                new CallScreen.LocationChangeEventArgs(false, false, false);
+            screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
 
@@ -1113,11 +1133,11 @@ namespace Skymu.Skyaeris
                 screen.HangUpRequested -= OnHangUp;
                 screen.LocationChangeRequested -= OnLocationChanged;
                 screen = null;
-                return; 
+                return;
             }
 
-            callFrame = new Frame();
-            callFrame.Navigate(screen);
+            frame = new Frame();
+            frame.Navigate(screen);
             SetCallPageLocation(initial_location);
             Sounds.Play("call-init");
         }
@@ -1135,28 +1155,48 @@ namespace Skymu.Skyaeris
 
         private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
         {
-            callFrame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            callFrame.VerticalContentAlignment = VerticalAlignment.Stretch;
-            callFrame.HorizontalAlignment = HorizontalAlignment.Stretch;
-            callFrame.VerticalAlignment = VerticalAlignment.Stretch;
-            //if (MessagePanelHost.Content == callFrame) MessagePanelHost.Content = null;
-            if (FillMessagePanelHost.Content == callFrame) FillMessagePanelHost.Content = null;
-            //if (FullscreenHost.Content == callFrame) FullscreenHost.Content = null;
-            if (location.SidebarToggle)
+            frame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            frame.VerticalContentAlignment = VerticalAlignment.Stretch;
+            frame.HorizontalAlignment = HorizontalAlignment.Stretch;
+            frame.VerticalAlignment = VerticalAlignment.Stretch;
+
+            if (location == null) 
             {
-                if (FillWindowHost.Content == callFrame) FillWindowHost.Content = null;
+                if (screen != null)
+                {
+                    screen.HangUpRequested -= OnHangUp;
+                    screen.LocationChangeRequested -= OnLocationChanged;
+                    screen = null;
+                    frame.Content = null;
+                    frame = null;
+                }
+                if (FillWindowHost.Content == frame)
+                    FillWindowHost.Content = null;
+                if (FillMessagePanelHost.Content == frame)
+                    FillMessagePanelHost.Content = null;
                 ContentArea.Visibility = Visibility.Visible;
-                ChatProfileArea.Visibility = Visibility.Collapsed;
-                FillMessagePanelHost.Visibility = Visibility.Visible;
-                TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                MessageWindowRow.Height = new GridLength(0);
-                FillMessagePanelHost.Content = callFrame;
+                SetWindow(WindowType.Chat);
             }
-            else if (!location.SidebarToggle)
+            else
             {
-                if (FillMessagePanelHost.Content == callFrame) FillMessagePanelHost.Content = null;
-                ContentArea.Visibility = Visibility.Collapsed;
-                FillWindowHost.Content = callFrame;
+                if (location.SidebarToggle)
+                {
+                    if (FillWindowHost.Content == frame)
+                        FillWindowHost.Content = null;
+                    ContentArea.Visibility = Visibility.Visible;
+                    ChatProfileArea.Visibility = Visibility.Collapsed;
+                    FillMessagePanelHost.Visibility = Visibility.Visible;
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    FillMessagePanelHost.Content = frame;
+                }
+                else if (!location.SidebarToggle)
+                {
+                    if (FillMessagePanelHost.Content == frame)
+                        FillMessagePanelHost.Content = null;
+                    ContentArea.Visibility = Visibility.Collapsed;
+                    FillWindowHost.Content = frame;
+                }
             }
         }
 
