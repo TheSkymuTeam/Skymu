@@ -9,6 +9,14 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Converters;
+using Skymu.Helpers;
+using Skymu.Properties;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,14 +41,6 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.Classes;
-using Skymu.Helpers;
-using Skymu.Properties;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
-
 namespace Skymu.Skyaeris
 {
     public partial class Main : Window, IMainWindowHolder
@@ -118,10 +118,14 @@ namespace Skymu.Skyaeris
         private BitmapImage sendBtnSmall = FrozenImage.Generate(
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
         );
-
         private BitmapImage sendBtnFull = FrozenImage.Generate(
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
         );
+
+        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
+        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
+        private BitmapImage contactsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/contacts-empty.png", false);
+        private BitmapImage recentsBtnImageEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/recents-empty.png", false);
 
         #endregion
 
@@ -606,6 +610,8 @@ namespace Skymu.Skyaeris
 
                 sidebarCol.Width = new GridLength(newWidth);
                 dragStart = current;
+
+                Sidebar_SizeChanged_Refresh();
             }
         }
 
@@ -637,6 +643,47 @@ namespace Skymu.Skyaeris
             }
         }
 
+        private void Sidebar_SizeChanged_Refresh()
+        {
+            if (btnServers.Visibility == Visibility.Collapsed)
+            {
+                if (SidebarColumn.ActualWidth <= 185)
+                {
+                    btnContacts.Source = contactsBtnImageEmpty;
+                    btnRecents.Source = recentsBtnImageEmpty;
+                    btnContacts.TextLeftMargin = 5;
+                    btnRecents.TextLeftMargin = 5;
+                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Center;
+                    btnRecents.TextHorizontalAlignment = HorizontalAlignment.Center;
+                }
+                else
+                {
+                    btnContacts.Source = contactsBtnImage;
+                    btnRecents.Source = recentsBtnImage;
+                    btnContacts.TextLeftMargin = 30;
+                    btnRecents.TextLeftMargin = 30;
+                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Left;
+                    btnRecents.TextHorizontalAlignment = HorizontalAlignment.Left;
+                }
+            }
+            if (SidebarColumn.ActualWidth < 195)
+            {
+                MakeGroupButton.OverlayText.Visibility = Visibility.Collapsed;
+                MakeGroupButton.TextLeftMargin = 0;
+            }
+            else
+            {
+                MakeGroupButton.OverlayText.Visibility = Visibility.Visible;
+                MakeGroupButton.TextLeftMargin = 41;
+                if (SidebarColumn.ActualWidth < 245)
+                {
+                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
+                }
+                else
+                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
+            }
+        }
+
         #endregion
 
         #region User count API
@@ -662,6 +709,11 @@ namespace Skymu.Skyaeris
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
 
+            Main_SizeChanged_Refresh();
+        }
+
+        private void Main_SizeChanged_Refresh()
+        {
             if (MessageWindow.ActualWidth <= 720 && MessageWindow.ActualWidth != 0)
             {
                 SendMsgButton.Text = "";
@@ -1390,6 +1442,11 @@ namespace Skymu.Skyaeris
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
+            Main_SizeChanged_Refresh();
+            Sidebar_SizeChanged_Refresh();
+            // seanFinx Crazy Hack
+            AddContactButton.OverlayText.TextTrimming = TextTrimming.None;
+            MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
 
             SourceInitialized += (s, e) =>
             {

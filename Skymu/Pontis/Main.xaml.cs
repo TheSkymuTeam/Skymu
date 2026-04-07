@@ -105,6 +105,10 @@ namespace Skymu.Pontis
             set { SetValue(WindowTitleProperty, value); }
         }
 
+        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
+        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
+        private BitmapImage sidebarBtnEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/empty.png", false);
+
         #endregion
 
         #region BitmapImage generators
@@ -510,6 +514,7 @@ namespace Skymu.Pontis
 
                 sidebarCol.Width = new GridLength(newWidth);
                 dragStart = current;
+                Sidebar_SizeChanged_Refresh();
             }
         }
 
@@ -538,6 +543,36 @@ namespace Skymu.Pontis
                 }
                 capturedElement = null;
                 e.Handled = true;
+            }
+        }
+
+        private void Sidebar_SizeChanged_Refresh()
+        {
+            if (btnServers.Visibility == Visibility.Collapsed)
+            {
+                btnServers.Width = 0;
+                if (SidebarColumn.ActualWidth <= 185)
+                {
+                    btnContacts.Source = sidebarBtnEmpty;
+                    btnRecents.Source = sidebarBtnEmpty;
+                    btnContacts.TextLeftMargin = 5;
+                    btnRecents.TextLeftMargin = 5;
+                    SidebarTabs.ColumnDefinitions[0].MinWidth = 0;
+                    SidebarTabs.ColumnDefinitions[0].MaxWidth = 69;
+                    btnContacts.MaxWidth = 69;
+                    btnContacts.HorizontalAlignment = HorizontalAlignment.Left;
+                }
+                else
+                {
+                    btnContacts.Source = contactsBtnImage;
+                    btnRecents.Source = recentsBtnImage;
+                    btnContacts.TextLeftMargin = 31;
+                    btnRecents.TextLeftMargin = 31;
+                    SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
+                    SidebarTabs.ColumnDefinitions[0].MaxWidth = double.MaxValue;
+                    btnContacts.MaxWidth = double.MaxValue;
+                    btnContacts.HorizontalAlignment = HorizontalAlignment.Stretch;
+                }
             }
         }
 
@@ -1155,11 +1190,16 @@ namespace Skymu.Pontis
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
+                SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
             }
 
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
+            Sidebar_SizeChanged_Refresh();
+            // seanFinx Crazy Hack
+            btnContacts.OverlayText.TextTrimming = TextTrimming.None;
+            btnRecents.OverlayText.TextTrimming = TextTrimming.None;
 
             SourceInitialized += (s, e) =>
             {
