@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Skymu.Helpers;
+using MiddleMan;
 
 namespace Skymu.Skyaeris
 {
@@ -22,10 +23,12 @@ namespace Skymu.Skyaeris
         private bool isPillMode;       
         private bool isLogoBig;
 
-        public CallScreen()
+        public CallScreen(User partner)
         {
             InitializeComponent();
-
+            MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
+            PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+            PartnerDisplayName.Text = partner.DisplayName;
             const string prefix = "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
 
             rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
@@ -37,6 +40,16 @@ namespace Skymu.Skyaeris
             isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
             Resized(null, null);
         }
+
+        #region Events / event handlers
+
+        public event EventHandler HangUpRequested;
+        private void OnHangUp(object sender, MouseButtonEventArgs e)
+        {
+            if (HangUpRequested != null) HangUpRequested(this, EventArgs.Empty);
+        }
+
+        #endregion
 
         private void Resized(object sender, RoutedEventArgs e)
         {
