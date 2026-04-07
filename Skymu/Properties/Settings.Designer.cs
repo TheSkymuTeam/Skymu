@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using Skymu.Classes;
-using System.Configuration;
-
 namespace Skymu.Properties {
     
     
@@ -221,12 +218,12 @@ namespace Skymu.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Skyaeris")]
-        public string SkypeEra {
+        public string Interface {
             get {
-                return ((string)(this["SkypeEra"]));
+                return ((string)(this["Interface"]));
             }
             set {
-                this["SkypeEra"] = value;
+                this["Interface"] = value;
             }
         }
         
@@ -326,14 +323,18 @@ namespace Skymu.Properties {
             }
         }
         
-        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public WindowPlacement WindowPlacement
-        {
-               get => (WindowPlacement)this["WindowPlacement"];
-               set => this["WindowPlacement"] = value;
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n\t\t<WindowPlacement>\r\n\t\t\t<Left>0</Left>\r\n\t\t\t<Top>0</Top>\r\n\t\t\t<Right>0</Right>\r\n\t" +
+            "\t\t<Bottom>0</Bottom>\r\n\t\t\t<sidebarWidth>0</sidebarWidth>\r\n\t\t</WindowPlacement>\r\n\t" +
+            "")]
+        public global::Skymu.Classes.WindowPlacement WindowPlacement {
+            get {
+                return ((global::Skymu.Classes.WindowPlacement)(this["WindowPlacement"]));
+            }
+            set {
+                this["WindowPlacement"] = value;
+            }
         }
     }
 }

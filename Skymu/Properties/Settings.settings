@@ -50,7 +50,7 @@
     <Setting Name="DynamicSidebarTabs" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="SkypeEra" Type="System.String" Scope="User">
+    <Setting Name="Interface" Type="System.String" Scope="User">
       <Value Profile="(Default)">Skyaeris</Value>
     </Setting>
     <Setting Name="Anonymize" Type="System.Boolean" Scope="User">
