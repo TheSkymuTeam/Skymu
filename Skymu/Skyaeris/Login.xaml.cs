@@ -33,7 +33,6 @@ namespace Skymu.Skyaeris
         public Login()
         {
             InitializeComponent();
-            ThemeManager.Load("default");
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.MouseLeftButtonUp += buttonLaunch;

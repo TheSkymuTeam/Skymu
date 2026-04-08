@@ -61,11 +61,6 @@ namespace Skymu.Pontis
         internal static bool IsWindowActive = false;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
-        private readonly Brush DefaultTextBrush = (Brush)
-            new BrushConverter().ConvertFromString("{StaticResource Text.HighContrast}");
-        private readonly Brush PlaceholderBrush = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("{StaticResource Text.LowContrast}")
-        );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
@@ -332,15 +327,6 @@ namespace Skymu.Pontis
         #endregion
 
         #region Custom window logic
-
-        private void SetTheme() // TODO add pontis theme support
-        {
-            //ContentBgTop.Fill = (Brush)Application.Current.Resources["Active.WindowBrush"];
-            //ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
-           // MainMenuBar.Background = (Brush)Application.Current.Resources["Active.MenuBarBrush"];
-           // MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
-           // this.Background = (Brush)Application.Current.Resources["Active.StandardBrush"];
-        }
 
         private void HandleWindowActivated()
         {
@@ -809,14 +795,107 @@ namespace Skymu.Pontis
             }*/
         }
 
-        private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
+        private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            Universal.NotImplemented("Voice calling");
+            StartCall();
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
         {
             EmojiFlyout.IsOpen = true;
+        }
+
+        #endregion
+
+        #region Calls
+
+        private Frame frame;
+        private CallScreen screen;
+
+        private async void StartCall()
+        {
+            if (Universal.CallPlugin == null)
+                return;
+            var dm = vmodel.SelectedConversation as DirectMessage;
+            if (dm == null)
+                return; // group calls not supported yet
+
+            CallScreen.LocationChangeEventArgs initial_location =
+                new CallScreen.LocationChangeEventArgs(false, false, false);
+            screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
+            screen.HangUpRequested += OnHangUp;
+            screen.LocationChangeRequested += OnLocationChanged;
+
+            if (!await screen.StartCall(vmodel.SelectedConversation, false)) // no video calling for now
+            {
+                screen.HangUpRequested -= OnHangUp;
+                screen.LocationChangeRequested -= OnLocationChanged;
+                screen = null;
+                return;
+            }
+
+            frame = new Frame();
+            frame.Navigate(screen);
+            SetCallPageLocation(initial_location);
+            Sounds.Play("call-init");
+        }
+
+        private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
+        {
+            SetCallPageLocation(e);
+        }
+
+        private void OnHangUp(object sender, EventArgs e)
+        {
+            SetCallPageLocation(null);
+            Sounds.Play("call-end");
+        }
+
+        private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
+        {
+            frame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+            frame.VerticalContentAlignment = VerticalAlignment.Stretch;
+            frame.HorizontalAlignment = HorizontalAlignment.Stretch;
+            frame.VerticalAlignment = VerticalAlignment.Stretch;
+
+            if (location == null)
+            {
+                if (screen != null)
+                {
+                    screen.HangUpRequested -= OnHangUp;
+                    screen.LocationChangeRequested -= OnLocationChanged;
+                    screen = null;
+                    frame.Content = null;
+                    frame = null;
+                }
+                if (FillWindowHost.Content == frame)
+                    FillWindowHost.Content = null;
+                if (FillMessagePanelHost.Content == frame)
+                    FillMessagePanelHost.Content = null;
+                ContentArea.Visibility = Visibility.Visible;
+                SetWindow(WindowType.Chat);
+            }
+            else
+            {
+                if (location.SidebarToggle)
+                {
+                    if (FillWindowHost.Content == frame)
+                        FillWindowHost.Content = null;
+                    ContentArea.Visibility = Visibility.Visible;
+                    ChatProfileArea.Visibility = Visibility.Collapsed;
+                    FillMessagePanelHost.Visibility = Visibility.Visible;
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    FillMessagePanelHost.Content = frame;
+                }
+                else if (!location.SidebarToggle)
+                {
+                    if (FillMessagePanelHost.Content == frame)
+                        FillMessagePanelHost.Content = null;
+                    ContentArea.Visibility = Visibility.Collapsed;
+                    FillWindowHost.Content = frame;
+                }
+            }
         }
 
         #endregion
@@ -993,7 +1072,7 @@ namespace Skymu.Pontis
             var para = new Paragraph(new Run(text))
             {
                 Margin = new Thickness(0),
-                Foreground = PlaceholderBrush,
+                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"],
             };
 
             flowDoc.Blocks.Add(para);
@@ -1020,7 +1099,7 @@ namespace Skymu.Pontis
                 return;
 
             tb.Text = text;
-            tb.Foreground = PlaceholderBrush;
+            tb.Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"];
             tb.Tag = TAG_PLACEHOLDER;
         }
 

@@ -23,7 +23,7 @@
     <Window.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
-            <Setter Property="Foreground" Value="{StaticResource SkBlue}" />
+            <Setter Property="Foreground" Value="{StaticResource Text.Hyperlink}" />
             <Setter Property="TextDecorations" Value="{x:Null}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -40,7 +40,7 @@
             <RowDefinition x:Name="MenuBarRow" Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Rectangle Grid.Row="0" Fill="{StaticResource SkBlue}" /> 
+        <Rectangle Grid.Row="0" Fill="{StaticResource Accent}" />
         <!--  placeholder for menu bar so designer donesnt mess up  -->
         <Grid Grid.Row="1">
             <Image
@@ -101,7 +101,7 @@
                     FontFamily="Arial"
                     FontSize="20"
                     FontWeight="Bold"
-                    Foreground="{StaticResource SkBlue}"
+                    Foreground="{StaticResource Text.Header}"
                     Text="{Binding [sF_LOGIN_WELCOME]}" />
                 <Grid
                     x:Name="LoginControls"

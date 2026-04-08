@@ -10,7 +10,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
-                <ResourceDictionary Source="Themes/default.xaml" />
+                <ResourceDictionary Source="pack://siteoforigin:,,,/Themes/default.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:LanguageManager x:Key="Lang" />
             <Style

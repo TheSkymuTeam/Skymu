@@ -11,7 +11,7 @@
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
-    Background="{StaticResource Metro.Accent}"
+    Background="{StaticResource Accent}"
     Closing="Login_Closing"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
@@ -162,7 +162,7 @@
                             Height="28"
                             Margin="0,0,0,0"
                             FontWeight="Normal"
-                            Foreground="{StaticResource SkBlue}">
+                            Foreground="{StaticResource Text.Hyperlink}">
                             <Hyperlink
                                 NavigateUri="#"
                                 RequestNavigate="Hyperlink_RequestNavigate"
@@ -204,7 +204,7 @@
                         Width="270"
                         Height="55"
                         VerticalAlignment="Top"
-                        Background="{StaticResource Metro.Accent}"
+                        Background="{StaticResource Accent}"
                         CornerRadius="5">
                         <StackPanel
                             Grid.Row="1"

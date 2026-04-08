@@ -255,6 +255,7 @@ namespace Skymu
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
             OS.Initialize();
+            ThemeManager.Load("default");
             base.OnStartup(ev);
             Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>
             {
