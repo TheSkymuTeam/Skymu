@@ -722,11 +722,9 @@ namespace Skymu.Skyaeris
                 MakeGroupButton.TextLeftMargin = 41;
             }
             if (SidebarColumn.Width.Value < 245)
-                {
-                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
-                }
-                else
-                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
+                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
+            else
+                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
         }
 
         #endregion
