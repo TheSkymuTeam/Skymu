@@ -1488,7 +1488,6 @@ namespace Skymu.Skyaeris
 
             SetWindow(WindowType.Home);
             Main_SizeChanged_Refresh();
-            Sidebar_SizeChanged_Refresh();
             // seanFinx Crazy Hack
             AddContactButton.OverlayText.TextTrimming = TextTrimming.None;
             MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
@@ -1505,6 +1504,7 @@ namespace Skymu.Skyaeris
                     this.Height = wp.Height;
                     SidebarColumn.Width = new GridLength(wp.sidebarWidth);
                 }
+                Sidebar_SizeChanged_Refresh();
             };
         }
 
