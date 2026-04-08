@@ -10,7 +10,6 @@ namespace Skymu.Preferences
 {
     public static class Settings
     {
-        // XAML binding: {Binding Source={x:Static s:Settings.Default}, Path=[ThemeRoot]}
         public static readonly SettingsProxy Default = new SettingsProxy();
 
         public class SettingsProxy : INotifyPropertyChanged
@@ -44,11 +43,6 @@ namespace Skymu.Preferences
             }
         }
 
-        // -------------------------------------------------------------------------
-        // Settings — adding a new one is ONE line:
-        // public static TYPE Name { get => S("Name", default); set => W("Name", value, nameof(Name)); }
-        // -------------------------------------------------------------------------
-
         public static WindowPlacement WindowPlacement
         {
             get => new WindowPlacement
@@ -80,7 +74,7 @@ namespace Skymu.Preferences
         public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }
         public static string Interface { get => S("Interface", "Skyaeris"); set => W("Interface", value, nameof(Interface)); }
         public static string SkippedVersion { get => S("SkippedVersion", "NONE"); set => W("SkippedVersion", value, nameof(SkippedVersion)); }
-        public static string SoundPack { get => S("SoundPack", "Skype"); set => W("SoundPack", value, nameof(SoundPack)); }
+        public static string SoundPack { get => S("SoundPack", "Sounds"); set => W("SoundPack", value, nameof(SoundPack)); }
 
         public static bool AutoLogin { get => S("AutoLogin", true); set => W("AutoLogin", value, nameof(AutoLogin)); }
         public static bool EnableNotifications { get => S("EnableNotifications", true); set => W("EnableNotifications", value, nameof(EnableNotifications)); }
@@ -96,11 +90,6 @@ namespace Skymu.Preferences
         public static bool MessageLogger { get => S("MessageLogger", false); set => W("MessageLogger", value, nameof(MessageLogger)); }
         public static bool NikoIcons { get => S("NikoIcons", false); set => W("NikoIcons", value, nameof(NikoIcons)); }
         public static bool SuppressOldRuntimeWarnings { get => S("SuppressOldRuntimeWarnings", false); set => W("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings)); }
-
-        // -------------------------------------------------------------------------
-        // Public API (matches Properties.Settings.Default)
-        // -------------------------------------------------------------------------
-
         public static void Save() { }
 
         public static void Reset()
@@ -108,10 +97,6 @@ namespace Skymu.Preferences
             if (File.Exists(FilePath))
                 File.Delete(FilePath);
         }
-
-        // -------------------------------------------------------------------------
-        // Infrastructure
-        // -------------------------------------------------------------------------
 
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -151,13 +136,11 @@ namespace Skymu.Preferences
             doc.Save(FilePath);
         }
 
-        // Typed read helpers
         private static string S(string k, string def) => Get(k, def) ?? def;
         private static bool S(string k, bool def) => bool.TryParse(Get(k, def.ToString()), out var v) ? v : def;
         private static int S(string k, int def) => int.TryParse(Get(k, def.ToString()), out var v) ? v : def;
         private static double Xd(string k, double def) => double.TryParse(Get(k, def.ToString()), out var v) ? v : def;
 
-        // Write + notify helper
         private static void W<T>(string key, T value, string propName)
         {
             Set(key, value.ToString());
