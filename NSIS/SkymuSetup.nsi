@@ -35,7 +35,7 @@ Function HideHeaderText
 FunctionEnd
 
 Function KillSkymuProcesses
-    nsExec::ExecToLog 'taskkill /F /IM Skymu.exe /T'
+    nsExec::ExecToLog 'taskkill /F /IM Skymu.exe'
 FunctionEnd
 
 Function VersionSelectPage
