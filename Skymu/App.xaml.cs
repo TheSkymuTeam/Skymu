@@ -202,7 +202,6 @@ namespace Skymu
                 {
                     if (dialog.CheckBox.IsChecked == true)
                         Settings.QuitWithoutAsking = true;
-                    Universal.Close();
                     Terminate();
                 };
                 dialog.ShowDialog();
