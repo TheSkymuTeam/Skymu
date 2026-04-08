@@ -17,7 +17,7 @@
     MinWidth="584"
     MinHeight="450"
     Activated="Window_Activated"
-    AllowsTransparency="True"
+    AllowsTransparency="False"
     Background="#8cbeff"
     Closing="Main_Closing"
     Deactivated="Window_Deactivated"
