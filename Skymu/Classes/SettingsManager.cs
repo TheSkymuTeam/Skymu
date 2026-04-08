@@ -77,8 +77,6 @@ namespace Skymu.Preferences
         public static string BrandingName { get => S("BrandingName", "Skype"); set => W("BrandingName", value, nameof(BrandingName)); }
         public static string ThemeRoot { get => S("ThemeRoot", "Light"); set => W("ThemeRoot", value, nameof(ThemeRoot)); }
         public static string PresFrame { get => S("PresFrame", "Aero.NormalColor"); set => W("PresFrame", value, nameof(PresFrame)); }
-        public static string BuildVersion { get => S("BuildVersion", "0.3.22"); set => W("BuildVersion", value, nameof(BuildVersion)); }
-        public static string BuildName { get => S("BuildName", "Drocea Walnut Cake"); set => W("BuildName", value, nameof(BuildName)); }
         public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }
         public static string Interface { get => S("Interface", "Skyaeris"); set => W("Interface", value, nameof(Interface)); }
         public static string SkippedVersion { get => S("SkippedVersion", "NONE"); set => W("SkippedVersion", value, nameof(SkippedVersion)); }

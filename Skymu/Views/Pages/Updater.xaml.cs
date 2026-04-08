@@ -304,7 +304,7 @@ namespace Skymu.Views.Pages
                         if (string.IsNullOrWhiteSpace(latestTag))
                             return new string[0];
 
-                        string currentVerStr = Settings.BuildVersion;
+                        string currentVerStr = Universal.BuildName;
                         currentVerStr = currentVerStr.Replace("v", "");
 
                         Version currentVer;

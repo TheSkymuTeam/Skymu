@@ -36,6 +36,7 @@
             Foreground="{StaticResource Text.HighContrast}"
             Text="Take another breath" />
         <TextBlock
+            x:Name="BuildVersion"
             Margin="0,3,9,-6"
             HorizontalAlignment="Center"
             FontFamily="Arial"
@@ -44,8 +45,8 @@
             Foreground="#555555">
             <TextBlock.Text>
                 <MultiBinding StringFormat="v{0} {1}">
-                    <Binding Path="BuildVersion" Source="{x:Static preferences:Settings.Default}" />
-                    <Binding Path="BuildName" Source="{x:Static preferences:Settings.Default}" />
+                    <Binding Source="{x:Static global:Universal.BuildVersion}" />
+                    <Binding Source="{x:Static global:Universal.BuildName}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>
