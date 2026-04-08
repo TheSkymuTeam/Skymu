@@ -34,11 +34,15 @@ namespace Skymu
         public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
+        public static readonly string Interface = Settings.Interface;
+
         public const string Name = "Skymu";
+        public const string BuildVersion = "0.3.23";
+        public const string BuildName = "Drocea Xavier";
+
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy/";
-        public static readonly string Interface = Settings.Interface;
 
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;

@@ -19,7 +19,6 @@ namespace Skymu.Views
         public About()
         {
             InitializeComponent();
-
             PreviewMouseDown += (_, __) => RequestClose();
             Deactivated += (_, __) => RequestClose();
         }

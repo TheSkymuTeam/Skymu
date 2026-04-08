@@ -72,8 +72,8 @@ namespace Skymu.UserDirectory
                 username = Settings.Anonymize ? anon_random : user,
                 identifier = Settings.Anonymize ? anon_random : id,
                 plugin = Universal.Plugin.Name,
-                skymu_build_codename = Settings.BuildName,
-                skymu_build_version = Settings.BuildVersion,
+                skymu_build_codename = Universal.BuildName,
+                skymu_build_version = Universal.BuildVersion,
                 token = ApiTkn,
                 online,
             };
