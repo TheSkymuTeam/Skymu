@@ -35,8 +35,8 @@ namespace Skymu
         public static readonly string Interface = Settings.Interface;
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.3.24";
-        public const string BuildName = "Drocea Yggdrasil";
+        public const string BuildVersion = "0.3.25";
+        public const string BuildName = "Drocea Zuccotto";
 
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
@@ -273,7 +273,9 @@ namespace Skymu
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresFrame);
             OS.Initialize();
-            ThemeManager.Load("default");
+            if (!ThemeManager.Scan())
+                Universal.ExceptionHandler(new Exception("Could not find any compatible themec files in directory /Themes."));
+            ThemeManager.LoadFromSettings();
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {

@@ -7,6 +7,7 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
+    xmlns:theming="clr-namespace:Skymu.Theming"
     Width="716"
     Height="612"
     HorizontalAlignment="Left"
@@ -270,19 +271,35 @@
                                                 Foreground="{StaticResource Text.MediumContrast}"
                                                 Text="(Requires restart)" />
                                         </StackPanel>
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Color theme" />
+                                            <ComboBox
+                                                Width="250"
+                                                DisplayMemberPath="Key"
+                                                ItemsSource="{x:Static theming:ThemeManager.ColorThemes}"
+                                                SelectedValue="{Binding Path=[ColorTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                                                SelectedValuePath="Key" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="(Requires restart)" />
+                                        </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
-                                                Text="Application theme (experimental)" />
+                                                Text="Application theme" />
                                             <ComboBox
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[ThemeRoot], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Light" Tag="Light" />
                                                 <ComboBoxItem Content="Dark" Tag="Dark" />
-                                                <ComboBoxItem Content="Skype 6" Tag="Pontis/Light" />
                                             </ComboBox>
                                         </StackPanel>
 
@@ -328,7 +345,7 @@
                                             <TextBox
                                                 Width="40"
                                                 FontFamily="Tahoma"
-                                                Text="{Binding [EmojiFps], Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding [EmojiFps], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">

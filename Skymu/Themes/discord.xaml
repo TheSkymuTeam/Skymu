@@ -1,0 +1,76 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="Theme.Name">Discord</sys:String>
+    <sys:String x:Key="Theme.Author">OmegaAOL</sys:String>
+    <sys:String x:Key="Theme.Description">Dark theme using Discord's classic blurple colors.</sys:String>
+    <sys:Int32 x:Key="Theme.Version">1</sys:Int32>
+
+    <LinearGradientBrush x:Key="Active.Titlebar" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FF4E5D94" />
+        <GradientStop Offset="0.0634" Color="#FF5865A8" />
+        <GradientStop Offset="0.0667" Color="#FF4E5D94" />
+        <GradientStop Offset="1.0" Color="#FF3B4A7A" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Active.Window" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FF36393F" />
+        <GradientStop Offset="1.0" Color="#FF2F3136" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Active.Menubar" Color="#FF2F3136" />
+    <SolidColorBrush x:Key="Active.Background" Color="#FF2F3136" />
+
+    <LinearGradientBrush x:Key="Inactive.Titlebar" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FF292B2F" />
+        <GradientStop Offset="0.0634" Color="#FF2F3136" />
+        <GradientStop Offset="0.0667" Color="#FF292B2F" />
+        <GradientStop Offset="1.0" Color="#FF202225" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Inactive.Window" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FF2F3136" />
+        <GradientStop Offset="1.0" Color="#FF292B2F" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Inactive.Menubar" Color="#FF292B2F" />
+    <SolidColorBrush x:Key="Inactive.Background" Color="#FF292B2F" />
+
+    <SolidColorBrush x:Key="Background" Color="#FF2F3136" />
+    <SolidColorBrush x:Key="Card.Background" Color="#FF36393F" />
+    <SolidColorBrush x:Key="Card.Border" Color="#26FFFFFF" />
+
+    <SolidColorBrush x:Key="Text.VeryHighContrast" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="Text.HighContrast" Color="#FFDCDDDE" />
+    <SolidColorBrush x:Key="Text.MediumContrast" Color="#FFB9BBBE" />
+    <SolidColorBrush x:Key="Text.LowContrast" Color="#FF72767D" />
+    <SolidColorBrush x:Key="Text.VeryLowContrast" Color="#FF40444B" />
+    <SolidColorBrush x:Key="Text.Hyperlink" Color="#FF7289DA" />
+    <SolidColorBrush x:Key="Text.Highlight" Color="#FF7289DA" />
+    <SolidColorBrush x:Key="Text.Header" Color="#FF7289DA" />
+
+    <SolidColorBrush x:Key="Metro.Background" Color="#FF36393F" />
+    <SolidColorBrush x:Key="Metro.Border" Color="#FF202225" />
+    <SolidColorBrush x:Key="Metro.Sidebar.UserCountTab" Color="#FF2F3136" />
+    <SolidColorBrush x:Key="Accent" Color="#FF7289DA" />
+
+    <SolidColorBrush x:Key="Message.Bubble.Me" Color="#FF3C3F45" />
+    <SolidColorBrush x:Key="Message.Bubble.Other" Color="#FF40444B" />
+    <SolidColorBrush x:Key="Message.Sender.Me" Color="#FFB9BBBE" />
+    <SolidColorBrush x:Key="Message.Sender.Other" Color="#FF7289DA" />
+    <SolidColorBrush x:Key="Message.Sender.Unread" Color="#FFFAA61A" />
+    <SolidColorBrush x:Key="Message.Sender.Forward" Color="#FF43B581" />
+    <SolidColorBrush x:Key="Message.Border" Color="#FF202225" />
+
+    <SolidColorBrush x:Key="Chatbar.Divider" Color="#FF202225" />
+    <SolidColorBrush x:Key="Sidebar.Header" Color="#FF292B2F" />
+    <SolidColorBrush x:Key="Sidebar.Divider.Opaque" Color="#FF202225" />
+    <SolidColorBrush x:Key="Sidebar.Divider.Translucent" Color="#AA202225" />
+    <SolidColorBrush x:Key="Avatar.Border" Color="#807289DA" />
+
+    <SolidColorBrush x:Key="EmojiFlyout.Background" Color="#CC18191C" />
+    <SolidColorBrush x:Key="EmojiFlyout.Border" Color="#FF202225" />
+
+    <Color x:Key="Avatar.Shadow">#80000000</Color>
+    <Color x:Key="WindowFrame.Button.Close.Glow">#ED4245</Color>
+    <Color x:Key="WindowFrame.Button.Generic.Glow">#7289DA</Color>
+
+</ResourceDictionary>
