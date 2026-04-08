@@ -9,27 +9,17 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Reflection.Emit;
-using System.Text;
 using System.Text.Json;
-using Skymu.Preferences;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
+using static System.String;
 
 namespace Skymu.Views.Pages
 {
@@ -37,10 +27,20 @@ namespace Skymu.Views.Pages
     {
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
-        private string brand = Settings.BrandingName;
-        private string[] update_info;
         private const string Repo = "Skymu";
+        private string brand = Settings.BrandingName;
+        private updateInfo? update_info;
         private WindowBase window;
+
+        internal struct updateInfo
+        {
+            public string status;
+            public string[] urls;
+            public string tag;
+            public string name;
+            // changelog, error log
+            public string log;
+        }
 
         private static readonly HttpClient _httpClient = CreateClient();
 
@@ -61,7 +61,8 @@ namespace Skymu.Views.Pages
         {
             update_info = await GetUpdateInfo();
 
-            if (update_info.Length > 0 && (manual || update_info[0] != Settings.SkippedVersion)) // not up to date, must show window
+            if (update_info != null && (manual || // not up to date, must show window
+                (IsNullOrEmpty(Settings.SkippedVersion) && update_info?.tag != Settings.SkippedVersion)))
             {
                 if (exwin != null)
                     window = exwin;
@@ -73,7 +74,7 @@ namespace Skymu.Views.Pages
                 window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
 
-                if (update_info[0] == "UPDATE_CHECK_ERROR") // error when checking for update
+                if (update_info?.status == "UPDATE_CHECK_ERROR") // error when checking for update
                 {
                     if (!manual)
                     {
@@ -86,21 +87,21 @@ namespace Skymu.Views.Pages
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
                     window.ButtonLeftAction = () => UpdateHandler(true, window);
                     Description.Text =
-                        Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + update_info[1];
+                        Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + update_info?.log ;
                 }
                 else // update is available
                 {
                     window.HeaderIcon = WindowBase.IconType.PackageCheckmark;
                     window.HeaderText =
-                        Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info[0];
+                        Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info?.name;
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonLeftAction = () => InitiateUpdate();
                     window.ButtonMiddleText = "Skip this version";
                     window.ButtonMiddleEnabled = true;
-                    window.ButtonMiddleAction = () => { SkipUpdate(update_info[0]); window.Close(); };
+                    window.ButtonMiddleAction = () => { SkipUpdate(update_info?.tag); window.Close(); };
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                     Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
-                    string changelog = update_info[1];
+                    string changelog = update_info?.log;
                     if (!string.IsNullOrEmpty(changelog))
                     {
                         changelog = changelog.Replace("*", "•");
@@ -173,6 +174,7 @@ namespace Skymu.Views.Pages
             window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
             window.ButtonLeftAction = () => window.Hide();
+            window.ButtonMiddleEnabled = false;
             Description.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_TEXT"];
             UpdateStatusText.Text = Universal.Lang["sF_UPGRADE_INIT"];
             ProgressGrid.Visibility = Visibility.Visible;
@@ -184,9 +186,9 @@ namespace Skymu.Views.Pages
 
             try
             {
-                string downloadUrl = update_info[2];
+                string downloadUrl = update_info?.urls[0];
 
-                if (string.IsNullOrWhiteSpace(downloadUrl))
+                if (IsNullOrWhiteSpace(downloadUrl))
                     return;
 
                 string downloadsFolder = Path.Combine(
@@ -278,9 +280,9 @@ namespace Skymu.Views.Pages
             }
         }
 
-        internal static async Task<string[]> GetUpdateInfo()
+        internal static async Task<updateInfo?> GetUpdateInfo()
         {
-            if (Settings.DisablePingbacks) return new string[0];
+            if (Settings.DisablePingbacks) return null;
             try
             {
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
@@ -290,7 +292,7 @@ namespace Skymu.Views.Pages
                 using (HttpResponseMessage response = await _httpClient.GetAsync(url))
                 {
                     if (!response.IsSuccessStatusCode)
-                        return new string[0];
+                        return null;
 
                     string json = await response.Content.ReadAsStringAsync();
 
@@ -302,9 +304,9 @@ namespace Skymu.Views.Pages
                             ?.TrimStart('v');
 
                         if (string.IsNullOrWhiteSpace(latestTag))
-                            return new string[0];
+                            return null;
 
-                        string currentVerStr = Universal.BuildName;
+                        string currentVerStr = Universal.BuildVersion;
                         currentVerStr = currentVerStr.Replace("v", "");
 
                         Version currentVer;
@@ -314,10 +316,10 @@ namespace Skymu.Views.Pages
 
                         Version updateVer;
                         if (!Version.TryParse(latestTag, out updateVer))
-                            return new string[0];
+                            return null;
 
                         if (currentVer >= updateVer)
-                            return new string[0]; 
+                            return null; 
 
                         string releaseName =
                             doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
@@ -332,24 +334,32 @@ namespace Skymu.Views.Pages
 
                         foreach (JsonElement asset in assets.EnumerateArray())
                         {
-                            JsonElement urlElement;
-                            if (asset.TryGetProperty("browser_download_url", out urlElement))
+                            if (asset.TryGetProperty("browser_download_url", out JsonElement　urlElement))
                             {
                                 string downloadUrl = urlElement.GetString();
-                                if (!string.IsNullOrEmpty(downloadUrl))
+                                if (!IsNullOrEmpty(downloadUrl))
                                     urls.Add(downloadUrl);
                             }
                         }
 
-                        List<string> result = new List<string> { buildName, changelog };
-                        result.AddRange(urls);
-                        return result.ToArray();
+                        return new updateInfo
+                        {
+                            status = "UPDATE_AVAILABLE",
+                            urls = urls.ToArray(),
+                            tag = latestTag,
+                            name = buildName,
+                            log = changelog
+                        };
                     }
                 }
             }
             catch (Exception ex)
             {
-                return new string[2] { "UPDATE_CHECK_ERROR", ex.Message };
+                return new updateInfo
+                {
+                    status = "UPDATE_CHECK_ERROR",
+                    log = ex.Message,
+                };
             }
         }
 
