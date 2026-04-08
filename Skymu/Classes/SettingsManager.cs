@@ -76,7 +76,7 @@ namespace Skymu.Preferences
         public static string PresFrame { get => S("PresFrame", "Aero.NormalColor"); set => W("PresFrame", value, nameof(PresFrame)); }
         public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }
         public static string Interface { get => S("Interface", "Skyaeris"); set => W("Interface", value, nameof(Interface)); }
-        public static string SkippedVersion { get => S("SkippedVersion", "NONE"); set => W("SkippedVersion", value, nameof(SkippedVersion)); }
+        public static string SkippedVersion { get => S("SkippedVersion", ""); set => W("SkippedVersion", value, nameof(SkippedVersion)); }
         public static string SoundPack { get => S("SoundPack", "Sounds"); set => W("SoundPack", value, nameof(SoundPack)); }
 
         public static bool AutoLogin { get => S("AutoLogin", true); set => W("AutoLogin", value, nameof(AutoLogin)); }
