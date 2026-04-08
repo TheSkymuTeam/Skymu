@@ -70,14 +70,6 @@ namespace Skymu.Pontis
             Chat,
         }
 
-        private enum WindowFrame
-        {
-            Native,
-            SkypeAero,
-            SkypeBasic,
-            SkypeAeroCustom,
-        };
-
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
             "WindowTitle",
             typeof(string),
@@ -1290,6 +1282,8 @@ namespace Skymu.Pontis
                 }
                 Sidebar_SizeChanged_Refresh();
             };
+
+            this.AllowsTransparency = false;
         }
 
         private void InitiateSignOut() => vmodel.InitiateSignOut();

@@ -262,7 +262,6 @@ namespace Skymu.Skyaeris
 
                     if (border == WindowFrame.SkypeAero)
                     {
-                        this.AllowsTransparency = false;
                         this.Background = Brushes.Transparent;
                     }
                     else if (border == WindowFrame.SkypeAeroCustom) // TODO: finish this
@@ -308,7 +307,6 @@ namespace Skymu.Skyaeris
             }
             else if (border == WindowFrame.Native) // using system native border
             {
-                this.AllowsTransparency = false;
                 WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
                 WindowArea.Margin = new Thickness(0);
@@ -1519,6 +1517,8 @@ namespace Skymu.Skyaeris
                 }
                 Sidebar_SizeChanged_Refresh();
             };
+
+            this.AllowsTransparency = false;
         }
 
         private void InitiateSignOut() => vmodel.InitiateSignOut();
