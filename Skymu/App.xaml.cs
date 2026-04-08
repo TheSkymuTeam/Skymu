@@ -15,12 +15,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using Skymu.Plugins;
-using System.Windows.Interop;
 using Skymu.Formatting;
 using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Preferences;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MiddleMan;
@@ -182,10 +180,12 @@ namespace Skymu
 
         public static void Close()
         {
+            if (Settings.QuitWithoutAsking)
+                Terminate();
             try
             {
                 string brand = Settings.BrandingName;
-                new Dialog(
+                Dialog dialog = new Dialog(
                     WindowBase.IconType.Question,
                     Lang["sQUIT_PROMPT"],
                     Lang["sQUIT_PROMPT_CAP"],
@@ -194,12 +194,22 @@ namespace Skymu
                     Lang["sZAPBUTTON_CANCEL"],
                     true,
                     null,
-                    Lang["sF_CONFIRM_QUIT"]
-                ).ShowDialog();
+                    Lang["sF_CONFIRM_QUIT"],
+                    false, null, null, false, null, null,
+                    true, Lang["sF_CONFIRM_CBNOMORE"]
+                );
+                dialog.BLAction = () =>
+                {
+                    if (dialog.CheckBox.IsChecked == true)
+                        Settings.QuitWithoutAsking = true;
+                    Close();
+                    Terminate();
+                };
+                dialog.ShowDialog();
             }
             catch
             {
-                Universal.Terminate();
+                Terminate();
             } // in case app is already too dead to show dialog by the time this is called
         }
 
