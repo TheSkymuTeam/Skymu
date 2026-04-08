@@ -17,10 +17,10 @@ namespace Skymu.Views
 {
     public partial class Options : Window
     {
-        public Options(string background_hex)
+        public Options(string brush)
         {
             InitializeComponent();
-            Background = (Brush)new BrushConverter().ConvertFrom(background_hex);
+            Background = (SolidColorBrush)Application.Current.Resources[brush];
             LoadVisualSettings();
         }
 

@@ -62,9 +62,9 @@ namespace Skymu.Pontis
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
         private readonly Brush DefaultTextBrush = (Brush)
-            new BrushConverter().ConvertFromString("#333333");
+            new BrushConverter().ConvertFromString("{StaticResource Text.HighContrast}");
         private readonly Brush PlaceholderBrush = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("#999999")
+            (Color)ColorConverter.ConvertFromString("{StaticResource Text.LowContrast}")
         );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
@@ -703,7 +703,7 @@ namespace Skymu.Pontis
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Options("#FFF").Show();
+            new Options("Metro.Background").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)

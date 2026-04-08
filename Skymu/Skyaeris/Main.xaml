@@ -78,13 +78,13 @@
             <Setter Property="Height" Value="16" />
             <Setter Property="Width" Value="36" />
         </Style>
-        <Style TargetType="global:SliceControl"  x:Key="AddButtonHoverStyle">
+        <Style x:Key="AddButtonHoverStyle" TargetType="global:SliceControl">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="TextColor" Value="#0099ff"/>
+                    <Setter Property="TextColor" Value="#0099ff" />
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="TextColor" Value="#333333"/>
+                    <Setter Property="TextColor" Value="{StaticResource Text.HighContrast}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -99,7 +99,7 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="#999999" />
+            <Setter Property="Foreground" Value="{StaticResource Text.LowContrast}" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
         <!--  User template  -->
@@ -128,9 +128,8 @@
                             <DropShadowEffect
                                 BlurRadius="2"
                                 Direction="270"
-                                Opacity="0.50"
                                 ShadowDepth="1"
-                                Color="#000000" />
+                                Color="{StaticResource Avatar.Shadow}" />
                         </Border.Effect>
                         <Grid>
                             <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
@@ -141,7 +140,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
+                            <Border BorderBrush="{StaticResource Avatar.Border}" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -207,9 +206,8 @@
                             <DropShadowEffect
                                 BlurRadius="2"
                                 Direction="270"
-                                Opacity="0.50"
                                 ShadowDepth="1"
-                                Color="#000000" />
+                                Color="{StaticResource Avatar.Shadow}" />
                         </Border.Effect>
                         <Grid>
                             <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
@@ -220,7 +218,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
+                            <Border BorderBrush="{StaticResource Avatar.Border}" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -271,13 +269,13 @@
                                     Height="20"
                                     Margin="0"
                                     Padding="8,0"
-                                    Background="#e5e5e5">
+                                    Background="{StaticResource Sidebar.Header}">
                                     <TextBlock
                                         Margin="2,0,0,1"
                                         VerticalAlignment="Center"
                                         FontFamily="Tahoma"
                                         FontSize="11"
-                                        Foreground="#000000"
+                                        Foreground="{StaticResource Text.VeryHighContrast}"
                                         Text="{Binding CategoryName}" />
                                 </Border>
                             </DataTemplate>
@@ -341,9 +339,8 @@
                             <DropShadowEffect
                                 BlurRadius="2"
                                 Direction="270"
-                                Opacity="0.50"
                                 ShadowDepth="1"
-                                Color="#000000" />
+                                Color="{StaticResource Avatar.Shadow}" />
                         </Border.Effect>
                         <Grid>
                             <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
@@ -354,7 +351,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <Border BorderBrush="#80BBBBBB" BorderThickness="1" />
+                            <Border BorderBrush="{StaticResource Avatar.Border}" BorderThickness="1" />
                         </Grid>
                     </Border>
                 </Grid>
@@ -427,13 +424,13 @@
                 Height="20"
                 Margin="0"
                 Padding="8,0"
-                Background="#e5e5e5">
+                Background="{StaticResource Sidebar.Header}">
                 <TextBlock
                     Margin="2,0,0,1"
                     VerticalAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    Foreground="#000000"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="{Binding DateText}" />
             </Border>
         </DataTemplate>
@@ -572,7 +569,7 @@
                         Grid.Column="1"
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Foreground="#999999"
+                        Foreground="{StaticResource Text.LowContrast}"
                         LineHeight="1"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap">
@@ -618,7 +615,7 @@
                     <TextBlock
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Foreground="#999999"
+                        Foreground="{StaticResource Text.LowContrast}"
                         Text="{Binding Time, StringFormat=h:mm tt}"
                         Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
                     <global:SliceControl
@@ -647,7 +644,7 @@
                     Grid.Column="1"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    Foreground="#999999"
+                    Foreground="{StaticResource Text.LowContrast}"
                     Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
                 <TextBlock
                     Grid.Column="2"
@@ -655,7 +652,7 @@
                     VerticalAlignment="Top"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    Foreground="#999999"
+                    Foreground="{StaticResource Text.LowContrast}"
                     Text="{Binding Time, StringFormat=h:mm tt}" />
             </Grid>
         </DataTemplate>
@@ -671,7 +668,7 @@
                     Grid.Column="1"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    Foreground="#999999"
+                    Foreground="{StaticResource Text.LowContrast}"
                     Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
                 <TextBlock
                     Grid.Column="2"
@@ -679,7 +676,7 @@
                     VerticalAlignment="Top"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    Foreground="#999999"
+                    Foreground="{StaticResource Text.LowContrast}"
                     Text="{Binding Time, StringFormat=h:mm tt}" />
             </Grid>
         </DataTemplate>
@@ -810,7 +807,7 @@
                     FontFamily="Arial"
                     FontSize="13"
                     FontWeight="Bold"
-                    Foreground="#333333"
+                    Foreground="{StaticResource Text.HighContrast}"
                     Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
                 <Image
                     x:Name="tbli"
@@ -973,25 +970,26 @@
                                 <ColumnDefinition
                                     x:Name="SidebarColumn"
                                     Width="300"
-                                    MinWidth="181" /> <!-- 160 is accurate, 181 is minimum without causing clipping issue as of now -->
+                                    MinWidth="181" />
+                                <!--  160 is accurate, 181 is minimum without causing clipping issue as of now  -->
                                 <ColumnDefinition x:Name="SkypeSplitterColumn" Width="4" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid x:Name="Sidebar" Grid.Column="0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0">
-                                <Grid x:Name="SidebarStatus" VerticalAlignment="Top">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="32" />
-                                        <RowDefinition Height="32" />
-                                    </Grid.RowDefinitions>
-                                    <global:SliceControl
-                                        x:Name="StatusBox"
-                                        Grid.Row="0"
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid x:Name="Sidebar" Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0">
+                                    <Grid x:Name="SidebarStatus" VerticalAlignment="Top">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="32" />
+                                            <RowDefinition Height="32" />
+                                        </Grid.RowDefinitions>
+                                        <global:SliceControl
+                                            x:Name="StatusBox"
+                                            Grid.Row="0"
                                             HorizontalAlignment="Stretch"
                                             ButtonStateOnInit="Pressed"
                                             DefaultIndex="0"
@@ -1167,7 +1165,7 @@
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/status-bottom.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
-                                            TextColor="#333333"
+                                            TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Tahoma"
                                             TextLeftMargin="34"
                                             TextSize="11" />
@@ -1200,7 +1198,7 @@
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/contacts.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
-                                            TextColor="#333333"
+                                            TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="30"
                                             TextSize="13"
@@ -1220,7 +1218,7 @@
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/servers.png'}"
                                             StackDirection="Vertical"
                                             Text="Servers"
-                                            TextColor="#333333"
+                                            TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="28"
                                             TextSize="13"
@@ -1241,7 +1239,7 @@
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/recents.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
-                                            TextColor="#333333"
+                                            TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="30"
                                             TextSize="13"
@@ -1251,7 +1249,7 @@
                                 <Border
                                     Grid.Row="1"
                                     Background="White"
-                                    BorderBrush="#26000000"
+                                    BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,0,1,0">
                                     <Grid x:Name="ContactsArea">
                                         <Grid.RowDefinitions>
@@ -1287,7 +1285,7 @@
                                         <Rectangle
                                             Grid.Row="1"
                                             Height="1"
-                                            Fill="#d9dfe6" />
+                                            Fill="{StaticResource Sidebar.Divider.Opaque}" />
                                         <ListBox
                                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -1394,47 +1392,44 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <global:SliceControl
-                                        x:Name="AddContactButton"
-                                        Grid.Column="0"
-                                        HorizontalAlignment="Stretch"
-                                        DefaultIndex="0"
-                                        ElementCount="3"
-                                        HoverIndex="1"
-                                        HoverTransition="False"
-                                        MouseLeftButtonUp="AddContact_Click"
-                                        PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/add-contact.png'}"
-                                        StackDirection="Vertical"
-                                        Style="{StaticResource AddButtonHoverStyle}"
-                                        Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
-                                        TextFont="Tahoma"
-                                        TextLeftMargin="41"
-                                        TextSize="11" />
+                                            x:Name="AddContactButton"
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Stretch"
+                                            DefaultIndex="0"
+                                            ElementCount="3"
+                                            HoverIndex="1"
+                                            HoverTransition="False"
+                                            MouseLeftButtonUp="AddContact_Click"
+                                            PressedIndex="2"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/add-contact.png'}"
+                                            StackDirection="Vertical"
+                                            Style="{StaticResource AddButtonHoverStyle}"
+                                            Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
+                                            TextFont="Tahoma"
+                                            TextLeftMargin="41"
+                                            TextSize="11" />
                                         <global:SliceControl
-                                        x:Name="MakeGroupButton"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Stretch"
-                                        DefaultIndex="0"
-                                        ElementCount="4"
-                                        HoverIndex="1"
-                                        HoverTransition="False"
-                                        MouseLeftButtonUp="MakeGroup_Click"
-                                        PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/create-group.png'}"
-                                        StackDirection="Vertical"
-                                        Style="{StaticResource AddButtonHoverStyle}"
-                                        Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
-                                        TextFont="Tahoma"
-                                        TextLeftMargin="41"
-                                        TextSize="11" />
+                                            x:Name="MakeGroupButton"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Stretch"
+                                            DefaultIndex="0"
+                                            ElementCount="4"
+                                            HoverIndex="1"
+                                            HoverTransition="False"
+                                            MouseLeftButtonUp="MakeGroup_Click"
+                                            PressedIndex="2"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/create-group.png'}"
+                                            StackDirection="Vertical"
+                                            Style="{StaticResource AddButtonHoverStyle}"
+                                            Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
+                                            TextFont="Tahoma"
+                                            TextLeftMargin="41"
+                                            TextSize="11" />
                                     </Grid>
 
-                                    <Border BorderBrush="#26000000" BorderThickness="1,0,1,0">
+                                    <Border BorderBrush="{StaticResource Card.Border}" BorderThickness="1,0,1,0">
                                         <StackPanel Orientation="Vertical">
-                                            <Rectangle
-                                                Height="1"
-                                                Fill="#C5C5C5"
-                                                Opacity="0.82" />
+                                            <Rectangle Height="1" Fill="{StaticResource Sidebar.Divider.Translucent}" />
                                             <global:SliceControl
                                                 HorizontalAlignment="Stretch"
                                                 DefaultIndex="0"
@@ -1445,15 +1440,12 @@
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/call-phones.png'}"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
-                                                TextColor="#333333"
+                                                TextColor="{StaticResource Text.HighContrast}"
                                                 TextFont="Arial"
                                                 TextLeftMargin="32"
                                                 TextSize="13"
                                                 TextWeight="Bold" />
-                                            <Rectangle
-                                                Height="1"
-                                                Fill="#C5C5C5"
-                                                Opacity="0.82" />
+                                            <Rectangle Height="1" Fill="{StaticResource Sidebar.Divider.Translucent}" />
                                         </StackPanel>
                                     </Border>
                                     <global:SliceControl
@@ -1465,7 +1457,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/user-count-background.png'}"
                                         StackDirection="Vertical"
                                         Text="Sky Multiprotocol. All rights reserved."
-                                        TextColor="#999999"
+                                        TextColor="{StaticResource Text.LowContrast}"
                                         TextFont="Tahoma"
                                         TextLeftMargin="7"
                                         TextSize="11" />
@@ -1511,7 +1503,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-left.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
-                                        TextColor="#333333"
+                                        TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="13"
                                         TextSize="13"
@@ -1529,7 +1521,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-right.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
-                                        TextColor="#333333"
+                                        TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="27"
                                         TextRightMargin="16"
@@ -1567,7 +1559,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-left.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"
-                                        TextColor="#333333"
+                                        TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
@@ -1593,7 +1585,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-middle.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"
-                                        TextColor="#333333"
+                                        TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
@@ -1619,7 +1611,7 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/tab-middle.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}"
-                                        TextColor="#333333"
+                                        TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
@@ -1646,7 +1638,7 @@
                                 <Border
                                     Grid.Row="1"
                                     Background="#FFF"
-                                    BorderBrush="#26000000"
+                                    BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,0,1,1"
                                     CornerRadius="0,0,4,4">
                                     <Grid>
@@ -1682,9 +1674,8 @@
                                                                 <DropShadowEffect
                                                                     BlurRadius="4"
                                                                     Direction="270"
-                                                                    Opacity="0.5"
                                                                     ShadowDepth="1"
-                                                                    Color="#FFA0A0A0" />
+                                                                    Color="{StaticResource Avatar.Shadow}" />
                                                             </Image.Effect>
                                                         </Image>
                                                         <!--  Information column  -->
@@ -1808,9 +1799,8 @@
                                                                             <DropShadowEffect
                                                                                 BlurRadius="4"
                                                                                 Direction="270"
-                                                                                Opacity="0.5"
                                                                                 ShadowDepth="1"
-                                                                                Color="#FFA0A0A0" />
+                                                                                Color="{StaticResource Avatar.Shadow}" />
                                                                         </Image.Effect>
                                                                     </Image>
                                                                 </StackPanel>
@@ -1843,9 +1833,8 @@
                                                                 <DropShadowEffect
                                                                     BlurRadius="4"
                                                                     Direction="270"
-                                                                    Opacity="0.5"
                                                                     ShadowDepth="1"
-                                                                    Color="#FFA0A0A0" />
+                                                                    Color="{StaticResource Avatar.Shadow}" />
                                                             </Image.Effect>
                                                         </Image>
                                                         <!--  Information column  -->
@@ -1902,9 +1891,8 @@
                                                                 <DropShadowEffect
                                                                     BlurRadius="4"
                                                                     Direction="270"
-                                                                    Opacity="0.5"
                                                                     ShadowDepth="1"
-                                                                    Color="#FFA0A0A0" />
+                                                                    Color="{StaticResource Avatar.Shadow}" />
                                                             </Image.Effect>
                                                         </Image>
                                                         <!--  Information column  -->
@@ -1946,7 +1934,7 @@
                                     MinWidth="510"
                                     Margin="0,4,0,0"
                                     Background="#FFF"
-                                    BorderBrush="#26000000"
+                                    BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,1,1,1"
                                     CornerRadius="4,4,4,4">
                                     <Grid>
@@ -2038,7 +2026,7 @@
                                         <Rectangle
                                             Grid.Row="1"
                                             Height="1"
-                                            Fill="#d9e1e8" />
+                                            Fill="{StaticResource Chatbar.Divider}" />
                                         <Image
                                             x:Name="throbber"
                                             Grid.Row="2"
@@ -2159,8 +2147,8 @@
                                                         StaysOpen="False">
                                                         <Border
                                                             Padding="2"
-                                                            Background="#CC202020"
-                                                            BorderBrush="#666666"
+                                                            Background="{StaticResource EmojiFlyout.Background}"
+                                                            BorderBrush="{StaticResource EmojiFlyout.Border}"
                                                             BorderThickness="1"
                                                             CornerRadius="4">
                                                             <ScrollViewer
@@ -2227,7 +2215,7 @@
                                                             x:Name="TypingIndicatorText"
                                                             Margin="3,0,0,0"
                                                             VerticalAlignment="Center"
-                                                            Foreground="#666666" />
+                                                            Foreground="{StaticResource Text.MediumContrast}" />
                                                     </StackPanel>
                                                 </Grid>
                                                 <!--  Message box typing area  -->

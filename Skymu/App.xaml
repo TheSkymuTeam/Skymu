@@ -10,10 +10,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
+                <ResourceDictionary Source="Themes/default.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:LanguageManager x:Key="Lang" />
-            <SolidColorBrush x:Key="SkBlue" Color="#00AFF0" />
-            <SolidColorBrush x:Key="Sk5Link" Color="#0066ff" />
             <Style
                 x:Key="Window"
                 BasedOn="{StaticResource {x:Type Window}}"
@@ -52,7 +51,7 @@
                 <!--  This fixes the red hyperlink hover color  -->
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="#00AFF0" />
+                        <Setter Property="Foreground" Value="{StaticResource Text.Header}" />
                     </Trigger>
                 </Style.Triggers>
             </Style>

@@ -177,18 +177,6 @@ namespace Skymu.Converters
 
     public class SenderToColorConverter : IMultiValueConverter
     {
-        private static readonly SolidColorBrush MyColor = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("#999999")
-        );
-
-        private static readonly SolidColorBrush OtherUserColor = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("#3399ff")
-        );
-
-        private static readonly SolidColorBrush ForwardedMessageColor = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("#00cc88")
-        );
-
         public object Convert(
             object[] values,
             Type targetType,
@@ -197,11 +185,11 @@ namespace Skymu.Converters
         )
         {
             if (values[0] is string identifier && identifier == Universal.CurrentUser?.Identifier)
-                return MyColor;
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Me"]; 
             else if (values[1] is bool isForwarded && isForwarded)
-                return ForwardedMessageColor;
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Forward"]; 
             else
-                return OtherUserColor;
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Other"]; 
         }
 
         public object[] ConvertBack(
@@ -651,16 +639,11 @@ namespace Skymu.Converters
 
     public class SenderToBubbleColorConverter : IValueConverter
     {
-        private static readonly SolidColorBrush SentColor =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E5F7FD"));
-        private static readonly SolidColorBrush ReceivedColor =
-            new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C7EDFC"));
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string id && id == Universal.CurrentUser?.Identifier)
-                return SentColor;
-            return ReceivedColor;
+                return (SolidColorBrush)Application.Current.Resources["Metro.Message.Bubble.Me"];
+            return (SolidColorBrush)Application.Current.Resources["Metro.Message.Bubble.Other"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
