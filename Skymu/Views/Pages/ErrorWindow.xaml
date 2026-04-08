@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Skymu.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Error Window"
     Width="400"
     Height="400"
@@ -21,7 +21,7 @@
             <TextBlock.Text>
                 <Binding
                     Path="BrandingName"
-                    Source="{x:Static properties:Settings.Default}"
+                    Source="{x:Static preferences:Settings.Default}"
                     StringFormat="{}Oh no! {0} encountered an unexpected error. Details are provided below. Please report this to the developers so it can be investigated and resolved." />
             </TextBlock.Text>
         </TextBlock>

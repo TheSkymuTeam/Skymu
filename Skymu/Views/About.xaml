@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="About"
     Width="501"
     Height="454"
@@ -44,8 +44,8 @@
             Foreground="#555555">
             <TextBlock.Text>
                 <MultiBinding StringFormat="v{0} {1}">
-                    <Binding Path="BuildVersion" Source="{x:Static properties:Settings.Default}" />
-                    <Binding Path="BuildName" Source="{x:Static properties:Settings.Default}" />
+                    <Binding Path="BuildVersion" Source="{x:Static preferences:Settings.Default}" />
+                    <Binding Path="BuildName" Source="{x:Static preferences:Settings.Default}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>

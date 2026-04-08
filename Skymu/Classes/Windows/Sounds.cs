@@ -9,12 +9,12 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using Skymu.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Threading.Tasks;
+using Skymu.Preferences;
 using System.Windows;
 
 # pragma warning disable CA1416
@@ -41,7 +41,7 @@ namespace Skymu
         static void Load(string key, string filename, string path = "", string fallback = "Sounds")
         {
             if (path == "")
-                path = Settings.Default.SoundPack;
+                path = Settings.SoundPack;
             var uri = new Uri($"pack://application:,,,/{path}/{filename}", UriKind.Absolute);
             bool suc = false;
             System.Windows.Resources.StreamResourceInfo streamInfo = null;

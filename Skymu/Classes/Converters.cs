@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Skymu.Formatting;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using MiddleMan;
+using Skymu.Preferences;
 using Skymu.Helpers;
 using Skymu.ViewModels;
 
@@ -594,12 +596,12 @@ namespace Skymu.Converters
 
         internal static string GetAssetBasePrefix(string era = null, bool universal = false)
         {
-            string theme_root = Properties.Settings.Default.ThemeRoot;
+            string theme_root = Settings.ThemeRoot;
             if (universal) theme_root = "Universal";
 
             if (!String.IsNullOrEmpty(theme_root))
             {
-                string baseFolder = Properties.Settings.Default.Interface;
+                string baseFolder = Settings.Interface;
                 if (!String.IsNullOrEmpty(era)) baseFolder = era;
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
 
@@ -611,7 +613,7 @@ namespace Skymu.Converters
         internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared, string era = null)
         {
             string packUri;
-            if (era == null) era = Properties.Settings.Default.Interface;
+            if (era == null) era = Settings.Interface;
             if (is_shared)
             {
                 packUri = $"pack://application:,,,/Skymu;component/{era}/Assets/Universal/{image_path}";

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Winforms = System.Windows.Forms;
+using Skymu.Preferences;
 
 # pragma warning disable CA1416
 
@@ -205,7 +206,7 @@ namespace Skymu
                 statusText = Universal.Lang["sTRAYHINT_USER_OFFLINE"];
             }
 
-            string iconToolTip = Properties.Settings.Default.BrandingName + " (" + statusText + ")";
+            string iconToolTip = Settings.BrandingName + " (" + statusText + ")";
             var resourceUri = new Uri("pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 

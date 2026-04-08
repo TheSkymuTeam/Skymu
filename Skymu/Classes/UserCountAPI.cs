@@ -15,10 +15,11 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Skymu.Preferences;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Skymu
+namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
@@ -67,12 +68,12 @@ namespace Skymu
             string anon_random = "skymu-user-" + GenerateRandomNumberString(10);
             var payload = new
             {
-                display_name = Properties.Settings.Default.Anonymize ? "Anonymous" : dn,
-                username = Properties.Settings.Default.Anonymize ? anon_random : user,
-                identifier = Properties.Settings.Default.Anonymize ? anon_random : id,
+                display_name = Settings.Anonymize ? "Anonymous" : dn,
+                username = Settings.Anonymize ? anon_random : user,
+                identifier = Settings.Anonymize ? anon_random : id,
                 plugin = Universal.Plugin.Name,
-                skymu_build_codename = Properties.Settings.Default.BuildName,
-                skymu_build_version = Properties.Settings.Default.BuildVersion,
+                skymu_build_codename = Settings.BuildName,
+                skymu_build_version = Settings.BuildVersion,
                 token = ApiTkn,
                 online,
             };

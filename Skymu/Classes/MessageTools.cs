@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using Skymu.Preferences;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -25,6 +26,7 @@ using System.Windows.Media.Imaging;
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Syntax;
+using Skymu.Emoticons;
 using Markdig.Syntax.Inlines;
 using MiddleMan;
 using Skymu.Helpers;
@@ -35,7 +37,7 @@ using MdTableCell = Markdig.Extensions.Tables.TableCell;
 using MdTableRow = Markdig.Extensions.Tables.TableRow;
 using WpfInline = System.Windows.Documents.Inline;
 
-namespace Skymu
+namespace Skymu.Formatting
 {
     internal class MessageTools
     {
@@ -698,7 +700,7 @@ namespace Skymu
                 SliceMode = 0,
                 Interactive = false,
                 IsAnimation = true,
-                AnimationFps = Properties.Settings.Default.EmojiFps,
+                AnimationFps = Settings.EmojiFps,
             };
 
             RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
@@ -812,7 +814,7 @@ namespace Skymu
                 {
                     int index = Universal.ActiveViewModel.ActiveConversation.IndexOf(deleted_msg);
                     Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
-                    if (Properties.Settings.Default.MessageLogger)
+                    if (Settings.MessageLogger)
                     {
                         deleted_msg.Text += " ==[deleted]==";
                         Universal.ActiveViewModel.ActiveConversation.Insert(index, deleted_msg);
@@ -834,7 +836,7 @@ namespace Skymu
                 if (index != -1)
                 {
                     Message edited_msg = eE.NewItem as Message;
-                    if (!Properties.Settings.Default.MessageLogger)
+                    if (!Settings.MessageLogger)
                     {
                         Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
                     }
@@ -842,7 +844,7 @@ namespace Skymu
                     edited_msg.Text += " ==[edited]==";
 
                     int insertIndex = Math.Min(
-                        index + (Properties.Settings.Default.MessageLogger ? 1 : 0),
+                        index + (Settings.MessageLogger ? 1 : 0),
                         Universal.ActiveViewModel.ActiveConversation.Count
                     );
 

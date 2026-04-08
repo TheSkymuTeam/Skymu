@@ -31,11 +31,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Skymu.Views;
+using Skymu.Preferences;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using MiddleMan;
 
-namespace Skymu
+namespace Skymu.Databases
 {
     internal class DatabaseManager
     {
@@ -112,15 +113,15 @@ namespace Skymu
                         Dialog dlg = null;
                         dlg = new Dialog(
                             WindowBase.IconType.Question,
-                            $"{Properties.Settings.Default.BrandingName} found a database associated with this user account, but it was made by a newer version of the database manager (v{LastUsedVersion}) " +
-                            $"than the existing one (v{Version}).\n\nWould you like to delete the database and start fresh, or download the latest version of {Properties.Settings.Default.BrandingName}?",
+                            $"{Settings.BrandingName} found a database associated with this user account, but it was made by a newer version of the database manager (v{LastUsedVersion}) " +
+                            $"than the existing one (v{Version}).\n\nWould you like to delete the database and start fresh, or download the latest version of {Settings.BrandingName}?",
                             "Purge database?",
-                            $"{Properties.Settings.Default.BrandingName} Database Manager",
+                            $"{Settings.BrandingName} Database Manager",
                             new Action(() =>
                             {
                                 new Views.Pages.Updater();
                             }),
-                            $"Update {Properties.Settings.Default.BrandingName}",
+                            $"Update {Settings.BrandingName}",
                             true,
                             new Action(() =>
                             {

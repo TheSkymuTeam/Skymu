@@ -11,29 +11,26 @@
 
 using MiddleMan;
 using Skymu.Classes;
+using Skymu.Emoticons;
+using Skymu.Formatting;
 using Skymu.Helpers;
-using Skymu.Properties;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime;
 using System.Text;
 using System.Threading;
+using Skymu.Preferences;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Windows.Shell;
 using System.Windows.Threading;
 
 namespace Skymu.Pontis
@@ -426,7 +423,7 @@ namespace Skymu.Pontis
                     continue;
                 tab.SetState(ButtonVisualState.Default);
                 buttonToColumn[tab].Width =
-                    Properties.Settings.Default.DynamicSidebarTabs
+                    Settings.DynamicSidebarTabs
                     && Universal.Plugin.SupportsServers
                         ? small
                         : dynamic;
@@ -1208,8 +1205,8 @@ namespace Skymu.Pontis
                 StatusBox.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
                 ConfigureCompactRecentsList();
-                if (Properties.Settings.Default.EnableSkypeHome) SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
-                WindowTitle = Properties.Settings.Default.BrandingName + "™ - " + Universal.CurrentUser.Username;
+                if (Settings.EnableSkypeHome) SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
+                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
                 Ready?.Invoke(this, EventArgs.Empty);

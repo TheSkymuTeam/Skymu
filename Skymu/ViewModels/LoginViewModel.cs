@@ -20,7 +20,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using MiddleMan;
 using QRCoder;
 using Skymu.Helpers;
+using Skymu.Credentials;
 using Skymu.Views;
+using Skymu.Plugins;
+using Skymu.Preferences;
 using Skymu.Views.Pages;
 using System;
 using System.Collections.ObjectModel;
@@ -66,10 +69,10 @@ namespace Skymu.ViewModels
         }
         public void LoadPlugins()
         {
-            Plugins.DisposeAll();
-            Universal.PluginList = Plugins.Load("Plugins");
+            PluginManager.DisposeAll();
+            Universal.PluginList = PluginManager.Load("Plugins");
             int pluginIndex = 0;
-            SavedCredential[] savedCredentials = Credentials.GetAll();
+            SavedCredential[] savedCredentials = CredentialManager.GetAll();
 
             foreach (var plugin in Universal.PluginList)
             {
@@ -83,7 +86,7 @@ namespace Skymu.ViewModels
                     }
                 }
 
-                if (match != null && PendingAutoLogin == null && Properties.Settings.Default.AutoLogin)
+                if (match != null && PendingAutoLogin == null && Settings.AutoLogin)
                 {
                     PendingAutoLogin = match;
                     Universal.Plugin = plugin;
@@ -160,13 +163,13 @@ namespace Skymu.ViewModels
             Sounds.Play("login", true);
             new Updater();
 
-            string brand = Properties.Settings.Default.BrandingName;
+            string brand = Settings.BrandingName;
             PlatformType platform = Runtime.DetectOS();
 
-            if (!Properties.Settings.Default.FirstRunCompleted)
+            if (!Settings.FirstRunCompleted)
             {
-                Properties.Settings.Default.FirstRunCompleted = true;
-                Properties.Settings.Default.Save();
+                Settings.FirstRunCompleted = true;
+                Settings.Save();
 
                 Dialog dlg = null;
                 dlg = new Dialog(
@@ -178,16 +181,16 @@ namespace Skymu.ViewModels
                     "Skymu User Statistics",
                     new Action(() =>
                     {
-                        Properties.Settings.Default.Anonymize = true;
-                        Properties.Settings.Default.Save();
+                        Settings.Anonymize = true;
+                        Settings.Save();
                         dlg.Close();
                     }),
                     Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
                     true,
                     new Action(() =>
                     {
-                        Properties.Settings.Default.Anonymize = false;
-                        Properties.Settings.Default.Save();
+                        Settings.Anonymize = false;
+                        Settings.Save();
                         dlg.Close();
                     }),
                     Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
@@ -221,7 +224,7 @@ namespace Skymu.ViewModels
                     Universal.MessageBox(message, "Compatibility warning");
             }
 
-            if (!Properties.Settings.Default.SuppressOldRuntimeWarnings)
+            if (!Settings.SuppressOldRuntimeWarnings)
             {
                 string newNetLink = String.Empty;
                 int netVersion = Runtime.DetectNetVersion();
@@ -245,8 +248,8 @@ namespace Skymu.ViewModels
                         "Skymu",
                         new Action(() =>
                         {
-                            Properties.Settings.Default.SuppressOldRuntimeWarnings = true;
-                            Properties.Settings.Default.Save();
+                            Settings.SuppressOldRuntimeWarnings = true;
+                            Settings.Save();
                             dlg.Close();
                         }),
                         Universal.Lang["sZAPBUTTON_DONTSHOW"],
@@ -332,7 +335,7 @@ namespace Skymu.ViewModels
                         WindowBase.IconType.ContactRequest,
                         null,
                         "Scan code to authenticate",
-                        Properties.Settings.Default.BrandingName + " - Login",
+                        Settings.BrandingName + " - Login",
                         null,
                         "Close",
                         false, null, null, false,
@@ -362,7 +365,7 @@ namespace Skymu.ViewModels
                 WindowBase.IconType.ContactRequest,
                 Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
                 "Two-factor authentication required",
-                Properties.Settings.Default.BrandingName + " - Login",
+                Settings.BrandingName + " - Login",
                 null,
                 Universal.Lang["sZAPBUTTON_SIGNIN"],
                 false, null, null, true
@@ -387,7 +390,7 @@ namespace Skymu.ViewModels
             {
                 SavedCredential cred = await Universal.Plugin.StoreCredential();
                 if (cred != null)
-                    Credentials.Save(cred);
+                    CredentialManager.Save(cred);
             }
 
             HeaderTextRequested?.Invoke("Loading user data");
