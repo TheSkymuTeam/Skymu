@@ -14,6 +14,7 @@ using Skymu.Classes;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
+using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -26,7 +27,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Skymu.Preferences;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -209,7 +209,9 @@ namespace Skymu.Skyaeris
         private void ToggleStatusBoxSelection(bool selected)
         {
             StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-            StatusBox.TextColor = selected ? Brushes.White : (SolidColorBrush)Application.Current.Resources["Text.HighContrast"];
+            StatusBox.TextColor = selected
+                ? Brushes.White
+                : (SolidColorBrush)Application.Current.Resources["Text.HighContrast"];
             SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
         }
 
@@ -394,7 +396,6 @@ namespace Skymu.Skyaeris
             }
         }
 
-
         private void HandleWindowActivated()
         {
             IsWindowActive = true;
@@ -562,8 +563,7 @@ namespace Skymu.Skyaeris
                     continue;
                 tab.SetState(ButtonVisualState.Default);
                 buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs
-                    && Universal.Plugin.SupportsServers
+                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
                         ? small
                         : dynamic;
             }
@@ -1167,7 +1167,7 @@ namespace Skymu.Skyaeris
             frame.HorizontalAlignment = HorizontalAlignment.Stretch;
             frame.VerticalAlignment = VerticalAlignment.Stretch;
 
-            if (location == null) 
+            if (location == null)
             {
                 if (screen != null)
                 {
@@ -1276,7 +1276,7 @@ namespace Skymu.Skyaeris
             var para = new Paragraph(new Run(text))
             {
                 Margin = new Thickness(0),
-                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"]
+                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"],
             };
 
             flowDoc.Blocks.Add(para);
@@ -1424,10 +1424,7 @@ namespace Skymu.Skyaeris
                         Universal.CurrentUser,
                         Universal.Plugin.ContactsList.ToArray()
                     );
-                WindowTitle =
-                    Settings.BrandingName
-                    + "™ - "
-                    + Universal.CurrentUser.Username;
+                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
                 Ready?.Invoke(this, EventArgs.Empty);
@@ -1469,7 +1466,8 @@ namespace Skymu.Skyaeris
             };
 
             InitializeWindowFrame();
-            if (Settings.FallbackFillColors) this.Background = (Brush)Application.Current.Resources["Background"];
+            if (Settings.FallbackFillColors)
+                this.Background = (Brush)Application.Current.Resources["Background"];
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
