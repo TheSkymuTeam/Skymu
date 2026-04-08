@@ -60,7 +60,7 @@
                 FontFamily="Arial"
                 FontSize="13"
                 FontWeight="Bold"
-                Foreground="#333333"
+                Foreground="{StaticResource Text.HighContrast}"
                 Text="Caption goes here" />
         </Grid>
         <Frame

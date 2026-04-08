@@ -1,51 +1,74 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--  Base Colors  -->
-    <SolidColorBrush x:Key="DarkBlueBrush" Color="#1d3a55" />
-    <SolidColorBrush x:Key="WhiteBrush" Color="#f4f4f4" />
+    <!--  ================= ACTIVE WINDOW (Skype 4-5) =================  -->
 
-    <!--  ================= ACTIVE =================  -->
-
-    <!--  Titlebar  -->
-    <LinearGradientBrush x:Key="Active.TitlebarBrush" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Active.Titlebar" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#FF6B9DE0" />
         <GradientStop Offset="0.0634" Color="#f0f6fe" />
         <GradientStop Offset="0.0667" Color="#d2e5fe" />
         <GradientStop Offset="1.0" Color="#8cbeff" />
     </LinearGradientBrush>
-
-    <!--  Window  -->
-    <LinearGradientBrush x:Key="Active.WindowBrush" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Active.Window" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#c5deff" />
         <GradientStop Offset="1.0" Color="#8cbeff" />
     </LinearGradientBrush>
+    <SolidColorBrush x:Key="Active.Menubar" Color="#c6dfff" />
+    <SolidColorBrush x:Key="Active.Background" Color="#8cbeff" />
 
-    <!--  MenuBar  -->
-    <SolidColorBrush x:Key="Active.MenuBarBrush" Color="#c6dfff" />
+    <!--  ================= INACTIVE WINDOW (Skype 4-5) =================  -->
 
-    <!--  Standard  -->
-    <SolidColorBrush x:Key="Active.StandardBrush" Color="#8cbeff" />
-
-    <!--  ================= INACTIVE =================  -->
-
-    <!--  Titlebar  -->
-    <LinearGradientBrush x:Key="Inactive.TitlebarBrush" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Inactive.Titlebar" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#f0f0f0" />
         <GradientStop Offset="0.0634" Color="#f8f8f8" />
         <GradientStop Offset="0.0667" Color="#f4f4f4" />
         <GradientStop Offset="1.0" Color="#d7d7d7" />
     </LinearGradientBrush>
-
-    <!--  Window  -->
-    <LinearGradientBrush x:Key="Inactive.WindowBrush" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Inactive.Window" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#ebecf0" />
         <GradientStop Offset="1.0" Color="#d8dae1" />
     </LinearGradientBrush>
+    <SolidColorBrush x:Key="Inactive.Menubar" Color="#f0edec" />
+    <SolidColorBrush x:Key="Inactive.Background" Color="#d8dae1" />
 
-    <!--  MenuBar  -->
-    <SolidColorBrush x:Key="Inactive.MenuBarBrush" Color="#f0edec" />
+    <!--  ================= STANDARD COLORS =================  -->
 
-    <!--  Standard  -->
-    <SolidColorBrush x:Key="Inactive.StandardBrush" Color="#d8dae1" />
+    <SolidColorBrush x:Key="Background" Color="#D4E2F2" />
+    <SolidColorBrush x:Key="Card.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Card.Border" Color="#26000000" />
+
+    <SolidColorBrush x:Key="Text.VeryHighContrast" Color="#000000" />
+    <SolidColorBrush x:Key="Text.HighContrast" Color="#333333" />
+    <SolidColorBrush x:Key="Text.MediumContrast" Color="#666666" />
+    <SolidColorBrush x:Key="Text.LowContrast" Color="#999999" />
+    <SolidColorBrush x:Key="Text.VeryLowContrast" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Text.Hyperlink" Color="#0066FF" />
+    <SolidColorBrush x:Key="Text.Highlight" Color="#3399FF" />
+    <SolidColorBrush x:Key="Text.Header" Color="#00AFF0" />
+
+    <SolidColorBrush x:Key="Metro.Background" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="Metro.Border" Color="#D9D9D9" />
+    <SolidColorBrush x:Key="Metro.Sidebar.UserCountTab" Color="#F3F3F3" />
+    <SolidColorBrush x:Key="Metro.Accent" Color="#00AFF0" />
+    <SolidColorBrush x:Key="Metro.Message.Bubble.Me" Color="#E5F7FD" />
+    <SolidColorBrush x:Key="Metro.Message.Bubble.Other" Color="#C7EDFC" />
+
+    <SolidColorBrush x:Key="Message.Sender.Me" Color="#999999" />
+    <SolidColorBrush x:Key="Message.Sender.Other" Color="#3399FF" />
+    <SolidColorBrush x:Key="Message.Sender.Unread" Color="#FFCC11" />
+    <SolidColorBrush x:Key="Message.Sender.Forward" Color="#00cc88" />
+    <SolidColorBrush x:Key="Message.Border" Color="#E4E8ED" />
+
+    <SolidColorBrush x:Key="Chatbar.Divider" Color="#D9E1E8" />
+    <SolidColorBrush x:Key="Sidebar.Header" Color="#E5E5E5" />
+    <SolidColorBrush x:Key="Sidebar.Divider.Opaque" Color="#D9DfE6" />
+    <SolidColorBrush x:Key="Sidebar.Divider.Translucent" Color="#D1C5C5C5" />
+    <SolidColorBrush x:Key="Avatar.Border" Color="#80BBBBBB" />
+
+    <SolidColorBrush x:Key="EmojiFlyout.Background" Color="#CC202020" />
+    <SolidColorBrush x:Key="EmojiFlyout.Border" Color="#666666" />
+
+    <Color x:Key="Avatar.Shadow">#80A0A0A0</Color>
+    <Color x:Key="WindowFrame.Button.Close.Glow">#FF0000</Color>
+    <Color x:Key="WindowFrame.Button.Generic.Glow">#00C3FF</Color>
 
 </ResourceDictionary>

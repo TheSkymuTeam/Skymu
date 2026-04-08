@@ -11,7 +11,7 @@
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
-    Background="{StaticResource SkBlue}"
+    Background="{StaticResource Metro.Accent}"
     Closing="Login_Closing"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
@@ -24,7 +24,7 @@
     <Window.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
-            <Setter Property="Foreground" Value="{StaticResource SkBlue}" />
+            <Setter Property="Foreground" Value="{StaticResource Text.Hyperlink}" />
             <Setter Property="TextDecorations" Value="{x:Null}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -44,9 +44,9 @@
             Grid.ColumnSpan="3"
             Width="300"
             HorizontalAlignment="Center"
-            Fill="#FFF"
+            Fill="{StaticResource Card.Background}"
             Stretch="Fill" />
-        <Rectangle Grid.Row="0" Fill="#EEE" />
+        <Rectangle Grid.Row="0" Fill="{StaticResource Metro.Border}" />
         <!--  placeholder for menu bar so designer donesnt mess up  -->
         <Grid Grid.Row="1">
             <Image
@@ -107,7 +107,7 @@
                     FontFamily="Arial"
                     FontSize="20"
                     FontWeight="Bold"
-                    Foreground="{StaticResource SkBlue}"
+                    Foreground="{StaticResource Text.Header}"
                     Text="{Binding [sF_LOGIN_WELCOME]}" />
                 <Grid
                     x:Name="LoginControls"
@@ -192,7 +192,7 @@
                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Login/pill.png'}"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"
-                        TextColor="#FF393A48"
+                        TextColor="{StaticResource Text.HighContrast}"
                         TextFont="Tahoma"
                         TextHorizontalAlignment="Center"
                         TextSize="11"
@@ -204,7 +204,7 @@
                         Width="270"
                         Height="55"
                         VerticalAlignment="Top"
-                        Background="{StaticResource SkBlue}"
+                        Background="{StaticResource Metro.Accent}"
                         CornerRadius="5">
                         <StackPanel
                             Grid.Row="1"
@@ -218,7 +218,7 @@
                                 Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                Foreground="#FFF"
+                                Foreground="{StaticResource Text.VeryLowContrast}"
                                 IsChecked="True" />
                             <CheckBox
                                 x:Name="StartOnWinStart"
@@ -227,7 +227,7 @@
                                 Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                Foreground="#FFF"
+                                Foreground="{StaticResource Text.VeryLowContrast}"
                                 IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=StartOnStartup, Mode=TwoWay}" />
                         </StackPanel>
                     </Border>

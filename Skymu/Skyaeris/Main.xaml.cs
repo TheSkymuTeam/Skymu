@@ -74,9 +74,9 @@ namespace Skymu.Skyaeris
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
         private readonly Brush DefaultTextBrush = (Brush)
-            new BrushConverter().ConvertFromString("#333333");
+            new BrushConverter().ConvertFromString("{StaticResource Text.HighContrast}");
         private readonly Brush PlaceholderBrush = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("#999999")
+            (Color)ColorConverter.ConvertFromString("{StaticResource Text.LowContrast}")
         );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
@@ -328,11 +328,11 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private DropShadowEffect CreateDropShadow(string hexColor)
+        private DropShadowEffect CreateDropShadow(string color)
         {
             return new DropShadowEffect()
             {
-                Color = (Color)ColorConverter.ConvertFromString(hexColor),
+                Color = (Color)Application.Current.Resources[color],
                 BlurRadius = 15,
                 ShadowDepth = 0,
                 Opacity = 1,
@@ -372,11 +372,11 @@ namespace Skymu.Skyaeris
             {
                 if (button.Name == "close")
                 {
-                    button.Effect = CreateDropShadow("#FF0000");
+                    button.Effect = CreateDropShadow("WindowFrame.Button.Close.Glow");
                 }
                 else
                 {
-                    button.Effect = CreateDropShadow("#00C3FF");
+                    button.Effect = CreateDropShadow("WindowFrame.Button.Generic.Glow");
                 }
             }
         }
@@ -401,11 +401,10 @@ namespace Skymu.Skyaeris
             IsWindowActive = true;
             if (vmodel != null)
                 vmodel.IsWindowActive = true;
-
-            ContentBgTop.Fill = (Brush)Application.Current.Resources["Active.WindowBrush"];
-            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Active.MenuBarBrush"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.StandardBrush"];
+            ContentBgTop.Fill = (Brush)Application.Current.Resources["Active.Window"];
+            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.Background"];
+            MainMenuBar.Background = (Brush)Application.Current.Resources["Active.Menubar"];
+            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.Background"];
 
             foreach (var button in new[] { close, minimize, maximize, split })
             {
@@ -414,8 +413,8 @@ namespace Skymu.Skyaeris
 
             if (border == WindowFrame.SkypeBasic)
             {
-                TitleBar.Background = (Brush)Application.Current.Resources["Active.TitlebarBrush"];
-                this.Background = (Brush)Application.Current.Resources["Active.StandardBrush"];
+                TitleBar.Background = (Brush)Application.Current.Resources["Active.Titlebar"];
+                this.Background = (Brush)Application.Current.Resources["Active.Background"];
             }
         }
 
@@ -425,11 +424,10 @@ namespace Skymu.Skyaeris
             if (vmodel != null)
                 vmodel.IsWindowActive = false;
 
-            ContentBgTop.Fill = (Brush)Application.Current.Resources["Inactive.WindowBrush"];
-            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.MenuBarBrush"];
-            MainMenuBarDivider.Fill = (Brush)
-                Application.Current.Resources["Inactive.StandardBrush"];
+            ContentBgTop.Fill = (Brush)Application.Current.Resources["Inactive.Window"];
+            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
+            MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.Menubar"];
+            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
 
             foreach (var button in new[] { close, minimize, maximize, split })
             {
@@ -438,9 +436,8 @@ namespace Skymu.Skyaeris
 
             if (border == WindowFrame.SkypeBasic)
             {
-                this.Background = (Brush)Application.Current.Resources["Inactive.StandardBrush"];
-                TitleBar.Background = (Brush)
-                    Application.Current.Resources["Inactive.TitlebarBrush"];
+                TitleBar.Background = (Brush)Application.Current.Resources["Inactive.Titlebar"];
+                this.Background = (Brush)Application.Current.Resources["Inactive.Background"];
             }
         }
 
@@ -883,7 +880,7 @@ namespace Skymu.Skyaeris
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.Options("#d4e2f2").Show();
+            new Views.Options("Background").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)

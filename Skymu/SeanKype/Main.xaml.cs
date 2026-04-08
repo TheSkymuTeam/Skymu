@@ -330,7 +330,7 @@ namespace Skymu.SeanKype
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Options("#FFF").Show();
+            new Options("Metro.Background").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)

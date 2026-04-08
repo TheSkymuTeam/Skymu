@@ -51,7 +51,7 @@
                                 VerticalAlignment="Top"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                Foreground="#666666"
+                                Foreground="{StaticResource Text.MediumContrast}"
                                 Text="{TemplateBinding Content}" />
                             <Image
                                 Height="24"
@@ -129,13 +129,13 @@
                             FontFamily="Tahoma"
                             FontSize="11"
                             FontWeight="Bold"
-                            Foreground="#FF393A48"
+                            Foreground="{StaticResource Text.HighContrast}"
                             Text="Skymu Customization:" />
                         <TextBlock
                             Margin="7,0"
                             FontFamily="Tahoma"
                             FontSize="11"
-                            Foreground="#FF393A48"
+                            Foreground="{StaticResource Text.HighContrast}"
                             Text="Modify the way Skymu looks, feels, and behaves" />
                     </StackPanel>
                     <TabControl
@@ -151,7 +151,7 @@
                             Opacity="0">
                             <Border
                                 x:Name="OptionCategoryContainer1"
-                                BorderBrush="#26000000"
+                                BorderBrush="{StaticResource Card.Border}"
                                 BorderThickness="1,0,1,1">
                                 <ScrollViewer>
                                     <StackPanel Orientation="Vertical">
@@ -205,6 +205,11 @@
                                                 ItemsSource="{Binding Languages}"
                                                 SelectedValue="{Binding Language, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
                                                 SelectedValuePath="Key" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="(Requires restart)" />
                                         </StackPanel>
 
 
@@ -218,6 +223,11 @@
                                                 <ComboBoxItem Content="Skype Aero" />
                                                 <ComboBoxItem Content="Skype Basic" />
                                             </ComboBox>
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="(Requires restart)" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -236,7 +246,7 @@
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
-                                                Foreground="#FF888888"
+                                                Foreground="{StaticResource Text.MediumContrast}"
                                                 Text="(Requires restart)" />
                                         </StackPanel>
 
@@ -257,7 +267,7 @@
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
-                                                Foreground="#FF888888"
+                                                Foreground="{StaticResource Text.MediumContrast}"
                                                 Text="(Requires restart)" />
                                         </StackPanel>
 
