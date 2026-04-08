@@ -18,7 +18,8 @@
     MinHeight="450"
     Activated="Window_Activated"
     AllowsTransparency="False"
-    Background="#8cbeff"
+    Background="{StaticResource Active.Background}"
+    Foreground="{StaticResource Text.VeryHighContrast}"
     Closing="Main_Closing"
     Deactivated="Window_Deactivated"
     FontFamily="Tahoma"
@@ -692,6 +693,7 @@
                             Margin="0"
                             Padding="0"
                             VerticalContentAlignment="Bottom"
+                            Background="{StaticResource Card.Background}"
                             CanContentScroll="True"
                             Focusable="false">
                             <ItemsPresenter />
@@ -705,15 +707,8 @@
         <Grid
             x:Name="TitleBar"
             Height="30"
-            VerticalAlignment="Top">
-            <Grid.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Offset="0.0" Color="#FF6B9DE0" />
-                    <GradientStop Offset="0.0634" Color="#f0f6fe" />
-                    <GradientStop Offset="0.0667" Color="#d2e5fe" />
-                    <GradientStop Offset="1" Color="#8cbeff" />
-                </LinearGradientBrush>
-            </Grid.Background>
+            VerticalAlignment="Top"
+            Background="{StaticResource Active.Titlebar}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="121" />
@@ -832,7 +827,7 @@
                 <Menu
                     x:Name="MainMenuBar"
                     Height="20"
-                    Background="#c6dfff"
+                    Background="{StaticResource Active.Menubar}"
                     FontFamily="Tahoma"
                     FontSize="11">
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
@@ -943,25 +938,21 @@
                     x:Name="MainMenuBarDivider"
                     Height="1"
                     VerticalAlignment="Top"
-                    Fill="#8cbeff" />
+                    Fill="{StaticResource Active.Background}" />
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="71" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Rectangle x:Name="ContentBgTop" Grid.Row="0">
-                    <Rectangle.Fill>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Offset="0.0" Color="#c5deff" />
-                            <GradientStop Offset="1.0" Color="#8cbeff" />
-                        </LinearGradientBrush>
-                    </Rectangle.Fill>
-                </Rectangle>
+                <Rectangle
+                    x:Name="ContentBgTop"
+                    Grid.Row="0"
+                    Fill="{StaticResource Active.Window}" />
                 <Rectangle
                     x:Name="ContentBgBottom"
                     Grid.Row="1"
-                    Fill="#8cbeff" />
+                    Fill="{StaticResource Active.Background}" />
                 <Border Grid.RowSpan="2" BorderThickness="4">
                     <Grid>
                         <ContentControl x:Name="FillWindowHost" />
@@ -1247,7 +1238,6 @@
                                 </StackPanel>
                                 <Border
                                     Grid.Row="1"
-                                    Background="White"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,0,1,0">
                                     <Grid x:Name="ContactsArea">
@@ -1933,7 +1923,7 @@
                                     Grid.Row="2"
                                     MinWidth="510"
                                     Margin="0,4,0,0"
-                                    Background="#FFF"
+                                    Background="{StaticResource Card.Background}"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,1,1,1"
                                     CornerRadius="4,4,4,4">

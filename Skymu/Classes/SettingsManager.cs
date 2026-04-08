@@ -70,6 +70,8 @@ namespace Skymu.Preferences
         public static int MsgLoadCount { get => S("MsgLoadCount", 30); set => W("MsgLoadCount", value, nameof(MsgLoadCount)); }
 
         public static string BrandingName { get => S("BrandingName", "Skype"); set => W("BrandingName", value, nameof(BrandingName)); }
+
+        public static string ColorTheme { get => S("ColorTheme", "Default"); set => W("ColorTheme", value, nameof(ColorTheme)); }
         public static string ThemeRoot { get => S("ThemeRoot", "Light"); set => W("ThemeRoot", value, nameof(ThemeRoot)); }
         public static string PresFrame { get => S("PresFrame", "Aero.NormalColor"); set => W("PresFrame", value, nameof(PresFrame)); }
         public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }

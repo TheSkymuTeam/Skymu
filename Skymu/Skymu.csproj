@@ -143,6 +143,10 @@
 
 	<ItemGroup>
 		<Page Remove="Themes\default.xaml" />
+		<Page Remove="Themes\discord.xaml" />
+		<Page Remove="Themes\newdiscord.xaml" />
+		<Page Remove="Themes\pink.xaml" />
+		<Page Remove="Themes\red.xaml" />
 	</ItemGroup>
 
 	<!-- Packages -->
@@ -200,6 +204,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="Themes\newdiscord.xaml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <SubType>Designer</SubType>
+		  <Generator>MSBuild:Compile</Generator>
+		</None>
+		<None Include="Themes\discord.xaml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <SubType>Designer</SubType>
+		  <Generator>MSBuild:Compile</Generator>
+		</None>
+		<None Include="Themes\red.xaml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <Generator>MSBuild:Compile</Generator>
+		</None>
+		<None Include="Themes\pink.xaml">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <Generator>MSBuild:Compile</Generator>
+		</None>
 		<None Include="Themes\default.xaml">
 			<Generator>MSBuild:Compile</Generator>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
