@@ -261,7 +261,7 @@ namespace Skymu.Views
                 }
             }
 
-            messageText.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("{StaticResource Text.MediumContrast}");
+            messageText.Foreground = (SolidColorBrush)Application.Current.Resources["Text.MediumContrast"];
             messageText.FontSize = 11;
             messageText.Margin = new Thickness(0, 1, 0, 6);
             Grid.SetRow(messageText, 1);
