@@ -47,12 +47,14 @@ namespace Stub
             }
         }
 
+        string MyUsername;
         public Task<LoginResult> Authenticate(
             AuthenticationMethod authType,
             string username,
             string password = null
         )
         {
+            MyUsername = username;
             MessageEvent.Invoke(
                 this,
                 new MessageRecievedEventArgs(
@@ -289,7 +291,7 @@ namespace Stub
         {
             _uiContext = SynchronizationContext.Current;
             MyInformation = new User(
-                "Sensei Wu",
+                MyUsername,
                 "thegamingkart",
                 "00001",
                 "Hello test",
