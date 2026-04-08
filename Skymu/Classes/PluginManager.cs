@@ -16,9 +16,9 @@ using System.Reflection;
 using System.Diagnostics;
 using MiddleMan;
 
-namespace Skymu
+namespace Skymu.Plugins
 {
-    internal class Plugins
+    internal class PluginManager
     {
         public static ICore[] Load(string path)
         {

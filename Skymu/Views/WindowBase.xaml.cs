@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows;
+using Skymu.Preferences;
 using System.Windows.Controls;
 
 namespace Skymu.Views
@@ -75,8 +76,8 @@ namespace Skymu.Views
 
         public IconType HeaderIcon
         {
-            get => Properties.Settings.Default.NikoIcons ? IconType.Niko : (IconType)HeaderImage.DefaultIndex;
-            set => HeaderImage.DefaultIndex = Properties.Settings.Default.NikoIcons ? (int)IconType.Niko : (int)value;
+            get => Settings.NikoIcons ? IconType.Niko : (IconType)HeaderImage.DefaultIndex;
+            set => HeaderImage.DefaultIndex = Settings.NikoIcons ? (int)IconType.Niko : (int)value;
         }
 
         public string ButtonLeftText

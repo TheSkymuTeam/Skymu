@@ -25,6 +25,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Skymu.Preferences;
+using Skymu.Formatting;
+using Skymu.Emoticons;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -63,7 +66,7 @@ namespace Skymu.SeanKype
                 LabelUsername.Content = Universal.CurrentUser?.DisplayName;
                 LabelStatus.Text = Universal.CurrentUser?.Status;
                 this.Title =
-                    Properties.Settings.Default.BrandingName
+                    Settings.BrandingName
                     + "\u2122 - "
                     + Universal.CurrentUser?.Username;
                 ConversationList.ItemsSource = Universal.Plugin.RecentsList;

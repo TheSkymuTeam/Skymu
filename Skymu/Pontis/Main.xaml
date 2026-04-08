@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:Skymu.Pontis"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"

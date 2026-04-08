@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
@@ -228,7 +228,7 @@
                                 FontFamily="Tahoma"
                                 FontSize="11"
                                 Foreground="{StaticResource Text.VeryLowContrast}"
-                                IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=StartOnStartup, Mode=TwoWay}" />
+                                IsChecked="{Binding Source={x:Static preferences:Settings.Default}, Path=[StartOnStartup], Mode=TwoWay}" />
                         </StackPanel>
                     </Border>
                 </Grid>

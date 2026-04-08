@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     Width="716"
     Height="612"
     HorizontalAlignment="Left"
@@ -191,7 +191,7 @@
                                                 x:Name="SC_BrandingNameBox"
                                                 Width="250"
                                                 FontFamily="Tahoma"
-                                                Text="{Binding BrandingName, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding Path=[BrandingName], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -203,7 +203,7 @@
                                                 Width="250"
                                                 DisplayMemberPath="Key"
                                                 ItemsSource="{Binding Languages}"
-                                                SelectedValue="{Binding Language, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Key" />
                                             <TextBlock
                                                 Margin="8,0,0,0"
@@ -218,7 +218,7 @@
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
                                                 Text="Main window frame" />
-                                            <ComboBox Width="250" SelectedIndex="{Binding WindowFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                            <ComboBox Width="250" SelectedIndex="{Binding Path=[WindowFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                                 <ComboBoxItem Content="Use the system window frame" />
                                                 <ComboBoxItem Content="Skype Aero" />
                                                 <ComboBoxItem Content="Skype Basic" />
@@ -237,7 +237,7 @@
                                                 Text="Interface era" />
                                             <ComboBox
                                                 Width="250"
-                                                SelectedValue="{Binding Interface, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValue="{Binding Path=[Interface], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Skype 5" Tag="Skyaeris" />
                                                 <ComboBoxItem Content="Skype 6" Tag="Pontis" />
@@ -258,7 +258,7 @@
                                             <ComboBox
                                                 x:Name="ComboSoundPack"
                                                 Width="250"
-                                                SelectedValue="{Binding SoundPack, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Standard" Tag="Sounds" />
                                                 <ComboBoxItem Content="Classic" Tag="SoundsClassic" />
@@ -278,7 +278,7 @@
                                                 Text="Application theme (experimental)" />
                                             <ComboBox
                                                 Width="250"
-                                                SelectedValue="{Binding ThemeRoot, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValue="{Binding Path=[ThemeRoot], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Light" Tag="Light" />
                                                 <ComboBoxItem Content="Dark" Tag="Dark" />
@@ -293,7 +293,7 @@
                                                 Text="Base theme (scrollbar, buttons, etc)" />
                                             <ComboBox
                                                 Width="250"
-                                                SelectedValue="{Binding PresFrame, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                                SelectedValue="{Binding Path=[PresFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Windows XP" Tag="Luna.NormalColor" />
                                                 <ComboBoxItem Content="Windows XP (Olive)" Tag="Luna.Homestead" />
@@ -307,18 +307,18 @@
                                         </StackPanel>
 
 
-                                        <CheckBox Margin="0,5" IsChecked="{Binding FallbackFillColors, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                        <CheckBox Margin="0,5" IsChecked="{Binding Path=[FallbackFillColors], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>
                                         </CheckBox>
 
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Enable auto-login for accounts with valid credentials saved"
-                                            IsChecked="{Binding AutoLogin, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[AutoLogin], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Replace all dialog icons with 'Niko' from the game 'Oneshot'"
-                                            IsChecked="{Binding NikoIcons, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[NikoIcons], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
@@ -328,7 +328,7 @@
                                             <TextBox
                                                 Width="40"
                                                 FontFamily="Tahoma"
-                                                Text="{Binding EmojiFps, Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding [EmojiFps], Converter={StaticResource StringToDoubleConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -339,29 +339,29 @@
                                             <TextBox
                                                 Width="40"
                                                 FontFamily="Tahoma"
-                                                Text="{Binding MsgLoadCount, Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding [MsgLoadCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
 
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Display a notification when you recieve a message"
-                                            IsChecked="{Binding EnableNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[EnableNotifications], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Make notifications blue instead of the accurate orange"
-                                            IsChecked="{Binding BlueNotifications, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[BlueNotifications], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Dynamically resize sidebar tabs based on selection (accurate)"
-                                            IsChecked="{Binding DynamicSidebarTabs, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[DynamicSidebarTabs], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Use GDI+ text rendering pipeline on Windows"
-                                            IsChecked="{Binding UseClearType, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[UseClearType], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <CheckBox
                                             Margin="0,5"
-                                            IsChecked="{Binding FallbackFillColors, Mode=TwoWay, Source={x:Static properties:Settings.Default}}"
+                                            IsChecked="{Binding Path=[FallbackFillColors], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                             Visibility="Collapsed">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>
                                         </CheckBox>
@@ -369,25 +369,25 @@
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Enable the 'Skype Home' feature (experimental, may use 20-60 MB of additional RAM)"
-                                            IsChecked="{Binding EnableSkypeHome, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[EnableSkypeHome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
-                                            IsChecked="{Binding StartOnStartup, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[StartOnStartup], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Retain original versions of edited and deleted messages (MessageLogger)"
-                                            IsChecked="{Binding MessageLogger, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[MessageLogger], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
                                             Content="Do not reveal my username and display name in Skymu's connected user statistics"
-                                            IsChecked="{Binding Anonymize, Mode=TwoWay, Source={x:Static properties:Settings.Default}}" />
+                                            IsChecked="{Binding Path=[Anonymize], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <CheckBox
                                             MaxWidth="450"
                                             Margin="0,5"
                                             HorizontalAlignment="Left"
-                                            IsChecked="{Binding DisablePingbacks, Mode=TwoWay, Source={x:Static properties:Settings.Default}}">
+                                            IsChecked="{Binding Path=[DisablePingbacks], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server and the updater (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
                                         </CheckBox>
 

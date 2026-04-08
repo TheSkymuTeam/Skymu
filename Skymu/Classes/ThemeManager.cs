@@ -3,7 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows;
 
-namespace Skymu
+namespace Skymu.Theming
 {
     public static class ThemeManager
     {

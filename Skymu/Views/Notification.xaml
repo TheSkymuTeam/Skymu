@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:global="clr-namespace:Skymu"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Notification"
     Width="240"
     AllowsTransparency="True"

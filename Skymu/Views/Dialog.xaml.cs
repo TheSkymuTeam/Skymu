@@ -11,6 +11,7 @@
 
 using System;
 using System.Windows;
+using Skymu.Preferences;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -92,7 +93,7 @@ namespace Skymu.Views
                 }
                 if (title == null)
                 {
-                    title = Properties.Settings.Default.BrandingName;
+                    title = Settings.BrandingName;
                     switch (type)
                     {
                         case WindowBase.IconType.Information:
@@ -124,7 +125,7 @@ namespace Skymu.Views
                 BRAction = brAction;
                 BMAction = bmAction;
                 BLAction = blAction;
-                DialogImage.DefaultIndex = Properties.Settings.Default.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
+                DialogImage.DefaultIndex = Settings.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
                 if (blText != null)
                     ButtonLeft.Content = blText;
                 if (bmText != null)

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Skymu.Preferences;
 using Microsoft.Win32;
 
 #pragma warning disable CA1416
@@ -23,8 +24,8 @@ namespace Skymu
                 return;
             _initialized = true;
 
-            Properties.Settings.Default.PropertyChanged += Settings_PropertyChanged;
-            Properties.Settings.Default.StartOnStartup = GetStartOnStartup();
+            Settings.Default.PropertyChanged += Settings_PropertyChanged;
+            Settings.StartOnStartup = GetStartOnStartup();
         }
 
         private static void Settings_PropertyChanged(
@@ -33,7 +34,7 @@ namespace Skymu
         )
         {
             if (e.PropertyName == "StartOnStartup")
-                SetSkymuStartOnComputerStart(Properties.Settings.Default.StartOnStartup);
+                SetSkymuStartOnComputerStart(Settings.StartOnStartup);
         }
 
         private static bool GetStartOnStartup()

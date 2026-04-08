@@ -18,6 +18,7 @@ using System.Net.Http;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.Json;
+using Skymu.Preferences;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,7 +37,7 @@ namespace Skymu.Views.Pages
     {
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
-        private string brand = Properties.Settings.Default.BrandingName;
+        private string brand = Settings.BrandingName;
         private string[] update_info;
         private const string Repo = "Skymu";
         private WindowBase window;
@@ -60,7 +61,7 @@ namespace Skymu.Views.Pages
         {
             update_info = await GetUpdateInfo();
 
-            if (update_info.Length > 0 && (manual || update_info[0] != Properties.Settings.Default.SkippedVersion)) // not up to date, must show window
+            if (update_info.Length > 0 && (manual || update_info[0] != Settings.SkippedVersion)) // not up to date, must show window
             {
                 if (exwin != null)
                     window = exwin;
@@ -279,7 +280,7 @@ namespace Skymu.Views.Pages
 
         internal static async Task<string[]> GetUpdateInfo()
         {
-            if (Properties.Settings.Default.DisablePingbacks) return new string[0];
+            if (Settings.DisablePingbacks) return new string[0];
             try
             {
                 _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
@@ -303,7 +304,7 @@ namespace Skymu.Views.Pages
                         if (string.IsNullOrWhiteSpace(latestTag))
                             return new string[0];
 
-                        string currentVerStr = Properties.Settings.Default.BuildVersion;
+                        string currentVerStr = Settings.BuildVersion;
                         currentVerStr = currentVerStr.Replace("v", "");
 
                         Version currentVer;
@@ -354,8 +355,8 @@ namespace Skymu.Views.Pages
 
         internal static void SkipUpdate(string tag)
         {
-            Properties.Settings.Default.SkippedVersion = tag;
-            Properties.Settings.Default.Save();
+            Settings.SkippedVersion = tag;
+            Settings.Save();
         }
     }
 }

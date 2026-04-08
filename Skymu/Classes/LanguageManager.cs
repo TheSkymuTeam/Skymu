@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using System;
+using Skymu.Preferences;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -32,7 +33,7 @@ namespace Skymu
                 if (!ldict.TryGetValue(key, out var value))
                     return key;
 
-                return value.Replace("Skype", Properties.Settings.Default.BrandingName);
+                return value.Replace("Skype", Settings.BrandingName);
             }
         }
 
@@ -48,7 +49,7 @@ namespace Skymu
                     Load(ff);
                 return;
             }
-            string lang = Properties.Settings.Default.Language ?? "English";
+            string lang = Settings.Language ?? "English";
             if (!Scan())
                 Universal.ExceptionHandler(
                     new Exception("Could not find any compatible files in directory /languages.")
@@ -57,12 +58,12 @@ namespace Skymu
                 Universal.ExceptionHandler(
                     new Exception("Could not load language \"" + lang + "\".")
                 );
-            Properties.Settings.Default.PropertyChanged += Settings_PropertyChanged;
+            Settings.Default.PropertyChanged += Settings_PropertyChanged;
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Properties.Settings.Default.Language))
+            if (e.PropertyName == nameof(Settings.Language))
             {
                 LoadFromSettings();
             }
@@ -70,7 +71,7 @@ namespace Skymu
 
         private void LoadFromSettings()
         {
-            string lang = Properties.Settings.Default.Language ?? "English";
+            string lang = Settings.Language ?? "English";
 
             if (llist.TryGetValue(lang, out var path))
             {

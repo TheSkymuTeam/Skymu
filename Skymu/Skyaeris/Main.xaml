@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:Skymu.Skyaeris"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
-    xmlns:properties="clr-namespace:Skymu.Properties"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"
@@ -970,8 +970,7 @@
                                 <ColumnDefinition
                                     x:Name="SidebarColumn"
                                     Width="300"
-                                    MinWidth="181" />
-                                <!--  160 is accurate, 181 is minimum without causing clipping issue as of now  -->
+                                    MinWidth="160" />
                                 <ColumnDefinition x:Name="SkypeSplitterColumn" Width="4" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
@@ -1418,6 +1417,7 @@
                                             HoverTransition="False"
                                             MouseLeftButtonUp="MakeGroup_Click"
                                             PressedIndex="2"
+                                            RightWidth="1"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/create-group.png'}"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"

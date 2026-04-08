@@ -14,12 +14,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Skymu.Preferences;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using Skymu.Formatting;
 using System.Windows.Threading;
 using MiddleMan;
-using Skymu.Skyaeris;
 using Skymu.ViewModels;
 
 namespace Skymu.Views
@@ -34,7 +35,7 @@ namespace Skymu.Views
 
         public Notification(MessageRecievedEventArgs e, int durationSeconds = 5)
         {
-            if (!Properties.Settings.Default.EnableNotifications || Universal.CurrentUser is null)
+            if (!Settings.EnableNotifications || Universal.CurrentUser is null)
                 return;
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
@@ -55,7 +56,7 @@ namespace Skymu.Views
                 _activeNotification = new Notification();
                 _activeNotification.InitializeComponent();
 
-                if (Properties.Settings.Default.BlueNotifications)
+                if (Settings.BlueNotifications)
                 {
                     if (blue_background == null)
                     {

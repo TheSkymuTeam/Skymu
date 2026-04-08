@@ -12,6 +12,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Skymu.Preferences;
 
 namespace Skymu.Views
 {
@@ -26,13 +27,11 @@ namespace Skymu.Views
 
         private void LoadVisualSettings()
         {
-            var settings = Properties.Settings.Default;
-
-            if (settings.WindowFrame == 0 && !settings.FallbackFillColors)
+            if (Settings.WindowFrame == 0 && !Settings.FallbackFillColors)
             {
                 RadioSkype.IsChecked = true;
             }
-            else if (settings.WindowFrame == 2 && settings.FallbackFillColors)
+            else if (Settings.WindowFrame == 2 && Settings.FallbackFillColors)
             {
                 RadioClassic.IsChecked = true;
             }
@@ -40,14 +39,14 @@ namespace Skymu.Views
 
         private void RadioSkype_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.WindowFrame = 0;
-            Properties.Settings.Default.FallbackFillColors = false;
+            Settings.WindowFrame = 0;
+            Settings.FallbackFillColors = false;
         }
 
         private void RadioClassic_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.WindowFrame = 2;
-            Properties.Settings.Default.FallbackFillColors = true;
+            Settings.WindowFrame = 2;
+            Settings.FallbackFillColors = true;
         }
 
         private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
@@ -59,20 +58,20 @@ namespace Skymu.Views
 
         private void SaveButtonClick(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            Settings.Save();
             this.Close();
         }
 
         private void RestartButtonClick(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Save();
+            Settings.Save();
             Universal.Restart();
         }
 
         private void ResetButtonClick(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Reset();
-            Properties.Settings.Default.Save();
+            Settings.Reset();
+            Settings.Save();
             LoadVisualSettings(); 
         }
     }

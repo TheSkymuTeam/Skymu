@@ -21,9 +21,14 @@ using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 using MiddleMan;
 using Skymu.Converters;
+using Skymu.Emoticons;
+using Skymu.Credentials;
 using Skymu.Helpers;
 using Skymu.Views;
+using Skymu.Databases;
 using System;
+using Skymu.Preferences;
+using Skymu.UserDirectory;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -276,7 +281,7 @@ namespace Skymu.ViewModels
             ConversationOpened?.Invoke(this, EventArgs.Empty);
             IsLoadingConversation = true;
 
-            ConversationItem[] cached = _database?.Messages.Read(SelectedConversation, Properties.Settings.Default.MsgLoadCount);
+            ConversationItem[] cached = _database?.Messages.Read(SelectedConversation, Settings.MsgLoadCount);
             ConversationItem[] items;
 
             if (cached != null && cached.Length > 0)
@@ -288,7 +293,7 @@ namespace Skymu.ViewModels
             else
             {
                 items = await Universal.Plugin.FetchMessages(
-                    SelectedConversation, Fetch.Newest, Properties.Settings.Default.MsgLoadCount, null
+                    SelectedConversation, Fetch.Newest, Settings.MsgLoadCount, null
                 );
                 _database?.Messages.Write(items, SelectedConversation);
             }
@@ -413,7 +418,7 @@ namespace Skymu.ViewModels
         private async Task SyncMessagesInBackground(Conversation conversation, string afterId)
         {
             ConversationItem[] items = await Universal.Plugin.FetchMessages(
-                conversation, Fetch.NewestAfterIdentifier, Properties.Settings.Default.MsgLoadCount, afterId
+                conversation, Fetch.NewestAfterIdentifier, Settings.MsgLoadCount, afterId
             );
 
             if (items == null || items.Length == 0) return;
@@ -524,7 +529,7 @@ namespace Skymu.ViewModels
 
         public void InitiateSignOut()
         {
-            Credentials.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
+            CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
             Sounds.Play("logout");
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, EventArgs.Empty);
@@ -535,7 +540,7 @@ namespace Skymu.ViewModels
 
         private async Task SkymuApiStatusHandler()
         {
-            if (Properties.Settings.Default.DisablePingbacks) return;
+            if (Settings.DisablePingbacks) return;
             await UserCountAPI.GenerateUID();
             await UserCountAPI.SetUsrStatus(
                 true,

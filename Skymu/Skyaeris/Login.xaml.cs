@@ -9,19 +9,16 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using MiddleMan;
-using Skymu.Helpers;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 
 namespace Skymu.Skyaeris
 {

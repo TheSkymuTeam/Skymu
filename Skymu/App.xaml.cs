@@ -14,7 +14,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Windows;
+using Skymu.Plugins;
 using System.Windows.Interop;
+using Skymu.Formatting;
+using Skymu.Theming;
+using Skymu.UserDirectory;
+using Skymu.Preferences;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -33,7 +38,7 @@ namespace Skymu
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy/";
-        public static readonly string Interface = Skymu.Properties.Settings.Default.Interface;
+        public static readonly string Interface = Settings.Interface;
 
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;
@@ -175,7 +180,7 @@ namespace Skymu
         {
             try
             {
-                string brand = Skymu.Properties.Settings.Default.BrandingName;
+                string brand = Settings.BrandingName;
                 new Dialog(
                     WindowBase.IconType.Question,
                     Lang["sQUIT_PROMPT"],
@@ -209,7 +214,7 @@ namespace Skymu
 
         public static void ExceptionHandler(Exception ex)
         {
-            string brand = Skymu.Properties.Settings.Default.BrandingName;
+            string brand = Settings.BrandingName;
             Views.Pages.ErrorWindow page = new Views.Pages.ErrorWindow(ex.ToString());
             WindowBase frame = new WindowBase(page);
             frame.HeaderIcon = WindowBase.IconType.Crash;
@@ -240,7 +245,7 @@ namespace Skymu
                 WindowBase.IconType.Information,
                 feature
                     + " hasn't been added to "
-                    + Skymu.Properties.Settings.Default.BrandingName
+                    + Settings.BrandingName
                     + " yet.",
                 "Feature not implemented",
                 null,
@@ -253,15 +258,15 @@ namespace Skymu
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
+            ApplyPresentationFramework(Settings.PresFrame);
             OS.Initialize();
             ThemeManager.Load("default");
             base.OnStartup(ev);
-            Skymu.Properties.Settings.Default.PropertyChanged += (sender, args) =>
+            Settings.Default.PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName == "PresFrame")
                 {
-                    ApplyPresentationFramework(Skymu.Properties.Settings.Default.PresFrame);
+                    ApplyPresentationFramework(Settings.PresFrame);
                 }
             };
         }
@@ -341,7 +346,7 @@ namespace Skymu
             catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)
             {
-                Plugins.DisposeAll();
+                PluginManager.DisposeAll();
                 Sounds.PlaySynchronous("logout");
             }
             base.OnExit(ev);

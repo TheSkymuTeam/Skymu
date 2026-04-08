@@ -17,9 +17,9 @@ using System.Security.Cryptography;
 using System.Xml.Linq;
 using MiddleMan;
 
-namespace Skymu
+namespace Skymu.Credentials
 {
-    internal static class Credentials
+    internal static class CredentialManager
     {
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
