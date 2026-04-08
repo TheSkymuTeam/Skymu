@@ -1196,7 +1196,6 @@ namespace Skymu.Pontis
             vmodel.SubscribeTypingIndicator();
 
             SetWindow(WindowType.Home);
-            Sidebar_SizeChanged_Refresh();
             // seanFinx Crazy Hack
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
             btnRecents.OverlayText.TextTrimming = TextTrimming.None;
@@ -1213,6 +1212,7 @@ namespace Skymu.Pontis
                     this.Height = wp.Height;
                     SidebarColumn.Width = new GridLength(wp.sidebarWidth);
                 }
+                Sidebar_SizeChanged_Refresh();
             };
         }
 
