@@ -73,11 +73,6 @@ namespace Skymu.Skyaeris
         internal static bool IsWindowActive = false;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
-        private readonly Brush DefaultTextBrush = (Brush)
-            new BrushConverter().ConvertFromString("{StaticResource Text.HighContrast}");
-        private readonly Brush PlaceholderBrush = new SolidColorBrush(
-            (Color)ColorConverter.ConvertFromString("{StaticResource Text.LowContrast}")
-        );
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
@@ -222,7 +217,7 @@ namespace Skymu.Skyaeris
         private void ToggleStatusBoxSelection(bool selected)
         {
             StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-            StatusBox.TextColor = selected ? Brushes.White : DefaultTextBrush;
+            StatusBox.TextColor = selected ? Brushes.White : (SolidColorBrush)Application.Current.Resources["Text.HighContrast"];
             SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
         }
 
@@ -986,7 +981,7 @@ namespace Skymu.Skyaeris
             }*/
         }
 
-        private void CallDropdownButtonClick(object sender, MouseButtonEventArgs e)
+        private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
             StartCall();
         }
@@ -1266,7 +1261,7 @@ namespace Skymu.Skyaeris
             var para = new Paragraph(new Run(text))
             {
                 Margin = new Thickness(0),
-                Foreground = PlaceholderBrush,
+                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"]
             };
 
             flowDoc.Blocks.Add(para);
@@ -1293,7 +1288,7 @@ namespace Skymu.Skyaeris
                 return;
 
             tb.Text = text;
-            tb.Foreground = PlaceholderBrush;
+            tb.Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"];
             tb.Tag = TAG_PLACEHOLDER;
         }
 

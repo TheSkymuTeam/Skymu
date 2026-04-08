@@ -642,8 +642,8 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string id && id == Universal.CurrentUser?.Identifier)
-                return (SolidColorBrush)Application.Current.Resources["Metro.Message.Bubble.Me"];
-            return (SolidColorBrush)Application.Current.Resources["Metro.Message.Bubble.Other"];
+                return (SolidColorBrush)Application.Current.Resources["Message.Bubble.Me"];
+            return (SolidColorBrush)Application.Current.Resources["Message.Bubble.Other"];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

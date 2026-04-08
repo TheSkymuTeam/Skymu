@@ -48,10 +48,10 @@
     <SolidColorBrush x:Key="Metro.Background" Color="#FFFFFF" />
     <SolidColorBrush x:Key="Metro.Border" Color="#D9D9D9" />
     <SolidColorBrush x:Key="Metro.Sidebar.UserCountTab" Color="#F3F3F3" />
-    <SolidColorBrush x:Key="Metro.Accent" Color="#00AFF0" />
-    <SolidColorBrush x:Key="Metro.Message.Bubble.Me" Color="#E5F7FD" />
-    <SolidColorBrush x:Key="Metro.Message.Bubble.Other" Color="#C7EDFC" />
+    <SolidColorBrush x:Key="Accent" Color="#00AFF0" />
 
+    <SolidColorBrush x:Key="Message.Bubble.Me" Color="#E5F7FD" />
+    <SolidColorBrush x:Key="Message.Bubble.Other" Color="#C7EDFC" />
     <SolidColorBrush x:Key="Message.Sender.Me" Color="#999999" />
     <SolidColorBrush x:Key="Message.Sender.Other" Color="#3399FF" />
     <SolidColorBrush x:Key="Message.Sender.Unread" Color="#FFCC11" />

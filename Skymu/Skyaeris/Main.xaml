@@ -1977,7 +1977,7 @@
                                                 ElementCount="5"
                                                 HoverIndex="1"
                                                 LeftWidth="23"
-                                                MouseLeftButtonUp="CallDropdownButtonClick"
+                                                MouseLeftButtonUp="CallButtonClick"
                                                 PressedIndex="2"
                                                 RightWidth="4"
                                                 Source="Assets/Universal/Chat/btn_call_left.png"
