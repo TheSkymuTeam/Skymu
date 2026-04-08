@@ -116,11 +116,11 @@
 		<Resource Include="Emoji\**\*" />
 
 		<!-- Sounds -->
-		<None Remove="Sounds\**\*" />
-		<Page Remove="Sounds\**\*" />
-		<EmbeddedResource Remove="Sounds\**\*" />
-		<Compile Remove="Sounds\**\*" />
-		<Resource Include="Sounds\**\*" />
+		<None Remove="Sounds*\**\*" />
+		<Page Remove="Sounds*\**\*" />
+		<EmbeddedResource Remove="Sounds*\**\*" />
+		<Compile Remove="Sounds*\**\*" />
+		<Resource Include="Sounds*\**\*" />
 
 		<!-- Languages as Content -->
 		<None Remove="Languages\**\*" />
