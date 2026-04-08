@@ -63,6 +63,7 @@ namespace Skymu.Preferences
                 Default.Notify(nameof(WindowPlacement));
             }
         }
+        public static bool QuitWithoutAsking { get => S("QuitWithoutAsking", false); set => W("QuitWithoutAsking", value, nameof(QuitWithoutAsking)); }
 
         public static int WindowFrame { get => S("WindowFrame", 0); set => W("WindowFrame", value, nameof(WindowFrame)); }
         public static int EmojiFps { get => S("EmojiFps", 50); set => W("EmojiFps", value, nameof(EmojiFps)); }

@@ -120,6 +120,15 @@
                     TextOptions.TextHintingMode="Fixed"
                     TextWrapping="Wrap"
                     Visibility="Collapsed" />
+                <CheckBox
+                    x:Name="CheckBox"
+                    Margin="11,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="Install Sean Defender"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    Visibility="Visible" />
                 <StackPanel
                     Grid.Column="1"
                     HorizontalAlignment="Right"

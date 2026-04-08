@@ -12,16 +12,15 @@
 using System;
 using System.Windows;
 using Skymu.Preferences;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Skymu.Views
 {
     public partial class Dialog : Window
     {
-        private Action BLAction;
-        private Action BMAction;
-        private Action BRAction;
+        public Action BLAction;
+        public Action BMAction;
+        public Action BRAction;
         public string TextBoxText { get; private set; }
 
         public Dialog(
@@ -39,7 +38,9 @@ namespace Skymu.Views
             Size? customDimensions = null,
             bool bmEnabled = false,
             Action bmAction = null,
-            string bmText = null
+            string bmText = null,
+            bool cbEnabled = false,
+            string cbText = null
         )
         {
             try
@@ -62,11 +63,7 @@ namespace Skymu.Views
                 if (brAction == null)
                     brAction = () => Close();
                 if (bmAction == null)
-                    bmAction = () =>
-                    {
-                        Close();
-                        Universal.Terminate();
-                    };
+                    bmAction = () => Close();
                 if (blAction == null)
                     blAction = () =>
                     {
@@ -80,6 +77,10 @@ namespace Skymu.Views
                     ButtonLeft.Visibility = Visibility.Visible;
                     ButtonLeft.IsDefault = true;
                     ButtonRight.IsDefault = false;
+                }
+                if (cbEnabled)
+                {
+                    CheckBox.Visibility = Visibility.Visible;
                 }
                 if (enableTextBox)
                 {
@@ -132,6 +133,8 @@ namespace Skymu.Views
                     ButtonMiddle.Content = bmText;
                 if (brText != null)
                     ButtonRight.Content = brText;
+                if (cbText != null)
+                    CheckBox.Content = cbText;
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
