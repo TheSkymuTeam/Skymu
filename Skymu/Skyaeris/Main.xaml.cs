@@ -720,13 +720,11 @@ namespace Skymu.Skyaeris
             {
                 MakeGroupButton.OverlayText.Visibility = Visibility.Visible;
                 MakeGroupButton.TextLeftMargin = 41;
-                if (SidebarColumn.ActualWidth < 245)
-                {
-                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
-                }
-                else
-                    MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
             }
+            if (SidebarColumn.Width.Value < 245)
+                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
+            else
+                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
         }
 
         #endregion
