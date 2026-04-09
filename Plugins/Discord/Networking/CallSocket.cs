@@ -319,8 +319,9 @@ namespace Discord.Networking
                     case 27:
                         // Add/remove proposals from the voice gateway external sender
                         // We commit them and send back the commit (+ welcome if adding members)
-                        Debug.WriteLine("[DAVE] Received MLS proposals (op 27).");
+                        Debug.WriteLine($"[DAVE] MLS proposals, daveSession null={_daveSession == null}, externalSenderSet={_pendingExternalSender == null}");
                         byte[] commitWelcome = _daveSession.ProcessProposals(payload);
+                        Debug.WriteLine($"[DAVE] ProcessProposals result: commitWelcome null={commitWelcome == null}");
                         if (commitWelcome != null) { await SendBinaryOpcode(28, commitWelcome); }
                         break;
                     case 29:
@@ -329,6 +330,7 @@ namespace Discord.Networking
                         if (payload.Length < 2) break;
                         ushort commitTransitionId = (ushort)((payload[0] << 8) | payload[1]);
                         bool commitOk = _daveSession.ProcessCommit(Slice(payload, 2));
+                        Debug.WriteLine($"[DAVE] Op 29 commit transition, commitOk={commitOk}");
                         if (commitOk)
                             await SendTransitionReady(commitTransitionId);
                         else
@@ -339,6 +341,7 @@ namespace Discord.Networking
                         if (payload.Length < 2) break;
                         ushort welcomeTransitionId = (ushort)((payload[0] << 8) | payload[1]);
                         bool welcomeOk = _daveSession.ProcessWelcome(Slice(payload, 2));
+                        Debug.WriteLine($"[DAVE] Op 30 welcome, welcomeOk={welcomeOk}");
                         if (welcomeOk)
                             await SendTransitionReady(welcomeTransitionId);
                         else
@@ -412,6 +415,7 @@ namespace Discord.Networking
                         _callUDP?.UpdateSecretKey(_secretKey);
                         // Create the DAVE session now that we know the protocol version
                         _daveSession = new DaveSession();
+                        Debug.WriteLine($"[DAVE] Init: channelId={_channelId}, selfUserId={_selfUserId}");
                         _daveSession.Init((ushort)daveProtoVersion, _channelId, _selfUserId);
                         _callUDP?.UpdateDaveSession(_daveSession);
 
@@ -456,6 +460,8 @@ namespace Discord.Networking
                         string speakingUserId = json["d"]?["user_id"]?.GetValue<string>();
                         int speakingSsrc = json["d"]?["ssrc"]?.GetValue<int>() ?? 0;
 
+                        Debug.WriteLine($"[DAVE] RegisterSsrc: ssrc={speakingSsrc}, userId={speakingUserId}");
+
                         if (!string.IsNullOrEmpty(speakingUserId) && speakingSsrc != 0)
                         {
                             _pendingSsrcMap[(uint)speakingSsrc] = speakingUserId;
@@ -470,7 +476,7 @@ namespace Discord.Networking
                             ? (int)json["d"]["heartbeat_interval"]
                             : 0;
                         Debug.WriteLine($"The interval Discord sent is: {heartbeatInterval}");
-                        Task.Run(() => StartHeartbeat());
+                        StartHeartbeat();
                         break;
                     case 12:
                         string op12UserId = json["d"]?["user_id"]?.GetValue<string>();
@@ -478,6 +484,9 @@ namespace Discord.Networking
 
                         if (!string.IsNullOrEmpty(op12UserId) && op12Ssrc != 0)
                             _daveSession?.RegisterSsrc((uint)op12Ssrc, op12UserId);
+                        break;
+                    case 14:
+                        Debug.WriteLine($"[WS-VOICE] opcode 14, session update: {data}");
                         break;
                     case 15:
                         // Ignore it, it's just Discord telling us what quality the video feed we are sending should be in.
@@ -526,7 +535,21 @@ namespace Discord.Networking
                         break;
                     case 11:
                         Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
-                        OnCallEstablished?.Invoke(); // tell the app that the call is ready
+                        var userIds = json["d"]?["user_ids"]?.AsArray();
+                        if (userIds != null)
+                        {
+                            foreach (var uid in userIds)
+                            {
+                                string joinedUserId = uid?.GetValue<string>();
+                                if (!string.IsNullOrEmpty(joinedUserId))
+                                {
+                                    Debug.WriteLine($"[DAVE] Op11 RegisterSsrc pending for userId={joinedUserId}");
+                                    _pendingSsrcMap[0] = joinedUserId; // SSRC unknown yet, will be updated on op 5
+                                    _daveSession?.RegisterSsrc(0, joinedUserId);
+                                }
+                            }
+                        }
+                        OnCallEstablished?.Invoke();
                         break;
                     case 13:
                         Debug.WriteLine($"[WS-VOICE] opcode 13, a user has left the voice channel: {data}");
@@ -537,9 +560,10 @@ namespace Discord.Networking
                         // As of 1/3/26, this is no longer necessary
                         break;
                     case 24:
+
                         int epoch = json["d"]?["epoch"]?.GetValue<int>() ?? 0;
                         int epochProtoVersion = json["d"]?["protocol_version"]?.GetValue<int>() ?? 1;
-
+                        Debug.WriteLine($"[DAVE] Op 24 received, epoch={epoch}, daveSession null={_daveSession == null}");
                         _pendingEpoch = epoch;
                         _pendingEpochProtoVersion = epochProtoVersion;
 

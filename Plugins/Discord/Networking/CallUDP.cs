@@ -359,6 +359,7 @@ namespace Discord.Networking
 
             if (samplesDecoded > 0)
             {
+                Debug.WriteLine($"[UDP] Decoded {samplesDecoded} samples from ssrc={ssrc}");
                 byte[] pcmBytes = new byte[samplesDecoded * 2 * 2]; // *2 channels *2 bytes per sample
                 Buffer.BlockCopy(pcm, 0, pcmBytes, 0, pcmBytes.Length);
                 _waveBuffer.AddSamples(pcmBytes, 0, pcmBytes.Length);
