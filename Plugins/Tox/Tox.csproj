@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<OutputType>Library</OutputType>
+		<AssemblyName>plugin-Tox</AssemblyName>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<LangVersion>latest</LangVersion>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">
+			<Private>False</Private>
+		</ProjectReference>
+	</ItemGroup>
+</Project>
