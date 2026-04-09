@@ -16,6 +16,7 @@
     mc:Ignorable="d">
     <Page.Resources>
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <Style x:Key="ActionButtonStyle" TargetType="global:SliceControl">
             <Setter Property="StackDirection" Value="Vertical" />
             <Setter Property="ElementCount" Value="5" />
@@ -29,7 +30,7 @@
     </Page.Resources>
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="Assets/Universal/Call Screen/background_hires.png" RenderOptions.BitmapScalingMode="HighQuality" />
+            <ImageBrush ImageSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/background_hires.png'}" RenderOptions.BitmapScalingMode="HighQuality" />
         </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -41,7 +42,7 @@
                 Width="169"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Source="Assets/Universal/Branding/logo-call-big.png" />
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-call-big.png'}" />
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -74,7 +75,7 @@
                     HoverIndex="1"
                     IsAnimation="True"
                     SliceMode="0"
-                    Source="Assets/Universal/Call Screen/connection_anim.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/connection_anim.png'}"
                     StackDirection="Vertical" />
                 <Image
                     x:Name="MyAvatar"
@@ -107,7 +108,7 @@
                 Grid.ColumnSpan="3"
                 BottomHeight="33"
                 SliceMode="1"
-                Source="Assets/Universal/Call Screen/pill.png"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/pill.png'}"
                 TopHeight="3" />
             <StackPanel
                 Grid.Column="0"
@@ -118,13 +119,13 @@
                 <global:SliceControl
                     x:Name="SidebarButton"
                     MouseLeftButtonUp="OnSidebarToggled"
-                    Source="Assets/Universal/Call Screen/btn_sidebar_expand.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_sidebar_expand.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="ChatButton"
                     Margin="8,0,0,0"
                     MouseLeftButtonUp="OnChatToggled"
-                    Source="Assets/Universal/Call Screen/btn_chat_inactive.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_chat_inactive.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
             <StackPanel
@@ -136,20 +137,20 @@
                     x:Name="MuteButton"
                     Margin="4,0"
                     MouseLeftButtonUp="OnMuteToggled"
-                    Source="Assets/Universal/Call Screen/btn_mic.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_mic.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
-                    Source="Assets/Universal/Call Screen/btn_dialpad.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_dialpad.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
-                    Source="Assets/Universal/Call Screen/btn_add.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_add.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
                     MouseLeftButtonUp="OnHangUp"
-                    Source="Assets/Universal/Call Screen/btn_hangup.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_hangup.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
             <StackPanel
@@ -160,12 +161,12 @@
                 Orientation="Horizontal">
                 <global:SliceControl
                     Margin="0,0,8,0"
-                    Source="Assets/Universal/Call Screen/btn_connection_4.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_connection_4.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="FullscreenButton"
                     MouseLeftButtonUp="OnFullscreenToggled"
-                    Source="Assets/Universal/Call Screen/btn_screen_expand.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_screen_expand.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
         </Grid>
