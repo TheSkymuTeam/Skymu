@@ -41,7 +41,7 @@ namespace Discord
 
             WebSocketManager.SubscribeVoiceServerUpdated((sender, e) =>
             {
-                _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId);
+                _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
                 _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 4
             }); 
 
@@ -66,8 +66,39 @@ namespace Discord
 
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
-        public Task<bool> EndCall(ActiveCall call) => Task.FromResult(false);
-        public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
+        public async Task<bool> SetMuted(ActiveCall call, bool muted)
+        {
+            await _callSocket.SetMute(muted);
+            await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
+            {
+                op = 4,
+                d = new
+                {
+                    guild_id = (string)null,
+                    channel_id = call.ConversationId,
+                    self_mute = muted,
+                    self_deaf = false
+                }
+            }));
+            return true;
+        }
+
+        public async Task<bool> EndCall(ActiveCall call)
+        {
+            await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
+            {
+                op = 4,
+                d = new
+                {
+                    guild_id = (string)null,
+                    channel_id = (string)null,
+                    self_mute = false,
+                    self_deaf = false
+                }
+            }));
+            _callSocket.WSDispose();
+            return true;
+        }
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
         // Plugin details

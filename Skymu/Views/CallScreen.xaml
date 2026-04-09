@@ -24,18 +24,26 @@
             <Setter Property="DefaultIndex" Value="0" />
             <Setter Property="HoverIndex" Value="3" />
             <Setter Property="PressedIndex" Value="2" />
-            <Setter Property="HoverTransition" Value="False" />
+            <Setter Property="HoverTransition" Value="True" />
             <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
         </Style>
     </Page.Resources>
     <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/background_hires.png'}" RenderOptions.BitmapScalingMode="HighQuality" />
-        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid Grid.RowSpan="2" ClipToBounds="True">
+            <Image
+                Margin="-10"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/background.png'}"
+                Stretch="Fill">
+                <Image.Effect>
+                    <BlurEffect Radius="20" />
+                </Image.Effect>
+            </Image>
+        </Grid>
         <Grid Grid.Row="0">
             <Image
                 x:Name="Logo"
@@ -137,7 +145,7 @@
                     x:Name="MuteButton"
                     Margin="4,0"
                     MouseLeftButtonUp="OnMuteToggled"
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_mic.png'}"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/btn_mic_off.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"

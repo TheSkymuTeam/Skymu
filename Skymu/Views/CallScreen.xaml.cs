@@ -52,7 +52,7 @@ namespace Skymu.Views
             MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
-            isMuted = false;
+            isMuted = true;
 
             const string prefix =
                 "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
@@ -80,10 +80,11 @@ namespace Skymu.Views
         public async Task StartCall(Conversation conversation, bool is_video)
         {
             Sounds.Play("call-init");
-            ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, false);
+            ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
             if (call == null) HangUpRequested(this, EventArgs.Empty);
             else
             {
+                Sounds.StopAll();
                 SwitchToOngoingCallUI();
                 _call = call;
             }

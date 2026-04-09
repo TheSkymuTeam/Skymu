@@ -32,6 +32,7 @@ namespace Skymu
             Load("message-recieved", "IM.WAV");
             Load("call-error", "CALL_ERROR1.WAV");
             Load("call-init", "CALL_INIT.WAV");
+            Load("call-out", "CALL_OUT.WAV");
             Load("call-ring", "CALL_IN.WAV");
             Load("call-end", "HANGUP.WAV");
             Load("login", "LOGIN.WAV");
@@ -96,6 +97,12 @@ namespace Skymu
             if (!players.TryGetValue(key, out var sp))
                 return;
             sp.Stop();
+        }
+
+        public static void StopAll()
+        {
+            foreach (var sp in players.Values)
+                sp.Stop();
         }
 
         public static void PlayLoop(string key)

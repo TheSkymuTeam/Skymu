@@ -7,6 +7,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -22,6 +23,8 @@ namespace Discord.Networking
         // Discord's WebSocket / Gateway URL
         private string gatewayUrl;
 
+
+
         // Used for sending the first payload required
         private string identifyPayloadJson;
 
@@ -36,6 +39,12 @@ namespace Discord.Networking
         // omega - events to hook into discord to hook into MiddleMan
         public event Action OnCallEstablished;
         public event Action<string> OnCallFailed;
+
+        // omega - mute state tracker
+        private bool _isMuted = false;
+
+        // omega - for ringer post
+        private string _discordToken;
 
         // The actual WebSocketClient
         public ClientWebSocket WSClient { get; private set; }
@@ -77,10 +86,12 @@ namespace Discord.Networking
         private int _pendingEpochProtoVersion = 1;
         private byte[] _pendingExternalSender = null;
 
-        public CallSocket(string endpoint, string token, string session, string userId, string channelId)
+        public CallSocket(string endpoint, string token, string session, string userId, string channelId, bool start_muted, string discord_token)
         {
+            _isMuted = start_muted;
             _selfUserId = userId;
             _channelId = channelId;
+            _discordToken = discord_token;
 
             gatewayUrl = $"wss://{endpoint}/?v=9";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -116,7 +127,7 @@ namespace Discord.Networking
             });
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
 
-            ConnectAsync();
+            _ = ConnectAsync();
         }
 
         public async Task ConnectAsync()
@@ -135,6 +146,13 @@ namespace Discord.Networking
 
             _receiveCts = new CancellationTokenSource();
             _ = Task.Run(() => ReceiveLoop(_receiveCts.Token));
+        }
+
+        internal async Task SetMute(bool muted)
+        {
+            if (_isMuted == muted) return;
+            _isMuted = muted;
+            _callUDP?.SetMuted(muted);
         }
 
         internal async Task SendPayload(string payload = null)
@@ -417,6 +435,21 @@ namespace Discord.Networking
                             }
                         });
                         await SendPayload(speakingPayload);
+                        var eligibilityResponse = await Discord.Core.api.SendAPI(
+    $"channels/{_channelId}/call",
+    HttpMethod.Get,
+    _discordToken
+);
+                        var eligibility = JsonSerializer.Deserialize<JsonElement>(eligibilityResponse);
+                        if (eligibility.GetProperty("ringable").GetBoolean())
+                        {
+                            await Discord.Core.api.SendAPI(
+                                $"channels/{_channelId}/call/ring",
+                                HttpMethod.Post,
+                                _discordToken,
+                                new { recipients = (string[])null }
+                            );
+                        }
                         break;
                     case 5:
                         // op_code: 5 is sent to us when a user speaks from Discord
