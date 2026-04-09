@@ -20,6 +20,7 @@ using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -881,6 +882,8 @@ namespace Skymu.Skyaeris
         protected override void OnClosed(EventArgs e)
         {
             WindowPlacementHelper.Save(this, SidebarColumn);
+
+            Settings.Default.PropertyChanged -= RefreshCreds;
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -1501,6 +1504,9 @@ namespace Skymu.Skyaeris
             AddContactButton.OverlayText.TextTrimming = TextTrimming.None;
             MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
 
+            Settings.Default.PropertyChanged += RefreshCreds;
+            RefreshCreds();
+
             SourceInitialized += (s, e) =>
             {
                 WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
@@ -1565,6 +1571,17 @@ namespace Skymu.Skyaeris
         }
 
         #endregion
+
+        private void RefreshCreds(object sender = null, PropertyChangedEventArgs e = null)
+        {
+            string subtext = Universal.Lang["sACCOUNT_PANEL_NR_OF_SUBSCRIPTIONS"];
+            switch (Settings.CredsSubCount)
+            {
+                case 0: subtext = Universal.Lang["sACCOUNT_PANEL_NO_SUBSCRIPTION"]; break;
+                case 1: subtext = Universal.Lang["sACCOUNT_PANEL_ONE_SUBSCRIPTION"]; break;
+            }
+            SkypeCreditBox.Text = Settings.CredsText + " - " + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+        }
     }
 
     public class CompactRecentsTemplateSelector : DataTemplateSelector

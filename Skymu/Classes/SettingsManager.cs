@@ -63,15 +63,16 @@ namespace Skymu.Preferences
                 Default.Notify(nameof(WindowPlacement));
             }
         }
-        public static bool QuitWithoutAsking { get => S("QuitWithoutAsking", false); set => W("QuitWithoutAsking", value, nameof(QuitWithoutAsking)); }
 
         public static int WindowFrame { get => S("WindowFrame", 0); set => W("WindowFrame", value, nameof(WindowFrame)); }
         public static int EmojiFps { get => S("EmojiFps", 50); set => W("EmojiFps", value, nameof(EmojiFps)); }
         public static int MsgLoadCount { get => S("MsgLoadCount", 30); set => W("MsgLoadCount", value, nameof(MsgLoadCount)); }
+        public static int CredsSubCount { get => S("CredsSubCount", 0); set => W("CredsSubCount", value, nameof(CredsSubCount)); }
 
         public static string BrandingName { get => S("BrandingName", "Skype"); set => W("BrandingName", value, nameof(BrandingName)); }
 
         public static string ColorTheme { get => S("ColorTheme", "Default"); set => W("ColorTheme", value, nameof(ColorTheme)); }
+        public static string CredsText { get => S("CredsText", "$ 0.00"); set => W("CredsText", value, nameof(CredsText)); }
         public static string ThemeRoot { get => S("ThemeRoot", "Light"); set => W("ThemeRoot", value, nameof(ThemeRoot)); }
         public static string PresFrame { get => S("PresFrame", "Aero.NormalColor"); set => W("PresFrame", value, nameof(PresFrame)); }
         public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }
@@ -92,6 +93,7 @@ namespace Skymu.Preferences
         public static bool DisablePingbacks { get => S("DisablePingbacks", false); set => W("DisablePingbacks", value, nameof(DisablePingbacks)); }
         public static bool MessageLogger { get => S("MessageLogger", false); set => W("MessageLogger", value, nameof(MessageLogger)); }
         public static bool NikoIcons { get => S("NikoIcons", false); set => W("NikoIcons", value, nameof(NikoIcons)); }
+        public static bool QuitWithoutAsking { get => S("QuitWithoutAsking", false); set => W("QuitWithoutAsking", value, nameof(QuitWithoutAsking)); }
         public static bool SuppressOldRuntimeWarnings { get => S("SuppressOldRuntimeWarnings", false); set => W("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings)); }
         public static void Save() { }
 
