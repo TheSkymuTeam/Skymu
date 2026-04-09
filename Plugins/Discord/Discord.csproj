@@ -31,4 +31,12 @@
 			<Private>False</Private>
 		</ProjectReference>
 	</ItemGroup>
+	<ItemGroup>
+	  <None Update="libcrypto-3-x64.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="libdave.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

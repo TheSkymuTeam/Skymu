@@ -37,6 +37,9 @@ namespace Discord.Networking
         private BufferedWaveProvider _waveBuffer;
         // The audio output device, plays back whatever is in the wave buffer
         private WaveOutEvent _waveOut;
+        // omega
+        private bool _muted = false;
+
 
         // Properties for outgoing voice packets
         // (When we are talking, essentially)
@@ -104,6 +107,8 @@ namespace Discord.Networking
             _waveOut.Play();
         }
 
+        public void SetMuted(bool muted) { _muted = muted; }
+
         private void InitMicrophone()
         {
             // Capture mono 48kHz, Discord voice is mono from clients
@@ -123,16 +128,29 @@ namespace Discord.Networking
 
             if (!useFakeMic)
             {
+                if (WaveInEvent.DeviceCount == 0)
+                {
+                    Debug.WriteLine("[MIC] No microphone devices found, skipping mic init.");
+                    return;
+                }
+
                 _waveIn = new WaveInEvent
                 {
                     WaveFormat = new WaveFormat(48000, 16, 1),
-                    // 20ms frames — 48000 * 0.02 * 1 channel * 2 bytes = 1920 bytes per callback
                     BufferMilliseconds = 20,
-                    // 4 buffers instead of the default 3 gives the OS more headroom and reduces callback jitter
                     NumberOfBuffers = 4
                 };
                 _waveIn.DataAvailable += OnMicData;
-                _waveIn.StartRecording();
+                try
+                {
+                    _waveIn.StartRecording();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[MIC] Failed to start recording: {ex.Message}");
+                    _waveIn.Dispose();
+                    _waveIn = null;
+                }
             }
             else
             {
@@ -218,15 +236,18 @@ namespace Discord.Networking
             var reader = _sendQueue.Reader;
             try
             {
-                await foreach (byte[] packet in reader.ReadAllAsync(cancellationToken))
+                while (await reader.WaitToReadAsync(cancellationToken))
                 {
-                    try
+                    while (reader.TryRead(out byte[] packet))
                     {
-                        await _udpClient.SendAsync(packet, packet.Length);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"[UDP] Send error: {ex.Message}");
+                        try
+                        {
+                            await _udpClient.SendAsync(packet, packet.Length);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine($"[UDP] Send error: {ex.Message}");
+                        }
                     }
                 }
             }
