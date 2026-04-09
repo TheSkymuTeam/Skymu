@@ -69,7 +69,7 @@
                     x:Name="ConnectionAnimation"
                     Margin="0,50"
                     VerticalAlignment="Bottom"
-                    AnimationFps="30"
+                    AnimationFps="20"
                     DefaultIndex="0"
                     ElementCount="10"
                     HoverIndex="1"
