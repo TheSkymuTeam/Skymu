@@ -337,15 +337,27 @@
                                             Content="Replace all dialog icons with 'Niko' from the game 'Oneshot'"
                                             IsChecked="{Binding Path=[NikoIcons], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
+
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
-                                                Text="Emoji animation speed (FPS)" />
+                                                Text="Amount of call credentials (visual only)" />
+                                            <TextBox
+                                                Width="80"
+                                                FontFamily="Tahoma"
+                                                Text="{Binding Path=[CredsText], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                        </StackPanel>
+
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <TextBlock
+                                                Padding="0,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Text="Amount of call subscriptions (visual only)" />
                                             <TextBox
                                                 Width="40"
                                                 FontFamily="Tahoma"
-                                                Text="{Binding [EmojiFps], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding [CredsSubCount], Converter={StaticResource StringToIntegerConverter}, Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
