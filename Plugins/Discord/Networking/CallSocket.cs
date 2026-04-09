@@ -33,6 +33,10 @@ namespace Discord.Networking
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
+        // omega - events to hook into discord to hook into MiddleMan
+        public event Action OnCallEstablished;
+        public event Action<string> OnCallFailed;
+
         // The actual WebSocketClient
         public ClientWebSocket WSClient { get; private set; }
 
@@ -69,7 +73,7 @@ namespace Discord.Networking
         
         // Pending SSRC maps and properties
         private readonly Dictionary<uint, string> _pendingSsrcMap = new Dictionary<uint, string>();
-        private int _pendingEpoch = -1;
+        private int _pendingEpoch = -1; // patrick: you don't have to init the integer with -1 - omega
         private int _pendingEpochProtoVersion = 1;
         private byte[] _pendingExternalSender = null;
 
@@ -447,7 +451,7 @@ namespace Discord.Networking
                         // Not necessary for our case, we just want audio to work.
                         break;
                     case 16:
-                        // This op_code its self is not important, however we need to send an op_code: 1 payload here.
+                        // This op_code itself is not important, however we need to send an op_code: 1 payload here.
                         // op_code: 1 is the Protocol selection payload.
 
                         GenerateRTCConnectionID();
@@ -487,6 +491,13 @@ namespace Discord.Networking
                         });
                         await SendPayload(protocolPayload);
                         break;
+                    case 11:
+                        Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
+                        OnCallEstablished?.Invoke(); // tell the app that the call is ready
+                        break;
+                    case 13:
+                        Debug.WriteLine($"[WS-VOICE] opcode 13, a user has left the voice channel: {data}");
+                        break;
                     case 21:
                         // The voice gateway is telling us to downgrade to transport-only encryption
                         // This happens when a client that doesn't support DAVE joins the call
@@ -501,6 +512,12 @@ namespace Discord.Networking
 
                         if (epoch == 1 && _daveSession != null)
                             await SendKeyPackage(epochProtoVersion);
+                        break;
+                    case 18:
+                        Debug.WriteLine($"[WS-VOICE] opcode 18, client flags from the user: {data}");
+                        break;
+                    case 20:
+                        Debug.WriteLine($"[WS-VOICE] opcode 20, platform user is connected on: {data}");
                         break;
                     default:
                         Debug.WriteLine($"[WS-VOICE] Unknown op code: {opCode}, data: {data}");

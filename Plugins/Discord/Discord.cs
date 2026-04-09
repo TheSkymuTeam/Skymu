@@ -33,17 +33,17 @@ namespace Discord
     {
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
-        public bool SupportsVideoCalls => false;
+        public bool SupportsVideoCalls => false; // not yet
+        private CallSocket _callSocket = null;
         public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
         {
-            var tcs = new TaskCompletionSource<bool>();
-            CallSocket callSocket = null;
+            var tcs = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
 
             WebSocketManager.SubscribeVoiceServerUpdated((sender, e) =>
             {
-                callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId);
-                tcs.TrySetResult(true); // signal that we're ready
-            });
+                _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId);
+                _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 4
+            }); 
 
             string voicePayloadJson = JsonSerializer.Serialize(new
             {
@@ -60,9 +60,8 @@ namespace Discord
             });
 
             await WebSocketManager.SendPayload(voicePayloadJson); // wait for payload send
-            await tcs.Task; // wait for call socket init
-
-            return new ActiveCall("test", conversationId, isVideo, new User[0]);
+            var voiceEvent = await tcs.Task; // wait for call socket init
+            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
         }
 
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
