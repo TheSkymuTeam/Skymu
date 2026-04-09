@@ -1,19 +1,19 @@
-﻿using System;
+﻿using Discord.Dave;
+using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Sockets;
-using Discord.Calling.Dave;
-using System.Collections.Generic;
 
-namespace Discord.Calling.Networking
+namespace Discord.Networking
 {
     class CallSocket
     {

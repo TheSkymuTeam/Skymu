@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Skymu.Pontis.CallScreen"
+    x:Class="Skymu.Views.CallScreen"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
@@ -59,11 +59,13 @@
                     Text="thegamingkart"
                     TextAlignment="Center" />
                 <TextBlock
+                    x:Name="CallStatus"
                     FontSize="11"
                     Foreground="White"
                     Text="calling"
                     TextAlignment="Center" />
                 <global:SliceControl
+                    x:Name="ConnectionAnimation"
                     Margin="0,50"
                     VerticalAlignment="Bottom"
                     AnimationFps="30"

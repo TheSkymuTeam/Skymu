@@ -814,19 +814,11 @@ namespace Skymu.Pontis
             screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
-
-            if (!await screen.StartCall(vmodel.SelectedConversation, false)) // no video calling for now
-            {
-                screen.HangUpRequested -= OnHangUp;
-                screen.LocationChangeRequested -= OnLocationChanged;
-                screen = null;
-                return;
-            }
-
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
-            Sounds.Play("call-init");
+
+            await screen.StartCall(vmodel.SelectedConversation, false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
@@ -837,7 +829,6 @@ namespace Skymu.Pontis
         private void OnHangUp(object sender, EventArgs e)
         {
             SetCallPageLocation(null);
-            Sounds.Play("call-end");
         }
 
         private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
@@ -853,6 +844,8 @@ namespace Skymu.Pontis
                 {
                     screen.HangUpRequested -= OnHangUp;
                     screen.LocationChangeRequested -= OnLocationChanged;
+                    screen.Visibility = Visibility.Collapsed;
+                    frame.Visibility = Visibility.Collapsed;
                     screen = null;
                     frame.Content = null;
                     frame = null;

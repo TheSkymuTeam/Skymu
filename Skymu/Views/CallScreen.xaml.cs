@@ -12,22 +12,40 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Skymu.Helpers;
+using System.Windows.Threading;
 using MiddleMan;
+using Skymu.Helpers;
 
-namespace Skymu.Pontis
+namespace Skymu.Views
 {
     public partial class CallScreen : Page
     {
-        private BitmapImage pill, rectangle, logo_small, logo_big, unmuted, muted, chat_active, chat_inactive, sidebar_expand, sidebar_collapse, screen_contract, screen_expand;
+        private BitmapImage pill,
+            rectangle,
+            logo_small,
+            logo_big,
+            unmuted,
+            muted,
+            chat_active,
+            chat_inactive,
+            sidebar_expand,
+            sidebar_collapse,
+            screen_contract,
+            screen_expand;
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
         private ActiveCall _call;
         private ICall plugin;
         private LocationChangeEventArgs location;
+        private DispatcherTimer _callTimer;
+        private TimeSpan _callElapsed;
 
-        public CallScreen(User partner, ICall call_plugin, CallScreen.LocationChangeEventArgs initial_location)
+        public CallScreen(
+            User partner,
+            ICall call_plugin,
+            CallScreen.LocationChangeEventArgs initial_location
+        )
         {
             InitializeComponent();
             plugin = call_plugin;
@@ -36,8 +54,9 @@ namespace Skymu.Pontis
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = false;
 
-            const string prefix = "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
-            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png"); // TODO make loop
+            const string prefix =
+                "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
+            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
             pill = FrozenImage.Generate(prefix + "Call Screen/pill.png");
             logo_small = FrozenImage.Generate(prefix + "Branding/logo-call-small.png");
             logo_big = FrozenImage.Generate(prefix + "Branding/logo-call-big.png");
@@ -46,7 +65,9 @@ namespace Skymu.Pontis
             chat_active = FrozenImage.Generate(prefix + "Call Screen/btn_chat_active.png");
             chat_inactive = FrozenImage.Generate(prefix + "Call Screen/btn_chat_inactive.png");
             sidebar_expand = FrozenImage.Generate(prefix + "Call Screen/btn_sidebar_expand.png");
-            sidebar_collapse = FrozenImage.Generate(prefix + "Call Screen/btn_sidebar_collapse.png");
+            sidebar_collapse = FrozenImage.Generate(
+                prefix + "Call Screen/btn_sidebar_collapse.png"
+            );
             screen_contract = FrozenImage.Generate(prefix + "Call Screen/btn_screen_contract.png");
             screen_expand = FrozenImage.Generate(prefix + "Call Screen/btn_screen_expand.png");
 
@@ -56,22 +77,42 @@ namespace Skymu.Pontis
             location = initial_location;
         }
 
-        public async Task<bool> StartCall(Conversation conversation, bool is_video)
+        public async Task StartCall(Conversation conversation, bool is_video)
         {
-            if (Universal.CallPlugin == null) return false;
-            var call = await plugin.StartCall(conversation.Identifier, is_video, false);
-            if (call != null)
+            Sounds.Play("call-init");
+            ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, false);
+            if (call == null) HangUpRequested(this, EventArgs.Empty);
+            else
             {
+                SwitchToOngoingCallUI();
                 _call = call;
-                return true;
             }
-            return false;
+        }
+
+        public void SwitchToOngoingCallUI()
+        {
+            MyAvatar.Visibility = Visibility.Collapsed;
+            MyAvatar = null;
+            ConnectionAnimation.Visibility = Visibility.Collapsed;
+            ConnectionAnimation = null;
+
+            _callElapsed = TimeSpan.Zero;
+            CallStatus.Text = "00:00";
+
+            _callTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _callTimer.Tick += (s, e) =>
+            {
+                _callElapsed = _callElapsed.Add(TimeSpan.FromSeconds(1));
+                CallStatus.Text = _callElapsed.ToString(@"mm\:ss");
+            };
+            _callTimer.Start();
         }
 
         #region Events / event handlers
 
         public event EventHandler HangUpRequested;
         public event EventHandler<LocationChangeEventArgs> LocationChangeRequested;
+
         public class LocationChangeEventArgs : EventArgs
         {
             public bool SidebarToggle;
@@ -89,30 +130,35 @@ namespace Skymu.Pontis
         private async void OnMuteToggled(object sender, MouseButtonEventArgs e)
         {
             isMuted = !isMuted;
-            if (isMuted) MuteButton.Source = muted;
-            else MuteButton.Source = unmuted;
+            if (isMuted)
+                MuteButton.Source = muted;
+            else
+                MuteButton.Source = unmuted;
             await plugin.SetMuted(_call, isMuted);
         }
 
-        private async void OnSidebarToggled(object sender, MouseButtonEventArgs e)
+        private void OnSidebarToggled(object sender, MouseButtonEventArgs e)
         {
             location.SidebarToggle = !location.SidebarToggle;
             SetButtonSource(SidebarButton, location.SidebarToggle);
-            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+            if (LocationChangeRequested != null)
+                LocationChangeRequested(this, location);
         }
 
-        private async void OnChatToggled(object sender, MouseButtonEventArgs e)
+        private void OnChatToggled(object sender, MouseButtonEventArgs e)
         {
             location.ChatToggle = !location.ChatToggle;
             SetButtonSource(ChatButton, location.ChatToggle);
-            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+            if (LocationChangeRequested != null)
+                LocationChangeRequested(this, location);
         }
 
-        private async void OnFullscreenToggled(object sender, MouseButtonEventArgs e)
+        private void OnFullscreenToggled(object sender, MouseButtonEventArgs e)
         {
             location.FullscreenToggle = !location.FullscreenToggle;
             SetButtonSource(FullscreenButton, location.FullscreenToggle);
-            if (LocationChangeRequested != null) LocationChangeRequested(this, location);
+            if (LocationChangeRequested != null)
+                LocationChangeRequested(this, location);
         }
 
         private void SetButtonSource(SliceControl button, bool active)
@@ -134,7 +180,10 @@ namespace Skymu.Pontis
         private async void OnHangUp(object sender, MouseButtonEventArgs e)
         {
             await plugin.EndCall(_call);
-            if (HangUpRequested != null) HangUpRequested(this, EventArgs.Empty);
+            Sounds.Play("call-end");
+            _callTimer?.Stop();
+            _callTimer = null;
+            HangUpRequested(this, EventArgs.Empty);
         }
 
         #endregion

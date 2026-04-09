@@ -18,19 +18,18 @@
 
 #pragma warning disable 4014
 
-using MiddleMan;
+using Discord.Helpers;
+using Discord.Networking.Managers;
+using Discord.Users;
+using ICSharpCode.SharpZipLib.Zip.Compression;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System.Net.WebSockets;
-using System.Net.WebSockets.Managed;
 using System.Security.Authentication;
 using System.Text;
 using System.Text.Json;
@@ -39,7 +38,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Discord.Classes
+namespace Discord.Networking
 {
     class WebSocket
     {
@@ -114,7 +113,7 @@ namespace Discord.Classes
         {
             _core = core;
             DscToken = token;
-            var config = new ConfigMgr();
+            var config = new ConfigManager();
 
             // Patrick - Discord adds "&compress=zlib-stream" at the end of this URL
             // However, I could not figure out how to decompress the stream it sends
@@ -274,6 +273,7 @@ namespace Discord.Classes
         private void HandleVoiceStateUpdate(JsonNode data)
         {
             if (data is null) return;
+            voice_details = new VoiceServerUpdateEventArgs(String.Empty, String.Empty, String.Empty, String.Empty);
             voice_details.UserId = data["user_id"]?.GetValue<string>();
             voice_details.SessionId = data["session_id"]?.GetValue<string>();
         }
@@ -304,7 +304,7 @@ namespace Discord.Classes
                             case "READY":
                                 // Only uncomment this if you need to debug the READY event from Discord.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
-                                UserStatusMgr.HandleUserStatus(json["d"]);
+                                StatusManager.HandleUserStatus(json["d"]);
 
                                 var readyData = json["d"];
 
@@ -337,7 +337,7 @@ namespace Discord.Classes
                                 Debug.WriteLine($"[WebSocket] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
                                 break;
                             case "PRESENCE_UPDATE":
-                                UserStatusMgr.HandleUserStatus(json["d"]);
+                                StatusManager.HandleUserStatus(json["d"]);
                                 break;
                             case "VOICE_STATE_UPDATE":
                                 HandleVoiceStateUpdate(json["d"]);
@@ -367,7 +367,7 @@ namespace Discord.Classes
         {
             if (messageData == null) return;
 
-            var messageItem = await DiscordMsgParser.ParseMessage(messageData);
+            var messageItem = await MessageParser.ParseMessage(messageData);
             if (messageItem == null) return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
@@ -390,7 +390,7 @@ namespace Discord.Classes
         private async Task HandleMessageUpdate(JsonNode messageData) // omega
         {
             if (messageData == null) return;
-            var messageItem = await DiscordMsgParser.ParseMessage(messageData);
+            var messageItem = await MessageParser.ParseMessage(messageData);
             if (messageItem == null) return;
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
             var args = new HelperClasses.DiscordMessageReceivedEventArgs

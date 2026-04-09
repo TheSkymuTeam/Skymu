@@ -9,17 +9,16 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Discord.Users;
+using MiddleMan;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text.Json.Nodes;
-using System.Threading.Channels;
 using System.Threading.Tasks;
-using MiddleMan;
 
-namespace Discord.Classes
+namespace Discord.Helpers
 {
-    internal class DiscordMsgParser
+    internal class MessageParser
     {
         public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
         {

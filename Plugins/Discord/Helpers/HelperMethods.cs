@@ -9,6 +9,8 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Discord.Networking.Managers;
+using Discord.Users;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Discord.Classes
+namespace Discord.Helpers
 {
     internal static class HelperMethods
     {
@@ -144,7 +146,7 @@ namespace Discord.Classes
 
         public static IEnumerable<JsonObject> GetUserChannels(bool orderByRecent)
         {
-            var privateChannels = WebSocketMgr.GetPrivateChannels() ?? new JsonArray();
+            var privateChannels = WebSocketManager.GetPrivateChannels() ?? new JsonArray();
             var channels = privateChannels
                 .OfType<JsonObject>()
                 .Where(c =>

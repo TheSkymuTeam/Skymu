@@ -1,5 +1,4 @@
-﻿using Discord.Classes;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -11,7 +10,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Discord
+namespace Discord.Networking
 {
     internal class AuthSocket : IDisposable
     {

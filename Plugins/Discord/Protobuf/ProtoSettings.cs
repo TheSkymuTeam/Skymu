@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Discord.Classes;
+using Discord.Helpers;
 using DiscordProtos.DiscordUsers.V1;
 using Google.Protobuf;
 using System.Diagnostics;
@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Discord.Networking;
 using System.Threading;
 using System.Threading.Tasks;
 

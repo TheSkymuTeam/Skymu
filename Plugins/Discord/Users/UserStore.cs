@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using MiddleMan;
+using Discord.Helpers;
 
-namespace Discord.Classes
+namespace Discord.Users
 {
     internal static class UserStore
     {
