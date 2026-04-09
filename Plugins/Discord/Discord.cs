@@ -23,24 +23,51 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord.Protobuf;
+using Discord.Calling.Networking;
 
 namespace Discord
 {
     public class Core : ICore, ICall
     {
-        // HELLO PATRICK. THESE ARE STUB METHODS. MOVE THEM WHERE YOU WANT
-
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
         public bool SupportsVideoCalls => false;
-        public Task<ActiveCall> StartCall(string conversationIdentifier, bool isVideo, bool startMuted) => Task.FromResult<ActiveCall>(new ActiveCall("dasd", "dasdsad", false, new User[1] { new User("Das", "dasdf", "Dasda") }));
+        public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            CallSocket callSocket = null;
+
+            WebSocketMgr.SubscribeVoiceServerUpdated((sender, e) =>
+            {
+                callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId);
+                tcs.TrySetResult(true); // signal that we're ready
+            });
+
+            string voicePayloadJson = JsonSerializer.Serialize(new
+            {
+                op = 4,
+                d = new
+                {
+                    guild_id = (string)null,
+                    channel_id = conversationId,
+                    self_mute = startMuted,
+                    self_deaf = false,
+                    self_video = isVideo,
+                    flags = 2
+                }
+            });
+
+            await WebSocketMgr.SendPayload(voicePayloadJson); // wait for payload send
+            await tcs.Task; // wait for call socket init
+
+            return new ActiveCall("test", conversationId, isVideo, new User[0]);
+        }
+
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> EndCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
-
-        // BYE PATRICK LOVE YOU
 
         // Plugin details
         public event EventHandler<PluginMessageEventArgs> OnError;
@@ -119,11 +146,11 @@ namespace Discord
 
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            if (authType == AuthenticationMethod.Token) 
+            if (authType == AuthenticationMethod.Token)
                 DscToken = username;
-            else if (authType == AuthenticationMethod.QRCode) 
+            else if (authType == AuthenticationMethod.QRCode)
                 return LoginResult.TwoFARequired;
-            else 
+            else
                 return LoginResult.UnsupportedAuthType;
 
             return await StartClient();
@@ -657,35 +684,35 @@ namespace Discord
                     switch (e.EventType)
                     {
                         case MessageEventType.Create:
-                        {
-                            var typingUser = TypingUsersList
-                                .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
-                            if (typingUser != null)
-                                TypingUsersList.Remove(typingUser);
-                            if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
-                                users.Remove(e.Sender.Identifier);
+                            {
+                                var typingUser = TypingUsersList
+                                    .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
+                                if (typingUser != null)
+                                    TypingUsersList.Remove(typingUser);
+                                if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
+                                    users.Remove(e.Sender.Identifier);
 
-                            var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
-                                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message, CheckIfGuildChannel(e))); 
-                            break;
-                        }
+                                var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
+                                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message, CheckIfGuildChannel(e)));
+                                break;
+                            }
                         case MessageEventType.Update:
-                        {
-                            var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
+                            {
+                                var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
                                 MessageEvent?.Invoke(this, new MessageEditedEventArgs(e.ChannelId, e.Identifier, message));
-                            break;
-                        }
+                                break;
+                            }
                         case MessageEventType.Delete:
-                        {
-                            MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
-                            break;
-                        }
+                            {
+                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
+                                break;
+                            }
                         case MessageEventType.BulkDelete:
-                        {
-                            foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
-                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
-                            break;
-                        }
+                            {
+                                foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
+                                    MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
+                                break;
+                            }
                     }
                 }
                 catch (Exception ex)
