@@ -12,20 +12,20 @@
 // Copied from Naticord which is found here: https://github.com/Naticord/naticord/blob/dev/Naticord/Networking/API.cs
 // This is done with permission from the original creator (patricktbp). Later modified by OmegaAOL.
 
+using Discord.Networking.Managers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Discord.Classes 
+namespace Discord.Networking
 {
     internal class API 
     {
-        private readonly ConfigMgr configMgr = new ConfigMgr();
+        private readonly ConfigManager ConfigManager = new ConfigManager();
 
         // Reuse client (less memory usage)
         internal readonly HttpClient client;
@@ -50,7 +50,7 @@ namespace Discord.Classes
             client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
             client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate"); // TODO maybe add brotli decompression? that's supposed to be better
 
-            XSuperProperties = configMgr.GetXSPJson();
+            XSuperProperties = ConfigManager.GetXSPJson();
             client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
 
             // Forcefully use TLS 1.2

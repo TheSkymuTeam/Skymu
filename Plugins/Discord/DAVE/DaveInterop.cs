@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Discord.Calling.Dave
+namespace Discord.Dave
 {
     internal static class DaveInterop
     {

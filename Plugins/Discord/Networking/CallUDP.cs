@@ -1,22 +1,22 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Threading.Channels;
+﻿using Concentus;
+using Concentus.Enums;
+using Concentus.Structs;
+using Discord.Dave;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
-using Concentus;
-using Concentus.Structs;
-using Concentus.Enums;
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
+using System;
 using System.Collections.Concurrent;
-using Discord.Calling.Dave;
+using System.Diagnostics;
+using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 
-namespace Discord.Calling.Networking
+namespace Discord.Networking
 {
     class CallUDP
     {

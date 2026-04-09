@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace Discord.Classes
+namespace Discord.Networking.Managers
 {
-    internal class ConfigMgr
+    internal class ConfigManager
     {
         private static readonly Random _rng = new Random();
         // Launch info
@@ -126,8 +126,8 @@ namespace Discord.Classes
                 (1UL << 55)
             );
 
-            LaunchSignature = ConfigMgr.FormatUUID(launchUuidPart1, launchUuidPart2);
-            ClientLaunchId = ConfigMgr.FormatUUID(RandU64(), RandU64());
+            LaunchSignature = ConfigManager.FormatUUID(launchUuidPart1, launchUuidPart2);
+            ClientLaunchId = ConfigManager.FormatUUID(RandU64(), RandU64());
         }
     }
 }

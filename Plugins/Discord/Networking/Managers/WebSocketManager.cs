@@ -9,16 +9,17 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Discord.Helpers;
 using System;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace Discord.Classes
+namespace Discord.Networking.Managers
 {
-    internal class WebSocketMgr
+    internal class WebSocketManager
     {
         // We reuse this to avoid creating more WebSocket instances, which is quite heavy
-        // Also, marked as static so WebSocketMgr helper classes can be called throughout the app
+        // Also, marked as static so WebSocketManager helper classes can be called throughout the app
         internal static WebSocket Socket;
 
         public static void EnsureConnected(string token, EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler, Core core)

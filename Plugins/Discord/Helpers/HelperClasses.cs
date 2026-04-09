@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace Discord.Classes
+namespace Discord.Helpers
 {
     public enum MessageEventType
     {

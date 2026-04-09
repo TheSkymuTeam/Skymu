@@ -9,7 +9,7 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using Discord.Classes;
+using Discord.Helpers;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -20,10 +20,12 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Discord.Networking.Managers;
 using System.Threading;
+using Discord.Users;
 using System.Threading.Tasks;
 using Discord.Protobuf;
-using Discord.Calling.Networking;
+using Discord.Networking;
 
 namespace Discord
 {
@@ -37,7 +39,7 @@ namespace Discord
             var tcs = new TaskCompletionSource<bool>();
             CallSocket callSocket = null;
 
-            WebSocketMgr.SubscribeVoiceServerUpdated((sender, e) =>
+            WebSocketManager.SubscribeVoiceServerUpdated((sender, e) =>
             {
                 callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId);
                 tcs.TrySetResult(true); // signal that we're ready
@@ -57,7 +59,7 @@ namespace Discord
                 }
             });
 
-            await WebSocketMgr.SendPayload(voicePayloadJson); // wait for payload send
+            await WebSocketManager.SendPayload(voicePayloadJson); // wait for payload send
             await tcs.Task; // wait for call socket init
 
             return new ActiveCall("test", conversationId, isVideo, new User[0]);
@@ -245,7 +247,7 @@ namespace Discord
 
         public async Task<bool> PopulateSidebarInformation()
         {
-            WebSocketMgr.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
+            WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
             _uiContext = SynchronizationContext.Current;
             JsonObject parsedDetails = null;
 
@@ -260,7 +262,7 @@ namespace Discord
 
                 parsedDetails = JsonNode.Parse(userDetails).AsObject();
 
-                var readyTask = WebSocketMgr.WaitUntilReady();
+                var readyTask = WebSocketManager.WaitUntilReady();
                 var delayTask = Task.Delay(WARNING_WS_MS);
 
                 if (await Task.WhenAny(readyTask, delayTask) == delayTask)
@@ -414,7 +416,7 @@ namespace Discord
             {
                 try
                 {
-                    var guilds = WebSocketMgr.GetGuilds();
+                    var guilds = WebSocketManager.GetGuilds();
                     foreach (var guildNode in guilds.OfType<JsonObject>())
                     {
                         int memberCount = 0;
@@ -564,7 +566,7 @@ namespace Discord
 
                 foreach (var node in messages.Reverse())
                 {
-                    var item = await DiscordMsgParser.ParseMessage(node);
+                    var item = await MessageParser.ParseMessage(node);
                     if (item != null)
                         messageList.Add(item);
                 }
@@ -660,7 +662,7 @@ namespace Discord
 
         private bool CheckIfGuildChannel(HelperClasses.DiscordMessageReceivedEventArgs e)
         {
-            var privateChannels = WebSocketMgr.GetPrivateChannels();
+            var privateChannels = WebSocketManager.GetPrivateChannels();
             var channel = privateChannels
                 .OfType<JsonObject>()
                 .FirstOrDefault(c => c["id"]?.GetValue<string>() == e.ChannelId);
@@ -740,7 +742,7 @@ namespace Discord
         public void Dispose()
         {
             // Dispose of the WebSocket
-            WebSocketMgr.Socket = null;
+            WebSocketManager.Socket = null;
 
             // Clear all of the users stored
             UserStore.Clear();

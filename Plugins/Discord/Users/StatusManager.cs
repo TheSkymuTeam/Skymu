@@ -15,11 +15,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Text.Json.Nodes;
-using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
+using Discord.Helpers;
 
-namespace Discord.Classes
+namespace Discord.Users
 {
-    internal class UserStatusMgr
+    internal class StatusManager
     {
         public static void HandleUserStatus(JsonNode messageData)
         {
