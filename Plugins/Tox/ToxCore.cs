@@ -1,0 +1,1293 @@
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// You may contact The Skymu Team: skymu@hubaxe.fr.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/legal/licenses/standard.txt
+/*==========================================================*/
+
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using static ToxCore;
+
+public static class ToxCore
+{
+    public static string toxDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox");
+    public static string AvatarDir = Path.Combine(toxDir, "avatars");
+
+    #region node stuff (unofficial)
+
+    public struct ToxNode
+    {
+        public string ip;
+        public UInt16 port;
+        public byte[] public_key;
+    }
+    private static byte[] FromHex(string hex)
+    {
+        int len = hex.Length;
+        if (len != 64)
+        {
+            throw new ArgumentException($"Hex string must be 64 characters long, got {len}");
+        }
+        byte[] result = new byte[len / 2];
+
+        for (int i = 0; i < 64; i += 2)
+            result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+
+        return result;
+    }
+    public static ToxNode[] toxNodes = {
+        new ToxNode { ip = "85.143.221.42", port = 33445, public_key = FromHex("DA4E4ED4B697F2E9B000EEFE3A34B554ACD3F45F5C96EAEA2516DD7FF9AF7B43") },
+        new ToxNode { ip = "2a04:ac00:1:9f00:5054:ff:fe01:becd", port = 33445, public_key = FromHex("DA4E4ED4B697F2E9B000EEFE3A34B554ACD3F45F5C96EAEA2516DD7FF9AF7B43") },
+        new ToxNode { ip = "78.46.73.141", port = 33445, public_key = FromHex("02807CF4F8BB8FB390CC3794BDF1E8449E9A8392C5D3F2200019DA9F1E812E46") },
+        new ToxNode { ip = "2a01:4f8:120:4091::3", port = 33445, public_key = FromHex("02807CF4F8BB8FB390CC3794BDF1E8449E9A8392C5D3F2200019DA9F1E812E46") },
+        new ToxNode { ip = "tox.initramfs.io", port = 33445, public_key = FromHex("3F0A45A268367C1BEA652F258C85F4A66DA76BCAA667A49E770BCC4917AB6A25") },
+        new ToxNode { ip = "205.185.115.131", port = 53, public_key = FromHex("3091C6BEB2A993F1C6300C16549FABA67098FF3D62C6D253828B531470B53D68") },
+        new ToxNode { ip = "tox.kurnevsky.net", port = 33445, public_key = FromHex("82EF82BA33445A1F91A7DB27189ECFC0C013E06E3DA71F588ED692BED625EC23") },
+    };
+
+    #endregion
+
+    #region log
+
+    public enum Tox_Log_Level {
+        TRACE,
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_log_level_to_string(Tox_Log_Level value);
+
+    #endregion
+
+    #region options
+
+    #region enum and struct
+
+    public enum Tox_Proxy_Type {
+        NONE,
+        HTTP,
+        SOCKS5,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_proxy_type_to_string(Tox_Proxy_Type value);
+
+    public enum Tox_Savedata_Type {
+        NONE,
+        TOX_SAVE,
+        KEY,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_savedata_type_to_string(Tox_Savedata_Type value);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_log_cb(IntPtr tox, Tox_Log_Level level, [MarshalAs(UnmanagedType.LPStr)] string file, UInt32 line, [MarshalAs(UnmanagedType.LPStr)] string func, [MarshalAs(UnmanagedType.LPStr)] string message, IntPtr user_data);
+
+    public struct Tox_Options
+    {
+#pragma warning disable CS0169
+        bool ipv6_enabled;
+        bool udp_enabled;
+        bool local_discovery_enabled;
+        bool dht_announcements_enabled;
+        Tox_Proxy_Type proxy_type;
+        [MarshalAs(UnmanagedType.LPStr)] string proxy_host;
+        UInt16 proxy_port;
+        UInt16 start_port;
+        UInt16 end_port;
+        UInt16 tcp_port;
+        bool hole_punching_enabled;
+        Tox_Savedata_Type savedata_type;
+        [MarshalAs(UnmanagedType.LPStr)] string savedata_data;
+        UIntPtr savedata_length;
+        tox_log_cb log_callback;
+        IntPtr log_user_data;
+        bool experimental_thread_safety;
+        bool experimental_groups_persistence;
+        bool experimental_disable_dns;
+        bool experimental_owned_data;
+        // private owned_savedata_data
+        // private owned_proxy_host
+#pragma warning restore CS0169
+    }
+
+    #endregion
+
+    #region getter and setter hive
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_ipv6_enabled(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_ipv6_enabled(IntPtr options, bool ipv6_enabled);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_udp_enabled(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_udp_enabled(IntPtr options, bool udp_enabled);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_local_discovery_enabled(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_local_discovery_enabled(IntPtr options, bool local_discovery_enabled);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_dht_announcements_enabled(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_dht_announcements_enabled(IntPtr options, bool dht_announcements_enabled);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Proxy_Type tox_options_get_proxy_type(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_proxy_type(IntPtr options, Tox_Proxy_Type proxy_type);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_options_get_proxy_host(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_proxy_host(IntPtr options, [MarshalAs(UnmanagedType.LPStr)] string proxy_host);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_options_get_proxy_port(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_proxy_port(IntPtr options, UInt16 proxy_port);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_options_get_start_port(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_start_port(IntPtr options, UInt16 start_port);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_options_get_end_port(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_end_port(IntPtr options, UInt16 end_port);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_options_get_tcp_port(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_tcp_port(IntPtr options, UInt16 tcp_port);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_hole_punching_enabled(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_hole_punching_enabled(IntPtr options, bool hole_punching_enabled);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Savedata_Type tox_options_get_savedata_type(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_savedata_type(IntPtr options, Tox_Savedata_Type savedata_type);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_options_get_savedata_data(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_set_savedata_data(IntPtr options, byte[] savedata_data, UIntPtr length);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_options_get_savedata_length(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_savedata_length(IntPtr options, UIntPtr savedata_length);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern tox_log_cb tox_options_get_log_callback(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_log_callback(IntPtr options, tox_log_cb log_callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_options_get_log_userdata(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_log_userdata(IntPtr options, IntPtr log_userdata);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_experimental_owned_data(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_experimental_owned_data(IntPtr options, bool experimental_owned_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_experimental_thread_safety(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_experimental_thread_safety(IntPtr options, bool experimental_thread_safety);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_experimental_groups_persistence(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_experimental_groups_persistence(IntPtr options, bool experimental_groups_persistence);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_options_get_experimental_disable_dns(IntPtr options);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_set_experimental_disable_dns(IntPtr options, bool experimental_disable_dns);
+
+    #endregion
+
+    #region actual options stuff
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_default(IntPtr options);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_copy(IntPtr dest, IntPtr src);
+
+    public enum Tox_Err_Options_New {
+        OK,
+        MALLOC,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_options_new_to_string(Tox_Err_Options_New value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_options_new(out Tox_Err_Options_New err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_options_free(IntPtr options);
+
+    #endregion
+
+    #endregion
+
+    #region version stuff
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_version_major();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_version_minor();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_version_patch();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_version_is_compatible(UInt32 major, UInt32 minor, UInt32 patch);
+
+    #endregion
+
+    #region size/length constant getter
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_public_key_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_secret_key_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_dht_id_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_uid_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_id_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_nospam_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_address_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_name_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_status_message_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_friend_request_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_message_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_custom_packet_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_hash_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_file_id_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_filename_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_max_hostname_length();
+
+    #endregion
+
+    #region very important enum? has User_Status and Message_Type
+
+    public enum Tox_User_Status
+    {
+        NONE,
+        AWAY,
+        BUSY,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_user_status_to_string(Tox_User_Status value);
+
+    public enum Tox_Message_Type
+    {
+        NORMAL,
+        ACTION,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_message_type_to_string(Tox_Message_Type value);
+
+    #endregion
+
+    #region important actions
+
+    public enum Tox_Err_New
+    {
+        OK,
+        NULL,
+        MALLOC,
+        PORT_ALLOC,
+        PROXY_BAD_TYPE,
+        PROXY_BAD_HOST,
+        PROXY_BAD_PORT,
+        PROXY_NOT_FOUND,
+        LOAD_ENCRYPTED,
+        LOAD_BAD_FORMAT,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_new_to_string(Tox_Err_New value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_new(IntPtr options, out Tox_Err_New error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_kill(IntPtr tox);
+
+    #endregion
+
+    #region get savedata (size)
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_get_savedata_size(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_get_savedata(IntPtr tox, [Out] byte[] savedata);
+
+    #endregion
+
+    #region bootstrap
+
+    public enum Tox_Err_Bootstrap
+    {
+        OK,
+        NULL,
+        BAD_HOST,
+        BAD_PORT,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_bootstrap_to_string(Tox_Err_Bootstrap value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_bootstrap(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string host, ushort port, [In] byte[] public_key, out Tox_Err_Bootstrap error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_add_tcp_relay(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string host, UInt16 port, [In] byte[] public_key, out Tox_Err_Bootstrap error);
+
+    #endregion
+
+    #region connection stuff
+
+    public enum Tox_Connection
+    {
+        NONE,
+        TCP,
+        UDP,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_connection_to_string(Tox_Connection value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Connection tox_self_get_connection_status(IntPtr tox);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_self_connection_status_cb(IntPtr tox, Tox_Connection connection_status, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_self_connection_status(IntPtr tox, tox_self_connection_status_cb callback);
+
+    #endregion
+
+    #region iterate
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_iteration_interval(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_iterate(IntPtr tox, IntPtr user_data);
+
+    #endregion
+
+    #region self get/set info
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_addr(IntPtr tox, [Out] byte[] address);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_set_nospam(IntPtr tox, UInt32 nospam);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_self_get_nospam(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_public_key(IntPtr tox, [Out] byte[] public_key);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_secret_key(IntPtr tox, [Out] byte[] secret_key);
+
+    public enum Tox_Err_Set_Info
+    {
+        OK,
+        NULL,
+        TOO_LONG,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_set_info_to_string(Tox_Err_Set_Info value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_self_set_name(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr length, out Tox_Err_Set_Info error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_self_get_name_size(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_name(IntPtr tox, [Out] byte[] name);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_self_set_status_message(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string status_message, UIntPtr length, out Tox_Err_Set_Info error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_self_get_status_message_size(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_status_message(IntPtr tox, [Out] byte[] name);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_set_status(IntPtr tox, Tox_User_Status status);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_User_Status tox_self_get_status(IntPtr tox);
+
+    #endregion
+
+    #region friend stuff, getter
+
+    public enum Tox_Err_Friend_Add
+    {
+        OK,
+        NULL,
+        TOO_LONG,
+        NO_MESSAGE,
+        OWN_KEY,
+        ALREADY_SENT,
+        BAD_CHECKSUM,
+        SET_NEW_NOSPAM,
+        MALLOC,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_add_to_string(Tox_Err_Friend_Add value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_friend_add(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string address, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Friend_Add error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_friend_add_norequest(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string public_key, out Tox_Err_Friend_Add error);
+
+    public enum Tox_Err_Friend_Delete
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_delete_to_string(Tox_Err_Friend_Delete value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_delete(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Delete error);
+
+    public enum Tox_Err_Friend_By_Public_Key
+    {
+        OK,
+        NULL,
+        NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_by_public_key_to_string(Tox_Err_Friend_By_Public_Key value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_friend_by_public_key(IntPtr tox, byte[] public_key, out Tox_Err_Friend_By_Public_Key error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_exists(IntPtr tox, UInt32 friend_number);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_self_get_friend_list_size(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_friend_list(IntPtr tox, [Out] UInt32[] friend_list); // TESTME
+
+    public enum Tox_Err_Friend_Get_Public_Key
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_get_public_key_to_string(Tox_Err_Friend_Get_Public_Key value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_get_public_key(IntPtr tox, UInt32 friend_number, [Out] byte[] public_key, out Tox_Err_Friend_Get_Public_Key error);
+
+    public enum Tox_Err_Friend_Get_Last_Online
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_get_last_online_to_string(Tox_Err_Friend_Get_Last_Online value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt64 tox_friend_get_last_online(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Get_Last_Online error);
+
+    public enum Tox_Err_Friend_Query
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_query_to_string(Tox_Err_Friend_Query value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_friend_get_name_size(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_get_name(IntPtr tox, UInt32 friend_number, [Out] byte[] name, out Tox_Err_Friend_Query error);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_name_cb(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_name(IntPtr tox, tox_friend_name_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_friend_get_status_message_size(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_get_status_message(IntPtr tox, UInt32 friend_number, [Out] byte[] name, out Tox_Err_Friend_Query error);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_status_message_cb(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_status_message(IntPtr tox, tox_friend_status_message_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_User_Status tox_friend_get_status(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_status_cb(IntPtr tox, UInt32 friend_number, Tox_User_Status status, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_status(IntPtr tox, tox_friend_status_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Connection tox_friend_get_connection_status(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_connection_status_cb(IntPtr tox, UInt32 friend_number, Tox_Connection connection_status, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_connection_status(IntPtr tox, tox_friend_connection_status_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_get_typing(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_typing_cb(IntPtr tox, UInt32 friend_number, bool typing, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_typing(IntPtr tox, tox_friend_typing_cb callback);
+
+    #endregion
+
+    #region set typing
+
+    public enum Tox_Err_Set_Typing
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_set_typing_to_string(Tox_Err_Set_Typing value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_self_set_typing(IntPtr tox, UInt32 friend_number, bool typing, out Tox_Err_Set_Typing error);
+
+    #endregion
+
+    #region friend send message n cb
+
+    public enum Tox_Err_Friend_Send_Message
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        SENDQ,
+        TOO_LONG,
+        EMPTY,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_send_message_to_string(Tox_Err_Friend_Send_Message value);
+
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_friend_send_message(IntPtr tox, UInt32 friend_number, Tox_Message_Type type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Friend_Send_Message error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_read_receipt_cb(IntPtr tox, UInt32 friend_number, UInt32 message_id, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_read_receipt(IntPtr tox, tox_friend_read_receipt_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_request_cb(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string public_key, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_request(IntPtr tox, tox_friend_request_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_message_cb(IntPtr tox, UInt32 friend_number, Tox_Message_Type type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_message(IntPtr tox, tox_friend_message_cb callback);
+
+    #endregion
+
+    #region hash
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_hash([Out] byte[] hash, [MarshalAs(UnmanagedType.LPStr)] string data, UIntPtr length);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_hash([Out] byte[] hash, byte[] data, UIntPtr length);
+
+    #endregion
+
+    #region file stuff
+
+    public enum Tox_File_Kind
+    {
+        DATA = 0,
+        AVATAR,
+        STICKER,
+        // Here the file_id is the specified hash of the data.
+        SHA1,
+        SHA256,
+    }
+
+    public enum Tox_File_Control
+    {
+        RESUME,
+        PAUSE,
+        CANCEL,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_file_control_to_string(Tox_File_Control value);
+
+    public enum Tox_Err_File_Control
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        CONTROL_NOT_FOUND,
+        CONTROL_NOT_PAUSE,
+        CONTROL_DENIED,
+        CONTROL_ALREADY_PAUSED,
+        CONTROL_SENDQ,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_control_to_string(Tox_Err_File_Control value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_file_control(IntPtr tox, UInt32 friend_number, UInt32 file_number, Tox_File_Control control, out Tox_Err_File_Control error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_file_recv_control_cb(IntPtr tox, UInt32 friend_number, UInt32 file_number, Tox_File_Control control, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_file_recv_control(IntPtr tox, tox_file_recv_control_cb callback);
+
+    public enum Tox_Err_File_Seek
+    {
+        OK,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        NOT_FOUND,
+        DENIED,
+        INVALID_POSITION,
+        SENDQ,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_seek_to_string(Tox_Err_File_Seek value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_file_seek(IntPtr tox, UInt32 friend_number, UInt32 file_number, UInt64 position, out Tox_Err_File_Seek error);
+
+    public enum Tox_Err_File_Get
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_get_to_string(Tox_Err_File_Get value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_file_get_file_id(IntPtr tox, UInt32 friend_number, UInt32 file_number, out Tox_Err_File_Get error);
+
+    public enum Tox_Err_File_By_Id
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_by_id_to_string(Tox_Err_File_By_Id value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_file_by_id(IntPtr tox, UInt32 friend_number, UInt32 file_number, out Tox_Err_File_By_Id error);
+
+    public enum Tox_Err_File_Send
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        NAME_TOO_LONG,
+        TOO_MANY,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_send_to_string(Tox_Err_File_Send value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_file_send(IntPtr tox, UInt32 friend_number, Tox_File_Kind kind, UInt64 file_size, UInt32 file_id, string filename, UIntPtr filename_length, out Tox_Err_File_Send error);
+
+    public enum Tox_Err_File_Send_Chunk
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        NOT_FOUND,
+        NOT_TRANSFERRING,
+        INVALID_LENGTH,
+        SENDQ,
+        WRONG_POSITION,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_file_send_chunk_to_string(Tox_Err_File_Send_Chunk value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_file_send_chunk(IntPtr tox, UInt32 friend_number, UInt32 file_number, UInt64 position, [MarshalAs(UnmanagedType.LPStr)] string data, UIntPtr length, out Tox_Err_File_Send_Chunk error);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_file_send_chunk(IntPtr tox, UInt32 friend_number, UInt32 file_number, UInt64 position, byte[] data, UIntPtr length, out Tox_Err_File_Send_Chunk error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_file_chunk_request_cb(IntPtr tox, UInt32 friend_number, UInt32 file_number, UInt64 position, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_file_chunk_request(IntPtr tox, tox_file_chunk_request_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_file_recv_cb(IntPtr tox, UInt32 friend_number, UInt32 file_number, Tox_File_Kind kind, UInt64 file_size, [MarshalAs(UnmanagedType.LPStr)] string filename, UIntPtr filename_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_file_recv(IntPtr tox, tox_file_recv_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_file_recv_chunk_cb(IntPtr tox, UInt32 friend_number, UInt32 file_number, UInt64 position, IntPtr data, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_file_recv_chunk(IntPtr tox, tox_file_recv_chunk_cb callback);
+
+    #endregion
+
+    #region conference
+
+    public enum Tox_Conference_Type
+    {
+        TEXT,
+        AV,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_conference_type_to_string(Tox_Conference_Type value);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_invite_cb(IntPtr tox, UInt32 friend_number, Tox_Conference_Type type, [MarshalAs(UnmanagedType.LPStr)] string cookie, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_invite(IntPtr tox, tox_conference_invite_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_connected_cb(IntPtr tox, UInt32 conference_number, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_connected(IntPtr tox, tox_conference_connected_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_message_cb(IntPtr tox, UInt32 conference_number, UInt32 peer_number, Tox_Message_Type type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_message(IntPtr tox, tox_conference_message_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_title_cb(IntPtr tox, UInt32 conference_number, UInt32 peer_number, [MarshalAs(UnmanagedType.LPStr)] string title, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_title(IntPtr tox, tox_conference_title_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_peer_name_cb(IntPtr tox, UInt32 conference_number, UInt32 peer_number, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_peer_name(IntPtr tox, tox_conference_peer_name_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_conference_peer_list_changed_cb(IntPtr tox, UInt32 conference_number, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_conference_peer_list_changed(IntPtr tox, tox_conference_peer_list_changed_cb callback);
+
+    public enum Tox_Err_Conference_New
+    {
+        OK,
+        INIT,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_new_to_string(Tox_Err_Conference_New value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_new(IntPtr tox, out Tox_Err_Conference_New error);
+
+    public enum Tox_Err_Conference_Delete
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_delete_to_string(Tox_Err_Conference_Delete value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_delete(IntPtr tox, UInt32 conference_number, out Tox_Err_Conference_Delete error);
+
+    public enum Tox_Err_Conference_Peer_Query
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+        PEER_NOT_FOUND,
+        NO_CONNECTION,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_peer_query_to_string(Tox_Err_Conference_Peer_Query value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_peer_count(IntPtr tox, UInt32 conference_number, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_conference_peer_get_name_size(IntPtr tox, UInt32 conference_number, UInt32 peer_number, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_peer_get_name(IntPtr tox, UInt32 conference_number, UInt32 peer_number, [Out] byte[] name, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_peer_get_public_key(IntPtr tox, UInt32 conference_number, UInt32 peer_number, [Out] byte[] public_key, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_peer_number_is_ours(IntPtr tox, UInt32 conference_number, UInt32 peer_number, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_offline_peer_count(IntPtr tox, UInt32 conference_number, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_conference_offline_peer_get_name_size(IntPtr tox, UInt32 offline_peer_number, UInt32 peer_number, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_offline_peer_get_name(IntPtr tox, UInt32 conference_number, UInt32 offline_peer_number, [Out] byte[] name, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_offline_peer_get_public_key(IntPtr tox, UInt32 conference_number, UInt32 offline_peer_number, [Out] byte[] public_key, out Tox_Err_Conference_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt64 tox_conference_offline_peer_get_last_active(IntPtr tox, UInt32 conference_number, UInt32 offline_peer_number, out Tox_Err_Conference_Peer_Query error);
+
+    public enum Tox_Err_Conference_Set_Max_Offline
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_set_max_offline_to_string(Tox_Err_Conference_Set_Max_Offline value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_set_max_offline(IntPtr tox, UInt32 conference_number, UInt32 max_offline, out Tox_Err_Conference_Set_Max_Offline error);
+
+    public enum Tox_Err_Conference_Invite
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+        FAIL_SEND,
+        NO_CONNECTION,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_invite_to_string(Tox_Err_Conference_Invite value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_invite(IntPtr tox, UInt32 friend_number, UInt32 conference_number, out Tox_Err_Conference_Invite error);
+
+    public enum Tox_Err_Conference_Join
+    {
+        OK,
+        INVALIID_LENGTH,
+        WRONG_TYPE,
+        FRIEND_NOT_FOUND,
+        DUPLICATE,
+        INIT_FAIL,
+        FAIL_SEND,
+        NULL,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_join_to_string(Tox_Err_Conference_Join value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_join(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string cookie, UIntPtr length, out Tox_Err_Conference_Join error);
+
+    public enum Tox_Err_Conference_Send_Message
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+        TOO_LONG,
+        NO_CONNECTION,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_send_message_to_string(Tox_Err_Conference_Send_Message value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_send_message(IntPtr tox, UInt32 conference_number, Tox_Message_Type type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Conference_Send_Message error);
+
+    public enum Tox_Err_Conference_Title
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+        INVALID_LENGTH,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_title_to_string(Tox_Err_Conference_Title value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_conference_get_title_size(IntPtr tox, UInt32 conference_number, out Tox_Err_Conference_Title error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_get_title(IntPtr tox, UInt32 conference_number, [Out] byte[] title, out Tox_Err_Conference_Title error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_set_title(IntPtr tox, UInt32 conference_number, [Out] byte[] title, UIntPtr length, out Tox_Err_Conference_Title error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_conference_get_chatlist_size(IntPtr tox);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_conference_get_chatlist(IntPtr tox, [Out] UInt32[] chatlist);
+
+    public enum Tox_Err_Conference_Get_Type
+    {
+        OK,
+        CONFERENCE_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_get_type_to_string(Tox_Err_Conference_Get_Type value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Conference_Type tox_conference_get_type(IntPtr tox, UInt32 conference_number, out Tox_Err_Conference_Get_Type error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_conference_get_id(IntPtr tox, UInt32 conference_number, [Out] byte[] id);
+
+    public enum Tox_Err_Conference_By_Id
+    {
+        OK,
+        NULL,
+        NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_by_id_to_string(Tox_Err_Conference_By_Id value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_conference_by_id(IntPtr tox, [MarshalAs(UnmanagedType.LPStr)] string id, out Tox_Err_Conference_By_Id error);
+
+    // tox_conference_get_uid: deprecated
+
+    public enum Tox_Err_Conference_By_Uid
+    {
+        OK,
+        NULL,
+        NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_conference_by_uid_to_string(Tox_Err_Conference_By_Uid value);
+    // Why is the above not marked as deprecated? The actual function is.
+
+    // tox_conference_by_uid: deprecated
+
+    #endregion
+
+    #region custom packet
+
+    public enum Tox_Err_Friend_Custom_Packet
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        PACKET_INVALID,
+        PACKET_EMPTY,
+        PACKET_TOO_LONG,
+        PACKET_SENDQ,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_friend_custom_packet_to_string(Tox_Err_Friend_Custom_Packet value);
+
+    // Basically UDP
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_send_lossy_packet(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, out Tox_Err_Friend_Custom_Packet error);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_send_lossy_packet(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string data, UIntPtr length, out Tox_Err_Friend_Custom_Packet error);
+    // Basically TCP
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_send_lossless_packet(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, out Tox_Err_Friend_Custom_Packet error);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_friend_send_lossless_packet(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string data, UIntPtr length, out Tox_Err_Friend_Custom_Packet error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_lossy_packet_cb(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_lossy_packet(IntPtr tox, tox_friend_lossy_packet_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_friend_lossless_packet_cb(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_friend_lossless_packet(IntPtr tox, tox_friend_lossless_packet_cb callback);
+
+    #endregion
+
+    #region "low-level network information"
+
+    public enum Tox_Err_Get_Port
+    {
+        OK,
+        NOT_BOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_get_port_to_string(Tox_Err_Get_Port value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_self_get_dht_id(IntPtr tox, [Out] byte[] dht_id);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_self_get_udp_port(IntPtr tox, out Tox_Err_Get_Port error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_self_get_tcp_port(IntPtr tox, out Tox_Err_Get_Port error);
+
+    #endregion
+
+    #region group chats (NGC?)
+
+    // 3069
+
+    #endregion
+
+    #region av
+
+    #region basics (new, iterate, kill, get_tox)
+
+    public enum Toxav_Err_New
+    {
+        OK,
+        NULL,
+        MALLOC,
+        MULTIPLE,
+    }
+    // So there is no error converter for Toxav_Err_New? Why?
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr toxav_new(IntPtr tox, out Toxav_Err_New err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_kill(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr toxav_get_tox(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 toxav_iteration_interval(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_iterate(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 toxav_audio_iteration_interval(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_audio_iterate(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 toxav_video_iteration_interval(IntPtr av);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_video_iterate(IntPtr av);
+
+    #endregion
+
+    #region initiation
+
+    public enum Toxav_Err_Call
+    {
+        OK,
+        MALLOC,
+        SYNC,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CONNECTED,
+        FRIEND_ALREADY_IN_CALL,
+        INVALID_BIT_RATE,
+    }
+    // Still no error converter? Sure...
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_call(IntPtr av, UInt32 friend_number, UInt32 audio_bit_rate, UInt32 video_bit_rate, out Toxav_Err_Call error);
+
+    // sorry what? user_data? Isn't that what iterate gets? ...NO? WHAT THE FUCK IS WRONG WITH TOXAV?
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_call_cb(IntPtr av, UInt32 friend_number, bool audio_enabled, bool video_enabled, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_call(IntPtr av, toxav_call_cb callback, IntPtr user_data);
+    
+    public enum Toxav_Err_Answer
+    {
+        OK,
+        SYNC,
+        CODEC_INITIALIZATION,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_CALLING,
+        INVALID_BIT_RATE,
+    }
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_answer(IntPtr av, UInt32 friend_number, UInt32 audio_bit_rate, UInt32 video_bit_rate, out Toxav_Err_Answer error);
+
+    #endregion
+
+    #region non-transfer stuff (states, etc)
+
+    public enum Toxav_Friend_Call_State
+    {
+        NONE = 0,
+        ERROR,
+        FINISHED,
+        SENDING_A,
+        SENDING_V,
+        ACCEPTING_A,
+        ACCEPTING_V,
+    }
+
+    // uint32_t state according to the header... WHAT?? Am I tripping? What is wrong with me? Am I even... no. I am alive.
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_call_state_cb(IntPtr av, UInt32 friend_number, Toxav_Friend_Call_State state, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_call_state(IntPtr av, toxav_call_state_cb callback, IntPtr user_data);
+
+    public enum Toxav_Call_Control
+    {
+        RESUME,
+        PAUSE,
+        CANCEL,
+        MUTE_AUDIO,
+        UNMUTE_AUDIO,
+        HIDE_VIDEO,
+        SHOW_VIDEO,
+    }
+
+    public enum Toxav_Err_Call_Control
+    {
+        OK,
+        SYNC,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_IN_CALL,
+        INVALID_TRANSITION,
+    }
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_call_control(IntPtr av, UInt32 friend_number, Toxav_Call_Control control, out Toxav_Err_Call_Control err);
+
+    public enum Toxav_Err_Bit_Rate_Set
+    {
+        OK,
+        SYNC,
+        INVALID_BIT_RATE,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_IN_CALL,
+    }
+
+    #endregion
+
+    #region A/V out
+
+    public enum Toxav_Err_Send_Frame
+    {
+        OK,
+        NULL,
+        FRIEND_NOT_FOUND,
+        FRIEND_NOT_IN_CALL,
+        SYNC,
+        INVALID,
+        PAYLOAD_TYPE_DISABLED,
+        RTP_FAILED,
+    }
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_audio_send_frame(IntPtr av, UInt32 friend_number, Int16[] pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, out Toxav_Err_Send_Frame err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_audio_set_bit_rate(IntPtr av, UInt32 friend_number, UInt32 bitrate, out Toxav_Err_Bit_Rate_Set err);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_audio_bit_rate_cb(IntPtr av, UInt32 friend_number, UInt32 audio_bit_rate, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_audio_bit_rate(IntPtr av, toxav_audio_bit_rate_cb callback, IntPtr user_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_video_send_frame(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, byte[] y, byte[] u, byte[] v, out Toxav_Err_Send_Frame err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_video_set_bit_rate(IntPtr av, UInt32 friend_number, UInt32 bitrate, out Toxav_Err_Bit_Rate_Set err);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_video_bit_rate_cb(IntPtr av, UInt32 friend_number, UInt32 video_bit_rate, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_video_bit_rate(IntPtr av, toxav_video_bit_rate_cb callback, IntPtr user_data);
+
+    #endregion
+
+    #region A/V in
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_audio_receive_frame_cb(IntPtr av, UInt32 friend_number, Int16[] pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_audio_receive_frame(IntPtr av, toxav_audio_receive_frame_cb callback, IntPtr user_data);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_video_receive_frame_cb(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, byte[] y, byte[] u, byte[] v, Int32 ystride, Int32 ustride, Int32 vstride, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void toxav_callback_video_receive_frame(IntPtr av, toxav_video_receive_frame_cb callback, IntPtr user_data);
+
+    #endregion
+
+    #region Group A/V blobs (legacy?)
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void toxav_audio_data_cb(IntPtr tox, UInt32 conference_number, UInt32 peer_number, Int16[] pcm, UInt32 samples, byte channels, UInt32 sample_rate, IntPtr user_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 toxav_add_av_groupchat(IntPtr tox, toxav_audio_data_cb audio_callback, IntPtr user_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 toxav_join_av_groupchat(
+        IntPtr tox, UInt32 friend_number, byte[] data, UInt16 length,
+        toxav_audio_data_cb audio_callback, IntPtr user_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 toxav_group_send_audio(
+        IntPtr tox, UInt32 conference_number, Int16[] pcm, UInt32 samples, byte channels,
+        UInt32 sample_rate);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 toxav_groupchat_enable_av(
+        IntPtr tox, UInt32 conference_number,
+        toxav_audio_data_cb audio_callback, IntPtr user_data);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 toxav_groupchat_disable_av(IntPtr tox, UInt32 conference_number);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool toxav_groupchat_av_enabled(IntPtr tox, UInt32 conference_number);
+
+    #endregion
+
+    #endregion
+}
