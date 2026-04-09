@@ -545,7 +545,7 @@ namespace Skymu.ViewModels
             await UserCountAPI.SetUsrStatus(
                 true,
                 Universal.CurrentUser?.DisplayName,
-                Universal.CurrentUser?.Username,
+                Universal.CurrentUser?.PublicUsername,
                 Universal.CurrentUser?.Identifier
             );
             await UserCountAPI.ConnectWS();
