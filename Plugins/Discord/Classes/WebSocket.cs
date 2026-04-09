@@ -79,6 +79,27 @@ namespace Discord.Classes
 
         private CancellationTokenSource _receiveCts;
 
+        // Ported from DiscordDAVECalling - omega
+        public class VoiceServerUpdateEventArgs : EventArgs
+        {
+            public string UserId;
+            public string SessionId;
+            public string VoiceToken;
+            public string VoiceEndpoint;
+
+            public VoiceServerUpdateEventArgs(string userId, string sessionId, string token, string endpoint)
+            {
+                UserId = userId;
+                SessionId = sessionId;
+                VoiceToken = token;
+                VoiceEndpoint = endpoint;
+            }
+        }
+
+        private VoiceServerUpdateEventArgs voice_details;
+
+        public event EventHandler<VoiceServerUpdateEventArgs> VoiceServerUpdateCompleted;
+
         // Event for new messages
         public event EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> MessageReceived;
         // Event for new guilds
@@ -133,7 +154,7 @@ namespace Discord.Classes
                 client_state = new { guild_versions = new { } }
             });
 
-           // Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
+            // Debug.WriteLine($"The generated payload is: {identifyPayloadJson}");
 
             _heartbeatBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(heartbeatPayloadJson));
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
@@ -250,6 +271,22 @@ namespace Discord.Classes
                    data[data.Length - 2] == 0xFF && data[data.Length - 1] == 0xFF;
         }
 
+        private void HandleVoiceStateUpdate(JsonNode data)
+        {
+            if (data is null) return;
+            voice_details.UserId = data["user_id"]?.GetValue<string>();
+            voice_details.SessionId = data["session_id"]?.GetValue<string>();
+        }
+
+        private void HandleVoiceServerUpdate(JsonNode data)
+        {
+            if (data is null) return;
+            voice_details.VoiceToken = data["token"]?.GetValue<string>();
+            voice_details.VoiceEndpoint = data["endpoint"]?.GetValue<string>();
+            VoiceServerUpdateCompleted?.Invoke(this, voice_details);
+        }
+
+
         private void HandleMessage(string data)
         {
             try
@@ -268,7 +305,7 @@ namespace Discord.Classes
                                 // Only uncomment this if you need to debug the READY event from Discord.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
                                 UserStatusMgr.HandleUserStatus(json["d"]);
-                                
+
                                 var readyData = json["d"];
 
                                 _privateChannelsJson = readyData["private_channels"]?.ToJsonString() ?? "[]"; // Store as strings to save memory
@@ -301,6 +338,12 @@ namespace Discord.Classes
                                 break;
                             case "PRESENCE_UPDATE":
                                 UserStatusMgr.HandleUserStatus(json["d"]);
+                                break;
+                            case "VOICE_STATE_UPDATE":
+                                HandleVoiceStateUpdate(json["d"]);
+                                break;
+                            case "VOICE_SERVER_UPDATE":
+                                HandleVoiceServerUpdate(json["d"]);
                                 break;
                         }
                         break;

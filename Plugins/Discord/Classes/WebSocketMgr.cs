@@ -61,6 +61,15 @@ namespace Discord.Classes
             Socket.MessageReceived += handler;
         }
 
+        public static void SubscribeVoiceServerUpdated(EventHandler<WebSocket.VoiceServerUpdateEventArgs> handler)
+        {
+            if (Socket == null)
+                return;
+
+            Socket.VoiceServerUpdateCompleted -= handler;
+            Socket.VoiceServerUpdateCompleted += handler;
+        }
+
         public static JsonArray GetPrivateChannels()
         {
             string json = Socket?._privateChannelsJson ?? "[]";
