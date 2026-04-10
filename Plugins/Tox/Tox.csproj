@@ -6,7 +6,7 @@
 		<AssemblyName>plugin-Tox</AssemblyName>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>7.3</LangVersion>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
