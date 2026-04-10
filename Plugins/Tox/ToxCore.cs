@@ -1,6 +1,6 @@
 ﻿/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
-// You may contact The Skymu Team: skymu@hubaxe.fr.
+// For any inquiries or concerns, contact skymu@hubaxe.fr.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
 // on your agreement to be bound by the terms of our License.
