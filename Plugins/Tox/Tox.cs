@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -25,7 +24,7 @@ using static ToxCore;
 
 namespace Tox
 {
-    public class Core : ICore//, ICall No calls yet
+    public class Core : ICore, ICall
     {
         #region Variables
 
@@ -58,11 +57,13 @@ namespace Tox
 
         internal string activecid;
         IntPtr av;
-        CancellationTokenSource av_cts = new ();
-        internal TaskCompletionSource<bool> av_finished = new();
+        internal static CallStruct avACall; // avacall dot co dot uk call anywhere from india pakistan where only 4 pesos
+        CancellationTokenSource avCts = new CancellationTokenSource();
+        internal TaskCompletionSource<bool> avFinished = new TaskCompletionSource<bool>();
+        internal TaskCompletionSource<bool> avWaiter = new TaskCompletionSource<bool>();
         Thread avThread;
         Timer avTimer;
-        Callbacks cbs = new ();
+        Callbacks cbs = new Callbacks();
         internal User currentUser;
         internal Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)> conferences
     = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
@@ -92,8 +93,9 @@ namespace Tox
             disposed = true;
 
             Debug.WriteLine("Tox: Flushing");
-            av_cts.Cancel();
-            av_finished.Task.Wait();
+            avCts.Cancel();
+            avCts = new CancellationTokenSource();
+            avFinished.Task.Wait();
             avTimer?.Dispose();
             avThread?.Abort();
             avThread = null;
@@ -108,8 +110,9 @@ namespace Tox
             cbs = null;
 
             activecid = null;
-            av_cts = new ();
-            av_finished = new ();
+            avACall = new CallStruct();
+            avFinished = new TaskCompletionSource<bool>();
+            avWaiter = new TaskCompletionSource<bool>();
             currentUser = null;
             conferences = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
             profile = null;
@@ -245,7 +248,7 @@ namespace Tox
         async Task<LoginResult> StartClient()
         {
             IntPtr opt = tox_options_new(out Tox_Err_Options_New oerr);
-            tox_options_set_log_callback(opt, Callbacks.tox_log_cb);
+            cbs.LogInit(opt);
 
             #region .tox file mess
             string path = Path.Combine(toxDir, profile + ".tox");
@@ -346,8 +349,6 @@ namespace Tox
             }
             Debug.WriteLine("Tox: Bootstrapped with all specified nodes");
 
-            cbs.Init(tox);
-
             byte[] public_key = new byte[tox_public_key_size()];
             tox_self_get_public_key(tox, public_key);
             int uname_size = (int)tox_self_get_name_size(tox);
@@ -382,8 +383,9 @@ namespace Tox
 
             currentUser.PublicUsername = pubkey;
 
-
             user_data = GCHandle.ToIntPtr(GCHandle.Alloc(this));
+            cbs.Init(tox, user_data, av);
+
             toxTimer = new Timer(ToxUpdate, null, 0, 1);
 
             avThread = new Thread(_ =>
@@ -469,7 +471,7 @@ namespace Tox
                         users[idx].Status = status;
                         users[idx].ConnectionStatus = UserConnectionStatus.Offline;
                     }
-                    DirectMessage dm = new (user, 0, fid.ToString());
+                    DirectMessage dm = new DirectMessage(user, 0, fid.ToString());
                     ContactsList.Add(dm);
                 }
             }
@@ -530,7 +532,7 @@ namespace Tox
                         users[idx].Status = status;
                         users[idx].ConnectionStatus = UserConnectionStatus.Offline;
                     }
-                    DirectMessage dm = new (user, 0, fid.ToString());
+                    DirectMessage dm = new DirectMessage(user, 0, fid.ToString());
                     RecentsList.Add(dm);
                 }
             }
@@ -626,23 +628,21 @@ namespace Tox
 
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
-            Tox_User_Status tstatus;
-            try
+            Tox_User_Status tstatus = Tox_User_Status.NONE;
+            switch (status)
             {
-#pragma warning disable CS8509
-                tstatus = status switch
-                {
-                    UserConnectionStatus.Online => Tox_User_Status.NONE,
-                    UserConnectionStatus.Away => Tox_User_Status.AWAY,
-                    UserConnectionStatus.DoNotDisturb => Tox_User_Status.BUSY,
-                };
-#pragma warning restore CS8509
-            }
-            catch
-            {
-                ERR("Only Online, Away, Do Not Disturb is supported");
-                return false;
-            }
+                case UserConnectionStatus.Online:
+                    break;
+                case UserConnectionStatus.Away:
+                    tstatus = Tox_User_Status.AWAY;
+                    break;
+                case UserConnectionStatus.DoNotDisturb:
+                    tstatus = Tox_User_Status.BUSY;
+                    break;
+                default:
+                    ERR("Only Online, Away, Do Not Disturb is supported");
+                    return false;
+            };
 
             tox_self_set_status(tox, tstatus);
             return true;
@@ -662,29 +662,76 @@ namespace Tox
 
         #region calls
 
+        internal struct CallStruct
+        {
+            public UInt32 Identifier;
+            public bool Active;
+            // comments are the control enum, by the perspective of a friend
+            public bool RAudio; // SENDING_A
+            public bool SAudio; // ACCEPTING_A
+            public bool RVideo; // SENDING_V
+            public bool SVideo; // SENDING_V
+            public ToxCall caller;
+        }
+
         void AVUpdate(object state)
         {
             toxav_iterate(av);
             int next = (int)toxav_iteration_interval(av);
             avTimer.Change(next, Timeout.Infinite);
-            if (av_cts.Token.IsCancellationRequested)
-                av_finished.TrySetResult(true);
+            if (avCts.Token.IsCancellationRequested)
+                avFinished.TrySetResult(true);
+
+            if (avACall.Active)
+            {
+                if (avACall.SAudio == true)
+                {
+                }
+            }
         }
 
         public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
         {
-            toxav_call(av, UInt32.Parse(conversationId), 0, 0, out Toxav_Err_Call err);
-            if (err != Toxav_Err_Call.OK)
+            UInt32 cid = UInt32.Parse(conversationId);
+            avWaiter = new TaskCompletionSource<bool>();
+            if (!toxav_call(av, cid, 64, 0, out Toxav_Err_Call err))
             {
-                ERR($"Failed to start call with friend {conversationId}: {err}");
+                ERR($"Failed to start a call with friend {conversationId}: {err}");
+                avWaiter = null;
                 return null;
             }
 
-            return new ActiveCall("test", conversationId, isVideo, new User[0]);
+            avACall = new CallStruct();
+            avACall.Identifier = UInt32.Parse(conversationId);
+            avACall.Active = true;
+            avACall.caller = new ToxCall(av, avACall.Identifier);
+            avACall.caller.Start();
+
+            bool suc = await avWaiter.Task;
+            avWaiter = null;
+            if (!suc)
+            {
+                avACall = new CallStruct();
+                return null;
+            }
+
+            return new ActiveCall($"{conversationId}_{Guid.NewGuid().ToString()}", conversationId, isVideo, new User[0] );
         }
+
+        public async Task<bool> EndCall(ActiveCall call)
+        {
+            avACall.caller.Stop();
+            avACall = new CallStruct();
+            if (!toxav_call_control(av, UInt32.Parse(call.ConversationId), Toxav_Call_Control.CANCEL, out Toxav_Err_Call_Control err))
+            {
+                ERR($"Could not finish call: {err}");
+                return false;
+            }
+            return true;
+        }
+
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
-        public Task<bool> EndCall(ActiveCall call) => Task.FromResult(false);
         public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
