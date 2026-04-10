@@ -234,7 +234,7 @@ namespace Skymu.ViewModels
             Universal.CurrentUser = Universal.Plugin.MyInformation;
 
             if (string.IsNullOrEmpty(Universal.CurrentUser?.Identifier))
-                throw new InvalidOperationException("Plugin did not return a valid user object to initialize the database.");
+                Universal.ExceptionHandler(new InvalidOperationException("Plugin did not return a valid user object to initialize the database."));
 
             _database = new DatabaseManager(Universal.CurrentUser);
             _database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());

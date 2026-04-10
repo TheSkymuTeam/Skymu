@@ -72,7 +72,7 @@ namespace Skymu.Theming
                     return;
                 }
 
-                throw new InvalidOperationException("No themes available to load.");
+                Universal.ExceptionHandler(new InvalidOperationException("No themes available to load."));
             }
             finally
             {
@@ -85,7 +85,7 @@ namespace Skymu.Theming
             if (_themeList.TryGetValue(themeName, out string path))
                 LoadPath(path);
             else
-                throw new FileNotFoundException($"Theme '{themeName}' not found. Did you call Scan() first?");
+                Universal.ExceptionHandler(new FileNotFoundException($"Theme '{themeName}' not found. Did you call Scan() first?"));
         }
 
         private static void LoadPath(string absolutePath)
