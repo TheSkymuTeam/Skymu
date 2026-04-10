@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.IO;
 using System.Media;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace Skymu
             Load("call-error", "CALL_ERROR1.WAV");
             Load("call-init", "CALL_INIT.WAV");
             Load("call-out", "CALL_OUT.WAV");
+            Load("call-reconnect", "CALL_RECONNECT_FRONT.WAV");
             Load("call-ring", "CALL_IN.WAV");
             Load("call-end", "HANGUP.WAV");
             Load("login", "LOGIN.WAV");
@@ -92,17 +94,22 @@ namespace Skymu
             }
         }
 
+        public static async Task PlayAsync(string key, CancellationToken token = default)
+        {
+            if (!players.TryGetValue(key, out var sp))
+                return;
+            await Task.Run(() =>
+            {
+                if (token.IsCancellationRequested) return;
+                sp.PlaySync();
+            }, token);
+        }
+
         public static void StopPlayback(string key)
         {
             if (!players.TryGetValue(key, out var sp))
                 return;
-            sp.Stop();
-        }
-
-        public static void StopAll()
-        {
-            foreach (var sp in players.Values)
-                sp.Stop();
+            Task.Run(() => sp.Stop());
         }
 
         public static void PlayLoop(string key)
