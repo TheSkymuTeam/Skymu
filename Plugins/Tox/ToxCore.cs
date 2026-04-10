@@ -49,6 +49,8 @@ public static class ToxCore
         new ToxNode { ip = "tox.initramfs.io", port = 33445, public_key = FromHex("3F0A45A268367C1BEA652F258C85F4A66DA76BCAA667A49E770BCC4917AB6A25") },
         new ToxNode { ip = "205.185.115.131", port = 53, public_key = FromHex("3091C6BEB2A993F1C6300C16549FABA67098FF3D62C6D253828B531470B53D68") },
         new ToxNode { ip = "tox.kurnevsky.net", port = 33445, public_key = FromHex("82EF82BA33445A1F91A7DB27189ECFC0C013E06E3DA71F588ED692BED625EC23") },
+        new ToxNode { ip = "188.225.9.167", port = 33445, public_key = FromHex("1911341A83E02503AB1FD6561BD64AF3A9D6C3F12B5FBB656976B2E678644A67") },
+        new ToxNode { ip = "95.181.230.108", port = 33445, public_key = FromHex("B5FFECB4E4C26409EBB88DB35793E7B39BFA3BA12AC04C096950CB842E3E130A") },
     };
 
     #endregion
@@ -1158,12 +1160,12 @@ public static class ToxCore
     public enum Toxav_Friend_Call_State
     {
         NONE = 0,
-        ERROR,
-        FINISHED,
-        SENDING_A,
-        SENDING_V,
-        ACCEPTING_A,
-        ACCEPTING_V,
+        ERROR = 1,
+        FINISHED = 2,
+        SENDING_A = 4,
+        SENDING_V = 8,
+        ACCEPTING_A = 16,
+        ACCEPTING_V = 32,
     }
 
     // uint32_t state according to the header... WHAT?? Am I tripping? What is wrong with me? Am I even... no. I am alive.
