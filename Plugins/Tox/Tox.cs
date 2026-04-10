@@ -34,7 +34,8 @@ namespace Tox
         public event EventHandler<MessageEventArgs> MessageEvent;
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
-        public ObservableCollection<User> TypingUsersList { get; private set; } = [];
+        public ObservableCollection<User> TypingUsersList { get; private set; }
+    = new ObservableCollection<User>();
         public string Name => "Tox";
         public string InternalName => "tox";
         public bool SupportsServers => false;
@@ -46,9 +47,14 @@ namespace Tox
         };
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = [];
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = [];
-        public ObservableCollection<Server> ServerList { get; private set; } = [];
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; }
+    = new ObservableCollection<DirectMessage>();
+
+        public ObservableCollection<Conversation> RecentsList { get; private set; }
+            = new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Server> ServerList { get; private set; }
+            = new ObservableCollection<Server>();
 
         internal string activecid;
         IntPtr av;
@@ -58,19 +64,27 @@ namespace Tox
         Timer avTimer;
         Callbacks cbs = new ();
         internal User currentUser;
-        internal Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)> conferences = [];
+        internal Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)> conferences
+    = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
         bool disposed = false;
         internal string profile;
         internal FileStream profilelock;
         string savepass;
         IntPtr tox;
         Timer toxTimer;
-        internal Dictionary<UInt32, byte[]> transfers = [];
-        internal Dictionary<UInt32, (Tox_File_Kind kind, string path)> transfer_info = [];
-        internal TaskCompletionSource<bool> tox_started = new();
-        internal Dictionary<string, HashSet<User>> typingUsersPerChannel = [];
+        internal Dictionary<UInt32, byte[]> transfers = new Dictionary<UInt32, byte[]>();
+
+        internal Dictionary<UInt32, (Tox_File_Kind kind, string path)> transfer_info
+            = new Dictionary<UInt32, (Tox_File_Kind kind, string path)>();
+
+        internal TaskCompletionSource<bool> tox_started = new TaskCompletionSource<bool>();
+
+        internal Dictionary<string, HashSet<User>> typingUsersPerChannel
+            = new Dictionary<string, HashSet<User>>();
+
         internal SynchronizationContext uiContext;
-        internal List<User> users = [];
+
+        internal List<User> users = new List<User>();
         IntPtr user_data;
 
         public void Dispose()
@@ -97,15 +111,15 @@ namespace Tox
             av_cts = new ();
             av_finished = new ();
             currentUser = null;
-            conferences = [];
+            conferences = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
             profile = null;
             savepass = null;
-            transfers = [];
-            transfer_info = [];
-            tox_started = new ();
-            typingUsersPerChannel = [];
+            transfers = new Dictionary<UInt32, byte[]>();
+            transfer_info = new Dictionary<UInt32, (Tox_File_Kind kind, string path)>();
+            tox_started = new TaskCompletionSource<bool>();
+            typingUsersPerChannel = new Dictionary<string, HashSet<User>>();
             uiContext = null;
-            users = [];
+            users = new List<User>();
             user_data = IntPtr.Zero;
         }
 
@@ -607,7 +621,7 @@ namespace Tox
                     TypingUsersList.Add(user);
                 }
             }
-            return [];
+            return new ConversationItem[0];
         }
 
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
@@ -681,7 +695,10 @@ namespace Tox
         public Task<LoginResult> AuthenticateTwoFA(string code) => Task.FromResult(LoginResult.UnsupportedAuthType);
         public Task<string> GetQRCode() => Task.FromResult(string.Empty);
         public Task<bool> PopulateServerList() => Task.FromResult(false);
-        public ClickableConfiguration[] ClickableConfigurations { get { return []; } }
+        public ClickableConfiguration[] ClickableConfigurations
+        {
+            get { return new ClickableConfiguration[0]; }
+        }
 
         #endregion
     }
