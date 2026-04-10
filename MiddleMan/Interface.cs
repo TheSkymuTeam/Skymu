@@ -106,6 +106,7 @@ namespace MiddleMan
     {
         private string _status;
         private string _username;
+        private string _publicusername;
         private UserConnectionStatus _presence_status;
 
         public string Status
@@ -118,6 +119,13 @@ namespace MiddleMan
         {
             get => _username;
             set => Set(ref _username, value, nameof(Username));
+        }
+
+        // for services where the username on the titlebar should be distinct from the username
+        public string PublicUsername
+        {
+            get => String.IsNullOrEmpty(_publicusername) ? _username : _publicusername;
+            set => Set(ref _publicusername, value, nameof(PublicUsername));
         }
 
         public UserConnectionStatus ConnectionStatus

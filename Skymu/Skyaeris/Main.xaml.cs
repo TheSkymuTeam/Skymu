@@ -691,7 +691,7 @@ namespace Skymu.Skyaeris
         {
             if (btnServers.Visibility == Visibility.Collapsed)
             {
-                if (SidebarColumn.ActualWidth <= 185)
+                if (SidebarColumn.Width.Value <= 185)
                 {
                     btnContacts.Source = contactsBtnImageEmpty;
                     btnRecents.Source = recentsBtnImageEmpty;
@@ -710,7 +710,7 @@ namespace Skymu.Skyaeris
                     btnRecents.TextHorizontalAlignment = HorizontalAlignment.Left;
                 }
             }
-            if (SidebarColumn.ActualWidth < 195)
+            if (SidebarColumn.Width.Value < 195)
             {
                 MakeGroupButton.OverlayText.Visibility = Visibility.Collapsed;
                 MakeGroupButton.TextLeftMargin = 0;
