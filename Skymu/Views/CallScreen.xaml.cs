@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -35,7 +36,6 @@ namespace Skymu.Views
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
-        private bool ringing;
         private ActiveCall _call;
         private ICall plugin;
         private LocationChangeEventArgs location;
@@ -77,41 +77,44 @@ namespace Skymu.Views
             Resized(null, null);
             location = initial_location;
         }
+        private CancellationTokenSource _ringCts;
+
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
             Universal.CallPlugin.OnCallStateChanged += OnCallStateChanged;
-            _call = new ActiveCall( // TODO proper call init setup
+            _call = new ActiveCall(
                 "INIT",
                 conversation.Identifier,
                 is_video,
                 new User[] { Universal.CurrentUser }
             );
-            ringing = true;
+
+            _ringCts = new CancellationTokenSource();
+            var token = _ringCts.Token;
+
             _ = Task.Run(async () =>
             {
-                Sounds.PlaySynchronous("call-init");
-
-                while (ringing)
+                await Sounds.PlayAsync("call-init", token);
+                while (!token.IsCancellationRequested)
                 {
-                    await Task.Delay(3000);
-
-                    if (!ringing)
-                        break;
-
-                    Sounds.Play("call-out");
+                    await Sounds.PlayAsync("call-reconnect", token);
                 }
             });
 
             ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
-            if (call == null) {
+
+            _ringCts.Cancel();   // signals the loop to stop after current sound finishes
+            Sounds.StopPlayback("call-reconnect");   
+            Sounds.StopPlayback("call-init");
+
+            if (call == null)
+            {
                 Sounds.Play("call-error");
                 HangUpRequested(this, EventArgs.Empty);
             }
             else
             {
-                ringing = false;
-                Sounds.StopAll();
                 SwitchToOngoingCallUI();
                 _call = call;
             }
@@ -218,8 +221,9 @@ namespace Skymu.Views
 
         private async void OnHangUp(object sender, MouseButtonEventArgs e)
         {
-            ringing = false;
-            Sounds.StopAll();
+            _ringCts?.Cancel();
+            Sounds.StopPlayback("call-reconnect");
+            Sounds.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
             await plugin.EndCall(_call);
             Sounds.Play("call-end");

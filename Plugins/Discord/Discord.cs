@@ -39,7 +39,7 @@ namespace Discord
         {
             var tcs = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
 
-            WebSocketManager.SubscribeVoiceServerUpdated((sender, e) =>
+            WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
             {
                 _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
                 _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 4
@@ -51,6 +51,7 @@ namespace Discord
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Failed, reason));
                 };
+                await _callSocket.ConnectAsync();
             }); 
 
             string voicePayloadJson = JsonSerializer.Serialize(new

@@ -127,8 +127,6 @@ namespace Discord.Networking
                 }
             });
             _identifyBuffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(identifyPayloadJson));
-
-            _ = ConnectAsync();
         }
 
         public async Task ConnectAsync()
