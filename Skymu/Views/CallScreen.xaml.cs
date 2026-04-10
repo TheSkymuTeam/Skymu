@@ -35,6 +35,7 @@ namespace Skymu.Views
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
+        private bool ringing;
         private ActiveCall _call;
         private ICall plugin;
         private LocationChangeEventArgs location;
@@ -79,11 +80,37 @@ namespace Skymu.Views
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
-            Sounds.Play("call-init");
+            Universal.CallPlugin.OnCallStateChanged += OnCallStateChanged;
+            _call = new ActiveCall( // TODO proper call init setup
+                "INIT",
+                conversation.Identifier,
+                is_video,
+                new User[] { Universal.CurrentUser }
+            );
+            ringing = true;
+            _ = Task.Run(async () =>
+            {
+                Sounds.PlaySynchronous("call-init");
+
+                while (ringing)
+                {
+                    await Task.Delay(3000);
+
+                    if (!ringing)
+                        break;
+
+                    Sounds.Play("call-out");
+                }
+            });
+
             ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
-            if (call == null) HangUpRequested(this, EventArgs.Empty);
+            if (call == null) {
+                Sounds.Play("call-error");
+                HangUpRequested(this, EventArgs.Empty);
+            }
             else
             {
+                ringing = false;
                 Sounds.StopAll();
                 SwitchToOngoingCallUI();
                 _call = call;
@@ -125,6 +152,17 @@ namespace Skymu.Views
                 SidebarToggle = sidebar;
                 ChatToggle = chat;
                 FullscreenToggle = fullscreen;
+            }
+        }
+
+        private void OnCallStateChanged(object sender, CallEventArgs e)
+        {
+            if (e.State == CallState.Ended)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    OnHangUp(null, null);
+                });
             }
         }
 
@@ -180,6 +218,9 @@ namespace Skymu.Views
 
         private async void OnHangUp(object sender, MouseButtonEventArgs e)
         {
+            ringing = false;
+            Sounds.StopAll();
+            Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
             await plugin.EndCall(_call);
             Sounds.Play("call-end");
             _callTimer?.Stop();

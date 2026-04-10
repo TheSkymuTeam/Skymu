@@ -238,8 +238,10 @@ namespace Discord.Networking
             {
                 while (await reader.WaitToReadAsync(cancellationToken))
                 {
+                    
                     while (reader.TryRead(out byte[] packet))
                     {
+                        if (_muted) continue;
                         try
                         {
                             await _udpClient.SendAsync(packet, packet.Length);
@@ -330,7 +332,6 @@ namespace Discord.Networking
             bool hasExtension = (data[0] & 0x10) != 0;
             int cc = data[0] & 0x0F;
             int baseHeaderSize = 12 + (cc * 4);
-
             if (hasExtension && data.Length > baseHeaderSize + 4)
             {
                 int extLen = (data[baseHeaderSize + 2] << 8) | data[baseHeaderSize + 3];
@@ -342,25 +343,25 @@ namespace Discord.Networking
                 }
             }
 
+            IOpusDecoder decoder = _opusDecoders.GetOrAdd(ssrc, _ => OpusCodecFactory.CreateDecoder(48000, 2));
+            short[] pcm = new short[1920];
+            int samplesDecoded;
+
             byte[] opus = _daveSession.DecryptAudioFrame(ssrc, davePayload);
             if (opus == null)
             {
-                Debug.WriteLine($"[UDP] DAVE decryption failed for ssrc={ssrc}.");
-                return;
+                Debug.WriteLine($"[UDP] DAVE decryption failed for ssrc={ssrc}. Timestamp: {DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+                samplesDecoded = decoder.Decode(ReadOnlySpan<byte>.Empty, pcm.AsSpan(), 960);
             }
-
-            // Get or create an Opus decoder for this SSRC
-            // Each sender has an independent stream so needs its own decoder state
-            IOpusDecoder decoder = _opusDecoders.GetOrAdd(ssrc, _ => OpusCodecFactory.CreateDecoder(48000, 2));
-
-            // 20ms frame at 48kHz = 960 samples per channel, 2 channels = 1920 shorts
-            short[] pcm = new short[1920];
-            int samplesDecoded = decoder.Decode(opus.AsSpan(), pcm.AsSpan(), 960);
+            else
+            {
+                samplesDecoded = decoder.Decode(opus.AsSpan(), pcm.AsSpan(), 960);
+                //Debug.WriteLine($"[UDP] Decoded {samplesDecoded} samples from ssrc={ssrc}");
+            }
 
             if (samplesDecoded > 0)
             {
-                Debug.WriteLine($"[UDP] Decoded {samplesDecoded} samples from ssrc={ssrc}");
-                byte[] pcmBytes = new byte[samplesDecoded * 2 * 2]; // *2 channels *2 bytes per sample
+                byte[] pcmBytes = new byte[samplesDecoded * 4];
                 Buffer.BlockCopy(pcm, 0, pcmBytes, 0, pcmBytes.Length);
                 _waveBuffer.AddSamples(pcmBytes, 0, pcmBytes.Length);
             }

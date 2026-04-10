@@ -43,6 +43,14 @@ namespace Discord
             {
                 _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
                 _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 4
+                _callSocket.OnHangUp += () =>
+                {
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Ended));
+                };
+                _callSocket.OnCallFailed += reason =>
+                {
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Failed, reason));
+                };
             }); 
 
             string voicePayloadJson = JsonSerializer.Serialize(new
@@ -85,18 +93,22 @@ namespace Discord
 
         public async Task<bool> EndCall(ActiveCall call)
         {
-            await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
+            try
             {
-                op = 4,
-                d = new
+                await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
                 {
-                    guild_id = (string)null,
-                    channel_id = (string)null,
-                    self_mute = false,
-                    self_deaf = false
-                }
-            }));
-            _callSocket.WSDispose();
+                    op = 4,
+                    d = new
+                    {
+                        guild_id = (string)null,
+                        channel_id = (string)null,
+                        self_mute = false,
+                        self_deaf = false
+                    }
+                }));
+                _callSocket.WSDispose();
+            }
+            catch (Exception ex) { Debug.WriteLine("[CALL-END] Exception while ending call: " + ex.Message); }
             return true;
         }
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
