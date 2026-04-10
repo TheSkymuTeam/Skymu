@@ -563,17 +563,15 @@ namespace MiddleMan
 
     public class CallEventArgs : EventArgs
     {
-        public string CallId { get; }
         public string ConversationId { get; }
-        public bool IsVideo { get; }
-        public User Caller { get; }
+        public CallState State { get; }
+        public string FailReason { get; }
 
-        public CallEventArgs(string call_id, string conversation_id, bool is_video, User caller)
+        public CallEventArgs(string convo_id, CallState state, string fail_reason = null)
         {
-            CallId = call_id;
-            ConversationId = conversation_id;
-            IsVideo = is_video;
-            Caller = caller;
+            ConversationId = convo_id;
+            State = state;
+            FailReason = fail_reason;
         }
     }
 

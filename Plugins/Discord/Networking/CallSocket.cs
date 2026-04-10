@@ -39,6 +39,7 @@ namespace Discord.Networking
         // omega - events to hook into discord to hook into MiddleMan
         public event Action OnCallEstablished;
         public event Action<string> OnCallFailed;
+        public event Action OnHangUp;
 
         // omega - mute state tracker
         private bool _isMuted = false;
@@ -439,21 +440,13 @@ namespace Discord.Networking
                             }
                         });
                         await SendPayload(speakingPayload);
-                        var eligibilityResponse = await Discord.Core.api.SendAPI(
-    $"channels/{_channelId}/call",
-    HttpMethod.Get,
-    _discordToken
+                        await Discord.Core.api.SendAPI( // for ringing. TODO see if eligiblity is important, if so, add that extra GET request, i've removed it for now because it's useless to us,
+                                                        // the skype call model ensures that you're always ringing in the UI anyways
+    $"channels/{_channelId}/call/ring",
+    HttpMethod.Post,
+    _discordToken,
+    new { recipients = (string[])null }
 );
-                        var eligibility = JsonSerializer.Deserialize<JsonElement>(eligibilityResponse);
-                        if (eligibility.GetProperty("ringable").GetBoolean())
-                        {
-                            await Discord.Core.api.SendAPI(
-                                $"channels/{_channelId}/call/ring",
-                                HttpMethod.Post,
-                                _discordToken,
-                                new { recipients = (string[])null }
-                            );
-                        }
                         break;
                     case 5:
                         // op_code: 5 is sent to us when a user speaks from Discord
@@ -478,12 +471,34 @@ namespace Discord.Networking
                         Debug.WriteLine($"The interval Discord sent is: {heartbeatInterval}");
                         StartHeartbeat();
                         break;
+                    case 11:
+                        Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
+                        OnCallEstablished?.Invoke();
+                        var userIds = json["d"]?["user_ids"]?.AsArray();
+                        if (userIds != null)
+                        {
+                            foreach (var uid in userIds)
+                            {
+                                string joinedUserId = uid?.GetValue<string>();
+                                if (!string.IsNullOrEmpty(joinedUserId))
+                                {
+                                    Debug.WriteLine($"[DAVE] Op11 RegisterSsrc pending for userId={joinedUserId}");
+                                    _pendingSsrcMap[0] = joinedUserId; // SSRC unknown yet, will be updated on op 5
+                                    _daveSession?.RegisterSsrc(0, joinedUserId);
+                                }
+                            }
+                        }
+                        break;
                     case 12:
                         string op12UserId = json["d"]?["user_id"]?.GetValue<string>();
                         int op12Ssrc = json["d"]?["ssrc"]?.GetValue<int>() ?? 0;
 
                         if (!string.IsNullOrEmpty(op12UserId) && op12Ssrc != 0)
                             _daveSession?.RegisterSsrc((uint)op12Ssrc, op12UserId);
+                        break;
+                    case 13:
+                        Debug.WriteLine($"[WS-VOICE] opcode 13, a user has left the voice channel: {data}");
+                        OnHangUp?.Invoke();
                         break;
                     case 14:
                         Debug.WriteLine($"[WS-VOICE] opcode 14, session update: {data}");
@@ -532,27 +547,6 @@ namespace Discord.Networking
                             }
                         });
                         await SendPayload(protocolPayload);
-                        break;
-                    case 11:
-                        Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
-                        var userIds = json["d"]?["user_ids"]?.AsArray();
-                        if (userIds != null)
-                        {
-                            foreach (var uid in userIds)
-                            {
-                                string joinedUserId = uid?.GetValue<string>();
-                                if (!string.IsNullOrEmpty(joinedUserId))
-                                {
-                                    Debug.WriteLine($"[DAVE] Op11 RegisterSsrc pending for userId={joinedUserId}");
-                                    _pendingSsrcMap[0] = joinedUserId; // SSRC unknown yet, will be updated on op 5
-                                    _daveSession?.RegisterSsrc(0, joinedUserId);
-                                }
-                            }
-                        }
-                        OnCallEstablished?.Invoke();
-                        break;
-                    case 13:
-                        Debug.WriteLine($"[WS-VOICE] opcode 13, a user has left the voice channel: {data}");
                         break;
                     case 21:
                         // The voice gateway is telling us to downgrade to transport-only encryption
