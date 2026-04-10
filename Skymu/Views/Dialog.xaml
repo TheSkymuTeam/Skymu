@@ -122,10 +122,10 @@
                     Visibility="Collapsed" />
                 <CheckBox
                     x:Name="CheckBox"
-                    Margin="11,0,0,0"
+                    Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Content="Install Sean Defender"
+                    Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
                     FontSize="11"
                     Visibility="Collapsed" />

@@ -100,8 +100,8 @@ namespace Tox
                 return;
             }
 
-            Dictionary<UInt32, User> users = [];
-            List<User> ua = [];
+            Dictionary<UInt32, User> users = new Dictionary<UInt32, User>();
+            List<User> ua = new List<User>();
 
             int pksize = (int)tox_public_key_size();
 

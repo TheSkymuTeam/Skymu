@@ -39,8 +39,7 @@ namespace Skymu.Views
             bool bmEnabled = false,
             Action bmAction = null,
             string bmText = null,
-            bool cbEnabled = false,
-            string cbText = null
+            bool cbEnabled = false
         )
         {
             try
@@ -133,8 +132,6 @@ namespace Skymu.Views
                     ButtonMiddle.Content = bmText;
                 if (brText != null)
                     ButtonRight.Content = brText;
-                if (cbText != null)
-                    CheckBox.Content = cbText;
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }

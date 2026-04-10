@@ -196,7 +196,7 @@ namespace Skymu
                     null,
                     Lang["sF_CONFIRM_QUIT"],
                     false, null, null, false, null, null,
-                    true, Lang["sF_CONFIRM_CBNOMORE"]
+                    true
                 );
                 dialog.BLAction = () =>
                 {
