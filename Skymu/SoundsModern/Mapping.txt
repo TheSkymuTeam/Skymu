@@ -4,6 +4,8 @@
 Error CALL_ERROR1
 Call_Ringing CALL_IN
 Call_Dialing CALL_INIT
+Call_Connecting CALL_OUT
+Call_Connecting CALL_RECONNECT_FRONT
 Error ERROR
 File_Transfer_Complete FT_COMPLETE
 File_Transfer_Failed FT_FAILED
