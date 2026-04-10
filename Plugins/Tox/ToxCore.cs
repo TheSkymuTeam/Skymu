@@ -1249,12 +1249,12 @@ public static class ToxCore
     #region A/V in
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void toxav_audio_receive_frame_cb(IntPtr av, UInt32 friend_number, Int16[] pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data);
+    public delegate void toxav_audio_receive_frame_cb(IntPtr av, UInt32 friend_number, IntPtr pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void toxav_callback_audio_receive_frame(IntPtr av, toxav_audio_receive_frame_cb callback, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void toxav_video_receive_frame_cb(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, byte[] y, byte[] u, byte[] v, Int32 ystride, Int32 ustride, Int32 vstride, IntPtr user_data);
+    public delegate void toxav_video_receive_frame_cb(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, IntPtr y, IntPtr u, IntPtr v, Int32 ystride, Int32 ustride, Int32 vstride, IntPtr user_data);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void toxav_callback_video_receive_frame(IntPtr av, toxav_video_receive_frame_cb callback, IntPtr user_data);
 

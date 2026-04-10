@@ -52,13 +52,16 @@ namespace Tox
 
         public static UserConnectionStatus MapStatus(Tox_User_Status status)
         {
-            return status switch
+            switch (status)
             {
-                Tox_User_Status.NONE => UserConnectionStatus.Online,
-                Tox_User_Status.AWAY => UserConnectionStatus.Away,
-                Tox_User_Status.BUSY => UserConnectionStatus.DoNotDisturb,
-                _ => UserConnectionStatus.Offline
+                case Tox_User_Status.NONE:
+                    return UserConnectionStatus.Online;
+                case Tox_User_Status.AWAY:
+                    return UserConnectionStatus.Away;
+                case Tox_User_Status.BUSY:
+                    return UserConnectionStatus.DoNotDisturb;
             };
+            return UserConnectionStatus.Unknown;
         }
 
         public static void save(IntPtr tox, string savename, Core core)
@@ -143,7 +146,7 @@ namespace Tox
             }
             else
             {
-                Group group = new(name, "C" + cid, 0, ua.ToArray());
+                Group group = new Group(name, "C" + cid, 0, ua.ToArray());
                 core.conferences.Add(cid, (users, group));
                 core.RecentsList.Add(group);
             }
