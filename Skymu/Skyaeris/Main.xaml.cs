@@ -1514,6 +1514,14 @@ namespace Skymu.Skyaeris
                 Sidebar_SizeChanged_Refresh();
             };
 
+            Universal.CallPlugin.OnIncomingCall += (sender, e) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    new Dialog(WindowBase.IconType.MultipleContactCall, $"You have an incoming call!\n\nFrom: {e.ConversationId}", "Incoming call").ShowDialog();
+                });
+            };
+
             this.AllowsTransparency = false;
         }
 
@@ -1557,6 +1565,8 @@ namespace Skymu.Skyaeris
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
                 status = currentStatus;
+                if (Universal.CurrentUser != null)
+                    Universal.CurrentUser.ConnectionStatus = status;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
                 Tray.PushIcon(status);
             }
