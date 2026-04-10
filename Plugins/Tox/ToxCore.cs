@@ -92,34 +92,6 @@ public static class ToxCore
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void tox_log_cb(IntPtr tox, Tox_Log_Level level, [MarshalAs(UnmanagedType.LPStr)] string file, UInt32 line, [MarshalAs(UnmanagedType.LPStr)] string func, [MarshalAs(UnmanagedType.LPStr)] string message, IntPtr user_data);
 
-    public struct Tox_Options
-    {
-#pragma warning disable CS0169
-        bool ipv6_enabled;
-        bool udp_enabled;
-        bool local_discovery_enabled;
-        bool dht_announcements_enabled;
-        Tox_Proxy_Type proxy_type;
-        [MarshalAs(UnmanagedType.LPStr)] string proxy_host;
-        UInt16 proxy_port;
-        UInt16 start_port;
-        UInt16 end_port;
-        UInt16 tcp_port;
-        bool hole_punching_enabled;
-        Tox_Savedata_Type savedata_type;
-        [MarshalAs(UnmanagedType.LPStr)] string savedata_data;
-        UIntPtr savedata_length;
-        tox_log_cb log_callback;
-        IntPtr log_user_data;
-        bool experimental_thread_safety;
-        bool experimental_groups_persistence;
-        bool experimental_disable_dns;
-        bool experimental_owned_data;
-        // private owned_savedata_data
-        // private owned_proxy_host
-#pragma warning restore CS0169
-    }
-
     #endregion
 
     #region getter and setter hive
@@ -412,7 +384,7 @@ public static class ToxCore
     #region self get/set info
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void tox_self_get_addr(IntPtr tox, [Out] byte[] address);
+    public static extern void tox_self_get_address(IntPtr tox, [Out] byte[] address);
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_self_set_nospam(IntPtr tox, UInt32 nospam);

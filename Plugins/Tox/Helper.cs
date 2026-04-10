@@ -29,6 +29,8 @@ namespace Tox
         public static string BATS(byte[] ba) => BitConverter.ToString(ba).Replace("-", "");
         // GrabCore
         public static Core GC(IntPtr user_data) => (Core)GCHandle.FromIntPtr(user_data).Target;
+        // GUID
+        public static string GUID() => Guid.NewGuid().ToString();
         // PtrToStringAnsi
         public static string PTSA(IntPtr ptr) => Marshal.PtrToStringAnsi(ptr);
         // TIMEstamp
@@ -68,7 +70,6 @@ namespace Tox
         {
             byte[] data = new byte[(int)tox_get_savedata_size(tox)];
             tox_get_savedata(tox, data);
-
             core.profilelock.Dispose();
             File.WriteAllBytes(Path.Combine(ToxCore.toxDir, savename + ".tox"), data);
             core.profilelock = new FileStream(Path.Combine(ToxCore.toxDir, savename + ".tox"), FileMode.Open, FileAccess.ReadWrite, FileShare.None);
