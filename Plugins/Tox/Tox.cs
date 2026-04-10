@@ -705,13 +705,6 @@ namespace Tox
             avTimer.Change(next, Timeout.Infinite);
             if (avCts.Token.IsCancellationRequested)
                 avFinished.TrySetResult(true);
-
-            if (avACall.Active)
-            {
-                if (avACall.SAudio == true)
-                {
-                }
-            }
         }
 
         public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
