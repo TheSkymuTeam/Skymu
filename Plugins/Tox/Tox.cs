@@ -93,19 +93,42 @@ namespace Tox
             disposed = true;
 
             Debug.WriteLine("Tox: Flushing");
-            avCts.Cancel();
-            avCts = new CancellationTokenSource();
-            avFinished.Task.Wait();
-            avTimer?.Dispose();
-            avThread?.Abort();
-            avThread = null;
+            try
+            {
+                avCts.Cancel();
+                avCts = new CancellationTokenSource();
+                if (avACall.Active)
+                    avFinished.Task.Wait();
+                avTimer?.Dispose();
+                avThread?.Abort();
+                avThread = null;
+            }
+            catch (Exception e)
+            {
+                ERR("An error occured trying to flush AV: "+e);
+            }
             toxav_kill(av);
             toxTimer?.Dispose();
-            SAVE();
+            try
+            {
+                SAVE();
+            }
+            catch (Exception e)
+            { // I don't even know how you caused this.. Do you have a direct access to kernel to mess stuff up?
+                ERR("An error occured trying to save profile. Stuff you did is lost. "+e);
+            }
             tox_kill(tox);
-            profilelock.Unlock(0, 0);
-            profilelock.Dispose();
-            File.Delete(Path.Combine(toxDir, profile + ".lock"));
+            Debug.WriteLine("Tox: Flushed Tox");
+            try
+            {
+                profilelock.Unlock(0, 0);
+                profilelock.Dispose();
+                File.Delete(Path.Combine(toxDir, profile + ".lock"));
+            }
+            catch (Exception e)
+            {
+                ERR("An error occured trying to release profile lock. "+e);
+            }
             cbs.Dispose();
             cbs = null;
 
@@ -124,6 +147,7 @@ namespace Tox
             uiContext = null;
             users = new List<User>();
             user_data = IntPtr.Zero;
+            Debug.WriteLine("Tox: Entire dispose process has finished");
         }
 
         #endregion
