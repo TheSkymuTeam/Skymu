@@ -91,7 +91,6 @@ namespace Tox
                 if (avACall.Active)
                     avFinished.Task.Wait();
                 avTimer?.Dispose();
-                avThread?.Abort();
                 avThread = null;
             }
             catch (Exception e)
@@ -420,7 +419,8 @@ namespace Tox
         void ToxUpdate(object state)
         {
             tox_iterate(tox, user_data);
-            toxTimer.Change((int)tox_iteration_interval(tox), Timeout.Infinite);
+            if (toxTimer != null)
+                toxTimer.Change((int)tox_iteration_interval(tox), Timeout.Infinite);
         }
             
         #region Populate
@@ -690,8 +690,9 @@ namespace Tox
         void AVUpdate(object state)
         {
             toxav_iterate(av);
-            avTimer.Change((int)toxav_iteration_interval(av), Timeout.Infinite);
-            if (avCts.Token.IsCancellationRequested)
+            if (avTimer != null)
+                avTimer.Change((int)toxav_iteration_interval(av), Timeout.Infinite);
+            if (avCts != null && avCts.Token.IsCancellationRequested)
                 avFinished.TrySetResult(true);
         }
 
