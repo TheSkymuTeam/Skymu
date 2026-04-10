@@ -78,7 +78,7 @@ namespace Discord.Networking
 
         private CancellationTokenSource _receiveCts;
 
-        // Ported from DiscordDAVECalling - omega
+        // Some portions originally ported from DiscordDAVECalling - omega
         public class VoiceServerUpdateEventArgs : EventArgs
         {
             public string UserId;
@@ -94,7 +94,7 @@ namespace Discord.Networking
                 VoiceEndpoint = endpoint;
             }
         }
-
+        public event EventHandler<string> IncomingCall;
         private VoiceServerUpdateEventArgs voice_details;
 
         public event EventHandler<VoiceServerUpdateEventArgs> VoiceServerUpdateCompleted;
@@ -286,6 +286,14 @@ namespace Discord.Networking
             VoiceServerUpdateCompleted?.Invoke(this, voice_details);
         }
 
+        private void HandleCallCreate(JsonNode data)
+        {
+            if (data == null) return;
+            string channelId = data["channel_id"]?.GetValue<string>();
+            if (!string.IsNullOrEmpty(channelId))
+                IncomingCall?.Invoke(this, channelId);
+        }
+
 
         private void HandleMessage(string data)
         {
@@ -344,6 +352,9 @@ namespace Discord.Networking
                                 break;
                             case "VOICE_SERVER_UPDATE":
                                 HandleVoiceServerUpdate(json["d"]);
+                                break;
+                            case "CALL_CREATE":
+                                HandleCallCreate(json["d"]);
                                 break;
                         }
                         break;

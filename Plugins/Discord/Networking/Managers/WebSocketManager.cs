@@ -71,6 +71,13 @@ namespace Discord.Networking.Managers
             Socket.VoiceServerUpdateCompleted += handler;
         }
 
+        public static void SubscribeIncomingCall(EventHandler<string> handler)
+        {
+            if (Socket == null) return;
+            Socket.IncomingCall -= handler;
+            Socket.IncomingCall += handler;
+        }
+
         public static JsonArray GetPrivateChannels()
         {
             string json = Socket?._privateChannelsJson ?? "[]";

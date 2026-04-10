@@ -23,8 +23,6 @@ namespace Discord.Networking
         // Discord's WebSocket / Gateway URL
         private string gatewayUrl;
 
-
-
         // Used for sending the first payload required
         private string identifyPayloadJson;
 

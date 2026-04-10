@@ -291,6 +291,10 @@ namespace Discord
         public async Task<bool> PopulateSidebarInformation()
         {
             WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
+            WebSocketManager.SubscribeIncomingCall((sender, channelId) =>
+            {
+                OnIncomingCall?.Invoke(this, new CallEventArgs(channelId, CallState.Ringing));
+            });
             _uiContext = SynchronizationContext.Current;
             JsonObject parsedDetails = null;
 
