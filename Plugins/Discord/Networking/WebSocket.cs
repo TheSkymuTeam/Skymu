@@ -286,7 +286,7 @@ namespace Discord.Networking
             VoiceServerUpdateCompleted?.Invoke(this, voice_details);
         }
 
-        private void HandleCallCreate(JsonNode data)
+        private void HandleCallUpdate(JsonNode data)
         {
             if (data == null) return;
             IncomingCall?.Invoke(this, data);
@@ -351,8 +351,8 @@ namespace Discord.Networking
                             case "VOICE_SERVER_UPDATE":
                                 HandleVoiceServerUpdate(json["d"]);
                                 break;
-                            case "CALL_CREATE":
-                                HandleCallCreate(json["d"]);
+                            case "CALL_UPDATE":
+                                HandleCallUpdate(json["d"]);
                                 break;
                         }
                         break;

@@ -35,7 +35,7 @@ namespace Skymu
             Load("call-init", "CALL_INIT.WAV");
             Load("call-out", "CALL_OUT.WAV");
             Load("call-reconnect", "CALL_RECONNECT_FRONT.WAV");
-            Load("call-ring", "CALL_IN.WAV");
+            Load("call-in", "CALL_IN.WAV");
             Load("call-end", "HANGUP.WAV");
             Load("login", "LOGIN.WAV");
             Load("logout", "LOGOUT.WAV");

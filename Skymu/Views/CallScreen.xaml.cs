@@ -47,6 +47,7 @@ namespace Skymu.Views
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
+        private bool _silent;
         private ActiveCall _call;
         private ICall plugin;
         private LocationChangeEventArgs location;
@@ -56,17 +57,19 @@ namespace Skymu.Views
         public CallScreen(
             User partner,
             ICall call_plugin,
-            CallScreen.LocationChangeEventArgs initial_location
+            CallScreen.LocationChangeEventArgs initial_location,
+            bool silent = false
         )
         {
             InitializeComponent();
             plugin = call_plugin;
+            _silent = silent;
             MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
-            const string prefix =
+            const string prefix = // TODO make less repetitive
                 "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
             rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
             pill = FrozenImage.Generate(prefix + "Call Screen/pill.png");
@@ -107,6 +110,7 @@ namespace Skymu.Views
             _ = Task.Run(async () =>
             {
                 await Sounds.PlayAsync("call-init", token);
+                if (_silent) return;
                 while (!token.IsCancellationRequested)
                 {
                     await Sounds.PlayAsync("call-reconnect", token);
