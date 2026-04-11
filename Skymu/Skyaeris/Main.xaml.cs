@@ -9,15 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using Skymu.Classes;
-using Skymu.Emoticons;
-using Skymu.Formatting;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,6 +26,15 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Emoticons;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 
 namespace Skymu.Skyaeris
 {
@@ -1125,16 +1125,19 @@ namespace Skymu.Skyaeris
         private Frame frame;
         private CallScreen screen;
 
-        private async void StartCall()
+        private async void StartCall(User partner = null)
         {
-            if (Universal.CallPlugin == null) return;
+            bool silent = false;
+            if (Universal.CallPlugin == null)
+                return;
             var dm = vmodel.SelectedConversation as DirectMessage;
             if (dm == null)
                 return; // group calls not supported yet
 
+            if (partner == null) { partner = dm.Partner; silent = true; }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
-            screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
+            screen = new CallScreen(partner, Universal.CallPlugin, initial_location, silent);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
@@ -1522,7 +1525,31 @@ namespace Skymu.Skyaeris
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        new Dialog(WindowBase.IconType.MultipleContactCall, $"You have an incoming call!\n\nFrom: {e.ConversationId}", "Incoming call").ShowDialog();
+                        Sounds.PlayLoop("call-in");
+                        Dialog dlg = null;
+                        dlg = new Dialog(
+                            WindowBase.IconType.MultipleContactCall,
+                            $"You have an incoming call. Would you like to answer it?\n\nCaller: {e.Caller.DisplayName} ({e.Caller.Username})\n"
+                                + $"In channel: {e.ConversationId}",
+                            "Incoming call", 
+                            Settings.BrandingName + " Call",
+                            new Action(() =>
+                            {
+                                Sounds.StopPlayback("call-in");
+
+                                dlg.Close();
+                            }),
+                            Universal.Lang["sZAPBUTTON_DECLINE"],
+                            true,
+                            new Action(() =>
+                            {
+                                Sounds.StopPlayback("call-in");
+                                StartCall(e.Caller);
+                                dlg.Close();
+                            }),
+                            Universal.Lang["sZAPBUTTON_ACCEPT"]
+                        );
+                        dlg.ShowDialog();
                     });
                 };
             }
@@ -1584,10 +1611,17 @@ namespace Skymu.Skyaeris
             string subtext = Universal.Lang["sACCOUNT_PANEL_NR_OF_SUBSCRIPTIONS"];
             switch (Settings.CredsSubCount)
             {
-                case 0: subtext = Universal.Lang["sACCOUNT_PANEL_NO_SUBSCRIPTION"]; break;
-                case 1: subtext = Universal.Lang["sACCOUNT_PANEL_ONE_SUBSCRIPTION"]; break;
+                case 0:
+                    subtext = Universal.Lang["sACCOUNT_PANEL_NO_SUBSCRIPTION"];
+                    break;
+                case 1:
+                    subtext = Universal.Lang["sACCOUNT_PANEL_ONE_SUBSCRIPTION"];
+                    break;
             }
-            SkypeCreditBox.Text = Settings.CredsText + " - " + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+            SkypeCreditBox.Text =
+                Settings.CredsText
+                + " - "
+                + subtext.Replace("%d", Settings.CredsSubCount.ToString());
         }
     }
 

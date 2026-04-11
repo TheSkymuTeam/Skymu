@@ -574,12 +574,26 @@ namespace MiddleMan
         public string ConversationId { get; }
         public CallState State { get; }
         public string FailReason { get; }
+        public User Caller { get; }
 
-        public CallEventArgs(string convo_id, CallState state, string fail_reason = null)
+        public CallEventArgs(string convo_id, CallState state)
+        {
+            ConversationId = convo_id;
+            State = state;
+        }
+
+        public CallEventArgs(string convo_id, CallState state, string fail_reason)
         {
             ConversationId = convo_id;
             State = state;
             FailReason = fail_reason;
+        }
+
+        public CallEventArgs(string convo_id, CallState state, User caller)
+        {
+            ConversationId = convo_id;
+            State = state;
+            Caller = caller;
         }
     }
 
