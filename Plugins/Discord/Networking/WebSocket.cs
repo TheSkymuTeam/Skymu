@@ -94,7 +94,7 @@ namespace Discord.Networking
                 VoiceEndpoint = endpoint;
             }
         }
-        public event EventHandler<string> IncomingCall;
+        public event EventHandler<JsonNode> IncomingCall;
         private VoiceServerUpdateEventArgs voice_details;
 
         public event EventHandler<VoiceServerUpdateEventArgs> VoiceServerUpdateCompleted;
@@ -289,9 +289,7 @@ namespace Discord.Networking
         private void HandleCallCreate(JsonNode data)
         {
             if (data == null) return;
-            string channelId = data["channel_id"]?.GetValue<string>();
-            if (!string.IsNullOrEmpty(channelId))
-                IncomingCall?.Invoke(this, channelId);
+            IncomingCall?.Invoke(this, data);
         }
 
 

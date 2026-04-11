@@ -13,18 +13,18 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Windows;
-using Skymu.Plugins;
-using Skymu.Helpers;
-using Skymu.Formatting;
-using Skymu.Theming;
-using Skymu.UserDirectory;
-using Skymu.Preferences;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MiddleMan;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Plugins;
+using Skymu.Preferences;
+using Skymu.Theming;
+using Skymu.UserDirectory;
 using Skymu.Views;
-using System.Runtime.InteropServices;
 
 namespace Skymu
 {
@@ -126,9 +126,7 @@ namespace Skymu
         public static void Restart()
         {
             string exePath = Process.GetCurrentProcess().MainModule.FileName;
-
             Process.Start(exePath);
-
             Universal.Terminate();
         }
 
@@ -199,7 +197,12 @@ namespace Skymu
                     true,
                     null,
                     Lang["sF_CONFIRM_QUIT"],
-                    false, null, null, false, null, null,
+                    false,
+                    null,
+                    null,
+                    false,
+                    null,
+                    null,
                     true
                 );
                 dialog.BLAction = () =>
@@ -212,8 +215,8 @@ namespace Skymu
             }
             catch
             {
-                Terminate();
-            } // in case app is already too dead to show dialog by the time this is called
+                Terminate(); // in case app is already too dead to show dialog by the time this is called
+            }
         }
 
         public static void Terminate()
@@ -260,10 +263,7 @@ namespace Skymu
         {
             new Dialog(
                 WindowBase.IconType.Information,
-                feature
-                    + " hasn't been added to "
-                    + Settings.BrandingName
-                    + " yet.",
+                feature + " hasn't been added to " + Settings.BrandingName + " yet.",
                 "Feature not implemented",
                 null,
                 null,
@@ -278,7 +278,11 @@ namespace Skymu
             ApplyPresentationFramework(Settings.PresFrame);
             OS.Initialize();
             if (!ThemeManager.Scan())
-                Universal.ExceptionHandler(new Exception("Could not find any compatible themec files in directory /Themes."));
+                Universal.ExceptionHandler(
+                    new Exception(
+                        "Could not find any compatible themec files in directory /Themes."
+                    )
+                );
             ThemeManager.LoadFromSettings();
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
@@ -360,8 +364,8 @@ namespace Skymu
         {
             try
             {
-                _ = UserCountAPI.CloseWS();
-            } // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+                _ = UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+            } 
             catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)
             {

@@ -41,19 +41,20 @@ namespace Discord
 
             WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
             {
-                _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
-                _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 11
-                _callSocket.OnHangUp += () =>
+                var socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
+                socket.OnCallEstablished += () => tcs.TrySetResult(e);
+                socket.OnHangUp += () =>
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Ended));
                 };
-                _callSocket.OnCallFailed += reason =>
+                socket.OnCallFailed += reason =>
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Failed, reason));
                 };
-                _ = api.SendAPI($"channels/{conversationId}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null }); // DUN DUN DO. DO DO DUN
-                await _callSocket.ConnectAsync();
-            }); 
+                _callSocket = socket;
+                _ = api.SendAPI($"channels/{conversationId}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null });
+                await socket.ConnectAsync();
+            });
 
             string voicePayloadJson = JsonSerializer.Serialize(new
             {
@@ -69,9 +70,14 @@ namespace Discord
                 }
             });
 
-            await WebSocketManager.SendPayload(voicePayloadJson); // wait for payload send
-            var voiceEvent = await tcs.Task; // wait for call socket init
-            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]); 
+            await WebSocketManager.SendPayload(voicePayloadJson);
+
+            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(15000));
+            if (completedTask != tcs.Task)
+                return null;
+
+            var voiceEvent = tcs.Task.Result;
+            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
         }
 
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
@@ -292,8 +298,11 @@ namespace Discord
         public async Task<bool> PopulateSidebarInformation()
         {
             WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
-            WebSocketManager.SubscribeIncomingCall((sender, channelId) =>
+            WebSocketManager.SubscribeIncomingCall((sender, data) =>
             {
+                string channelId = data["channel_id"]?.GetValue<string>(); // Discord doesn't seem to give us the user ID of the person doing the ringing, oh well
+                if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
+                if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
                 OnIncomingCall?.Invoke(this, new CallEventArgs(channelId, CallState.Ringing));
             });
             _uiContext = SynchronizationContext.Current;
