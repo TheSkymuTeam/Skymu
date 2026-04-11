@@ -57,7 +57,8 @@ public static class ToxCore
 
     #region log
 
-    public enum Tox_Log_Level {
+    public enum Tox_Log_Level
+    {
         TRACE,
         DEBUG,
         INFO,
@@ -73,7 +74,8 @@ public static class ToxCore
 
     #region enum and struct
 
-    public enum Tox_Proxy_Type {
+    public enum Tox_Proxy_Type
+    {
         NONE,
         HTTP,
         SOCKS5,
@@ -81,7 +83,8 @@ public static class ToxCore
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tox_proxy_type_to_string(Tox_Proxy_Type value);
 
-    public enum Tox_Savedata_Type {
+    public enum Tox_Savedata_Type
+    {
         NONE,
         TOX_SAVE,
         KEY,
@@ -206,7 +209,8 @@ public static class ToxCore
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_options_copy(IntPtr dest, IntPtr src);
 
-    public enum Tox_Err_Options_New {
+    public enum Tox_Err_Options_New
+    {
         OK,
         MALLOC,
     }
@@ -1111,7 +1115,7 @@ public static class ToxCore
     public delegate void toxav_call_cb(IntPtr av, UInt32 friend_number, bool audio_enabled, bool video_enabled, IntPtr user_data);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void toxav_callback_call(IntPtr av, toxav_call_cb callback, IntPtr user_data);
-    
+
     public enum Toxav_Err_Answer
     {
         OK,
@@ -1262,6 +1266,90 @@ public static class ToxCore
     public static extern bool toxav_groupchat_av_enabled(IntPtr tox, UInt32 conference_number);
 
     #endregion
+
+    #endregion
+
+    #region encryptsave
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_pass_salt_length();
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_pass_key_length();
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_pass_encryption_extra_length();
+
+    public enum Tox_Err_Key_Derivation
+    {
+        OK,
+        NULL,
+        FAILED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_key_derivation_to_string(Tox_Err_Key_Derivation value);
+
+    public enum Tox_Err_Encryption
+    {
+        OK,
+        NULL,
+        KEY_DERIVATION_FAILED,
+        FAILED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_encryption_to_string(Tox_Err_Encryption value);
+
+    public enum Tox_Err_Decryption
+    {
+        OK,
+        NULL,
+        TOX_ERR_DECRYPTION_INVALID_LENGTH,
+        TOX_ERR_DECRYPTION_BAD_FORMAT,
+        KEY_DERIVATION_FAILED,
+        FAILED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_decryption_to_string(Tox_Err_Decryption value);
+
+    // part 1
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_pass_encrypt(byte[] plaintext, UIntPtr plaintext_len, [MarshalAs(UnmanagedType.LPStr)] string passphrase, UIntPtr passphrase_len, byte[] ciphertext, out Tox_Err_Encryption err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_pass_decrypt(byte[] ciphertext, UIntPtr ciphertext_len, [MarshalAs(UnmanagedType.LPStr)] string passphrase, UIntPtr passphrase_len, [Out] byte[] plaintext, out Tox_Err_Decryption err);
+
+    // part 2
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_pass_key_free(IntPtr key);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_pass_key_derive([MarshalAs(UnmanagedType.LPStr)] string passphrase, UIntPtr passphrase_len, out Tox_Err_Key_Derivation error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_pass_key_derive_with_salt([MarshalAs(UnmanagedType.LPStr)] string passphrase, UIntPtr passphrase_len, byte[] salt, out Tox_Err_Key_Derivation error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_pass_key_encrypt(IntPtr key, byte[] plaintext, UIntPtr plaintext_len, byte[] ciphertext, out Tox_Err_Encryption err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_pass_key_decrypt(IntPtr key, byte[] ciphertext, UIntPtr ciphertext_len, [Out] byte[] plaintext, out Tox_Err_Decryption err);
+
+    public enum Tox_Err_Get_Salt
+    {
+        OK,
+        NULL,
+        BAD_FORMAT
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_get_salt_to_string(Tox_Err_Get_Salt value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_get_salt(byte[] ciphertext, [Out] byte[] salt, out Tox_Err_Get_Salt err);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_is_data_encrypted(byte[] data);
 
     #endregion
 }
