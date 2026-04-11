@@ -55,7 +55,7 @@ namespace Skymu
 
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+            Application.Current.Dispatcher.BeginInvoke(
                 new Action(
                     delegate
                     {
@@ -72,7 +72,7 @@ namespace Skymu
 
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+            Application.Current.Dispatcher.BeginInvoke(
                 new Action(
                     delegate
                     {
