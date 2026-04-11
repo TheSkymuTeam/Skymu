@@ -297,19 +297,24 @@ namespace Discord
 
         public async Task<bool> PopulateSidebarInformation()
         {
-            WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
-            WebSocketManager.SubscribeIncomingCall((sender, data) =>
+            try
             {
-                string channelId = data["channel_id"]?.GetValue<string>(); // Discord doesn't seem to give us the user ID of the person doing the ringing, oh well
+                WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
+                WebSocketManager.SubscribeIncomingCall((sender, data) =>
+                {
+                    string channelId = data["channel_id"]?.GetValue<string>(); // Discord doesn't seem to give us the user ID of the person doing the ringing, oh well
                 if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
                 if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
                 string callerId = data["ongoing_rings"]?[_currentUser?.Identifier]?.GetValue<string>(); // who's ringing the current user?
                 OnIncomingCall?.Invoke(this, new CallEventArgs(channelId, CallState.Ringing, UserStore.Get(callerId)));
-            });
-            _uiContext = SynchronizationContext.Current;
-            JsonObject parsedDetails = null;
+                });
+                _uiContext = SynchronizationContext.Current;
+                
 
-            protoSettings = new ProtoSettings(DscToken);
+                protoSettings = new ProtoSettings(DscToken);
+            }
+            catch (Exception ex) { OnError?.Invoke(this, new PluginMessageEventArgs("Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
+            JsonObject parsedDetails = null;
             try
             {
                 string userDetails = await api.SendAPI(
