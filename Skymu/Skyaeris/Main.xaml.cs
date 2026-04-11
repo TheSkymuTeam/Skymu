@@ -1536,7 +1536,6 @@ namespace Skymu.Skyaeris
                             new Action(() =>
                             {
                                 Sounds.StopPlayback("call-in");
-
                                 dlg.Close();
                             }),
                             Universal.Lang["sZAPBUTTON_DECLINE"],
