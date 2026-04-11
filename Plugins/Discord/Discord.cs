@@ -300,7 +300,6 @@ namespace Discord
             WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
             WebSocketManager.SubscribeIncomingCall((sender, data) =>
             {
-                Debug.WriteLine(data);
                 string channelId = data["channel_id"]?.GetValue<string>(); // Discord doesn't seem to give us the user ID of the person doing the ringing, oh well
                 if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
                 if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
