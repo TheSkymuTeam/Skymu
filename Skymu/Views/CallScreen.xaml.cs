@@ -63,7 +63,12 @@ namespace Skymu.Views
         {
             InitializeComponent();
             plugin = call_plugin;
+            if (Universal.CurrentUser.ProfilePicture != null)
+                MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
+            if (partner.ProfilePicture != null)
+                PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             _silent = silent;
+            if (_silent) CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
             MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
