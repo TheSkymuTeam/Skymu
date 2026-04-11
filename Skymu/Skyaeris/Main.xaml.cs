@@ -1514,13 +1514,16 @@ namespace Skymu.Skyaeris
                 Sidebar_SizeChanged_Refresh();
             };
 
-            Universal.CallPlugin.OnIncomingCall += (sender, e) =>
+            if (Universal.CallPlugin != null)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Universal.CallPlugin.OnIncomingCall += (sender, e) =>
                 {
-                    new Dialog(WindowBase.IconType.MultipleContactCall, $"You have an incoming call!\n\nFrom: {e.ConversationId}", "Incoming call").ShowDialog();
-                });
-            };
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        new Dialog(WindowBase.IconType.MultipleContactCall, $"You have an incoming call!\n\nFrom: {e.ConversationId}", "Incoming call").ShowDialog();
+                    });
+                };
+            }
 
             this.AllowsTransparency = false;
         }
