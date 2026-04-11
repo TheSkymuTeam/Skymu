@@ -24,6 +24,7 @@
 		<UseApplicationTrust>false</UseApplicationTrust>
 		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<NoWarn>$(NoWarn);NETSDK1138</NoWarn>
 		<StartupObject />
 		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
 	</PropertyGroup>
