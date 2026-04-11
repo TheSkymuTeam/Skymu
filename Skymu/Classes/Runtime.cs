@@ -16,23 +16,49 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using System.ComponentModel;
 
 namespace Skymu.Helpers
 {
     public enum PlatformType
     {
+        [Description("Unknown")]
         Unknown,
+
+        [Description("Wine (Legacy)")]
         WineLegacy,
+
+        [Description("Wine 10")]
         Wine10,
+
+        [Description("Wine 11")]
         Wine11,
+
+        [Description("Windows 2000")]
         Windows2000,
+
+        [Description("Windows XP")]
         WindowsXP,
+
+        [Description("Windows Vista")]
         WindowsVista,
+
+        [Description("Windows 7")]
         Windows7,
+
+        [Description("Windows 8")]
         Windows8,
+
+        [Description("Windows 8.1")]
         Windows81,
+
+        [Description("Windows 10")]
         Windows10,
+
+        [Description("Windows 11")]
         Windows11,
+
+        [Description("Future Windows")]
         WindowsFuture,
     }
 
