@@ -351,7 +351,7 @@ namespace Skymu.ViewModels
                         false, null, null, false,
                         FrozenImage.GenerateFromArray(
                             new PngByteQRCode(
-                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.H)
+                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q)
                             ).GetGraphic(20)
                         )
                     );
