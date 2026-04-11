@@ -18,8 +18,10 @@ using MiddleMan;
 
 namespace Stub
 {
-    public class Core : ICore
+    public class Core : ICore, ICall
     {
+        #region Variables
+
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
@@ -42,13 +44,34 @@ namespace Stub
             {
                 return new[]
                 {
-                    new AuthTypeInfo(AuthenticationMethod.Token, "Fancy a stub username?"),
+                    new AuthTypeInfo(AuthenticationMethod.Token, "Fancy stub username?"),
                 };
             }
         }
 
-        string MyUsername;
-        public Task<LoginResult> Authenticate(
+        public User MyInformation { get; private set; }
+
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+            new ObservableCollection<DirectMessage>();
+
+        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+            new ObservableCollection<Conversation>();
+
+        public ObservableCollection<Server> ServerList { get; private set; } =
+            new ObservableCollection<Server>();
+
+        public ObservableCollection<User> TypingUsersList { get; private set; } =
+            new ObservableCollection<User>();
+
+        private SynchronizationContext _uiContext;
+        private string MyUsername;
+
+        #endregion
+
+        // Also called on logout
+        public void Dispose() { }
+
+        public async Task<LoginResult> Authenticate(
             AuthenticationMethod authType,
             string username,
             string password = null
@@ -63,23 +86,18 @@ namespace Stub
                     false
                 )
             );
-            return Task.FromResult(LoginResult.Success);
+            return LoginResult.Success;
         }
-
-        public Task<string> GetQRCode()
+        public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
-            return Task.FromResult(String.Empty);
+            MyUsername = autoLoginCredentials.User.Username;
+            if (String.IsNullOrEmpty(MyUsername))
+                MyUsername = "Sensei Wu";
+            return LoginResult.Success;
         }
-
-        public void Dispose() { }
-
-        public ObservableCollection<User> TypingUsersList { get; private set; } =
-            new ObservableCollection<User>();
-
-        public Task<LoginResult> AuthenticateTwoFA(string code)
-        {
-            return Task.FromResult(LoginResult.Success);
-        }
+        public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.Success;
+        public async Task<SavedCredential> StoreCredential() => new SavedCredential(MyInformation, "", AuthenticationMethod.Token, InternalName);
+        public async Task<string> GetQRCode() => String.Empty;
 
         public Task<bool> SendMessage(
             string identifier,
@@ -114,7 +132,7 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public Task<ConversationItem[]> FetchMessages(
+        public async Task<ConversationItem[]> FetchMessages(
             Conversation conversation,
             Fetch fetch_type,
             int message_count,
@@ -123,6 +141,8 @@ namespace Stub
         { // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
             TypingUsersList.Clear();
             List<ConversationItem> messageList = new List<ConversationItem>();
+
+            #region Dummy messages
 
             messageList.Add(
                 new Message(
@@ -253,23 +273,12 @@ namespace Stub
                 )
             );
 
-            return Task.FromResult(messageList.ToArray());
+            #endregion
+
+            return messageList.ToArray();
         }
 
-        public User MyInformation { get; private set; }
-
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
-            new ObservableCollection<DirectMessage>();
-
-        public ObservableCollection<Conversation> RecentsList { get; private set; } =
-            new ObservableCollection<Conversation>();
-
-        public ObservableCollection<Server> ServerList { get; private set; } =
-            new ObservableCollection<Server>();
-
-        private SynchronizationContext _uiContext;
-
-        public Task<bool> PopulateServerList()
+        public async Task<bool> PopulateServerList()
         {
             string id = "2132";
             ServerList.Add(
@@ -284,10 +293,10 @@ namespace Stub
                     }
                 )
             );
-            return Task.FromResult(true);
+            return true;
         }
 
-        public Task<bool> PopulateSidebarInformation()
+        public async Task<bool> PopulateSidebarInformation()
         {
             _uiContext = SynchronizationContext.Current;
             MyInformation = new User(
@@ -297,10 +306,10 @@ namespace Stub
                 "Hello test",
                 UserConnectionStatus.Online
             );
-            return Task.FromResult(true);
+            return true;
         }
 
-        public Task<bool> PopulateContactsList()
+        public async Task<bool> PopulateContactsList()
         {
             ContactsList.Clear();
             ContactsList.Add(
@@ -323,59 +332,10 @@ namespace Stub
                     "32"
                 )
             );
-            return Task.FromResult(true);
+            return true;
         }
 
-        User[] users = new User[]
-        {
-            new User("Mario", "mario", "012", "It's-a me!", UserConnectionStatus.Online),
-            new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb),
-            new User("Peach", "peach", "014", "In the castle", UserConnectionStatus.Away),
-            new User(
-                "Bowser",
-                "bowser",
-                "015",
-                "Planning something...",
-                UserConnectionStatus.Online
-            ),
-            new User("Yoshi", "yoshi", "016", "Yoshi!", UserConnectionStatus.Online),
-            new User("Toad", "toad", "017", "Welcome!", UserConnectionStatus.Online),
-            new User("Wario", "wario", "018", "Hehehe", UserConnectionStatus.DoNotDisturb),
-            new User("Waluigi", "waluigi", "019", "Wah!", UserConnectionStatus.Invisible),
-            new User("Daisy", "daisy", "020", "Hi!", UserConnectionStatus.Online),
-            new User(
-                "Rosalina",
-                "rosalina",
-                "021",
-                "Watching the stars",
-                UserConnectionStatus.Away
-            ),
-            new User("Donkey Kong", "dk", "022", "Bananas!", UserConnectionStatus.Online),
-            new User("Koopa", "koopa", "023", "Patrolling", UserConnectionStatus.Offline),
-        };
-
-        private System.Threading.Timer presenceTimer;
-        private Random rand = new Random();
-
-        private string[] randomTexts = new string[]
-        {
-            "It's-a me, Mario!",
-            "Let's-a go!",
-            "Mamma mia!",
-            "Here we go!",
-            "Just jumped on a Goomba",
-            "Looking for Princess Peach",
-            "Time to save the kingdom",
-            "Collecting coins",
-            "Found a Super Mushroom",
-            "Jumping through pipes",
-            "Watch out for Bowser",
-            "Yahoo!",
-            "Wahoo!",
-            "On my way to the castle",
-        };
-
-        public Task<bool> PopulateRecentsList()
+        public async Task<bool> PopulateRecentsList()
         {
             RecentsList.Clear();
 
@@ -420,10 +380,108 @@ namespace Stub
             );
 
             if (presenceTimer == null)
-                presenceTimer = new System.Threading.Timer(UpdatePresence, null, 0, 1);
+                presenceTimer = new Timer(UpdatePresence, null, 0, 1);
 
-            return Task.FromResult(true);
+            return true;
         }
+
+        public ClickableConfiguration[] ClickableConfigurations
+        {
+            get
+            {
+                return new ClickableConfiguration[]
+                {
+                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
+                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
+                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">"),
+                };
+            }
+        }
+
+        public async Task<bool> SetTextStatus(string status) => true;
+        // false = the status will not be set
+        public async Task<bool> SetConnectionStatus(UserConnectionStatus status) => true;
+
+        #region Calls (remove this entire region and remove `, ICall` to disable
+
+        // Call will be picked up as soon as something is returned
+        public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
+        {
+            TaskCompletionSource<bool> waiter = new TaskCompletionSource<bool>();
+            Thread thread = new Thread(_ =>
+            {
+                Thread.Sleep(5000);
+                waiter.SetResult(true);
+            });
+            thread.Start();
+
+            _ = await waiter.Task;
+
+            return new ActiveCall("STUBCALL", conversationId, isVideo, new User[0]);
+        }
+
+        public async Task<bool> EndCall(ActiveCall call) => true;
+        public async Task<bool> AnswerCall(ActiveCall call) => false;
+        public async Task<bool> DeclineCall(ActiveCall call) => false;
+        public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
+        public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
+        public event EventHandler<CallEventArgs> OnIncomingCall;
+        public event EventHandler<CallEventArgs> OnCallStateChanged;
+        public bool SupportsVideoCalls => false;
+
+        #endregion
+
+        #region Stub specific stuff
+
+        User[] users = new User[]
+        {
+            new User("Mario", "mario", "012", "It's-a me!", UserConnectionStatus.Online),
+            new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb),
+            new User("Peach", "peach", "014", "In the castle", UserConnectionStatus.Away),
+            new User(
+                "Bowser",
+                "bowser",
+                "015",
+                "Planning something...",
+                UserConnectionStatus.Online
+            ),
+            new User("Yoshi", "yoshi", "016", "Yoshi!", UserConnectionStatus.Online),
+            new User("Toad", "toad", "017", "Welcome!", UserConnectionStatus.Online),
+            new User("Wario", "wario", "018", "Hehehe", UserConnectionStatus.DoNotDisturb),
+            new User("Waluigi", "waluigi", "019", "Wah!", UserConnectionStatus.Invisible),
+            new User("Daisy", "daisy", "020", "Hi!", UserConnectionStatus.Online),
+            new User(
+                "Rosalina",
+                "rosalina",
+                "021",
+                "Watching the stars",
+                UserConnectionStatus.Away
+            ),
+            new User("Donkey Kong", "dk", "022", "Bananas!", UserConnectionStatus.Online),
+            new User("Koopa", "koopa", "023", "Patrolling", UserConnectionStatus.Offline),
+        };
+
+        private Timer presenceTimer;
+        private Random rand = new Random();
+
+        private string[] randomTexts = new string[]
+        {
+            "It's-a me, Mario!",
+            "Let's-a go!",
+            "Mamma mia!",
+            "Here we go!",
+            "Just jumped on a Goomba",
+            "Looking for Princess Peach",
+            "Time to save the kingdom",
+            "Collecting coins",
+            "Found a Super Mushroom",
+            "Jumping through pipes",
+            "Watch out for Bowser",
+            "Yahoo!",
+            "Wahoo!",
+            "On my way to the castle",
+        };
 
         private void UpdatePresence(object state)
         {
@@ -447,38 +505,6 @@ namespace Stub
             );
         }
 
-        public ClickableConfiguration[] ClickableConfigurations
-        {
-            get
-            {
-                return new ClickableConfiguration[]
-                {
-                    new ClickableConfiguration(ClickableItemType.User, "<@!", ">"),
-                    new ClickableConfiguration(ClickableItemType.User, "<@", ">"),
-                    new ClickableConfiguration(ClickableItemType.ServerRole, "<@&", ">"),
-                    new ClickableConfiguration(ClickableItemType.ServerChannel, "<#", ">"),
-                };
-            }
-        }
-
-        public Task<SavedCredential> StoreCredential()
-        {
-            return Task.FromResult<SavedCredential>(null);
-        }
-
-        public Task<bool> SetConnectionStatus(UserConnectionStatus status)
-        {
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> SetTextStatus(string status)
-        {
-            return Task.FromResult(true);
-        }
-
-        public Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
-        {
-            return Task.FromResult(LoginResult.Success);
-        }
+        #endregion
     }
 }
