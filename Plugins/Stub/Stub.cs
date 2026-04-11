@@ -91,12 +91,14 @@ namespace Stub
         public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             MyUsername = autoLoginCredentials.User.Username;
-            if (String.IsNullOrEmpty(MyUsername))
-                MyUsername = "Sensei Wu";
             return LoginResult.Success;
         }
         public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.Success;
-        public async Task<SavedCredential> StoreCredential() => new SavedCredential(MyInformation, "", AuthenticationMethod.Token, InternalName);
+        public async Task<SavedCredential> StoreCredential()
+        {
+            // TODO: Fix logout return new SavedCredential(MyInformation, "", AuthenticationMethod.Token, InternalName);
+            return null;
+        }
         public async Task<string> GetQRCode() => String.Empty;
 
         public Task<bool> SendMessage(
