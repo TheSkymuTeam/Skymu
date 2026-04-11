@@ -60,6 +60,7 @@ namespace Skymu.ViewModels
         }
 
         public SavedCredential PendingAutoLogin { get; private set; }
+        public PluginListing PendingAutoLoginListing { get; private set; }
 
 
         public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
@@ -86,21 +87,22 @@ namespace Skymu.ViewModels
                     }
                 }
 
-                if (match != null && PendingAutoLogin == null && Settings.AutoLogin)
-                {
-                    PendingAutoLogin = match;
-                    Universal.Plugin = plugin;
-                    Universal.CallPlugin = Universal.Plugin as ICall;
-                }
-
                 if (plugin.AuthenticationTypes.Length <= 1)
                 {
-                    PluginItems.Add(new PluginListing(
+                    var listing = new PluginListing(
                         plugin.Name,
                         pluginIndex,
                         plugin.AuthenticationTypes[0].AuthType,
                         plugin.AuthenticationTypes[0].CustomTextUsername
-                    ));
+                    );
+                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin)
+                    {
+                        PendingAutoLogin = match;
+                        PendingAutoLoginListing = listing;
+                        Universal.Plugin = plugin;
+                        Universal.CallPlugin = Universal.Plugin as ICall;
+                    }
+                    PluginItems.Add(listing);
                 }
                 else
                 {
@@ -134,12 +136,15 @@ namespace Skymu.ViewModels
                                     continue;
                             }
                         }
-                        PluginItems.Add(new PluginListing(
-                            name,
-                            pluginIndex,
-                            ati.AuthType,
-                            ati.CustomTextUsername
-                        ));
+                        var listing = new PluginListing(name, pluginIndex, ati.AuthType, ati.CustomTextUsername);
+                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin) // TODO check against authentication type too?
+                        {
+                            PendingAutoLogin = match;
+                            PendingAutoLoginListing = listing;
+                            Universal.Plugin = plugin;
+                            Universal.CallPlugin = Universal.Plugin as ICall;
+                        }
+                        PluginItems.Add(listing);
                     }
                 }
                 pluginIndex++;
@@ -289,6 +294,9 @@ namespace Skymu.ViewModels
             }
             else
             {
+                PendingAutoLogin = null;
+                _selectedListing = PendingAutoLoginListing;
+                PluginSelectionUpdated?.Invoke(PendingAutoLoginListing);
                 AnimationToggleRequested?.Invoke(false);
                 if (lr == LoginResult.Failure)
                     HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
