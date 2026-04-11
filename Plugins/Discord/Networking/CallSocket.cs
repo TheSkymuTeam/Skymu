@@ -57,7 +57,7 @@ namespace Discord.Networking
         private string _discordToken;
 
         // The actual WebSocketClient
-        public ClientWebSocket WSClient { get; private set; }
+        public System.Net.WebSockets.Managed.ClientWebSocket WSClient { get; private set; }
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
@@ -145,7 +145,7 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new ClientWebSocket();
+            WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
             WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
             var uri = new Uri(gatewayUrl);
 
