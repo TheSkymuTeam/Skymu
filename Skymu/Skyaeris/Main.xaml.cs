@@ -756,6 +756,7 @@ namespace Skymu.Skyaeris
 
         private void Main_SizeChanged_Refresh()
         {
+            MessageWindow.UpdateLayout();
             if (MessageWindow.ActualWidth <= 720 && MessageWindow.ActualWidth != 0)
             {
                 SendMsgButton.Text = "";
@@ -1234,6 +1235,7 @@ namespace Skymu.Skyaeris
             ConversationItemsList.ItemsSource = vmodel.ActiveConversation;
             throbber.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
+            Main_SizeChanged_Refresh();
         }
 
         private void HandleConversationItems()
