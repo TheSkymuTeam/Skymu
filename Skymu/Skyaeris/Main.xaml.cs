@@ -1127,14 +1127,14 @@ namespace Skymu.Skyaeris
 
         private async void StartCall(User partner = null)
         {
-            bool silent = false;
+            bool silent = true;
             if (Universal.CallPlugin == null)
                 return;
             var dm = vmodel.SelectedConversation as DirectMessage;
             if (dm == null)
                 return; // group calls not supported yet
 
-            if (partner == null) { partner = dm.Partner; silent = true; }
+            if (partner == null) { partner = dm.Partner; silent = false; }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
             screen = new CallScreen(partner, Universal.CallPlugin, initial_location, silent);
