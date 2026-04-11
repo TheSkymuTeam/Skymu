@@ -48,6 +48,7 @@ namespace Skymu.Views
         private bool isLogoBig;
         private bool isMuted;
         private bool _silent;
+        private bool _hangUpRequested = false;
         private ActiveCall _call;
         private ICall plugin;
         private LocationChangeEventArgs location;
@@ -123,6 +124,8 @@ namespace Skymu.Views
             });
 
             ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
+
+            if (_hangUpRequested) return; // in case user has already hung up before the call is established
 
             _ringCts.Cancel();   
             Sounds.StopPlayback("call-reconnect");   
@@ -239,13 +242,14 @@ namespace Skymu.Views
             }
         }
 
-        private async void OnHangUp(object sender, MouseButtonEventArgs e)
+        private void OnHangUp(object sender, MouseButtonEventArgs e)
         {
+            _hangUpRequested = true;
             _ringCts?.Cancel();
             Sounds.StopPlayback("call-reconnect");
             Sounds.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
-            await plugin.EndCall(_call);
+            _ = plugin.EndCall(_call);
             Sounds.Play("call-end");
             _callTimer?.Stop();
             _callTimer = null;
