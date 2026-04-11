@@ -9,9 +9,10 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
 using System.Collections.Generic;
-using System.Windows.Media.Imaging;
+using System;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace Skymu
 {
@@ -40,6 +41,17 @@ namespace Skymu
                 if (char.IsHighSurrogate(str[i]))
                     i++; 
             }
+        }
+        public static string ToDisplayString(this Enum value)
+        {
+            FieldInfo field = value.GetType().GetField(value.ToString());
+            if (field != null)
+            {
+                object[] attrs = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                if (attrs.Length > 0)
+                    return ((DescriptionAttribute)attrs[0]).Description;
+            }
+            return value.ToString();
         }
     }
 }

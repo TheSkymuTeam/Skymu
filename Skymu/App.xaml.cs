@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Windows;
 using Skymu.Plugins;
+using Skymu.Helpers;
 using Skymu.Formatting;
 using Skymu.Theming;
 using Skymu.UserDirectory;
@@ -23,6 +24,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MiddleMan;
 using Skymu.Views;
+using System.Runtime.InteropServices;
 
 namespace Skymu
 {
@@ -37,6 +39,8 @@ namespace Skymu
         public const string Name = "Skymu";
         public const string BuildVersion = "0.3.25";
         public const string BuildName = "Drocea Zuccotto";
+        public static string Platform = Runtime.DetectOS().ToDisplayString();
+        public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";

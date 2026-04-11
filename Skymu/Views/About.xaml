@@ -5,6 +5,7 @@
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
+    xmlns:io="clr-namespace:System.Runtime.InteropServices;assembly=System.Runtime.InteropServices.RuntimeInformation"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="About"
@@ -63,14 +64,31 @@
             TextWrapping="Wrap" />
         <TextBlock
             Width="390"
-            Margin="0,16,10,0"
+            Margin="0,10,10,0"
             HorizontalAlignment="Center"
             FontFamily="Tahoma"
             FontSize="11"
             Foreground="#363636"
             LineHeight="16"
-            Text="Skymu is a multi-protocol chat client that faithfully recreates the user interface of older Skype versions. As far as we know, no comparable product exists, and the Skype branding has been completely retired. You are running the .NET Framework build of Skymu, which is compatible with Windows Vista and above."
+            Text="Skymu is an advanced, multiprotocol instant messaging client that faithfully recreates the user interface and experience of several older Skype versions.&#x0a;As far as we know, no comparable piece of software exists."
             TextAlignment="Center"
             TextWrapping="Wrap" />
+        <TextBlock
+            Width="390"
+            Margin="0,10,10,0"
+            HorizontalAlignment="Center"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="#888888"
+            LineHeight="16"
+            TextAlignment="Center"
+            TextWrapping="Wrap">
+            <TextBlock.Text>
+                <MultiBinding StringFormat="Common Language Runtime: {0} on {1}">
+                    <Binding Source="{x:Static global:Universal.NetVersion}" />
+                    <Binding Source="{x:Static global:Universal.Platform}" />
+                </MultiBinding>
+            </TextBlock.Text>
+        </TextBlock>
     </StackPanel>
 </Window>
