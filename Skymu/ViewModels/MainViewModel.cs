@@ -533,6 +533,7 @@ namespace Skymu.ViewModels
             Sounds.Play("logout");
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, EventArgs.Empty);
+            UserCountAPI.CloseWS();
         }
         #endregion
 

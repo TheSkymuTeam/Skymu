@@ -6,6 +6,8 @@ Use any version of Visual Studio from 2019 Community (recommended) onwards. Buil
 
 Be warned, every project has to be set to build as either x86 or x64. Any CPU is not possible due to native code dependencies (the SQLite DLL)
 
+Tox plugin requires Plugins/Tox/x(arch)/*.dll to be copied over to the build output's Plugins folder.
+
 ![Client](Images/client.png) 
 
 # How to create the installer
