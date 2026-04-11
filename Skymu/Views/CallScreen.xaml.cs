@@ -61,8 +61,10 @@ namespace Skymu.Views
         {
             InitializeComponent();
             plugin = call_plugin;
-            MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
-            PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+            if (Universal.CurrentUser.ProfilePicture != null)
+                MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
+            if (partner.ProfilePicture != null)
+                PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
