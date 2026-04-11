@@ -172,7 +172,7 @@ namespace Skymu.UserDirectory
         public static async Task CloseWS()
         {
             await SetUsrStatus(false);
-            if (ws.State == WebSocketState.Open)
+            if (ws != null && ws.State == WebSocketState.Open)
             {
                 await ws.CloseAsync(
                     WebSocketCloseStatus.NormalClosure,

@@ -49,6 +49,8 @@ public static class ToxCore
         new ToxNode { ip = "tox.initramfs.io", port = 33445, public_key = FromHex("3F0A45A268367C1BEA652F258C85F4A66DA76BCAA667A49E770BCC4917AB6A25") },
         new ToxNode { ip = "205.185.115.131", port = 53, public_key = FromHex("3091C6BEB2A993F1C6300C16549FABA67098FF3D62C6D253828B531470B53D68") },
         new ToxNode { ip = "tox.kurnevsky.net", port = 33445, public_key = FromHex("82EF82BA33445A1F91A7DB27189ECFC0C013E06E3DA71F588ED692BED625EC23") },
+        new ToxNode { ip = "188.225.9.167", port = 33445, public_key = FromHex("1911341A83E02503AB1FD6561BD64AF3A9D6C3F12B5FBB656976B2E678644A67") },
+        new ToxNode { ip = "95.181.230.108", port = 33445, public_key = FromHex("B5FFECB4E4C26409EBB88DB35793E7B39BFA3BA12AC04C096950CB842E3E130A") },
     };
 
     #endregion
@@ -89,34 +91,6 @@ public static class ToxCore
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void tox_log_cb(IntPtr tox, Tox_Log_Level level, [MarshalAs(UnmanagedType.LPStr)] string file, UInt32 line, [MarshalAs(UnmanagedType.LPStr)] string func, [MarshalAs(UnmanagedType.LPStr)] string message, IntPtr user_data);
-
-    public struct Tox_Options
-    {
-#pragma warning disable CS0169
-        bool ipv6_enabled;
-        bool udp_enabled;
-        bool local_discovery_enabled;
-        bool dht_announcements_enabled;
-        Tox_Proxy_Type proxy_type;
-        [MarshalAs(UnmanagedType.LPStr)] string proxy_host;
-        UInt16 proxy_port;
-        UInt16 start_port;
-        UInt16 end_port;
-        UInt16 tcp_port;
-        bool hole_punching_enabled;
-        Tox_Savedata_Type savedata_type;
-        [MarshalAs(UnmanagedType.LPStr)] string savedata_data;
-        UIntPtr savedata_length;
-        tox_log_cb log_callback;
-        IntPtr log_user_data;
-        bool experimental_thread_safety;
-        bool experimental_groups_persistence;
-        bool experimental_disable_dns;
-        bool experimental_owned_data;
-        // private owned_savedata_data
-        // private owned_proxy_host
-#pragma warning restore CS0169
-    }
 
     #endregion
 
@@ -410,7 +384,7 @@ public static class ToxCore
     #region self get/set info
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern void tox_self_get_addr(IntPtr tox, [Out] byte[] address);
+    public static extern void tox_self_get_address(IntPtr tox, [Out] byte[] address);
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_self_set_nospam(IntPtr tox, UInt32 nospam);
@@ -1158,12 +1132,12 @@ public static class ToxCore
     public enum Toxav_Friend_Call_State
     {
         NONE = 0,
-        ERROR,
-        FINISHED,
-        SENDING_A,
-        SENDING_V,
-        ACCEPTING_A,
-        ACCEPTING_V,
+        ERROR = 1,
+        FINISHED = 2,
+        SENDING_A = 4,
+        SENDING_V = 8,
+        ACCEPTING_A = 16,
+        ACCEPTING_V = 32,
     }
 
     // uint32_t state according to the header... WHAT?? Am I tripping? What is wrong with me? Am I even... no. I am alive.
@@ -1247,12 +1221,12 @@ public static class ToxCore
     #region A/V in
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void toxav_audio_receive_frame_cb(IntPtr av, UInt32 friend_number, Int16[] pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data);
+    public delegate void toxav_audio_receive_frame_cb(IntPtr av, UInt32 friend_number, IntPtr pcm, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void toxav_callback_audio_receive_frame(IntPtr av, toxav_audio_receive_frame_cb callback, IntPtr user_data);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void toxav_video_receive_frame_cb(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, byte[] y, byte[] u, byte[] v, Int32 ystride, Int32 ustride, Int32 vstride, IntPtr user_data);
+    public delegate void toxav_video_receive_frame_cb(IntPtr av, UInt32 friend_number, UInt16 width, UInt16 height, IntPtr y, IntPtr u, IntPtr v, Int32 ystride, Int32 ustride, Int32 vstride, IntPtr user_data);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void toxav_callback_video_receive_frame(IntPtr av, toxav_video_receive_frame_cb callback, IntPtr user_data);
 
