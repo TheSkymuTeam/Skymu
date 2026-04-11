@@ -239,12 +239,12 @@ namespace Tox
 
             return await StartClient();
         }
-        public Task<SavedCredential> StoreCredential()
+        public async Task<SavedCredential> StoreCredential()
         {
             // savepass is filled = encrypted save = saving the pass goes against the point of encrypting it
             if (string.IsNullOrEmpty(savepass))
-                return Task.FromResult(new SavedCredential(currentUser, "", AuthenticationMethod.Token, InternalName));
-            return Task.FromResult<SavedCredential>(null);
+                return new SavedCredential(currentUser, "", AuthenticationMethod.Token, InternalName);
+            return null;
         }
 
         const string FileLockedErr = "Tox profile is locked. Are you running an another instance of this program, or an another Tox client?";
@@ -425,11 +425,11 @@ namespace Tox
             
         #region Populate
         
-        public Task<bool> PopulateSidebarInformation()
+        public async Task<bool> PopulateSidebarInformation()
         {
             uiContext = SynchronizationContext.Current;
             MyInformation = currentUser;
-            return Task.FromResult(true);
+            return true;
         }
 
         public async Task<bool> PopulateContactsList()
@@ -745,9 +745,9 @@ namespace Tox
 
         #region Unimplemented stuff
 
-        public Task<LoginResult> AuthenticateTwoFA(string code) => Task.FromResult(LoginResult.UnsupportedAuthType);
-        public Task<string> GetQRCode() => Task.FromResult(string.Empty);
-        public Task<bool> PopulateServerList() => Task.FromResult(false);
+        public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.UnsupportedAuthType;
+        public async Task<string> GetQRCode() => string.Empty;
+        public async Task<bool> PopulateServerList() => false;
         public ClickableConfiguration[] ClickableConfigurations
         {
             get { return new ClickableConfiguration[0]; }
