@@ -135,7 +135,7 @@ namespace Skymu.Skyaeris
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
         private void OnPrivacy(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY); }
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
-        private void OnClose(object sender, EventArgs e) { Universal.Close(); }
+        private void OnClose(object sender, EventArgs e) { Universal.Close(false); }
 
         private void Login_Loaded(object sender, EventArgs e)
         {
