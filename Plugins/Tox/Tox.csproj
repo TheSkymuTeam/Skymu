@@ -15,7 +15,8 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="NAudio" Version="2.3.0" />
+	  <PackageReference Include="NAudio.Core" Version="2.3.0" />
+	  <PackageReference Include="NAudio.WinMM" Version="2.3.0" />
 	  <PackageReference Include="System.Threading.Channels" Version="10.0.5" />
 	</ItemGroup>
 	<ItemGroup>

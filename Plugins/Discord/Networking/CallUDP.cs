@@ -83,7 +83,7 @@ namespace Discord.Networking
         // Fake mic sound properties
         private IOpusEncoder _fakeMicEncoder;
         private IWaveProvider _fakeMicReader;
-        private Mp3FileReader _fakeMicSource;
+        private WaveFileReader _fakeMicSource;
 
         public CallUDP(UdpClient udpClient, byte[] secretKey, int ssrc)
         {
@@ -98,7 +98,7 @@ namespace Discord.Networking
             if (useFakeMic && fakeMicFile != null)
             {
                 // Convert MP3 to 48kHz mono PCM for Discord
-                _fakeMicSource = new Mp3FileReader(fakeMicFile);
+                _fakeMicSource = new WaveFileReader(fakeMicFile);
                 var stereoToMono = new StereoToMonoSampleProvider(_fakeMicSource.ToSampleProvider());
                 var resampled = new WdlResamplingSampleProvider(stereoToMono, 48000);
                 _fakeMicReader = new SampleToWaveProvider16(resampled);
