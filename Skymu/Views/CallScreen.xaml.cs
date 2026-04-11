@@ -115,7 +115,7 @@ namespace Skymu.Views
 
             ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
 
-            _ringCts.Cancel();   // signals the loop to stop after current sound finishes
+            _ringCts.Cancel();   
             Sounds.StopPlayback("call-reconnect");   
             Sounds.StopPlayback("call-init");
 

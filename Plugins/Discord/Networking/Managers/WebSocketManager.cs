@@ -71,7 +71,7 @@ namespace Discord.Networking.Managers
             Socket.VoiceServerUpdateCompleted += handler;
         }
 
-        public static void SubscribeIncomingCall(EventHandler<string> handler)
+        public static void SubscribeIncomingCall(EventHandler<JsonNode> handler)
         {
             if (Socket == null) return;
             Socket.IncomingCall -= handler;
