@@ -77,7 +77,7 @@ namespace Discord
         public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
         public async Task<bool> SetMuted(ActiveCall call, bool muted)
         {
-            await _callSocket.SetMute(muted);
+            _callSocket.SetMute(muted);
             await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
             {
                 op = 4,
