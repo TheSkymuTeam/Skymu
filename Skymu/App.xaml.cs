@@ -180,7 +180,7 @@ namespace Skymu
             }
         }
 
-        public static void Close()
+        public static void Close(bool donotask = true)
         {
             if (Settings.QuitWithoutAsking)
                 Terminate();
@@ -203,7 +203,7 @@ namespace Skymu
                     false,
                     null,
                     null,
-                    true
+                    donotask
                 );
                 dialog.BLAction = () =>
                 {
