@@ -68,11 +68,48 @@ namespace Tox
 
         public static void save(IntPtr tox, string savename, Core core)
         {
+            core.profilelock.Dispose();
+            string path = Path.Combine(ToxCore.toxDir, savename + ".tox");
+
             byte[] data = new byte[(int)tox_get_savedata_size(tox)];
             tox_get_savedata(tox, data);
-            core.profilelock.Dispose();
-            File.WriteAllBytes(Path.Combine(ToxCore.toxDir, savename + ".tox"), data);
-            core.profilelock = new FileStream(Path.Combine(ToxCore.toxDir, savename + ".tox"), FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+            if (String.IsNullOrEmpty(core.savepass))
+                File.WriteAllBytes(path, data);
+            else // Oh femboy...
+            {
+                FileStream file = File.OpenRead(path);
+                byte[] esave = new byte[tox_pass_encryption_extra_length()];
+                file.Read(esave, 0, (int)tox_pass_encryption_extra_length());
+                file.Close();
+                byte[] salt = new byte[tox_pass_salt_length()];
+                IntPtr key;
+                Tox_Err_Key_Derivation kerr;
+                if (tox_get_salt(esave, salt, out Tox_Err_Get_Salt err))
+                {
+                    key = tox_pass_key_derive_with_salt(core.savepass, (UIntPtr)core.savepass.Length, salt, out kerr);
+                }
+                else
+                {
+                    key = tox_pass_key_derive(core.savepass, (UIntPtr)core.savepass.Length, out kerr);
+                }
+                if (kerr != Tox_Err_Key_Derivation.OK)
+                {
+                    core.ERR("Failed to derive key for encrypting the save. Some of your progress is lost: " + kerr);
+                }
+                else
+                {
+                    byte[] edata = new byte[data.Length + tox_pass_encryption_extra_length()];
+                    if (tox_pass_key_encrypt(key, data, (UIntPtr)data.Length, edata, out Tox_Err_Encryption eerr))
+                        File.WriteAllBytes(path, edata);
+                    else
+                    {
+                        core.ERR("Failed to encrypt save. Some of your progress is lost: " + eerr);
+                    }
+                }
+            }
+
+            core.profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             core.profilelock.Lock(0, 0);
         }
 
