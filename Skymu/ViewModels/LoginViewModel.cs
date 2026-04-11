@@ -253,14 +253,16 @@ namespace Skymu.ViewModels
                         "Skymu",
                         new Action(() =>
                         {
-                            Settings.SuppressOldRuntimeWarnings = true;
+                            Settings.SuppressOldRuntimeWarnings = (bool)dlg.CheckBox.IsChecked;
                             Settings.Save();
                             dlg.Close();
                         }),
-                        Universal.Lang["sZAPBUTTON_DONTSHOW"],
+                        Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
                         true,
                         new Action(() =>
                         {
+                            Settings.SuppressOldRuntimeWarnings = (bool)dlg.CheckBox.IsChecked;
+                            Settings.Save();
                             Process.Start(new ProcessStartInfo
                             {
                                 FileName = newNetLink,
@@ -268,7 +270,7 @@ namespace Skymu.ViewModels
                             });
                             dlg.Close();
                         }),
-                        Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+                        Universal.Lang["sSKYACCESS_DLG_BTN_YES"], false, null, null, false, null, null, true
                     );
                     dlg.ShowDialog();
                 }

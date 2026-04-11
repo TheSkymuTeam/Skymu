@@ -42,7 +42,7 @@ namespace Discord
             WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
             {
                 _callSocket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
-                _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 4
+                _callSocket.OnCallEstablished += () => tcs.TrySetResult(e); // wait for op 11
                 _callSocket.OnHangUp += () =>
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Ended));
@@ -51,6 +51,7 @@ namespace Discord
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Failed, reason));
                 };
+                _ = api.SendAPI($"channels/{conversationId}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null }); // DUN DUN DO. DO DO DUN
                 await _callSocket.ConnectAsync();
             }); 
 
@@ -70,7 +71,7 @@ namespace Discord
 
             await WebSocketManager.SendPayload(voicePayloadJson); // wait for payload send
             var voiceEvent = await tcs.Task; // wait for call socket init
-            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
+            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]); 
         }
 
         public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);

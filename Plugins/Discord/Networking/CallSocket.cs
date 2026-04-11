@@ -447,13 +447,6 @@ namespace Discord.Networking
                             }
                         });
                         await SendPayload(speakingPayload);
-                        await Discord.Core.api.SendAPI( // for ringing. TODO see if eligiblity is important, if so, add that extra GET request, i've removed it for now because it's useless to us,
-                                                        // the skype call model ensures that you're always ringing in the UI anyways
-    $"channels/{_channelId}/call/ring",
-    HttpMethod.Post,
-    _discordToken,
-    new { recipients = (string[])null }
-);
                         break;
                     case 5:
                         // op_code: 5 is sent to us when a user speaks from Discord
@@ -479,8 +472,8 @@ namespace Discord.Networking
                         StartHeartbeat();
                         break;
                     case 11:
-                        Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
                         OnCallEstablished?.Invoke();
+                        Debug.WriteLine($"[WS-VOICE] opcode 11, a user has joined the voice channel: {data}");
                         var userIds = json["d"]?["user_ids"]?.AsArray();
                         if (userIds != null)
                         {
