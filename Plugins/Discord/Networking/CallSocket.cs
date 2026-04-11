@@ -156,7 +156,7 @@ namespace Discord.Networking
             _ = Task.Run(() => ReceiveLoop(_receiveCts.Token));
         }
 
-        internal async Task SetMute(bool muted)
+        internal void SetMute(bool muted)
         {
             if (_isMuted == muted) return;
             _isMuted = muted;
