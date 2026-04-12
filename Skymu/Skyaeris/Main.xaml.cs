@@ -1545,30 +1545,15 @@ namespace Skymu.Skyaeris
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Sounds.PlayLoop("call-in");
-                        Dialog dlg = null;
-                        dlg = new Dialog(
-                            WindowBase.IconType.MultipleContactCall,
-                            $"You have an incoming call. Would you like to answer it?\n\nCaller: {e.Caller.DisplayName} ({e.Caller.Username})\n"
-                                + $"In channel: {e.ConversationId}",
-                            "Incoming call", 
-                            Settings.BrandingName + " Call",
-                            new Action(() =>
-                            {
-                                Sounds.StopPlayback("call-in");
-                                dlg.Close();
-                            }),
-                            Universal.Lang["sZAPBUTTON_DECLINE"],
-                            true,
-                            new Action(() =>
-                            {
-                                Sounds.StopPlayback("call-in");
-                                StartCall(e.Caller);
-                                dlg.Close();
-                            }),
-                            Universal.Lang["sZAPBUTTON_ACCEPT"]
-                        );
-                        dlg.ShowDialog();
+                        IncomingCall ic = new IncomingCall(e);
+                        EventHandler handler = null;
+                        handler = (s, args) =>
+                        {
+                            ic.Answered -= handler;
+                            StartCall(e.Caller);
+                        };
+                        ic.Answered += handler;
+                        ic.Show();
                     });
                 };
             }
