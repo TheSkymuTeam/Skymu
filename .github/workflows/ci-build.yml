@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: 1. Build MiddleMan Project
+    - name: 1. Build MiddleMan
       # -r (runtime) specifies the architecture, which overrides "Any CPU"
       run: dotnet build MiddleMan/MiddleMan.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
@@ -35,10 +35,13 @@ jobs:
     - name: 3. Build Skymu
       run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
-    - name: 4. Export Release Folder to Artifacts
+    - name: 4. Build NSIS
+      run: makensis NSIS\SkymuSetup.nsi
+      
+    - name: 5. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
       with:
         # Separate the names so the x86 and x64 files don't overwrite each other
         name: nightly-build-${{ matrix.architecture }}
-        path: 'Skymu/bin/'
+        path: 'NSIS/SkymuSetup.exe'
         retention-days: 7
