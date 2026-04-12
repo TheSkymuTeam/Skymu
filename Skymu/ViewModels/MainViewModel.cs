@@ -229,7 +229,7 @@ namespace Skymu.ViewModels
 
         public async Task InitSidebar()
         {
-            await Universal.Plugin.PopulateSidebarInformation();
+            await Universal.Plugin.PopulateUserInformation();
             await Universal.Plugin.PopulateRecentsList();
             Universal.CurrentUser = Universal.Plugin.MyInformation;
 

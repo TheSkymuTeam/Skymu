@@ -298,7 +298,7 @@ namespace Stub
             return true;
         }
 
-        public async Task<bool> PopulateSidebarInformation()
+        public async Task<bool> PopulateUserInformation()
         {
             _uiContext = SynchronizationContext.Current;
             MyInformation = new User(
@@ -424,7 +424,10 @@ namespace Stub
         }
 
         public async Task<bool> EndCall(ActiveCall call) => true;
-        public async Task<bool> AnswerCall(string convo_id) => false;
+        public async Task<ActiveCall> AnswerCall(string convo_id)
+        {
+            return await StartCall(convo_id, false, true);
+        }
         public async Task<bool> DeclineCall(string convo_id) => false;
         public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
         public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;

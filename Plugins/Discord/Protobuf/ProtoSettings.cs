@@ -20,7 +20,7 @@ namespace Discord.Protobuf
     {
         private string DscToken;
         // The API instance used by Skymu
-        internal static readonly API api = new API();
+        internal static readonly DiscordHttpClient api = new DiscordHttpClient();
         // The generated class from Google's Protobuf
         public PreloadedUserSettings _proto;
         // Endpoints necessary fetching and setting Proto settings
@@ -34,7 +34,7 @@ namespace Discord.Protobuf
 
         internal async Task<PreloadedUserSettings> FetchProtoSettings()
         {
-            string currentProto = await api.SendAPI(PROTO_ENDPOINT, HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
+            string currentProto = await api.Send(PROTO_ENDPOINT, HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(currentProto))
                 return new PreloadedUserSettings();
 
@@ -60,7 +60,7 @@ namespace Discord.Protobuf
 
             // We have to create our own PATCH method since .NET doesn't officially support it
             HttpMethod Patch = new HttpMethod("PATCH");
-            string protoResponse = await api.SendAPI(PROTO_ENDPOINT, Patch, DscToken, body, null, null, null).ConfigureAwait(false);
+            string protoResponse = await api.Send(PROTO_ENDPOINT, Patch, DscToken, body, null, null, null).ConfigureAwait(false);
 
             Debug.WriteLine(protoResponse);
             return !protoResponse.Contains("message");

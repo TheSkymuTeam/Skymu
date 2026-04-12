@@ -134,7 +134,7 @@ namespace Discord.Helpers
 
             try
             {
-                using var stream = await Core.api.client.GetStreamAsync(url); // skip double buffering and thusly extra RAM usage
+                using var stream = await Core.Client.client.GetStreamAsync(url); // skip double buffering and thusly extra RAM usage
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 return (originalUrl, ms.ToArray());

@@ -319,7 +319,7 @@ namespace Discord.Networking
             string discordTkt = json["ticket"]?.GetValue<string>();
             var ticketPayload = new { ticket = discordTkt };
 
-            string encToken = await Core.api.SendAPI("users/@me/remote-auth/login", HttpMethod.Post, null, ticketPayload, null, null);
+            string encToken = await Core.Client.Send("users/@me/remote-auth/login", HttpMethod.Post, null, ticketPayload, null, null);
 
             var encJson = JsonObject.Parse(encToken);
             string discordEncTkn = encJson["encrypted_token"]?.GetValue<string>();
