@@ -40,5 +40,5 @@ jobs:
       with:
         # Separate the names so the x86 and x64 files don't overwrite each other
         name: nightly-build-${{ matrix.architecture }}
-        path: '**/bin/win-${{ matrix.architecture }}/Release/'
+        path: 'Skymu/bin/'
         retention-days: 7
