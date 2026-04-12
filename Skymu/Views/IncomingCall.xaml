@@ -7,13 +7,13 @@
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Incoming Call"
     Width="385"
-    Height="150"
     AllowsTransparency="True"
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"
     ShowActivated="False"
     ShowInTaskbar="False"
+    SizeToContent="Height"
     Style="{StaticResource Window}"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
@@ -37,9 +37,9 @@
         <Grid Margin="11,8,11,14">
             <Grid.RowDefinitions>
                 <!--  Header  -->
-                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
                 <!--  Border  -->
-                <RowDefinition Height="0.5" />
+                <RowDefinition Height="1" />
                 <!--  Content  -->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -47,37 +47,100 @@
                 <Image
                     Width="36"
                     Height="16"
-                    Margin="10,0,0,0"
+                    Margin="8,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-incoming-call.png'}"
                     Stretch="Fill" />
-                <global:SliceControl
-                    x:Name="close"
+                <Grid
                     Grid.Row="0"
                     Margin="0,0,5,0"
-                    HorizontalAlignment="Right"
-                    DefaultIndex="0"
-                    ElementCount="5"
-                    HoverIndex="1"
-                    MouseLeftButtonDown="CloseButton_Click"
-                    PressedIndex="2"
-                    SliceMode="0"
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close-circle.png'}"
-                    StackDirection="Vertical"
-                    Visibility="Visible" />
+                    HorizontalAlignment="Right">
+                    <global:SliceControl
+                        x:Name="Close"
+                        DefaultIndex="0"
+                        ElementCount="5"
+                        HoverIndex="1"
+                        MouseLeftButtonDown="OnClose"
+                        PressedIndex="2"
+                        SliceMode="0"
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close-circle.png'}"
+                        StackDirection="Vertical"
+                        Visibility="Visible" />
+                    <Image
+                        Width="12"
+                        Height="16"
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close1.png'}" />
+                </Grid>
+
             </Grid>
             <Rectangle Grid.Row="1" Fill="#DDDDDD" />
 
-            <Border Grid.Row="2" BorderThickness="10">
+            <Grid Grid.Row="2" Margin="10,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Image
-                    x:Name="MyAvatar"
+                    x:Name="CallerAvatar"
+                    Grid.Column="0"
                     Height="70"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     RenderOptions.BitmapScalingMode="HighQuality"
                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/sensei_wu.jpg'}" />
-            </Border>
+                <Grid Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock
+                        x:Name="CallerName"
+                        VerticalAlignment="Top"
+                        FontFamily="Arial"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="Sensei Wu calling" />
+                    <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+                        <global:SliceControl
+                            x:Name="Answer"
+                            Width="Auto"
+                            Margin="0,0,5,0"
+                            DefaultIndex="0"
+                            ElementCount="5"
+                            HoverIndex="1"
+                            MouseLeftButtonUp="OnAnswer"
+                            PressedIndex="2"
+                            RightWidth="14"
+                            SliceMode="1"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/answer.png'}"
+                            StackDirection="Vertical"
+                            Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_ANSWER]}"
+                            TextColor="White"
+                            TextFont="Arial"
+                            TextLeftMargin="25"
+                            TextRightMargin="10"
+                            TextSize="13"
+                            TextWeight="Bold" />
+                        <global:SliceControl
+                            x:Name="Decline"
+                            Width="Auto"
+                            DefaultIndex="0"
+                            ElementCount="5"
+                            HoverIndex="1"
+                            MouseLeftButtonUp="OnDecline"
+                            PressedIndex="2"
+                            RightWidth="14"
+                            SliceMode="1"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/decline.png'}"
+                            StackDirection="Vertical"
+                            Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_DECLINE]}"
+                            TextColor="White"
+                            TextFont="Arial"
+                            TextLeftMargin="25"
+                            TextRightMargin="10"
+                            TextSize="13"
+                            TextWeight="Bold" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
     </Grid>
 </Window>

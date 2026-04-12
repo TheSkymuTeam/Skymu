@@ -44,9 +44,12 @@ namespace Skymu
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 string dir = AppDomain.CurrentDomain.BaseDirectory;
-                string ff = Path.Combine(dir, "languages", "english.lang");
-                if (File.Exists(ff))
-                    Load(ff);
+                while (dir != null)
+                {
+                    string candidate = Path.Combine(dir, "languages", "english.lang");
+                    if (File.Exists(candidate)) { Load(candidate); break; }
+                    dir = Directory.GetParent(dir)?.FullName;
+                }
                 return;
             }
             string lang = Settings.Language ?? "English";

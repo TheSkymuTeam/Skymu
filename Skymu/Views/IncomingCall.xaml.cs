@@ -21,21 +21,48 @@ using System.Windows.Media.Imaging;
 using Skymu.Formatting;
 using System.Windows.Threading;
 using MiddleMan;
+using Skymu.Helpers;
 using Skymu.ViewModels;
 
 namespace Skymu.Views
 {
     public partial class IncomingCall : Window
     {
+        public EventHandler Answered;
 
-        public IncomingCall(MessageRecievedEventArgs e, int durationSeconds = 5)
+        public IncomingCall(CallEventArgs e)
         {
-           
-            
+            InitializeComponent();
+            var animation = new DoubleAnimation
+            {
+                From = 0.8,
+                To = 0.4,
+                Duration = TimeSpan.FromSeconds(1.0),
+                AutoReverse = true,
+                RepeatBehavior = RepeatBehavior.Forever,
+                EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
+            };
+            BeginAnimation(OpacityProperty, animation);
+            Sounds.PlayLoop("call-in");
+            if (e.Caller.ProfilePicture != null) CallerAvatar.Source = FrozenImage.GenerateFromArray(e.Caller.ProfilePicture);
+            else CallerAvatar.Source = Universal.AnonymousAvatar;
+            CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", e.Caller.DisplayName);
         }
 
-        private void CloseButton_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnClose(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            OnDecline(sender, e); // close does not minimize for now. TODO add this
+        }
+
+        private void OnAnswer(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Answered?.Invoke(this, new EventArgs());
+            OnDecline(sender, e);
+        }
+
+        private void OnDecline(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Sounds.StopPlayback("call-in");
             Close();
         }
     }
