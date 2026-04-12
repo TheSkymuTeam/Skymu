@@ -28,9 +28,9 @@ jobs:
 
     - name: 2. Build Plugins
       run: |
-        for file in Plugins/**/*.csproj; do
-          dotnet build "$file" --configuration Release -r win-${{ matrix.architecture }} --self-contained false
-        done
+        Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
+          dotnet build $_.FullName --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+        }
     
     - name: 3. Build Skymu
       run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
