@@ -1,0 +1,74 @@
+﻿<Window
+    x:Class="Skymu.Views.IncomingCall"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:preferences="clr-namespace:Skymu.Preferences"
+    Title="Incoming Call"
+    Width="385"
+    Height="150"
+    AllowsTransparency="True"
+    Background="Transparent"
+    FontFamily="Tahoma"
+    FontSize="11"
+    ShowActivated="False"
+    ShowInTaskbar="False"
+    Style="{StaticResource Window}"
+    Topmost="True"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None">
+    <Window.Resources>
+        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+    </Window.Resources>
+    <Grid>
+        <global:SliceControl
+            x:Name="bubble"
+            HorizontalAlignment="Stretch"
+            BottomHeight="18"
+            DefaultIndex="0"
+            ElementCount="1"
+            LeftWidth="15"
+            RightWidth="15"
+            SliceMode="2"
+            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/background.png'}"
+            TopHeight="12" />
+        <Grid Margin="11,8,11,14">
+            <Grid.RowDefinitions>
+                <!--  Header  -->
+                <RowDefinition Height="30" />
+                <!--  Border  -->
+                <RowDefinition Height="0.5" />
+                <!--  Content  -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Image
+                    Width="36"
+                    Height="16"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-incoming-call.png'}"
+                    Stretch="Fill" />
+                <global:SliceControl
+                    x:Name="close"
+                    Grid.Row="0"
+                    Margin="0,0,5,0"
+                    HorizontalAlignment="Right"
+                    DefaultIndex="0"
+                    ElementCount="5"
+                    HoverIndex="1"
+                    MouseLeftButtonDown="CloseButton_Click"
+                    PressedIndex="2"
+                    SliceMode="0"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close-circle.png'}"
+                    StackDirection="Vertical"
+                    Visibility="Visible" />
+            </Grid>
+            <Rectangle Grid.Row="1" Fill="#DDDDDD" />
+            <Grid Grid.Row="2" />
+        </Grid>
+    </Grid>
+</Window>
