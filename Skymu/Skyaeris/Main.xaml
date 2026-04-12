@@ -1941,7 +1941,9 @@
                                             HorizontalAlignment="Left"
                                             Orientation="Horizontal">
                                             <global:SliceControl
+                                                x:Name="VideoCallButton"
                                                 Width="Auto"
+                                                Margin="0,0,10,0"
                                                 Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 DefaultIndex="0"
                                                 ElementCount="5"
@@ -1962,7 +1964,6 @@
                                             <global:SliceControl
                                                 x:Name="CallButton"
                                                 Width="Auto"
-                                                Margin="10,0,0,0"
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
@@ -1981,6 +1982,7 @@
                                             <global:SliceControl
                                                 x:Name="CallDropdown"
                                                 Width="24"
+                                                Margin="0,0,10,0"
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
@@ -1991,7 +1993,6 @@
                                                 StackDirection="Vertical" />
                                             <global:SliceControl
                                                 Width="44"
-                                                Margin="10,0,0,0"
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"

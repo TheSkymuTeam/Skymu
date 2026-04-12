@@ -53,9 +53,6 @@ namespace Discord.Networking
         // omega - mute state tracker
         private bool _isMuted = false;
 
-        // omega - for ringer post
-        private string _discordToken;
-
         // The actual WebSocketClient
         public System.Net.WebSockets.Managed.ClientWebSocket WSClient { get; private set; }
 
@@ -96,12 +93,11 @@ namespace Discord.Networking
         private int _pendingEpochProtoVersion = 1;
         private byte[] _pendingExternalSender = null;
 
-        public CallSocket(string endpoint, string token, string session, string userId, string channelId, bool start_muted, string discord_token)
+        public CallSocket(string endpoint, string token, string session, string userId, string channelId, bool start_muted)
         {
             _isMuted = start_muted;
             _selfUserId = userId;
             _channelId = channelId;
-            _discordToken = discord_token;
 
             gatewayUrl = $"wss://{endpoint}/?v=9";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
