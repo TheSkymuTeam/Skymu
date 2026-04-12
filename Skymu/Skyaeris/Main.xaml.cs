@@ -157,11 +157,30 @@ namespace Skymu.Skyaeris
 
         private void SetWindow(WindowType type, bool force = false)
         {
+            if (vmodel.SelectedConversation is Group)
+            {
+                VideoCallButton.Visibility = Visibility.Collapsed;
+                CallButton.IsEnabled = false;
+                CallDropdown.IsEnabled = false;
+                CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
+            }
+            else if (vmodel.SelectedConversation is ServerChannel)
+            {
+                VideoCallButton.Visibility = Visibility.Collapsed;
+                CallButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                VideoCallButton.Visibility = Visibility.Visible;
+                CallButton.Visibility = Visibility.Visible;
+                CallButton.IsEnabled = true;
+                CallDropdown.IsEnabled = true;
+                CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
+            }
+
             if (type == current_window && !force)
                 return;
 
-            bool group = vmodel.SelectedConversation is Group ? true : false;
-            bool server = vmodel.SelectedConversation is ServerChannel ? true : false;
             current_window = type;
             switch (type)
             {
@@ -186,17 +205,6 @@ namespace Skymu.Skyaeris
                 case WindowType.Chat:
                     ToggleStatusBoxSelection(false);
                     StatusBox.SetState(ButtonVisualState.Default);
-
-                    if (group)
-                    {
-                        VideoCallButton.Visibility = Visibility.Collapsed;
-                        CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
-                    }
-                    else if (server)
-                    {
-                        VideoCallButton.Visibility = Visibility.Collapsed;
-                        CallButton.Visibility = Visibility.Collapsed;
-                    }
                     HomeTopbar.Visibility = Visibility.Collapsed;
                     ChatTopbar.Visibility = Visibility.Visible;
                     ChatProfileArea.Visibility = Visibility.Visible;
