@@ -72,11 +72,7 @@ namespace Discord
 
             await WebSocketManager.SendPayload(voicePayloadJson);
 
-            var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(15000));
-            if (completedTask != tcs.Task)
-                return null;
-
-            var voiceEvent = tcs.Task.Result;
+            var voiceEvent = await tcs.Task;
             return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
         }
 
