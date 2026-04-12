@@ -1948,6 +1948,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                IsEnabled="False"
                                                 LeftWidth="22"
                                                 PressedIndex="2"
                                                 RightWidth="22"

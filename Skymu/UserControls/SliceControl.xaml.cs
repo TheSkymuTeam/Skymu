@@ -823,6 +823,8 @@ namespace Skymu
         public void UpdateHitTestState()
         {
             IsHitTestVisible = IsEnabled && Interactive;
+            if (!IsEnabled) Opacity = 0.4;
+            else Opacity = 1;
         }
 
         public void SetState(ButtonVisualState state)

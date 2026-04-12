@@ -119,12 +119,10 @@ namespace Skymu.Skyaeris
             )
             {
                 LoginButton.IsEnabled = true;
-                LoginButton.Opacity = 1;
             }
             else
             {
                 LoginButton.IsEnabled = false;
-                LoginButton.Opacity = 0.4;
             }
         }
 
