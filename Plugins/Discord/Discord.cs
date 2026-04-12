@@ -740,13 +740,20 @@ namespace Discord
         {
             var call_established = new TaskCompletionSource<bool>();
             var call_picked_up = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
+            EventHandler<WebSocket.VoiceServerUpdateEventArgs> vsHandler = null;
 
-            WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
+            vsHandler = async (sender, e) =>
             {
-                await Client.Send($"channels/{convo_id}/call/ring", HttpMethod.Post, DiscordToken, new { recipients = (string[])null });
+                WebSocketManager.UnsubscribeVoiceServerUpdated(vsHandler);
+                if (!is_answering_call) _ = Client.Send($"channels/{convo_id}/call/ring", HttpMethod.Post, DiscordToken, new { recipients = (string[])null });
                 call_established.TrySetResult(true);
                 CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, convo_id, start_muted);
-                socket.OnCallEstablished += () => call_picked_up.TrySetResult(e);
+                socket.OnCallEstablished += () =>
+                {
+                    Debug.WriteLine("[CALL-INIT] Event recieved, call has been picked up by the remote user. Setting result of task call_picked_up...");
+                    bool result = call_picked_up.TrySetResult(e);
+                    Debug.WriteLine("[CALL-INIT] Set result " + result + " for the call_picked_up event.");
+                };
                 socket.OnHangUp += () =>
                 {
                     OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Ended));
@@ -757,7 +764,7 @@ namespace Discord
                 };
                 _callSocket = socket;
                 await socket.ConnectAsync();
-            });
+            };
 
             string voicePayloadJson = JsonSerializer.Serialize(new
             {
@@ -773,11 +780,17 @@ namespace Discord
                 }
             });
 
+            WebSocketManager.SubscribeVoiceServerUpdated(vsHandler);
             await WebSocketManager.SendPayload(voicePayloadJson);
-            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) // Discord hasn't initialized a call even after 5 seconds
+            Debug.WriteLine("[CALL-INIT] Voice payload sent.");
+            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) 
+            {
+                Debug.WriteLine("[CALL-INIT] Discord failed to respond with CALL_UPDATE in the 5 second time limit. Cancelling call.");
                 return null;
-
+            }
+            else Debug.WriteLine("[CALL-INIT] Discord responded with CALL_UPDATE and the call has been established.");
             var voiceEvent = await call_picked_up.Task;
+            Debug.WriteLine("[CALL-INIT] Call initialization complete. Returning the active call.");
             return new ActiveCall(voiceEvent.SessionId, convo_id, is_video_call, new User[0]);
         }
         public async Task<bool> DeclineCall(string convo_id)

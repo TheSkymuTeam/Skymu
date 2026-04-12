@@ -71,6 +71,12 @@ namespace Discord.Networking.Managers
             Socket.VoiceServerUpdateCompleted += handler;
         }
 
+        public static void UnsubscribeVoiceServerUpdated(EventHandler<WebSocket.VoiceServerUpdateEventArgs> handler)
+        {
+            if (Socket == null) return;
+            Socket.VoiceServerUpdateCompleted -= handler;
+        }
+
         public static void SubscribeIncomingCall(EventHandler<JsonNode> handler)
         {
             if (Socket == null) return;
