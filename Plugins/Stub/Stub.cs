@@ -408,7 +408,7 @@ namespace Stub
         #region Calls (remove this entire region and remove `, ICall` to disable
 
         // Call will be picked up as soon as something is returned
-        public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
+        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
         {
             TaskCompletionSource<bool> waiter = new TaskCompletionSource<bool>();
             Thread thread = new Thread(_ =>
@@ -420,12 +420,12 @@ namespace Stub
 
             _ = await waiter.Task;
 
-            return new ActiveCall("STUBCALL", conversationId, isVideo, new User[0]);
+            return new ActiveCall("STUBCALL", convo_id, is_video_call, new User[0]);
         }
 
         public async Task<bool> EndCall(ActiveCall call) => true;
-        public async Task<bool> AnswerCall(ActiveCall call) => false;
-        public async Task<bool> DeclineCall(ActiveCall call) => false;
+        public async Task<bool> AnswerCall(string convo_id) => false;
+        public async Task<bool> DeclineCall(string convo_id) => false;
         public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
         public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
         public event EventHandler<CallEventArgs> OnIncomingCall;
