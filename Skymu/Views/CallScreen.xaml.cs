@@ -61,14 +61,14 @@ namespace Skymu.Views
         )
         {
             InitializeComponent();
-            if (Universal.CurrentUser.ProfilePicture != null)
-                MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
-            if (partner.ProfilePicture != null)
-                PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+
+            if (Universal.CurrentUser.ProfilePicture != null) MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
+            else MyAvatar.Source = Universal.AnonymousAvatar;
+            if (partner.ProfilePicture != null) PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+            else PartnerAvatar.Source = Universal.AnonymousAvatar;
+
             _is_answer = is_answering_call;
             if (_is_answer) CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
-            MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
-            PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 

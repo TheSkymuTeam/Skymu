@@ -12,6 +12,7 @@
     FontFamily="Tahoma"
     FontSize="11"
     MouseLeftButtonDown="OnDrag"
+    ResizeMode="NoResize"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
