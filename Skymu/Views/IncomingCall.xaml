@@ -11,6 +11,7 @@
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"
+    MouseLeftButtonDown="OnDrag"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
@@ -24,7 +25,6 @@
     </Window.Resources>
     <Grid>
         <global:SliceControl
-            x:Name="bubble"
             HorizontalAlignment="Stretch"
             BottomHeight="18"
             DefaultIndex="0"
@@ -64,13 +64,15 @@
                         MouseLeftButtonDown="OnClose"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close-circle.png'}"
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/round-button.png'}"
                         StackDirection="Vertical"
+                        Tag="NoDrag"
                         Visibility="Visible" />
                     <Image
                         Width="12"
                         Height="16"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close1.png'}" />
+                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close.png'}"
+                        Tag="NoDrag" />
                 </Grid>
 
             </Grid>
@@ -112,6 +114,7 @@
                             SliceMode="1"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/answer.png'}"
                             StackDirection="Vertical"
+                            Tag="NoDrag"
                             Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_ANSWER]}"
                             TextColor="White"
                             TextFont="Arial"
@@ -131,6 +134,7 @@
                             SliceMode="1"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/decline.png'}"
                             StackDirection="Vertical"
+                            Tag="NoDrag"
                             Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_DECLINE]}"
                             TextColor="White"
                             TextFont="Arial"

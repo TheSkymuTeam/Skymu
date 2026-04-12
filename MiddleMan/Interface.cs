@@ -674,9 +674,9 @@ namespace MiddleMan
         event EventHandler<CallEventArgs> OnIncomingCall;
         event EventHandler<CallEventArgs> OnCallStateChanged;
 
-        Task<ActiveCall> StartCall(string conversationIdentifier, bool isVideo, bool startMuted);
-        Task<bool> AnswerCall(ActiveCall call);
-        Task<bool> DeclineCall(ActiveCall call);
+        Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted);
+        Task<bool> AnswerCall(string convo_id);
+        Task<bool> DeclineCall(string convo_id);
         Task<bool> EndCall(ActiveCall call);
         Task<bool> SetMuted(ActiveCall call, bool muted);
         Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);

@@ -35,24 +35,26 @@ namespace Discord
         public event EventHandler<CallEventArgs> OnCallStateChanged;
         public bool SupportsVideoCalls => false; // not yet
         private CallSocket _callSocket = null;
-        public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
+        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
         {
-            var tcs = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
+            var call_established = new TaskCompletionSource<bool>();
+            var call_picked_up = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
 
             WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
             {
-                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted);
-                socket.OnCallEstablished += () => tcs.TrySetResult(e);
+                call_established.TrySetResult(true);
+                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, convo_id, start_muted);
+                socket.OnCallEstablished += () => call_picked_up.TrySetResult(e);
                 socket.OnHangUp += () =>
                 {
-                    OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Ended));
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Ended));
                 };
                 socket.OnCallFailed += reason =>
                 {
-                    OnCallStateChanged?.Invoke(this, new CallEventArgs(conversationId, CallState.Failed, reason));
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Failed, reason));
                 };
                 _callSocket = socket;
-                _ = api.SendAPI($"channels/{conversationId}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null });
+                _ = api.SendAPI($"channels/{convo_id}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null });
                 await socket.ConnectAsync();
             });
 
@@ -62,25 +64,31 @@ namespace Discord
                 d = new
                 {
                     guild_id = (string)null,
-                    channel_id = conversationId,
-                    self_mute = startMuted,
+                    channel_id = convo_id,
+                    self_mute = start_muted,
                     self_deaf = false,
-                    self_video = isVideo,
+                    self_video = is_video_call,
                     flags = 2
                 }
             });
 
             await WebSocketManager.SendPayload(voicePayloadJson);
 
-            if (await Task.WhenAny(tcs.Task, Task.Delay(5000)) != tcs.Task) // Discord hasn't initialized a call even after 5 seconds
+            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) // Discord hasn't initialized a call even after 5 seconds
                 return null;
 
-            var voiceEvent = await tcs.Task;
-            return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
+            var voiceEvent = await call_picked_up.Task;
+            return new ActiveCall(voiceEvent.SessionId, convo_id, is_video_call, new User[0]);
         }
 
-        public Task<bool> AnswerCall(ActiveCall call) => Task.FromResult(false);
-        public Task<bool> DeclineCall(ActiveCall call) => Task.FromResult(false);
+        public async Task<bool> AnswerCall(string convo_id) 
+        {
+            return true;
+        }
+        public async Task<bool> DeclineCall(string convo_id)
+        {
+            return true;
+        }
         public async Task<bool> SetMuted(ActiveCall call, bool muted)
         {
             _callSocket.SetMute(muted);

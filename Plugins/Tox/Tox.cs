@@ -748,19 +748,19 @@ namespace Tox
                 avFinished.TrySetResult(true);
         }
 
-        public async Task<ActiveCall> StartCall(string conversationId, bool isVideo, bool startMuted)
+        public async Task<ActiveCall> StartCall(string convo_id, bool is_video, bool start_muted)
         {
-            UInt32 cid = UInt32.Parse(conversationId);
+            UInt32 cid = UInt32.Parse(convo_id);
             avWaiter = new TaskCompletionSource<bool>();
             if (!toxav_call(av, cid, 64, 0, out Toxav_Err_Call err))
             {
-                ERR($"Failed to start a call with friend {conversationId}: {err}");
+                ERR($"Failed to start a call with friend {convo_id}: {err}");
                 avWaiter = null;
                 return null;
             }
 
             avACall = new CallStruct();
-            avACall.Identifier = UInt32.Parse(conversationId);
+            avACall.Identifier = UInt32.Parse(convo_id);
             avACall.Active = true;
             avACall.caller = new ToxCall(av, avACall.Identifier);
             avACall.caller.Start();
@@ -773,7 +773,7 @@ namespace Tox
                 return null;
             }
 
-            return new ActiveCall($"{conversationId}_{GUID()}", conversationId, isVideo, new User[0] );
+            return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0] );
         }
 
         public async Task<bool> EndCall(ActiveCall call)
@@ -788,8 +788,8 @@ namespace Tox
             return true;
         }
 
-        public async Task<bool> AnswerCall(ActiveCall call) => false;
-        public async Task<bool> DeclineCall(ActiveCall call) => false;
+        public async Task<bool> AnswerCall(string convo_id) => false;
+        public async Task<bool> DeclineCall(string convo_id) => false;
         public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
         public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
 

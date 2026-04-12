@@ -1157,7 +1157,7 @@ namespace Skymu.Skyaeris
             if (partner == null) { partner = dm.Partner; silent = false; }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
-            screen = new CallScreen(partner, Universal.CallPlugin, initial_location, silent);
+            screen = new CallScreen(partner, initial_location, silent);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();

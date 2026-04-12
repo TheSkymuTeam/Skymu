@@ -50,20 +50,17 @@ namespace Skymu.Views
         private bool _silent;
         private bool _hangUpRequested = false;
         private ActiveCall _call;
-        private ICall plugin;
         private LocationChangeEventArgs location;
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;
 
         public CallScreen(
             User partner,
-            ICall call_plugin,
             CallScreen.LocationChangeEventArgs initial_location,
             bool silent = false
         )
         {
             InitializeComponent();
-            plugin = call_plugin;
             if (Universal.CurrentUser.ProfilePicture != null)
                 MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             if (partner.ProfilePicture != null)
@@ -123,7 +120,7 @@ namespace Skymu.Views
                 }
             });
 
-            ActiveCall call = await plugin.StartCall(conversation.Identifier, is_video, true);
+            ActiveCall call = await Universal.CallPlugin.StartCall(conversation.Identifier, is_video, true);
 
             if (_hangUpRequested) return; // in case user has already hung up before the call is established
 
@@ -199,7 +196,7 @@ namespace Skymu.Views
                 MuteButton.Source = muted;
             else
                 MuteButton.Source = unmuted;
-            await plugin.SetMuted(_call, isMuted);
+            await Universal.CallPlugin.SetMuted(_call, isMuted);
         }
 
         private void OnSidebarToggled(object sender, MouseButtonEventArgs e)
@@ -249,7 +246,7 @@ namespace Skymu.Views
             Sounds.StopPlayback("call-out");
             Sounds.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
-            _ = plugin.EndCall(_call);
+            _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;
             Sounds.Play("call-end", true);

@@ -811,7 +811,7 @@ namespace Skymu.Pontis
 
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
-            screen = new CallScreen(dm.Partner, Universal.CallPlugin, initial_location);
+            screen = new CallScreen(dm.Partner, initial_location);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();

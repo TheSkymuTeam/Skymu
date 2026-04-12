@@ -29,40 +29,57 @@ namespace Skymu.Views
     public partial class IncomingCall : Window
     {
         public EventHandler Answered;
+        public CallEventArgs call;
 
         public IncomingCall(CallEventArgs e)
         {
             InitializeComponent();
+            call = e;
             var animation = new DoubleAnimation
-            {
-                From = 0.8,
-                To = 0.4,
-                Duration = TimeSpan.FromSeconds(1.0),
+            { 
+                From = 1,
+                To = 0.7,
+                Duration = TimeSpan.FromSeconds(1.5),
                 AutoReverse = true,
                 RepeatBehavior = RepeatBehavior.Forever,
                 EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut }
             };
             BeginAnimation(OpacityProperty, animation);
             Sounds.PlayLoop("call-in");
-            if (e.Caller.ProfilePicture != null) CallerAvatar.Source = FrozenImage.GenerateFromArray(e.Caller.ProfilePicture);
+            if (call.Caller.ProfilePicture != null) CallerAvatar.Source = FrozenImage.GenerateFromArray(call.Caller.ProfilePicture);
             else CallerAvatar.Source = Universal.AnonymousAvatar;
-            CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", e.Caller.DisplayName);
+            CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", call.Caller.DisplayName);
         }
 
         private void OnClose(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            OnDecline(sender, e); // close does not minimize for now. TODO add this
+            Sounds.StopPlayback("call-in");
+            Close();
         }
 
         private void OnAnswer(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Answered?.Invoke(this, new EventArgs());
-            OnDecline(sender, e);
+            Sounds.StopPlayback("call-in");
+            Close();
+        }
+
+        private void OnDrag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var source = e.OriginalSource as DependencyObject;
+            while (source != null)
+            {
+                if (source is FrameworkElement fe && (string)fe.Tag == "NoDrag") return;
+                source = VisualTreeHelper.GetParent(source);
+            }
+            DragMove();
         }
 
         private void OnDecline(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             Sounds.StopPlayback("call-in");
+            _ = Universal.CallPlugin.DeclineCall(call.ConversationId);
+            Sounds.Play("call-end", true);
             Close();
         }
     }
