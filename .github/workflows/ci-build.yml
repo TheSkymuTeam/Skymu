@@ -27,7 +27,7 @@ jobs:
       run: dotnet build MiddleMan/MiddleMan.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
     - name: 2. Build Entire Solution
-      run: dotnet build Skymu.sln --configuration Release -r win-${{ matrix.architecture }} --no-restore --self-contained false
+      run: dotnet build Skymu.sln --configuration Release -p:RuntimeIdentifier=win-${{ matrix.architecture }} --no-restore --self-contained false
 
     - name: 3. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
