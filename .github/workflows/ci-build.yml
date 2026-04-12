@@ -36,15 +36,12 @@ jobs:
       run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
     - name: 4. Build NSIS
-      uses: joncloud/makensis-action@v5.0
-      with:
-        arguments: "/V3"
-        script-file: "NSIS/SkymuSetup.nsi"
+      run: makensis NSIS/SkymuNightlySetup.nsi
       
     - name: 5. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
       with:
         # Separate the names so the x86 and x64 files don't overwrite each other
         name: nightly-build-${{ matrix.architecture }}
-        path: 'NSIS/SkymuSetup.exe'
+        path: 'NSIS/SkymuNightlySetup.exe'
         retention-days: 7
