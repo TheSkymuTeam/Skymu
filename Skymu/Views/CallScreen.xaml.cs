@@ -47,7 +47,7 @@ namespace Skymu.Views
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
-        private bool _silent;
+        private bool _is_answer;
         private bool _hangUpRequested = false;
         private ActiveCall _call;
         private LocationChangeEventArgs location;
@@ -57,7 +57,7 @@ namespace Skymu.Views
         public CallScreen(
             User partner,
             CallScreen.LocationChangeEventArgs initial_location,
-            bool silent = false
+            bool is_answering_call = false
         )
         {
             InitializeComponent();
@@ -65,8 +65,8 @@ namespace Skymu.Views
                 MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             if (partner.ProfilePicture != null)
                 PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
-            _silent = silent;
-            if (_silent) CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
+            _is_answer = is_answering_call;
+            if (_is_answer) CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
             MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
             PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
             PartnerDisplayName.Text = partner.DisplayName;
@@ -113,7 +113,7 @@ namespace Skymu.Views
             _ = Task.Run(async () =>
             {
                 await Sounds.PlayAsync("call-init", token);
-                if (_silent) return;
+                if (_is_answer) return;
                 while (!token.IsCancellationRequested)
                 {
                     await Sounds.PlayAsync("call-out", token);

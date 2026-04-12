@@ -66,7 +66,7 @@ namespace Discord.Helpers
             byte[] data = null;
             try
             {
-                using var stream = await Core.api.client.GetStreamAsync(url).ConfigureAwait(false);
+                using var stream = await Core.Client.client.GetStreamAsync(url).ConfigureAwait(false);
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 data = ms.ToArray();
@@ -106,7 +106,7 @@ namespace Discord.Helpers
             if (user != null)
                 return user.DisplayName ?? id;
 
-            string userData = await Core.api.SendAPI($"/users/{id}/profile", HttpMethod.Get, token, null, null, null, null);
+            string userData = await Core.Client.Send($"/users/{id}/profile", HttpMethod.Get, token, null, null, null, null);
             try
             {
                 using (JsonDocument doc = JsonDocument.Parse(userData))

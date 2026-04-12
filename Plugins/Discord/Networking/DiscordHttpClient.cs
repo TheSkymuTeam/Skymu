@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace Discord.Networking
 {
-    internal class API 
+    internal class DiscordHttpClient 
     {
         private readonly ConfigManager ConfigManager = new ConfigManager();
 
@@ -34,7 +34,7 @@ namespace Discord.Networking
         public string XSuperProperties = null;
         public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
 
-        internal API()
+        internal DiscordHttpClient()
         {
             var handler = new HttpClientHandler()
             {
@@ -57,7 +57,7 @@ namespace Discord.Networking
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
-        public async Task<string> SendAPI(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
+        public async Task<string> Send(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
         {
             string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint.TrimStart('/');
             // Debug.WriteLine(url);

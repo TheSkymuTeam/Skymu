@@ -477,7 +477,7 @@ namespace Tox
             
         #region Populate
         
-        public async Task<bool> PopulateSidebarInformation()
+        public async Task<bool> PopulateUserInformation()
         {
             uiContext = SynchronizationContext.Current;
             MyInformation = currentUser;
@@ -788,7 +788,10 @@ namespace Tox
             return true;
         }
 
-        public async Task<bool> AnswerCall(string convo_id) => false;
+        public async Task<ActiveCall> AnswerCall(string convo_id)
+        {
+            return await StartCall(convo_id, false, true); // TODO do this properly 
+        }
         public async Task<bool> DeclineCall(string convo_id) => false;
         public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
         public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;

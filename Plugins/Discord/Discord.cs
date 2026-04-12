@@ -31,104 +31,14 @@ namespace Discord
 {
     public class Core : ICore, ICall
     {
+        #region Variables and plugin metadata
+
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
-        public bool SupportsVideoCalls => false; // not yet
         private CallSocket _callSocket = null;
-        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
-        {
-            var call_established = new TaskCompletionSource<bool>();
-            var call_picked_up = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
-
-            WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
-            {
-                call_established.TrySetResult(true);
-                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, convo_id, start_muted);
-                socket.OnCallEstablished += () => call_picked_up.TrySetResult(e);
-                socket.OnHangUp += () =>
-                {
-                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Ended));
-                };
-                socket.OnCallFailed += reason =>
-                {
-                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Failed, reason));
-                };
-                _callSocket = socket;
-                _ = api.SendAPI($"channels/{convo_id}/call/ring", HttpMethod.Post, DscToken, new { recipients = (string[])null });
-                await socket.ConnectAsync();
-            });
-
-            string voicePayloadJson = JsonSerializer.Serialize(new
-            {
-                op = 4,
-                d = new
-                {
-                    guild_id = (string)null,
-                    channel_id = convo_id,
-                    self_mute = start_muted,
-                    self_deaf = false,
-                    self_video = is_video_call,
-                    flags = 2
-                }
-            });
-
-            await WebSocketManager.SendPayload(voicePayloadJson);
-
-            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) // Discord hasn't initialized a call even after 5 seconds
-                return null;
-
-            var voiceEvent = await call_picked_up.Task;
-            return new ActiveCall(voiceEvent.SessionId, convo_id, is_video_call, new User[0]);
-        }
-
-        public async Task<bool> AnswerCall(string convo_id) 
-        {
-            return true;
-        }
-        public async Task<bool> DeclineCall(string convo_id)
-        {
-            return true;
-        }
-        public async Task<bool> SetMuted(ActiveCall call, bool muted)
-        {
-            _callSocket.SetMute(muted);
-            await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
-            {
-                op = 4,
-                d = new
-                {
-                    guild_id = (string)null,
-                    channel_id = call.ConversationId,
-                    self_mute = muted,
-                    self_deaf = false
-                }
-            }));
-            return true;
-        }
-
-        public async Task<bool> EndCall(ActiveCall call)
-        {
-            try
-            {
-                await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
-                {
-                    op = 4,
-                    d = new
-                    {
-                        guild_id = (string)null,
-                        channel_id = (string)null,
-                        self_mute = false,
-                        self_deaf = false
-                    }
-                }));
-                _callSocket.WSDispose();
-            }
-            catch (Exception ex) { Debug.WriteLine("[CALL-END] Exception while ending call: " + ex.Message); }
-            return true;
-        }
-        public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
         // Plugin details
+        public bool SupportsVideoCalls => false; // not yet
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
@@ -149,11 +59,11 @@ namespace Discord
 
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
-        private string DscToken;
-        // We reuse this to avoid creating more API instances, which is quite heavy
-        internal static readonly API api = new API();
-        private ProtoSettings protoSettings;
-        internal AuthSocket socket = new AuthSocket();
+        private string DiscordToken;
+        // We reuse this to avoid creating more DiscordHttpClient instances, which is quite heavy
+        internal static readonly DiscordHttpClient Client = new DiscordHttpClient();
+        private ProtoSettings proto;
+        internal AuthSocket authSocket = new AuthSocket();
         // Track the active channel ID for real-time updates
         private string _activeChannelId;
         public SynchronizationContext _uiContext;
@@ -203,10 +113,14 @@ namespace Discord
             Servers
         }
 
+        #endregion
+
+        #region Authentication and basic plugin init
+
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             if (authType == AuthenticationMethod.Token)
-                DscToken = username;
+                DiscordToken = username;
             else if (authType == AuthenticationMethod.QRCode)
                 return LoginResult.TwoFARequired;
             else
@@ -215,19 +129,17 @@ namespace Discord
             return await StartClient();
         }
 
-        public async Task<string> GetQRCode()
+        public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
-            var tcs = new TaskCompletionSource<string>();
-            EventHandler<string> handler = null;
-            handler = (sender, message) =>
+            DiscordToken = credential.PasswordOrToken;
+            if (string.IsNullOrWhiteSpace(DiscordToken))
             {
-                socket.QRCodeGenerated -= handler;
-                tcs.SetResult(message);
-            };
-            socket.QRCodeGenerated += handler;
-            await socket.StartSocket();
-            return await tcs.Task;
+                return LoginResult.Failure;
+            }
+
+            return await StartClient().ConfigureAwait(false);
         }
+
 
         public Task<LoginResult> AuthenticateTwoFA(string code)
         {
@@ -237,36 +149,39 @@ namespace Discord
             completedHandler = async (sender, message) =>
             {
                 // Unsubscribe both handlers
-                socket.TokenRecieved -= completedHandler;
+                authSocket.TokenRecieved -= completedHandler;
 
-                DscToken = message;
+                DiscordToken = message;
                 var loginResult = await StartClient();
                 tcs.SetResult(loginResult);
             };
-            socket.TokenRecieved += completedHandler;
+            authSocket.TokenRecieved += completedHandler;
 
             return tcs.Task;
         }
 
-        public async Task<LoginResult> Authenticate(SavedCredential credential)
+        public async Task<string> GetQRCode()
         {
-            DscToken = credential.PasswordOrToken;
-            if (string.IsNullOrWhiteSpace(DscToken))
+            var tcs = new TaskCompletionSource<string>();
+            EventHandler<string> handler = null;
+            handler = (sender, message) =>
             {
-                return LoginResult.Failure;
-            }
-
-            return await StartClient().ConfigureAwait(false);
+                authSocket.QRCodeGenerated -= handler;
+                tcs.SetResult(message);
+            };
+            authSocket.QRCodeGenerated += handler;
+            await authSocket.StartSocket();
+            return await tcs.Task;
         }
 
         public Task<SavedCredential> StoreCredential()
         {
-            return Task.FromResult(new SavedCredential(_currentUser, DscToken, AuthenticationMethod.Token, InternalName));
+            return Task.FromResult(new SavedCredential(_currentUser, DiscordToken, AuthenticationMethod.Token, InternalName));
         }
 
         public async Task<LoginResult> StartClient()
         {
-            string userCheckTkn = await api.SendAPI(USERS_ME, HttpMethod.Get, DscToken, null, null, null).ConfigureAwait(false);
+            string userCheckTkn = await Client.Send(USERS_ME, HttpMethod.Get, DiscordToken, null, null, null).ConfigureAwait(false);
             if (userCheckTkn.Contains("username"))
             {
                 // Parse and store details
@@ -302,32 +217,32 @@ namespace Discord
             }
         }
 
-        public async Task<bool> PopulateSidebarInformation()
+        public async Task<bool> PopulateUserInformation()
         {
             try
             {
-                WebSocketManager.EnsureConnected(DscToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
+                WebSocketManager.EnsureConnected(DiscordToken, OnWebSocketMessageReceived, this); // fixes the websocket bug YEAAAAAAAAA
                 WebSocketManager.SubscribeIncomingCall((sender, data) =>
                 {
                     string channelId = data["channel_id"]?.GetValue<string>(); // Discord doesn't seem to give us the user ID of the person doing the ringing, oh well
-                if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
-                if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
-                string callerId = data["ongoing_rings"]?[_currentUser?.Identifier]?.GetValue<string>(); // who's ringing the current user?
-                OnIncomingCall?.Invoke(this, new CallEventArgs(channelId, CallState.Ringing, UserStore.Get(callerId)));
+                    if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
+                    if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
+                    string callerId = data["ongoing_rings"]?[_currentUser?.Identifier]?.GetValue<string>(); // who's ringing the current user?
+                    OnIncomingCall?.Invoke(this, new CallEventArgs(channelId, CallState.Ringing, UserStore.Get(callerId)));
                 });
                 _uiContext = SynchronizationContext.Current;
-                
 
-                protoSettings = new ProtoSettings(DscToken);
+
+                proto = new ProtoSettings(DiscordToken);
             }
             catch (Exception ex) { OnError?.Invoke(this, new PluginMessageEventArgs("Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
             JsonObject parsedDetails = null;
             try
             {
-                string userDetails = await api.SendAPI(
+                string userDetails = await Client.Send(
                     USERS_ME,
                     HttpMethod.Get,
-                    DscToken,
+                    DiscordToken,
                     null, null, null).ConfigureAwait(false);
 
                 parsedDetails = JsonNode.Parse(userDetails).AsObject();
@@ -363,6 +278,10 @@ namespace Discord
                 return false;
             }
         }
+
+        #endregion
+
+        #region List population (contacts, servers, recents)
 
         public Task<bool> PopulateContactsList() => PopulateListsBackend(ListType.Contacts);
         public Task<bool> PopulateRecentsList() => PopulateListsBackend(ListType.Recents);
@@ -593,6 +512,10 @@ namespace Discord
             return true;
         }
 
+        #endregion
+
+        #region Fetching and sending messages
+
         public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             TypingUsersList.Clear();
@@ -608,7 +531,7 @@ namespace Discord
 
             try
             {
-                string encJson = await api.SendAPI(parameters, HttpMethod.Get, DscToken, null, null, null);
+                string encJson = await Client.Send(parameters, HttpMethod.Get, DiscordToken, null, null, null);
                 var parsed = JsonNode.Parse(encJson);
 
                 if (parsed is not JsonArray messages)
@@ -696,7 +619,7 @@ namespace Discord
                     }
                 }
 
-                string msgResponse = await api.SendAPI($"/channels/{channelId}/messages", HttpMethod.Post, DscToken, payloadJson, attachment != null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
+                string msgResponse = await Client.Send($"/channels/{channelId}/messages", HttpMethod.Post, DiscordToken, payloadJson, attachment != null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);
                 return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
             }
             catch (Exception ex)
@@ -706,10 +629,14 @@ namespace Discord
             }
         }
 
+        #endregion
+
+        #region Protocol Buffers
+
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
         {
-            protoSettings._proto = await protoSettings.FetchProtoSettings();
-            protoSettings._proto.Status.Status = status switch
+            proto._proto = await proto.FetchProtoSettings();
+            proto._proto.Status.Status = status switch
             {
                 UserConnectionStatus.Online => "online",
                 UserConnectionStatus.Away => "idle",
@@ -718,17 +645,21 @@ namespace Discord
                 UserConnectionStatus.Offline => "offline",
                 _ => "offline"
             };
-            return await protoSettings.UpdateProtoSettings(protoSettings._proto);
+            return await proto.UpdateProtoSettings(proto._proto);
         }
 
         public async Task<bool> SetTextStatus(string custStatus)
         {
             if (String.IsNullOrEmpty(custStatus)) return false;
 
-            protoSettings._proto = await protoSettings.FetchProtoSettings();
-            protoSettings._proto.Status.CustomStatus.Text = custStatus;
-            return await protoSettings.UpdateProtoSettings(protoSettings._proto);
+            proto._proto = await proto.FetchProtoSettings();
+            proto._proto.Status.CustomStatus.Text = custStatus;
+            return await proto.UpdateProtoSettings(proto._proto);
         }
+
+        #endregion
+
+        #region WebSocket message handling
 
         private bool CheckIfGuildChannel(HelperClasses.DiscordMessageReceivedEventArgs e)
         {
@@ -749,50 +680,153 @@ namespace Discord
 
         private void OnWebSocketMessageReceived(object sender, HelperClasses.DiscordMessageReceivedEventArgs e)
         {
-            _uiContext?.Post(_ =>
+            try
             {
-                try
+                switch (e.EventType)
                 {
-                    switch (e.EventType)
-                    {
-                        case MessageEventType.Create:
-                            {
-                                var typingUser = TypingUsersList
-                                    .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
-                                if (typingUser != null)
-                                    TypingUsersList.Remove(typingUser);
-                                if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
-                                    users.Remove(e.Sender.Identifier);
+                    case MessageEventType.Create:
+                        {
+                            var typingUser = TypingUsersList
+                                .FirstOrDefault(u => u.Identifier == e.Sender.Identifier);
+                            if (typingUser != null)
+                                TypingUsersList.Remove(typingUser);
+                            if (_typingUsersPerChannel.TryGetValue(e.ChannelId, out var users))
+                                users.Remove(e.Sender.Identifier);
 
-                                var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
-                                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message, CheckIfGuildChannel(e)));
-                                break;
-                            }
-                        case MessageEventType.Update:
-                            {
-                                var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
-                                MessageEvent?.Invoke(this, new MessageEditedEventArgs(e.ChannelId, e.Identifier, message));
-                                break;
-                            }
-                        case MessageEventType.Delete:
-                            {
-                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
-                                break;
-                            }
-                        case MessageEventType.BulkDelete:
-                            {
-                                foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
-                                    MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
-                                break;
-                            }
-                    }
+                            var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
+                            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(e.ChannelId, message, CheckIfGuildChannel(e)));
+                            break;
+                        }
+                    case MessageEventType.Update:
+                        {
+                            var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
+                            MessageEvent?.Invoke(this, new MessageEditedEventArgs(e.ChannelId, e.Identifier, message));
+                            break;
+                        }
+                    case MessageEventType.Delete:
+                        {
+                            MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, e.Identifier));
+                            break;
+                        }
+                    case MessageEventType.BulkDelete:
+                        {
+                            foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
+                                MessageEvent?.Invoke(this, new MessageDeletedEventArgs(e.ChannelId, id));
+                            break;
+                        }
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Message event handling error: {ex.Message}");
-                }
-            }, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Message event handling error: {ex.Message}");
+            }
         }
+
+#endregion
+
+        #region Calling functionality
+
+        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
+        {
+            return await InitiateCall(false, convo_id, is_video_call, start_muted);
+        }
+
+        public async Task<ActiveCall> AnswerCall(string convo_id)
+        {
+            return await InitiateCall(true, convo_id);
+        }
+
+        public async Task<ActiveCall> InitiateCall(bool is_answering_call, string convo_id, bool is_video_call = false, bool start_muted = true)
+        {
+            var call_established = new TaskCompletionSource<bool>();
+            var call_picked_up = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
+
+            WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
+            {
+                await Client.Send($"channels/{convo_id}/call/ring", HttpMethod.Post, DiscordToken, new { recipients = (string[])null });
+                call_established.TrySetResult(true);
+                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, convo_id, start_muted);
+                socket.OnCallEstablished += () => call_picked_up.TrySetResult(e);
+                socket.OnHangUp += () =>
+                {
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Ended));
+                };
+                socket.OnCallFailed += reason =>
+                {
+                    OnCallStateChanged?.Invoke(this, new CallEventArgs(convo_id, CallState.Failed, reason));
+                };
+                _callSocket = socket;
+                await socket.ConnectAsync();
+            });
+
+            string voicePayloadJson = JsonSerializer.Serialize(new
+            {
+                op = 4,
+                d = new
+                {
+                    guild_id = (string)null,
+                    channel_id = convo_id,
+                    self_mute = start_muted,
+                    self_deaf = false,
+                    self_video = is_video_call,
+                    flags = 2
+                }
+            });
+
+            await WebSocketManager.SendPayload(voicePayloadJson);
+            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) // Discord hasn't initialized a call even after 5 seconds
+                return null;
+
+            var voiceEvent = await call_picked_up.Task;
+            return new ActiveCall(voiceEvent.SessionId, convo_id, is_video_call, new User[0]);
+        }
+        public async Task<bool> DeclineCall(string convo_id)
+        {
+            await EndCall(null);
+            return true;
+        }
+        public async Task<bool> SetMuted(ActiveCall call, bool muted)
+        {
+            _callSocket.SetMute(muted);
+            await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
+            {
+                op = 4,
+                d = new
+                {
+                    guild_id = (string)null,
+                    channel_id = call.ConversationId,
+                    self_mute = muted,
+                    self_deaf = false
+                }
+            }));
+            return true;
+        }
+
+        public async Task<bool> EndCall(ActiveCall call)
+        {
+            try
+            {
+                await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
+                {
+                    op = 4,
+                    d = new
+                    {
+                        guild_id = (string)null,
+                        channel_id = (string)null,
+                        self_mute = false,
+                        self_deaf = false
+                    }
+                }));
+                _callSocket.WSDispose();
+            }
+            catch (Exception ex) { Debug.WriteLine("[CALL-END] Exception while ending call: " + ex.Message); }
+            return true;
+        }
+        public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
+
+        #endregion
+
+        #region Getters
 
         public string GetActiveChannelID() { return _activeChannelId; }
 
@@ -808,6 +842,10 @@ namespace Discord
             // Return the generated result
             return DateTimeOffset.FromUnixTimeMilliseconds(epochTimestamp).LocalDateTime;
         }
+
+        #endregion
+
+        #region Disposal
 
         public void Dispose()
         {
@@ -825,5 +863,7 @@ namespace Discord
             _recentChannelMap = new Dictionary<string, string>();
             UserIdToChannelId = new Dictionary<string, string>();
         }
+
+        #endregion
     }
 }

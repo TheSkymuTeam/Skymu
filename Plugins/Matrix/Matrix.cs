@@ -367,7 +367,7 @@ namespace Matrix
             new ObservableCollection<Conversation>();
         public ObservableCollection<Server> ServerList { get; private set; }
 
-        public Task<bool> PopulateSidebarInformation()
+        public Task<bool> PopulateUserInformation()
         {
             _uiContext = SynchronizationContext.Current;
             MyInformation = _user;

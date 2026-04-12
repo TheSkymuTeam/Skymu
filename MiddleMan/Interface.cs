@@ -647,7 +647,7 @@ namespace MiddleMan
             string parent_message_identifier = null
         ); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
-        Task<bool> PopulateSidebarInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
+        Task<bool> PopulateUserInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         ObservableCollection<DirectMessage> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Conversation> RecentsList { get; } // field for recents list, ideally bound to a WebSocket or similar for real-time updates.
         ObservableCollection<Server> ServerList { get; } // field for server list, ideally bound to a WebSocket or similar for real-time updates.
@@ -675,7 +675,7 @@ namespace MiddleMan
         event EventHandler<CallEventArgs> OnCallStateChanged;
 
         Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted);
-        Task<bool> AnswerCall(string convo_id);
+        Task<ActiveCall> AnswerCall(string convo_id);
         Task<bool> DeclineCall(string convo_id);
         Task<bool> EndCall(ActiveCall call);
         Task<bool> SetMuted(ActiveCall call, bool muted);
