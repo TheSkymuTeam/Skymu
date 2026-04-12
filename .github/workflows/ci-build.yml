@@ -26,10 +26,13 @@ jobs:
       # -r (runtime) specifies the architecture, which overrides "Any CPU"
       run: dotnet build MiddleMan/MiddleMan.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
-    - name: 2. Build Entire Solution
-      run: dotnet build Skymu.sln --configuration Release -p:RuntimeIdentifier=win-${{ matrix.architecture }} --no-restore --self-contained false
+    - name: 2. Build Plugins
+      run: dotnet build Plugins/**/*.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+    
+    - name: 3. Build Skymu
+      run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
-    - name: 3. Export Release Folder to Artifacts
+    - name: 4. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
       with:
         # Separate the names so the x86 and x64 files don't overwrite each other
