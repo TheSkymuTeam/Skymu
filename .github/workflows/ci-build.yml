@@ -36,7 +36,10 @@ jobs:
       run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
     - name: 4. Build NSIS
-      run: makensis NSIS\SkymuSetup.nsi
+      uses: joncloud/makensis-action@v5.0
+      with:
+        arguments: "/V3"
+        script-file: "NSIS/SkymuSetup.nsi"
       
     - name: 5. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
