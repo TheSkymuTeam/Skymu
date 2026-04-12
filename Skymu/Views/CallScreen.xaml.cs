@@ -119,7 +119,7 @@ namespace Skymu.Views
                 if (_silent) return;
                 while (!token.IsCancellationRequested)
                 {
-                    await Sounds.PlayAsync("call-reconnect", token);
+                    await Sounds.PlayAsync("call-out", token);
                 }
             });
 
@@ -128,7 +128,7 @@ namespace Skymu.Views
             if (_hangUpRequested) return; // in case user has already hung up before the call is established
 
             _ringCts.Cancel();   
-            Sounds.StopPlayback("call-reconnect");   
+            Sounds.StopPlayback("call-out");   
             Sounds.StopPlayback("call-init");
 
             if (call == null)
@@ -246,7 +246,7 @@ namespace Skymu.Views
         {
             _hangUpRequested = true;
             _ringCts?.Cancel();
-            Sounds.StopPlayback("call-reconnect");
+            Sounds.StopPlayback("call-out");
             Sounds.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
             _ = plugin.EndCall(_call);
