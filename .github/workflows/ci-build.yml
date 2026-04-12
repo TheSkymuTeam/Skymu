@@ -33,7 +33,7 @@ jobs:
         }
     
     - name: 3. Build Skymu
-      run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+      run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} --self-contained false
 
     - name: 4. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
