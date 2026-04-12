@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matrix", "Plugins\Matrix\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stub", "Plugins\Stub\Stub.csproj", "{A3162020-D14E-4C12-9C1C-F1ED89C98023}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tox", "Plugins\Tox\Tox.csproj", "{DDE64A87-29EC-1573-F99C-3DB9CC076F43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tox", "Plugins\Tox\Tox.csproj", "{DDE64A87-29EC-1573-F99C-3DB9CC076F43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

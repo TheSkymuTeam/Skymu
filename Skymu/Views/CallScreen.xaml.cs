@@ -133,7 +133,7 @@ namespace Skymu.Views
 
             if (call == null)
             {
-                Sounds.Play("call-error");
+                Sounds.Play("call-error", true);
                 HangUpRequested(this, EventArgs.Empty);
             }
             else
@@ -250,9 +250,9 @@ namespace Skymu.Views
             Sounds.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
             _ = plugin.EndCall(_call);
-            Sounds.Play("call-end");
             _callTimer?.Stop();
             _callTimer = null;
+            Sounds.Play("call-end", true);
             HangUpRequested(this, EventArgs.Empty);
         }
 

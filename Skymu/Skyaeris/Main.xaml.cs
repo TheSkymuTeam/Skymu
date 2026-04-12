@@ -155,11 +155,13 @@ namespace Skymu.Skyaeris
 
         #region Home and Chat window switching
 
-        private void SetWindow(WindowType type)
+        private void SetWindow(WindowType type, bool force = false)
         {
-            if (type == current_window)
+            if (type == current_window && !force)
                 return;
 
+            bool group = vmodel.SelectedConversation is Group ? true : false;
+            bool server = vmodel.SelectedConversation is ServerChannel ? true : false;
             current_window = type;
             switch (type)
             {
@@ -185,6 +187,16 @@ namespace Skymu.Skyaeris
                     ToggleStatusBoxSelection(false);
                     StatusBox.SetState(ButtonVisualState.Default);
 
+                    if (group)
+                    {
+                        VideoCallButton.Visibility = Visibility.Collapsed;
+                        CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
+                    }
+                    else if (server)
+                    {
+                        VideoCallButton.Visibility = Visibility.Collapsed;
+                        CallButton.Visibility = Visibility.Collapsed;
+                    }
                     HomeTopbar.Visibility = Visibility.Collapsed;
                     ChatTopbar.Visibility = Visibility.Visible;
                     ChatProfileArea.Visibility = Visibility.Visible;
@@ -1181,7 +1193,7 @@ namespace Skymu.Skyaeris
                 if (FillMessagePanelHost.Content == frame)
                     FillMessagePanelHost.Content = null;
                 ContentArea.Visibility = Visibility.Visible;
-                SetWindow(WindowType.Chat);
+                SetWindow(WindowType.Chat, true);
             }
             else
             {

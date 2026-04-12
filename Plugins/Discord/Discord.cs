@@ -41,7 +41,7 @@ namespace Discord
 
             WebSocketManager.SubscribeVoiceServerUpdated(async (sender, e) =>
             {
-                var socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted, DscToken);
+                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversationId, startMuted);
                 socket.OnCallEstablished += () => tcs.TrySetResult(e);
                 socket.OnHangUp += () =>
                 {
@@ -71,6 +71,9 @@ namespace Discord
             });
 
             await WebSocketManager.SendPayload(voicePayloadJson);
+
+            if (await Task.WhenAny(tcs.Task, Task.Delay(5000)) != tcs.Task) // Discord hasn't initialized a call even after 5 seconds
+                return null;
 
             var voiceEvent = await tcs.Task;
             return new ActiveCall(voiceEvent.SessionId, conversationId, isVideo, new User[0]);
