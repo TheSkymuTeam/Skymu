@@ -239,6 +239,9 @@
 	  <Page Update="Pontis\Main.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
+	  <Page Update="Views\IncomingCall.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
