@@ -66,7 +66,7 @@ namespace Tox
         bool disposed = false;
         internal string profile;
         internal FileStream profilelock;
-        string savepass;
+        internal string savepass;
         IntPtr tox;
         Timer toxTimer;
         internal Dictionary<UInt32, byte[]> transfers = new Dictionary<UInt32, byte[]>();
@@ -80,6 +80,10 @@ namespace Tox
         IntPtr user_data;
 
         public void Dispose()
+        {
+            dispose();
+        }
+        private void dispose(bool save = true)
         {
             disposed = true;
 
@@ -99,14 +103,15 @@ namespace Tox
             }
             toxav_kill(av);
             toxTimer?.Dispose();
-            try
-            {
-                SAVE();
-            }
-            catch (Exception e)
-            { // I don't even know how you caused this.. Do you have a direct access to kernel to mess stuff up?
-                ERR("An error occured trying to save profile. Stuff you did is lost. "+e);
-            }
+            if (save)
+                try
+                {
+                    SAVE();
+                }
+                catch (Exception e)
+                {
+                    ERR("An error occured trying to save profile. Some of your progress is lost. "+e);
+                }
             tox_kill(tox);
             Debug.WriteLine("Tox: Flushed Tox");
             try
@@ -120,7 +125,6 @@ namespace Tox
                 ERR("An error occured trying to release profile lock. "+e);
             }
             cbs.Dispose();
-            cbs = null;
 
             activecid = null;
             avACall = new CallStruct();
@@ -247,19 +251,21 @@ namespace Tox
             return null;
         }
 
-        const string FileLockedErr = "Tox profile is locked. Are you running an another instance of this program, or an another Tox client?";
+        const string FileLockedErrS = "Tox profile is locked";
+        const string FileLockedErrE = ". Are you running an another instance of this program, or an another Tox client?";
+        const string FileLockedErr = FileLockedErrS + FileLockedErrE;
         async Task<LoginResult> StartClient()
         {
             IntPtr opt = tox_options_new(out Tox_Err_Options_New oerr);
             cbs.LogInit(opt);
 
             bool newprofile = false;
-            #region .tox file mess
             string path = Path.Combine(toxDir, profile + ".tox");
             string lockpath = Path.Combine(toxDir, profile + ".lock");
             if (File.Exists(path))
             {
                 byte[] data;
+                #region .tox and .lock file mess
                 try
                 { // Mess ahead - be careful
                     if (File.Exists(lockpath))
@@ -278,7 +284,7 @@ namespace Tox
                                         Process proc = Process.GetProcessById(pid);
                                         if (proc.ProcessName.ToLower().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName())
                                         {
-                                            ERR(FileLockedErr);
+                                            ERR(FileLockedErrS + " by " + locklines[1] +FileLockedErrE);
                                             return LoginResult.Failure;
                                         }
                                     }
@@ -297,8 +303,6 @@ namespace Tox
                         File.Delete(lockpath);
                     }
                     data = File.ReadAllBytes(path);
-                    profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-                    File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
                 }
                 catch (IOException e)
                 {
@@ -307,20 +311,68 @@ namespace Tox
                     ERR(FileLockedErr);
                     return LoginResult.Failure; 
                 }
-                profilelock.Lock(0, 0);
+                #endregion
                 tox_options_set_savedata_type(opt, Tox_Savedata_Type.TOX_SAVE);
+
+                if (!String.IsNullOrEmpty(savepass))
+                {
+                    FileStream file = File.OpenRead(path);
+                    byte[] esave = new byte[tox_pass_encryption_extra_length()];
+                    file.Read(esave, 0, (int)tox_pass_encryption_extra_length());
+                    file.Close();
+                    profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                    profilelock.Lock(0, 0);
+                    File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
+                    byte[] salt = new byte[tox_pass_salt_length()];
+                    IntPtr key;
+                    Tox_Err_Key_Derivation kerr;
+                    if (tox_get_salt(esave, salt, out Tox_Err_Get_Salt err))
+                    {
+                        key = tox_pass_key_derive_with_salt(savepass, (UIntPtr)savepass.Length, salt, out kerr);
+                    }
+                    else
+                    {
+                        key = tox_pass_key_derive(savepass, (UIntPtr)savepass.Length, out kerr);
+                    }
+                    if (kerr != Tox_Err_Key_Derivation.OK)
+                    {
+                        ERR("Failed to derive key for decrypting the save:" + kerr);
+                        return LoginResult.Failure;
+                    }
+                    else
+                    {
+                        byte[] edata = data;
+                        data = new byte[data.Length - tox_pass_encryption_extra_length()];
+                        if (!tox_pass_key_decrypt(key, edata, (UIntPtr)edata.Length, data, out Tox_Err_Decryption derr))
+                        {
+                            ERR("Failed to decrypt profile. Incorrect password? Error: " + PTSA(tox_err_decryption_to_string(derr)));
+                            dispose(false);
+                            return LoginResult.Failure;
+                        }
+                    }
+                }
+                else
+                {
+                    profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                    profilelock.Lock(0, 0);
+                    File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
+                }
+
                 tox_options_set_savedata_data(opt, data, (UIntPtr)data.Length);
                 tox_options_set_savedata_length(opt, (UIntPtr)data.Length);
             } else
             {
                 newprofile = true;
             }
-            #endregion
 
             tox = tox_new(opt, out Tox_Err_New nerr);
             if (nerr != Tox_Err_New.OK)
             {
-                ERR($"Failed to initialize Tox core: {PTSA(tox_err_new_to_string(nerr))}");
+                if (nerr == Tox_Err_New.LOAD_ENCRYPTED)
+                    ERR("Failed to load profile, with LOAD_ENCRYPTED. Is the profile encrypted?");
+                else
+                    ERR($"Failed to initialize Tox core: {PTSA(tox_err_new_to_string(nerr))}");
+                dispose(false);
                 return LoginResult.Failure;
             }
 
@@ -328,7 +380,7 @@ namespace Tox
             if (averr != Toxav_Err_New.OK)
             {
                 ERR($"Failed to initialize Toxav: {averr}");
-                Dispose();
+                dispose(false);
                 return LoginResult.Failure;
             }
 
@@ -348,7 +400,7 @@ namespace Tox
             if (!BootstrapSuccess)
             {
                 ERR("Failed to bootstrap with any of the specified nodes.");
-                Dispose();
+                dispose(false);
                 return LoginResult.Failure;
             }
             Debug.WriteLine("Tox: Bootstrapped with all specified nodes");
