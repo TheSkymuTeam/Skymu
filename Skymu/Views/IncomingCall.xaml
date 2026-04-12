@@ -68,7 +68,16 @@
                     Visibility="Visible" />
             </Grid>
             <Rectangle Grid.Row="1" Fill="#DDDDDD" />
-            <Grid Grid.Row="2" />
+
+            <Border Grid.Row="2" BorderThickness="10">
+                <Image
+                    x:Name="MyAvatar"
+                    Height="70"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/sensei_wu.jpg'}" />
+            </Border>
         </Grid>
     </Grid>
 </Window>
