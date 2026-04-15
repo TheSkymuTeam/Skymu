@@ -140,6 +140,11 @@ namespace Skymu.Preferences
             get => S("Interface", "Skyaeris");
             set => W("Interface", value, nameof(Interface));
         }
+        public static bool RoomCallUI
+        {
+            get => S("RoomCallUI", true);
+            set => W("RoomCallUI", value, nameof(RoomCallUI));
+        }
         public static string SkippedVersion
         {
             get => S("SkippedVersion", "");

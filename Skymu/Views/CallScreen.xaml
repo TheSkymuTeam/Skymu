@@ -39,7 +39,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="110" />
+                <RowDefinition x:Name="floor" Height="0" />
             </Grid.RowDefinitions>
             <!--  top gradient  -->
             <Image
@@ -48,8 +48,9 @@
                 Stretch="Fill" />
             <!--  bottom gradient  -->
             <Image
+                x:Name="bottom_gradient"
                 Grid.Row="1"
-                Opacity="0.6"
+                Opacity="1"
                 Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/gradient_bottom.png'}"
                 Stretch="Fill" />
             <Rectangle

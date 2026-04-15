@@ -20,6 +20,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Skymu.Preferences;
 using System.Windows.Threading;
 
 namespace Skymu.Views
@@ -92,10 +93,18 @@ namespace Skymu.Views
             screen_contract = FrozenImage.Generate(prefix + "Call Screen/btn_screen_contract.png");
             screen_expand = FrozenImage.Generate(prefix + "Call Screen/btn_screen_expand.png");
 
+
             isPillMode = !(this.ActualWidth >= 1025.0);
             isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
             Resized(null, null);
             location = initial_location;
+
+            if (Settings.RoomCallUI)
+            {
+                bottom_gradient.Opacity = 0.6;
+                floor.Height = new GridLength(110);
+            }
+
             SetButtonSource(SidebarButton, location.SidebarToggle);
             SetButtonSource(ChatButton, location.ChatToggle);
             SetButtonSource(FullscreenButton, isFullscreen);

@@ -336,7 +336,10 @@
                                             Margin="0,5"
                                             Content="Replace all dialog icons with 'Niko' from the game 'Oneshot'"
                                             IsChecked="{Binding Path=[NikoIcons], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
-
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Use the unreleased 'room-style' call UI from the mid-2012 Skype 5.5 mockups"
+                                            IsChecked="{Binding Path=[RoomCallUI], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
