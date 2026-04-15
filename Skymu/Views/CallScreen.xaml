@@ -9,6 +9,8 @@
     Title="CallScreen"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
     Background="#000"
     FontFamily="Arial"
     FontSize="15.5"
@@ -94,13 +96,13 @@
                     x:Name="PartnerAvatar"
                     Height="160"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/thegamingkart.jpg'}" />
+                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/man.png'}" />
                 <TextBlock
                     x:Name="PartnerDisplayName"
                     Margin="0,18,0,5"
                     FontWeight="Bold"
                     Foreground="White"
-                    Text="thegamingkart"
+                    Text="Jeffrey E. Epstein"
                     TextAlignment="Center" />
                 <TextBlock
                     x:Name="CallStatus"
@@ -124,7 +126,7 @@
                     x:Name="MyAvatar"
                     Height="160"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/sensei_wu.jpg'}" />
+                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/woman.png'}" />
             </StackPanel>
         </Grid>
 
