@@ -806,7 +806,9 @@
                     <TextBlock
                         x:Name="TitleMain"
                         Foreground="{StaticResource Text.HighContrast}"
-                        Style="{StaticResource TitlebarTextStyle}" />
+                        Style="{StaticResource TitlebarTextStyle}"
+                        Text="Skype™ - jeevacation"
+                        Visibility="Visible" />
                 </Grid>
             </StackPanel>
         </Grid>
