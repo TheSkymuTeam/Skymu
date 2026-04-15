@@ -34,15 +34,23 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.RowSpan="2" ClipToBounds="True">
+            <!--  Background  -->
             <Image
-                Margin="-10"
                 RenderOptions.BitmapScalingMode="HighQuality"
                 Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/background.png'}"
-                Stretch="Fill">
-                <Image.Effect>
-                    <BlurEffect Radius="20" />
-                </Image.Effect>
-            </Image>
+                Stretch="Fill" />
+
+            <Rectangle>
+                <Rectangle.Fill>
+                    <ImageBrush
+                        ImageSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/noise.png'}"
+                        Opacity="0.1"
+                        Stretch="None"
+                        TileMode="Tile"
+                        Viewport="0,0,32,32"
+                        ViewportUnits="Absolute" />
+                </Rectangle.Fill>
+            </Rectangle>
         </Grid>
         <Grid Grid.Row="0">
             <Image
