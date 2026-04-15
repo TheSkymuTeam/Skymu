@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Discord.Networking
@@ -57,7 +58,7 @@ namespace Discord.Networking
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
         }
 
-        public async Task<string> Send(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
+        public async Task<string> Send(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null, CancellationToken ctoken = default)
         {
             string url = "https://discord.com/api/v" + Core.API_VERSION + "/" + endpoint.TrimStart('/');
             // Debug.WriteLine(url);
@@ -107,10 +108,15 @@ namespace Discord.Networking
 
                 try
                 {
-                    using (HttpResponseMessage response = await client.SendAsync(request))
+                    ctoken.ThrowIfCancellationRequested();
+                    using (HttpResponseMessage response = await client.SendAsync(request, ctoken))
                     {
                         return await response.Content.ReadAsStringAsync();
                     }
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {

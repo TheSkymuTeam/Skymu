@@ -115,6 +115,30 @@ namespace Skymu.Pontis
 
         private void SetWindow(WindowType type, bool force = false)
         {
+            if (vmodel.SelectedConversation is Group)
+            {
+                VideoCallButton.Visibility = Visibility.Collapsed;
+                CallButton.IsEnabled = false;
+                CallDropdown.IsEnabled = false;
+                CallDropdown.Visibility = Visibility.Visible;
+                CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
+            }
+            else if (vmodel.SelectedConversation is ServerChannel)
+            {
+                VideoCallButton.Visibility = Visibility.Collapsed;
+                CallButton.Visibility = Visibility.Collapsed;
+                CallDropdown.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                VideoCallButton.Visibility = Visibility.Visible;
+                CallButton.Visibility = Visibility.Visible;
+                CallDropdown.Visibility = Visibility.Visible;
+                CallButton.IsEnabled = true;
+                CallDropdown.IsEnabled = true;
+                CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
+            }
+
             if (type == current_window && !force)
                 return;
 

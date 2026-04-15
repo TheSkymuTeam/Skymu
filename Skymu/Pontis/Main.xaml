@@ -1521,6 +1521,7 @@
                                         HorizontalAlignment="Left"
                                         Orientation="Horizontal">
                                         <global:SliceControl
+                                            x:Name="VideoCallButton"
                                             Width="Auto"
                                             Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             DefaultIndex="0"

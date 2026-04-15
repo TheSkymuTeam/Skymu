@@ -169,6 +169,7 @@ namespace Skymu.Skyaeris
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.Visibility = Visibility.Collapsed;
+                CallDropdown.Visibility = Visibility.Collapsed;
             }
             else
             {
