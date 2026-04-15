@@ -17,43 +17,14 @@
 /*==========================================================*/
 
 using MiddleMan;
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Threading.Tasks;
-After:
-using System.Helpers;
 using Skymu.ViewModels;
-using System.Views;
-*/
-using Skymu.ViewModels;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System;
-using Skymu.ComponentModel;
-using Skymu.Views.Pages;
-After:
-using Skymu.Views.Pages;
-using System;
-*/
 using System;
 using System.ComponentModel;
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using MiddleMan;
-using Skymu.Helpers;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
-After:
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-*/
+
 
 
 namespace Skymu.SeanKype

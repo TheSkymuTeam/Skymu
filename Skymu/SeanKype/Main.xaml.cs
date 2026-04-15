@@ -16,68 +16,25 @@
 /*==========================================================*/
 
 using MiddleMan;
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Skymu.Views;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using Skymu.Preferences;
-using Skymu.Formatting;
-using Skymu.Emoticons;
-using System.Windows.Interop;
-After:
-using System.Converters;
-using System.Emoticons;
-using System.Formatting;
-using Skymu.Helpers;
-using System.Preferences;
-using System.ViewModels;
-using Skymu.Views;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Skymu.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Tasks;
-*/
-using Skymu.Emoticons;
-using Skymu.Formatting;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.ViewModels;
-using Skymu.Views;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.Threading.Input;
-using System.Windows;
-After:
-using System.Windows;
-using System.Windows.Controls;
-*/
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using MiddleMan;
-using Skymu.Converters;
-using Skymu.Helpers;
-using Skymu.ViewModels;
-After:
-using System.Windows.Input;
-using System.Windows.Interop;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-*/
+using System.Linq;
+using Skymu.Views;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Skymu.Preferences;
+using Skymu.Formatting;
+using Skymu.ViewModels;
+using Skymu.Helpers;
+using Skymu.Emoticons;
+using System.Windows.Interop;
 
 
 namespace Skymu.SeanKype

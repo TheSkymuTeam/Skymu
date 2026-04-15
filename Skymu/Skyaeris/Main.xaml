@@ -4,12 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:global="clr-namespace:Skymu"
-    xmlns:local="clr-namespace:Skymu.Skyaeris"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
-    xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"
@@ -63,14 +60,34 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Height" Value="18" />
             <Setter Property="Margin" Value="-1,0,0,0" />
-            <Setter Property="HoverTransition" Value="False" />
+            <Setter Property="HoverTransition" Value="True" />
             <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
             <Setter Property="SliceMode" Value="0" />
             <Setter Property="ElementCount" Value="4" />
             <Setter Property="StackDirection" Value="Vertical" />
             <Setter Property="DefaultIndex" Value="0" />
-            <Setter Property="HoverIndex" Value="2" />
-            <Setter Property="PressedIndex" Value="3" />
+            <Setter Property="HoverIndex" Value="1" />
+            <Setter Property="PressedIndex" Value="2" />
+        </Style>
+        <Style x:Key="TitlebarTextStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,0" />
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Panel.ZIndex" Value="2" />
+            <Setter Property="FontFamily" Value="Arial" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Text" Value="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
+        </Style>
+        <Style
+            x:Key="TitlebarTextStyleAero"
+            BasedOn="{StaticResource TitlebarTextStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="Visibility" Value="Visible" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Normal" />
         </Style>
         <Style x:Key="LongIconStyle" TargetType="Image">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -356,7 +373,6 @@
                         </Grid>
                     </Border>
                 </Grid>
-
                 <TextBlock
                     x:Name="usernameText"
                     Grid.Row="1"
@@ -706,7 +722,7 @@
     <Grid x:Name="FrameArea">
         <Grid
             x:Name="TitleBar"
-            Height="30"
+            Height="25"
             VerticalAlignment="Top"
             Background="{StaticResource Active.Titlebar}">
             <Grid.ColumnDefinitions>
@@ -724,7 +740,7 @@
                     MouseEnter="TitleButton_MouseEnter"
                     MouseLeave="TitleButton_MouseLeave"
                     MouseLeftButtonUp="TitleButton_Click"
-                    Source="Assets/Universal/Window Frame/Aero/split.png"
+                    Source="Assets/Universal/Window Frame/Basic/split/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="minimize"
@@ -732,7 +748,7 @@
                     MouseEnter="TitleButton_MouseEnter"
                     MouseLeave="TitleButton_MouseLeave"
                     MouseLeftButtonUp="TitleButton_Click"
-                    Source="Assets/Universal/Window Frame/Aero/minimize.png"
+                    Source="Assets/Universal/Window Frame/Basic/minimize/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="maximize"
@@ -740,7 +756,7 @@
                     MouseEnter="TitleButton_MouseEnter"
                     MouseLeave="TitleButton_MouseLeave"
                     MouseLeftButtonUp="TitleButton_Click"
-                    Source="Assets/Universal/Window Frame/Aero/maximize.png"
+                    Source="Assets/Universal/Window Frame/Basic/maximize/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="close"
@@ -748,76 +764,57 @@
                     MouseEnter="TitleButton_MouseEnter"
                     MouseLeave="TitleButton_MouseLeave"
                     MouseLeftButtonUp="TitleButton_Click"
-                    Source="Assets/Universal/Window Frame/Aero/close.png"
+                    Source="Assets/Universal/Window Frame/Basic/close/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
             </StackPanel>
-            <Grid x:Name="IconText" Grid.Column="0">
-                <TextBlock
-                    x:Name="TitleShadow"
-                    Margin="50,7,0,0"
-                    VerticalAlignment="Top"
-                    Panel.ZIndex="2"
-                    FontFamily="Segoe UI"
-                    FontSize="12"
-                    Foreground="White"
-                    Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
-                    Visibility="Hidden">
-                    <TextBlock.Effect>
-                        <BlurEffect KernelType="Gaussian" Radius="15.0" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock
-                    x:Name="TitleShadow2"
-                    Margin="50,7,0,0"
-                    VerticalAlignment="Top"
-                    Panel.ZIndex="2"
-                    FontFamily="Segoe UI"
-                    FontSize="12"
-                    Foreground="White"
-                    Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
-                    Visibility="Hidden">
-                    <TextBlock.Effect>
-                        <BlurEffect KernelType="Gaussian" Radius="20.0" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock
-                    x:Name="TitleShadow3"
-                    Margin="50,7,0,0"
-                    VerticalAlignment="Top"
-                    Panel.ZIndex="2"
-                    FontFamily="Segoe UI"
-                    FontSize="12"
-                    Foreground="White"
-                    Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}"
-                    Visibility="Hidden">
-                    <TextBlock.Effect>
-                        <BlurEffect KernelType="Gaussian" Radius="17.0" />
-                    </TextBlock.Effect>
-                </TextBlock>
-                <TextBlock
-                    x:Name="TitleMain"
-                    Margin="50,7,0,0"
-                    VerticalAlignment="Top"
-                    Panel.ZIndex="2"
-                    FontFamily="Arial"
-                    FontSize="13"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource Text.HighContrast}"
-                    Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
+            <StackPanel
+                Grid.Column="0"
+                HorizontalAlignment="Left"
+                Orientation="Horizontal">
                 <Image
                     x:Name="TitleBarIcon"
                     Margin="8,0,0,0"
+                    VerticalAlignment="Center"
                     MouseLeave="TitleBarIcon_CancelHold"
                     MouseLeftButtonDown="TitleBarIcon_MouseDown"
                     MouseLeftButtonUp="TitleBarIcon_CancelHold"
                     Source="Assets/Universal/Branding/logo-window-frame.png"
                     Style="{StaticResource LongIconStyle}" />
-                <!--  Cursor="Hand" why?????  -->
-            </Grid>
+                <Grid Margin="5,0">
+                    <TextBlock
+                        x:Name="TitleShadow"
+                        Foreground="White"
+                        Style="{StaticResource TitlebarTextStyle}">
+                        <TextBlock.Effect>
+                            <BlurEffect KernelType="Gaussian" Radius="15.0" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="TitleShadow2"
+                        Foreground="White"
+                        Style="{StaticResource TitlebarTextStyle}">
+                        <TextBlock.Effect>
+                            <BlurEffect KernelType="Gaussian" Radius="20.0" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="TitleShadow3"
+                        Foreground="White"
+                        Style="{StaticResource TitlebarTextStyle}">
+                        <TextBlock.Effect>
+                            <BlurEffect KernelType="Gaussian" Radius="17.0" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock
+                        x:Name="TitleMain"
+                        Foreground="{StaticResource Text.HighContrast}"
+                        Style="{StaticResource TitlebarTextStyle}" />
+                </Grid>
+            </StackPanel>
         </Grid>
         <Grid
             x:Name="WindowArea"
-            Margin="4,30,4,4"
+            Margin="4,25,4,4"
             MouseDown="WindowArea_MouseDown">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

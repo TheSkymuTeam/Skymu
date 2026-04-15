@@ -20,28 +20,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MiddleMan;
 using Skymu.Converters;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Skymu.Emoticons;
-using Skymu.Credentials;
-using Skymu.Helpers;
-using Skymu.Views;
-using Skymu.Databases;
-using System;
-using Skymu.Preferences;
-After:
 using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
-using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.UserDirectory;
-*/
-using Skymu.Credentials;
-using Skymu.Databases;
-using Skymu.Emoticons;
-using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
