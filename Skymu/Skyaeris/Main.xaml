@@ -985,7 +985,7 @@
                                             PressedIndex="2"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/status-top.png'}"
                                             StackDirection="Vertical"
-                                            Text="Sensei Wu"
+                                            Text="Jeffrey E. Epstein"
                                             TextColor="#FFFFFF"
                                             TextFont="Arial"
                                             TextLeftMargin="43"
