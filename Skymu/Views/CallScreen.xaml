@@ -9,7 +9,7 @@
     Title="CallScreen"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
-    Background="#FFF"
+    Background="#000"
     FontFamily="Arial"
     FontSize="15.5"
     SizeChanged="Resized"
@@ -39,6 +39,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="110" />
             </Grid.RowDefinitions>
             <!--  top gradient  -->
             <Image
@@ -48,10 +49,24 @@
             <!--  bottom gradient  -->
             <Image
                 Grid.Row="1"
+                Opacity="0.6"
                 Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/gradient_bottom.png'}"
                 Stretch="Fill" />
+            <Rectangle
+                Grid.Row="2"
+                Height="110"
+                VerticalAlignment="Bottom">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <!--  Top of this overlay  -->
+                        <GradientStop Offset="0.0" Color="#001821" />
+                        <!--  Bottom of this overlay  -->
+                        <GradientStop Offset="1.0" Color="#005371" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <!--  noise  -->
-            <Rectangle Grid.RowSpan="2">
+            <Rectangle Grid.RowSpan="3">
                 <Rectangle.Fill>
                     <ImageBrush
                         ImageSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/noise.png'}"
