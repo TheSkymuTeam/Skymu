@@ -135,8 +135,11 @@ namespace Skymu.Skyaeris
         #region BitmapImage generators
         private BitmapImage GenerateTitlebarButtonImage(string name)
         {
+            string framedir = "Aero";
+            if (_currentFrame == WindowFrame.SkypeBasic) framedir = "Basic";
+
             return FrozenImage.Generate(
-                $"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/{name}.png"
+                $"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/{framedir}/{name}/combined.png"
             );
         }
 
@@ -272,7 +275,7 @@ namespace Skymu.Skyaeris
                 chrome.UseAeroCaptionButtons = false;
                 WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
-
+                TitleMain.Visibility = Visibility.Visible;
                 if (
                     _currentFrame == WindowFrame.SkypeAero
                     || _currentFrame == WindowFrame.SkypeAeroCustom
@@ -284,7 +287,6 @@ namespace Skymu.Skyaeris
                     // Set up the window background and margin
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
-
                     if (_currentFrame == WindowFrame.SkypeAero)
                     {
                         this.Background = Brushes.Transparent;
@@ -320,15 +322,23 @@ namespace Skymu.Skyaeris
                         BlurRadius = 20,
                     };
 
-                    TitleShadow.Visibility = Visibility.Visible;
-                    TitleShadow2.Visibility = Visibility.Visible;
-                    TitleShadow3.Visibility = Visibility.Visible;
+                    Style aeroStyle = (Style)FindResource("TitlebarTextStyleAero");
+                    TitleMain.Style = aeroStyle;
+                    TitleShadow.Style = aeroStyle;
+                    TitleShadow2.Style = aeroStyle;
+                    TitleShadow3.Style = aeroStyle;
+                    TitleBarIcon.Margin = new Thickness(8, 5, 0, 0);
                 }
 
                 img_maximize = GenerateTitlebarButtonImage("maximize");
                 img_restore = GenerateTitlebarButtonImage("restore");
                 img_split = GenerateTitlebarButtonImage("split");
                 img_join = GenerateTitlebarButtonImage("join");
+
+                close.Source = GenerateTitlebarButtonImage("close");
+                maximize.Source = img_maximize;
+                minimize.Source = GenerateTitlebarButtonImage("minimize");
+                split.Source = img_split;
             }
             else if (_currentFrame == WindowFrame.Native) // using system native border
             {
@@ -456,7 +466,7 @@ namespace Skymu.Skyaeris
 
             foreach (var button in new[] { close, minimize, maximize, split })
             {
-                button.DefaultIndex = 1;
+                button.DefaultIndex = 3;
             }
 
             if (Settings.FallbackFillColors)

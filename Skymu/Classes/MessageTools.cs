@@ -10,32 +10,11 @@
 /*==========================================================*/
 
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System;
-After:
-using Markdig;
-using Markdig.Extensions.Mathematics;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using MiddleMan;
-using Skymu.Emoticons;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using System;
-*/
-using Markdig;
-using Markdig.Extensions.Mathematics;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Skymu.Preferences;
-using System.Linq;
-After:
-using System.Linq;
-*/
+using Markdig;
+using Markdig.Extensions.Mathematics;
+using Markdig.Syntax;
+using Markdig.Syntax.Inlines;
 using MiddleMan;
 using Skymu.Emoticons;
 using Skymu.Helpers;

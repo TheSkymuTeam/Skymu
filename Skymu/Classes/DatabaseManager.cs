@@ -27,38 +27,15 @@
 /*==========================================================*/
 
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-After:
-using Microsoft.Data.Sqlite;
-using MiddleMan;
-using Skymu.Preferences;
-using System.Views;
-*/
-using Microsoft.Data.Sqlite;
-using MiddleMan;
-using Skymu.Preferences;
-using System;
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Skymu.Preferences;
-using System.Text;
 using Microsoft.Data.Sqlite;
 using MiddleMan;
-After:
-using System.Collections.Generic;
-using System.IO;
-using Microsoft.Data.Linq;
-using System.Text;
-*/
+using Skymu.Preferences;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Skymu.Views;
 
 namespace Skymu.Databases
 {
