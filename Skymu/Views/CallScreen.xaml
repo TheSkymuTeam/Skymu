@@ -9,6 +9,7 @@
     Title="CallScreen"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
+    Background="#FFF"
     FontFamily="Arial"
     FontSize="15.5"
     SizeChanged="Resized"
@@ -34,17 +35,27 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.RowSpan="2" ClipToBounds="True">
-            <!--  Background  -->
-            <Image
-                RenderOptions.BitmapScalingMode="HighQuality"
-                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/background.png'}"
-                Stretch="Fill" />
 
-            <Rectangle>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!--  top gradient  -->
+            <Image
+                Grid.Row="0"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/gradient_top.png'}"
+                Stretch="Fill" />
+            <!--  bottom gradient  -->
+            <Image
+                Grid.Row="1"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/gradient_bottom.png'}"
+                Stretch="Fill" />
+            <!--  noise  -->
+            <Rectangle Grid.RowSpan="2">
                 <Rectangle.Fill>
                     <ImageBrush
                         ImageSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Call Screen/noise.png'}"
-                        Opacity="0.1"
+                        Opacity="0.05"
                         Stretch="None"
                         TileMode="Tile"
                         Viewport="0,0,32,32"
