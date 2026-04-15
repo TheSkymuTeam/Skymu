@@ -39,6 +39,7 @@ namespace Skymu
             Load("call-end", "HANGUP.WAV");
             Load("login", "LOGIN.WAV");
             Load("logout", "LOGOUT.WAV");
+            Load("busy", "BUSY.WAV");
         }
 
         static void Load(string key, string filename, string path = "", string fallback = "Sounds")

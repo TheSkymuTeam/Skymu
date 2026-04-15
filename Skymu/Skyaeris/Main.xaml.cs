@@ -68,7 +68,6 @@ namespace Skymu.Skyaeris
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
-        private CancellationTokenSource _TitleBarIconHoldTokenSource;
         private readonly Random _random = new Random(); // what is this bro
 
         private enum WindowType
@@ -867,14 +866,13 @@ namespace Skymu.Skyaeris
             HandleWindowDeactivated();
         }
 
-        private void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
-            {
+            
                 try
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    // await Task.Delay(1500, _TitleBarIconHoldTokenSource.Token); // holding for 2 sec? I hope??
+                    await Sounds.PlayAsync("busy");
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
                         url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
@@ -887,18 +885,7 @@ namespace Skymu.Skyaeris
                 {
                     // ass
                 }
-            }
-        }
-
-        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
-        {
-            if (
-                _TitleBarIconHoldTokenSource != null
-                && !_TitleBarIconHoldTokenSource.IsCancellationRequested
-            )
-            {
-                _TitleBarIconHoldTokenSource.Cancel();
-            }
+            
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
