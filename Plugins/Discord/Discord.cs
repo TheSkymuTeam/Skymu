@@ -516,8 +516,19 @@ namespace Discord
 
         #region Fetching and sending messages
 
+        private CancellationTokenSource _fetchCts; // omega: fix message overlap bug
+
         public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
+            if (_fetchCts != null)
+            {
+                _fetchCts.Cancel();
+                _fetchCts.Dispose();
+            }
+
+            _fetchCts = new CancellationTokenSource();
+            CancellationToken token = _fetchCts.Token;
+
             TypingUsersList.Clear();
             List<ConversationItem> messageList = new List<ConversationItem>();
 
@@ -531,8 +542,10 @@ namespace Discord
 
             try
             {
-                string encJson = await Client.Send(parameters, HttpMethod.Get, DiscordToken, null, null, null);
+                token.ThrowIfCancellationRequested();
+                string encJson = await Client.Send(parameters, HttpMethod.Get, DiscordToken, null, null, null, null, token);
                 var parsed = JsonNode.Parse(encJson);
+                token.ThrowIfCancellationRequested();
 
                 if (parsed is not JsonArray messages)
                 {
@@ -559,6 +572,7 @@ namespace Discord
 
                 foreach (var node in messages.Reverse())
                 {
+                    token.ThrowIfCancellationRequested();
                     var item = await MessageParser.ParseMessage(node);
                     if (item != null)
                         messageList.Add(item);
@@ -568,6 +582,10 @@ namespace Discord
                     return messageList.Where(m => ulong.Parse(m.Identifier) > ulong.Parse(identifier)).ToArray();
 
                 return messageList.ToArray();
+            }
+            catch (OperationCanceledException)
+            {
+                return new ConversationItem[0]; // expected case
             }
             catch (Exception ex)
             {
