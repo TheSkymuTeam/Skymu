@@ -1,6 +1,6 @@
 !define SOURCE_DIR_MODERN "..\Skymu\bin\SkymuCore\Release"
 !define SOURCE_DIR_LEGACY "..\Skymu\bin\SkymuFramework\Release"
-!define PRODUCT_NAME "Skymu"
+!define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://skymu.app"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Skymu.exe"
@@ -13,12 +13,12 @@ RequestExecutionLevel admin
 !include "nsDialogs.nsh"
 
 !define MUI_ABORTWARNING
-!define MUI_ICON "skype.ico"
-!define MUI_UNICON "skype.ico"
+!define MUI_ICON "beta.ico"
+!define MUI_UNICON "beta.ico"
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "header.bmp"
+!define MUI_HEADERIMAGE_BITMAP "header-beta.bmp"
 !define MUI_HEADERIMAGE_BITMAP_STRETCH "AspectFitHeight"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "column.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "column-beta.bmp"
 
 Var VersionRadio_Modern
 Var VersionRadio_Legacy
@@ -47,7 +47,7 @@ Function VersionSelectPage
     Pop $0
 
     ; --- Modern ---
-    ${NSD_CreateRadioButton} 0 25u 100% 12u "Skymu"
+    ${NSD_CreateRadioButton} 0 25u 100% 12u "Skymu (BETA)"
     Pop $VersionRadio_Modern
     ${NSD_Check} $VersionRadio_Modern
 
@@ -56,7 +56,7 @@ Function VersionSelectPage
     SetCtlColors $ModernDesc 0x808080 transparent
 
     ; --- Legacy ---
-    ${NSD_CreateRadioButton} 0 60u 100% 12u "Skymu Legacy"
+    ${NSD_CreateRadioButton} 0 60u 100% 12u "Skymu Legacy (BETA)"
     Pop $VersionRadio_Legacy
 
     ${NSD_CreateLabel} 10u 73u 90% 20u "For Windows Vista or 32-bit systems. Uses .NET Framework 4.6.1."
@@ -96,7 +96,7 @@ Page custom VersionSelectPage VersionSelectLeave
 !insertmacro MUI_LANGUAGE "English"
 
 Name "${PRODUCT_NAME}"
-OutFile ".\Skymu Installer.exe"
+OutFile ".\Skymu Installer (BETA).exe"
 InstallDir "$PROGRAMFILES64\Skymu"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show

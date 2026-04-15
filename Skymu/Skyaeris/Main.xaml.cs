@@ -387,7 +387,7 @@ namespace Skymu.Skyaeris
 
         private void HandleWindowButtonEnter(SliceControl button)
         {
-            if (button != null)
+            if (button != null && _currentFrame != WindowFrame.SkypeBasic)
             {
                 if (button.Name == "close")
                 {
