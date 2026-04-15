@@ -869,24 +869,24 @@ namespace Skymu.Skyaeris
 
         private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-            
-                try
-                {
-                    // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    await Sounds.PlayAsync("busy");
-                    string url;
-                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                    else
-                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
 
-                    Universal.OpenUrl(url);
-                }
-                catch (TaskCanceledException)
-                {
-                    // ass
-                }
-            
+            try
+            {
+                // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
+                await Sounds.PlayAsync("busy");
+                string url;
+                if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                    url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                else
+                    url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+
+                Universal.OpenUrl(url);
+            }
+            catch (TaskCanceledException)
+            {
+                // ass
+            }
+
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
@@ -1160,7 +1160,8 @@ namespace Skymu.Skyaeris
                 answer_call = false;
             }
             CallScreen.LocationChangeEventArgs initial_location =
-                new CallScreen.LocationChangeEventArgs(false, false, false);
+                new CallScreen.LocationChangeEventArgs(true, false);
+           
             screen = new CallScreen(partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;

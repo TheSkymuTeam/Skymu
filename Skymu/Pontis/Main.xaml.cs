@@ -836,7 +836,7 @@ namespace Skymu.Pontis
 
             if (partner == null) { partner = dm.Partner; answer_call = false; }
             CallScreen.LocationChangeEventArgs initial_location =
-                new CallScreen.LocationChangeEventArgs(false, false, false);
+                new CallScreen.LocationChangeEventArgs(true, false);
             screen = new CallScreen(partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;

@@ -13,9 +13,11 @@ using MiddleMan;
 using Skymu.Helpers;
 using System;
 using System.Threading;
+using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -39,12 +41,14 @@ namespace Skymu.Views
         private bool isPillMode;
         private bool isLogoBig;
         private bool isMuted;
+        private bool isFullscreen = false;
         private bool _is_answer;
         private bool _hangUpRequested = false;
         private ActiveCall _call;
         private LocationChangeEventArgs location;
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;
+        private Frame _originalFrame;
 
         public CallScreen(
             User partner,
@@ -92,6 +96,9 @@ namespace Skymu.Views
             isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
             Resized(null, null);
             location = initial_location;
+            SetButtonSource(SidebarButton, location.SidebarToggle);
+            SetButtonSource(ChatButton, location.ChatToggle);
+            SetButtonSource(FullscreenButton, isFullscreen);
         }
 
         private CancellationTokenSource _ringCts;
@@ -173,13 +180,11 @@ namespace Skymu.Views
         {
             public bool SidebarToggle;
             public bool ChatToggle;
-            public bool FullscreenToggle;
 
-            public LocationChangeEventArgs(bool sidebar, bool chat, bool fullscreen)
+            public LocationChangeEventArgs(bool sidebar, bool chat)
             {
                 SidebarToggle = sidebar;
                 ChatToggle = chat;
-                FullscreenToggle = fullscreen;
             }
         }
 
@@ -220,12 +225,80 @@ namespace Skymu.Views
                 LocationChangeRequested(this, location);
         }
 
+        private Window _fullscreenWindow;
+
         private void OnFullscreenToggled(object sender, MouseButtonEventArgs e)
         {
-            location.FullscreenToggle = !location.FullscreenToggle;
-            SetButtonSource(FullscreenButton, location.FullscreenToggle);
-            if (LocationChangeRequested != null)
-                LocationChangeRequested(this, location);
+            isFullscreen = !isFullscreen;
+            SetButtonSource(FullscreenButton, isFullscreen);
+
+            if (isFullscreen)
+                EnterFullscreen();
+            else
+                ExitFullscreen();
+        }
+
+        private void EnterFullscreen()
+        {
+            _originalFrame = GetFrameParent();
+
+            if (_originalFrame != null)
+            {
+                while (_originalFrame.NavigationService.CanGoBack)
+                    _originalFrame.NavigationService.RemoveBackEntry();
+                _originalFrame.Content = null;
+            }
+
+            _fullscreenWindow = new Window
+            {
+                WindowStyle = WindowStyle.None,
+                WindowState = WindowState.Maximized,
+                ResizeMode = ResizeMode.NoResize,
+                Content = this
+            };
+
+            _fullscreenWindow.Closed += (s, e) =>
+            {
+                if (isFullscreen)
+                {
+                    ExitFullscreen();
+                }
+            };
+
+            if (_originalFrame != null)
+                _originalFrame.Content = null;
+
+            SetButtonSource(FullscreenButton, isFullscreen);
+            _fullscreenWindow.Show();
+        }
+
+        private void ExitFullscreen()
+        {
+            isFullscreen = false;
+            SetButtonSource(FullscreenButton, isFullscreen);
+
+            _fullscreenWindow.Content = null;
+            if (_originalFrame != null)
+            {
+                _originalFrame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
+                _originalFrame.Content = this;
+                while (_originalFrame.NavigationService.CanGoBack)
+                    _originalFrame.NavigationService.RemoveBackEntry();
+            }
+            _fullscreenWindow?.Close();
+            _fullscreenWindow = null;
+        }
+
+        private Frame GetFrameParent()
+        {
+            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            while (parent != null)
+            {
+                if (parent is Frame frame)
+                    return frame;
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+            return null;
         }
 
         private void SetButtonSource(SliceControl button, bool active)
@@ -255,6 +328,12 @@ namespace Skymu.Views
             _callTimer?.Stop();
             _callTimer = null;
             Sounds.Play("call-end", true);
+
+            if (isFullscreen)
+            {
+                ExitFullscreen();
+            }
+
             HangUpRequested(this, EventArgs.Empty);
         }
 
