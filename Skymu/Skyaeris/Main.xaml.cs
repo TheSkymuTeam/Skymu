@@ -9,6 +9,15 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Classes;
+using Skymu.Emoticons;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,15 +35,6 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.Classes;
-using Skymu.Emoticons;
-using Skymu.Formatting;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
 
 namespace Skymu.Skyaeris
 {
@@ -47,13 +47,12 @@ namespace Skymu.Skyaeris
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
         private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
-        private const string MSG_SEND_ERR = "Error sending message.";
 
         // ViewModel
         private MainViewModel vmodel;
 
         // Other file-level variables
-        private readonly WindowFrame border = (WindowFrame)Settings.WindowFrame;
+        private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
@@ -69,7 +68,7 @@ namespace Skymu.Skyaeris
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
-        private CancellationTokenSource _tbliHoldTokenSource;
+        private CancellationTokenSource _TitleBarIconHoldTokenSource;
         private readonly Random _random = new Random(); // what is this bro
 
         private enum WindowType
@@ -266,15 +265,18 @@ namespace Skymu.Skyaeris
 
         public void InitializeWindowFrame()
         {
-            if (border != WindowFrame.Native) // using Skype's custom border
+            if (_currentFrame != WindowFrame.Native) // using Skype's custom border
             {
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 WindowChrome chrome = new WindowChrome();
                 chrome.UseAeroCaptionButtons = false;
                 WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
-                SetClickable(tbli, close, minimize, maximize, split);
+                SetClickable(TitleBarIcon, close, minimize, maximize, split);
 
-                if (border == WindowFrame.SkypeAero || border == WindowFrame.SkypeAeroCustom) // switch configuration from Skype Basic to Aero
+                if (
+                    _currentFrame == WindowFrame.SkypeAero
+                    || _currentFrame == WindowFrame.SkypeAeroCustom
+                ) // switch configuration from Skype Basic to Aero
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
                     OriginalWindowAreaMargin = AeroThickness;
@@ -283,11 +285,11 @@ namespace Skymu.Skyaeris
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
 
-                    if (border == WindowFrame.SkypeAero)
+                    if (_currentFrame == WindowFrame.SkypeAero)
                     {
                         this.Background = Brushes.Transparent;
                     }
-                    else if (border == WindowFrame.SkypeAeroCustom) // TODO: finish this
+                    else if (_currentFrame == WindowFrame.SkypeAeroCustom) // TODO: finish this
                     {
                         var img = FrozenImage.Generate(
                             "pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/aero-background.png"
@@ -328,7 +330,7 @@ namespace Skymu.Skyaeris
                 img_split = GenerateTitlebarButtonImage("split");
                 img_join = GenerateTitlebarButtonImage("join");
             }
-            else if (border == WindowFrame.Native) // using system native border
+            else if (_currentFrame == WindowFrame.Native) // using system native border
             {
                 WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
@@ -410,7 +412,7 @@ namespace Skymu.Skyaeris
             ContentBgBottom.Fill = (Brush)Application.Current.Resources["Background"];
             MainMenuBar.Background = (Brush)Application.Current.Resources["Card.Background"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Background"];
-            if (border == WindowFrame.SkypeBasic)
+            if (_currentFrame == WindowFrame.SkypeBasic)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Background"];
                 this.Background = (Brush)Application.Current.Resources["Background"];
@@ -439,7 +441,7 @@ namespace Skymu.Skyaeris
             MainMenuBar.Background = (Brush)Application.Current.Resources["Active.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.Background"];
 
-            if (border == WindowFrame.SkypeBasic)
+            if (_currentFrame == WindowFrame.SkypeBasic)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Active.Titlebar"];
                 this.Background = (Brush)Application.Current.Resources["Active.Background"];
@@ -468,7 +470,7 @@ namespace Skymu.Skyaeris
             MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
 
-            if (border == WindowFrame.SkypeBasic)
+            if (_currentFrame == WindowFrame.SkypeBasic)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Inactive.Titlebar"];
                 this.Background = (Brush)Application.Current.Resources["Inactive.Background"];
@@ -770,7 +772,6 @@ namespace Skymu.Skyaeris
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
-
             Main_SizeChanged_Refresh();
         }
 
@@ -856,14 +857,14 @@ namespace Skymu.Skyaeris
             HandleWindowDeactivated();
         }
 
-        private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+        private void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-            using (_tbliHoldTokenSource = new CancellationTokenSource())
+            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
             {
                 try
                 {
-                    await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
-
+                    // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
+                    // await Task.Delay(1500, _TitleBarIconHoldTokenSource.Token); // holding for 2 sec? I hope??
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
                         url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
@@ -879,13 +880,14 @@ namespace Skymu.Skyaeris
             }
         }
 
-        // Method triggered if the user lets go of the click OR moves their mouse away
-        private void tbli_CancelHold(object sender, MouseEventArgs e)
+        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
         {
-            // If a timer is currently running, cancel it
-            if (_tbliHoldTokenSource != null && !_tbliHoldTokenSource.IsCancellationRequested)
+            if (
+                _TitleBarIconHoldTokenSource != null
+                && !_TitleBarIconHoldTokenSource.IsCancellationRequested
+            )
             {
-                _tbliHoldTokenSource.Cancel();
+                _TitleBarIconHoldTokenSource.Cancel();
             }
         }
 
@@ -1154,7 +1156,11 @@ namespace Skymu.Skyaeris
             if (dm == null)
                 return; // group calls not supported yet
 
-            if (partner == null) { partner = dm.Partner; answer_call = false; }
+            if (partner == null)
+            {
+                partner = dm.Partner;
+                answer_call = false;
+            }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
             screen = new CallScreen(partner, initial_location, answer_call);

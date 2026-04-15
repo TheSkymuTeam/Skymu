@@ -9,24 +9,16 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Threading;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.Helpers;
 
 namespace Skymu.Views
 {
@@ -62,13 +54,20 @@ namespace Skymu.Views
         {
             InitializeComponent();
 
-            if (Universal.CurrentUser.ProfilePicture != null) MyAvatar.Source = FrozenImage.GenerateFromArray(Universal.CurrentUser.ProfilePicture);
-            else MyAvatar.Source = Universal.AnonymousAvatar;
-            if (partner.ProfilePicture != null) PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
-            else PartnerAvatar.Source = Universal.AnonymousAvatar;
+            if (Universal.CurrentUser.ProfilePicture != null)
+                MyAvatar.Source = FrozenImage.GenerateFromArray(
+                    Universal.CurrentUser.ProfilePicture
+                );
+            else
+                MyAvatar.Source = Universal.AnonymousAvatar;
+            if (partner.ProfilePicture != null)
+                PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+            else
+                PartnerAvatar.Source = Universal.AnonymousAvatar;
 
             _is_answer = is_answering_call;
-            if (_is_answer) CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
+            if (_is_answer)
+                CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
@@ -94,8 +93,8 @@ namespace Skymu.Views
             Resized(null, null);
             location = initial_location;
         }
-        private CancellationTokenSource _ringCts;
 
+        private CancellationTokenSource _ringCts;
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
@@ -113,19 +112,25 @@ namespace Skymu.Views
             _ = Task.Run(async () =>
             {
                 await Sounds.PlayAsync("call-init", token);
-                if (_is_answer) return;
+                if (_is_answer)
+                    return;
                 while (!token.IsCancellationRequested)
                 {
                     await Sounds.PlayAsync("call-out", token);
                 }
             });
 
-            ActiveCall call = await Universal.CallPlugin.StartCall(conversation.Identifier, is_video, true);
+            ActiveCall call = await Universal.CallPlugin.StartCall(
+                conversation.Identifier,
+                is_video,
+                true
+            );
 
-            if (_hangUpRequested) return; // in case user has already hung up before the call is established
+            if (_hangUpRequested)
+                return; // in case user has already hung up before the call is established
 
-            _ringCts.Cancel();   
-            Sounds.StopPlayback("call-out");   
+            _ringCts.Cancel();
+            Sounds.StopPlayback("call-out");
             Sounds.StopPlayback("call-init");
 
             if (call == null)

@@ -9,13 +9,8 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using MiddleMan;
-using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Text.Json.Nodes;
-using Discord.Helpers;
 
 namespace Discord.Users
 {

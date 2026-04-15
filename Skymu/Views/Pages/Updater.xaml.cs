@@ -87,7 +87,7 @@ namespace Skymu.Views.Pages
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
                     window.ButtonLeftAction = () => UpdateHandler(true, window);
                     Description.Text =
-                        Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + update_info?.log ;
+                        Universal.Lang["sF_UPGRADE_CHECK_FAILED"] + "\n\n" + update_info?.log;
                 }
                 else // update is available
                 {
@@ -319,7 +319,7 @@ namespace Skymu.Views.Pages
                             return null;
 
                         if (currentVer >= updateVer)
-                            return null; 
+                            return null;
 
                         string releaseName =
                             doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
@@ -334,7 +334,7 @@ namespace Skymu.Views.Pages
 
                         foreach (JsonElement asset in assets.EnumerateArray())
                         {
-                            if (asset.TryGetProperty("browser_download_url", out JsonElement　urlElement))
+                            if (asset.TryGetProperty("browser_download_url", out JsonElement urlElement))
                             {
                                 string downloadUrl = urlElement.GetString();
                                 if (!IsNullOrEmpty(downloadUrl))

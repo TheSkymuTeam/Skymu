@@ -9,9 +9,9 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Windows;
-using Skymu.Preferences;
 using System.Windows.Media.Imaging;
 
 namespace Skymu.Views

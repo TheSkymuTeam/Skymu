@@ -10,6 +10,10 @@
 /*==========================================================*/
 
 using Discord.Helpers;
+using Discord.Networking;
+using Discord.Networking.Managers;
+using Discord.Protobuf;
+using Discord.Users;
 using MiddleMan;
 using System;
 using System.Collections.Generic;
@@ -20,12 +24,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Discord.Networking.Managers;
 using System.Threading;
-using Discord.Users;
 using System.Threading.Tasks;
-using Discord.Protobuf;
-using Discord.Networking;
 
 namespace Discord
 {
@@ -287,12 +287,12 @@ namespace Discord
         public Task<bool> PopulateRecentsList() => PopulateListsBackend(ListType.Recents);
         public Task<bool> PopulateServerList() => PopulateListsBackend(ListType.Servers);
 
-        private async Task<bool> PopulateListsBackend(ListType lType)
+        private async Task<bool> PopulateListsBackend(ListType list_type)
         {
             try
             {
                 var dscChannels = HelperMethods.GetUserChannels(
-                    lType == ListType.Recents);
+                    list_type == ListType.Recents);
 
                 foreach (var channel in dscChannels)
                 {
@@ -318,7 +318,7 @@ namespace Discord
                         string dscUserName = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
 
-                        if (lType == ListType.Recents)
+                        if (list_type == ListType.Recents)
                         {
                             _recentChannelMap[channelId] = userId;
                         }
@@ -327,7 +327,7 @@ namespace Discord
 
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
-                        if (lType == ListType.Recents)
+                        if (list_type == ListType.Recents)
                             RecentsList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
                         else
                             ContactsList.Add(new DirectMessage(profileData, 0, channelId));
@@ -361,7 +361,7 @@ namespace Discord
                         string groupName = channel["name"]?.GetValue<string>();
                         string avatarHash = channel["icon"]?.GetValue<string>();
 
-                        if (lType == ListType.Recents)
+                        if (list_type == ListType.Recents)
                         {
                             _recentChannelMap[channelId] = null;
                         }
@@ -389,7 +389,7 @@ namespace Discord
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
                         var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
 
-                        if (lType == ListType.Recents)
+                        if (list_type == ListType.Recents)
                             RecentsList.Add(profileData);
                     }
                 }
@@ -401,7 +401,7 @@ namespace Discord
             }
 
             // Populate all of the servers in the servers list
-            if (lType == ListType.Servers)
+            if (list_type == ListType.Servers)
             {
                 try
                 {
@@ -722,7 +722,7 @@ namespace Discord
             }
         }
 
-#endregion
+        #endregion
 
         #region Calling functionality
 
@@ -783,7 +783,7 @@ namespace Discord
             WebSocketManager.SubscribeVoiceServerUpdated(vsHandler);
             await WebSocketManager.SendPayload(voicePayloadJson);
             Debug.WriteLine("[CALL-INIT] Voice payload sent.");
-            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task) 
+            if (await Task.WhenAny(call_established.Task, Task.Delay(5000)) != call_established.Task)
             {
                 Debug.WriteLine("[CALL-INIT] Discord failed to respond with CALL_UPDATE in the 5 second time limit. Cancelling call.");
                 return null;

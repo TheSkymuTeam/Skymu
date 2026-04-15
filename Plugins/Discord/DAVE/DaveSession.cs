@@ -48,7 +48,7 @@ namespace Discord.Dave
             _selfUserId = selfUserId;
             ulong groupId = ulong.TryParse(channelId, out ulong g) ? g : 0;
             DaveInterop.daveSessionInit(_session, protocolVersion, groupId, selfUserId);
-        }   
+        }
 
         public void SetExternalSender(byte[] payload)
         {

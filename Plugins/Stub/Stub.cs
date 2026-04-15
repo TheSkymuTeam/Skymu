@@ -9,12 +9,12 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
-using MiddleMan;
 
 namespace Stub
 {
@@ -88,17 +88,21 @@ namespace Stub
             );
             return LoginResult.Success;
         }
+
         public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             MyUsername = autoLoginCredentials.User.Username;
             return LoginResult.Success;
         }
+
         public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.Success;
+
         public async Task<SavedCredential> StoreCredential()
         {
             // TODO: Fix logout return new SavedCredential(MyInformation, "", AuthenticationMethod.Token, InternalName);
             return null;
         }
+
         public async Task<string> GetQRCode() => String.Empty;
 
         public Task<bool> SendMessage(
@@ -402,13 +406,18 @@ namespace Stub
         }
 
         public async Task<bool> SetTextStatus(string status) => true;
+
         // false = the status will not be set
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status) => true;
 
         #region Calls (remove this entire region and remove `, ICall` to disable
 
         // Call will be picked up as soon as something is returned
-        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
+        public async Task<ActiveCall> StartCall(
+            string convo_id,
+            bool is_video_call,
+            bool start_muted
+        )
         {
             TaskCompletionSource<bool> waiter = new TaskCompletionSource<bool>();
             Thread thread = new Thread(_ =>
@@ -424,13 +433,18 @@ namespace Stub
         }
 
         public async Task<bool> EndCall(ActiveCall call) => true;
+
         public async Task<ActiveCall> AnswerCall(string convo_id)
         {
             return await StartCall(convo_id, false, true);
         }
+
         public async Task<bool> DeclineCall(string convo_id) => false;
+
         public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
+
         public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
+
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
         public bool SupportsVideoCalls => false;

@@ -9,15 +9,16 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using static ToxCore;
 using NAudio.Wave;
 using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using static ToxCore;
 
 // Taken from Discord.Network.CallUDP. Thanks to the devs! (patricktbp and omega, I think)
+// message from omega: TODO move mic and speaker logic to app instead of plugin
 
 namespace Tox
 {

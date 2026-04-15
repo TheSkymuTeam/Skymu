@@ -34,10 +34,10 @@ namespace Discord.Helpers
             public string Identifier { get; set; }
             public IEnumerable<string> BulkIdentifiers { get; set; }
 
-            public User Sender { get; set; } 
+            public User Sender { get; set; }
             public DateTime Timestamp { get; set; }
-            public string Text { get; set; } 
-            public Attachment[] Attachments { get; set; } 
+            public string Text { get; set; }
+            public Attachment[] Attachments { get; set; }
             public Message ParentMessage { get; set; } = null;
         }
     }

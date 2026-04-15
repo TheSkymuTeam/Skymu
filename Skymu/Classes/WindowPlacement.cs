@@ -9,9 +9,9 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Diagnostics;
-using Skymu.Preferences;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;

@@ -14,6 +14,7 @@ using Skymu.Classes;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
+using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -23,7 +24,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Skymu.Preferences;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,7 +61,7 @@ namespace Skymu.Pontis
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
-        private CancellationTokenSource _tbliHoldTokenSource;
+        private CancellationTokenSource _TitleBarIconHoldTokenSource;
         private readonly Random _random = new Random(); // what is this bro
 
         private enum WindowType
@@ -113,9 +113,9 @@ namespace Skymu.Pontis
 
         #region Home and Chat window switching
 
-        private void SetWindow(WindowType type)
+        private void SetWindow(WindowType type, bool force = false)
         {
-            if (type == current_window)
+            if (type == current_window && !force)
                 return;
 
             current_window = type;
@@ -621,14 +621,14 @@ namespace Skymu.Pontis
             HandleWindowDeactivated();
         }
 
-        private async void tbli_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-            using (_tbliHoldTokenSource = new CancellationTokenSource())
+            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
             {
 
                 try
                 {
-                    await Task.Delay(1500, _tbliHoldTokenSource.Token); // holding for 2 sec? I hope??
+                    await Task.Delay(1500, _TitleBarIconHoldTokenSource.Token); // holding for 2 sec? I hope??
 
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
@@ -646,12 +646,12 @@ namespace Skymu.Pontis
         }
 
         // Method triggered if the user lets go of the click OR moves their mouse away
-        private void tbli_CancelHold(object sender, MouseEventArgs e)
+        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
         {
             // If a timer is currently running, cancel it
-            if (_tbliHoldTokenSource != null && !_tbliHoldTokenSource.IsCancellationRequested)
+            if (_TitleBarIconHoldTokenSource != null && !_TitleBarIconHoldTokenSource.IsCancellationRequested)
             {
-                _tbliHoldTokenSource.Cancel();
+                _TitleBarIconHoldTokenSource.Cancel();
             }
         }
 
@@ -801,17 +801,19 @@ namespace Skymu.Pontis
         private Frame frame;
         private CallScreen screen;
 
-        private async void StartCall()
+        private async void StartCall(User partner = null)
         {
+            bool answer_call = true;
             if (Universal.CallPlugin == null)
                 return;
             var dm = vmodel.SelectedConversation as DirectMessage;
             if (dm == null)
                 return; // group calls not supported yet
 
+            if (partner == null) { partner = dm.Partner; answer_call = false; }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(false, false, false);
-            screen = new CallScreen(dm.Partner, initial_location);
+            screen = new CallScreen(partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
@@ -855,7 +857,7 @@ namespace Skymu.Pontis
                 if (FillMessagePanelHost.Content == frame)
                     FillMessagePanelHost.Content = null;
                 ContentArea.Visibility = Visibility.Visible;
-                SetWindow(WindowType.Chat);
+                SetWindow(WindowType.Chat, true);
             }
             else
             {
@@ -1263,7 +1265,7 @@ namespace Skymu.Pontis
 
             SourceInitialized += (s, e) =>
             {
-	            WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
                 if (wplc != null)
                 {
                     WindowPlacement wp = (WindowPlacement)wplc;

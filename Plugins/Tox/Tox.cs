@@ -17,7 +17,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -99,7 +98,7 @@ namespace Tox
             }
             catch (Exception e)
             {
-                ERR("An error occured trying to flush AV: "+e);
+                ERR("An error occured trying to flush AV: " + e);
             }
             toxav_kill(av);
             toxTimer?.Dispose();
@@ -110,7 +109,7 @@ namespace Tox
                 }
                 catch (Exception e)
                 {
-                    ERR("An error occured trying to save profile. Some of your progress is lost. "+e);
+                    ERR("An error occured trying to save profile. Some of your progress is lost. " + e);
                 }
             tox_kill(tox);
             Debug.WriteLine("Tox: Flushed Tox");
@@ -122,7 +121,7 @@ namespace Tox
             }
             catch (Exception e)
             {
-                ERR("An error occured trying to release profile lock. "+e);
+                ERR("An error occured trying to release profile lock. " + e);
             }
             cbs.Dispose();
 
@@ -152,7 +151,7 @@ namespace Tox
         // UiContextPost
         internal void UCP(SendOrPostCallback d) => uiContext?.Post(d, null);
         // ERRor
-        internal void ERR(string err) { Debug.WriteLine("Tox: ERROR: "+err); OnError?.Invoke(this, new PluginMessageEventArgs(err)); }
+        internal void ERR(string err) { Debug.WriteLine("Tox: ERROR: " + err); OnError?.Invoke(this, new PluginMessageEventArgs(err)); }
         internal void SAVE() => save(tox, profile, this);
         // UserNAME
         string UNAME(IntPtr tox, UInt32 fid)
@@ -284,7 +283,7 @@ namespace Tox
                                         Process proc = Process.GetProcessById(pid);
                                         if (proc.ProcessName.ToLower().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName())
                                         {
-                                            ERR(FileLockedErrS + " by " + locklines[1] +FileLockedErrE);
+                                            ERR(FileLockedErrS + " by " + locklines[1] + FileLockedErrE);
                                             return LoginResult.Failure;
                                         }
                                     }
@@ -309,7 +308,7 @@ namespace Tox
                     if (!IsFileLocked(e))
                         throw e; // file not locked
                     ERR(FileLockedErr);
-                    return LoginResult.Failure; 
+                    return LoginResult.Failure;
                 }
                 #endregion
                 tox_options_set_savedata_type(opt, Tox_Savedata_Type.TOX_SAVE);
@@ -360,7 +359,8 @@ namespace Tox
 
                 tox_options_set_savedata_data(opt, data, (UIntPtr)data.Length);
                 tox_options_set_savedata_length(opt, (UIntPtr)data.Length);
-            } else
+            }
+            else
             {
                 newprofile = true;
             }
@@ -431,7 +431,7 @@ namespace Tox
             }
 
             string pubkey = BATS(public_key);
-            string avatarPath = Path.Combine(AvatarDir, pubkey+".png");
+            string avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
             if (File.Exists(avatarPath))
                 currentUser = new User(uname, profile, pubkey, status, UserConnectionStatus.Online, File.ReadAllBytes(avatarPath));
             else
@@ -442,7 +442,7 @@ namespace Tox
             string tid = BATS(tidb);
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
-                OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: "+tid));
+                OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
             currentUser.PublicUsername = tid;
 
@@ -474,9 +474,9 @@ namespace Tox
             if (toxTimer != null)
                 toxTimer.Change((int)tox_iteration_interval(tox), Timeout.Infinite);
         }
-            
+
         #region Populate
-        
+
         public async Task<bool> PopulateUserInformation()
         {
             uiContext = SynchronizationContext.Current;
@@ -713,10 +713,11 @@ namespace Tox
             return true;
         }
 
-        public async Task<bool> SetTextStatus(string status) {
+        public async Task<bool> SetTextStatus(string status)
+        {
             if (!tox_self_set_status_message(tox, status, (UIntPtr)status.Length, out Tox_Err_Set_Info err))
             {
-                ERR("Failed to set status: "+PTSA(tox_err_set_info_to_string(err)));
+                ERR("Failed to set status: " + PTSA(tox_err_set_info_to_string(err)));
                 return false;
             }
             return true;
@@ -773,7 +774,7 @@ namespace Tox
                 return null;
             }
 
-            return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0] );
+            return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0]);
         }
 
         public async Task<bool> EndCall(ActiveCall call)

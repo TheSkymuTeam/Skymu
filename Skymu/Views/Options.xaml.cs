@@ -9,10 +9,10 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Skymu.Preferences;
 
 namespace Skymu.Views
 {
@@ -72,7 +72,7 @@ namespace Skymu.Views
         {
             Settings.Reset();
             Settings.Save();
-            LoadVisualSettings(); 
+            LoadVisualSettings();
         }
     }
 }

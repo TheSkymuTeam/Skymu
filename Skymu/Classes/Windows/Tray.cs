@@ -10,12 +10,12 @@
 /*==========================================================*/
 
 using MiddleMan;
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Winforms = System.Windows.Forms;
-using Skymu.Preferences;
 
 # pragma warning disable CA1416
 

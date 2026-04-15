@@ -9,7 +9,7 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
- // TODO get the fucking rid of this 
+// TODO get the fucking rid of this 
 
 using System;
 using System.Threading.Tasks;

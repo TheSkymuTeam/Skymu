@@ -9,13 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
-using System.IO;
-using System.Xml.Linq;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Reflection;
 using Skymu.Classes;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Reflection;
+using System.Xml.Linq;
 
 namespace Skymu.Preferences
 {
@@ -26,14 +26,20 @@ namespace Skymu.Preferences
         public class SettingsProxy : INotifyPropertyChanged
         {
             public event PropertyChangedEventHandler PropertyChanged;
+
             internal void Notify(string n) =>
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
 
-            private static readonly Dictionary<string, PropertyInfo> _props = new Dictionary<string, PropertyInfo>();
+            private static readonly Dictionary<string, PropertyInfo> _props =
+                new Dictionary<string, PropertyInfo>();
 
             static SettingsProxy()
             {
-                foreach (var p in typeof(Settings).GetProperties(BindingFlags.Public | BindingFlags.Static))
+                foreach (
+                    var p in typeof(Settings).GetProperties(
+                        BindingFlags.Public | BindingFlags.Static
+                    )
+                )
                     _props[p.Name] = p;
             }
 
@@ -42,7 +48,8 @@ namespace Skymu.Preferences
                 get => _props.TryGetValue(key, out var p) ? p.GetValue(null) : null;
                 set
                 {
-                    if (!_props.TryGetValue(key, out var p)) return;
+                    if (!_props.TryGetValue(key, out var p))
+                        return;
                     try
                     {
                         var converted = Convert.ChangeType(value, p.PropertyType);
@@ -56,14 +63,15 @@ namespace Skymu.Preferences
 
         public static WindowPlacement WindowPlacement
         {
-            get => new WindowPlacement
-            {
-                Top = Xd("WP_Top", 0),
-                Left = Xd("WP_Left", 0),
-                Width = Xd("WP_Width", 0),
-                Height = Xd("WP_Height", 0),
-                sidebarWidth = Xd("WP_SidebarWidth", 0)
-            };
+            get =>
+                new WindowPlacement
+                {
+                    Top = Xd("WP_Top", 0),
+                    Left = Xd("WP_Left", 0),
+                    Width = Xd("WP_Width", 0),
+                    Height = Xd("WP_Height", 0),
+                    sidebarWidth = Xd("WP_SidebarWidth", 0),
+                };
             set
             {
                 Set("WP_Top", value.Top.ToString());
@@ -75,37 +83,150 @@ namespace Skymu.Preferences
             }
         }
 
-        public static int WindowFrame { get => S("WindowFrame", 0); set => W("WindowFrame", value, nameof(WindowFrame)); }
-        public static int EmojiFps { get => S("EmojiFps", 50); set => W("EmojiFps", value, nameof(EmojiFps)); }
-        public static int MsgLoadCount { get => S("MsgLoadCount", 30); set => W("MsgLoadCount", value, nameof(MsgLoadCount)); }
-        public static int CredsSubCount { get => S("CredsSubCount", 0); set => W("CredsSubCount", value, nameof(CredsSubCount)); }
+        public static int WindowFrame
+        {
+            get => S("WindowFrame", 0);
+            set => W("WindowFrame", value, nameof(WindowFrame));
+        }
+        public static int EmojiFps
+        {
+            get => S("EmojiFps", 50);
+            set => W("EmojiFps", value, nameof(EmojiFps));
+        }
+        public static int MsgLoadCount
+        {
+            get => S("MsgLoadCount", 30);
+            set => W("MsgLoadCount", value, nameof(MsgLoadCount));
+        }
+        public static int CredsSubCount
+        {
+            get => S("CredsSubCount", 0);
+            set => W("CredsSubCount", value, nameof(CredsSubCount));
+        }
 
-        public static string BrandingName { get => S("BrandingName", "Skype"); set => W("BrandingName", value, nameof(BrandingName)); }
+        public static string BrandingName
+        {
+            get => S("BrandingName", "Skype");
+            set => W("BrandingName", value, nameof(BrandingName));
+        }
 
-        public static string ColorTheme { get => S("ColorTheme", "Default"); set => W("ColorTheme", value, nameof(ColorTheme)); }
-        public static string CredsText { get => S("CredsText", "$ 0.00"); set => W("CredsText", value, nameof(CredsText)); }
-        public static string ThemeRoot { get => S("ThemeRoot", "Light"); set => W("ThemeRoot", value, nameof(ThemeRoot)); }
-        public static string PresFrame { get => S("PresFrame", "Aero.NormalColor"); set => W("PresFrame", value, nameof(PresFrame)); }
-        public static string Language { get => S("Language", "English"); set => W("Language", value, nameof(Language)); }
-        public static string Interface { get => S("Interface", "Skyaeris"); set => W("Interface", value, nameof(Interface)); }
-        public static string SkippedVersion { get => S("SkippedVersion", ""); set => W("SkippedVersion", value, nameof(SkippedVersion)); }
-        public static string SoundPack { get => S("SoundPack", "Sounds"); set => W("SoundPack", value, nameof(SoundPack)); }
+        public static string ColorTheme
+        {
+            get => S("ColorTheme", "Default");
+            set => W("ColorTheme", value, nameof(ColorTheme));
+        }
+        public static string CredsText
+        {
+            get => S("CredsText", "$ 0.00");
+            set => W("CredsText", value, nameof(CredsText));
+        }
+        public static string ThemeRoot
+        {
+            get => S("ThemeRoot", "Light");
+            set => W("ThemeRoot", value, nameof(ThemeRoot));
+        }
+        public static string PresFrame
+        {
+            get => S("PresFrame", "Aero.NormalColor");
+            set => W("PresFrame", value, nameof(PresFrame));
+        }
+        public static string Language
+        {
+            get => S("Language", "English");
+            set => W("Language", value, nameof(Language));
+        }
+        public static string Interface
+        {
+            get => S("Interface", "Skyaeris");
+            set => W("Interface", value, nameof(Interface));
+        }
+        public static string SkippedVersion
+        {
+            get => S("SkippedVersion", "");
+            set => W("SkippedVersion", value, nameof(SkippedVersion));
+        }
+        public static string SoundPack
+        {
+            get => S("SoundPack", "Sounds");
+            set => W("SoundPack", value, nameof(SoundPack));
+        }
 
-        public static bool AutoLogin { get => S("AutoLogin", true); set => W("AutoLogin", value, nameof(AutoLogin)); }
-        public static bool EnableNotifications { get => S("EnableNotifications", true); set => W("EnableNotifications", value, nameof(EnableNotifications)); }
-        public static bool EnableSkypeHome { get => S("EnableSkypeHome", true); set => W("EnableSkypeHome", value, nameof(EnableSkypeHome)); }
-        public static bool UseClearType { get => S("UseClearType", true); set => W("UseClearType", value, nameof(UseClearType)); }
-        public static bool DynamicSidebarTabs { get => S("DynamicSidebarTabs", true); set => W("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs)); }
-        public static bool BlueNotifications { get => S("BlueNotifications", false); set => W("BlueNotifications", value, nameof(BlueNotifications)); }
-        public static bool StartOnStartup { get => S("StartOnStartup", false); set => W("StartOnStartup", value, nameof(StartOnStartup)); }
-        public static bool FallbackFillColors { get => S("FallbackFillColors", false); set => W("FallbackFillColors", value, nameof(FallbackFillColors)); }
-        public static bool Anonymize { get => S("Anonymize", false); set => W("Anonymize", value, nameof(Anonymize)); }
-        public static bool FirstRunCompleted { get => S("FirstRunCompleted", false); set => W("FirstRunCompleted", value, nameof(FirstRunCompleted)); }
-        public static bool DisablePingbacks { get => S("DisablePingbacks", false); set => W("DisablePingbacks", value, nameof(DisablePingbacks)); }
-        public static bool MessageLogger { get => S("MessageLogger", false); set => W("MessageLogger", value, nameof(MessageLogger)); }
-        public static bool NikoIcons { get => S("NikoIcons", false); set => W("NikoIcons", value, nameof(NikoIcons)); }
-        public static bool QuitWithoutAsking { get => S("QuitWithoutAsking", false); set => W("QuitWithoutAsking", value, nameof(QuitWithoutAsking)); }
-        public static bool SuppressOldRuntimeWarnings { get => S("SuppressOldRuntimeWarnings", false); set => W("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings)); }
+        public static bool AutoLogin
+        {
+            get => S("AutoLogin", true);
+            set => W("AutoLogin", value, nameof(AutoLogin));
+        }
+        public static bool EnableNotifications
+        {
+            get => S("EnableNotifications", true);
+            set => W("EnableNotifications", value, nameof(EnableNotifications));
+        }
+        public static bool EnableSkypeHome
+        {
+            get => S("EnableSkypeHome", true);
+            set => W("EnableSkypeHome", value, nameof(EnableSkypeHome));
+        }
+        public static bool UseClearType
+        {
+            get => S("UseClearType", true);
+            set => W("UseClearType", value, nameof(UseClearType));
+        }
+        public static bool DynamicSidebarTabs
+        {
+            get => S("DynamicSidebarTabs", true);
+            set => W("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs));
+        }
+        public static bool BlueNotifications
+        {
+            get => S("BlueNotifications", false);
+            set => W("BlueNotifications", value, nameof(BlueNotifications));
+        }
+        public static bool StartOnStartup
+        {
+            get => S("StartOnStartup", false);
+            set => W("StartOnStartup", value, nameof(StartOnStartup));
+        }
+        public static bool FallbackFillColors
+        {
+            get => S("FallbackFillColors", false);
+            set => W("FallbackFillColors", value, nameof(FallbackFillColors));
+        }
+        public static bool Anonymize
+        {
+            get => S("Anonymize", false);
+            set => W("Anonymize", value, nameof(Anonymize));
+        }
+        public static bool FirstRunCompleted
+        {
+            get => S("FirstRunCompleted", false);
+            set => W("FirstRunCompleted", value, nameof(FirstRunCompleted));
+        }
+        public static bool DisablePingbacks
+        {
+            get => S("DisablePingbacks", false);
+            set => W("DisablePingbacks", value, nameof(DisablePingbacks));
+        }
+        public static bool MessageLogger
+        {
+            get => S("MessageLogger", false);
+            set => W("MessageLogger", value, nameof(MessageLogger));
+        }
+        public static bool NikoIcons
+        {
+            get => S("NikoIcons", false);
+            set => W("NikoIcons", value, nameof(NikoIcons));
+        }
+        public static bool QuitWithoutAsking
+        {
+            get => S("QuitWithoutAsking", false);
+            set => W("QuitWithoutAsking", value, nameof(QuitWithoutAsking));
+        }
+        public static bool SuppressOldRuntimeWarnings
+        {
+            get => S("SuppressOldRuntimeWarnings", false);
+            set => W("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings));
+        }
+
         public static void Save() { }
 
         public static void Reset()
@@ -116,7 +237,8 @@ namespace Skymu.Preferences
 
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Skymu", "shared.xml"
+            "Skymu",
+            "shared.xml"
         );
 
         private static XDocument LoadOrCreate()
@@ -137,9 +259,13 @@ namespace Skymu.Preferences
             try
             {
                 var doc = LoadOrCreate();
-                return doc.Root.Element("UI")?.Element("General")?.Element(key)?.Value ?? defaultValue;
+                return doc.Root.Element("UI")?.Element("General")?.Element(key)?.Value
+                    ?? defaultValue;
             }
-            catch { return defaultValue; }
+            catch
+            {
+                return defaultValue;
+            }
         }
 
         private static void Set(string key, string value)
@@ -147,15 +273,23 @@ namespace Skymu.Preferences
             var doc = LoadOrCreate();
             var node = doc.Root.Element("UI").Element("General");
             var el = node.Element(key);
-            if (el == null) node.Add(new XElement(key, value));
-            else el.Value = value;
+            if (el == null)
+                node.Add(new XElement(key, value));
+            else
+                el.Value = value;
             doc.Save(FilePath);
         }
 
         private static string S(string k, string def) => Get(k, def) ?? def;
-        private static bool S(string k, bool def) => bool.TryParse(Get(k, def.ToString()), out var v) ? v : def;
-        private static int S(string k, int def) => int.TryParse(Get(k, def.ToString()), out var v) ? v : def;
-        private static double Xd(string k, double def) => double.TryParse(Get(k, def.ToString()), out var v) ? v : def;
+
+        private static bool S(string k, bool def) =>
+            bool.TryParse(Get(k, def.ToString()), out var v) ? v : def;
+
+        private static int S(string k, int def) =>
+            int.TryParse(Get(k, def.ToString()), out var v) ? v : def;
+
+        private static double Xd(string k, double def) =>
+            double.TryParse(Get(k, def.ToString()), out var v) ? v : def;
 
         private static void W<T>(string key, T value, string propName)
         {

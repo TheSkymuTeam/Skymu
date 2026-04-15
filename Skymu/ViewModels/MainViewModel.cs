@@ -18,9 +18,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Windows.Input;
 using MiddleMan;
 using Skymu.Converters;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using Skymu.Emoticons;
 using Skymu.Credentials;
 using Skymu.Helpers;
@@ -28,18 +30,30 @@ using Skymu.Views;
 using Skymu.Databases;
 using System;
 using Skymu.Preferences;
+After:
+using Skymu.Credentials;
+using Skymu.Databases;
+using Skymu.Emoticons;
+using Skymu.Helpers;
+using Skymu.Preferences;
 using Skymu.UserDirectory;
-using System.IO;
+*/
+using Skymu.Credentials;
+using Skymu.Databases;
+using Skymu.Emoticons;
+using Skymu.Preferences;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Skymu.ViewModels
 {
@@ -109,13 +123,13 @@ namespace Skymu.ViewModels
 
         public event EventHandler SignOutRequested;
 
-       
+
         public event Action<string> UserCountUpdated;
 
- 
+
         public event Action<string> SpeedTestIconUpdated;
 
-     
+
         public event Action<bool> CallActiveChanged;
 
         #endregion
@@ -131,24 +145,24 @@ namespace Skymu.ViewModels
             if (attachments == null || attachments.Length == 0 || _isDownloading) return;
             _isDownloading = true;
 
-            
-                string url = attachments[0].Url;
-                string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
-                using (var response = await Universal.WebClient.GetStreamAsync(url))
-                using (var fileStream = File.Create(tempPath))
-                {
-                    await response.CopyToAsync(fileStream);
-                }
-                string ext = DatabaseManager.MessagesTable.ResolveImageExtension(File.ReadAllBytes(tempPath), attachments[0].Name); // TODO spin off to helper method
-                string finalPath = tempPath + ext;
-                if (File.Exists(finalPath)) File.Delete(finalPath);
-                File.Move(tempPath, finalPath);
-                Universal.OpenUrl(finalPath);
-            
 
-            
-                _isDownloading = false;
-            
+            string url = attachments[0].Url;
+            string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
+            using (var response = await Universal.WebClient.GetStreamAsync(url))
+            using (var fileStream = File.Create(tempPath))
+            {
+                await response.CopyToAsync(fileStream);
+            }
+            string ext = DatabaseManager.MessagesTable.ResolveImageExtension(File.ReadAllBytes(tempPath), attachments[0].Name); // TODO spin off to helper method
+            string finalPath = tempPath + ext;
+            if (File.Exists(finalPath)) File.Delete(finalPath);
+            File.Move(tempPath, finalPath);
+            Universal.OpenUrl(finalPath);
+
+
+
+            _isDownloading = false;
+
         });
         public IRelayCommand VideoCallCommand { get; }
         public IAsyncRelayCommand CallCommand { get; }
@@ -501,7 +515,7 @@ namespace Skymu.ViewModels
                 .Cast<object>().ToList();
         }
 
-      
+
         public async Task<IList<object>> GetServerItems()
         {
             if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1)
@@ -516,7 +530,7 @@ namespace Skymu.ViewModels
             return Universal.Plugin.ServerList.Cast<object>().ToList();
         }
 
-     
+
         public IList<object> GetGroupedRecents()
         {
             return CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList)

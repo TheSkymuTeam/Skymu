@@ -9,19 +9,19 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Formatting;
+using Skymu.Preferences;
+using Skymu.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Skymu.Preferences;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using Skymu.Formatting;
 using System.Windows.Threading;
-using MiddleMan;
-using Skymu.ViewModels;
 
 namespace Skymu.Views
 {

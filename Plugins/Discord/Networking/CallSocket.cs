@@ -18,7 +18,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -86,7 +85,7 @@ namespace Discord.Networking
         // Stored so we can initialise the DAVE session on op_code: 4
         private readonly string _selfUserId;
         private readonly string _channelId;
-        
+
         // Pending SSRC maps and properties
         private readonly Dictionary<uint, string> _pendingSsrcMap = new Dictionary<uint, string>();
         private int _pendingEpoch = -1; // patrick: you don't have to init the integer with -1 - omega

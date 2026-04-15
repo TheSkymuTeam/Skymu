@@ -26,15 +26,39 @@
 // incompatibiliies with old Skype database-reading software.
 /*==========================================================*/
 
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Skymu.Views;
+After:
+using Microsoft.Data.Sqlite;
+using MiddleMan;
+using Skymu.Preferences;
+using System.Views;
+*/
+using Microsoft.Data.Sqlite;
+using MiddleMan;
+using Skymu.Preferences;
+using System;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using Skymu.Preferences;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using MiddleMan;
+After:
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.Data.Linq;
+using System.Text;
+*/
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Skymu.Databases
 {
@@ -2165,7 +2189,7 @@ namespace Skymu.Databases
                                         );
                                         break;
 
-                                    // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
+                                        // Other types (topic changes, joins, etc.) not in MM yet, skip for now. TODO add the things
                                 }
                             }
                         }

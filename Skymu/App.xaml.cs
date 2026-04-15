@@ -9,14 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using MiddleMan;
 using Skymu.Formatting;
 using Skymu.Helpers;
@@ -25,6 +17,14 @@ using Skymu.Preferences;
 using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Views;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Skymu
 {
@@ -365,7 +365,7 @@ namespace Skymu
             try
             {
                 _ = UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
-            } 
+            }
             catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)
             {

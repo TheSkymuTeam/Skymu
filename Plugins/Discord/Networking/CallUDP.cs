@@ -249,7 +249,7 @@ namespace Discord.Networking
             {
                 while (await reader.WaitToReadAsync(cancellationToken))
                 {
-                    
+
                     while (reader.TryRead(out byte[] packet))
                     {
                         if (_muted) continue;

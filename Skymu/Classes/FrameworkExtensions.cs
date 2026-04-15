@@ -9,8 +9,8 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -39,7 +39,7 @@ namespace Skymu
                 yield return new Rune(codePoint);
 
                 if (char.IsHighSurrogate(str[i]))
-                    i++; 
+                    i++;
             }
         }
         public static string ToDisplayString(this Enum value)
