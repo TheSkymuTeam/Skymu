@@ -1,0 +1,47 @@
+name: Skymu Nightly
+
+on:
+  push:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: windows-2022
+    
+    strategy:
+      matrix:
+        # This creates two parallel runs: one for x86 and one for x64
+        architecture: [x86, x64]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: 1. Build MiddleMan
+      # -r (runtime) specifies the architecture, which overrides "Any CPU"
+      run: dotnet build MiddleMan/MiddleMan.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+
+    - name: 2. Build Plugins
+      run: |
+        Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
+          dotnet build $_.FullName --configuration Release -r win-${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+        }
+    
+    - name: 3. Build Skymu
+      run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+
+    - name: 4. Build NSIS
+      run: makensis NSIS/SkymuNightlySetup.nsi
+      
+    - name: 5. Export Release Folder to Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        # Separate the names so the x86 and x64 files don't overwrite each other
+        name: nightly-build-${{ matrix.architecture }}
+        path: 'NSIS/SkymuNightlySetup.exe'
+        retention-days: 7
