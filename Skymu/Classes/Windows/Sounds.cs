@@ -9,13 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.IO;
 using System.Media;
+using System.Threading;
 using System.Threading.Tasks;
-using Skymu.Preferences;
 using System.Windows;
 
 # pragma warning disable CA1416
@@ -40,7 +40,7 @@ namespace Skymu
             Load("login", "LOGIN.WAV");
             Load("logout", "LOGOUT.WAV");
         }
-        
+
         static void Load(string key, string filename, string path = "", string fallback = "Sounds")
         {
             if (path == "")
@@ -71,6 +71,7 @@ namespace Skymu
         }
 
         public static bool forcelock = false;
+
         public static void Play(string key, bool force = false)
         {
             if (!players.TryGetValue(key, out var sp))
@@ -81,7 +82,7 @@ namespace Skymu
                 forcelock = true;
                 Task.Run(() =>
                 {
-                    sp.PlaySync(); 
+                    sp.PlaySync();
                     forcelock = false;
                 });
             }
@@ -89,7 +90,7 @@ namespace Skymu
             {
                 if (!forcelock)
                 {
-                    sp.Play();          
+                    sp.Play();
                 }
             }
         }
@@ -98,11 +99,15 @@ namespace Skymu
         {
             if (!players.TryGetValue(key, out var sp))
                 return;
-            await Task.Run(() =>
-            {
-                if (token.IsCancellationRequested) return;
-                sp.PlaySync();
-            }, token);
+            await Task.Run(
+                () =>
+                {
+                    if (token.IsCancellationRequested)
+                        return;
+                    sp.PlaySync();
+                },
+                token
+            );
         }
 
         public static void StopPlayback(string key)
@@ -121,7 +126,8 @@ namespace Skymu
 
         public static void PlaySynchronous(string key)
         {
-            if (players.TryGetValue(key, out var sp)) sp.PlaySync();
+            if (players.TryGetValue(key, out var sp))
+                sp.PlaySync();
         }
     }
 }

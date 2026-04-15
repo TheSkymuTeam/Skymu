@@ -19,11 +19,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using MiddleMan;
 using QRCoder;
-using Skymu.Helpers;
 using Skymu.Credentials;
-using Skymu.Views;
+using Skymu.Helpers;
 using Skymu.Plugins;
 using Skymu.Preferences;
+using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
 using System.Collections.ObjectModel;

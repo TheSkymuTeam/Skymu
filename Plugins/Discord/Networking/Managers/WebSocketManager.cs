@@ -38,13 +38,13 @@ namespace Discord.Networking.Managers
             EventHandler readyHandler = null;
             readyHandler = (s, e) =>
             {
-                Socket.Ready -= readyHandler; 
-                tcs.TrySetResult(true);       
+                Socket.Ready -= readyHandler;
+                tcs.TrySetResult(true);
             };
 
             Socket.Ready += readyHandler;
 
-            return tcs.Task; 
+            return tcs.Task;
         }
 
         public static async Task SendPayload(string payload)

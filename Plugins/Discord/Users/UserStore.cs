@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
+﻿using Discord.Helpers;
 using MiddleMan;
-using Discord.Helpers;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Discord.Users
 {

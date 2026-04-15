@@ -15,7 +15,9 @@
 // This also applies to the associated XAML file.
 /*==========================================================*/
 
-using System;
+using MiddleMan;
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -29,12 +31,54 @@ using Skymu.Preferences;
 using Skymu.Formatting;
 using Skymu.Emoticons;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+After:
+using System.Converters;
+using System.Emoticons;
+using System.Formatting;
+using Skymu.Helpers;
+using System.Preferences;
+using System.ViewModels;
+using Skymu.Views;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Skymu.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Tasks;
+*/
+using Skymu.Emoticons;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using Skymu.Views;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
+using System.Threading.Input;
+using System.Windows;
+After:
+using System.Windows;
+using System.Windows.Controls;
+*/
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using MiddleMan;
 using Skymu.Converters;
 using Skymu.Helpers;
 using Skymu.ViewModels;
+After:
+using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+*/
+
 
 namespace Skymu.SeanKype
 {

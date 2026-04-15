@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Discord.Helpers;
+﻿using Discord.Networking;
 using DiscordProtos.DiscordUsers.V1;
 using Google.Protobuf;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using Discord.Networking;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Discord.Protobuf

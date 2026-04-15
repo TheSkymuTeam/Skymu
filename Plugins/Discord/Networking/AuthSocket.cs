@@ -96,6 +96,7 @@ namespace Discord.Networking
 
             return OaepSha256Decode(em);
         }
+
         private byte[] OaepSha256Decode(byte[] em)
         {
             using (var sha256 = SHA256.Create())
@@ -112,8 +113,10 @@ namespace Discord.Networking
 
                 // skip lHash  then find 0x01
                 int msgStart = hLen;
-                while (msgStart < db.Length && db[msgStart] == 0x00) msgStart++;
-                if (db[msgStart] != 0x01) throw new CryptographicException("OAEP decode failed");
+                while (msgStart < db.Length && db[msgStart] == 0x00)
+                    msgStart++;
+                if (db[msgStart] != 0x01)
+                    throw new CryptographicException("OAEP decode failed");
                 msgStart++;
 
                 return db.Skip(msgStart).ToArray();
@@ -143,7 +146,8 @@ namespace Discord.Networking
         private byte[] XorBytes(byte[] a, byte[] b)
         {
             byte[] result = new byte[a.Length];
-            for (int i = 0; i < a.Length; i++) result[i] = (byte)(a[i] ^ b[i]);
+            for (int i = 0; i < a.Length; i++)
+                result[i] = (byte)(a[i] ^ b[i]);
             return result;
         }
 
@@ -163,11 +167,24 @@ namespace Discord.Networking
 
             byte[] bitString = DerBitString(rsaKey);
 
-            byte[] oid = new byte[] {
-        0x30, 0x0D,
-        0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01,
-        0x05, 0x00
-    };
+            byte[] oid = new byte[]
+            {
+                0x30,
+                0x0D,
+                0x06,
+                0x09,
+                0x2A,
+                0x86,
+                0x48,
+                0x86,
+                0xF7,
+                0x0D,
+                0x01,
+                0x01,
+                0x01,
+                0x05,
+                0x00,
+            };
 
             return DerSequence(Concat(oid, bitString));
         }
@@ -177,7 +194,8 @@ namespace Discord.Networking
             // prepend 0x00 if high bit set to keep it positive
             bool needsPad = (value[0] & 0x80) != 0;
             byte[] content = needsPad ? new byte[value.Length + 1] : value;
-            if (needsPad) Buffer.BlockCopy(value, 0, content, 1, value.Length);
+            if (needsPad)
+                Buffer.BlockCopy(value, 0, content, 1, value.Length);
 
             return Concat(new byte[] { 0x02 }, DerLength(content.Length), content);
         }
@@ -187,11 +205,17 @@ namespace Discord.Networking
             WSClient?.Dispose();
             WSClient = null;
         }
-        private byte[] DerSequence(byte[] content)
-            => Concat(new byte[] { 0x30 }, DerLength(content.Length), content);
 
-        private byte[] DerBitString(byte[] content)
-            => Concat(new byte[] { 0x03 }, DerLength(content.Length + 1), new byte[] { 0x00 }, content);
+        private byte[] DerSequence(byte[] content) =>
+            Concat(new byte[] { 0x30 }, DerLength(content.Length), content);
+
+        private byte[] DerBitString(byte[] content) =>
+            Concat(
+                new byte[] { 0x03 },
+                DerLength(content.Length + 1),
+                new byte[] { 0x00 },
+                content
+            );
 
         private byte[] DerLength(int length)
         {
@@ -205,10 +229,15 @@ namespace Discord.Networking
         private byte[] Concat(params byte[][] arrays)
         {
             int total = 0;
-            foreach (var a in arrays) total += a.Length;
+            foreach (var a in arrays)
+                total += a.Length;
             byte[] result = new byte[total];
             int offset = 0;
-            foreach (var a in arrays) { Buffer.BlockCopy(a, 0, result, offset, a.Length); offset += a.Length; }
+            foreach (var a in arrays)
+            {
+                Buffer.BlockCopy(a, 0, result, offset, a.Length);
+                offset += a.Length;
+            }
             return result;
         }
 
@@ -217,7 +246,8 @@ namespace Discord.Networking
             byte[] encBytes = Convert.FromBase64String(encNonce);
             byte[] plainBytes = DecryptOaepSha256(encBytes);
 
-            return Convert.ToBase64String(plainBytes)
+            return Convert
+                .ToBase64String(plainBytes)
                 .TrimEnd('=')
                 .Replace('+', '-')
                 .Replace('/', '_');
@@ -232,7 +262,8 @@ namespace Discord.Networking
 
         public async Task<bool> StartSocket()
         {
-            if (WSClient is not null) return true;
+            if (WSClient is not null)
+                return true;
 
             WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
             WSClient.Options.SetRequestHeader("Origin", "https://discord.com");
@@ -240,18 +271,24 @@ namespace Discord.Networking
             await WSClient.ConnectAsync(new Uri(gatewayUrl), CancellationToken.None);
             _ = ReceiveMessages();
             return true;
-
-
         }
+
         private async Task ReceiveMessages()
         {
             var buffer = new byte[4096];
             while (WSClient.State == WebSocketState.Open)
             {
-                var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                var result = await WSClient.ReceiveAsync(
+                    new ArraySegment<byte>(buffer),
+                    CancellationToken.None
+                );
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
-                    await WSClient.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                    await WSClient.CloseAsync(
+                        WebSocketCloseStatus.NormalClosure,
+                        string.Empty,
+                        CancellationToken.None
+                    );
                 }
                 else
                 {
@@ -271,7 +308,12 @@ namespace Discord.Networking
             Debug.WriteLine($"Full init payload: {json}");
 
             byte[] bytes = Encoding.UTF8.GetBytes(json);
-            await WSClient.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            await WSClient.SendAsync(
+                new ArraySegment<byte>(bytes),
+                WebSocketMessageType.Text,
+                true,
+                CancellationToken.None
+            );
         }
 
         private async void HandleNonceProof(string data)
@@ -282,11 +324,7 @@ namespace Discord.Networking
             // Decrypt the nonce using the private_key we generated earlier
             string nonce = DecryptNonce(encryptedNonce);
             // Send proof of the nonce that we decrypted to Discord
-            var payload = new
-            {
-                op = "nonce_proof",
-                nonce = nonce
-            };
+            var payload = new { op = "nonce_proof", nonce = nonce };
             string jpayload = JsonSerializer.Serialize(payload);
             byte[] bytes = Encoding.UTF8.GetBytes(jpayload);
 
@@ -307,7 +345,6 @@ namespace Discord.Networking
             QRCodeGenerated?.Invoke(this, fullRA);
         }
 
-
         private void HandleQRUpdate()
         {
             PendingMobileVerification?.Invoke(this, null);
@@ -319,7 +356,14 @@ namespace Discord.Networking
             string discordTkt = json["ticket"]?.GetValue<string>();
             var ticketPayload = new { ticket = discordTkt };
 
-            string encToken = await Core.Client.Send("users/@me/remote-auth/login", HttpMethod.Post, null, ticketPayload, null, null);
+            string encToken = await Core.Client.Send(
+                "users/@me/remote-auth/login",
+                HttpMethod.Post,
+                null,
+                ticketPayload,
+                null,
+                null
+            );
 
             var encJson = JsonObject.Parse(encToken);
             string discordEncTkn = encJson["encrypted_token"]?.GetValue<string>();
@@ -330,21 +374,29 @@ namespace Discord.Networking
 
         private void HandleMessage(string data)
         {
-
             var json = JsonObject.Parse(data);
             string op = json["op"]?.GetValue<string>() ?? "";
 
             switch (op)
             {
-                case "hello": _ = SendAuthPayload(); break;
-                case "nonce_proof": HandleNonceProof(data); break;
-                case "pending_remote_init": HandleQRCode(data); break;
-                case "pending_ticket": HandleQRUpdate(); break;
-                case "pending_login": HandleQRLogin(data); break;
-                default: break;
+                case "hello":
+                    _ = SendAuthPayload();
+                    break;
+                case "nonce_proof":
+                    HandleNonceProof(data);
+                    break;
+                case "pending_remote_init":
+                    HandleQRCode(data);
+                    break;
+                case "pending_ticket":
+                    HandleQRUpdate();
+                    break;
+                case "pending_login":
+                    HandleQRLogin(data);
+                    break;
+                default:
+                    break;
             }
-
         }
     }
-
 }

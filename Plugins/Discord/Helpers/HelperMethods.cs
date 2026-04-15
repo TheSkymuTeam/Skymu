@@ -138,7 +138,7 @@ namespace Discord.Helpers
         public static bool TryToGetChannelId(string identifier, out string channelId)
         {
             channelId = null;
-            string dictChannelId = Discord.Core.UserIdToChannelId.TryGetValue(identifier, out string mappedChannelId) ? mappedChannelId : null;
+            string dictChannelId = Core.UserIdToChannelId.TryGetValue(identifier, out string mappedChannelId) ? mappedChannelId : null;
             if (dictChannelId != null) channelId = dictChannelId;
             else channelId = identifier;
             return true;

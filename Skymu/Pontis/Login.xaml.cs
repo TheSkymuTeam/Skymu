@@ -9,7 +9,10 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
+using MiddleMan;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -21,7 +24,28 @@ using MiddleMan;
 using Skymu.Helpers;
 using Skymu.ViewModels;
 using Skymu.Views;
+After:
+using System.Helpers;
+using System.ViewModels;
+using System.Views;
 using Skymu.Views.Pages;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Views;
+*/
+using Skymu.ViewModels;
+using Skymu.Views;
+using Skymu.Views.Pages;
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Navigation;
 
 namespace Skymu.Pontis
 {

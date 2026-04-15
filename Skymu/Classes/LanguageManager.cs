@@ -9,8 +9,8 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
 using Skymu.Preferences;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -47,7 +47,11 @@ namespace Skymu
                 while (dir != null)
                 {
                     string candidate = Path.Combine(dir, "languages", "english.lang");
-                    if (File.Exists(candidate)) { Load(candidate); break; }
+                    if (File.Exists(candidate))
+                    {
+                        Load(candidate);
+                        break;
+                    }
                     dir = Directory.GetParent(dir)?.FullName;
                 }
                 return;

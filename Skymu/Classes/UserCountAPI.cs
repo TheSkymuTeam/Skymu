@@ -9,13 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Skymu.Preferences;
 using System.Threading;
 using System.Threading.Tasks;
 

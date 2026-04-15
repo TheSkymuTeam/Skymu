@@ -9,21 +9,20 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using Skymu.Formatting;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using MiddleMan;
-using Skymu.Preferences;
-using Skymu.Helpers;
-using Skymu.ViewModels;
 
 namespace Skymu.Converters
 {
@@ -72,11 +71,22 @@ namespace Skymu.Converters
             return "0";
         }
 
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
-            if (value is string stringValue
-                && int.TryParse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result))
+            if (
+                value is string stringValue
+                && int.TryParse(
+                    stringValue,
+                    NumberStyles.Integer,
+                    CultureInfo.InvariantCulture,
+                    out int result
+                )
+            )
             {
                 return result;
             }
@@ -126,7 +136,12 @@ namespace Skymu.Converters
             return Math.Max((height / 2) - 30, 0);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -137,7 +152,8 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             byte[] raw = Helpers.RetrieveImageAttachment(value);
-            if (raw == null) return null;
+            if (raw == null)
+                return null;
 
             try
             {
@@ -187,11 +203,11 @@ namespace Skymu.Converters
         )
         {
             if (values[0] is string identifier && identifier == Universal.CurrentUser?.Identifier)
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Me"]; 
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Me"];
             else if (values[1] is bool isForwarded && isForwarded)
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Forward"]; 
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Forward"];
             else
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Other"]; 
+                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Other"];
         }
 
         public object[] ConvertBack(
@@ -334,7 +350,12 @@ namespace Skymu.Converters
                 return NotNullMargin;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        )
         {
             throw new NotImplementedException();
         }
@@ -514,9 +535,12 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var image_path = value as string;
-            if (image_path == null) return null;
-            else if (parameter is string era && !String.IsNullOrEmpty(era)) return Helpers.AssetPathGenerator(image_path, false, era);
-            else return Helpers.AssetPathGenerator(image_path, false);
+            if (image_path == null)
+                return null;
+            else if (parameter is string era && !String.IsNullOrEmpty(era))
+                return Helpers.AssetPathGenerator(image_path, false, era);
+            else
+                return Helpers.AssetPathGenerator(image_path, false);
         }
 
         public object ConvertBack(
@@ -583,8 +607,14 @@ namespace Skymu.Converters
         internal static byte[] RetrieveImageAttachment(object value)
         {
             Attachment[] arr = value as Attachment[];
-            if (arr == null || arr.Length < 1 ||
-     (arr[0].Type != AttachmentType.Image && arr[0].Type != AttachmentType.ThumbnailImage))
+            if (
+                arr == null
+                || arr.Length < 1
+                || (
+                    arr[0].Type != AttachmentType.Image
+                    && arr[0].Type != AttachmentType.ThumbnailImage
+                )
+            )
                 return null;
 
             byte[] bytes = arr[0].File;
@@ -597,26 +627,33 @@ namespace Skymu.Converters
         internal static string GetAssetBasePrefix(string era = null, bool universal = false)
         {
             string theme_root = Settings.ThemeRoot;
-            if (universal) theme_root = "Universal";
+            if (universal)
+                theme_root = "Universal";
 
             if (!String.IsNullOrEmpty(theme_root))
             {
                 string baseFolder = Settings.Interface;
-                if (!String.IsNullOrEmpty(era)) baseFolder = era;
+                if (!String.IsNullOrEmpty(era))
+                    baseFolder = era;
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
-
             }
 
             return $"pack://application:,,,/Skymu;component/Skyaeris/Assets/{theme_root}/";
         }
 
-        internal static BitmapImage AssetPathGenerator(string image_path, bool is_shared, string era = null)
+        internal static BitmapImage AssetPathGenerator(
+            string image_path,
+            bool is_shared,
+            string era = null
+        )
         {
             string packUri;
-            if (era == null) era = Settings.Interface;
+            if (era == null)
+                era = Settings.Interface;
             if (is_shared)
             {
-                packUri = $"pack://application:,,,/Skymu;component/{era}/Assets/Universal/{image_path}";
+                packUri =
+                    $"pack://application:,,,/Skymu;component/{era}/Assets/Universal/{image_path}";
             }
             else
             {
@@ -635,8 +672,12 @@ namespace Skymu.Converters
             return HorizontalAlignment.Left;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     public class SenderToBubbleColorConverter : IValueConverter
@@ -648,8 +689,12 @@ namespace Skymu.Converters
             return (SolidColorBrush)Application.Current.Resources["Message.Bubble.Other"];
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     public class SeanKypeSidebarTemplateSelector : DataTemplateSelector
@@ -661,10 +706,14 @@ namespace Skymu.Converters
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (item is ServerChannel) return ServerChannelTemplate;
-            if (item is DirectMessage) return DirectMessageTemplate;
-            if (item is Group) return GroupTemplate;
-            if (item is Server) return ServerTemplate;
+            if (item is ServerChannel)
+                return ServerChannelTemplate;
+            if (item is DirectMessage)
+                return DirectMessageTemplate;
+            if (item is Group)
+                return GroupTemplate;
+            if (item is Server)
+                return ServerTemplate;
             return base.SelectTemplate(item, container);
         }
     }
@@ -678,8 +727,12 @@ namespace Skymu.Converters
             return Visibility.Collapsed;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     public class SenderToReceivedVisibilityConverter : IValueConverter
@@ -691,39 +744,67 @@ namespace Skymu.Converters
             return Visibility.Visible;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     // Converts bool → Visibility: true=Hidden (keeps layout space), false=Visible.
     // Used to hide avatar/arrow in merged bubbles while preserving alignment.
     public class BoolToHiddenVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => (value is bool b && b) ? Visibility.Hidden : Visibility.Visible;
+        public object Convert(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => (value is bool b && b) ? Visibility.Hidden : Visibility.Visible;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     // Converts bool → Visibility: true=Visible, false=Collapsed.
     public class BoolToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => (value is bool b && b) ? Visibility.Visible : Visibility.Collapsed;
+        public object Convert(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => (value is bool b && b) ? Visibility.Visible : Visibility.Collapsed;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     // Converts bool → Visibility: true=Collapsed, false=Visible.
     public class InverseBoolToVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => (value is bool b && b) ? Visibility.Collapsed : Visibility.Visible;
+        public object Convert(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => (value is bool b && b) ? Visibility.Collapsed : Visibility.Visible;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => Binding.DoNothing;
+        public object ConvertBack(
+            object value,
+            Type targetType,
+            object parameter,
+            CultureInfo culture
+        ) => Binding.DoNothing;
     }
 
     public class MessageGroup
@@ -731,15 +812,18 @@ namespace Skymu.Converters
         public ObservableCollection<Message> Messages { get; }
         public bool ShowSenderName { get; }
         public User Sender => Messages.Count > 0 ? Messages[0].Sender : null;
-        public DateTime Time => Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
+        public DateTime Time =>
+            Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
 
         public bool IsImageGroup
         {
             get
             {
-                if (Messages.Count != 1 || Messages[0].Attachments == null) return false;
+                if (Messages.Count != 1 || Messages[0].Attachments == null)
+                    return false;
                 foreach (var a in Messages[0].Attachments)
-                    if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage) return true;
+                    if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage)
+                        return true;
                 return false;
             }
         }

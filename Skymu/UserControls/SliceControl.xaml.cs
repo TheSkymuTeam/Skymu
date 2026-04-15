@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -823,8 +822,10 @@ namespace Skymu
         public void UpdateHitTestState()
         {
             IsHitTestVisible = IsEnabled && Interactive;
-            if (!IsEnabled) Opacity = 0.4;
-            else Opacity = 1;
+            if (!IsEnabled)
+                Opacity = 0.4;
+            else
+                Opacity = 1;
         }
 
         public void SetState(ButtonVisualState state)
@@ -945,8 +946,10 @@ namespace Skymu
 
             if (StackDirection == SpriteStackDirection.Vertical)
             {
-                double singleHeightPx = (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount;
-                double spannedHeightPx = singleHeightPx * ElementSpan + SpriteSpacing * (ElementSpan - 1);
+                double singleHeightPx =
+                    (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount;
+                double spannedHeightPx =
+                    singleHeightPx * ElementSpan + SpriteSpacing * (ElementSpan - 1);
                 double yPx = index * (singleHeightPx + SpriteSpacing);
                 return new Rect(0, yPx / bmp.PixelHeight, 1, spannedHeightPx / bmp.PixelHeight);
             }
@@ -965,9 +968,10 @@ namespace Skymu
             if (bmp == null || ElementCount <= 0)
                 return ActualHeight;
 
-            double singleHeight = StackDirection == SpriteStackDirection.Vertical
-                ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
-                : bmp.PixelHeight;
+            double singleHeight =
+                StackDirection == SpriteStackDirection.Vertical
+                    ? (bmp.PixelHeight - (ElementCount - 1) * SpriteSpacing) / ElementCount
+                    : bmp.PixelHeight;
 
             int span = Math.Max(1, ElementSpan);
             return StackDirection == SpriteStackDirection.Vertical

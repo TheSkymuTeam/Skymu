@@ -9,16 +9,13 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
+using MiddleMan;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Controls;
-using Microsoft.Win32;
-using MiddleMan;
 
 namespace Skymu
 {
@@ -35,7 +32,7 @@ namespace Skymu
             _contacts = contacts;
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
-            _browser.Navigate(new Uri("https://skymu.app/home")); 
+            _browser.Navigate(new Uri("https://skymu.app/home"));
         }
 
         private static void InvokeEval(string script)
@@ -101,14 +98,16 @@ namespace Skymu
             // The local user's avatar has class 'user{username}' (set by SH.MyselfPanel markup).
             // Contact avatars in SH.AvatarViewItem have no username class; their src is set to
             // httpfe://avatar.local/{username} so we match on that instead.
-            InvokeEval($"(function(){{"
-    + $"var imgs=document.getElementsByTagName('img');"
-    + $"for(var i=0;i<imgs.length;i++){{"
-    + $"var s=imgs[i].src||'',c=imgs[i].className||'';"
-    + $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)"
-    + $"imgs[i].src='{src}';"
-    + $"}}"
-    + $"}})();");
+            InvokeEval(
+                $"(function(){{"
+                    + $"var imgs=document.getElementsByTagName('img');"
+                    + $"for(var i=0;i<imgs.length;i++){{"
+                    + $"var s=imgs[i].src||'',c=imgs[i].className||'';"
+                    + $"if(c.indexOf('user{username}')!==-1||s.indexOf('avatar.local/{username}')!==-1)"
+                    + $"imgs[i].src='{src}';"
+                    + $"}}"
+                    + $"}})();"
+            );
         }
     }
 

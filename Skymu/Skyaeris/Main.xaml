@@ -805,11 +805,11 @@
                     Foreground="{StaticResource Text.HighContrast}"
                     Text="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
                 <Image
-                    x:Name="tbli"
+                    x:Name="TitleBarIcon"
                     Margin="8,0,0,0"
-                    MouseLeave="tbli_CancelHold"
-                    MouseLeftButtonDown="tbli_MouseDown"
-                    MouseLeftButtonUp="tbli_CancelHold"
+                    MouseLeave="TitleBarIcon_CancelHold"
+                    MouseLeftButtonDown="TitleBarIcon_MouseDown"
+                    MouseLeftButtonUp="TitleBarIcon_CancelHold"
                     Source="Assets/Universal/Branding/logo-window-frame.png"
                     Style="{StaticResource LongIconStyle}" />
                 <!--  Cursor="Hand" why?????  -->

@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace Discord.Networking
 {
-    internal class DiscordHttpClient 
+    internal class DiscordHttpClient
     {
         private readonly ConfigManager ConfigManager = new ConfigManager();
 
@@ -59,7 +59,7 @@ namespace Discord.Networking
 
         public async Task<string> Send(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null)
         {
-            string url = "https://discord.com/api/v" + Discord.Core.API_VERSION + "/" + endpoint.TrimStart('/');
+            string url = "https://discord.com/api/v" + Core.API_VERSION + "/" + endpoint.TrimStart('/');
             // Debug.WriteLine(url);
             using (var request = new HttpRequestMessage(httpMethod, url))
             {

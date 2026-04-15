@@ -52,7 +52,7 @@ namespace Tox
         }
         internal void Init(IntPtr tox, IntPtr user_data, IntPtr av)
         {
-            
+
             _OnConnectionStatus = OnConnectionStatus; tox_callback_self_connection_status(tox, _OnConnectionStatus);
             _OnFriendName = OnFriendName; tox_callback_friend_name(tox, _OnFriendName);
             _OnFriendStatusMessage = OnFriendStatusMessage; tox_callback_friend_status_message(tox, _OnFriendStatusMessage);
@@ -351,11 +351,11 @@ namespace Tox
             tox_conference_peer_get_public_key(tox, cid, pid, pkeyb, out _);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
             if (BATS(pkeyb) != core.currentUser.Identifier)
-            core.UCP(_ =>
-            {
-                Message message = new Message($"{cid}/{pid}_{GUID()}", core.conferences[cid].users[pid], TIME(), msg);
-                core.RaiseMessageEvent(new MessageRecievedEventArgs("C" + cid, message, false));
-            });
+                core.UCP(_ =>
+                {
+                    Message message = new Message($"{cid}/{pid}_{GUID()}", core.conferences[cid].users[pid], TIME(), msg);
+                    core.RaiseMessageEvent(new MessageRecievedEventArgs("C" + cid, message, false));
+                });
         }
 
 

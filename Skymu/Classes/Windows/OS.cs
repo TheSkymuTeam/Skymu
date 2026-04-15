@@ -9,17 +9,10 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Skymu.Preferences;
 using Microsoft.Win32;
+using Skymu.Preferences;
+using System;
+using System.Diagnostics;
 
 #pragma warning disable CA1416
 
