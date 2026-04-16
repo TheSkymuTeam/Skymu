@@ -922,6 +922,11 @@ namespace Skymu.Skyaeris
             new Views.About().Show();
         }
 
+        private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
+        {
+            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
+        }
+
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
         {
             new Updater(true);
