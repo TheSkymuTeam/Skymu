@@ -927,7 +927,7 @@
                         <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK], Source={StaticResource Lang}}" IsEnabled="False" />
                         <Separator />
                         <MenuItem Click="OnAbout" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
-                        <MenuItem Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnPrivacyPolicy" Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
                     </MenuItem>
                 </Menu>
                 <Rectangle

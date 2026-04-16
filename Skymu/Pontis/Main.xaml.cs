@@ -333,7 +333,7 @@ namespace Skymu.Pontis
                 MI(L("sZAPBUTTON_FEEDBACK")),
                 SEP(),
                 MI(L("sMAINMENU_HELP_ABOUT"), (s, e2) => OnAbout(null, null)),
-                MI(L("sMAINMENU_HELP_PRIVACY"))
+                MI(L("sMAINMENU_HELP_PRIVACY"), (s, e2) => OnPrivacyPolicy(null, null))
             );
         }
 
@@ -708,6 +708,11 @@ namespace Skymu.Pontis
         private void OnAbout(object sender, RoutedEventArgs e)
         {
             new About().Show();
+        }
+
+        private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
+        {
+            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
         }
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
