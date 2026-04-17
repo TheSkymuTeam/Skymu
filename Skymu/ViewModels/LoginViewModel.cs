@@ -71,7 +71,7 @@ namespace Skymu.ViewModels
         public void LoadPlugins()
         {
             PluginManager.DisposeAll();
-            Universal.PluginList = PluginManager.Load("Plugins");
+            Universal.PluginList = PluginManager.Load(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins"));
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
 
