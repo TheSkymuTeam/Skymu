@@ -1,6 +1,6 @@
 ﻿/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
-// For any inquiries or concerns, contact skymu@hubaxe.fr.
+// For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
 // on your agreement to be bound by the terms of our License.
@@ -162,6 +162,8 @@ namespace Skymu.Skyaeris
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.IsEnabled = false;
                 CallDropdown.IsEnabled = false;
+                CallButton.Visibility = Visibility.Visible;
+                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
             else if (vmodel.SelectedConversation is ServerChannel)
@@ -174,6 +176,7 @@ namespace Skymu.Skyaeris
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
+                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.IsEnabled = true;
                 CallDropdown.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
