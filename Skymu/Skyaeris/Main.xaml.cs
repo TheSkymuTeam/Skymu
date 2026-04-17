@@ -24,7 +24,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -68,7 +67,7 @@ namespace Skymu.Skyaeris
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
 
-        private readonly Random _random = new Random(); // what is this bro
+        private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
 
         private enum WindowType
         {
@@ -922,6 +921,11 @@ namespace Skymu.Skyaeris
             new Views.About().Show();
         }
 
+        private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
+        {
+            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
+        }
+
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
         {
             new Updater(true);
@@ -934,7 +938,10 @@ namespace Skymu.Skyaeris
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
-        private void AddContact_Click(object sender, MouseButtonEventArgs e) { }
+        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        {
+            new AddContact();
+        }
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
         {
@@ -990,9 +997,10 @@ namespace Skymu.Skyaeris
             Keyboard.ClearFocus();
         }
 
-        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private async void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSendButtonState();
+            vmodel?.StartTyping();
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)

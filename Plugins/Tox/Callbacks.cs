@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using ToxOO;
 using static Tox.Helper;
 using static ToxCore;
 
@@ -28,61 +29,84 @@ namespace Tox
         internal void Dispose()
         {
             _OnConnectionStatus = null;
+            #region friend
             _OnFriendName = null;
             _OnFriendStatusMessage = null;
             _OnFriendStatus = null;
             _OnFriendConnectionStatus = null;
             _OnFriendTyping = null;
-            //_OnFriendRequest = null; TODO: Restore this once Skymu implements it. 
+            _OnFriendRequest = null;
             _OnFriendMessage = null;
+            #endregion
+            #region file
             _OnFileRecvControl = null;
             _OnFileRecv = null;
             _OnFileRecvChunk = null;
+            #endregion
+            #region conference
             _OnConferenceMessage = null;
             _OnConferencePeerName = null;
             _OnConferencePeerListChanged = null;
+            #endregion
+            #region av
             _OnCall = null;
             _OnCallState = null;
             _OnAudioReceiveFrame = null;
             _OnVideoReceiveFrame = null;
+            #endregion
+            #region group
+            _OnGroupInvite = null;
+            _OnGroupSelfJoin = null;
+            #endregion
         }
-        internal void LogInit(IntPtr opt)
+        internal void LogInit(Options opt)
         {
-            _OnLog = OnLog; tox_options_set_log_callback(opt, _OnLog);
+            _OnLog = OnLog; opt.logCallback = _OnLog;
         }
-        internal void Init(IntPtr tox, IntPtr user_data, IntPtr av)
+        internal void Init(ToxOO.Tox tox, IntPtr user_data, IntPtr av)
         {
-
-            _OnConnectionStatus = OnConnectionStatus; tox_callback_self_connection_status(tox, _OnConnectionStatus);
-            _OnFriendName = OnFriendName; tox_callback_friend_name(tox, _OnFriendName);
-            _OnFriendStatusMessage = OnFriendStatusMessage; tox_callback_friend_status_message(tox, _OnFriendStatusMessage);
-            _OnFriendStatus = OnFriendStatus; tox_callback_friend_status(tox, _OnFriendStatus);
-            _OnFriendConnectionStatus = OnFriendConnectionStatus; tox_callback_friend_connection_status(tox, _OnFriendConnectionStatus);
-            _OnFriendTyping = OnFriendTyping; tox_callback_friend_typing(tox, _OnFriendTyping);
-            //_OnFriendRequest = OnFriendRequest; tox_callback_friend_request(tox, _OnFriendRequest);
-            _OnFriendMessage = OnFriendMessage; tox_callback_friend_message(tox, _OnFriendMessage);
-            _OnFileRecvControl = OnFileRecvControl; tox_callback_file_recv_control(tox, _OnFileRecvControl);
-            _OnFileChunkRequest = OnFileChunkRequest; tox_callback_file_chunk_request(tox, _OnFileChunkRequest);
-            _OnFileRecv = OnFileRecv; tox_callback_file_recv(tox, _OnFileRecv);
-            _OnFileRecvChunk = OnFileRecvChunk; tox_callback_file_recv_chunk(tox, _OnFileRecvChunk);
-            _OnConferenceMessage = OnConferenceMessage; tox_callback_conference_message(tox, _OnConferenceMessage);
-            _OnConferenceTitle = OnConferenceTitle; tox_callback_conference_title(tox, _OnConferenceTitle);
-            _OnConferencePeerName = OnConferencePeerName; tox_callback_conference_peer_name(tox, _OnConferencePeerName);
-            _OnConferencePeerListChanged = OnConferencePeerListChanged; tox_callback_conference_peer_list_changed(tox, _OnConferencePeerListChanged);
+            _OnConnectionStatus = OnConnectionStatus; tox.selfConnectionStatus = _OnConnectionStatus;
+            #region friend
+            _OnFriendName = OnFriendName; tox.friendName = _OnFriendName;
+            _OnFriendStatusMessage = OnFriendStatusMessage; tox.friendStatusMessage = _OnFriendStatusMessage;
+            _OnFriendStatus = OnFriendStatus; tox.friendStatus = _OnFriendStatus;
+            _OnFriendConnectionStatus = OnFriendConnectionStatus; tox.friendConnectionStatus = _OnFriendConnectionStatus;
+            _OnFriendTyping = OnFriendTyping; tox.friendTyping = _OnFriendTyping;
+            //_OnFriendRequest = OnFriendRequest; tox.friendRequest = _OnFriendRequest; TODO: Restore this once Skymu implements it. 
+            _OnFriendMessage = OnFriendMessage; tox.friendMessage = _OnFriendMessage;
+            #endregion
+            #region file
+            _OnFileRecvControl = OnFileRecvControl; tox_callback_file_recv_control(tox.ptr, _OnFileRecvControl);
+            _OnFileChunkRequest = OnFileChunkRequest; tox_callback_file_chunk_request(tox.ptr, _OnFileChunkRequest);
+            _OnFileRecv = OnFileRecv; tox_callback_file_recv(tox.ptr, _OnFileRecv);
+            _OnFileRecvChunk = OnFileRecvChunk; tox_callback_file_recv_chunk(tox.ptr, _OnFileRecvChunk);
+            #endregion
+            #region conference
+            _OnConferenceMessage = OnConferenceMessage; tox_callback_conference_message(tox.ptr, _OnConferenceMessage);
+            _OnConferenceTitle = OnConferenceTitle; tox_callback_conference_title(tox.ptr, _OnConferenceTitle);
+            _OnConferencePeerName = OnConferencePeerName; tox_callback_conference_peer_name(tox.ptr, _OnConferencePeerName);
+            _OnConferencePeerListChanged = OnConferencePeerListChanged; tox_callback_conference_peer_list_changed(tox.ptr, _OnConferencePeerListChanged);
+            #endregion
+            #region av
             _OnCall = OnCall; toxav_callback_call(av, _OnCall, user_data);
             _OnCallState = OnCallState; toxav_callback_call_state(av, _OnCallState, user_data);
             _OnAudioReceiveFrame = OnAudioReceiveFrame; toxav_callback_audio_receive_frame(av, _OnAudioReceiveFrame, user_data);
             _OnVideoReceiveFrame = OnVideoReceiveFrame; toxav_callback_video_receive_frame(av, _OnVideoReceiveFrame, user_data);
+            #endregion
+            #region group
+            _OnGroupInvite = OnGroupInvite; tox_callback_group_invite(tox.ptr, _OnGroupInvite);
+            _OnGroupSelfJoin = OnGroupSelfJoin; tox_callback_group_self_join(tox.ptr, _OnGroupSelfJoin);
+            #endregion
         }
-
-        #region self, core
 
         tox_log_cb _OnLog;
         static void OnLog(IntPtr tox, Tox_Log_Level level, string file, UInt32 line, string func, string message, IntPtr user_data)
         {
-            if (level == Tox_Log_Level.TRACE || level == Tox_Log_Level.DEBUG) return;
+            // TODO: Uncomment: if (level == Tox_Log_Level.TRACE || level == Tox_Log_Level.DEBUG) return;
             Debug.WriteLine($"Tox: [{level}] {func}: {message}");
         }
+
+        #region self, core
 
         tox_self_connection_status_cb _OnConnectionStatus;
         void OnConnectionStatus(IntPtr tox, Tox_Connection status, IntPtr user_data)
@@ -94,6 +118,8 @@ namespace Tox
         #endregion
 
         #region friend stuff
+
+        #region info
 
         tox_friend_name_cb _OnFriendName;
         void OnFriendName(IntPtr tox, UInt32 fid, string name, UIntPtr length, IntPtr user_data)
@@ -135,22 +161,29 @@ namespace Tox
         tox_friend_connection_status_cb _OnFriendConnectionStatus;
         void OnFriendConnectionStatus(IntPtr tox, UInt32 fid, Tox_Connection connection_status, IntPtr user_data)
         { // Time to send avatar, according to Tox specs
-            if (connection_status == Tox_Connection.NONE) return;
-            Core core = GC(user_data);
-            User user = core.users[(int)fid];
-            byte[] pfp = core.currentUser.ProfilePicture;
-            byte[] hash = new byte[tox_hash_length()];
-            tox_hash(hash, pfp, (UIntPtr)pfp.Length);
-            UInt32 trid = tox_file_send(tox, fid, Tox_File_Kind.AVATAR, (UInt64)pfp.Length, 0, Encoding.ASCII.GetString(hash), (UIntPtr)tox_hash_length(), out Tox_Err_File_Send err);
-            if (core.transfers.ContainsKey(trid))
+            if (connection_status != Tox_Connection.NONE)
             {
-                core.transfers.Remove(trid);
-                core.transfer_info.Remove(trid);
+                if (connection_status == Tox_Connection.NONE) return;
+                Core core = GC(user_data);
+                User user = core.users[(int)fid];
+                byte[] pfp = core.currentUser.ProfilePicture;
+                byte[] hash = new byte[tox_hash_length()];
+                tox_hash(hash, pfp, (UIntPtr)pfp.Length);
+                UInt32 trid = tox_file_send(tox, fid, Tox_File_Kind.AVATAR, (UInt64)pfp.Length, 0, Encoding.ASCII.GetString(hash), (UIntPtr)tox_hash_length(), out var err);
+                if (core.transfers.ContainsKey(trid))
+                {
+                    core.transfers.Remove(trid);
+                    core.transfer_info.Remove(trid);
+                }
+                core.transfers.Add(trid, core.currentUser.ProfilePicture);
+                core.transfer_info.Add(trid, (Tox_File_Kind.AVATAR, ""));
+                Debug.WriteLine($"Tox: Sending my PFP to {fid} as a {connection_status} connection was established");
             }
-            core.transfers.Add(trid, core.currentUser.ProfilePicture);
-            core.transfer_info.Add(trid, (Tox_File_Kind.AVATAR, ""));
-            Debug.WriteLine($"Sending my PFP to {fid}");
+            else
+                Debug.WriteLine($"Tox: Connection with {fid} got terminated");
         }
+
+        #endregion
 
         tox_friend_typing_cb _OnFriendTyping;
         void OnFriendTyping(IntPtr tox, UInt32 fid, bool typing, IntPtr user_data)
@@ -181,7 +214,7 @@ namespace Tox
         void OnFriendRequest(IntPtr tox, string public_key, string message, UIntPtr length, IntPtr user_data)
         {
             Core core = GC(user_data);
-            tox_friend_add_norequest(tox, public_key, out Tox_Err_Friend_Add err);
+            tox_friend_add_norequest(tox, public_key, out var err);
             if (err != Tox_Err_Friend_Add.OK)
             {
                 core.ERR($"Failed to add friend: {PTSA(tox_err_friend_add_to_string(err))}");
@@ -199,6 +232,10 @@ namespace Tox
                 core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
             });
         }
+
+        // TODO: lossy_packet
+
+        // TODO: lossless_packet
 
         #endregion
 
@@ -230,7 +267,7 @@ namespace Tox
 
             byte[] chunk = new byte[(int)length];
             Array.Copy(core.transfers[file_number], (int)position, chunk, 0, (int)length);
-            tox_file_send_chunk(tox, fid, file_number, position, chunk, length, out Tox_Err_File_Send_Chunk err);
+            tox_file_send_chunk(tox, fid, file_number, position, chunk, length, out var err);
             if (err != Tox_Err_File_Send_Chunk.OK)
                 Debug.WriteLine($"Tox: Something went wrong sending file {file_number} to {fid}: {PTSA(tox_err_file_send_chunk_to_string(err))}");
         }
@@ -261,7 +298,7 @@ namespace Tox
                         return;
                     }
                 }
-                if (!tox_file_control(tox, fid, file_number, Tox_File_Control.RESUME, out Tox_Err_File_Control err))
+                if (!tox_file_control(tox, fid, file_number, Tox_File_Control.RESUME, out var err))
                 { // accept!
                     core.ERR($"Tox: Error accepting the avatar: {PTSA(tox_err_file_control_to_string(err))}");
                     return;
@@ -272,14 +309,14 @@ namespace Tox
             else
             {
                 string sfid = fid.ToString();
-                string pkey = PKEY(tox, fid);
+                string pkey = BATS(core.tox.friends[fid].publicKey);
                 core.UCP(_ =>
                 {
                     Message message = new Message($"{sfid}_{GUID()}", core.users[(int)fid], TIME(), $"I have tried to send you a file {filename}, but the Tox plugin currently does not support that.");
                     core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
                 });
                 tox_file_control(tox, fid, file_number, Tox_File_Control.CANCEL, out _);
-                tox_friend_send_message(tox, fid, Tox_Message_Type.NORMAL, FILE_NOT_SUPPORTED, (UIntPtr)FILE_NOT_SUPPORTED.Length, out _);
+                core.tox.friends[fid].SendMessage(Tox_Message_Type.NORMAL, FILE_NOT_SUPPORTED);
             }
         }
 
@@ -303,12 +340,7 @@ namespace Tox
                     string avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
                     if (!Directory.Exists(avatar_cache_dir)) Directory.CreateDirectory(avatar_cache_dir);
 
-                    byte[] pubkey = new byte[tox_public_key_size()];
-                    if (!tox_friend_get_public_key(tox, fid, pubkey, out Tox_Err_Friend_Get_Public_Key err))
-                    {
-                        core.ERR($"Failed to get public key of friend {fid} for saving the new avatar: {PTSA(tox_err_friend_get_public_key_to_string(err))}");
-                        return;
-                    }
+                    byte[] pubkey = core.tox.friends[fid].publicKey;
 
                     File.WriteAllBytes(Path.Combine(avatar_cache_dir, BATS(pubkey) + ".png"), bdata);
                     core.UCP(_ =>
@@ -366,7 +398,7 @@ namespace Tox
             Group g = core.conferences[cid].conference;
             string orig = g.DisplayName;
             g.DisplayName = title;
-            UIntPtr uname_size = tox_conference_peer_get_name_size(tox, cid, pid, out Tox_Err_Conference_Peer_Query err);
+            UIntPtr uname_size = tox_conference_peer_get_name_size(tox, cid, pid, out var err);
             string uname;
             if (uname_size == UIntPtr.Zero || err != Tox_Err_Conference_Peer_Query.OK)
             {
@@ -405,13 +437,63 @@ namespace Tox
 
         #endregion
 
+        #region group chat
+
+        // TODO: peer_name
+
+        // TODO: peer_status
+
+        // TODO: topic
+
+        // TODO: name when it starts to exist
+
+        // TODO: privacy_state
+
+        // TODO: voice_state
+
+        // TODO: topic_lock
+
+        // TODO: peer_limit
+
+        // TODO: password
+
+        // TODO: message
+
+        // TODO: private_message
+
+        // TODO: custom_packet
+
+        // TODO: custom_private_packet
+
+        tox_group_invite_cb _OnGroupInvite;
+        static void OnGroupInvite(IntPtr tox, UInt32 fid, byte[] invite_data, UIntPtr invite_data_length, string group_name, UIntPtr group_name_length, IntPtr user_data)
+        {
+            tox_group_invite_accept(tox, fid, invite_data, invite_data_length, "Skymuer", (UIntPtr)7, null, UIntPtr.Zero, out var err);
+            Debug.WriteLine("Tox: Accepting invite: " + err);
+        }
+
+        // TODO: peer_join
+
+        // TODO: peer_exit
+
+        tox_group_self_join_cb _OnGroupSelfJoin;
+        static void OnGroupSelfJoin(IntPtr tox, UInt32 group_number, IntPtr user_data)
+        {
+            Debug.WriteLine($"Tox: You joined G{group_number}");
+        }
+
+        // TODO: join_fail
+
+        #endregion
+
         #region AV
 
         toxav_call_cb _OnCall;
         void OnCall(IntPtr av, UInt32 fid, bool audio_enabled, bool video_enabled, IntPtr user_data)
         {
-            Debug.WriteLine($"Tox: {fid} tried to call with audio {audio_enabled}, video {video_enabled}, but incoming calls are not ready.");
-            toxav_call_control(av, fid, Toxav_Call_Control.CANCEL, out _);
+            Debug.WriteLine($"Tox: Incoming call from {fid} with audio {audio_enabled}, video {video_enabled}");
+            Core core = GC(user_data);
+            core.CALL(new CallEventArgs(fid.ToString(), CallState.Ringing, core.users[(int)fid]));
         }
 
         // TODO: call_state
@@ -429,6 +511,7 @@ namespace Tox
             if ((state & Toxav_Friend_Call_State.FINISHED) != 0)
             {
                 Debug.WriteLine($"Tox: Call with {fid} ended/declined");
+                core.CSC(new CallEventArgs(fid.ToString(), CallState.Ended));
                 core.avWaiter?.TrySetResult(false);
                 return;
             }

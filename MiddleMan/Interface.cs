@@ -665,6 +665,8 @@ namespace MiddleMan
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation.
         Task<bool> SetConnectionStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
         Task<bool> SetTextStatus(string status); // sets text status
+        int TypingTimeout { get; } // timeout for typing status
+        Task<bool> SetTyping(string idenfitier, bool typing); // sets typing status
     }
 
     public interface ICall
