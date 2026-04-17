@@ -36,6 +36,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace Skymu.ViewModels
@@ -162,6 +163,8 @@ namespace Skymu.ViewModels
         private readonly Dictionary<string, Message> _pendingPreviewMessages;
         private bool _synchronizing;
         private bool _typingIndicatorSubscribed;
+        private bool _typingActive;
+        private Timer _typingTimer;
 
         private const string SKYMU_PREFIX = "@skymu/";
         private const string SKYMU_SENDING = SKYMU_PREFIX + "sending";
@@ -216,6 +219,11 @@ namespace Skymu.ViewModels
             ActiveConversation = new ObservableCollection<ConversationItem>();
             GroupedConversation = new ObservableCollection<MessageGroup>();
             _pendingPreviewMessages = new Dictionary<string, Message>();
+            _typingActive = false;
+            _typingTimer = new Timer(_ => {
+                Universal.Plugin.SetTyping(SelectedConversation?.Identifier, false);
+                _typingActive = false;
+            }, null, Timeout.Infinite, Timeout.Infinite);
 
             SendMessageCommand = new AsyncRelayCommand<string>(SendMessage);
             RunSpeedTestCommand = new AsyncRelayCommand(RunSpeedTest);
@@ -605,6 +613,15 @@ namespace Skymu.ViewModels
                 TypingText = text;
                 IsTypingVisible = true;
             }));
+        }
+
+        public void StartTyping()
+        {
+            _typingTimer.Change(Universal.Plugin.TypingTimeout, Timeout.Infinite);
+            if (!_typingActive) {
+                Universal.Plugin.SetTyping(SelectedConversation?.Identifier, true);
+                _typingActive = true;
+            }
         }
 
         public async Task RunSpeedTest()

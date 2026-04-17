@@ -17,11 +17,25 @@
 	<ItemGroup>
 	  <PackageReference Include="NAudio.Core" Version="2.3.0" />
 	  <PackageReference Include="NAudio.WinMM" Version="2.3.0" />
-		<PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+	  <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">
 			<Private>False</Private>
 		</ProjectReference>
+	</ItemGroup>
+	<Target Name="Copyx86Dlls" AfterTargets="Build">
+		<Copy
+			SourceFiles="@(x86Dlls)"
+			DestinationFolder="..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\" />
+	</Target>
+	<Target Name="Copyx64Dlls" AfterTargets="Build">
+		<Copy
+			SourceFiles="@(x64Dlls)"
+			DestinationFolder="..\..\Skymu\bin\SkymuCore\$(Configuration)\Plugins\" />
+	</Target>
+	<ItemGroup>
+		<x86Dlls Include="lib86\*.dll" />
+		<x64Dlls Include="lib64\*.dll" />
 	</ItemGroup>
 </Project>

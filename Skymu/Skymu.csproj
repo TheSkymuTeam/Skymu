@@ -115,6 +115,13 @@
 		<EmbeddedResource Remove="Emoji\Resources\**\*" />
 		<Compile Remove="Emoji\**\*" />
 		<Resource Include="Emoji\**\*" />
+		
+		<!-- Page assets -->
+		<None Remove="Views\Pages\Assets\**\*" />
+		<Page Remove="Views\Pages\Assets\**\*" />
+		<EmbeddedResource Remove="Views\Pages\Assets\**\*" />
+		<Compile Remove="Views\Pages\Assets\**\*" />
+		<Resource Include="Views\Pages\Assets\**\*" />
 
 		<!-- Sounds -->
 		<None Remove="Sounds*\**\*" />
@@ -122,7 +129,7 @@
 		<EmbeddedResource Remove="Sounds*\**\*" />
 		<Compile Remove="Sounds*\**\*" />
 		<Resource Include="Sounds*\**\*" />
-
+		
 		<!-- Languages as Content -->
 		<None Remove="Languages\**\*" />
 		<Page Remove="Languages\**\*" />
