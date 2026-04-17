@@ -1,0 +1,132 @@
+﻿<Page
+    x:Class="Skymu.Views.Pages.AddContact"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:global="clr-namespace:Skymu"
+    xmlns:local="clr-namespace:Skymu.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Add a contact"
+    FontFamily="Tahoma"
+    FontSize="11"
+    Style="{StaticResource Page}">
+    <Grid
+        Width="503"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Width="Auto"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="346*"/>
+                <ColumnDefinition Width="131*"/>
+                <ColumnDefinition Width="131*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                FontFamily="Tahoma"
+                FontSize="11"
+                FontWeight="Bold"
+                Margin="0,0,0,10"
+                Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}" Grid.ColumnSpan="2"/>
+            <TextBlock
+                x:Name="FindContactDetails"
+                Grid.Row="1"
+                FontFamily="Tahoma"
+                FontSize="11"
+                Margin="0,0,0,18"
+                Text="{Binding Path='[sF_ADDFRIEND_FIND_LABEL]', Source={StaticResource Lang}}"
+                TextWrapping="Wrap" Grid.ColumnSpan="2"/>
+            <Grid
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="0,31,0,13"
+                Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="255" />
+                    <ColumnDefinition Width="122" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="UserDetailsInput"
+                    Grid.Column="0"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    Height="20"/>
+                <Button
+                    x:Name="UserFindBtn"
+                    Grid.Column="1"
+                    Click="FindFriend"
+                    Content="{Binding Path='[sF_ADDFRIEND_FIND_BTN]', Source={StaticResource Lang}}"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    Height="23"
+                    IsDefault="True"
+                    IsEnabled="False"
+                    Margin="8,0,0,0"/>
+            </Grid>
+            <TextBlock
+                Grid.Row="2"
+                FontFamily="Tahoma"
+                FontSize="11"
+                Margin="0,15,0,26"
+                Text="{Binding Path='[sF_SEARCH_MANDALAY_LB_INTRO]', Source={StaticResource Lang}}"
+                TextWrapping="Wrap" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
+            <!--TODO: Progressbar accuracy-->
+            <ProgressBar
+                x:Name="FindPBar"
+                Grid.Row="3"
+                Width="Auto"
+                Height="10"
+                HorizontalAlignment="Stretch"
+                Visibility="Collapsed"/>
+        </Grid>
+        <StackPanel
+            x:Name="BottomField"
+            Grid.Row="2"
+            Height="Auto"
+            Orientation="Vertical">
+            <TextBlock
+                x:Name="MoreThingsYouCanDoText"
+                FontFamily="Tahoma"
+                FontSize="11"
+                FontWeight="Bold"
+                Text="{Binding Path='[sAC_MORE_CAPTION]', Source={StaticResource Lang}}"/>
+            <Separator
+                Margin="0,10,0,8"/>
+            <global:SliceControl
+                Source="Assets/AddContact/plus.png"
+                Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
+                TextColor="#0066ff"
+                TextLeftMargin="22"
+                TextSize="11"/>
+            <global:SliceControl
+                Margin="0,2,0,0"
+                Source="Assets/AddContact/add.png"
+                Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
+                TextColor="#0066ff"
+                TextLeftMargin="22"
+                TextSize="11"/>
+            <global:SliceControl
+                Margin="0,2,0,0"
+                Source="Assets/AddContact/megaphone.png"
+                Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
+                TextColor="#0066ff"
+                TextLeftMargin="22"
+                TextSize="11"/>
+        </StackPanel>
+    </Grid>
+</Page>
