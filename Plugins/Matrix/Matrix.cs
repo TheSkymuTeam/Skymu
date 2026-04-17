@@ -1187,5 +1187,8 @@ namespace Matrix
                 }
             }
         }
+
+        public int TypingTimeout => 5000;
+        public async Task<bool> SetTyping(string identifier, bool typing) => false;
     }
 }
