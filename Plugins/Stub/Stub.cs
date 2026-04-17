@@ -410,6 +410,9 @@ namespace Stub
         // false = the status will not be set
         public async Task<bool> SetConnectionStatus(UserConnectionStatus status) => true;
 
+        public int TypingTimeout => 5000;
+        public async Task<bool> SetTyping(string idenfitier, bool typing) => false;
+
         #region Calls (remove this entire region and remove `, ICall` to disable
 
         // Call will be picked up as soon as something is returned
