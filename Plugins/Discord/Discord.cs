@@ -654,13 +654,12 @@ namespace Discord
         public int TypingTimeout => 5000;
         public async Task<bool> SetTyping(string identifier, bool typing)
         {
-            Debug.WriteLine("A");
             if (!typing || string.IsNullOrWhiteSpace(identifier))
                 return false;
-            Debug.WriteLine("B");
+
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
                 return false;
-            Debug.WriteLine("C");
+
             try {
                 string msgResponse = await Client.Send($"/channels/{channelId}/typing", HttpMethod.Post, DiscordToken).ConfigureAwait(false);
                 Debug.WriteLine("RSP "+msgResponse);
