@@ -38,7 +38,7 @@ namespace Skymu
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4";
-        public const string BuildName = "Erebus Aether Beta 4";
+        public const string BuildName = "Erebus Aether";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
