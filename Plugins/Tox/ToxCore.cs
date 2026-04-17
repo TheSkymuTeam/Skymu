@@ -86,7 +86,7 @@ public static class ToxCore
     {
         NONE,
         TOX_SAVE,
-        KEY,
+        SECRET_KEY,
     }
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tox_savedata_type_to_string(Tox_Savedata_Type value);
@@ -164,7 +164,7 @@ public static class ToxCore
     public static extern bool tox_options_set_savedata_data(IntPtr options, byte[] savedata_data, UIntPtr length);
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern IntPtr tox_options_get_savedata_length(IntPtr options);
+    public static extern UIntPtr tox_options_get_savedata_length(IntPtr options);
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_options_set_savedata_length(IntPtr options, UIntPtr savedata_length);
 
@@ -978,7 +978,7 @@ public static class ToxCore
     }
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tox_err_conference_by_uid_to_string(Tox_Err_Conference_By_Uid value);
-    // Why is the above not marked as deprecated? The actual function is.
+    // Why is the above not marked as deprecated? The actual function is. // EDIT: This is how ToxCore moves
 
     // tox_conference_by_uid: deprecated
 
@@ -1046,7 +1046,561 @@ public static class ToxCore
 
     #region group chats (NGC?)
 
-    // 3069
+    #region length stuff
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_topic_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_part_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_message_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_custom_lossy_packet_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_custom_lossless_packet_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_group_name_length();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_max_password_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_chat_id_size();
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_peer_public_key_size();
+
+    #endregion
+
+    #region Group chat state enumerators
+
+    public enum Tox_Group_Privacy_State
+    {
+        PUBLIC,
+        PRIVATE,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_privacy_state_to_string(Tox_Group_Privacy_State value);
+
+    // Hello boolean how are you?
+    public enum Tox_Group_Topic_Lock
+    {
+        ENABLED,
+        DISABLED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_topic_lock_to_string(Tox_Group_Topic_Lock value);
+
+    public enum Tox_Group_Voice_State
+    {
+        ALL,
+        MODERATOR,
+        FOUNDER,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_voice_state_to_string(Tox_Group_Voice_State value);
+
+    public enum Tox_Group_Role
+    {
+        FOUNDER,
+        MODERATOR,
+        USER,
+        OBSERVER,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_role_to_string(Tox_Group_Role value);
+
+    #endregion
+
+    #region Group chat instance management
+
+    public enum Tox_Err_Group_New
+    {
+        OK,
+        TOO_LONG,
+        EMPTY,
+        INIT,
+        STATE,
+        ANNOUNCE,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_new_to_string(Tox_Err_Group_New value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_new(IntPtr tox, Tox_Group_Privacy_State privacy_state, [MarshalAs(UnmanagedType.LPStr)] string group_name, UIntPtr group_name_length, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, out Tox_Err_Group_New error);
+
+    public enum Tox_Err_Group_Join
+    {
+        OK,
+        INIT,
+        BAD_CHAT_ID,
+        EMPTY,
+        TOO_LONG,
+        PASSWORD,
+        CORE,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_join_to_string(Tox_Err_Group_Join value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_join(IntPtr tox, byte[] chat_id, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, [MarshalAs(UnmanagedType.LPStr)] string password, UIntPtr password_length, out Tox_Err_Group_Join error);
+
+    public enum Tox_Err_Group_Is_Connected
+    {
+        OK,
+        GROUP_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_is_connected_to_string(Tox_Err_Group_Is_Connected value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_is_connected(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Is_Connected error);
+
+    public enum Tox_Err_Group_Disconnect
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        ALREADY_DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_disconnect_to_string(Tox_Err_Group_Disconnect value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_disconnect(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Disconnect error);
+
+    public enum Tox_Err_Group_Reconnect
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        CORE,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_reconnect_to_string(Tox_Err_Group_Reconnect value);
+
+    // tox_group_reconnect: deprecated
+
+    public enum Tox_Err_Group_Leave
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_leave_to_string(Tox_Err_Group_Reconnect value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_is_disconnect(IntPtr tox, UInt32 group_number, [MarshalAs(UnmanagedType.LPStr)] string part_message, UIntPtr length, out Tox_Err_Group_Leave error);
+
+    #endregion
+
+    #region Group user-visible client information
+
+    public enum Tox_Err_Group_Self_Query
+    {
+        OK,
+        GROUP_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_self_query_to_string(Tox_Err_Group_Self_Query value);
+
+    public enum Tox_Err_Group_Self_Name_Set
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        INVALID,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_self_name_set_to_string(Tox_Err_Group_Self_Name_Set value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_self_set_name(IntPtr tox, UInt32 group_number, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr length, out Tox_Err_Group_Self_Name_Set error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_group_self_get_name_size(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Self_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_self_get_name(IntPtr tox, UInt32 group_number, [Out] byte[] name, out Tox_Err_Group_Self_Query error);
+
+    public enum Tox_Err_Group_Self_Status_Set
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_self_status_set_to_string(Tox_Err_Group_Self_Status_Set value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_self_set_status(IntPtr tox, UInt32 group_number, [MarshalAs(UnmanagedType.LPStr)] string status, UIntPtr length, Tox_Err_Group_Self_Status_Set error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_User_Status tox_group_self_get_status(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Self_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Group_Role tox_group_self_get_role(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Self_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_self_get_peer_id(IntPtr tox, UInt32 group_number, out Tox_Err_Group_Self_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_self_get_public_key(IntPtr tox, UInt32 group_number, [Out] byte[] public_key, out Tox_Err_Group_Self_Query error);
+
+    #endregion
+
+    #region Peer-specific group state queries
+
+    public enum Tox_Err_Group_Peer_Query
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        PEER_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_peer_query_to_string(Tox_Err_Group_Peer_Query value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_group_peer_get_name_size(IntPtr tox, UInt32 group_number, UInt32 peer_id, out Tox_Err_Group_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_peer_get_name(IntPtr tox, UInt32 group_number, UInt32 peer_id, [Out] byte[] name, out Tox_Err_Group_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_User_Status tox_group_peer_get_status(IntPtr tox, UInt32 group_number, UInt32 peer_id, out Tox_Err_Group_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Group_Role tox_group_peer_get_role(IntPtr tox, UInt32 group_number, UInt32 peer_id, out Tox_Err_Group_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Connection tox_group_peer_get_connection_status(IntPtr tox, UInt32 group_number, UInt32 peer_id, out Tox_Err_Group_Peer_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_peer_get_public_key(IntPtr tox, UInt32 group_number, UInt32 peer_id, [Out] byte[] public_key, out Tox_Err_Group_Peer_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_peer_name_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_peer_name(IntPtr tox, tox_group_peer_name_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_peer_status_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_User_Status status, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_peer_status(IntPtr tox, tox_group_peer_status_cb callback);
+
+    #endregion
+
+    #region Group chat state queries and events
+
+    public enum Tox_Err_Group_State_Query
+    {
+        OK,
+        GROUP_NOT_FOUND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_state_query_to_string(Tox_Err_Group_State_Query value);
+
+    public enum Tox_Err_Group_Topic_Set
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        PERMISSIONS,
+        FAIL_CREATE,
+        FAIL_SEND,
+        DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_topic_set_to_string(Tox_Err_Group_Topic_Set value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_set_topic(IntPtr tox, UInt32 group_number, [MarshalAs(UnmanagedType.LPStr)] string topic, UIntPtr length, out Tox_Err_Group_Topic_Set error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_group_get_topic_size(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_get_topic(IntPtr tox, UInt32 group_number, [Out] byte[] topic, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_topic_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, [MarshalAs(UnmanagedType.LPStr)] string topic, UIntPtr topic_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_topic(IntPtr tox, tox_group_topic_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_group_get_name_size(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_get_name(IntPtr tox, UInt32 group_number, [Out] byte[] name, out Tox_Err_Group_State_Query error);
+
+    /* 'cause it is something that doesn't exist
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_name_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, IntPtr name, UIntPtr topic_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_name(IntPtr tox, tox_group_topic_cb callback);
+    */
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_get_chat_id(IntPtr tox, UInt32 group_number, [Out] byte[] chat_id, out Tox_Err_Group_State_Query error);
+
+    public enum Tox_Err_Group_By_Id
+    {
+        OK,
+        NULL,
+        NOT_FOUND
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_by_id_to_string(Tox_Err_Group_By_Id value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_by_id(IntPtr tox, byte[] chat_id, out Tox_Err_Group_By_Id error);
+
+    // Requires 0.2.23, which is not out yet
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_get_group_list_size(IntPtr tox);
+
+    // Deprecated
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_get_number_groups(IntPtr tox);
+
+    // Requires 0.2.23, which is not out yet
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_group_get_group_list(IntPtr tox, [Out] UInt32[] group_list);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Group_Privacy_State tox_group_get_privacy_state(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_privacy_state_cb(IntPtr tox, UInt32 group_number, Tox_Group_Privacy_State privacy_state, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_privacy_state(IntPtr tox, tox_group_privacy_state_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Group_Voice_State tox_group_get_voice_state(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_voice_state_cb(IntPtr tox, UInt32 group_number, Tox_Group_Voice_State voice_state, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_voice_state(IntPtr tox, tox_group_voice_state_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern Tox_Group_Topic_Lock tox_group_get_topic_lock(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_topic_lock_cb(IntPtr tox, UInt32 group_number, Tox_Group_Topic_Lock topic_lock, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_topic_lock(IntPtr tox, tox_group_topic_lock_cb callback);
+
+    // Yes, UInt16. In the next line, it's UInt32.
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt16 tox_group_get_peer_limit(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_peer_limit_cb(IntPtr tox, UInt32 group_number, UInt32 peer_limit, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_peer_limit(IntPtr tox, tox_group_peer_limit_cb callback);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UIntPtr tox_group_get_password_size(IntPtr tox, UInt32 group_number, out Tox_Err_Group_State_Query error);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_get_password(IntPtr tox, UInt32 group_number, [Out] byte[] password, out Tox_Err_Group_State_Query error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_password_cb(IntPtr tox, UInt32 group_number, [MarshalAs(UnmanagedType.LPStr)] string password, UIntPtr password_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_password(IntPtr tox, tox_group_password_cb callback);
+
+    #endregion
+
+    #region Group chat message sending
+
+    public enum Tox_Err_Group_Send_Message
+    { 
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        EMPTY,
+        BAD_TYPE,
+        PERMISSIONS,
+        FAIL_SEND,
+        DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_send_message_to_string(Tox_Err_Group_Send_Message value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_send_message(IntPtr tox, UInt32 group_number, Tox_Message_Type message_type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Group_Send_Message error);
+
+    public enum Tox_Err_Group_Send_Private_Message
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        PEER_NOT_FOUND,
+        TOO_LONG,
+        EMPTY,
+        BAD_TYPE,
+        PERMISSIONS,
+        FAIL_SEND,
+        DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_send_private_message_to_string(Tox_Err_Group_Send_Private_Message value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern UInt32 tox_group_send_private_message(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Group_Send_Private_Message error);
+
+    public enum Tox_Err_Group_Send_Custom_Packet
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        EMPTY,
+        DISCONNECTED,
+        FAIL_SEND,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_send_custom_packet_to_string(Tox_Err_Group_Send_Custom_Packet value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_send_custom_packet(IntPtr tox, UInt32 group_number, bool lossless, byte[] data, UIntPtr length, out Tox_Err_Group_Send_Custom_Packet error);
+
+    public enum Tox_Err_Group_Send_Custom_Private_Packet
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        TOO_LONG,
+        EMPTY,
+        PEER_NOT_FOUND,
+        FAIL_SEND,
+        DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_send_custom_private_packet_to_string(Tox_Err_Group_Send_Custom_Private_Packet value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_send_custom_private_packet(IntPtr tox, UInt32 group_number, UInt32 peer_id, bool lossless, byte[] data, UIntPtr length, out Tox_Err_Group_Send_Custom_Private_Packet error);
+
+    #endregion
+
+    #region Group chat message receiving
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_message_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr message_length, UInt32 message_id, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_message(IntPtr tox, tox_group_message_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_private_message_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr message_length, UInt32 message_id, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_private_message(IntPtr tox, tox_group_private_message_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_custom_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, byte[] data, UIntPtr data_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_custom_packet(IntPtr tox, tox_group_custom_packet_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_custom_private_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, byte[] data, UIntPtr data_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_custom_private_packet(IntPtr tox, tox_group_custom_packet_cb callback);
+
+    #endregion
+
+    #region Group chat inviting and join/part events
+
+    public enum Tox_Err_Group_Invite_Friend
+    {
+        OK,
+        GROUP_NOT_FOUND,
+        FRIEND_NOT_FOUND,
+        INVITE_FAIL,
+        FAIL_SEND,
+        DISCONNECTED,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_invite_friend_to_string(Tox_Err_Group_Invite_Friend value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_invite_friend(IntPtr tox, UInt32 group_number, UInt32 friend_number, out Tox_Err_Group_Invite_Friend error);
+
+    public enum Tox_Err_Group_Invite_Accept
+    {
+        OK,
+        BAD_INVITE,
+        INIT_FAILED,
+        TOO_LONG,
+        EMPTY,
+        PASSWORD,
+        FRIEND_NOT_FOUND,
+        FAIL_SEND,
+        NULL
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_err_group_invite_accept_to_string(Tox_Err_Group_Invite_Accept value);
+
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern bool tox_group_invite_accept(IntPtr tox, UInt32 friend_number, byte[] invite_data, UIntPtr length, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, [MarshalAs(UnmanagedType.LPStr)] string password, UIntPtr password_length, out Tox_Err_Group_Invite_Accept error);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_invite_cb(IntPtr tox, UInt32 friend_number, byte[] invite_data, UIntPtr invite_data_length, [MarshalAs(UnmanagedType.LPStr)] string group_name, UIntPtr group_name_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_invite(IntPtr tox, tox_group_invite_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_peer_join_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_peer_join(IntPtr tox, tox_group_peer_join_cb callback);
+
+    public enum Tox_Group_Exit_Type
+    {
+        QUIT,
+        TIMEOUT,
+        DISCONNECTED,  
+        SELF_DISCONNECTED,
+        KICK,
+        SYNC_ERROR,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_exit_type_to_string(Tox_Group_Exit_Type value);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_peer_exit_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Group_Exit_Type exit_type, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, [MarshalAs(UnmanagedType.LPStr)] string part_message, UIntPtr parg_message_length, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_peer_exit(IntPtr tox, tox_group_peer_exit_cb callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_self_join_cb(IntPtr tox, UInt32 group_number, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_self_join(IntPtr tox, tox_group_self_join_cb callback);
+
+    public enum Tox_Group_Join_Fail
+    {
+        PEER_LIMIT,
+        INVALID_PASSWORD,
+        UNKNOWN,
+    }
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr tox_group_join_fail_to_string(Tox_Group_Join_Fail value);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void tox_group_join_fail_cb(IntPtr tox, UInt32 group_number, Tox_Group_Join_Fail fail_type, IntPtr user_data);
+    [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
+    public static extern void tox_callback_group_join_fail(IntPtr tox, tox_group_join_fail_cb callback);
+
+    #endregion
+
+    #region Group chat Founder controls
+
+    // 4909
+    // TODO: Implement founder controls
+
+    #endregion
+
+    #region Group chat moderation controls
+
+    // 5208
+    // TODO: Implement moderation controls
+
+    #endregion
 
     #endregion
 
@@ -1272,10 +1826,8 @@ public static class ToxCore
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_pass_salt_length();
-
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_pass_key_length();
-
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_pass_encryption_extra_length();
 
@@ -1349,6 +1901,35 @@ public static class ToxCore
 
     [DllImport("libtoxcore.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern bool tox_is_data_encrypted(byte[] data);
+
+    #endregion
+
+    #region future
+
+    public static UInt32 Ftox_group_get_group_list_size(IntPtr tox)
+    {
+        if (tox_version_is_compatible(0, 2, 23))
+            return tox_group_get_group_list_size(tox);
+        else
+            return tox_group_get_number_groups(tox);
+    }
+
+    public static void Ftox_group_get_group_list(IntPtr tox, [Out] UInt32[] group_list)
+    {
+        if (tox_version_is_compatible(0, 2, 23))
+            tox_group_get_group_list(tox, group_list);
+        else
+        {
+            UInt32 gc = Ftox_group_get_group_list_size(tox);
+            UInt32[] gl = new UInt32[gc];
+            for (UInt32 i = 0; i < UInt32.MaxValue && gl.Length < gc; i++) {
+		        tox_group_self_get_peer_id(tox, i, out Tox_Err_Group_Self_Query err);
+                if (err == Tox_Err_Group_Self_Query.OK) {
+                    gl[i] = i;
+		        }
+	        }
+        }
+    }
 
     #endregion
 }
