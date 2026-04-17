@@ -37,8 +37,8 @@ namespace Skymu
         public static readonly string Interface = Settings.Interface;
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.4";
-        public const string BuildName = "Erebus Aether Beta 4";
+        public const string BuildVersion = "0.3.26";
+        public const string BuildName = "Drocea Z-Unreleased";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
