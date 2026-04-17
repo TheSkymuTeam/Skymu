@@ -132,7 +132,7 @@ namespace Tox
                         if (_muted || !Core.avACall.SAudio) continue;
                         try
                         {
-                            if (!toxav_audio_send_frame(av, fid, packet.pcm, packet.sample_count, packet.channels, packet.sampling_rate, out Toxav_Err_Send_Frame err))
+                            if (!toxav_audio_send_frame(av, fid, packet.pcm, packet.sample_count, packet.channels, packet.sampling_rate, out var err))
                             {
                                 Debug.WriteLine($"Tox: Error when sending audio, {err}");
                             }
