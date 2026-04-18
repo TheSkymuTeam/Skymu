@@ -453,6 +453,8 @@ namespace Skymu.ViewModels
         {
             if (string.IsNullOrEmpty(text) || SelectedConversation == null) return;
 
+            StopTyping();
+
             string tempId = SKYMU_SENDING + "/" + Guid.NewGuid().ToString();
             var preview = new Message(
                 tempId, Universal.Plugin.MyInformation, DateTime.Now, text, null, null
@@ -613,6 +615,11 @@ namespace Skymu.ViewModels
                 TypingText = text;
                 IsTypingVisible = true;
             }));
+        }
+
+        public void StopTyping()
+        {
+            _typingTimer.Change(0, Timeout.Infinite);
         }
 
         public void StartTyping()
