@@ -48,6 +48,11 @@ namespace Skymu.ViewModels
         public ObservableCollection<ConversationItem> ActiveConversation { get; }
         public ObservableCollection<MessageGroup> GroupedConversation { get; }
 
+        internal DatabaseManager Database
+        {
+            get => _database;
+        }
+
         private Conversation _selectedConversation;
         public Conversation SelectedConversation
         {
