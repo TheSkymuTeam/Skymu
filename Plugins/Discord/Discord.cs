@@ -662,7 +662,6 @@ namespace Discord
 
             try {
                 string msgResponse = await Client.Send($"/channels/{channelId}/typing", HttpMethod.Post, DiscordToken).ConfigureAwait(false);
-                Debug.WriteLine("RSP "+msgResponse);
                 return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
             }
             catch (Exception ex)
