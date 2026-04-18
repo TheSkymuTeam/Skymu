@@ -745,7 +745,7 @@ namespace Tox
 
         public async Task<bool> EndCall(ActiveCall call)
         {
-            avACall.caller.Stop();
+            avACall.caller?.Stop();
             avACall = new CallStruct();
             if (!toxav_call_control(av, UInt32.Parse(call.ConversationId), Toxav_Call_Control.CANCEL, out var err))
             {
