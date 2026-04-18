@@ -1,13 +1,18 @@
-﻿using MiddleMan;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: http://skymu.app/legal/licenses/standard.txt
+/*==========================================================*/
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using static Tox.Helper;
 using static ToxCore;
@@ -39,15 +44,9 @@ namespace ToxOO {
             tox_options_copy(o.ptr, ptr);
             return o;
         }
-        public void Copy(Options o)
-        {
-            tox_options_copy(o.ptr, ptr);
-        }
+        public void Copy(Options o) => tox_options_copy(o.ptr, ptr);
 
-        public void Default()
-        {
-            tox_options_default(ptr);
-        }
+        public void Default() => tox_options_default(ptr);
 
         public bool ipv6Enabled
         {
@@ -204,7 +203,6 @@ namespace ToxOO {
                     default: throw new Exception(err.ToString());
                 }
         }
-
         public void Dispose()
         {
             tox_kill(ptr);
@@ -218,7 +216,7 @@ namespace ToxOO {
         {
             get
             {
-                byte[] savedata = new byte[(int)savedataSize];
+                var savedata = new byte[(int)savedataSize];
                 tox_get_savedata(ptr, savedata);
                 return savedata;
             }
@@ -253,7 +251,7 @@ namespace ToxOO {
         {
             get
             {
-                byte[] address = new byte[Size.address];
+                var address = new byte[Size.address];
                 tox_self_get_address(ptr, address);
                 return BATS(address);
             }
@@ -267,7 +265,7 @@ namespace ToxOO {
         {
             get
             {
-                byte[] public_key = new byte[Size.publicKey];
+                var public_key = new byte[Size.publicKey];
                 tox_self_get_public_key(ptr, public_key);
                 return public_key;
             }
@@ -282,13 +280,12 @@ namespace ToxOO {
                 default: throw new Exception(err.ToString());
             }
         }
-
         public string name
         {
             get
             {
-                int size = (int)tox_self_get_name_size(ptr);
-                byte[] name = new byte[size];
+                var size = (int)tox_self_get_name_size(ptr);
+                var name = new byte[size];
                 tox_self_get_name(ptr, name);
                 string uname = Encoding.ASCII.GetString(name);
                 if (String.IsNullOrEmpty(uname))
@@ -306,7 +303,7 @@ namespace ToxOO {
             get
             {
                 int size = (int)tox_self_get_status_message_size(ptr);
-                byte[] status_message = new byte[size];
+                var status_message = new byte[size];
                 tox_self_get_status_message(ptr, status_message);
                 return Encoding.ASCII.GetString(status_message);
             }
@@ -420,7 +417,7 @@ namespace ToxOO {
 
         #endregion
 
-        #region file
+        #region file TODO
 
         /// <param name="hash">byte[] of size Size.hash</param>
         /// <returns>If the result was null or not</returns>
@@ -430,6 +427,10 @@ namespace ToxOO {
         public static bool Hash(string data, [Out] byte[] hash) => tox_hash(hash, data, (UIntPtr)data.Length);
 
         #endregion
+
+        #region conference
+        public tox_conference_invite_cb conferenceInvite { set => tox_callback_conference_invite(ptr, value); }
+        #endregion
     }
 
     public class Friend
@@ -437,7 +438,7 @@ namespace ToxOO {
         public IntPtr ptr;
         public UInt32 id;
 
-        internal Friend(IntPtr ptr, UInt32 id)
+        public Friend(IntPtr ptr, UInt32 id)
         {
             this.ptr = ptr;
             this.id = id;
@@ -449,7 +450,7 @@ namespace ToxOO {
         {
             get
             {
-                byte[] pubkey = new byte[Size.publicKey];
+                var pubkey = new byte[Size.publicKey];
                 tox_friend_get_public_key(ptr, id, pubkey, out var err);
                 if (err != Tox_Err_Friend_Get_Public_Key.OK)
                     switch (err)
@@ -488,10 +489,10 @@ namespace ToxOO {
         {
             get
             {
-                byte[] name = new byte[(int)tox_friend_get_name_size(ptr, id, out _)];
+                var name = new byte[(int)tox_friend_get_name_size(ptr, id, out _)];
                 if (!tox_friend_get_name(ptr, id, name, out var err))
                     fqerr(err);
-                string uname = Encoding.ASCII.GetString(name);
+                var uname = Encoding.ASCII.GetString(name);
                 if (String.IsNullOrEmpty(uname))
                     return BATS(publicKey);
                 return uname;
@@ -501,7 +502,7 @@ namespace ToxOO {
         {
             get
             {
-                byte[] stat = new byte[(int)tox_friend_get_status_message_size(ptr, id, out _)];
+                var stat = new byte[(int)tox_friend_get_status_message_size(ptr, id, out _)];
                 if (!tox_friend_get_status_message(ptr, id, stat, out var err))
                     fqerr(err);
                 return Encoding.ASCII.GetString(stat);

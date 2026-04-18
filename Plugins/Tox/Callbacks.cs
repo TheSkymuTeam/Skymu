@@ -188,8 +188,8 @@ namespace Tox
         tox_friend_typing_cb _OnFriendTyping;
         void OnFriendTyping(IntPtr tox, UInt32 fid, bool typing, IntPtr user_data)
         {
-            string fids = fid.ToString();
-            Core core = GC(user_data);
+            var fids = fid.ToString();
+            var core = GC(user_data);
             if (!core.typingUsersPerChannel.ContainsKey(fids))
                 core.typingUsersPerChannel.Add(fids, new HashSet<User>());
 
@@ -213,7 +213,7 @@ namespace Tox
         tox_friend_request_cb _OnFriendRequest;
         void OnFriendRequest(IntPtr tox, string public_key, string message, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             tox_friend_add_norequest(tox, public_key, out var err);
             if (err != Tox_Err_Friend_Add.OK)
             {
@@ -225,10 +225,10 @@ namespace Tox
         tox_friend_message_cb _OnFriendMessage;
         void OnFriendMessage(IntPtr tox, UInt32 fid, Tox_Message_Type type, string msg, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             core.UCP(_ =>
             {
-                Message message = new Message($"{fid}_{GUID()}", core.users[(int)fid], TIME(), msg);
+                var message = new Message($"{fid}_{GUID()}", core.users[(int)fid], TIME(), msg);
                 core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
             });
         }
@@ -244,7 +244,7 @@ namespace Tox
         tox_file_recv_control_cb _OnFileRecvControl;
         void OnFileRecvControl(IntPtr tox, UInt32 friend_number, UInt32 file_number, Tox_File_Control control, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: File {file_number} by/at {friend_number} got new state of {control}");
             switch (control)
             {
@@ -258,14 +258,14 @@ namespace Tox
         tox_file_chunk_request_cb _OnFileChunkRequest;
         void OnFileChunkRequest(IntPtr tox, UInt32 fid, UInt32 file_number, UInt64 position, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             if (!core.transfers.ContainsKey(file_number))
             {
                 Debug.WriteLine($"Tox: File {file_number} is no longer registered as transfering locally, but a chunk was requested");
                 return;
             }
 
-            byte[] chunk = new byte[(int)length];
+            var chunk = new byte[(int)length];
             Array.Copy(core.transfers[file_number], (int)position, chunk, 0, (int)length);
             tox_file_send_chunk(tox, fid, file_number, position, chunk, length, out var err);
             if (err != Tox_Err_File_Send_Chunk.OK)
@@ -275,7 +275,7 @@ namespace Tox
         tox_file_recv_cb _OnFileRecv;
         void OnFileRecv(IntPtr tox, UInt32 fid, UInt32 file_number, Tox_File_Kind kind, UInt64 file_size, string filename, UIntPtr filename_length, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: Got file {file_number} of kind {kind} from {fid} with {file_size} bytes as the length");
             if (kind == Tox_File_Kind.AVATAR)
             {
@@ -290,7 +290,7 @@ namespace Tox
                 }
                 else if (friend.ProfilePicture != null)
                 {
-                    byte[] hash = new byte[tox_hash_length()];
+                    var hash = new byte[tox_hash_length()];
                     tox_hash(hash, friend.ProfilePicture, (UIntPtr)friend.ProfilePicture.Length);
                     if (BATS(hash) == filename)
                     { // cache hit
@@ -308,8 +308,8 @@ namespace Tox
             }
             else
             {
-                string sfid = fid.ToString();
-                string pkey = BATS(core.tox.friends[fid].publicKey);
+                var sfid = fid.ToString();
+                var pkey = BATS(core.tox.friends[fid].publicKey);
                 core.UCP(_ =>
                 {
                     Message message = new Message($"{sfid}_{GUID()}", core.users[(int)fid], TIME(), $"I have tried to send you a file {filename}, but the Tox plugin currently does not support that.");
@@ -323,13 +323,13 @@ namespace Tox
         tox_file_recv_chunk_cb _OnFileRecvChunk;
         void OnFileRecvChunk(IntPtr tox, UInt32 fid, UInt32 file_number, UInt64 position, IntPtr data, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             if (!core.transfers.ContainsKey(file_number))
             {
                 Debug.WriteLine($"Tox: File {file_number} is not known");
                 return;
             }
-            byte[] bdata = core.transfers[file_number];
+            var bdata = core.transfers[file_number];
 
             if (length == UIntPtr.Zero)
             {
@@ -337,10 +337,10 @@ namespace Tox
                 if (core.transfer_info[file_number].kind == Tox_File_Kind.AVATAR)
                 {
                     Debug.WriteLine("Tox: Got profile picture");
-                    string avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
+                    var avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
                     if (!Directory.Exists(avatar_cache_dir)) Directory.CreateDirectory(avatar_cache_dir);
 
-                    byte[] pubkey = core.tox.friends[fid].publicKey;
+                    var pubkey = core.tox.friends[fid].publicKey;
 
                     File.WriteAllBytes(Path.Combine(avatar_cache_dir, BATS(pubkey) + ".png"), bdata);
                     core.UCP(_ =>
@@ -378,14 +378,14 @@ namespace Tox
         tox_conference_message_cb _OnConferenceMessage;
         void OnConferenceMessage(IntPtr tox, UInt32 cid, UInt32 pid, Tox_Message_Type type, string msg, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
-            byte[] pkeyb = new byte[tox_public_key_size()];
+            var core = GC(user_data);
+            var pkeyb = new byte[tox_public_key_size()];
             tox_conference_peer_get_public_key(tox, cid, pid, pkeyb, out _);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
             if (BATS(pkeyb) != core.currentUser.Identifier)
                 core.UCP(_ =>
                 {
-                    Message message = new Message($"{cid}/{pid}_{GUID()}", core.conferences[cid].users[pid], TIME(), msg);
+                    var message = new Message($"{cid}/{pid}_{GUID()}", core.conferences[cid].users[pid], TIME(), msg);
                     core.RaiseMessageEvent(new MessageRecievedEventArgs("C" + cid, message, false));
                 });
         }
@@ -394,20 +394,20 @@ namespace Tox
         tox_conference_title_cb _OnConferenceTitle;
         void OnConferenceTitle(IntPtr tox, UInt32 cid, UInt32 pid, string title, UIntPtr length, IntPtr user_data)
         {
-            Core core = GC(user_data);
-            Group g = core.conferences[cid].conference;
-            string orig = g.DisplayName;
+            var core = GC(user_data);
+            var g = core.conferences[cid].conference;
+            var orig = g.DisplayName;
             g.DisplayName = title;
-            UIntPtr uname_size = tox_conference_peer_get_name_size(tox, cid, pid, out var err);
+            var uname_size = tox_conference_peer_get_name_size(tox, cid, pid, out var err);
             string uname;
             if (uname_size == UIntPtr.Zero || err != Tox_Err_Conference_Peer_Query.OK)
             {
-                byte[] pkeyb = new byte[tox_public_key_size()];
+                var pkeyb = new byte[tox_public_key_size()];
                 uname = BATS(pkeyb);
             }
             else
             {
-                byte[] unameb = new byte[(int)uname_size];
+                var unameb = new byte[(int)uname_size];
                 tox_conference_peer_get_name(tox, cid, pid, unameb, out _);
                 uname = Encoding.ASCII.GetString(unameb);
             }
@@ -491,8 +491,8 @@ namespace Tox
         toxav_call_cb _OnCall;
         void OnCall(IntPtr av, UInt32 fid, bool audio_enabled, bool video_enabled, IntPtr user_data)
         {
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: Incoming call from {fid} with audio {audio_enabled}, video {video_enabled}");
-            Core core = GC(user_data);
             core.CALL(new CallEventArgs(fid.ToString(), CallState.Ringing, core.users[(int)fid]));
         }
 
@@ -500,7 +500,7 @@ namespace Tox
         toxav_call_state_cb _OnCallState;
         void OnCallState(IntPtr av, UInt32 fid, Toxav_Friend_Call_State state, IntPtr user_data)
         {
-            Core core = GC(user_data);
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: Got call state {state} for {fid}");
             if ((state & Toxav_Friend_Call_State.ERROR) != 0)
             {
@@ -533,8 +533,8 @@ namespace Tox
         toxav_audio_receive_frame_cb _OnAudioReceiveFrame;
         void OnAudioReceiveFrame(IntPtr av, UInt32 fid, IntPtr pcmPtr, UIntPtr sample_count, byte channels, UInt32 sampling_rate, IntPtr user_data)
         {
-            int expectedSize = (int)sample_count * channels;
-            Int16[] pcm = new Int16[expectedSize];
+            var expectedSize = (int)sample_count * channels;
+            var pcm = new Int16[expectedSize];
             Marshal.Copy(pcmPtr, pcm, 0, expectedSize);
 
             Core.avACall.caller.HandleVoicePacket(pcm, sample_count, channels, sampling_rate);
