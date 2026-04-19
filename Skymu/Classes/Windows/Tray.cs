@@ -135,9 +135,12 @@ namespace Skymu
                     {
                         foreach (System.Windows.Window window in System.Windows.Application.Current.Windows)
                         {
-                            window.Show();
-                            window.WindowState = System.Windows.WindowState.Normal;
-                            window.Activate();
+                            if (window.IsInitialized)
+                            {
+                                window.Show();
+                                window.WindowState = System.Windows.WindowState.Normal;
+                                window.Activate();
+                            }
                         }
                     });
                     break;
