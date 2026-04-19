@@ -593,15 +593,15 @@ namespace Skymu.Skyaeris
             GridLength dynamic = new GridLength(1, GridUnitType.Star);
             GridLength small = new GridLength(32);
 
-            buttonToColumn[tab_to_select].Width = dynamic;
+            if (Universal.Plugin.SupportsServers)
+                buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
-                if (tab == btnServers && !Universal.Plugin.SupportsServers)
-                    continue;
                 tab.SetState(ButtonVisualState.Default);
-                buttonToColumn[tab].Width =
+                if (Universal.Plugin.SupportsServers)
+                    buttonToColumn[tab].Width =
                     Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
                         ? small
                         : dynamic;

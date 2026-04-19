@@ -430,22 +430,21 @@ namespace Skymu.Pontis
             GridLength dynamic = new GridLength(1, GridUnitType.Star);
             GridLength small = new GridLength(32);
 
-            buttonToColumn[tab_to_select].Width = dynamic;
+            if (Universal.Plugin.SupportsServers)
+                buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
-                if (tab == btnServers && !Universal.Plugin.SupportsServers)
-                    continue;
                 tab.SetState(ButtonVisualState.Default);
-                buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs
-                    && Universal.Plugin.SupportsServers
+                if (Universal.Plugin.SupportsServers)
+                    buttonToColumn[tab].Width =
+                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
                         ? small
                         : dynamic;
             }
 
-            SetWindow(WindowType.Home);
+            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -557,9 +556,10 @@ namespace Skymu.Pontis
                     btnContacts.TextLeftMargin = 5;
                     btnRecents.TextLeftMargin = 5;
                     SidebarTabs.ColumnDefinitions[0].MinWidth = 0;
-                    SidebarTabs.ColumnDefinitions[0].MaxWidth = 69;
+                    SidebarTabs.ColumnDefinitions[0].Width = new GridLength(69);
                     btnContacts.MaxWidth = 69;
                     btnContacts.HorizontalAlignment = HorizontalAlignment.Left;
+                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Center;
                 }
                 else
                 {
@@ -568,9 +568,10 @@ namespace Skymu.Pontis
                     btnContacts.TextLeftMargin = 31;
                     btnRecents.TextLeftMargin = 31;
                     SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
-                    SidebarTabs.ColumnDefinitions[0].MaxWidth = double.MaxValue;
+                    SidebarTabs.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
                     btnContacts.MaxWidth = double.MaxValue;
                     btnContacts.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Left;
                 }
             }
         }
@@ -1281,7 +1282,7 @@ namespace Skymu.Pontis
             _ = SelectTab(btnRecents);
             ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
-
+            
             if (!Universal.Plugin.SupportsServers)
             {
                 btnServers.Visibility = Visibility.Collapsed;
