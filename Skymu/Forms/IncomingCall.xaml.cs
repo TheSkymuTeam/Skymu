@@ -39,7 +39,7 @@ namespace Skymu.Views
             BeginAnimation(OpacityProperty, animation);
             Sounds.PlayLoop("call-in");
             if (_call.Caller.ProfilePicture != null)
-                CallerAvatar.Source = FrozenImage.GenerateFromArray(_call.Caller.ProfilePicture);
+                CallerAvatar.Source = ImageHelper.GenerateFromArray(_call.Caller.ProfilePicture);
             else
                 CallerAvatar.Source = Universal.AnonymousAvatar;
             CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", _call.Caller.DisplayName);

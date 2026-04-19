@@ -73,7 +73,7 @@ namespace Skymu.SeanKype
                 ConversationList.ItemsSource = Universal.Plugin.RecentsList;
                 GlobalUserCount.Text = string.Empty;
                 if (Universal.CurrentUser?.ProfilePicture?.Length > 0)
-                    UserPicture.Source = FrozenImage.GenerateFromArray(
+                    UserPicture.Source = ImageHelper.GenerateFromArray(
                         Universal.CurrentUser.ProfilePicture
                     );
                 else
@@ -102,7 +102,7 @@ namespace Skymu.SeanKype
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = FrozenImage.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
@@ -154,7 +154,7 @@ namespace Skymu.SeanKype
             LabelUsername1.Content = conv?.DisplayName;
             LabelStatus1.Text = (conv is DirectMessage dm) ? dm.Partner?.Status : null;
             if (conv?.ProfilePicture?.Length > 0)
-                ChatHeaderAvatar.Source = FrozenImage.GenerateFromArray(conv.ProfilePicture);
+                ChatHeaderAvatar.Source = ImageHelper.GenerateFromArray(conv.ProfilePicture);
             else
                 ChatHeaderAvatar.Source =
                     (conv is Group) ? Universal.GroupAvatar : Universal.AnonymousAvatar;
@@ -413,7 +413,7 @@ namespace Skymu.SeanKype
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath = Converters.Helpers.GetAssetBasePrefix("SeanKype") + "Profile Pictures/" + avatar + ".png";
-            return FrozenImage.Generate(AvatarPath);
+            return ImageHelper.Generate(AvatarPath);
         }
 
         #endregion
@@ -435,7 +435,7 @@ namespace Skymu.SeanKype
                 };
                 try
                 {
-                    var sc = MessageTools.FormAnimatedEmoji(emojiFilename);
+                    var sc = Formatter.MakeEmoji(emojiFilename);
                     sc.Tag = emojiFilename;
                     border.Child = sc;
                     border.MouseLeftButtonUp += EmojiBox_Click;

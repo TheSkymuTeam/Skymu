@@ -117,11 +117,11 @@
 		<Resource Include="Emoji\**\*" />
 		
 		<!-- Page assets -->
-		<None Remove="Views\Pages\Assets\**\*" />
-		<Page Remove="Views\Pages\Assets\**\*" />
-		<EmbeddedResource Remove="Views\Pages\Assets\**\*" />
-		<Compile Remove="Views\Pages\Assets\**\*" />
-		<Resource Include="Views\Pages\Assets\**\*" />
+		<None Remove="Forms\Pages\Assets\**\*" />
+		<Page Remove="Forms\Pages\Assets\**\*" />
+		<EmbeddedResource Remove="Forms\Pages\Assets\**\*" />
+		<Compile Remove="Forms\Pages\Assets\**\*" />
+		<Resource Include="Forms\Pages\Assets\**\*" />
 
 		<!-- Sounds -->
 		<None Remove="Sounds*\**\*" />
@@ -237,7 +237,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\CallScreen.xaml">
+	  <Page Update="Forms\CallScreen.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
 	  <Page Update="Pontis\Login.xaml">
@@ -246,7 +246,7 @@
 	  <Page Update="Pontis\Main.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
-	  <Page Update="Views\IncomingCall.xaml">
+	  <Page Update="Forms\IncomingCall.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
 	</ItemGroup>

@@ -106,10 +106,10 @@ namespace Skymu.Skyaeris
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private BitmapImage sendBtnSmall = FrozenImage.Generate(
+        private BitmapImage sendBtnSmall = ImageHelper.Generate(
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
         );
-        private BitmapImage sendBtnFull = FrozenImage.Generate(
+        private BitmapImage sendBtnFull = ImageHelper.Generate(
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
         );
 
@@ -140,7 +140,7 @@ namespace Skymu.Skyaeris
             string framedir = "Aero";
             if (_currentFrame == WindowFrame.SkypeBasic) framedir = "Basic";
 
-            return FrozenImage.Generate(
+            return ImageHelper.Generate(
                 $"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/{framedir}/{name}/combined.png"
             );
         }
@@ -152,7 +152,7 @@ namespace Skymu.Skyaeris
                 + "Profile Pictures/"
                 + avatar
                 + ".png";
-            return FrozenImage.Generate(AvatarPath);
+            return ImageHelper.Generate(AvatarPath);
         }
 
         #endregion
@@ -320,7 +320,7 @@ namespace Skymu.Skyaeris
                     }
                     else if (_currentFrame == WindowFrame.SkypeAeroCustom) // TODO: finish this
                     {
-                        var img = FrozenImage.Generate(
+                        var img = ImageHelper.Generate(
                             "pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/aero-background.png"
                         );
                         this.Background = new ImageBrush
@@ -1397,7 +1397,7 @@ namespace Skymu.Skyaeris
                 };
                 try
                 {
-                    var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+                    var sliceControl = Formatter.MakeEmoji(emojiFilename);
                     sliceControl.Tag = emojiFilename;
                     border.Child = sliceControl;
                     border.MouseLeftButtonUp += EmojiBox_Click;
@@ -1410,7 +1410,7 @@ namespace Skymu.Skyaeris
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Failed to load emoji: {emojiFilename} - {ex.Message}");
+                    Debug.WriteLine($"[EMOJI] Failed to load emoji: {emojiFilename} - {ex.Message}");
                 }
             }
         }
@@ -1437,7 +1437,7 @@ namespace Skymu.Skyaeris
             RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
-            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+            var sliceControl = Formatter.MakeEmoji(emojiFilename);
 
             if (!MessageTextBox.Selection.IsEmpty)
                 MessageTextBox.Selection.Text = string.Empty;
@@ -1511,7 +1511,7 @@ namespace Skymu.Skyaeris
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = FrozenImage.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>

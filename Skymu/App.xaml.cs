@@ -93,7 +93,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        MessageTools.HandleIncoming(e);
+                        ActiveViewModel?.HandleIncoming(e);
                     }
                 )
             );

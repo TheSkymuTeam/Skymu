@@ -176,7 +176,7 @@ namespace Skymu.Views
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = Helpers.FrozenImage.Generate(Converters.Helpers.GetAssetBasePrefix(null, true) + "Icon Bitmap/skype-status.png"),
+                Source = Helpers.ImageHelper.Generate(Converters.Helpers.GetAssetBasePrefix(null, true) + "Icon Bitmap/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat
@@ -214,54 +214,17 @@ namespace Skymu.Views
             messageGrid.Children.Add(titleText);
 
             TextBlock messageText;
-            if (isGroupChat)
-            {
-                if (hasImage)
-                {
-                    if (hasMessage)
-                        messageText = MessageTools.FormTextblock(
-                            message.Sender.DisplayName
-                                + $" {SHARED_PHOTO}: \""
-                                + message.Text
-                                + "\""
-                        );
-                    else
-                        messageText = MessageTools.FormTextblock(
-                            message.Sender.DisplayName + $" {SHARED_PHOTO}"
-                        );
-                }
-                else if (hasMessage)
-                {
-                    messageText = MessageTools.FormTextblock(
-                        message.Sender.DisplayName + ": \"" + message.Text + "\""
-                    );
-                }
-                else
-                {
-                    messageText = MessageTools.FormTextblock(message.Sender.DisplayName);
-                }
-            }
-            else
-            {
-                if (hasImage)
-                {
-                    if (hasMessage)
-                        messageText = MessageTools.FormTextblock(
-                            $"{SHARED_PHOTO}: \"" + message.Text + "\""
-                        );
-                    else
-                        messageText = MessageTools.FormTextblock($"{SHARED_PHOTO}");
-                }
-                else if (hasMessage)
-                {
-                    messageText = MessageTools.FormTextblock("\"" + message.Text + "\"");
-                }
-                else
-                {
-                    messageText = MessageTools.FormTextblock("(no message)");
-                }
-            }
+            string body;
+            if (hasImage && hasMessage) body = $"{SHARED_PHOTO}: \"{message.Text}\"";
+            else if (hasImage) body = SHARED_PHOTO;
+            else if (hasMessage) body = $"\"{message.Text}\"";
+            else body = isGroupChat ? null : "(no message)";
 
+            string raw = isGroupChat
+                ? (body != null ? $"{message.Sender.DisplayName} {body}" : message.Sender.DisplayName)
+                : body ?? "(no message)";
+
+            messageText = Formatter.Parse(raw);
             messageText.Foreground = (SolidColorBrush)Application.Current.Resources["Text.MediumContrast"];
             messageText.FontSize = 11;
             messageText.Margin = new Thickness(0, 1, 0, 6);
