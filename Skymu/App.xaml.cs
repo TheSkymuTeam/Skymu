@@ -10,8 +10,8 @@
 /*==========================================================*/
 
 using MiddleMan;
-using Skymu.Formatting;
 using Skymu.Helpers;
+using Skymu.Migration;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Theming;
@@ -284,6 +284,7 @@ namespace Skymu
                     )
                 );
             ThemeManager.LoadFromSettings();
+            Migrator.Run();
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {
