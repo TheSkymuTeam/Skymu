@@ -358,26 +358,6 @@ namespace MiddleMan
         }
     }
 
-    public class PluginInfo
-    {
-        public AuthenticationMethod AuthType { get; set; }
-        public string CustomTextUsername { get; set; }
-        public string CustomTextAuthType { get; set; }
-        public string Url { get; set; }
-
-        public PluginInfo(
-            AuthenticationMethod type,
-            string custom_text_username_field = null,
-            string custom_text_auth_type = null
-        )
-        {
-            AuthType = type;
-            CustomTextAuthType = custom_text_auth_type;
-            CustomTextUsername = custom_text_username_field;
-        }
-    }
-
-
     public class SavedCredential
     {
         public User User { get; }
