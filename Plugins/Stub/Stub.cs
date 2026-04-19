@@ -64,7 +64,7 @@ namespace Stub
             new ObservableCollection<User>();
 
         private SynchronizationContext _uiContext;
-        private string MyUsername;
+        private User Me;
 
         #endregion
 
@@ -77,7 +77,7 @@ namespace Stub
             string password = null
         )
         {
-            MyUsername = username;
+            Me = new User(username, username, username);
             MessageEvent.Invoke(
                 this,
                 new MessageRecievedEventArgs(
@@ -91,7 +91,7 @@ namespace Stub
 
         public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
-            MyUsername = autoLoginCredentials.User.Username;
+            Me = autoLoginCredentials.User;
             return LoginResult.Success;
         }
 
@@ -103,7 +103,10 @@ namespace Stub
             return null;
         }
 
-        public async Task<string> GetQRCode() => String.Empty;
+        public Task<string> GetQRCode() 
+        {
+            return Task.FromResult(String.Empty);
+        }
 
         public Task<bool> SendMessage(
             string identifier,
@@ -138,7 +141,7 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public async Task<ConversationItem[]> FetchMessages(
+        public Task<ConversationItem[]> FetchMessages(
             Conversation conversation,
             Fetch fetch_type,
             int message_count,
@@ -497,10 +500,10 @@ namespace Stub
 
             #endregion
 
-            return messageList.ToArray();
+            return Task.FromResult(messageList.ToArray());
         }
 
-        public async Task<bool> PopulateServerList()
+        public Task<bool> PopulateServerList()
         {
             string id = "2132";
             ServerList.Add(
@@ -515,23 +518,19 @@ namespace Stub
                     }
                 )
             );
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> PopulateUserInformation()
+        public Task<bool> PopulateUserInformation()
         {
             _uiContext = SynchronizationContext.Current;
-            MyInformation = new User(
-                MyUsername,
-                "jeevacation",
-                "00001",
-                "Hello test",
-                UserConnectionStatus.Online
-            );
-            return true;
+            Me.Status = "Need an Attorney? Better Call Saul! (505) 503-4455";
+            Me.ConnectionStatus = UserConnectionStatus.Online;
+            MyInformation = Me;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> PopulateContactsList()
+        public Task<bool> PopulateContactsList()
         {
             ContactsList.Clear();
             ContactsList.Add(
@@ -554,10 +553,10 @@ namespace Stub
                     "32"
                 )
             );
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> PopulateRecentsList()
+        public Task<bool> PopulateRecentsList()
         {
             RecentsList.Clear();
 
@@ -604,7 +603,7 @@ namespace Stub
             if (presenceTimer == null)
                 presenceTimer = new Timer(UpdatePresence, null, 0, 1);
 
-            return true;
+            return Task.FromResult(true);
         }
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -621,13 +620,20 @@ namespace Stub
             }
         }
 
-        public async Task<bool> SetTextStatus(string status) => true;
+        public Task<bool> SetTextStatus(string status)
+        {
+            return Task.FromResult(true);
+        }
 
-        // false = the status will not be set
-        public async Task<bool> SetConnectionStatus(UserConnectionStatus status) => true;
+        public Task<bool> SetConnectionStatus(UserConnectionStatus status) {
+            return Task.FromResult(true);
+        }
 
         public int TypingTimeout => 5000;
-        public async Task<bool> SetTyping(string idenfitier, bool typing) => false;
+        public Task<bool> SetTyping(string idenfitier, bool typing) {
+
+            return Task.FromResult(false);
+        }
 
         #region Calls (remove this entire region and remove `, ICall` to disable
 

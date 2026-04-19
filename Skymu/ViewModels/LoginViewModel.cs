@@ -77,6 +77,14 @@ namespace Skymu.ViewModels
 
             foreach (var plugin in Universal.PluginList)
             {
+                if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
+                {
+                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), String.Empty, AuthenticationMethod.Password, plugin.InternalName.ToLowerInvariant());
+                    Universal.Plugin = plugin;
+                    Universal.CallPlugin = Universal.Plugin as ICall;
+                    return;
+                }
+
                 SavedCredential match = null;
                 foreach (SavedCredential cred in savedCredentials)
                 {
@@ -152,8 +160,7 @@ namespace Skymu.ViewModels
         }
         public void HandleProtocolSelected(PluginListing listing)
         {
-            if (listing == null) return;
-            if (PendingAutoLogin != null) return;
+            if (listing == null || PendingAutoLogin != null || Universal.TestMode) return;
             _selectedListing = listing;
             Universal.Plugin = Universal.PluginList[listing.PluginIndex];
             Universal.CallPlugin = Universal.Plugin as ICall;
@@ -280,6 +287,7 @@ namespace Skymu.ViewModels
 
         public async Task TryAutoLogin()
         {
+
             if (PendingAutoLogin == null)
             {
                 AnimationToggleRequested?.Invoke(false);

@@ -358,6 +358,26 @@ namespace MiddleMan
         }
     }
 
+    public class PluginInfo
+    {
+        public AuthenticationMethod AuthType { get; set; }
+        public string CustomTextUsername { get; set; }
+        public string CustomTextAuthType { get; set; }
+        public string Url { get; set; }
+
+        public PluginInfo(
+            AuthenticationMethod type,
+            string custom_text_username_field = null,
+            string custom_text_auth_type = null
+        )
+        {
+            AuthType = type;
+            CustomTextAuthType = custom_text_auth_type;
+            CustomTextUsername = custom_text_username_field;
+        }
+    }
+
+
     public class SavedCredential
     {
         public User User { get; }
@@ -631,6 +651,7 @@ namespace MiddleMan
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)
         AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         bool SupportsServers { get; } // Does the plugin support servers or not? (Most don't)
+        int TypingTimeout { get; } // timeout for typing status
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> Authenticate(
@@ -665,7 +686,6 @@ namespace MiddleMan
         ObservableCollection<User> TypingUsersList { get; } // display names, ID's of users currently typing in the active conversation.
         Task<bool> SetConnectionStatus(UserConnectionStatus status); // sets presence status (online, offline, etc)
         Task<bool> SetTextStatus(string status); // sets text status
-        int TypingTimeout { get; } // timeout for typing status
         Task<bool> SetTyping(string idenfitier, bool typing); // sets typing status
     }
 

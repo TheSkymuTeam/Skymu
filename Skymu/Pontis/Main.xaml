@@ -739,7 +739,7 @@
                                             PressedIndex="2"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/header.png'}"
                                             StackDirection="Vertical"
-                                            Text="Jeffrey E. Epstein"
+                                            Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="43"
