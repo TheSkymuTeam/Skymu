@@ -261,9 +261,9 @@
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
-                                                <ComboBoxItem Content="Standard" Tag="Sounds" />
-                                                <ComboBoxItem Content="Classic" Tag="SoundsClassic" />
-                                                <ComboBoxItem Content="Skype 8" Tag="SoundsModern" />
+                                                <ComboBoxItem Content="Standard" Tag="Skymu" />
+                                                <ComboBoxItem Content="Classic" Tag="Skype7" />
+                                                <ComboBoxItem Content="Skype 8" Tag="Skype8" />
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"

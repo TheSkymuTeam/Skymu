@@ -46,7 +46,7 @@ namespace Skymu
         {
             if (path == "")
                 path = Settings.SoundPack;
-            var uri = new Uri($"pack://application:,,,/{path}/{filename}", UriKind.Absolute);
+            var uri = new Uri($"pack://application:,,,/Sounds/{path}/{filename}", UriKind.Absolute);
             bool suc = false;
             System.Windows.Resources.StreamResourceInfo streamInfo = null;
             try
@@ -67,7 +67,7 @@ namespace Skymu
             }
             else if (fallback != String.Empty && path != fallback)
             {
-                Load(key, filename, fallback, "Sounds");
+                Load(key, filename, fallback, "Skymu");
             }
         }
 

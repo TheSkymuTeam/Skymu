@@ -152,7 +152,7 @@ namespace Skymu.Preferences
         }
         public static string SoundPack
         {
-            get => S("SoundPack", "Sounds");
+            get => S("SoundPack", "Skymu");
             set => W("SoundPack", value, nameof(SoundPack));
         }
 
