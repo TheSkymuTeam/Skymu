@@ -23,7 +23,7 @@ namespace Tox
 {
     internal class Helper
     {
-        #region GenericQuick
+        #region Generic
 
         // ByteArrayToString
         public static string BATS(byte[] ba) => BitConverter.ToString(ba).Replace("-", "");
@@ -36,9 +36,25 @@ namespace Tox
         // TIMEstamp
         public static DateTime TIME() => DateTimeOffset.UtcNow.DateTime;
 
+        public static byte[] FromHex(string hex)
+        {
+            var len = hex.Length;
+            if (len != 64)
+            {
+                throw new ArgumentException($"Hex string must be 64 characters long, got {len}");
+            }
+            var result = new byte[len / 2];
+
+            for (int i = 0; i < 64; i += 2)
+                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+
+            return result;
+        }
+
+
         #endregion
 
-        #region ToxQuick
+        #region Tox
 
         public static UserConnectionStatus MapStatus(Tox_User_Status status)
         {
@@ -57,19 +73,19 @@ namespace Tox
         public static void save(ToxOO.Tox tox, string savename, Core core)
         {
             core.profilelock.Dispose();
-            string path = Path.Combine(ToxCore.toxDir, savename + ".tox");
+            var path = Path.Combine(ToxCore.toxDir, savename + ".tox");
 
-            byte[] data = tox.savedata;
+            var data = tox.savedata;
 
             if (String.IsNullOrEmpty(core.savepass))
                 File.WriteAllBytes(path, data);
             else // Oh femboy...
             {
                 FileStream file = File.OpenRead(path);
-                byte[] esave = new byte[Size.encryptionExtra];
+                var esave = new byte[Size.encryptionExtra];
                 file.Read(esave, 0, esave.Length);
                 file.Close();
-                byte[] salt = new byte[Size.salt];
+                var salt = new byte[Size.salt];
                 IntPtr key;
                 Tox_Err_Key_Derivation kerr;
                 if (tox_get_salt(esave, salt, out var err))
@@ -86,7 +102,7 @@ namespace Tox
                 }
                 else
                 {
-                    byte[] edata = new byte[data.Length + Size.encryptionExtra];
+                    var edata = new byte[data.Length + Size.encryptionExtra];
                     if (tox_pass_key_encrypt(key, data, (UIntPtr)data.Length, edata, out var eerr))
                         File.WriteAllBytes(path, edata);
                     else
@@ -100,61 +116,42 @@ namespace Tox
             core.profilelock.Lock(0, 0);
         }
 
-        #endregion
-
-        public static byte[] FromHex(string hex)
-        {
-            int len = hex.Length;
-            if (len != 64)
-            {
-                throw new ArgumentException($"Hex string must be 64 characters long, got {len}");
-            }
-            byte[] result = new byte[len / 2];
-
-            for (int i = 0; i < 64; i += 2)
-                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-
-            return result;
-        }
-
-        #region ToxAdvanced
-
         public static void PeerListRefresh(Core core, IntPtr tox, UInt32 cid)
         {
-            byte[] pkbyte = new byte[Size.conferenceId];
+            var pkbyte = new byte[Size.conferenceId];
             if (!tox_conference_get_id(tox, cid, pkbyte))
             {
                 core.ERR($"Failed to get public key for conference {cid}");
                 return;
             }
-            string pubkey = Helper.BATS(pkbyte);
-            string name = pubkey;
-            byte[] titleb = new byte[(int)tox_conference_get_title_size(tox, cid, out var gterr)];
+            var pubkey = Helper.BATS(pkbyte);
+            var name = pubkey;
+            var titleb = new byte[(int)tox_conference_get_title_size(tox, cid, out var gterr)];
             if (titleb.Length != 0)
             {
                 tox_conference_get_title(tox, cid, titleb, out gterr);
                 name = Encoding.ASCII.GetString(titleb);
             }
 
-            UInt32 pc = tox_conference_peer_count(tox, cid, out var cpcerr);
+            var pc = tox_conference_peer_count(tox, cid, out var cpcerr);
             if (cpcerr != Tox_Err_Conference_Peer_Query.OK)
             {
                 core.ERR($"Failed to get peer count for conference {cid}: {PTSA(tox_err_conference_peer_query_to_string(cpcerr))}");
                 return;
             }
 
-            Dictionary<UInt32, User> users = new Dictionary<UInt32, User>();
-            List<User> ua = new List<User>();
+            var users = new Dictionary<UInt32, User>();
+            var ua = new List<User>();
 
-            int pksize = (int)tox_public_key_size();
+            var pksize = (int)tox_public_key_size();
 
             for (UInt32 pid = 0; pid < pc; pid++)
             {
-                byte[] pubkeyb = new byte[pksize];
+                var pubkeyb = new byte[pksize];
                 tox_conference_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
                 string ppkey = BATS(pubkeyb);
 
-                byte[] nameb = new byte[(int)tox_conference_peer_get_name_size(tox, cid, pid, out _)];
+                var nameb = new byte[(int)tox_conference_peer_get_name_size(tox, cid, pid, out _)];
                 if (nameb.Length != 0)
                     tox_conference_peer_get_name(tox, cid, pid, nameb, out _);
                 string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
@@ -165,13 +162,13 @@ namespace Tox
             // Who needs to access offline users anyways.
             for (UInt32 pid = 0; pid < tox_conference_offline_peer_count(tox, cid, out _); pid++)
             {
-                byte[] pubkeyb = new byte[pksize];
+                var pubkeyb = new byte[pksize];
                 tox_conference_offline_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
-                string ppkey = BATS(pubkeyb);
-                byte[] nameb = new byte[(int)tox_conference_offline_peer_get_name_size(tox, cid, pid, out _)];
+                var ppkey = BATS(pubkeyb);
+                var nameb = new byte[(int)tox_conference_offline_peer_get_name_size(tox, cid, pid, out _)];
                 if (nameb.Length != 0)
                     tox_conference_offline_peer_get_name(tox, cid, pid, nameb, out _);
-                string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
+                var pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
                 ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Offline));
             }
@@ -194,40 +191,40 @@ namespace Tox
 
         public static void PeerListRefreshGC(Core core, IntPtr tox, UInt32 cid)
         {
-            byte[] pkbyte = new byte[tox_conference_id_size()];
+            var pkbyte = new byte[tox_conference_id_size()];
             if (!tox_conference_get_id(tox, cid, pkbyte))
             {
                 core.ERR($"Failed to get public key for conference {cid}");
                 return;
             }
-            string pubkey = Helper.BATS(pkbyte);
-            string name = pubkey;
-            byte[] titleb = new byte[(int)tox_conference_get_title_size(tox, cid, out var gterr)];
+            var pubkey = Helper.BATS(pkbyte);
+            var name = pubkey;
+            var titleb = new byte[(int)tox_conference_get_title_size(tox, cid, out var gterr)];
             if (titleb.Length != 0)
             {
                 tox_conference_get_title(tox, cid, titleb, out gterr);
                 name = Encoding.ASCII.GetString(titleb);
             }
 
-            UInt32 pc = tox_conference_peer_count(tox, cid, out var cpcerr);
+            var pc = tox_conference_peer_count(tox, cid, out var cpcerr);
             if (cpcerr != Tox_Err_Conference_Peer_Query.OK)
             {
                 core.ERR($"Failed to get peer count for conference {cid}: {Helper.PTSA(tox_err_conference_peer_query_to_string(cpcerr))}");
                 return;
             }
 
-            Dictionary<UInt32, User> users = new Dictionary<UInt32, User>();
-            List<User> ua = new List<User>();
+            var users = new Dictionary<UInt32, User>();
+            var ua = new List<User>();
 
-            int pksize = (int)tox_public_key_size();
+            var pksize = (int)tox_public_key_size();
 
             for (UInt32 pid = 0; pid < pc; pid++)
             {
-                byte[] pubkeyb = new byte[pksize];
+                var pubkeyb = new byte[pksize];
                 tox_conference_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
                 string ppkey = BATS(pubkeyb);
 
-                byte[] nameb = new byte[(int)tox_conference_peer_get_name_size(tox, cid, pid, out _)];
+                var nameb = new byte[(int)tox_conference_peer_get_name_size(tox, cid, pid, out _)];
                 if (nameb.Length != 0)
                     tox_conference_peer_get_name(tox, cid, pid, nameb, out _);
                 string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
@@ -235,16 +232,16 @@ namespace Tox
                 users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Online));
             }
             ua = users.Values.ToList();
-            // Who needs to access offline users anyways.
+
             for (UInt32 pid = 0; pid < tox_conference_offline_peer_count(tox, cid, out _); pid++)
             {
-                byte[] pubkeyb = new byte[pksize];
+                var pubkeyb = new byte[pksize];
                 tox_conference_offline_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
-                string ppkey = BATS(pubkeyb);
-                byte[] nameb = new byte[(int)tox_conference_offline_peer_get_name_size(tox, cid, pid, out _)];
+                var ppkey = BATS(pubkeyb);
+                var nameb = new byte[(int)tox_conference_offline_peer_get_name_size(tox, cid, pid, out _)];
                 if (nameb.Length != 0)
                     tox_conference_offline_peer_get_name(tox, cid, pid, nameb, out _);
-                string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
+                var pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
                 ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Offline));
             }
@@ -259,7 +256,7 @@ namespace Tox
             }
             else
             {
-                Group group = new Group(name, "C" + cid, 0, ua.ToArray());
+                var group = new Group(name, "C" + cid, 0, ua.ToArray());
                 core.conferences.Add(cid, (users, group));
                 core.RecentsList.Add(group);
             }

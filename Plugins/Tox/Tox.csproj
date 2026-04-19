@@ -27,12 +27,14 @@
 	<Target Name="Copyx86Dlls" AfterTargets="Build">
 		<Copy
 			SourceFiles="@(x86Dlls)"
-			DestinationFolder="..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\" />
+			DestinationFolder="..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\"
+			SkipUnchangedFiles="false" />
 	</Target>
 	<Target Name="Copyx64Dlls" AfterTargets="Build">
 		<Copy
 			SourceFiles="@(x64Dlls)"
-			DestinationFolder="..\..\Skymu\bin\SkymuCore\$(Configuration)\Plugins\" />
+			DestinationFolder="..\..\Skymu\bin\SkymuCore\$(Configuration)\Plugins\"
+			SkipUnchangedFiles="false" />
 	</Target>
 	<ItemGroup>
 		<x86Dlls Include="lib86\*.dll" />

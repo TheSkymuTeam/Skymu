@@ -786,10 +786,12 @@ namespace Skymu.Pontis
             Keyboard.ClearFocus();
         }
 
-        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private async void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSendButtonState();
-            vmodel?.StartTyping();
+            await Task.Delay(500);
+            if (HasAnyContent(MessageTextBox))
+                vmodel?.StartTyping();
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
@@ -952,9 +954,7 @@ namespace Skymu.Pontis
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                bool hasContent = HasAnyContent(MessageTextBox);
-
-                if (!hasContent)
+                if (!HasAnyContent(MessageTextBox))
                 {
                     ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
