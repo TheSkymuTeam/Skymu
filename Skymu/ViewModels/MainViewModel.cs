@@ -355,11 +355,10 @@ namespace Skymu.ViewModels
                 {
                     if (!(addedItem is Message message)) continue;
 
-                    if (message.Identifier != null && !message.Identifier.StartsWith(SKYMU_SENDING))
+                    /*if (message.Identifier != null && !message.Identifier.StartsWith(SKYMU_SENDING)) // removed: messages already written to DB upstream
                     {
-                        var msgArr = new ConversationItem[] { message };
-                        Task.Run(() => _database?.Messages.Write(msgArr, currentConv));
-                    }
+                        Task.Run(() => _database?.Messages.WriteSingle(message, currentConv));
+                    }*/
 
                     if (message.Sender.Identifier == Universal.CurrentUser?.Identifier
                         && message.Identifier != null

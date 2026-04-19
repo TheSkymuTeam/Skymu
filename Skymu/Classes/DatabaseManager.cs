@@ -2234,6 +2234,11 @@ namespace Skymu.Databases
                 }
             }
 
+            public bool WriteSingle(ConversationItem item, Conversation conversation)
+            {
+                return Write(new ConversationItem[1] { item }, conversation);
+            }
+
             public bool Write( // JUMP messages write
                 ConversationItem[] items,
                 Conversation conversation,

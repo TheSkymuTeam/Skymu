@@ -2115,7 +2115,7 @@
                                                         <global:SliceControl
                                                             x:Name="EmojiButton"
                                                             Width="18"
-                                                            Height="17"
+                                                            Height="18"
                                                             HorizontalAlignment="Left"
                                                             DefaultIndex="0"
                                                             ElementCount="5"
