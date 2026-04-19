@@ -59,7 +59,7 @@
             FontSize="11"
             Foreground="#363636"
             LineHeight="16"
-            Text="Open-source software: http://skymu.app/legal/licenses/standard.txt&#x0a;You can find our repository over at GitHub listed under the Skymu name.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and employed under fair use."
+            Text="Open-source software under the AGPL v3: https://skymu.app/legal/license&#x0a;You can find our repository over at GitHub listed under the Skymu name.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and employed under fair use."
             TextAlignment="Center"
             TextWrapping="Wrap" />
         <TextBlock
