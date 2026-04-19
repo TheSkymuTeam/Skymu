@@ -42,7 +42,7 @@ namespace Skymu
             Load("busy", "BUSY.WAV");
         }
 
-        static void Load(string key, string filename, string path = "", string fallback = "Sounds")
+        static void Load(string key, string filename, string path = "", string fallback = "Skymu")
         {
             if (path == "")
                 path = Settings.SoundPack;
