@@ -8,13 +8,21 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-
-/*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
 // persfidious, patricktbp, or HUBAXE.
 // It is a port of logic that previously lived in Main.xaml.cs.
 /*==========================================================*/
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MiddleMan;
+using Skymu.Converters;
+using Skymu.Credentials;
+using Skymu.Databases;
+using Skymu.Emoticons;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.UserDirectory;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,18 +34,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MiddleMan;
-using Skymu.Converters;
-using Skymu.Credentials;
-using Skymu.Databases;
-using Skymu.Emoticons;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.UserDirectory;
 
 namespace Skymu.ViewModels
 {
