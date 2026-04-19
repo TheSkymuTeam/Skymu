@@ -21,6 +21,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -760,6 +761,12 @@ namespace Skymu.Formatting
         {
             if (e is MessageRecievedEventArgs eR)
             {
+                var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c =>
+                    c.Identifier == eR.ConversationId
+                );
+                if (conversation != null)
+                    Universal.ActiveViewModel?.Database.Messages.Write(new ConversationItem[] { eR.Item }, conversation);
+
                 // TODO: have creation, editing and deletion affect all conversations in database, not just the current
                 if (Universal.ActiveViewModel?.SelectedConversation?.Identifier == eR.ConversationId)
                     Universal.ActiveViewModel?.ActiveConversation.Add(eR.Item);

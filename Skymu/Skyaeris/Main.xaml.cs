@@ -1003,7 +1003,9 @@ namespace Skymu.Skyaeris
         private async void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSendButtonState();
-            vmodel?.StartTyping();
+            await Task.Delay(500);
+            if (HasAnyContent(MessageTextBox))
+                vmodel?.StartTyping();
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
@@ -1078,9 +1080,7 @@ namespace Skymu.Skyaeris
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                bool hasContent = HasAnyContent(MessageTextBox);
-
-                if (!hasContent)
+                if (!HasAnyContent(MessageTextBox))
                 {
                     ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }

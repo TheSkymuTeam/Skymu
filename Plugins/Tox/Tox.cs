@@ -17,7 +17,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ToxOO;
@@ -63,7 +62,7 @@ namespace Tox
         Callbacks cbs = new Callbacks();
         internal User currentUser;
         internal Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)> conferences
-    = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
+            = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
         bool disposed = false;
         internal string profile;
         internal FileStream profilelock;
@@ -162,7 +161,7 @@ namespace Tox
         internal void SAVE() => save(tox, profile, this);
         internal byte[] GrabAvatar(UInt32 fid)
         {
-            string avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
+            var avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
             if (!Directory.Exists(avatar_cache_dir)) return null;
 
             string pkey;
@@ -175,14 +174,15 @@ namespace Tox
                 return null;
             }
 
-            string path = Path.Combine(avatar_cache_dir, pkey + ".png");
+            var path = Path.Combine(avatar_cache_dir, pkey + ".png");
             if (!File.Exists(path)) return null;
             return File.ReadAllBytes(path);
         }
+
         // https://stackoverflow.com/a/3202085
         static bool IsFileLocked(IOException exception)
         {
-            int errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
+            var errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
             return errorCode == 32 || errorCode == 33;
         }
 
@@ -246,12 +246,12 @@ namespace Tox
         {
             if (!ToxOO.Version.Compatible(0, 2, 22))
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
-            Options opt = new Options();
+            var opt = new Options();
             cbs.LogInit(opt);
 
-            bool newprofile = false;
-            string path = Path.Combine(toxDir, profile + ".tox");
-            string lockpath = Path.Combine(toxDir, profile + ".lock");
+            var newprofile = false;
+            var path = Path.Combine(toxDir, profile + ".tox");
+            var lockpath = Path.Combine(toxDir, profile + ".lock");
             if (File.Exists(path))
             {
                 byte[] data;
@@ -308,14 +308,14 @@ namespace Tox
 
                 if (!String.IsNullOrEmpty(savepass))
                 {
-                    FileStream file = File.OpenRead(path);
-                    byte[] esave = new byte[Size.encryptionExtra];
+                    var file = File.OpenRead(path);
+                    var esave = new byte[Size.encryptionExtra];
                     file.Read(esave, 0, (int)Size.encryptionExtra);
                     file.Close();
                     profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                     profilelock.Lock(0, 0);
                     File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
-                    byte[] salt = new byte[Size.salt];
+                    var salt = new byte[Size.salt];
                     IntPtr key;
                     Tox_Err_Key_Derivation kerr;
                     if (tox_get_salt(esave, salt, out var err))
@@ -333,7 +333,7 @@ namespace Tox
                     }
                     else
                     {
-                        byte[] edata = data;
+                        var edata = data;
                         data = new byte[data.Length - Size.encryptionExtra];
                         if (!tox_pass_key_decrypt(key, edata, (UIntPtr)edata.Length, data, out var derr))
                         {
@@ -383,7 +383,7 @@ namespace Tox
                 return LoginResult.Failure;
             }
 
-            bool BootstrapSuccess = false;
+            var BootstrapSuccess = false;
             foreach (ToxNode node in toxNodes)
             {
                 try
@@ -405,28 +405,24 @@ namespace Tox
             }
             Debug.WriteLine("Tox: Bootstrapped with all specified nodes");
 
-            byte[] public_key = tox.publicKey;
-            string pubkey = BATS(public_key);
+            var public_key = tox.publicKey;
+            var pubkey = BATS(public_key);
             string uname;
             if (newprofile)
             {
-                uname = profile;
                 tox.name = profile;
             }
-            else
-            {
-                uname = tox.name;
-            }
+            uname = tox.name;
 
-            string status = tox.statusMessage;
+            var status = tox.statusMessage;
             
-            string avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
+            var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
             if (File.Exists(avatarPath))
                 currentUser = new User(uname, profile, pubkey, status, UserConnectionStatus.Online, File.ReadAllBytes(avatarPath));
             else
                 currentUser = new User(uname, profile, pubkey, status, UserConnectionStatus.Online);
 
-            string tid = tox.address;
+            var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
@@ -450,9 +446,6 @@ namespace Tox
             // (especially in censored countries), and that you are stuck here, and not somewhere else.
             await tox_started.Task;
 
-            tox_group_join(tox.ptr, FromHex("04427658dc596ce9e248b0a39ac98964ee62e57f093efb56b8b914282d019058"), "orph", (UIntPtr)4, null, (UIntPtr)0, out var ggerr);
-            Debug.WriteLine(ggerr);
-
             return LoginResult.Success;
         }
 
@@ -461,8 +454,7 @@ namespace Tox
         void ToxUpdate(object state)
         {
             tox.Iterate(user_data);
-            if (toxTimer != null)
-                toxTimer.Change(tox.iterationInterval, Timeout.Infinite);
+            toxTimer?.Change(tox.iterationInterval, Timeout.Infinite);
         }
 
         #region Populate
@@ -480,17 +472,17 @@ namespace Tox
             {
                 if (!HasConversation("fid.ToString()", ContactsList))
                 {
-                    string uname = f.name;
+                    var uname = f.name;
 
-                    string status = f.statusMessage;
+                    var status = f.statusMessage;
 
                     User user;
-                    int idx = (int)f.id;
+                    var idx = (int)f.id;
                     if (idx >= 0 && idx < users.Count && users[idx] != null)
                         user = users[idx];
                     else
                     {
-                        string pubkey = BATS(f.publicKey);
+                        var pubkey = BATS(f.publicKey);
                         user = new User(
                             uname ?? pubkey,
                             pubkey,
@@ -511,7 +503,7 @@ namespace Tox
                         users[idx].Status = status;
                         users[idx].ConnectionStatus = UserConnectionStatus.Offline;
                     }
-                    DirectMessage dm = new DirectMessage(user, 0, f.id.ToString());
+                    var dm = new DirectMessage(user, 0, f.id.ToString());
                     ContactsList.Add(dm);
                 }
             }
@@ -524,16 +516,16 @@ namespace Tox
             {
                 if (!HasConversation(f.id.ToString(), RecentsList))
                 {
-                    string uname = f.name;
-                    string status = f.statusMessage;
+                    var uname = f.name;
+                    var status = f.statusMessage;
 
                     User user;
-                    int idx = (int)f.id;
+                    var idx = (int)f.id;
                     if (idx >= 0 && idx < users.Count && users[idx] != null)
                         user = users[idx];
                     else
                     {
-                        string pubkey = BATS(f.publicKey);
+                        var pubkey = BATS(f.publicKey);
                         user = new User(
                             uname ?? pubkey,
                             pubkey,
@@ -554,12 +546,12 @@ namespace Tox
                         users[idx].Status = status;
                         users[idx].ConnectionStatus = UserConnectionStatus.Offline;
                     }
-                    DirectMessage dm = new DirectMessage(user, 0, f.id.ToString());
+                    var dm = new DirectMessage(user, 0, f.id.ToString());
                     RecentsList.Add(dm);
                 }
             }
 
-            UInt32[] chatlist = new UInt32[(int)tox_conference_get_chatlist_size(tox.ptr)];
+            var chatlist = new UInt32[(int)tox_conference_get_chatlist_size(tox.ptr)];
             if (chatlist.Length != 0)
             {
                 tox_conference_get_chatlist(tox.ptr, chatlist);
@@ -569,7 +561,7 @@ namespace Tox
                 }
             }
 
-            UInt32[] grouplist = new UInt32[(int)Ftox_group_get_group_list_size(tox.ptr)];
+            var grouplist = new UInt32[(int)Ftox_group_get_group_list_size(tox.ptr)];
             Debug.WriteLine(grouplist.Length);
             if (grouplist.Length != 0)
             {
@@ -590,15 +582,15 @@ namespace Tox
         public async Task<bool> SendMessage(string identifier, string otext, Attachment attachment, string parent_message_identifier)
         {
             // Shitty /me impl that JUST WORKS!!!
-            bool ME = otext.StartsWith("/me ");
+            var ME = otext.StartsWith("/me ");
             var type = ME ? Tox_Message_Type.ACTION : Tox_Message_Type.NORMAL;
-            string text = otext;
+            var text = otext;
             if (ME)
                 text = otext.Substring(4);
 
             if (identifier.StartsWith("C"))
             {
-                UInt32 cid = UInt32.Parse(identifier.Substring(1));
+                var cid = UInt32.Parse(identifier.Substring(1));
                 if (!tox_conference_send_message(tox.ptr, cid, type, text, (UIntPtr)text.Length, out var err))
                 {
                     if (err == Tox_Err_Conference_Send_Message.NO_CONNECTION)
@@ -620,7 +612,7 @@ namespace Tox
             }
             else
             {
-                UInt32? mid = tox.friends[UInt32.Parse(identifier)].SendMessage(type, text);
+                var mid = tox.friends[UInt32.Parse(identifier)].SendMessage(type, text);
                 if (mid == null)
                 {
                     _ = Task.Run(async () =>
@@ -707,9 +699,8 @@ namespace Tox
         void AVUpdate(object state)
         {
             toxav_iterate(av);
-            if (avTimer != null)
-                avTimer.Change((int)toxav_iteration_interval(av), Timeout.Infinite);
-            if (avCts != null && avCts.Token.IsCancellationRequested)
+            avTimer?.Change((int)toxav_iteration_interval(av), Timeout.Infinite);
+            if (avCts?.Token.IsCancellationRequested == true)
                 avFinished.TrySetResult(true);
         }
 
@@ -735,7 +726,7 @@ namespace Tox
                     return null;
                 }
 
-                bool suc = await avWaiter.Task;
+                var suc = await avWaiter.Task;
                 avWaiter = null;
                 if (!suc)
                 {
@@ -754,7 +745,7 @@ namespace Tox
 
         public async Task<bool> EndCall(ActiveCall call)
         {
-            avACall.caller.Stop();
+            avACall.caller?.Stop();
             avACall = new CallStruct();
             if (!toxav_call_control(av, UInt32.Parse(call.ConversationId), Toxav_Call_Control.CANCEL, out var err))
             {
