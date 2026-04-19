@@ -155,346 +155,130 @@ namespace Stub
 
             messageList.Add(
                 new Message(
-                    "20208",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 0),
-                    "Alright lads, lasses and whatever else is over there. I have a very important announcement to make. Supermium is a super stinky no no browser."
+                    "20202",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 10, 0),
+                    "Hey, I’ve been playing Genshin Impact on the Steam Deck, it works fine."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20209",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 5),
-                    "Closed source wrappers? Booooo thumbs down"
+                    "20203",
+                    new User("omega", "omega", "omega"),
+                    new DateTime(2025, 4, 30, 8, 10, 10),
+                    "Oh nice, I’ve heard good things about it."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20210",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 10),
-                    "Who knows what the lads at the LSC are hiding, perhaps their shenanigans are worse than Lord Mandelson's were, for a so called open source browser."
+                    "20204",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 10, 20),
+                    "Yeah, it’s a really fun game."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20211",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 15),
-                    "Why not come to Eclipse and get any other browser like"
+                    "20205",
+                    new User("omega", "omega", "omega"),
+                    new DateTime(2025, 4, 30, 8, 10, 30),
+                    "Cool, I might try it out sometime."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20212",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 20),
-                    "e3kskoy7wqk"
+                    "20206",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 10, 40),
+                    "It’s pretty enjoyable even without spending money."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20213",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 25),
-                    "or the Redfox browser"
+                    "20207",
+                    new User("omega", "omega", "omega"),
+                    new DateTime(2025, 4, 30, 8, 10, 50),
+                    "That’s good to know."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20214",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 30),
-                    "Nigel Farage out"
+                    "20202",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 11, 0),
+                    "I just wanted to share it’s a solid game."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20215",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 35),
-                    "LOL"
+                    "20202",
+                    new User("omega", "omega", "omega"),
+                    new DateTime(2025, 4, 30, 8, 11, 10),
+                    "Thanks for the info!"
                 )
             );
             messageList.Add(
                 new Message(
-                    "20216",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 19, 40),
-                    "stinky stinky no no or stinky no no"
+                    "20202",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 11, 20),
+                    "Gameplay-wise it’s really engaging and well-designed."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20217",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 19, 45),
-                    "super stinky no no"
+                    "20202",
+                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new DateTime(2025, 4, 30, 8, 12, 40),
+                    "Sounds interesting, I’ll check it out."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20218",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 19, 50),
-                    "okay I'll add that can I pin this lmao @Xi Jinping"
+                    "20202",
+                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new DateTime(2025, 4, 30, 8, 13, 30),
+                    "@Amongus do you want to discuss this more in DMs?"
                 )
             );
             messageList.Add(
                 new Message(
-                    "20219",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 20, 0),
-                    "as the leader of Reform looking out for the less technically inclined of the British public, might want to remove this line"
+                    "20202",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 14, 0),
+                    "Just sharing my experience, I think most people would enjoy it."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20220",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 20, 5),
-                    "True"
+                    "20202",
+                    new User("Nova", "Nova", "Nova"),
+                    new DateTime(2025, 4, 30, 8, 15, 0),
+                    "I think it could be fun to collaborate on the project with this in mind."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20221",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 20, 10),
-                    "since its redundant"
+                    "20202",
+                    new User("omega", "omega", "omega"),
+                    new DateTime(2025, 4, 30, 8, 15, 20),
+                    "Yeah, that makes sense. Thanks for sharing."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20222",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 20, 15),
-                    "Hmm if you want to eventually make it real, maybe no pin"
+                    "20202",
+                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new DateTime(2025, 4, 30, 8, 15, 30),
+                    "Great, let’s move forward."
                 )
             );
             messageList.Add(
                 new Message(
-                    "20223",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 20, 20),
-                    "Alright what about now"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20224",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 20, 25),
-                    "If we mention you doing nothing wrong, lets not mention Eclipse. The tradeoff would be funnier."
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20225",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 20, 30),
-                    "This could be simplified, maybe just remove everything but the last sentence."
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20226",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 20, 35),
-                    "raytek could have made this too if they had humour"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20227",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 20, 40),
-                    "yeah"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20228",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 20, 45),
-                    "What about now"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20229",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 20, 50),
-                    "YEA XD"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20230",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 21, 0),
-                    "I'll subtly remove the eclipse line for the extra troll"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20231",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 5),
-                    "do add Compa did nothing wrong near the end somewhere"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20232",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 21, 10),
-                    "Then it'd be obvious it's eclipse"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20233",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 15),
-                    "ah"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20234",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 21, 20),
-                    "It will be obvious, but that's also why to not mention Eclipse"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20235",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 25),
-                    "tbf do they even know im here XD"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20236",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 21, 30),
-                    "It will throw a lot of people off"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20237",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 35),
-                    "they dont need to know who if you mention me they'll start thinking i done it"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20238",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 21, 40),
-                    "This is why I say mention e3k but not eclipse"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20239",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 45),
-                    "why are we talking about this here lol"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20240",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 21, 50),
-                    "They probably suspect, maybe even have a spy here"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20241",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 21, 55),
-                    "SHUT UP"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20242",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 22, 0),
-                    "Who gets the Nigel Farage cameo first"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20243",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 22, 5),
-                    "GO TO SISCAT NOW LMAO AND WIPE THE MSGS BEFORE THEY SEE"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20244",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 22, 10),
-                    "probably lsc or a splinter group"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20245",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 22, 15),
-                    "SHUSH"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20246",
-                    new User("XiJinping", "XiJinping", "XiJinping"),
-                    new DateTime(2025, 4, 30, 16, 22, 20),
-                    "alright I'll delete and log"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20247",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 22, 25),
-                    "lmfao"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20248",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 22, 30),
-                    "Alright"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20249",
-                    new User("IF", "IF", "IF"),
-                    new DateTime(2025, 4, 30, 16, 22, 35),
-                    "my server works for this lol"
-                )
-            );
-            messageList.Add(
-                new Message(
-                    "20250",
-                    new User("wuggy", "wuggy", "wuggy"),
-                    new DateTime(2025, 4, 30, 16, 22, 40),
-                    "I kept the message in clipboard I'll paste it in siscat"
+                    "20202",
+                    new User("Amongus", "Amongus", "Amongus"),
+                    new DateTime(2025, 4, 30, 8, 15, 40),
+                    "Got it, thanks everyone. Also, Genshin impact fuckin sucks ass lol"
                 )
             );
 
