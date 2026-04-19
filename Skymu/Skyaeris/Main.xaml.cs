@@ -756,8 +756,9 @@ namespace Skymu.Skyaeris
                     btnRecents.Source = recentsBtnImageEmpty;
                     btnContacts.TextLeftMargin = 5;
                     btnRecents.TextLeftMargin = 5;
+                    SidebarTabs.ColumnDefinitions[0].Width = GridLength.Auto;
+                    btnContacts.HorizontalAlignment = HorizontalAlignment.Left;
                     btnContacts.TextHorizontalAlignment = HorizontalAlignment.Center;
-                    btnRecents.TextHorizontalAlignment = HorizontalAlignment.Center;
                 }
                 else
                 {
@@ -765,8 +766,9 @@ namespace Skymu.Skyaeris
                     btnRecents.Source = recentsBtnImage;
                     btnContacts.TextLeftMargin = 30;
                     btnRecents.TextLeftMargin = 30;
+                    SidebarTabs.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
+                    btnContacts.HorizontalAlignment = HorizontalAlignment.Stretch;
                     btnContacts.TextHorizontalAlignment = HorizontalAlignment.Left;
-                    btnRecents.TextHorizontalAlignment = HorizontalAlignment.Left;
                 }
             }
             if (SidebarColumn.Width.Value < 195)

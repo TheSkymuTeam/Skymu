@@ -263,6 +263,7 @@
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Standard" Tag="Skymu" />
                                                 <ComboBoxItem Content="Classic" Tag="Skype7" />
+                                                <ComboBoxItem Content="Skype 1" Tag="Skype1" />
                                                 <ComboBoxItem Content="Skype 8" Tag="Skype8" />
                                             </ComboBox>
                                             <TextBlock
