@@ -765,7 +765,7 @@ namespace Skymu.Formatting
                     c.Identifier == eR.ConversationId
                 );
                 if (conversation != null)
-                    Universal.ActiveViewModel?.Database.Messages.Write(new ConversationItem[] { eR.Item }, conversation);
+                    Universal.ActiveViewModel?.Database.Messages.WriteSingle(eR.Item, conversation);
 
                 // TODO: have creation, editing and deletion affect all conversations in database, not just the current
                 if (Universal.ActiveViewModel?.SelectedConversation?.Identifier == eR.ConversationId)
