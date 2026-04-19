@@ -36,6 +36,8 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
+        internal static bool TestMode = true; // disables plugin login, signs you directly into stub
+
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4";
         public const string BuildName = "Erebus Aether";

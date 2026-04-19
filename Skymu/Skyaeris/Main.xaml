@@ -986,7 +986,7 @@
                                             PressedIndex="2"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Sidebar/status-top.png'}"
                                             StackDirection="Vertical"
-                                            Text="Jeffrey E. Epstein"
+                                            Text="Saul Goodman"
                                             TextColor="#FFFFFF"
                                             TextFont="Arial"
                                             TextLeftMargin="43"

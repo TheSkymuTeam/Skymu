@@ -272,34 +272,13 @@ namespace Skymu.Skyaeris
 
         #region Custom window logic
 
-        [DllImport("dwmapi.dll")]
-        private static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetWindowDC(IntPtr hwnd);
-        [DllImport("user32.dll")]
-        private static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
-        [DllImport("user32.dll")]
-        private static extern bool DrawIconEx(IntPtr hdc, int x, int y, IntPtr hIcon,
-            int cx, int cy, int istep, IntPtr hbr, int flags);
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MARGINS { public int left, right, top, bottom; }
-        private const int DI_NORMAL = 0x0003;
-        private Drawing.Icon _bannerIcon;
-
         public void InitializeWindowFrame()
         {
-            /* if (_currentFrame == WindowFrame.SkypeAero) // NEW EXPIREMENTAL SKYPE AERO BRANCH
-            {
-                // Keep native frame — do NOT collapse TitleBar or apply WindowChrome
-                WindowStyle = WindowStyle.SingleBorderWindow;
-                TitleBar.Visibility = Visibility.Collapsed;
-                WindowArea.Margin = new Thickness(0);
-            } */
             if (_currentFrame != WindowFrame.Native) // using Skype's custom border
             {
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 WindowChrome chrome = new WindowChrome();
-                chrome.UseAeroCaptionButtons = false;
+                //chrome.UseAeroCaptionButtons = false;
                 WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.Visibility = Visibility.Visible;
@@ -367,7 +346,7 @@ namespace Skymu.Skyaeris
                 minimize.Source = GenerateTitlebarButtonImage("minimize");
                 split.Source = img_split;
             }
-            else if (_currentFrame == WindowFrame.Native) // using system native border
+            else // using system native border
             {
                 WindowStyle = WindowStyle.SingleBorderWindow;
                 TitleBar.Visibility = Visibility.Collapsed;
