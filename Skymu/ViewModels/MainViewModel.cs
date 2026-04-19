@@ -350,14 +350,12 @@ namespace Skymu.ViewModels
                 {
                     if (!(addedItem is Message message)) continue;
 
-                    // Persist to DB if it is a real (non-preview) message
                     if (message.Identifier != null && !message.Identifier.StartsWith(SKYMU_SENDING))
                     {
                         var msgArr = new ConversationItem[] { message };
                         Task.Run(() => _database?.Messages.Write(msgArr, currentConv));
                     }
 
-                    // Remove matching preview message (optimistic UI)
                     if (message.Sender.Identifier == Universal.CurrentUser?.Identifier
                         && message.Identifier != null
                         && !message.Identifier.StartsWith(SKYMU_SENDING))
@@ -377,7 +375,6 @@ namespace Skymu.ViewModels
                         }
                     }
 
-                    // Back-fill PreviousMessageIdentifier for newly arriving item
                     int idx = ActiveConversation.IndexOf(message);
                     for (int i = idx - 1; i >= 0; i--)
                     {
@@ -389,14 +386,12 @@ namespace Skymu.ViewModels
                         }
                     }
 
-                    // Sound effect for incoming messages
                     if (message.Sender.Identifier != Universal.CurrentUser?.Identifier
                         && IsWindowActive && !_synchronizing)
                     {
                         Sounds.Play("message-recieved");
                     }
 
-                    // Update GroupedConversation for SeanKype skin
                     Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                         AppendToGroupedConversation(message)));
                 }
