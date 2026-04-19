@@ -8,8 +8,6 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-
-/*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
 // persfidious, patricktbp, or HUBAXE.
 // It is a port of logic that previously lived in the old
