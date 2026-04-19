@@ -60,13 +60,13 @@ namespace Skymu.Views
             InitializeComponent();
 
             if (Universal.CurrentUser.ProfilePicture != null)
-                MyAvatar.Source = FrozenImage.GenerateFromArray(
+                MyAvatar.Source = ImageHelper.GenerateFromArray(
                     Universal.CurrentUser.ProfilePicture
                 );
             else
                 MyAvatar.Source = Universal.AnonymousAvatar;
             if (partner.ProfilePicture != null)
-                PartnerAvatar.Source = FrozenImage.GenerateFromArray(partner.ProfilePicture);
+                PartnerAvatar.Source = ImageHelper.GenerateFromArray(partner.ProfilePicture);
             else
                 PartnerAvatar.Source = Universal.AnonymousAvatar;
 
@@ -78,20 +78,20 @@ namespace Skymu.Views
 
             const string prefix = // TODO make less repetitive
                 "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
-            rectangle = FrozenImage.Generate(prefix + "Call Screen/rectangle.png");
-            pill = FrozenImage.Generate(prefix + "Call Screen/pill.png");
-            logo_small = FrozenImage.Generate(prefix + "Branding/logo-call-small.png");
-            logo_big = FrozenImage.Generate(prefix + "Branding/logo-call-big.png");
-            unmuted = FrozenImage.Generate(prefix + "Call Screen/btn_mic.png");
-            muted = FrozenImage.Generate(prefix + "Call Screen/btn_mic_off.png");
-            chat_active = FrozenImage.Generate(prefix + "Call Screen/btn_chat_active.png");
-            chat_inactive = FrozenImage.Generate(prefix + "Call Screen/btn_chat_inactive.png");
-            sidebar_expand = FrozenImage.Generate(prefix + "Call Screen/btn_sidebar_expand.png");
-            sidebar_collapse = FrozenImage.Generate(
+            rectangle = ImageHelper.Generate(prefix + "Call Screen/rectangle.png");
+            pill = ImageHelper.Generate(prefix + "Call Screen/pill.png");
+            logo_small = ImageHelper.Generate(prefix + "Branding/logo-call-small.png");
+            logo_big = ImageHelper.Generate(prefix + "Branding/logo-call-big.png");
+            unmuted = ImageHelper.Generate(prefix + "Call Screen/btn_mic.png");
+            muted = ImageHelper.Generate(prefix + "Call Screen/btn_mic_off.png");
+            chat_active = ImageHelper.Generate(prefix + "Call Screen/btn_chat_active.png");
+            chat_inactive = ImageHelper.Generate(prefix + "Call Screen/btn_chat_inactive.png");
+            sidebar_expand = ImageHelper.Generate(prefix + "Call Screen/btn_sidebar_expand.png");
+            sidebar_collapse = ImageHelper.Generate(
                 prefix + "Call Screen/btn_sidebar_collapse.png"
             );
-            screen_contract = FrozenImage.Generate(prefix + "Call Screen/btn_screen_contract.png");
-            screen_expand = FrozenImage.Generate(prefix + "Call Screen/btn_screen_expand.png");
+            screen_contract = ImageHelper.Generate(prefix + "Call Screen/btn_screen_contract.png");
+            screen_expand = ImageHelper.Generate(prefix + "Call Screen/btn_screen_expand.png");
 
 
             isPillMode = !(this.ActualWidth >= 1025.0);

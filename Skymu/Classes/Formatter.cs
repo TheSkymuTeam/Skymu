@@ -9,8 +9,6 @@
 // License: http://skymu.app/legal/licenses/standard.txt
 /*==========================================================*/
 
-
-
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Syntax;
@@ -41,7 +39,7 @@ using WpfInline = System.Windows.Documents.Inline;
 
 namespace Skymu.Formatting
 {
-    internal class MessageTools
+    internal class Formatter
     {
         public static class BrushesStatic
         {
@@ -113,7 +111,7 @@ namespace Skymu.Formatting
                 .UseGenericAttributes() // {#id .class key=value}
                 .Build();
 
-        public static TextBlock FormTextblock(
+        public static TextBlock Parse(
             string input,
             bool doNotFormat = false,
             Style style = null
@@ -684,9 +682,9 @@ namespace Skymu.Formatting
                 inlines.Add(il);
         }
 
-        internal static SliceControl FormAnimatedEmoji(string emojiName)
+        internal static SliceControl MakeEmoji(string emojiName)
         {
-            BitmapImage sourceImg = FrozenImage.Generate(
+            BitmapImage sourceImg = ImageHelper.Generate(
                 $"pack://application:,,,/Emoji/{emojiName}/views/default_20_anim/index.png"
             );
             var sliceControl = new SliceControl
@@ -736,7 +734,7 @@ namespace Skymu.Formatting
                     if (EmojiDictionary.Map.TryGetValue(emojiKey, out var emojiFilename))
                     {
                         inlines.Add(
-                            new InlineUIContainer(FormAnimatedEmoji(emojiFilename))
+                            new InlineUIContainer(MakeEmoji(emojiFilename))
                             {
                                 BaselineAlignment = BaselineAlignment.TextBottom,
                             }
@@ -757,123 +755,6 @@ namespace Skymu.Formatting
                 inlines.Add(currentRun);
         }
 
-        public static void HandleIncoming(MessageEventArgs e)
-        {
-            if (e is MessageRecievedEventArgs eR)
-            {
-                var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c =>
-                    c.Identifier == eR.ConversationId
-                );
-                if (conversation != null)
-                    Universal.ActiveViewModel?.Database.Messages.WriteSingle(eR.Item, conversation);
-
-                // TODO: have creation, editing and deletion affect all conversations in database, not just the current
-                if (Universal.ActiveViewModel?.SelectedConversation?.Identifier == eR.ConversationId)
-                    Universal.ActiveViewModel?.ActiveConversation.Add(eR.Item);
-                if (eR.Item is Message message)
-                {
-                    UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
-                    if (eR.SentInServerChannel)
-                    {
-                        // for server channels (guild channels), only notify if:
-                        // 1. replied to
-                        // 2. pinged
-
-                        if (
-                            message.ParentMessage?.Sender?.Identifier
-                            == Universal.CurrentUser?.Identifier
-                        )
-                        { /* case 1 is true, continue */
-                        }
-                        else if (
-                            !string.IsNullOrEmpty(message.Text)
-                            && !string.IsNullOrEmpty(Universal.CurrentUser?.DisplayName)
-                            && message.Text.Contains($"<@{Universal.CurrentUser.DisplayName}>")
-                        )
-                        { /* case 2 is true, continue */
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-
-                    if (message.Sender.Identifier != Universal.CurrentUser?.Identifier)
-                    {
-                        if (
-                            !(Universal.ActiveViewModel?.IsWindowActive ?? false)
-                            || Universal.ActiveViewModel?.SelectedConversation?.Identifier != eR.ConversationId
-                        )
-                        {
-                            new Views.Notification(eR);
-                        }
-                    }
-                }
-            }
-            else if (
-                e is MessageDeletedEventArgs eD
-                && Universal.ActiveViewModel?.SelectedConversation?.Identifier == e.ConversationId
-            )
-            {
-                var item = Universal.ActiveViewModel.ActiveConversation.FirstOrDefault(x =>
-                    x.Identifier == eD.DeletedItemId
-                );
-                if (item is Message deleted_msg)
-                {
-                    int index = Universal.ActiveViewModel.ActiveConversation.IndexOf(deleted_msg);
-                    Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
-                    if (Settings.MessageLogger)
-                    {
-                        deleted_msg.Text += " ==[deleted]==";
-                        Universal.ActiveViewModel.ActiveConversation.Insert(index, deleted_msg);
-                    }
-                }
-            }
-            else if (
-                e is MessageEditedEventArgs eE
-                && Universal.ActiveViewModel?.SelectedConversation?.Identifier == e.ConversationId
-            )
-            {
-                var index =
-                    Universal.ActiveViewModel
-                        .ActiveConversation.Select((item, i) => new { item, i })
-                        .LastOrDefault(x => x.item.Identifier == eE.OldItemId)
-                        ?.i
-                    ?? -1;
-
-                if (index != -1)
-                {
-                    Message edited_msg = eE.NewItem as Message;
-                    if (!Settings.MessageLogger)
-                    {
-                        Universal.ActiveViewModel.ActiveConversation.RemoveAt(index);
-                    }
-
-                    edited_msg.Text += " ==[edited]==";
-
-                    int insertIndex = Math.Min(
-                        index + (Settings.MessageLogger ? 1 : 0),
-                        Universal.ActiveViewModel.ActiveConversation.Count
-                    );
-
-                    Universal.ActiveViewModel.ActiveConversation.Insert(insertIndex, edited_msg);
-                }
-            }
-        }
-
-        private static void UpdateRecentsListOnNewMessage(
-            string conversationId,
-            DateTime messageTimestamp
-        )
-        {
-            var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c =>
-                c.Identifier == conversationId
-            );
-            if (conversation == null)
-                return;
-
-            conversation.LastMessageTime = messageTimestamp;
-            Skyaeris.Main.RefreshCompactRecentsView();
-        }
     }
 }
+

@@ -98,7 +98,7 @@ namespace Skymu.Pontis
         #region BitmapImage generators
         private BitmapImage GenerateTitlebarButtonImage(string name)
         {
-            return FrozenImage.Generate(
+            return ImageHelper.Generate(
                 $"pack://application:,,,/Pontis/Assets/Universal/Window Frame/Aero/{name}.png"
             );
         }
@@ -106,7 +106,7 @@ namespace Skymu.Pontis
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath = Converters.Helpers.GetAssetBasePrefix("Pontis") + "Profile Pictures/" + avatar + ".png";
-            return FrozenImage.Generate(AvatarPath);
+            return ImageHelper.Generate(AvatarPath);
         }
 
         #endregion
@@ -1149,7 +1149,7 @@ namespace Skymu.Pontis
                 };
                 try
                 {
-                    var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+                    var sliceControl = Formatter.MakeEmoji(emojiFilename);
                     sliceControl.Tag = emojiFilename;
                     border.Child = sliceControl;
                     border.MouseLeftButtonUp += EmojiBox_Click;
@@ -1185,7 +1185,7 @@ namespace Skymu.Pontis
             RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
-            var sliceControl = MessageTools.FormAnimatedEmoji(emojiFilename);
+            var sliceControl = Formatter.MakeEmoji(emojiFilename);
 
             if (!MessageTextBox.Selection.IsEmpty)
                 MessageTextBox.Selection.Text = string.Empty;
@@ -1252,7 +1252,7 @@ namespace Skymu.Pontis
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = FrozenImage.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>

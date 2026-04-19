@@ -32,6 +32,7 @@ using Microsoft.Data.Sqlite;
 using MiddleMan;
 using Skymu.Preferences;
 using System;
+using Skymu.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1827,45 +1828,6 @@ namespace Skymu.Databases
                 return mediaDir;
             }
 
-            internal static string ResolveImageExtension(byte[] bytes, string existingName)
-            {
-                string ext = Path.GetExtension(existingName)?.ToLowerInvariant();
-                if ( // does the file already have the extension? (unlikely)
-                    ext == ".png"
-                    || ext == ".jpg"
-                    || ext == ".jpeg"
-                    || ext == ".gif"
-                    || ext == ".webp"
-                )
-                {
-                    return existingName; // just save as is, the file has the extension already
-                }
-
-                if (bytes.Length >= 4) // are there magic bytes?
-                {
-                    if ( // do they match up with any of the formats we know?
-                        bytes[0] == 0x89
-                        && bytes[1] == 0x50
-                        && bytes[2] == 0x4E
-                        && bytes[3] == 0x47
-                    )
-                        return existingName + ".png"; // save as PNG
-                    if (bytes[0] == 0xFF && bytes[1] == 0xD8)
-                        return existingName + ".jpg"; // save as JPEG
-                    if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
-                        return existingName + ".gif"; // save as GIF
-                    if (
-                        bytes[0] == 0x52
-                        && bytes[1] == 0x49
-                        && bytes[2] == 0x46
-                        && bytes[3] == 0x46
-                    )
-                        return existingName + ".webp"; // save as WebP
-                }
-
-                return existingName; // couldn't find proper extension, just save without an extension
-            }
-
             private void WriteImageAttachments(
                 ConversationItem[] items,
                 Conversation conversation,
@@ -1936,7 +1898,7 @@ namespace Skymu.Databases
                                 : string.Concat(
                                     attachment.Name.Split(Path.GetInvalidFileNameChars())
                                 );
-                            string safeName = ResolveImageExtension(attachment.File, rawName);
+                            string safeName = ImageHelper.ResolveExtension(attachment.File, rawName);
 
                             string fileName = $"{message.Identifier}_{attachmentIndex}_{safeName}";
                             string filePath = Path.Combine(mediaDir, fileName);
@@ -2234,11 +2196,6 @@ namespace Skymu.Databases
                 }
             }
 
-            public bool WriteSingle(ConversationItem item, Conversation conversation)
-            {
-                return Write(new ConversationItem[1] { item }, conversation);
-            }
-
             public bool Write( // JUMP messages write
                 ConversationItem[] items,
                 Conversation conversation,
@@ -2492,6 +2449,11 @@ namespace Skymu.Databases
                 }
 
                 return true;
+            }
+
+            public bool WriteRow(ConversationItem item, Conversation conversation)
+            {
+                return Write(new ConversationItem[1] { item }, conversation);
             }
         }
 

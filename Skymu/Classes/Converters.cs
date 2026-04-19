@@ -108,7 +108,7 @@ namespace Skymu.Converters
 
             if (bytes != null && bytes.Length > 0)
             {
-                return FrozenImage.GenerateFromArray(bytes);
+                return ImageHelper.GenerateFromArray(bytes);
             }
 
             if (type == "group")
@@ -157,7 +157,7 @@ namespace Skymu.Converters
 
             try
             {
-                return FrozenImage.GenerateFromArray(raw);
+                return ImageHelper.GenerateFromArray(raw);
             }
             catch
             {
@@ -305,7 +305,7 @@ namespace Skymu.Converters
             if (text == null)
                 return DependencyProperty.UnsetValue;
 
-            return MessageTools.FormTextblock(text, false, ViewerStyle);
+            return Formatter.Parse(text, false, ViewerStyle);
         }
 
         public object ConvertBack(
@@ -659,7 +659,7 @@ namespace Skymu.Converters
             {
                 packUri = GetAssetBasePrefix(era) + image_path;
             }
-            return FrozenImage.Generate(packUri);
+            return ImageHelper.Generate(packUri);
         }
     }
 
