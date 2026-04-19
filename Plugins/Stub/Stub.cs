@@ -523,7 +523,7 @@ namespace Stub
             _uiContext = SynchronizationContext.Current;
             MyInformation = new User(
                 MyUsername,
-                "jeevacation",
+                "thegamingkart (legend)",
                 "00001",
                 "Hello test",
                 UserConnectionStatus.Online
