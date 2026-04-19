@@ -136,7 +136,7 @@ namespace Stub
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
             TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
-            TypingUsersList.Add(new User("WGP", "20200", "20200"));
+            TypingUsersList.Add(new User("Xaero", "20200", "20200"));
             TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
             return Task.FromResult(true);
         }
