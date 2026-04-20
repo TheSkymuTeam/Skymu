@@ -96,7 +96,7 @@
                     x:Name="PartnerAvatar"
                     Height="160"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/man.png'}" />
+                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/saul.png'}" />
                 <TextBlock
                     x:Name="PartnerDisplayName"
                     Margin="0,18,0,5"
@@ -126,7 +126,7 @@
                     x:Name="MyAvatar"
                     Height="160"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/woman.png'}" />
+                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/waltuh.png'}" />
             </StackPanel>
         </Grid>
 
