@@ -8,7 +8,9 @@ Be warned, every project has to be set to build as either x86 or x64. Any CPU is
 
 Tox plugin requires Plugins/Tox/x(arch)/*.dll to be copied over to the build output's Plugins folder.
 
-![Client](Images/client.png) 
+![Client, chatting](Images/skymu-v0.4-chat.png) 
+
+![Client, calling](Images/skymu-v0.4-call.png) 
 
 # How to create the installer
 
