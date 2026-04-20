@@ -496,6 +496,11 @@ namespace Skymu.ViewModels
                     ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
+                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0)
+                    {
+                        new Views.Notification(eR);
+                        return;
+                    }
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (eR.SentInServerChannel)
                     {
@@ -520,16 +525,21 @@ namespace Skymu.ViewModels
                         {
                             return;
                         }
+                        if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.PING) != 0)
+                            new Views.Notification(eR);
                     }
-
-                    if (message.Sender.Identifier != Universal.CurrentUser?.Identifier)
+                    else
                     {
                         if (
-                            !IsWindowActive
-                            || SelectedConversation?.Identifier != eR.ConversationId
+                            message.Sender.Identifier != Universal.CurrentUser?.Identifier
+                            && (Settings.NotificationTrigger & Classes.NotificationTriggerType.DM) != 0
                         )
                         {
-                            new Views.Notification(eR);
+                            if (
+                                !IsWindowActive
+                                || SelectedConversation?.Identifier != eR.ConversationId
+                            )
+                                new Views.Notification(eR);
                         }
                     }
                 }
@@ -638,7 +648,7 @@ namespace Skymu.ViewModels
                 if (_pendingPreviewMessages.TryGetValue(tempId, out var pending))
                 {
                     _pendingPreviewMessages.Remove(tempId);
-                    Application.Current.Dispatcher.BeginInvoke(
+                    _ = Application.Current.Dispatcher.BeginInvoke(
                         new Action(() =>
                         {
                             ActiveConversation.Remove(pending);

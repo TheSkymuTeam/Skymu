@@ -166,6 +166,11 @@ namespace Skymu.Preferences
             get => S("EnableNotifications", true);
             set => W("EnableNotifications", value, nameof(EnableNotifications));
         }
+        public static NotificationTriggerType NotificationTrigger
+        {
+            get => S("NotificationTrigger", NotificationTriggerType.PDM);
+            set => W("NotificationTrigger", value, nameof(NotificationTrigger));
+        }
         public static bool EnableSkypeHome
         {
             get => S("EnableSkypeHome", true);
@@ -293,6 +298,9 @@ namespace Skymu.Preferences
         private static int S(string k, int def) =>
             int.TryParse(Get(k, def.ToString()), out var v) ? v : def;
 
+        private static NotificationTriggerType S(string k, NotificationTriggerType def) =>
+            Enum.TryParse<NotificationTriggerType>(Get(k, def.ToString()), out var v) ? v : def;
+        
         private static double Xd(string k, double def) =>
             double.TryParse(Get(k, def.ToString()), out var v) ? v : def;
 
