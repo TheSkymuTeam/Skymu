@@ -496,12 +496,12 @@ namespace Skymu.ViewModels
                     ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
+                    UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0)
                     {
                         new Views.Notification(eR);
                         return;
                     }
-                    UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (eR.SentInServerChannel)
                     {
                         // for server channels (guild channels), only notify if:
