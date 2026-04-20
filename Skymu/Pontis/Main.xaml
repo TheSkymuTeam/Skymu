@@ -500,127 +500,130 @@
         <!--  CONVERSATION ITEM TEMPLATES START  -->
         <!--  MessageItem Template  -->
         <DataTemplate DataType="{x:Type plugin:Message}">
-            <Grid x:Name="ConversationGrid" Margin="0,10,65,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="148" />
-                    <ColumnDefinition Width="428" />
-                    <ColumnDefinition Width="50" />
-                </Grid.ColumnDefinitions>
-                <!--  Sender name  -->
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="0,0,16,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    TextTrimming="CharacterEllipsis">
-                    <TextBlock.Foreground>
-                        <MultiBinding Converter="{StaticResource SenderToColorConverter}">
-                            <Binding Path="Sender.Identifier" />
-                            <Binding Path="IsForwarded" />
-                        </MultiBinding>
-                    </TextBlock.Foreground>
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource ForwardedChecker}">
-                            <Binding Path="Sender.DisplayName" />
-                            <Binding Path="IsForwarded" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                    <TextBlock.Visibility>
-                        <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
-                            <Binding Path="PreviousMessageIdentifier" />
-                            <Binding Path="Sender.Identifier" />
-                        </MultiBinding>
-                    </TextBlock.Visibility>
-                </TextBlock>
-                <!--  Center area  -->
-                <!--  Reply header  -->
-                <Grid
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="0,0,20,2"
-                    Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid x:Name="ConversationGrid" HorizontalAlignment="Stretch" Margin="0,10,65,0" MaxWidth="626">
+                    <!-- 148 + 428 + 50 -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="148" />
+                        <ColumnDefinition Width="*" MaxWidth="428" />
+                        <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
-                    <Image
-                        Grid.Column="0"
-                        Width="12"
-                        Margin="0,0,6,0"
-                        VerticalAlignment="Center"
-                        SnapsToDevicePixels="True"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/reply-arrow.png'}" />
+                    <!--  Sender name  -->
                     <TextBlock
-                        Grid.Column="1"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,0,16,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Foreground="{StaticResource Text.LowContrast}"
-                        LineHeight="1"
-                        TextTrimming="CharacterEllipsis"
-                        TextWrapping="NoWrap">
+                        TextTrimming="CharacterEllipsis">
+                        <TextBlock.Foreground>
+                            <MultiBinding Converter="{StaticResource SenderToColorConverter}">
+                                <Binding Path="Sender.Identifier" />
+                                <Binding Path="IsForwarded" />
+                            </MultiBinding>
+                        </TextBlock.Foreground>
                         <TextBlock.Text>
-                            <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-                                <Binding Path="ParentMessage.Sender.DisplayName" />
-                                <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+                            <MultiBinding Converter="{StaticResource ForwardedChecker}">
+                                <Binding Path="Sender.DisplayName" />
+                                <Binding Path="IsForwarded" />
                             </MultiBinding>
                         </TextBlock.Text>
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
+                                <Binding Path="PreviousMessageIdentifier" />
+                                <Binding Path="Sender.Identifier" />
+                            </MultiBinding>
+                        </TextBlock.Visibility>
                     </TextBlock>
-                </Grid>
-                <!--  Message body + attachment  -->
-                <StackPanel
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="0,0,20,0"
-                    Orientation="Vertical">
-                    <ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
-                    <Image
-                        MaxWidth="300"
-                        MaxHeight="300"
-                        Margin="{Binding Text, Converter={StaticResource NullDependentMargin}}"
+                    <!--  Center area  -->
+                    <!--  Reply header  -->
+                    <Grid
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="0,0,20,2"
+                        Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Image
+                            Grid.Column="0"
+                            Width="12"
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            SnapsToDevicePixels="True"
+                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/reply-arrow.png'}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            FontFamily="Tahoma"
+                            FontSize="11"
+                            Foreground="{StaticResource Text.LowContrast}"
+                            LineHeight="1"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap">
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+                                    <Binding Path="ParentMessage.Sender.DisplayName" />
+                                    <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Grid>
+                    <!--  Message body + attachment  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0,0,20,0"
+                        Orientation="Vertical">
+                        <ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+                        <Image
+                            MaxWidth="300"
+                            MaxHeight="300"
+                            Margin="{Binding Text, Converter={StaticResource NullDependentMargin}}"
+                            HorizontalAlignment="Left"
+                            Cursor="Hand"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
+                            Stretch="Uniform"
+                            Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+                            <Image.InputBindings>
+                                <MouseBinding
+                                    Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding Attachments}"
+                                    MouseAction="LeftClick" />
+                            </Image.InputBindings>
+                        </Image>
+                    </StackPanel>
+                    <!--  Timestamp  -->
+                    <Grid
+                        Grid.Row="1"
+                        Grid.Column="2"
                         HorizontalAlignment="Left"
-                        Cursor="Hand"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
-                        Stretch="Uniform"
-                        Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
-                        <Image.InputBindings>
-                            <MouseBinding
-                                Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding Attachments}"
-                                MouseAction="LeftClick" />
-                        </Image.InputBindings>
-                    </Image>
-                </StackPanel>
-                <!--  Timestamp  -->
-                <Grid
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-                    <TextBlock
-                        FontFamily="Tahoma"
-                        FontSize="11"
-                        Foreground="{StaticResource Text.LowContrast}"
-                        Text="{Binding Time, StringFormat=h:mm tt}"
-                        Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-                    <global:SliceControl
-                        Width="10"
-                        Height="10"
-                        AnimationFps="60"
-                        DefaultIndex="0"
-                        ElementCount="72"
-                        IsAnimation="True"
-                        SliceMode="0"
-                        Source="Assets/Universal/Chat/loading.png"
-                        StackDirection="Vertical"
-                        Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+                        VerticalAlignment="Top">
+                        <TextBlock
+                            FontFamily="Tahoma"
+                            FontSize="11"
+                            Foreground="{StaticResource Text.LowContrast}"
+                            Text="{Binding Time, StringFormat=h:mm tt}"
+                            Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+                        <global:SliceControl
+                            Width="10"
+                            Height="10"
+                            AnimationFps="60"
+                            DefaultIndex="0"
+                            ElementCount="72"
+                            IsAnimation="True"
+                            SliceMode="0"
+                            Source="Assets/Universal/Chat/loading.png"
+                            StackDirection="Vertical"
+                            Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+                    </Grid>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -1505,7 +1508,6 @@
                             <Border
                                 x:Name="MessageWindow"
                                 Grid.Row="2"
-                                MinWidth="710"
                                 Margin="0,4,0,0"
                                 Background="{StaticResource Metro.Background}">
                                 <Grid>
@@ -1654,7 +1656,7 @@
                                         </ListBox.ItemsPanel>
                                         <ListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem">
-                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Setter Property="HorizontalAlignment" Value="Stretch" />
                                                 <Setter Property="Padding" Value="0" />
                                                 <Setter Property="Template">
                                                     <Setter.Value>
