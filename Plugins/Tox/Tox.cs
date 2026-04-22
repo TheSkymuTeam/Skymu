@@ -79,10 +79,7 @@ namespace Tox
         internal List<User> users = new List<User>();
         IntPtr user_data;
 
-        public void Dispose()
-        {
-            dispose();
-        }
+        public void Dispose() => dispose();
         private void dispose(bool save = true)
         {
             disposed = true;
@@ -90,10 +87,10 @@ namespace Tox
             Debug.WriteLine("Tox: Flushing");
             try
             {
-                avCts.Cancel();
-                avCts = new CancellationTokenSource();
+                avCts?.Cancel();
                 if (avACall.Active)
                     avFinished.Task.Wait();
+                avCts = new CancellationTokenSource();
                 avTimer?.Dispose();
                 avThread = null;
             }
@@ -562,13 +559,12 @@ namespace Tox
             }
 
             var grouplist = new UInt32[(int)Ftox_group_get_group_list_size(tox.ptr)];
-            Debug.WriteLine(grouplist.Length);
             if (grouplist.Length != 0)
             {
                 Ftox_group_get_group_list(tox.ptr, grouplist);
                 foreach (UInt32 gid in grouplist)
                 {
-                    Debug.WriteLine("Found group: " + gid);
+                    //Debug.WriteLine("Found group: " + gid);
                 }
             }
 
@@ -707,11 +703,16 @@ namespace Tox
         public async Task<ActiveCall> StartCall(string convo_id, bool is_video, bool start_muted) => await startCall(convo_id, is_video, start_muted);
         async Task<ActiveCall> startCall(string convo_id, bool is_video, bool start_muted, bool accept = false)
         {
+            avACall = new CallStruct();
+            avACall.SAudio = true;
+            avACall.Identifier = UInt32.Parse(convo_id);
+            avACall.Active = true;
             if (accept)
             {
                 if (!toxav_answer(av, UInt32.Parse(convo_id), 64, 0, out var err))
                 {
                     ERR("An error occured when answering the call: " + err);
+                    avACall = new CallStruct();
                     return null;
                 }
             }
@@ -723,6 +724,7 @@ namespace Tox
                 {
                     ERR($"Failed to start a call with friend {convo_id}: {err}");
                     avWaiter = null;
+                    avACall = new CallStruct();
                     return null;
                 }
 
@@ -730,13 +732,10 @@ namespace Tox
                 avWaiter = null;
                 if (!suc)
                 {
+                    avACall = new CallStruct();
                     return null;
                 }
             }
-
-            avACall = new CallStruct();
-            avACall.Identifier = UInt32.Parse(convo_id);
-            avACall.Active = true;
             avACall.caller = new ToxCall(av, avACall.Identifier);
             avACall.caller.Start();
 

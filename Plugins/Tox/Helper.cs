@@ -72,7 +72,7 @@ namespace Tox
 
         public static void save(ToxOO.Tox tox, string savename, Core core)
         {
-            core.profilelock.Dispose();
+            core.profilelock?.Dispose();
             var path = Path.Combine(ToxCore.toxDir, savename + ".tox");
 
             var data = tox.savedata;
