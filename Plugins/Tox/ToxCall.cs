@@ -17,6 +17,9 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using static ToxCore;
 
+// TODO: Dynamic audio quality
+// also omega please put the backend to use communication devices instead of normal n also dynamic audio device switch if that's not the case yet
+
 // Taken from Discord.Network.CallUDP. Thanks to the devs! (patricktbp and omega, I think)
 // message from omega: TODO move mic and speaker logic to app instead of plugin
 
@@ -78,7 +81,7 @@ namespace Tox
         {
             if (WaveInEvent.DeviceCount == 0)
             {
-                Debug.WriteLine("[MIC] No microphone devices found, skipping mic init.");
+                Debug.WriteLine("Tox: No microphone devices found, skipping mic init.");
                 return;
             }
 
@@ -95,7 +98,7 @@ namespace Tox
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[MIC] Failed to start recording: {ex.Message}");
+                Debug.WriteLine("Tox: Failed to start recording: " + ex.Message);
                 _waveIn.Dispose();
                 _waveIn = null;
             }
