@@ -17,6 +17,22 @@ using System.Text;
 using static Tox.Helper;
 using static ToxCore;
 
+// shit
+class Shit
+{
+    internal static void pqerr(Tox_Err_Conference_Peer_Query err)
+    {
+        switch (err)
+        {
+            case Tox_Err_Conference_Peer_Query.OK: return;
+            case Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
+            case Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND: throw new ObjectDisposedException("Peer");
+            case Tox_Err_Conference_Peer_Query.NO_CONNECTION: throw new InvalidOperationException("No connection");
+            default: throw new Exception(err.ToString());
+        }
+    }
+}
+
 namespace ToxOO {
     public class Options
     {
@@ -430,6 +446,11 @@ namespace ToxOO {
 
         #region conference
         public tox_conference_invite_cb conferenceInvite { set => tox_callback_conference_invite(ptr, value); }
+        public tox_conference_connected_cb conferenceConnected { set => tox_callback_conference_connected(ptr, value); }
+        public tox_conference_message_cb conferenceMessage { set => tox_callback_conference_message(ptr, value); }
+        public tox_conference_title_cb conferenceTitle { set => tox_callback_conference_title(ptr, value); }
+        public tox_conference_peer_name_cb conferencePeerName { set => tox_callback_conference_peer_name(ptr, value); }
+        public tox_conference_peer_list_changed_cb conferencePeerListChanged { set => tox_callback_conference_peer_list_changed(ptr, value); }
         #endregion
     }
 
@@ -438,13 +459,13 @@ namespace ToxOO {
         public IntPtr ptr;
         public UInt32 id;
 
-        public Friend(IntPtr ptr, UInt32 id)
+        public Friend(IntPtr tox, UInt32 id)
         {
-            this.ptr = ptr;
-            this.id = id;
-            tox_friend_get_last_online(ptr, id, out var err);
+            tox_friend_get_last_online(tox, id, out var err);
             if (err == Tox_Err_Friend_Get_Last_Online.FRIEND_NOT_FOUND)
                 throw new ArgumentException("Friend not found");
+            ptr = tox;
+            this.id = id;
         }
         public byte[] publicKey
         {
@@ -563,6 +584,98 @@ namespace ToxOO {
                     case Tox_Err_Friend_Send_Message.EMPTY: throw new ArgumentException("Empty message");
                 }
             return mid;
+        }
+    }
+    
+    public class Conference
+    {
+        public IntPtr ptr;
+        public UInt32 id;
+
+        public Conference(IntPtr tox, UInt32 id)
+        {
+            tox_conference_get_type(tox, id, out var err);
+            if (err == Tox_Err_Conference_Get_Type.CONFERENCE_NOT_FOUND)
+                throw new ArgumentException("Conference not found");
+            ptr = tox;
+            this.id = id;
+        }
+        /// <summary>This creates a new conference.</summary>
+        public Conference(IntPtr tox)
+        {
+            id = tox_conference_new(tox, out var err);
+            if (err != Tox_Err_Conference_New.OK)
+                switch (err)
+                {
+                    default: throw new Exception(err.ToString());
+                }
+            ptr = tox;
+        }
+
+        public Tox_Conference_Type Type
+        {
+            get
+            {
+                var type = tox_conference_get_type(ptr, id, out var err);
+                if (err != Tox_Err_Conference_Get_Type.OK)
+                    switch (err)
+                    {
+                        case Tox_Err_Conference_Get_Type.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
+                        default: throw new Exception(err.ToString());
+                    }
+                return type;
+            }
+        }
+
+        /// <summary>Please dispose the object properly after this!</summary>
+        public void Delete()
+        {
+            if (!tox_conference_delete(ptr, id, out var err))
+                switch (err)
+                {
+                    case Tox_Err_Conference_Delete.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
+                    default: throw new Exception(err.ToString());
+                }
+        }
+
+        public UInt32 peerCount
+        {
+            get
+            {
+                UInt32 peerCount = tox_conference_peer_count(ptr, id, out var err);
+                Shit.pqerr(err);
+                return peerCount;
+            }
+        }
+        public ConferencePeer[] peers
+        {
+            get
+            {
+                var ps = new ConferencePeer[peerCount];
+                for (UInt32 i = 0; i < ps.Length; i++)
+                {
+                    ps[i] = new ConferencePeer(ptr, id, i);
+                }
+                return ps;
+            }
+        }
+    }
+    public class ConferencePeer
+    {
+        public IntPtr ptr;
+        public UInt32 cid;
+        public UInt32 id;
+
+        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id)
+        {
+            tox_conference_peer_get_name_size(ptr, cid, id, out var err);
+            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
+                throw new ObjectDisposedException("Conference");
+            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
+                throw new ObjectDisposedException("Peer");
+            ptr = tox;
+            this.cid = cid;
+            this.id = id;
         }
     }
 }
