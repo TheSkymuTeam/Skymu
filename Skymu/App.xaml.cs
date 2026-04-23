@@ -36,7 +36,7 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
-        internal static bool TestMode = true; // disables plugin login, signs you directly into stub
+        internal static bool TestMode = false; // disables plugin login, signs you directly into stub
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4";
@@ -55,39 +55,25 @@ namespace Skymu
 
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
-        public static void PluginErrorHandler(object sender, PluginMessageEventArgs e)
+        private static void PluginPopup(object sender, PluginMessageEventArgs e, string prefix, WindowBase.IconType itype)
         {
-            Application.Current.Dispatcher.BeginInvoke(
+            Current.Dispatcher.BeginInvoke(
                 new Action(
                     delegate
                     {
                         var core = (ICore)sender;
                         new Dialog(
-                            WindowBase.IconType.Error,
+                            itype,
                             e.Message,
-                            "Error in plugin " + core.Name
+                            prefix + core.Name
                         ).ShowDialog();
                     }
                 )
             );
         }
 
-        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e)
-        {
-            Application.Current.Dispatcher.BeginInvoke(
-                new Action(
-                    delegate
-                    {
-                        var core = (ICore)sender;
-                        new Dialog(
-                            WindowBase.IconType.Information,
-                            e.Message,
-                            "Warning from plugin " + core.Name
-                        ).ShowDialog();
-                    }
-                )
-            );
-        }
+        public static void PluginErrorHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Error in plugin ", WindowBase.IconType.Error);
+        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Warning from plugin ", WindowBase.IconType.Information);
 
         public static void PluginNotificationHandler(object sender, MessageEventArgs e)
         {
