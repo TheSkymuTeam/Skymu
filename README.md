@@ -35,3 +35,8 @@ Tox plugin requires Plugins/Tox/x(arch)/*.dll to be copied over to the build out
 | System.Threading.Channels | 10.0.3 | [MIT](https://choosealicense.com/licenses/mit/) | [GitHub repository](https://github.com/dotnet/dotnet) |
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
+
+# For Windows Vista or Windows 7 SP0 Users
+
+When You Download SkymuSetup make sure to select skymu leagcy if you dont have .net 4.8 , 5 or 10 SDK
+if have it then select Skymu. 
