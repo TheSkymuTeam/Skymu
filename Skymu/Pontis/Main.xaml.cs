@@ -47,16 +47,17 @@ namespace Skymu.Pontis
         private const string MSG_SEND_ERR = "Error sending message.";
 
         // ViewModel
-        private MainViewModel vmodel;
+        private readonly MainViewModel vmodel;
 
         // Other file-level variables
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
+        private SliceControl _currentTab;
         private NativeMenuBar _menuBar;
         private bool _userScrolledUp = false;
-        private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
+        private readonly Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
-        private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
+        private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = String.Empty;
         public event EventHandler Ready;
@@ -89,21 +90,17 @@ namespace Skymu.Pontis
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
-        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
-        private BitmapImage sidebarBtnEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/empty.png", false);
+        private readonly BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
+        private readonly BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
+        private readonly BitmapImage sidebarBtnEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/empty.png", false);
+
+        private Metadata SelectedContact;
 
         #endregion
 
         #region BitmapImage generators
-        private BitmapImage GenerateTitlebarButtonImage(string name)
-        {
-            return ImageHelper.Generate(
-                $"pack://application:,,,/Pontis/Assets/Universal/Window Frame/Aero/{name}.png"
-            );
-        }
 
-        private BitmapImage GenerateAvatarImage(string avatar)
+        private static BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath = Converters.Helpers.GetAssetBasePrefix("Pontis") + "Profile Pictures/" + avatar + ".png";
             return ImageHelper.Generate(AvatarPath);
@@ -158,6 +155,7 @@ namespace Skymu.Pontis
                     browser.Visibility = Visibility.Visible;
                     ConversationList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
+                    SelectedContact = null;
                     break;
 
                 case WindowType.Chat:
@@ -193,10 +191,7 @@ namespace Skymu.Pontis
             if (parent == null)
                 return null;
 
-            TreeViewItem container =
-                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-
-            if (container != null)
+            if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
                 return container;
 
             foreach (object child in parent.Items)
@@ -412,9 +407,28 @@ namespace Skymu.Pontis
                 mainWindow.Dispatcher.Invoke(mainWindow.ConfigureCompactRecentsList);
             }
         }
+        
+        private async void SelectTopButton(SliceControl to_select)
+        {
+            if (to_select == AddContactButton)
+                ApplyPlaceholderTb(SearchBox, Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"], true);
+            else
+                ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
+            foreach (var tab in new[] { HomeButton, AddContactButton })
+            {
+                if (tab == to_select)
+                    tab.SetState(ButtonVisualState.Pressed);
+                else
+                    tab.SetState(ButtonVisualState.Default);
+            }
+        }
 
         private async Task SelectTab(SliceControl tab_to_select)
         {
+            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
+            _currentTab = tab_to_select;
+            AddContactGrid.Visibility = Visibility.Collapsed;
+            SidebarTabs.Visibility = Visibility.Visible;
             if (tab_to_select.Name == "btnServers")
             {
                 ConversationList.Visibility = Visibility.Collapsed;
@@ -432,6 +446,7 @@ namespace Skymu.Pontis
 
             if (Universal.Plugin.SupportsServers)
                 buttonToColumn[tab_to_select].Width = dynamic;
+            tab_to_select.SetState(ButtonVisualState.Pressed);
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
@@ -483,6 +498,56 @@ namespace Skymu.Pontis
                     ConfigureCompactRecentsList();
                     break;
             }
+            if (
+                tab_to_select.Name != "btnServers"
+                && SelectedContact is Metadata SelectedMetadata
+            )
+            {
+                foreach (object item in ConversationList.Items)
+                {
+                    if (
+                        item is Conversation
+                        && ((Metadata)item).Identifier == (SelectedMetadata).Identifier
+                    )
+                    {
+                        ConversationList.SelectedItem = item;
+                    }
+                }
+            }
+        }
+
+        const string torepl_start = "<a href=\"skype:?show_add_phone\">";
+        void RefreshAddContactHint(object o, EventArgs e)
+        {
+            // TODO: Investigate why this refuses to work
+            string input = AddContactHint.Text;
+            AddContactHint.Text = "";
+
+            int i = 0;
+            while (i < input.Length)
+            {
+                int start = input.IndexOf(torepl_start, i);
+                if (start == -1)
+                {
+                    AddContactHint.Inlines.Add(new Run(input.Substring(i)));
+                    break;
+                }
+
+                if (start > i)
+                    AddContactHint.Inlines.Add(new Run(input.Substring(i, start - i)));
+
+                int end = input.IndexOf("</a>", start);
+                if (end == -1)
+                    break;
+
+                AddContactHint.Inlines.Add(new Hyperlink(new Run(
+                    input.Substring(start + torepl_start.Length, end - (start + torepl_start.Length))
+                )));
+
+                i = end + 4;
+            }
+
+            AddContactHint.Text = input.Replace(torepl_start, "").Replace("</a>", "");
         }
 
         #endregion
@@ -607,12 +672,15 @@ namespace Skymu.Pontis
             RoutedPropertyChangedEventArgs<object> e
         )
         {
+            SelectedContact = null;
             HandleServerItemSelection(e);
         }
 
         private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selected = ((ListBox)sender).SelectedItem;
+            if (selected is Metadata selectedMetadata)
+                SelectedContact = selectedMetadata;
             if (selected is DateHeaderItem)
             {
                 ((ListBox)sender).SelectedItem = null;
@@ -621,9 +689,11 @@ namespace Skymu.Pontis
             HandleConversationSelection(selected);
         }
 
-        private void Chat_Close(object sender, MouseButtonEventArgs e)
+        private void HomeButton_Click(object sender, MouseButtonEventArgs e)
         {
+            _ = SelectTab(_currentTab);
             SetWindow(WindowType.Home);
+            SelectTopButton(HomeButton);
         }
 
         private void StatusArea_Click(object sender, MouseButtonEventArgs e)
@@ -728,8 +798,36 @@ namespace Skymu.Pontis
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
+        private async void AddContact_Close(object sender, MouseButtonEventArgs e)
+        {
+            await SelectTab(_currentTab);
+            if (current_window == WindowType.Home)
+                SelectTopButton(HomeButton);
+            else
+            {
+                SelectTopButton(null);
+                foreach (object item in ConversationList.Items)
+                {
+                    if (
+                        item is Conversation
+                        && ((Metadata)item).Identifier == ((Metadata)SelectedContact).Identifier
+                    )
+                    {
+                        ConversationList.SelectedItem = item;
+                    }
+                }
+            }
+        }
+
         private void AddContact_Click(object sender, MouseButtonEventArgs e) {
-            new AddContact();
+            foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
+                tab.SetState(ButtonVisualState.Default);
+            SidebarTabs.Visibility = Visibility.Collapsed;
+            ConversationList.Visibility = Visibility.Collapsed;
+            ServersList.Visibility = Visibility.Collapsed;
+            AddContactGrid.Visibility = Visibility.Visible;
+            SelectTopButton(AddContactButton);
+            SearchBox.Focus();
         }
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
@@ -757,7 +855,12 @@ namespace Skymu.Pontis
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            ApplyPlaceholderTb(SearchBox,
+                AddContactGrid.Visibility == Visibility.Visible ?
+                Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"] :
+                Universal.Lang["sCONTACT_QF_HINT"],
+                true
+            );
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
@@ -842,8 +945,7 @@ namespace Skymu.Pontis
             bool answer_call = true;
             if (Universal.CallPlugin == null)
                 return;
-            var dm = vmodel.SelectedConversation as DirectMessage;
-            if (dm == null)
+            if (!(vmodel.SelectedConversation is DirectMessage dm))
                 return; // group calls not supported yet
 
             if (partner == null) { partner = dm.Partner; answer_call = false; }
@@ -1108,12 +1210,12 @@ namespace Skymu.Pontis
             }
         }
 
-        private void ApplyPlaceholderTb(TextBox tb, string text)
+        private void ApplyPlaceholderTb(TextBox tb, string text, bool force = false)
         {
-            if (tb.Tag as string == TAG_PLACEHOLDER)
+            if (!force && tb.Tag as string == TAG_PLACEHOLDER)
                 return;
 
-            if (!string.IsNullOrEmpty(tb.Text))
+            if (!force && !string.IsNullOrEmpty(tb.Text))
                 return;
 
             tb.Text = text;
@@ -1179,8 +1281,7 @@ namespace Skymu.Pontis
         private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
         {
             var border = sender as Border;
-            var sliceControlInside = border?.Child as SliceControl;
-            if (sliceControlInside == null) return;
+            if (!(border?.Child is SliceControl sliceControlInside)) return;
 
             EmojiFlyout.IsOpen = false;
             RemovePlaceholder(MessageTextBox);
@@ -1247,7 +1348,7 @@ namespace Skymu.Pontis
 
             vmodel.ConversationItemChanged += (s, e) =>
             {
-                if (!is_loading_conversation && !_userScrolledUp)
+                if (!IsLoadingConversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
             };
 
@@ -1289,6 +1390,9 @@ namespace Skymu.Pontis
                 ServersColumn.Width = new GridLength(0);
                 SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
             }
+
+            RefreshAddContactHint(null, null);
+            Universal.Lang.PropertyChanged += RefreshAddContactHint;
 
             vmodel.SubscribeTypingIndicator();
 
