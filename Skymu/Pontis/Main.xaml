@@ -905,7 +905,7 @@
                                         ElementCount="5"
                                         HoverIndex="1"
                                         IsRadioButton="True"
-                                        MouseLeftButtonUp="Chat_Close"
+                                        MouseLeftButtonUp="HomeButton_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/home.png'}"
@@ -932,17 +932,18 @@
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/group.png'}"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
+                                        x:Name="AddContactButton"
                                         Grid.Column="6"
                                         HorizontalAlignment="Right"
                                         DefaultIndex="0"
                                         ElementCount="5"
                                         HoverIndex="1"
+                                        IsRadioButton="True"
                                         MouseLeftButtonUp="AddContact_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/add.png'}"
                                         StackDirection="Vertical" />
-
                                 </Grid>
 
                                 <!--  Search box  -->
@@ -1149,6 +1150,98 @@
                                                 </Style>
                                             </TreeView.ItemContainerStyle>
                                         </TreeView>
+                                        <!-- Add contact -->
+                                        <Grid x:Name="AddContactGrid" Visibility="Visible">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="3*" />
+                                                    <RowDefinition Height="1*" />
+                                                </Grid.RowDefinitions>
+                                                <StackPanel
+                                                    Grid.Row="0"
+                                                    x:Name="AddContactInfoPanel"
+                                                    Width="Auto"
+                                                    Height="Auto"
+                                                    RenderTransformOrigin="0.5,0.5"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                                    <Image
+                                                        Width="80"
+                                                        Height="80"
+                                                        Source="Assets/Universal/Sidebar/add-contact-bg.png"/>
+                                                    <TextBlock
+                                                        x:Name="AddContactHint"
+                                                        Margin="35,15,35,0"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Foreground="#333333"
+                                                        Text="{Binding Path='[sADD_CONTACT_PANEL_MESSAGE]', Source={StaticResource Lang}}"
+                                                        TextAlignment="Center"
+                                                        TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </Grid>
+                                            
+                                            <ListBox
+                                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                                x:Name="AddUserList"
+                                                BorderThickness="0"
+                                                  ScrollViewer.CanContentScroll="True"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                                Style="{StaticResource NoInsetListBox}"
+                                                mc:Ignorable="d">
+                                                <ListBox.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
+                                                    </ItemsPanelTemplate>
+                                                </ListBox.ItemsPanel>
+                                                <ListBox.ItemContainerStyle>
+                                                    <Style TargetType="ListBoxItem">
+                                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                        <Setter Property="Padding" Value="0" />
+                                                        <Setter Property="Focusable" Value="True" />
+                                                        <Setter Property="IsEnabled" Value="True" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ListBoxItem">
+                                                                    <Border x:Name="ItemBorder" Background="Transparent">
+                                                                        <ContentPresenter />
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsSelected" Value="True">
+                                                                            <Setter TargetName="ItemBorder" Property="Background">
+                                                                                <Setter.Value>
+                                                                                    <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </Trigger>
+                                                                        <DataTrigger Binding="{Binding}" Value="{x:Type global:DateHeaderItem}">
+                                                                            <Setter Property="Focusable" Value="False" />
+                                                                            <Setter Property="IsEnabled" Value="False" />
+                                                                        </DataTrigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ListBox.ItemContainerStyle>
+                                            </ListBox>
+                                            <global:SliceControl
+                                                x:Name="btnAddContactClose"
+                                                Margin="0,2,2,0"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                DefaultIndex="1"
+                                                ElementCount="5"
+                                                HoverIndex="1"
+                                                PressedIndex="2"
+                                                SliceMode="0"
+                                                MouseUp="AddContact_Close"
+                                                Source="Assets/Universal/Sidebar/add-contact-close.png"
+                                                StackDirection="Vertical" />
+                                        </Grid>
                                     </Grid>
                                     <!--  User count  -->
                                     <Border
