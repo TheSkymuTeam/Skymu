@@ -42,7 +42,8 @@
                 FontSize="11"
                 FontWeight="Bold"
                 Margin="0,0,0,10"
-                Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}" Grid.ColumnSpan="2"/>
+                Text="me no work do not use" Grid.ColumnSpan="2"/>
+            <!-- {Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}} -->
             <TextBlock
                 x:Name="FindContactDetails"
                 Grid.Row="1"
