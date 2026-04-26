@@ -6,6 +6,7 @@
 		<AssemblyName>plugin-Matrix</AssemblyName>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
+		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
