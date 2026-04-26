@@ -46,6 +46,11 @@ namespace Skymu
                 string dir = AppDomain.CurrentDomain.BaseDirectory;
                 while (dir != null)
                 {
+                    string newerlang = Path.Combine(dir, "languages", "english-skype-7.39.lang");
+                    if (File.Exists(newerlang))
+                    {
+                        Load(newerlang);
+                    }
                     string candidate = Path.Combine(dir, "languages", "english.lang");
                     if (File.Exists(candidate))
                     {
@@ -61,6 +66,12 @@ namespace Skymu
                 Universal.ExceptionHandler(
                     new Exception("Could not find any compatible files in directory /languages.")
                 );
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+                // TODO: Load ones for other languages too
+                if (!Load(llist.TryGetValue("English (Skype 7.39)", out var mlpath) ? mlpath : String.Empty))
+                    Universal.ExceptionHandler(
+                        new Exception("Could not load the Skype 7.39 language. Certain parts might be untranslated.")
+                    );
             if (!Load(llist.TryGetValue(lang, out var path) ? path : String.Empty))
                 Universal.ExceptionHandler(
                     new Exception("Could not load language \"" + lang + "\".")
@@ -91,7 +102,7 @@ namespace Skymu
             if (String.IsNullOrEmpty(path) || !File.Exists(path))
                 return false;
             currentPath = path;
-            ldict.Clear();
+            // ldict.Clear(); Not needed?
             foreach (string line in File.ReadLines(currentPath))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
