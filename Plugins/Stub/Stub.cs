@@ -456,13 +456,14 @@ namespace Stub
 
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
+
         public bool SupportsVideoCalls => false;
 
         #endregion
 
         #region Stub specific stuff
 
-        User[] users = new User[]
+        private readonly User[] users = new User[]
         {
             new User("Mario", "mario", "012", "It's-a me!", UserConnectionStatus.Online),
             new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb),
@@ -491,9 +492,9 @@ namespace Stub
         };
 
         private Timer presenceTimer;
-        private Random rand = new Random();
+        private readonly Random rand = new Random();
 
-        private string[] randomTexts = new string[]
+        private readonly string[] randomTexts = new string[]
         {
             "It's-a me, Mario!",
             "Let's-a go!",
