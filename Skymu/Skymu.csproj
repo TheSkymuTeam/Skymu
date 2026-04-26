@@ -27,6 +27,7 @@
 		<NoWarn>$(NoWarn);NETSDK1138</NoWarn>
 		<StartupObject />
 		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
+		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 
 	<!-- Assembly information -->
