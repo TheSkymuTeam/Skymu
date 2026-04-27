@@ -41,8 +41,8 @@ namespace Skymu
         internal static bool TestMode = false; // disables plugin login, signs you directly into stub
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.4";
-        public const string BuildName = "Erebus Aether";
+        public const string BuildVersion = "0.4.1-beta1";
+        public const string BuildName = "Eros Basilisk (BETA)";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
@@ -275,7 +275,7 @@ namespace Skymu
                 );
             ThemeManager.LoadFromSettings();
             Migrator.Run();
-            WebClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuClient-" + BuildVersion + "-" + BuildName.Replace(" ", "-"));
+            WebClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuClient-" + BuildVersion);
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {
