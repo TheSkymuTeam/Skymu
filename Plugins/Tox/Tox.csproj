@@ -18,7 +18,6 @@
 	  <PackageReference Include="NAudio.Core" Version="2.3.0" />
 	  <PackageReference Include="NAudio.WinMM" Version="2.3.0" />
 	  <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
-	  <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">

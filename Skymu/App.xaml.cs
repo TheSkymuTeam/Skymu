@@ -48,7 +48,7 @@ namespace Skymu
 
         public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
-        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy/";
+        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
 
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;
@@ -275,6 +275,7 @@ namespace Skymu
                 );
             ThemeManager.LoadFromSettings();
             Migrator.Run();
+            WebClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuClient-" + BuildVersion + "-" + BuildName.Replace(" ", "-"));
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {
