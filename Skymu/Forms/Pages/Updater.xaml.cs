@@ -276,8 +276,6 @@ namespace Skymu.Views.Pages
             if (Settings.DisablePingbacks) return null;
             try
             {
-                Universal.WebClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
-
                 string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
 
                 using (HttpResponseMessage response = await Universal.WebClient.GetAsync(url))

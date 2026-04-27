@@ -23,7 +23,7 @@
 		<PackageReference Include="NAudio.WinMM" Version="2.3.0" />
 		<PackageReference Include="SharpZipLib" Version="1.4.2" />
 		<PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />
-		<PackageReference Include="System.Text.Json" Version="10.0.7" />
+		<PackageReference Include="System.Text.Json" Version="10.0.5" />
 		<PackageReference Include="System.Threading.Channels" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>

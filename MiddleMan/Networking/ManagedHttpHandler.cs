@@ -139,7 +139,7 @@ namespace MiddleMan.Networking
             }
 
             sb.Append("\r\n");
-            Debug.WriteLine($"[MIDDLEMAN-HTTP] Sending request to {uri} with headers: {sb}");
+            Debug.WriteLine($"[MIDDLEMAN-HTTP] Sending request to {uri} with the following headers\n{sb}");
             ct.ThrowIfCancellationRequested();
             byte[] requestBytes = Encoding.ASCII.GetBytes(sb.ToString());
             await stream.WriteAsync(requestBytes, 0, requestBytes.Length, ct).ConfigureAwait(false);
@@ -199,8 +199,7 @@ namespace MiddleMan.Networking
 
             foreach (var h in responseHeaders)
             {
-                if ((h.Key.Equals("Content-Encoding", StringComparison.OrdinalIgnoreCase)
-                        || h.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase)))
+                if (h.Key.Equals("Content-Encoding", StringComparison.OrdinalIgnoreCase) || h.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 if (!response.Headers.TryAddWithoutValidation(h.Key, h.Value))
@@ -226,7 +225,7 @@ namespace MiddleMan.Networking
                 }
             }
 
-            if (!String.IsNullOrEmpty(contentEncoding) || data.Length == 0)
+            if (String.IsNullOrEmpty(contentEncoding) || data.Length == 0)
             {
                 Debug.WriteLine("[MIDDLEMAN-HTTP] Server responded in plaintext, or response is empty.");
                 return data;
