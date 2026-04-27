@@ -11,12 +11,11 @@
 
 /*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE.
+// persfidious, patricktbp, or HUBAXE. Port is by Xaero.
 // This also applies to the associated XAML file.
-// Please do not judge us on it.
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Enumerations;
 using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
@@ -48,7 +47,7 @@ namespace Skymu.SeanKype
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(UserConnectionStatus.Offline);
+            Tray.PushIcon(PresenceStatus.Offline);
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)

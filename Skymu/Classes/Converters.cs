@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
@@ -223,33 +224,33 @@ namespace Skymu.Converters
 
     public class StatusToTextConverter : IValueConverter
     {
-        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<
-            UserConnectionStatus,
+        public static readonly Dictionary<PresenceStatus, string> StatusMap = new Dictionary<
+            PresenceStatus,
             string
         >()
         {
-            { UserConnectionStatus.Online, Universal.Lang["sSTATUS_ONLINE"] },
-            { UserConnectionStatus.OnlineMobile, Universal.Lang["sSTATUS_ONLINE_MOBILE"] },
-            { UserConnectionStatus.Away, Universal.Lang["sSTATUS_AWAY"] },
-            { UserConnectionStatus.AwayMobile, Universal.Lang["sSTATUS_AWAY_MOBILE"] },
-            { UserConnectionStatus.DoNotDisturb, Universal.Lang["sSTATUS_DND"] },
-            { UserConnectionStatus.DoNotDisturbMobile, Universal.Lang["sSTATUS_DND_MOBILE"] },
-            { UserConnectionStatus.Blocked, Universal.Lang["sSTATUS_BLOCKED"] },
-            { UserConnectionStatus.Offline, Universal.Lang["sSTATUS_OFFLINE"] },
+            { PresenceStatus.Online, Universal.Lang["sSTATUS_ONLINE"] },
+            { PresenceStatus.OnlineMobile, Universal.Lang["sSTATUS_ONLINE_MOBILE"] },
+            { PresenceStatus.Away, Universal.Lang["sSTATUS_AWAY"] },
+            { PresenceStatus.AwayMobile, Universal.Lang["sSTATUS_AWAY_MOBILE"] },
+            { PresenceStatus.DoNotDisturb, Universal.Lang["sSTATUS_DND"] },
+            { PresenceStatus.DoNotDisturbMobile, Universal.Lang["sSTATUS_DND_MOBILE"] },
+            { PresenceStatus.Blocked, Universal.Lang["sSTATUS_BLOCKED"] },
+            { PresenceStatus.Offline, Universal.Lang["sSTATUS_OFFLINE"] },
             {
-                UserConnectionStatus.Unknown,
+                PresenceStatus.Unknown,
                 Universal.Lang["sSTATUS_UNKNOWN"] /* fallback */
             },
         };
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            UserConnectionStatus statInt;
+            PresenceStatus statInt;
 
-            if (!(value is UserConnectionStatus))
+            if (!(value is PresenceStatus))
                 return Universal.Lang["sTRAYHINT_USER_OFFLINE"];
 
-            statInt = (UserConnectionStatus)value;
+            statInt = (PresenceStatus)value;
 
             return StatusMap.TryGetValue(statInt, out var statusText)
                 ? statusText
@@ -365,7 +366,7 @@ namespace Skymu.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is UserConnectionStatus stat)
+            if (value is PresenceStatus stat)
             {
                 return MainViewModel.GetIntFromStatus(stat);
             }

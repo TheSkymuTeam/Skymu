@@ -9,7 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Enumerations;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
@@ -23,22 +23,22 @@ namespace Skymu
 {
     class Tray
     {
-        public static readonly Dictionary<UserConnectionStatus, string> StatusMap = new Dictionary<UserConnectionStatus, string>()
+        public static readonly Dictionary<PresenceStatus, string> StatusMap = new Dictionary<PresenceStatus, string>()
         {
-            { UserConnectionStatus.Online, Universal.Lang["sTRAYHINT_USER_ONLINE"] },
-            { UserConnectionStatus.Away, Universal.Lang["sTRAYHINT_USER_AWAY"] },
-            { UserConnectionStatus.Offline, Universal.Lang["sTRAYHINT_USER_OFFLINE"] },
-            { UserConnectionStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
-            { UserConnectionStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
+            { PresenceStatus.Online, Universal.Lang["sTRAYHINT_USER_ONLINE"] },
+            { PresenceStatus.Away, Universal.Lang["sTRAYHINT_USER_AWAY"] },
+            { PresenceStatus.Offline, Universal.Lang["sTRAYHINT_USER_OFFLINE"] },
+            { PresenceStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
+            { PresenceStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
         };
 
-        public static readonly Dictionary<UserConnectionStatus, string> SIconTextMap = new Dictionary<UserConnectionStatus, string>()
+        public static readonly Dictionary<PresenceStatus, string> SIconTextMap = new Dictionary<PresenceStatus, string>()
         {
-            { UserConnectionStatus.Online, "online" },
-            { UserConnectionStatus.Away, "away" },
-            { UserConnectionStatus.Offline, "offline" },
-            { UserConnectionStatus.DoNotDisturb, "dnd" },
-            { UserConnectionStatus.Invisible, "offline" }
+            { PresenceStatus.Online, "online" },
+            { PresenceStatus.Away, "away" },
+            { PresenceStatus.Offline, "offline" },
+            { PresenceStatus.DoNotDisturb, "dnd" },
+            { PresenceStatus.Invisible, "offline" }
         };
 
         private static Winforms.NotifyIcon Icon;
@@ -194,7 +194,7 @@ namespace Skymu
             if (messageWindow != null) { PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero); }
         }
 
-        public static void PushIcon(UserConnectionStatus icon, bool is_signed_in = true)
+        public static void PushIcon(PresenceStatus icon, bool is_signed_in = true)
         {
             string iconName;
             if (!SIconTextMap.TryGetValue(icon, out iconName))

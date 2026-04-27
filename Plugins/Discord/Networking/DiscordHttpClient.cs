@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using MiddleMan.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -29,7 +30,7 @@ namespace Discord.Networking
         private readonly ConfigManager ConfigManager = new ConfigManager();
 
         // Reuse client (less memory usage)
-        internal readonly HttpClient client;
+        internal readonly HttpClient InternalHttpClient;
 
         // Configuration (Firefox 115 ESR on Windows 10)
         public string XSuperProperties = null;
@@ -37,25 +38,16 @@ namespace Discord.Networking
 
         internal DiscordHttpClient()
         {
-            var handler = new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-
             ServicePointManager.DefaultConnectionLimit = 10;
-
-            client = new HttpClient(handler);
+            InternalHttpClient = new HttpClient(new ManagedHttpHandler());
 
             // Set default headers once
-            client.DefaultRequestHeaders.Add("Accept", "*/*");
-            client.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate"); // TODO maybe add brotli decompression? that's supposed to be better
+            InternalHttpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            InternalHttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            InternalHttpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate"); // TODO maybe add brotli decompression? that's supposed to be better
 
             XSuperProperties = ConfigManager.GetXSPJson();
-            client.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
-
-            // Forcefully use TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            InternalHttpClient.DefaultRequestHeaders.Add("X-Super-Properties", XSuperProperties);
         }
 
         public async Task<string> Send(string endpoint, HttpMethod httpMethod, string token = null, object data = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> headers = null, CancellationToken ctoken = default)
@@ -109,7 +101,7 @@ namespace Discord.Networking
                 try
                 {
                     ctoken.ThrowIfCancellationRequested();
-                    using (HttpResponseMessage response = await client.SendAsync(request, ctoken))
+                    using (HttpResponseMessage response = await InternalHttpClient.SendAsync(request, ctoken))
                     {
                         return await response.Content.ReadAsStringAsync();
                     }

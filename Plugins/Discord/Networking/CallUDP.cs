@@ -42,7 +42,7 @@ namespace Discord.Networking
         // Cancellation token used to stop the UDP receive loop cleanly on disconnect
         private CancellationTokenSource _cts;
         // One Opus decoder per SSRC, each speaker is an independent stream with its own decoder state
-        private readonly ConcurrentDictionary<uint, IOpusDecoder> _opusDecoders = new();
+        private readonly ConcurrentDictionary<uint, IOpusDecoder> _opusDecoders = new ConcurrentDictionary<uint, IOpusDecoder>();
         // A ring buffer that sits between the decoder and the audio device
         // Decoded PCM frames are written here and NAudio drains it at the hardware sample rate
         private BufferedWaveProvider _waveBuffer;

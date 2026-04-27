@@ -14,8 +14,8 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using MiddleMan;
-
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
@@ -512,8 +512,8 @@ namespace Skymu.SeanKype
                 ).ShowDialog();
             }
 
-            UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == UserConnectionStatus.Unknown) return;
+            PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
+            if (status == PresenceStatus.Unknown) return;
 
             _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
             Tray.PushIcon(status);

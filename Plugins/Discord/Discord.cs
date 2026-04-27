@@ -15,6 +15,8 @@ using Discord.Networking.Managers;
 using Discord.Protobuf;
 using Discord.Users;
 using MiddleMan;
+using MiddleMan.Enumerations;
+using MiddleMan.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -68,7 +70,7 @@ namespace Discord
         private string _activeChannelId;
         public SynchronizationContext _uiContext;
         // This is to verify what users is in the recents list, used for message handling in WebSockets so we can refresh the list
-        public Dictionary<string, string> _recentChannelMap = new();
+        public Dictionary<string, string> _recentChannelMap = new Dictionary<string, string>();
         // The current user
         private User _currentUser;
 
@@ -87,7 +89,7 @@ namespace Discord
         public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
 
-        public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new();
+        public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new Dictionary<string, HashSet<string>>();
         internal static Dictionary<string, string> UserIdToChannelId = new Dictionary<string, string>();
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -192,7 +194,7 @@ namespace Discord
                 string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
                 string avatarHash = parsedUser["avatar"]?.GetValue<string>();
                 byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
-                _currentUser = new User(displayName, username, id, null, UserConnectionStatus.Offline, avatar); // temp just for StoreCredential
+                _currentUser = new User(displayName, username, id, null, PresenceStatus.Offline, avatar); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
@@ -264,7 +266,7 @@ namespace Discord
                     return false;
                 }
 
-                _currentUser.ConnectionStatus = UserStore.Get("0")?.ConnectionStatus ?? UserConnectionStatus.Offline;
+                _currentUser.ConnectionStatus = UserStore.Get("0")?.ConnectionStatus ?? PresenceStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
                 MyInformation = _currentUser;
@@ -547,7 +549,7 @@ namespace Discord
                 var parsed = JsonNode.Parse(encJson);
                 token.ThrowIfCancellationRequested();
 
-                if (parsed is not JsonArray messages)
+                if (!(parsed is JsonArray messages))
                 {
                     if (parsed is JsonObject msg)
                     {
@@ -675,18 +677,28 @@ namespace Discord
 
         #region Protocol Buffers
 
-        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
+        public async Task<bool> SetConnectionStatus(PresenceStatus status)
         {
             proto._proto = await proto.FetchProtoSettings();
-            proto._proto.Status.Status = status switch
+            switch (status)
             {
-                UserConnectionStatus.Online => "online",
-                UserConnectionStatus.Away => "idle",
-                UserConnectionStatus.DoNotDisturb => "dnd",
-                UserConnectionStatus.Invisible => "invisible",
-                UserConnectionStatus.Offline => "offline",
-                _ => "offline"
-            };
+                case PresenceStatus.Online:
+                    proto._proto.Status.Status = "online";
+                    break;
+                case PresenceStatus.Away:
+                    proto._proto.Status.Status = "idle";
+                    break;
+                case PresenceStatus.DoNotDisturb:
+                    proto._proto.Status.Status = "dnd";
+                    break;
+                case PresenceStatus.Invisible:
+                    proto._proto.Status.Status = "invisible";
+                    break;
+                case PresenceStatus.Offline:
+                default:
+                    proto._proto.Status.Status = "offline";
+                    break;
+            }
             return await proto.UpdateProtoSettings(proto._proto);
         }
 

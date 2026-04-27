@@ -21,6 +21,8 @@ using MiddleMan;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Views;
@@ -404,6 +406,7 @@ namespace Skymu.ViewModels
 
         private async Task InitiateMain(bool saveCredentials)
         {
+            Debug.WriteLine($"[SKYMU] Login success. Initiating main window...");
             if (saveCredentials)
             {
                 SavedCredential cred = await Universal.Plugin.StoreCredential();

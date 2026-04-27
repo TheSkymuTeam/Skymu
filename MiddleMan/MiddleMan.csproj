@@ -12,4 +12,21 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="C:\Users\semmal\.nuget\packages\libcurl.net.x64\1.4.1\build\\libcurl.dll" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="C:\Users\semmal\.nuget\packages\libcurl.net.x64\1.4.1\build\\libcurl.dll" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="C:\Users\semmal\.nuget\packages\libcurl.net.x64\1.4.1\build\\libcurl.dll" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="C:\Users\semmal\.nuget\packages\libcurl.net.x64\1.4.1\build\\LibCurlShim.dll" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="libcurl-x64.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

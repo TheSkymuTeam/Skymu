@@ -29,10 +29,11 @@
 
 
 using Microsoft.Data.Sqlite;
-using MiddleMan;
 using Skymu.Preferences;
 using System;
 using Skymu.Helpers;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

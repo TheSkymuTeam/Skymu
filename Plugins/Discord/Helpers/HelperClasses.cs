@@ -9,10 +9,9 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
 using System;
 using System.Collections.Generic;
-
 
 namespace Discord.Helpers
 {

@@ -42,15 +42,6 @@ namespace Skymu.Views.Pages
             public string log;
         }
 
-        private static readonly HttpClient _httpClient = CreateClient();
-
-        private static HttpClient CreateClient()
-        {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Skymu-Updater");
-            return client;
-        }
-
         public Updater(bool manual = false)
         {
             InitializeComponent();
@@ -205,7 +196,7 @@ namespace Skymu.Views.Pages
                 _cts = new CancellationTokenSource();
 
                 using (
-                    HttpResponseMessage response = await _httpClient.GetAsync(
+                    HttpResponseMessage response = await Universal.WebClient.GetAsync(
                         downloadUrl,
                         HttpCompletionOption.ResponseHeadersRead,
                         _cts.Token
@@ -285,11 +276,11 @@ namespace Skymu.Views.Pages
             if (Settings.DisablePingbacks) return null;
             try
             {
-                _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
+                Universal.WebClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuUpdater");
 
                 string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
 
-                using (HttpResponseMessage response = await _httpClient.GetAsync(url))
+                using (HttpResponseMessage response = await Universal.WebClient.GetAsync(url))
                 {
                     if (!response.IsSuccessStatusCode)
                         return null;

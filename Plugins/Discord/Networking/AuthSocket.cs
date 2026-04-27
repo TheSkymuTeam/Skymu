@@ -262,7 +262,7 @@ namespace Discord.Networking
 
         public async Task<bool> StartSocket()
         {
-            if (WSClient is not null)
+            if (WSClient != null)
                 return true;
 
             WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();

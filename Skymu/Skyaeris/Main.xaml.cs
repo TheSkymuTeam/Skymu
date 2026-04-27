@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Classes;
 using Skymu.Emoticons;
 using Skymu.Formatting;
@@ -27,10 +28,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using Drawing = System.Drawing;
-using Winforms = System.Windows.Forms;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -1613,8 +1610,8 @@ namespace Skymu.Skyaeris
                 ).ShowDialog();
             }
 
-            UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == UserConnectionStatus.Unknown)
+            PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
+            if (status == PresenceStatus.Unknown)
                 return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);

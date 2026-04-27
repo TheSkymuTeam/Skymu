@@ -8,7 +8,7 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:local="clr-namespace:Skymu.Pontis"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:plugin="clr-namespace:MiddleMan;assembly=MiddleMan"
+    xmlns:mm="clr-namespace:MiddleMan.Classes;assembly=MiddleMan"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
@@ -93,7 +93,7 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
         <!--  User template  -->
-        <DataTemplate DataType="{x:Type plugin:DirectMessage}">
+        <DataTemplate DataType="{x:Type mm:DirectMessage}">
             <Grid Height="32" Margin="2,4,0,4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2" />
@@ -172,7 +172,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!--  Group template  -->
-        <DataTemplate DataType="{x:Type plugin:Group}">
+        <DataTemplate DataType="{x:Type mm:Group}">
             <Grid Height="32" Margin="2,4,0,4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2" />
@@ -251,7 +251,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!--  Server template  -->
-        <HierarchicalDataTemplate DataType="{x:Type plugin:Server}" ItemsSource="{Binding GroupedChannels}">
+        <HierarchicalDataTemplate DataType="{x:Type mm:Server}" ItemsSource="{Binding GroupedChannels}">
             <HierarchicalDataTemplate.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding}">
@@ -271,7 +271,7 @@
                                         Text="{Binding CategoryName}" />
                                 </Border>
                             </DataTemplate>
-                            <DataTemplate DataType="{x:Type plugin:ServerChannel}">
+                            <DataTemplate DataType="{x:Type mm:ServerChannel}">
                                 <Grid Height="22" Margin="0,0,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="24" />
@@ -426,7 +426,7 @@
                     Text="{Binding DateText}" />
             </Border>
         </DataTemplate>
-        <DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type plugin:DirectMessage}">
+        <DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type mm:DirectMessage}">
             <Grid Height="22" Margin="8,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="18" />
@@ -461,7 +461,7 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-        <DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type plugin:Group}">
+        <DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type mm:Group}">
             <Grid Height="22" Margin="8,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="18" />
@@ -499,10 +499,14 @@
         <!--  COMPACT RECENTS TEMPLATES END  -->
         <!--  CONVERSATION ITEM TEMPLATES START  -->
         <!--  MessageItem Template  -->
-        <DataTemplate DataType="{x:Type plugin:Message}">
+        <DataTemplate DataType="{x:Type mm:Message}">
             <Grid HorizontalAlignment="Stretch">
-                <Grid x:Name="ConversationGrid" HorizontalAlignment="Stretch" Margin="0,10,65,0" MaxWidth="626">
-                    <!-- 148 + 428 + 50 -->
+                <Grid
+                    x:Name="ConversationGrid"
+                    MaxWidth="626"
+                    Margin="0,10,65,0"
+                    HorizontalAlignment="Stretch">
+                    <!--  148 + 428 + 50  -->
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -628,7 +632,7 @@
             </Grid>
         </DataTemplate>
         <!--  CallStartedItem Template  -->
-        <DataTemplate DataType="{x:Type plugin:CallStartedNotice}">
+        <DataTemplate DataType="{x:Type mm:CallStartedNotice}">
             <Grid Margin="0,9.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="114" />
@@ -652,7 +656,7 @@
             </Grid>
         </DataTemplate>
         <!--  CallEndedItem Template  -->
-        <DataTemplate DataType="{x:Type plugin:CallEndedNotice}">
+        <DataTemplate DataType="{x:Type mm:CallEndedNotice}">
             <Grid Margin="0,9.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="114" />
@@ -1150,7 +1154,7 @@
                                                 </Style>
                                             </TreeView.ItemContainerStyle>
                                         </TreeView>
-                                        <!-- Add contact -->
+                                        <!--  Add contact  -->
                                         <Grid x:Name="AddContactGrid" Visibility="Visible">
                                             <Grid>
                                                 <Grid.RowDefinitions>
@@ -1158,17 +1162,17 @@
                                                     <RowDefinition Height="1*" />
                                                 </Grid.RowDefinitions>
                                                 <StackPanel
-                                                    Grid.Row="0"
                                                     x:Name="AddContactInfoPanel"
+                                                    Grid.Row="0"
                                                     Width="Auto"
                                                     Height="Auto"
-                                                    RenderTransformOrigin="0.5,0.5"
                                                     HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center">
+                                                    VerticalAlignment="Center"
+                                                    RenderTransformOrigin="0.5,0.5">
                                                     <Image
                                                         Width="80"
                                                         Height="80"
-                                                        Source="Assets/Universal/Sidebar/add-contact-bg.png"/>
+                                                        Source="Assets/Universal/Sidebar/add-contact-bg.png" />
                                                     <TextBlock
                                                         x:Name="AddContactHint"
                                                         Margin="35,15,35,0"
@@ -1177,16 +1181,16 @@
                                                         Foreground="#333333"
                                                         Text="{Binding Path='[sADD_CONTACT_PANEL_MESSAGE]', Source={StaticResource Lang}}"
                                                         TextAlignment="Center"
-                                                        TextWrapping="Wrap"/>
+                                                        TextWrapping="Wrap" />
                                                 </StackPanel>
                                             </Grid>
-                                            
+
                                             <ListBox
                                                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                                 x:Name="AddUserList"
                                                 BorderThickness="0"
-                                                  ScrollViewer.CanContentScroll="True"
+                                                ScrollViewer.CanContentScroll="True"
                                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                                 Style="{StaticResource NoInsetListBox}"
                                                 mc:Ignorable="d">
@@ -1228,17 +1232,17 @@
                                             </ListBox>
                                             <global:SliceControl
                                                 x:Name="btnAddContactClose"
-                                                Margin="0,2,2,0"
                                                 Width="20"
                                                 Height="20"
+                                                Margin="0,2,2,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
                                                 DefaultIndex="1"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                MouseUp="AddContact_Close"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                MouseUp="AddContact_Close"
                                                 Source="Assets/Universal/Sidebar/add-contact-close.png"
                                                 StackDirection="Vertical" />
                                         </Grid>
@@ -1319,7 +1323,7 @@
                                 <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
                                 <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                     <ContentControl.Resources>
-                                        <DataTemplate DataType="{x:Type plugin:DirectMessage}">
+                                        <DataTemplate DataType="{x:Type mm:DirectMessage}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
@@ -1412,7 +1416,7 @@
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>
-                                        <DataTemplate DataType="{x:Type plugin:Group}">
+                                        <DataTemplate DataType="{x:Type mm:Group}">
                                             <ItemsControl ItemsSource="{Binding Members}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -1423,7 +1427,7 @@
                                                     </ItemsPanelTemplate>
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
-                                                    <DataTemplate DataType="{x:Type plugin:User}">
+                                                    <DataTemplate DataType="{x:Type mm:User}">
                                                         <StackPanel
                                                             Width="120"
                                                             Margin="10,0"
@@ -1478,7 +1482,7 @@
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                         </DataTemplate>
-                                        <DataTemplate DataType="{x:Type plugin:Server}">
+                                        <DataTemplate DataType="{x:Type mm:Server}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
@@ -1536,7 +1540,7 @@
                                                 </StackPanel>
                                             </Grid>
                                         </DataTemplate>
-                                        <DataTemplate DataType="{x:Type plugin:ServerChannel}">
+                                        <DataTemplate DataType="{x:Type mm:ServerChannel}">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />

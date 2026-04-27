@@ -9,13 +9,14 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE.
+// persfidious, patricktbp, or HUBAXE. (ported by Xaero)
 // It is a port of logic that previously lived in Main.xaml.cs.
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Converters;
 using Skymu.Credentials;
 using Skymu.Databases;
@@ -173,21 +174,21 @@ namespace Skymu.ViewModels
 
         #region Icon dictionaries
 
-        private static readonly Dictionary<UserConnectionStatus, int> StatusMap = new Dictionary<
-            UserConnectionStatus,
+        private static readonly Dictionary<PresenceStatus, int> StatusMap = new Dictionary<
+            PresenceStatus,
             int
         >
         {
-            { UserConnectionStatus.Online, 2 },
-            { UserConnectionStatus.OnlineMobile, 2 },
-            { UserConnectionStatus.Away, 3 },
-            { UserConnectionStatus.AwayMobile, 3 },
-            { UserConnectionStatus.DoNotDisturb, 5 },
-            { UserConnectionStatus.DoNotDisturbMobile, 5 },
-            { UserConnectionStatus.Invisible, 19 },
-            { UserConnectionStatus.Blocked, 9 },
-            { UserConnectionStatus.Offline, 14 },
-            { UserConnectionStatus.Unknown, 0 },
+            { PresenceStatus.Online, 2 },
+            { PresenceStatus.OnlineMobile, 2 },
+            { PresenceStatus.Away, 3 },
+            { PresenceStatus.AwayMobile, 3 },
+            { PresenceStatus.DoNotDisturb, 5 },
+            { PresenceStatus.DoNotDisturbMobile, 5 },
+            { PresenceStatus.Invisible, 19 },
+            { PresenceStatus.Blocked, 9 },
+            { PresenceStatus.Offline, 14 },
+            { PresenceStatus.Unknown, 0 },
         };
 
         private static readonly Dictionary<ChannelType, int> ChannelTypeMap = new Dictionary<
@@ -204,13 +205,13 @@ namespace Skymu.ViewModels
             { ChannelType.NoAccess, 4 },
         };
 
-        public static int GetIntFromStatus(UserConnectionStatus status) =>
+        public static int GetIntFromStatus(PresenceStatus status) =>
             StatusMap.TryGetValue(status, out int v) ? v : 0;
 
         public static int GetIntFromChannelType(ChannelType channel) =>
             ChannelTypeMap.TryGetValue(channel, out int v) ? v : 0;
 
-        public UserConnectionStatus GetStatusFromInt(int value) =>
+        public PresenceStatus GetStatusFromInt(int value) =>
             StatusMap.FirstOrDefault(x => x.Value == value).Key;
 
         #endregion
@@ -955,34 +956,34 @@ namespace Skymu.ViewModels
                 .Select(kvp => (kvp.Key, kvp.Value));
         }
 
-        public UserConnectionStatus GetConnectionStatusFromName(string menuItemName)
+        public PresenceStatus GetConnectionStatusFromName(string menuItemName)
         {
-            UserConnectionStatus status;
+            PresenceStatus status;
             switch (menuItemName)
             {
                 case "online":
-                    status = UserConnectionStatus.Online;
+                    status = PresenceStatus.Online;
                     break;
                 case "offline":
-                    status = UserConnectionStatus.Offline;
+                    status = PresenceStatus.Offline;
                     break;
                 case "invisible":
-                    status = UserConnectionStatus.Invisible;
+                    status = PresenceStatus.Invisible;
                     break;
                 case "away":
-                    status = UserConnectionStatus.Away;
+                    status = PresenceStatus.Away;
                     break;
                 case "dnd":
-                    status = UserConnectionStatus.DoNotDisturb;
+                    status = PresenceStatus.DoNotDisturb;
                     break;
                 case "call_forwarding":
                     Universal.NotImplemented(
                         Universal.Lang["sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL"]
                     );
-                    status = UserConnectionStatus.Unknown;
+                    status = PresenceStatus.Unknown;
                     break;
                 default:
-                    status = UserConnectionStatus.Unknown;
+                    status = PresenceStatus.Unknown;
                     break;
             }
             return status;
