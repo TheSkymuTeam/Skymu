@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mm="clr-namespace:MiddleMan;assembly=MiddleMan"
+    xmlns:mm="clr-namespace:MiddleMan.Classes;assembly=MiddleMan"
     Title="Skype"
     Width="960"
     Height="560"

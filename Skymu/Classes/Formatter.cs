@@ -13,7 +13,7 @@ using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using MiddleMan;
+using MiddleMan.Classes;
 using Skymu.Emoticons;
 using Skymu.Helpers;
 using Skymu.Preferences;

@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,7 +103,7 @@ namespace Skymu.Credentials
                 (string)e.Element("Username"),
                 (string)e.Element("Identifier"),
                 null,
-                UserConnectionStatus.Offline,
+                PresenceStatus.Offline,
                 avatar
             );
 

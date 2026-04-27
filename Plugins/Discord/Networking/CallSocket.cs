@@ -210,45 +210,47 @@ namespace Discord.Networking
 
         private async Task ReceiveLoop(CancellationToken cancellationToken)
         {
-            using var ms = new MemoryStream();
-            try
+            using (var ms = new MemoryStream())
             {
-                while (WSClient.State == WebSocketState.Open)
+                try
                 {
-                    var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
-                    if (result.MessageType == WebSocketMessageType.Close)
+                    while (WSClient.State == WebSocketState.Open)
                     {
-                        Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
-                        return;
-                    }
-
-                    if (result.Count > 0)
-                    {
-                        ms.Write(_receiveBuffer, 0, result.Count);
-                    }
-
-                    if (result.EndOfMessage)
-                    {
-                        byte[] data = ms.ToArray();
-                        ms.SetLength(0);
-
-                        if (result.MessageType == WebSocketMessageType.Binary)
+                        var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
+                        if (result.MessageType == WebSocketMessageType.Close)
                         {
-                            HandleBinaryMessage(data);
-                            continue;
+                            Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
+                            return;
                         }
 
-                        string message = Encoding.UTF8.GetString(data);
-                        HandleMessage(message);
+                        if (result.Count > 0)
+                        {
+                            ms.Write(_receiveBuffer, 0, result.Count);
+                        }
+
+                        if (result.EndOfMessage)
+                        {
+                            byte[] data = ms.ToArray();
+                            ms.SetLength(0);
+
+                            if (result.MessageType == WebSocketMessageType.Binary)
+                            {
+                                HandleBinaryMessage(data);
+                                continue;
+                            }
+
+                            string message = Encoding.UTF8.GetString(data);
+                            HandleMessage(message);
+                        }
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    // Expected during shutdown
+                }
+                catch (WebSocketException ex) { Debug.WriteLine($"WebSocket error: {ex.Message}"); }
+                catch (Exception ex) { Debug.WriteLine($"WebSocket error: {ex.Message}"); }
             }
-            catch (OperationCanceledException)
-            {
-                // Expected during shutdown
-            }
-            catch (WebSocketException ex) { Debug.WriteLine($"WebSocket error: {ex.Message}"); }
-            catch (Exception ex) { Debug.WriteLine($"WebSocket error: {ex.Message}"); }
         }
 
         private async Task<IpDiscoveryResult> PerformIpDiscovery(string serverIp, int serverPort, int ssrc)
@@ -410,7 +412,7 @@ namespace Discord.Networking
                         if (keyNode is JsonArray keyArrayNode)
                         {
                             _secretKey = new byte[keyArrayNode.Count];
-                            for (int i = 0; i < keyArrayNode.Count; i++) { _secretKey[i] = (byte)keyArrayNode[i]!.GetValue<int>(); }
+                            for (int i = 0; i < keyArrayNode.Count; i++) { _secretKey[i] = (byte)keyArrayNode[i].GetValue<int>(); }
                         }
                         else { _secretKey = Array.Empty<byte>(); }
 

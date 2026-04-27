@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Formatting;
 using Skymu.Preferences;
 using Skymu.ViewModels;
@@ -40,7 +41,7 @@ namespace Skymu.Views
 
             // jim: self explanatory, if its on dnd PLEASE do not send notifications.
 
-            if (Universal.CurrentUser?.ConnectionStatus == UserConnectionStatus.DoNotDisturb)
+            if (Universal.CurrentUser?.ConnectionStatus == PresenceStatus.DoNotDisturb)
             {
                 Debug.WriteLine("Notification: user is in Do Not Disturb mode, suppress");
                 return;

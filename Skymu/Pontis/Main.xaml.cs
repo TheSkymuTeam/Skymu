@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.Classes;
 using Skymu.Emoticons;
 using Skymu.Formatting;
@@ -1449,8 +1450,8 @@ namespace Skymu.Pontis
                 ).ShowDialog();
             }
 
-            UserConnectionStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == UserConnectionStatus.Unknown) return;
+            PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
+            if (status == PresenceStatus.Unknown) return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
             Tray.PushIcon(status);

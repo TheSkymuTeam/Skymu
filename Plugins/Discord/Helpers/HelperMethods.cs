@@ -11,7 +11,8 @@
 
 using Discord.Networking.Managers;
 using Discord.Users;
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -66,11 +67,15 @@ namespace Discord.Helpers
             byte[] data = null;
             try
             {
-                using var stream = await Core.Client.client.GetStreamAsync(url).ConfigureAwait(false);
-                using var ms = new MemoryStream();
-                await stream.CopyToAsync(ms);
-                data = ms.ToArray();
-                File.WriteAllBytes(cachedFile, data);
+                using (var stream = await Core.Client.InternalHttpClient.GetStreamAsync(url).ConfigureAwait(false))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(ms);
+                        data = ms.ToArray();
+                        File.WriteAllBytes(cachedFile, data);
+                    }
+                }
             }
             catch { Debug.WriteLine("Unable to fetch avatar from URL - GetCachedAvatarAsync(). The URL in question is: " + url); }
             return data;
@@ -123,16 +128,16 @@ namespace Discord.Helpers
             }
         }
 
-        public static UserConnectionStatus MapStatus(string statusStr)
+        public static PresenceStatus MapStatus(string statusStr)
         {
-            return statusStr.ToLower() switch
+            switch (statusStr.ToLower())
             {
-                "online" => UserConnectionStatus.Online,
-                "idle" => UserConnectionStatus.Away,
-                "dnd" => UserConnectionStatus.DoNotDisturb,
-                "offline" => UserConnectionStatus.Offline,
-                _ => UserConnectionStatus.Offline
-            };
+                case "online": return PresenceStatus.Online;
+                case "idle": return PresenceStatus.Away;
+                case "dnd": return PresenceStatus.DoNotDisturb;
+                case "offline": return PresenceStatus.Offline;
+                default: return PresenceStatus.Offline;
+            }
         }
 
         public static bool TryToGetChannelId(string identifier, out string channelId)

@@ -207,45 +207,47 @@ namespace Discord.Networking
 
         private async Task ReceiveLoop(CancellationToken cancellationToken)
         {
-            using var ms = new MemoryStream();
-            try
+            using (var ms = new MemoryStream())
             {
-                while (WSClient.State == WebSocketState.Open)
+                try
                 {
-                    var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
-                    if (result.MessageType == WebSocketMessageType.Close)
+                    while (WSClient.State == WebSocketState.Open)
                     {
-                        Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
-                        await ReconnectWithDelay(1);
-                        return;
-                    }
+                        var result = await WSClient.ReceiveAsync(new ArraySegment<byte>(_receiveBuffer), cancellationToken);
+                        if (result.MessageType == WebSocketMessageType.Close)
+                        {
+                            Debug.WriteLine($"Server closed connection: {result.CloseStatus}");
+                            await ReconnectWithDelay(1);
+                            return;
+                        }
 
-                    if (result.Count > 0)
-                    {
-                        ms.Write(_receiveBuffer, 0, result.Count);
-                    }
+                        if (result.Count > 0)
+                        {
+                            ms.Write(_receiveBuffer, 0, result.Count);
+                        }
 
-                    if (result.EndOfMessage)
-                    {
-                        string message = DecodeZStream(ms.ToArray());
-                        ms.SetLength(0);
-                        HandleMessage(message);
+                        if (result.EndOfMessage)
+                        {
+                            string message = DecodeZStream(ms.ToArray());
+                            ms.SetLength(0);
+                            HandleMessage(message);
+                        }
                     }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                // Expected during shutdown
-            }
-            catch (WebSocketException ex)
-            {
-                Debug.WriteLine($"WebSocket error: {ex.Message}");
-                await ReconnectWithDelay();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"WebSocket error: {ex.Message}");
-                await ReconnectWithDelay();
+                catch (OperationCanceledException)
+                {
+                    // Expected during shutdown
+                }
+                catch (WebSocketException ex)
+                {
+                    Debug.WriteLine($"WebSocket error: {ex.Message}");
+                    await ReconnectWithDelay();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"WebSocket error: {ex.Message}");
+                    await ReconnectWithDelay();
+                }
             }
         }
 
@@ -450,7 +452,7 @@ namespace Discord.Networking
                 ChannelId = channelId,
                 BulkIdentifiers = ids
                     .Select(x => x?.GetValue<string>())
-                    .Where(x => x != null)!
+                    .Where(x => x != null)
                     .ToList()
             };
 

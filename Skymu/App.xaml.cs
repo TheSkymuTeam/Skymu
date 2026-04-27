@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using MiddleMan;
+using MiddleMan.Classes;
 using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
@@ -18,6 +19,7 @@ using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Views;
 using System;
+using MiddleMan.Networking;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -118,7 +120,7 @@ namespace Skymu
             Universal.Terminate();
         }
 
-        internal static readonly HttpClient WebClient = new HttpClient
+        internal static readonly HttpClient WebClient = new HttpClient(new ManagedHttpHandler())
         {
             Timeout = TimeSpan.FromSeconds(10),
         };

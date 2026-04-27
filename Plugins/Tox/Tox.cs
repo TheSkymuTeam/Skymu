@@ -10,6 +10,8 @@
 /*==========================================================*/
 
 using MiddleMan;
+using MiddleMan.Enumerations;
+using MiddleMan.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -415,9 +417,9 @@ namespace Tox
             
             var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
             if (File.Exists(avatarPath))
-                currentUser = new User(uname, profile, pubkey, status, UserConnectionStatus.Online, File.ReadAllBytes(avatarPath));
+                currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Online, File.ReadAllBytes(avatarPath));
             else
-                currentUser = new User(uname, profile, pubkey, status, UserConnectionStatus.Online);
+                currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Online);
 
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
@@ -485,7 +487,7 @@ namespace Tox
                             pubkey,
                             pubkey,
                             status,
-                            UserConnectionStatus.Offline,
+                            PresenceStatus.Offline,
                             GrabAvatar(f.id)
                         );
                     }
@@ -498,7 +500,7 @@ namespace Tox
                     {
                         users[idx].Username = uname;
                         users[idx].Status = status;
-                        users[idx].ConnectionStatus = UserConnectionStatus.Offline;
+                        users[idx].ConnectionStatus = PresenceStatus.Offline;
                     }
                     var dm = new DirectMessage(user, 0, f.id.ToString());
                     ContactsList.Add(dm);
@@ -528,7 +530,7 @@ namespace Tox
                             pubkey,
                             pubkey,
                             status,
-                            UserConnectionStatus.Offline,
+                            PresenceStatus.Offline,
                             GrabAvatar(f.id)
                         );
                     }
@@ -541,7 +543,7 @@ namespace Tox
                     {
                         users[idx].Username = uname;
                         users[idx].Status = status;
-                        users[idx].ConnectionStatus = UserConnectionStatus.Offline;
+                        users[idx].ConnectionStatus = PresenceStatus.Offline;
                     }
                     var dm = new DirectMessage(user, 0, f.id.ToString());
                     RecentsList.Add(dm);
@@ -640,17 +642,17 @@ namespace Tox
             return new ConversationItem[0];
         }
 
-        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
+        public async Task<bool> SetConnectionStatus(PresenceStatus status)
         {
             Tox_User_Status tstatus = Tox_User_Status.NONE;
             switch (status)
             {
-                case UserConnectionStatus.Online:
+                case PresenceStatus.Online:
                     break;
-                case UserConnectionStatus.Away:
+                case PresenceStatus.Away:
                     tstatus = Tox_User_Status.AWAY;
                     break;
-                case UserConnectionStatus.DoNotDisturb:
+                case PresenceStatus.DoNotDisturb:
                     tstatus = Tox_User_Status.BUSY;
                     break;
                 default:

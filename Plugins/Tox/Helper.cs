@@ -9,7 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,18 +57,18 @@ namespace Tox
 
         #region Tox
 
-        public static UserConnectionStatus MapStatus(Tox_User_Status status)
+        public static PresenceStatus MapStatus(Tox_User_Status status)
         {
             switch (status)
             {
                 case Tox_User_Status.NONE:
-                    return UserConnectionStatus.Online;
+                    return PresenceStatus.Online;
                 case Tox_User_Status.AWAY:
-                    return UserConnectionStatus.Away;
+                    return PresenceStatus.Away;
                 case Tox_User_Status.BUSY:
-                    return UserConnectionStatus.DoNotDisturb;
+                    return PresenceStatus.DoNotDisturb;
             };
-            return UserConnectionStatus.Unknown;
+            return PresenceStatus.Unknown;
         }
 
         public static void save(ToxOO.Tox tox, string savename, Core core)
@@ -156,7 +157,7 @@ namespace Tox
                     tox_conference_peer_get_name(tox, cid, pid, nameb, out _);
                 string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
-                users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Online));
+                users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Online));
             }
             ua = users.Values.ToList();
             // Who needs to access offline users anyways.
@@ -170,7 +171,7 @@ namespace Tox
                     tox_conference_offline_peer_get_name(tox, cid, pid, nameb, out _);
                 var pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
-                ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Offline));
+                ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Offline));
             }
             if (core.conferences.ContainsKey(cid))
             {
@@ -229,7 +230,7 @@ namespace Tox
                     tox_conference_peer_get_name(tox, cid, pid, nameb, out _);
                 string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
-                users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Online));
+                users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Online));
             }
             ua = users.Values.ToList();
 
@@ -243,7 +244,7 @@ namespace Tox
                     tox_conference_offline_peer_get_name(tox, cid, pid, nameb, out _);
                 var pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
 
-                ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, UserConnectionStatus.Offline));
+                ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Offline));
             }
             if (core.conferences.ContainsKey(cid))
             {

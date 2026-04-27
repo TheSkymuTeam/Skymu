@@ -10,7 +10,8 @@
 /*==========================================================*/
 
 using Discord.Users;
-using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
@@ -97,10 +98,10 @@ namespace Discord.Helpers
 
         public static async Task<(string Url, byte[] Data)> ParseMessageMedia(JsonNode message)
         {
-            if (message["attachments"] is not JsonArray attachments || attachments.Count == 0)
+            if (!(message["attachments"] is JsonArray attachments) || attachments.Count == 0)
                 return (null, null);
 
-            if (attachments[0] is not JsonObject obj) // TODO make support multiple attachments
+            if (!(attachments[0] is JsonObject obj)) // TODO make support multiple attachments
                 return (null, null);
 
             string contentType = obj["content_type"]?.GetValue<string>(); // TODO make support media other than image
@@ -132,12 +133,16 @@ namespace Discord.Helpers
             string sizeParams = (width.HasValue && height.HasValue) ? $"&width={width}&height={height}" : "";
             string url = originalUrl.Replace("cdn.discordapp.com", "media.discordapp.net") + $"&=&format=png{sizeParams}";
 
-            try
+            try // skip double buffering and thusly extra RAM usage
             {
-                using var stream = await Core.Client.client.GetStreamAsync(url); // skip double buffering and thusly extra RAM usage
-                using var ms = new MemoryStream();
-                await stream.CopyToAsync(ms);
-                return (originalUrl, ms.ToArray());
+                using (var stream = await Core.Client.InternalHttpClient.GetStreamAsync(url))
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(ms);
+                        return (originalUrl, ms.ToArray());
+                    }
+                }
             }
             catch
             {

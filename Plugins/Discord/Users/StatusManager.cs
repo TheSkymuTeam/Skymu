@@ -59,7 +59,6 @@ namespace Discord.Users
             }
 
             UserStore.UpdatePresence(userId, status, customStatus);
-            Debug.WriteLine($"[Presence status updated] {UserStore.Get(userId)?.DisplayName ?? userId} → {status} | {customStatus}");
         }
 
         public class StatusData

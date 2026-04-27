@@ -10,6 +10,8 @@
 /*==========================================================*/
 
 using MiddleMan;
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -309,7 +311,7 @@ namespace Stub
         {
             _uiContext = SynchronizationContext.Current;
             Me.Status = "Need an Attorney? Better Call Saul! (505) 503-4455";
-            Me.ConnectionStatus = UserConnectionStatus.Online;
+            Me.ConnectionStatus = PresenceStatus.Online;
             MyInformation = Me;
             return Task.FromResult(true);
         }
@@ -324,7 +326,7 @@ namespace Stub
                         "u1",
                         "u1",
                         "hi skmuuymu",
-                        UserConnectionStatus.Online
+                        PresenceStatus.Online
                     ),
                     10,
                     "32"
@@ -332,7 +334,7 @@ namespace Stub
             );
             ContactsList.Add(
                 new DirectMessage(
-                    new User("Skymu user 2", "u2", "u2", "HELLO", UserConnectionStatus.Away),
+                    new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
                     "32"
                 )
@@ -409,7 +411,7 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public Task<bool> SetConnectionStatus(UserConnectionStatus status) {
+        public Task<bool> SetConnectionStatus(PresenceStatus status) {
             return Task.FromResult(true);
         }
 
@@ -465,30 +467,30 @@ namespace Stub
 
         private readonly User[] users = new User[]
         {
-            new User("Mario", "mario", "012", "It's-a me!", UserConnectionStatus.Online),
-            new User("Luigi", "luigi", "013", "NO", UserConnectionStatus.DoNotDisturb),
-            new User("Peach", "peach", "014", "In the castle", UserConnectionStatus.Away),
+            new User("Mario", "mario", "012", "It's-a me!", PresenceStatus.Online),
+            new User("Luigi", "luigi", "013", "NO", PresenceStatus.DoNotDisturb),
+            new User("Peach", "peach", "014", "In the castle", PresenceStatus.Away),
             new User(
                 "Bowser",
                 "bowser",
                 "015",
                 "Planning something...",
-                UserConnectionStatus.Online
+                PresenceStatus.Online
             ),
-            new User("Yoshi", "yoshi", "016", "Yoshi!", UserConnectionStatus.Online),
-            new User("Toad", "toad", "017", "Welcome!", UserConnectionStatus.Online),
-            new User("Wario", "wario", "018", "Hehehe", UserConnectionStatus.DoNotDisturb),
-            new User("Waluigi", "waluigi", "019", "Wah!", UserConnectionStatus.Invisible),
-            new User("Daisy", "daisy", "020", "Hi!", UserConnectionStatus.Online),
+            new User("Yoshi", "yoshi", "016", "Yoshi!", PresenceStatus.Online),
+            new User("Toad", "toad", "017", "Welcome!", PresenceStatus.Online),
+            new User("Wario", "wario", "018", "Hehehe", PresenceStatus.DoNotDisturb),
+            new User("Waluigi", "waluigi", "019", "Wah!", PresenceStatus.Invisible),
+            new User("Daisy", "daisy", "020", "Hi!", PresenceStatus.Online),
             new User(
                 "Rosalina",
                 "rosalina",
                 "021",
                 "Watching the stars",
-                UserConnectionStatus.Away
+                PresenceStatus.Away
             ),
-            new User("Donkey Kong", "dk", "022", "Bananas!", UserConnectionStatus.Online),
-            new User("Koopa", "koopa", "023", "Patrolling", UserConnectionStatus.Offline),
+            new User("Donkey Kong", "dk", "022", "Bananas!", PresenceStatus.Online),
+            new User("Koopa", "koopa", "023", "Patrolling", PresenceStatus.Offline),
         };
 
         private Timer presenceTimer;
@@ -520,8 +522,8 @@ namespace Stub
 
         private void RandomizeUser(User user)
         {
-            Array values = Enum.GetValues(typeof(UserConnectionStatus));
-            var newStatus = (UserConnectionStatus)values.GetValue(rand.Next(values.Length));
+            Array values = Enum.GetValues(typeof(PresenceStatus));
+            var newStatus = (PresenceStatus)values.GetValue(rand.Next(values.Length));
             var newText = randomTexts[rand.Next(randomTexts.Length)];
 
             _uiContext?.Post(

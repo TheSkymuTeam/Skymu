@@ -9,8 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
-
+using MiddleMan.Classes;
+using MiddleMan.Enumerations;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -45,7 +45,7 @@ namespace Skymu.Pontis
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(UserConnectionStatus.Offline);
+            Tray.PushIcon(PresenceStatus.Offline);
         }
 
         private async void buttonLaunch(object state, RoutedEventArgs e)

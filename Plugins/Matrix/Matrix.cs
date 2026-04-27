@@ -10,11 +10,14 @@
 /*==========================================================*/
 
 using MiddleMan;
+using MiddleMan.Enumerations;
+using MiddleMan.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.Http;
+using MiddleMan.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -45,7 +48,7 @@ namespace Matrix
         private User _user;
         private string _homeserver = "https://matrix.org";
         private string _nextBatch;
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new HttpClient(new ManagedHttpHandler());
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
 
@@ -484,7 +487,7 @@ namespace Matrix
                     Conversation conversation;
                     if (isDirect)
                         conversation = new DirectMessage(
-                            new User(roomName, roomId, roomId, string.Empty, UserConnectionStatus.Online, null),
+                            new User(roomName, roomId, roomId, string.Empty, PresenceStatus.Online, null),
                             0, roomId, DateTime.Now);
                     else
                         conversation = new Group(
@@ -688,25 +691,25 @@ namespace Matrix
             }
         }
 
-        public async Task<bool> SetConnectionStatus(UserConnectionStatus status)
+        public async Task<bool> SetConnectionStatus(PresenceStatus status)
         {
             try
             {
                 string presenceStr;
                 switch (status)
                 {
-                    case UserConnectionStatus.Online:
-                    case UserConnectionStatus.OnlineMobile:
+                    case PresenceStatus.Online:
+                    case PresenceStatus.OnlineMobile:
                         presenceStr = "online";
                         break;
-                    case UserConnectionStatus.Offline:
-                    case UserConnectionStatus.Invisible:
+                    case PresenceStatus.Offline:
+                    case PresenceStatus.Invisible:
                         presenceStr = "offline";
                         break;
-                    case UserConnectionStatus.Away:
-                    case UserConnectionStatus.AwayMobile:
-                    case UserConnectionStatus.DoNotDisturb:
-                    case UserConnectionStatus.DoNotDisturbMobile:
+                    case PresenceStatus.Away:
+                    case PresenceStatus.AwayMobile:
+                    case PresenceStatus.DoNotDisturb:
+                    case PresenceStatus.DoNotDisturbMobile:
                         presenceStr = "unavailable";
                         break;
                     default:

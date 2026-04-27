@@ -23,8 +23,8 @@ namespace Discord.Dave
         private IntPtr _session = IntPtr.Zero;
         private IntPtr _encryptor = IntPtr.Zero;
 
-        private readonly ConcurrentDictionary<string, IntPtr> _decryptors = new();
-        private readonly ConcurrentDictionary<uint, string> _ssrcToUserId = new();
+        private readonly ConcurrentDictionary<string, IntPtr> _decryptors = new ConcurrentDictionary<string, IntPtr>();
+        private readonly ConcurrentDictionary<uint, string> _ssrcToUserId = new ConcurrentDictionary<uint, string>();
         private readonly DaveInterop.DAVEMLSFailureCallback _failureCb;
         private byte[] _lastExternalSender;
         private string _selfUserId;

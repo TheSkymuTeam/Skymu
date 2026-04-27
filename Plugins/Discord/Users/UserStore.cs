@@ -1,5 +1,16 @@
-﻿using Discord.Helpers;
-using MiddleMan;
+﻿/*==========================================================*/
+// Skymu is copyrighted by The Skymu Team.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our License.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: https://skymu.app/legal/license
+/*==========================================================*/
+
+using Discord.Helpers;
+using MiddleMan.Classes;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
@@ -7,7 +18,7 @@ namespace Discord.Users
 {
     internal static class UserStore
     {
-        private static readonly ConcurrentDictionary<string, User> _users = new();
+        private static readonly ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
 
         public static async Task<User> GetOrCreateWithAvatar(string userId, string displayName, string username, string avatarHash = null)
         {
