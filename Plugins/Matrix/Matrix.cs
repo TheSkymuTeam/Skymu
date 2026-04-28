@@ -48,7 +48,7 @@ namespace Matrix
         private User _user;
         private string _homeserver = "https://matrix.org";
         private string _nextBatch;
-        private static readonly HttpClient _httpClient = new HttpClient(new ManagedHttpHandler());
+        private static readonly HttpClient _httpClient = new HttpClient(new BouncyHttpHandler());
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
 

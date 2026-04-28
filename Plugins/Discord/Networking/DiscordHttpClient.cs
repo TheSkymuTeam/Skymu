@@ -38,7 +38,7 @@ namespace Discord.Networking
 
         internal DiscordHttpClient()
         {
-            var handler = new ManagedHttpHandler()
+            var handler = new BouncyHttpHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };

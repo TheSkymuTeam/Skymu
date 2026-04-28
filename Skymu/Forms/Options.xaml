@@ -256,15 +256,15 @@
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
-                                                Text="Sound pack (exp.)" />
+                                                Text="Sound pack" />
                                             <ComboBox
                                                 x:Name="ComboSoundPack"
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Standard" Tag="Skymu" />
-                                                <ComboBoxItem Content="Classic" Tag="Skype7" />
-                                                <ComboBoxItem Content="Skype 1" Tag="Skype1" />
+                                                <ComboBoxItem Content="Skype 1 and 2" Tag="Skype1" />
+                                                <ComboBoxItem Content="Skype 3 to 7" Tag="Skype7" />
                                                 <ComboBoxItem Content="Skype 8" Tag="Skype8" />
                                             </ComboBox>
                                             <TextBlock

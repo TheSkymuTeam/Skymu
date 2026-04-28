@@ -120,7 +120,7 @@ namespace Skymu
             Universal.Terminate();
         }
 
-        internal static readonly HttpClient WebClient = new HttpClient(new ManagedHttpHandler())
+        internal static readonly HttpClient WebClient = new HttpClient(new BouncyHttpHandler())
         {
             Timeout = TimeSpan.FromSeconds(10),
         };
