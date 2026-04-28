@@ -15,8 +15,8 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MiddleMan.Classes;
-using MiddleMan.Enumerations;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using Skymu.Converters;
 using Skymu.Credentials;
 using Skymu.Databases;

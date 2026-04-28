@@ -9,7 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-namespace MiddleMan.Enumerations
+namespace Yggdrasil.Enumerations
 {
     public enum AuthenticationMethod
     {

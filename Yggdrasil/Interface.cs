@@ -14,10 +14,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using MiddleMan.Enumerations;
-using MiddleMan.Classes;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Classes;
 
-namespace MiddleMan
+namespace Yggdrasil
 {
 
     public interface IMidgard // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication

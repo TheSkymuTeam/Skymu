@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mm="clr-namespace:MiddleMan.Classes;assembly=MiddleMan"
+    xmlns:mm="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"
@@ -1693,7 +1693,7 @@
                                                                     Text="{Binding Partner.Status, TargetNullValue=''}"
                                                                     TextTrimming="CharacterEllipsis" />
                                                             </StackPanel>
-                                                            <!--  Time row for remote user. TODO: implement this in MiddleMan  -->
+                                                            <!--  Time row for remote user. TODO: implement this in Yggdrasil  -->
                                                             <StackPanel
                                                                 x:Name="TimeRow"
                                                                 Margin="0,0,0,15"

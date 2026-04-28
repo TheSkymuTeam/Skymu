@@ -9,13 +9,13 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan.Enumerations;
+using Yggdrasil.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MiddleMan.Classes
+namespace Yggdrasil.Classes
 {
     public abstract class Metadata : INotifyPropertyChanged
     {

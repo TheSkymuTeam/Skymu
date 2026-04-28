@@ -9,7 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan.Classes;
+using Yggdrasil.Classes;
 using Skymu.Helpers;
 using System;
 using System.Windows;

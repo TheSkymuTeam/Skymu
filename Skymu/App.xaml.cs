@@ -9,8 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
-using MiddleMan.Classes;
+using Yggdrasil;
+using Yggdrasil.Classes;
 using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
@@ -19,7 +19,7 @@ using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Views;
 using System;
-using MiddleMan.Networking;
+using Yggdrasil.Networking;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -120,7 +120,7 @@ namespace Skymu
             Universal.Terminate();
         }
 
-        internal static readonly HttpClient WebClient = new HttpClient(new BouncyHttpHandler())
+        internal static readonly HttpClient WebClient = new HttpClient(new OmegaEngine())
         {
             Timeout = TimeSpan.FromSeconds(10),
         };

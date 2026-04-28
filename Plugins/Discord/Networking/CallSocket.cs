@@ -15,6 +15,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Yggdrasil.Networking;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
@@ -44,7 +45,7 @@ namespace Discord.Networking
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
-        // omega - events to hook into discord to hook into MiddleMan
+        // omega - events to hook into discord to hook into Yggdrasil
         public event Action OnCallEstablished;
         public event Action<string> OnCallFailed;
         public event Action OnHangUp;

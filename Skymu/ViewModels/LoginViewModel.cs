@@ -17,12 +17,12 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using MiddleMan;
+using Yggdrasil;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
-using MiddleMan.Classes;
-using MiddleMan.Enumerations;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Views;

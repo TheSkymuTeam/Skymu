@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.36631.11
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skymu", "Skymu\Skymu.csproj", "{29B19002-44DC-4AB8-9BD7-135FC9D418A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiddleMan", "MiddleMan\MiddleMan.csproj", "{35391F57-6DA9-4E45-BC63-34EE7D0C9D63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yggdrasil", "Yggdrasil\Yggdrasil.csproj", "{35391F57-6DA9-4E45-BC63-34EE7D0C9D63}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Discord", "Plugins\Discord\Discord.csproj", "{F5495418-88EB-4C33-BFBB-DA0B43AE6A83}"
 EndProject
