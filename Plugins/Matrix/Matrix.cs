@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Matrix
 {
-    public class Core : ICore
+    public class Core : IMidgard
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;

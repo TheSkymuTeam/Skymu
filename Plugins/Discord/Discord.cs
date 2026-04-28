@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Discord
 {
-    public class Core : ICore, ICall
+    public class Core : IMidgard, ICall
     {
         #region Variables and plugin metadata
 

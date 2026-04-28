@@ -20,7 +20,7 @@ using MiddleMan.Classes;
 namespace MiddleMan
 {
 
-    public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
+    public interface IMidgard // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
@@ -81,10 +81,4 @@ namespace MiddleMan
         Task<bool> SetMuted(ActiveCall call, bool muted);
         Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);
     }
-
-    public interface IMessenger // For methods/variables specific to messaging services, like Discord, WhatsApp, etc.
-    { }
-
-    public interface IBoard // For methods/variables specific to messageboard services, like Bluesky, Reddit, etc. Yes, Instagram is technically a messageboard.
-    { }
 }
