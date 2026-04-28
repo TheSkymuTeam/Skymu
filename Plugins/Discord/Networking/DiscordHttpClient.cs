@@ -38,8 +38,14 @@ namespace Discord.Networking
 
         internal DiscordHttpClient()
         {
+            var handler = new ManagedHttpHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+
             ServicePointManager.DefaultConnectionLimit = 10;
-            InternalHttpClient = new HttpClient(new ManagedHttpHandler());
+
+            InternalHttpClient = new HttpClient(handler);
 
             // Set default headers once
             InternalHttpClient.DefaultRequestHeaders.Add("Accept", "*/*");

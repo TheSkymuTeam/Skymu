@@ -28,7 +28,7 @@ namespace Skymu.UserDirectory
         public static readonly string WS_URL = $"wss://{DOMAIN_NAME}/ws";
 
         // REST API variables
-        private static readonly HttpClient httpClient = new HttpClient(new ManagedHttpHandler())
+        private static readonly HttpClient client = new HttpClient(new ManagedHttpHandler())
         {
             BaseAddress = new Uri("https://" + DOMAIN_NAME),
         };
@@ -42,7 +42,7 @@ namespace Skymu.UserDirectory
         // REST API functions
         public static async Task GenerateUID()
         {
-            string json = await httpClient.GetStringAsync("/token");
+            string json = await client.GetStringAsync("/token");
             JsonNode node = JsonNode.Parse(json);
             ApiTkn = node?["token"]?.ToString();
         }
@@ -83,7 +83,7 @@ namespace Skymu.UserDirectory
 
             using (StringContent content = new StringContent(json))
             using (
-                HttpResponseMessage response = await httpClient.PostAsync("/set_status", content)
+                HttpResponseMessage response = await client.PostAsync("/set_status", content)
             )
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
@@ -101,7 +101,7 @@ namespace Skymu.UserDirectory
             using (
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json")
             )
-            using (HttpResponseMessage response = await httpClient.PostAsync("/ping", content))
+            using (HttpResponseMessage response = await client.PostAsync("/ping", content))
             {
                 await response.Content.ReadAsStringAsync(); // drain the buffer
             }
