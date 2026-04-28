@@ -11,7 +11,7 @@ namespace Skymu.Migration
     {
         public static void Run()
         {
-            if (Settings.SoundPack == "Sounds") Settings.SoundPack = "Skymu"; // Apr 19, 2026
+
         }
     }
 }

@@ -17,20 +17,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
-using System.Diagnostics;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using Org.BouncyCastle.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MiddleMan.Networking
 {
-    public sealed class ManagedHttpHandler : HttpMessageHandler
+    public sealed class BouncyHttpHandler : HttpMessageHandler
     {
         private readonly Dictionary<string, Queue<Stream>> _pool
             = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);
@@ -44,7 +49,7 @@ namespace MiddleMan.Networking
         /// </summary>
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.None;
 
-        public ManagedHttpHandler(int maxPoolSize = 10)
+        public BouncyHttpHandler(int maxPoolSize = 10)
         {
             _maxPoolSize = maxPoolSize;
         }
@@ -78,7 +83,7 @@ namespace MiddleMan.Networking
         }
 
         private async Task<Stream> OpenConnectionAsync(
-            string host, int port, bool isHttps, CancellationToken ct)
+    string host, int port, bool isHttps, CancellationToken ct)
         {
             Debug.WriteLine($"[MIDDLEMAN-HTTP] Opening new connection to {host}:{port}");
 
@@ -105,10 +110,15 @@ namespace MiddleMan.Networking
 
             if (isHttps)
             {
-                var ssl = new SslStream(stream, leaveInnerStreamOpen: false);
-                await ssl.AuthenticateAsClientAsync(host).ConfigureAwait(false);
-                Debug.WriteLine($"[MIDDLEMAN-HTTP] TLS handshake complete with {host}");
-                stream = ssl;
+                var protocol = new TlsClientProtocol(stream);
+
+                await Task.Run(() =>
+                    protocol.Connect(new SkipVerifyTlsClient(host)), ct)
+                    .ConfigureAwait(false);
+
+                Debug.WriteLine($"[MIDDLEMAN-HTTP] BC TLS handshake complete with {host}");
+
+                stream = protocol.Stream;
             }
 
             return stream;
@@ -516,6 +526,56 @@ namespace MiddleMan.Networking
                         await ReadExactAsync(2, ct).ConfigureAwait(false); 
                     }
                     return ms.ToArray();
+                }
+            }
+        }
+    }
+
+    internal sealed class SkipVerifyTlsClient : DefaultTlsClient
+    {
+        private readonly string _host;
+
+        public SkipVerifyTlsClient(string host)
+            : base(new BcTlsCrypto(new SecureRandom()))
+        {
+            _host = host;
+        }
+
+        public override TlsAuthentication GetAuthentication()
+        {
+            return new CertAuth(_host);
+        }
+
+        private sealed class CertAuth : TlsAuthentication
+        {
+            private readonly string _host;
+            public CertAuth(string host) { _host = host; }
+
+            public TlsCredentials GetClientCredentials(CertificateRequest req) => null;
+
+            public void NotifyServerCertificate(TlsServerCertificate serverCert)
+            {
+                var bcCerts = serverCert.Certificate.GetCertificateList();
+                var dotnetCerts = new X509Certificate2Collection();
+
+                foreach (var bcCert in bcCerts)
+                {
+                    var der = bcCert.GetEncoded();
+                    dotnetCerts.Add(new X509Certificate2(der));
+                }
+
+                using (var chain = new X509Chain())
+                {
+                    chain.ChainPolicy.ExtraStore.AddRange(dotnetCerts);
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+
+                    bool valid = chain.Build(dotnetCerts[0]);
+                    bool hostMatch = string.Equals(
+                        dotnetCerts[0].GetNameInfo(X509NameType.DnsName, false),
+                        _host, StringComparison.OrdinalIgnoreCase);
+
+                    if (!valid || !hostMatch)
+                        throw new TlsFatalAlert(AlertDescription.bad_certificate);
                 }
             }
         }
