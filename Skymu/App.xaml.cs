@@ -32,9 +32,9 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
-        public static ICore Plugin;
+        public static IMidgard Plugin;
         public static ICall CallPlugin;
-        public static ICore[] PluginList;
+        public static IMidgard[] PluginList;
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
@@ -63,7 +63,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        var core = (ICore)sender;
+                        var core = (IMidgard)sender;
                         new Dialog(
                             itype,
                             e.Message,
@@ -270,7 +270,7 @@ namespace Skymu
             if (!ThemeManager.Scan())
                 Universal.ExceptionHandler(
                     new Exception(
-                        "Could not find any compatible themec files in directory /Themes."
+                        "Could not find any compatible theme files in directory /Themes."
                     )
                 );
             ThemeManager.LoadFromSettings();

@@ -27,7 +27,7 @@ using static ToxCore;
 
 namespace Tox
 {
-    public class Core : ICore, ICall
+    public class Core : IMidgard, ICall
     {
         #region Variables
 

@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Stub
 {
-    public class Core : ICore, ICall
+    public class Core : IMidgard, ICall
     {
         #region Variables
 
