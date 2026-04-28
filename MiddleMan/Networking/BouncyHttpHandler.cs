@@ -9,8 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 // ManagedHttpHandler is a pure managed HttpMessageHandler that
-// bypasses schannel entirely by using Socket + SslStream,
-// the same TLS path used by System.Net.WebSockets.Managed.
+// bypasses schannel entirely by using Socket + BouncyCastle.
 // Use this INSTEAD of the standard HttpMessageHandler for all
 // plugins to prevent TLS issues on Vista and Windows 7.
 /*==========================================================*/
