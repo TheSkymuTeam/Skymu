@@ -10,7 +10,7 @@
 /*==========================================================*/
 
 using Discord.Helpers;
-using MiddleMan.Classes;
+using Yggdrasil.Classes;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 

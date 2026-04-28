@@ -15,7 +15,7 @@
 // This also applies to the associated XAML file.
 /*==========================================================*/
 
-using MiddleMan.Enumerations;
+using Yggdrasil.Enumerations;
 using Skymu.ViewModels;
 using System;
 using System.ComponentModel;

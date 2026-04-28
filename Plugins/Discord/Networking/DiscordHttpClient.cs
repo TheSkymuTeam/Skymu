@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using MiddleMan.Networking;
+using Yggdrasil.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -38,7 +38,7 @@ namespace Discord.Networking
 
         internal DiscordHttpClient()
         {
-            var handler = new BouncyHttpHandler()
+            var handler = new OmegaEngine()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };

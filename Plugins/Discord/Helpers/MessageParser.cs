@@ -10,8 +10,8 @@
 /*==========================================================*/
 
 using Discord.Users;
-using MiddleMan.Classes;
-using MiddleMan.Enumerations;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;

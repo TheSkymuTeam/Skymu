@@ -9,7 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan.Enumerations;
+using Yggdrasil.Enumerations;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;

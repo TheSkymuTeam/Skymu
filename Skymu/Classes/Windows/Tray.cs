@@ -9,7 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan.Enumerations;
+using Yggdrasil.Enumerations;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;

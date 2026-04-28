@@ -9,15 +9,15 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
-using MiddleMan.Enumerations;
-using MiddleMan.Classes;
+using Yggdrasil;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net.Http;
-using MiddleMan.Networking;
+using Yggdrasil.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -48,7 +48,7 @@ namespace Matrix
         private User _user;
         private string _homeserver = "https://matrix.org";
         private string _nextBatch;
-        private static readonly HttpClient _httpClient = new HttpClient(new BouncyHttpHandler());
+        private static readonly HttpClient _httpClient = new HttpClient(new OmegaEngine());
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
 

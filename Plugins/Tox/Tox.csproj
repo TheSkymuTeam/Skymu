@@ -20,7 +20,7 @@
 	  <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\MiddleMan\MiddleMan.csproj">
+		<ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj">
 			<Private>False</Private>
 		</ProjectReference>
 	</ItemGroup>

@@ -9,9 +9,9 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using MiddleMan;
-using MiddleMan.Enumerations;
-using MiddleMan.Classes;
+using Yggdrasil;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

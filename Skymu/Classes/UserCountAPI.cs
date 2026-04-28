@@ -17,7 +17,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
-using MiddleMan.Networking;
+using Yggdrasil.Networking;
 using System.Threading.Tasks;
 
 namespace Skymu.UserDirectory
@@ -28,7 +28,7 @@ namespace Skymu.UserDirectory
         public static readonly string WS_URL = $"wss://{DOMAIN_NAME}/ws";
 
         // REST API variables
-        private static readonly HttpClient client = new HttpClient(new BouncyHttpHandler())
+        private static readonly HttpClient client = new HttpClient(new OmegaEngine())
         {
             BaseAddress = new Uri("https://" + DOMAIN_NAME),
         };

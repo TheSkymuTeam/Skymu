@@ -35,6 +35,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
+using Yggdrasil.Networking;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
@@ -115,13 +116,7 @@ namespace Discord.Networking
             DscToken = token;
             var config = new ConfigManager();
 
-            // Patrick - Discord adds "&compress=zlib-stream" at the end of this URL
-            // However, I could not figure out how to decompress the stream it sends
-            // I'll look into this a bit more, however no success so far :(
-
-            // OmegaAOL - I fixed it lol congrats WS stuff is compressed now
-
-            gatewayUrl = "wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream";
+            gatewayUrl = "wss://gateway.discord.gg/?encoding=json&v=9&compress=zlib-stream"; // omega add compression
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             identifyPayloadJson = JsonSerializer.Serialize(new
@@ -253,10 +248,14 @@ namespace Discord.Networking
 
         private Inflater _inflater;
 
-        public string DecodeZStream(byte[] compressed)
+        public string DecodeZStream(byte[] data)
         {
-            if (!EndsWithFlushSuffix(compressed)) return null;
-            _inflater.SetInput(compressed);
+            if (data.Length < 2 || data[0] != 0x78)
+                return Encoding.UTF8.GetString(data);
+
+            if (!EndsWithFlushSuffix(data)) return null;
+
+            _inflater.SetInput(data);
             using (var output = new MemoryStream())
             {
                 int read;
@@ -265,6 +264,7 @@ namespace Discord.Networking
                 return Encoding.UTF8.GetString(output.ToArray());
             }
         }
+
         private bool EndsWithFlushSuffix(byte[] data)
         {
             if (data.Length < 4) return false;
@@ -299,6 +299,7 @@ namespace Discord.Networking
         {
             try
             {
+                Debug.WriteLine("[WS-RESPONSE] " + data);
                 var json = JsonNode.Parse(data);
                 int opCode = json["op"]?.GetValue<int>() ?? -1;
 

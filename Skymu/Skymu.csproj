@@ -205,7 +205,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MiddleMan\MiddleMan.csproj" />
+		<ProjectReference Include="..\Yggdrasil\Yggdrasil.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

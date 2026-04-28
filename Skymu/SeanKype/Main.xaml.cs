@@ -14,8 +14,8 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using MiddleMan.Classes;
-using MiddleMan.Enumerations;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
