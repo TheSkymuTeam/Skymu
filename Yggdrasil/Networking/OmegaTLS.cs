@@ -16,6 +16,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.IO;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -83,6 +84,31 @@ namespace Yggdrasil.Networking
             : base(new BcTlsCrypto(new SecureRandom()))
         {
             _host = host;
+        }
+
+        public override ProtocolVersion[] GetProtocolVersions()
+        {
+            var versions = base.GetProtocolVersions();
+            // Debug.WriteLine($"[OMEGA-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}");
+            return versions;
+        }
+
+        public override void NotifySelectedCipherSuite(int selectedCipherSuite)
+        {
+            base.NotifySelectedCipherSuite(selectedCipherSuite);
+            Debug.WriteLine($"[OMEGA-TLS] Cipher suite: 0x{selectedCipherSuite:X4}");
+        }
+
+        public override void NotifyServerVersion(ProtocolVersion serverVersion)
+        {
+            base.NotifyServerVersion(serverVersion);
+            Debug.WriteLine($"[OMEGA-TLS] Negotiated TLS version: {serverVersion}");
+        }
+
+        public override void NotifyAlertReceived(short alertLevel, short alertDescription)
+        {
+            Debug.WriteLine($"[OMEGA-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
+            base.NotifyAlertReceived(alertLevel, alertDescription);
         }
 
         public override TlsAuthentication GetAuthentication()
