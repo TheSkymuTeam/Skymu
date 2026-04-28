@@ -686,14 +686,11 @@ namespace Skymu
             if (_overlayRightBrush == null)
                 _overlayRightBrush = MakeBrush();
 
-            // Paint the OLD state onto the overlay (was: targetState)
             PaintOverlay(_visualState);
             SyncOverlayLayout();
 
-            // Snap the base to the target state immediately
             SetState(targetState);
 
-            // When reversing mid-animation, pick up from wherever the overlay currently is
             double fromOpacity = wasReversing ? currentOpacity : 1.0;
             double toOpacity = 0.0;
 
@@ -728,7 +725,6 @@ namespace Skymu
                     return;
                 OverlayLeft.Opacity = OverlayMiddle.Opacity = OverlayRight.Opacity = 0;
                 _fadeStoryboard = null;
-                // No SetState call needed here — base was already set above
             };
 
             newSb.Begin();

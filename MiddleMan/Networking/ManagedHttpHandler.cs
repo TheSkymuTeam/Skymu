@@ -163,7 +163,6 @@ namespace MiddleMan.Networking
             if (parts.Length < 2 || !int.TryParse(parts[1], out int statusCode))
                 throw new HttpRequestException($"Invalid HTTP status line: {statusLine}");
 
-            // --- Response headers ---
             var responseHeaders = new List<KeyValuePair<string, string>>();
             string headerLine;
             while (!string.IsNullOrEmpty(headerLine = await reader.ReadLineAsync(ct).ConfigureAwait(false)))
@@ -175,7 +174,6 @@ namespace MiddleMan.Networking
                         headerLine.Substring(colon + 1).Trim()));
             }
 
-            // --- Parse transfer metadata ---
             int contentLength = -1;
             bool chunked = false;
             bool connectionClose = false;
@@ -192,12 +190,10 @@ namespace MiddleMan.Networking
                     connectionClose = true;
             }
 
-            // --- Log the response ---
             LogResponse(statusCode, uri, responseHeaders);
 
-            // --- Read body ---
             // 204 No Content, 304 Not Modified, and 1xx informational responses
-            // never have a body — don't attempt to read one or we'll hang forever.
+            // never have a body and don't attempt to read one or we'll hang forever.
             bool hasNoBody = statusCode == 204
                           || statusCode == 304
                           || (statusCode >= 100 && statusCode < 200);
@@ -206,7 +202,7 @@ namespace MiddleMan.Networking
 
             if (hasNoBody)
             {
-                Debug.WriteLine($"[MIDDLEMAN-HTTP] Status {statusCode} — no body expected, skipping read.");
+                Debug.WriteLine($"[MIDDLEMAN-HTTP] Status {statusCode}, no body expected, skipping read.");
                 responseBody = Array.Empty<byte>();
             }
             else if (chunked)
@@ -216,7 +212,7 @@ namespace MiddleMan.Networking
             }
             else if (contentLength == 0)
             {
-                Debug.WriteLine("[MIDDLEMAN-HTTP] Content-Length: 0 — empty body.");
+                Debug.WriteLine("[MIDDLEMAN-HTTP] Content-Length: 0, empty body.");
                 responseBody = Array.Empty<byte>();
             }
             else if (contentLength > 0)
@@ -226,15 +222,14 @@ namespace MiddleMan.Networking
             }
             else if (connectionClose)
             {
-                // Server said it will close the socket after the response — safe to read to end
-                Debug.WriteLine("[MIDDLEMAN-HTTP] Connection: close — reading to end of stream.");
+                // server said it will close the socket after the response, safe to read to end
+                Debug.WriteLine("[MIDDLEMAN-HTTP] Connection: close, reading to end of stream.");
                 responseBody = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
             }
             else
             {
                 // Keep-alive with no Content-Length and no chunked encoding.
                 // We have no way to know where the body ends without closing the connection.
-                // Treat as empty to avoid hanging. This should rarely happen with well-behaved servers.
                 Debug.WriteLine("[MIDDLEMAN-HTTP] Warning: keep-alive response with no Content-Length or chunked encoding. Treating body as empty.");
                 responseBody = Array.Empty<byte>();
             }
@@ -260,10 +255,9 @@ namespace MiddleMan.Networking
                     response.Content.Headers.TryAddWithoutValidation(h.Key, h.Value);
             }
 
-            // Only return to pool if the connection is still alive
             if (connectionClose || hasNoBody && connectionClose)
             {
-                Debug.WriteLine("[MIDDLEMAN-HTTP] Server closed connection — discarding from pool.");
+                Debug.WriteLine("[MIDDLEMAN-HTTP] Server closed connection, discarding from pool.");
                 stream.Dispose();
             }
             else
@@ -300,7 +294,7 @@ namespace MiddleMan.Networking
 
             Debug.WriteLine($"[MIDDLEMAN-HTTP] <-- {statusCode} {description} ({uri})");
 
-            // Log a few useful response headers
+            // log a few useful response headers
             foreach (var h in headers)
             {
                 if (h.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase)
@@ -332,7 +326,7 @@ namespace MiddleMan.Networking
 
             if (string.IsNullOrEmpty(contentEncoding) || data.Length == 0)
             {
-                Debug.WriteLine("[MIDDLEMAN-HTTP] No Content-Encoding or empty body — skipping decompression.");
+                Debug.WriteLine("[MIDDLEMAN-HTTP] No Content-Encoding or empty body, skipping decompression.");
                 return data;
             }
 
@@ -353,7 +347,6 @@ namespace MiddleMan.Networking
             {
                 using (var compressed = new MemoryStream(data))
                 {
-                    // zlib-wrapped deflate starts with 0x78 0x9C (or 0x01 / 0xDA / 0x5E)
                     bool isZlibWrapped = data.Length > 2
                         && data[0] == 0x78
                         && (data[1] == 0x9C || data[1] == 0x01
@@ -371,7 +364,7 @@ namespace MiddleMan.Networking
                 }
             }
 
-            Debug.WriteLine($"[MIDDLEMAN-HTTP] Warning: unsupported Content-Encoding '{contentEncoding}' — returning raw bytes.");
+            Debug.WriteLine($"[MIDDLEMAN-HTTP] Warning: unsupported Content-Encoding '{contentEncoding}', returning raw bytes.");
             return data;
         }
 
@@ -417,10 +410,6 @@ namespace MiddleMan.Networking
             }
             base.Dispose(disposing);
         }
-
-        // =====================================================================
-        // HttpReader — buffered line/chunk/exact reader over a raw Stream
-        // =====================================================================
 
         private sealed class HttpReader
         {
@@ -524,7 +513,7 @@ namespace MiddleMan.Networking
                         if (chunkSize == 0) break;
                         byte[] chunk = await ReadExactAsync(chunkSize, ct).ConfigureAwait(false);
                         ms.Write(chunk, 0, chunk.Length);
-                        await ReadExactAsync(2, ct).ConfigureAwait(false); // consume trailing CRLF
+                        await ReadExactAsync(2, ct).ConfigureAwait(false); 
                     }
                     return ms.ToArray();
                 }
