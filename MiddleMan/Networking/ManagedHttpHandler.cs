@@ -348,7 +348,7 @@ namespace MiddleMan.Networking
                     if (b == '\n') break;
                     line.Add(b.Value);
                 }
-                return Encoding.UTF8.GetString(line.ToArray());
+                return Encoding.ASCII.GetString(line.ToArray());
             }
             public async Task<byte[]> ReadExactAsync(int count, CancellationToken ct)
             {
@@ -396,21 +396,18 @@ namespace MiddleMan.Networking
             {
                 using (var ms = new MemoryStream())
                 {
-                    while (true)
+                    while (true) 
                     {
                         string sizeLine = await ReadLineAsync(ct).ConfigureAwait(false);
                         if (sizeLine == null) break;
-
                         int semi = sizeLine.IndexOf(';');
                         if (semi >= 0) sizeLine = sizeLine.Substring(0, semi);
-
-                        int chunkSize = Convert.ToInt32(sizeLine.Trim(), 16);
+                        if (!int.TryParse(sizeLine.Trim(), System.Globalization.NumberStyles.HexNumber, null, out int chunkSize))
+                            break;
                         if (chunkSize == 0) break;
-
                         byte[] chunk = await ReadExactAsync(chunkSize, ct).ConfigureAwait(false);
                         ms.Write(chunk, 0, chunk.Length);
-
-                        await ReadLineAsync(ct).ConfigureAwait(false);
+                        await ReadExactAsync(2, ct).ConfigureAwait(false); 
                     }
                     return ms.ToArray();
                 }
