@@ -291,7 +291,7 @@ namespace Discord.Dave
         }
 
         private static void OnMlsFailure(string source, string reason, IntPtr _)
-            => Debug.WriteLine($"[DAVE] MLS failure — source={source}, reason={reason}");
+            => Debug.WriteLine($"[DAVE] MLS failure, source={source}, reason={reason}");
 
         private static IntPtr MarshalStringArray(string[] strings, out IntPtr[] ptrs)
         {
