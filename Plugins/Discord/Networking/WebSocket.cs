@@ -250,8 +250,6 @@ namespace Discord.Networking
 
         public string DecodeZStream(byte[] data)
         {
-            if (data.Length < 2 || data[0] != 0x78)
-                return Encoding.UTF8.GetString(data);
 
             if (!EndsWithFlushSuffix(data)) return null;
 
@@ -299,7 +297,7 @@ namespace Discord.Networking
         {
             try
             {
-                Debug.WriteLine("[WS-RESPONSE] " + data);
+                //Debug.WriteLine("[WS-RESPONSE] " + data);
                 var json = JsonNode.Parse(data);
                 int opCode = json["op"]?.GetValue<int>() ?? -1;
 
