@@ -385,8 +385,8 @@
                                                 SelectedValue="{Binding Path=[NotificationTrigger], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="all recieved messages" Tag="{x:Static classes:NotificationTriggerType.ALL}" />
-                                                <ComboBoxItem Content="direct messages and pings" Tag="{x:Static classes:NotificationTriggerType.PDM}" />
-                                                <ComboBoxItem Content="pings" Tag="{x:Static classes:NotificationTriggerType.PING}" />
+                                                <ComboBoxItem Content="direct messages, replies, and pings" Tag="{x:Static classes:NotificationTriggerType.PDM}" />
+                                                <ComboBoxItem Content="replies and pings" Tag="{x:Static classes:NotificationTriggerType.PING}" />
                                                 <ComboBoxItem Content="direct messages" Tag="{x:Static classes:NotificationTriggerType.DM}" />
                                             </ComboBox>
                                         </StackPanel>
