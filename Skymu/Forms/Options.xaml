@@ -373,7 +373,7 @@
 
                                         <CheckBox
                                             Margin="0,5"
-                                            Content="Display a notification when you recieve a message"
+                                            Content="Enable Skymu notifications"
                                             IsChecked="{Binding Path=[EnableNotifications], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
