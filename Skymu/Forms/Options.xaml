@@ -379,15 +379,15 @@
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
-                                                Text="Notification trigger" />
+                                                Text="Show me notifications when I am" />
                                             <ComboBox
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[NotificationTrigger], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
-                                                <ComboBoxItem Content="All messages" Tag="{x:Static classes:NotificationTriggerType.ALL}" />
-                                                <ComboBoxItem Content="Standard (ping, DM)" Tag="{x:Static classes:NotificationTriggerType.PDM}" />
-                                                <ComboBoxItem Content="Ping only" Tag="{x:Static classes:NotificationTriggerType.PING}" />
-                                                <ComboBoxItem Content="DM only" Tag="{x:Static classes:NotificationTriggerType.DM}" />
+                                                <ComboBoxItem Content="messaged from anywhere (not recommended)" Tag="{x:Static classes:NotificationTriggerType.ALL}" />
+                                                <ComboBoxItem Content="pinged or messaged directly" Tag="{x:Static classes:NotificationTriggerType.PDM}" />
+                                                <ComboBoxItem Content="pinged" Tag="{x:Static classes:NotificationTriggerType.PING}" />
+                                                <ComboBoxItem Content="messaged directly" Tag="{x:Static classes:NotificationTriggerType.DM}" />
                                             </ComboBox>
                                         </StackPanel>
                                         <CheckBox
