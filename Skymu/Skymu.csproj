@@ -90,24 +90,12 @@
 	<!-- Resource Handling -->
 	<ItemGroup>
 		<!-- SeanKype -->
-		<None Remove="SeanKype\Assets\**\*" />
-		<Page Remove="SeanKype\Assets\**\*" />
-		<EmbeddedResource Remove="SeanKype\Assets\**\*" />
-		<Compile Remove="SeanKype\Assets\**\*" />
 		<Resource Include="SeanKype\Assets\**\*" />
 
 		<!-- Skyaeris -->
-		<None Remove="Skyaeris\Assets\**\*" />
-		<Page Remove="Skyaeris\Assets\**\*" />
-		<EmbeddedResource Remove="Skyaeris\Assets\**\*" />
-		<Compile Remove="Skyaeris\Assets\**\*" />
 		<Resource Include="Skyaeris\Assets\**\*" />
 
 		<!-- Pontis -->
-		<None Remove="Pontis\Assets\**\*" />
-		<Page Remove="Pontis\Assets\**\*" />
-		<EmbeddedResource Remove="Pontis\Assets\**\*" />
-		<Compile Remove="Pontis\Assets\**\*" />
 		<Resource Include="Pontis\Assets\**\*" />
 
 		<!-- Emoji -->
@@ -241,10 +229,10 @@
 	  <Page Update="Forms\CallScreen.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
-	  <Page Update="Pontis\Login.xaml">
+	  <Page Update="SeanKype\Login.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
-	  <Page Update="Pontis\Main.xaml">
+	  <Page Update="SeanKype\Main.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
 	  <Page Update="Forms\IncomingCall.xaml">

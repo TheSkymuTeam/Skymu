@@ -77,8 +77,7 @@ namespace Skymu.Views
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
-            const string prefix = // TODO make less repetitive
-                "pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/";
+            string prefix = $"pack://application:,,,/Skymu;component/{Universal.Interface}/Assets/Universal/"; // TODO make less repetitive
             rectangle = ImageHelper.Generate(prefix + "Call Screen/rectangle.png");
             pill = ImageHelper.Generate(prefix + "Call Screen/pill.png");
             logo_small = ImageHelper.Generate(prefix + "Branding/logo-call-small.png");

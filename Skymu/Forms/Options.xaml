@@ -207,11 +207,6 @@
                                                 ItemsSource="{Binding Languages}"
                                                 SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Key" />
-                                            <TextBlock
-                                                Margin="8,0,0,0"
-                                                VerticalAlignment="Center"
-                                                Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
                                         </StackPanel>
 
 
@@ -221,22 +216,22 @@
                                                 VerticalAlignment="Center"
                                                 Text="Main window frame" />
                                             <ComboBox Width="250" SelectedIndex="{Binding Path=[WindowFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
-                                                <ComboBoxItem Content="Use the system window frame" />
                                                 <ComboBoxItem Content="Skype Aero" />
                                                 <ComboBoxItem Content="Skype Basic" />
+                                                <ComboBoxItem Content="Use the system window frame" />
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
                                                 Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
+                                                Text="Requires restart" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
-                                                Text="Interface era" />
+                                                Text="Skype UI era" />
                                             <ComboBox
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[Interface], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
@@ -249,7 +244,7 @@
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
                                                 Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
+                                                Text="Requires restart" />
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -264,14 +259,14 @@
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem Content="Standard" Tag="Skymu" />
                                                 <ComboBoxItem Content="Skype 1 and 2" Tag="Skype1" />
-                                                <ComboBoxItem Content="Skype 3 to 7" Tag="Skype7" />
+                                                <ComboBoxItem Content="Skype 3 to 7" Tag="SeanKype" />
                                                 <ComboBoxItem Content="Skype 8" Tag="Skype8" />
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
                                                 Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
+                                                Text="Requires restart" />
                                         </StackPanel>
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
@@ -288,10 +283,10 @@
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
                                                 Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
+                                                Text="Requires restart" />
                                         </StackPanel>
 
-                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                        <!-- <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
@@ -303,7 +298,7 @@
                                                 <ComboBoxItem Content="Light" Tag="Light" />
                                                 <ComboBoxItem Content="Dark" Tag="Dark" />
                                             </ComboBox>
-                                        </StackPanel>
+                                        </StackPanel>-->
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock

@@ -8,7 +8,7 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// OmegaWebSocket is a WebSocket client backed by OmegaTLS,
+// BifrostWebSocket is a WebSocket client backed by BifrostTLS,
 // bypassing Schannel entirely. It connects via raw TCP +
 // Bouncy Castle TLS, performs the HTTP/1.1 Upgrade handshake,
 // then speaks the RFC 6455 WebSocket framing protocol.
@@ -32,11 +32,11 @@ using System.Threading.Tasks;
 
 namespace Yggdrasil.Networking
 {
-    public sealed class OmegaWebSocketOptions
+    public sealed class BifrostWebSocketOptions
     {
-        private readonly OmegaWebSocket _owner;
+        private readonly BifrostWebSocket _owner;
 
-        internal OmegaWebSocketOptions(OmegaWebSocket owner) => _owner = owner;
+        internal BifrostWebSocketOptions(BifrostWebSocket owner) => _owner = owner;
 
         public void SetRequestHeader(string headerName, string headerValue)
             => _owner.RequestHeaders[headerName] = headerValue;
@@ -47,7 +47,7 @@ namespace Yggdrasil.Networking
         public TimeSpan KeepAliveInterval { get; set; } = TimeSpan.Zero;
     }
 
-    public sealed class OmegaWebSocket : IDisposable
+    public sealed class BifrostWebSocket : IDisposable
     {
         private Stream _stream;
         private WebSocketState _state = WebSocketState.None;
@@ -65,7 +65,7 @@ namespace Yggdrasil.Networking
         public string CloseStatusDescription { get; private set; }
         public WebSocketCloseStatus? CloseStatus { get; private set; }
 
-        public OmegaWebSocketOptions Options { get; }
+        public BifrostWebSocketOptions Options { get; }
 
         public Dictionary<string, string> RequestHeaders { get; }
             = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -75,9 +75,9 @@ namespace Yggdrasil.Networking
 
         public string SubProtocol { get; private set; }
 
-        public OmegaWebSocket()
+        public BifrostWebSocket()
         {
-            Options = new OmegaWebSocketOptions(this);
+            Options = new BifrostWebSocketOptions(this);
         }
         public async Task ConnectAsync(Uri uri, CancellationToken ct)
         {
@@ -99,14 +99,14 @@ namespace Yggdrasil.Networking
             string host = uri.Host;
             string path = string.IsNullOrEmpty(uri.PathAndQuery) ? "/" : uri.PathAndQuery;
 
-            Debug.WriteLine($"[OMEGA-WS] Connecting to {uri}");
+            Debug.WriteLine($"[BIFROST-WS] Connecting to {uri}");
 
-            _stream = await OmegaTLS.OpenAsync(host, port, isWss, ct).ConfigureAwait(false);
+            _stream = await BifrostTLS.OpenAsync(host, port, isWss, ct).ConfigureAwait(false);
 
             await PerformUpgradeAsync(host, path, ct).ConfigureAwait(false);
 
             lock (_stateLock) _state = WebSocketState.Open;
-            Debug.WriteLine($"[OMEGA-WS] Connection open: {uri}");
+            Debug.WriteLine($"[BIFROST-WS] Connection open: {uri}");
         }
 
         public async Task SendAsync(
@@ -140,7 +140,7 @@ namespace Yggdrasil.Networking
                 _writeLock.Release();
             }
 
-            Debug.WriteLine($"[OMEGA-WS] Sent {buffer.Count} byte {messageType} frame.");
+            Debug.WriteLine($"[BIFROST-WS] Sent {buffer.Count} byte {messageType} frame.");
         }
 
         public async Task<WebSocketReceiveResult> ReceiveAsync(
@@ -174,12 +174,12 @@ namespace Yggdrasil.Networking
                         }
 
                     case 0x09: // ping; auto-pong; keep waiting
-                        Debug.WriteLine("[OMEGA-WS] Received ping, sending pong.");
+                        Debug.WriteLine("[BIFROST-WS] Received ping, sending pong.");
                         await SendPongAsync(payload, ct).ConfigureAwait(false);
                         continue;
 
                     case 0x0A: // pong; ignore; keep waiting
-                        Debug.WriteLine("[OMEGA-WS] Received pong.");
+                        Debug.WriteLine("[BIFROST-WS] Received pong.");
                         continue;
 
                     case 0x08: // close
@@ -195,7 +195,7 @@ namespace Yggdrasil.Networking
                             CloseStatus = closeStatus;
                             CloseStatusDescription = closeDesc;
                             lock (_stateLock) _state = WebSocketState.CloseReceived;
-                            Debug.WriteLine($"[OMEGA-WS] Close received: {closeStatus} '{closeDesc}'");
+                            Debug.WriteLine($"[BIFROST-WS] Close received: {closeStatus} '{closeDesc}'");
                             return new WebSocketReceiveResult(0, WebSocketMessageType.Close, true,
                                 closeStatus, closeDesc);
                         }
@@ -241,7 +241,7 @@ namespace Yggdrasil.Networking
             }
 
             lock (_stateLock) _state = WebSocketState.Closed;
-            Debug.WriteLine($"[OMEGA-WS] Close sent: {closeStatus} '{statusDescription}'");
+            Debug.WriteLine($"[BIFROST-WS] Close sent: {closeStatus} '{statusDescription}'");
         }
 
         private async Task PerformUpgradeAsync(string host, string path, CancellationToken ct)
@@ -271,7 +271,7 @@ namespace Yggdrasil.Networking
             await _stream.WriteAsync(upgradeBytes, 0, upgradeBytes.Length, ct).ConfigureAwait(false);
             await _stream.FlushAsync(ct).ConfigureAwait(false);
 
-            Debug.WriteLine($"[OMEGA-WS] Upgrade request sent to {host}{path}");
+            Debug.WriteLine($"[BIFROST-WS] Upgrade request sent to {host}{path}");
 
 
             // IMPORTANT!!!: LineReader buffers up to 4096 bytes at a time. Any WebSocket
@@ -281,7 +281,7 @@ namespace Yggdrasil.Networking
             var reader = new LineReader(_stream);
 
             string statusLine = await reader.ReadLineAsync(ct).ConfigureAwait(false);
-            Debug.WriteLine($"[OMEGA-WS] Upgrade response: {statusLine}");
+            Debug.WriteLine($"[BIFROST-WS] Upgrade response: {statusLine}");
 
             if (statusLine == null || !statusLine.Contains("101"))
                 throw new WebSocketException(
@@ -310,16 +310,15 @@ namespace Yggdrasil.Networking
                 throw new WebSocketException(
                     "Sec-WebSocket-Accept header missing or invalid. Server is not a valid WebSocket endpoint.");
 
-            // recover any bytes the LineReader pulled in beyond the HTTP headers.
-            // These belong to the first WebSocket frame and must not be discarded.
+            // recover any bytes the LineReader pulled in beyond the HTTP headers
             var leftover = reader.Unconsumed;
             if (leftover.Count > 0)
             {
-                Debug.WriteLine($"[OMEGA-WS] Recovering {leftover.Count} byte(s) buffered during upgrade.");
+                Debug.WriteLine($"[BIFROST-WS] Recovering {leftover.Count} byte(s) buffered during upgrade.");
                 _stream = new PrependStream(leftover.Array, leftover.Offset, leftover.Count, _stream);
             }
 
-            Debug.WriteLine("[OMEGA-WS] Upgrade successful.");
+            Debug.WriteLine("[BIFROST-WS] Upgrade successful.");
         }
 
         private static string ComputeAcceptKey(string key)
@@ -332,7 +331,7 @@ namespace Yggdrasil.Networking
             }
         }
 
-        private static byte[] BuildFrame(
+        private static byte[] BuildFrame( // i really fucking hate this goofy shit 
             byte opcode, bool fin, byte[] data, int offset, int count)
         {
             var maskKey = new byte[4];
@@ -369,7 +368,7 @@ namespace Yggdrasil.Networking
             return frame;
         }
 
-        private async Task<(byte opcode, bool fin, byte[] payload)> ReadFrameAsync(
+        private async Task<(byte opcode, bool fin, byte[] payload)> ReadFrameAsync( // i really fucking hate this goofy shit part 2
             CancellationToken ct)
         {
             await _readLock.WaitAsync(ct).ConfigureAwait(false);
@@ -463,9 +462,9 @@ namespace Yggdrasil.Networking
             }
 
             try { _stream?.Dispose(); }
-            catch { /* best effort */ }
+            catch { /* well I tried */ }
 
-            Debug.WriteLine("[OMEGA-WS] Connection aborted.");
+            Debug.WriteLine("[BIFROST-WS] Connection aborted.");
         }
 
         public void Dispose()

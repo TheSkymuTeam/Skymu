@@ -116,7 +116,7 @@ namespace Skymu.Theming
             Debug.WriteLine($"[ThemeManager] Loaded: {absolutePath}");
             Debug.WriteLine($"[ThemeManager] MergedDictionaries count: {Application.Current.Resources.MergedDictionaries.Count}");
             foreach (var dict in Application.Current.Resources.MergedDictionaries)
-                Debug.WriteLine(dict.Source);
+                Debug.WriteLine("[ThemeManager] MergedDictionary: " + dict.Source);
         }
 
         private static string ReadThemeName(string xamlPath)

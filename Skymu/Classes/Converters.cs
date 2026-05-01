@@ -627,7 +627,7 @@ namespace Skymu.Converters
 
         internal static string GetAssetBasePrefix(string era = null, bool universal = false)
         {
-            string theme_root = Settings.ThemeRoot;
+            string theme_root = "Light"; 
             if (universal)
                 theme_root = "Universal";
 
@@ -639,7 +639,7 @@ namespace Skymu.Converters
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
             }
 
-            return $"pack://application:,,,/Skymu;component/Skyaeris/Assets/{theme_root}/";
+            return $"pack://application:,,,/Skymu;component/Skype5/Assets/{theme_root}/";
         }
 
         internal static BitmapImage AssetPathGenerator(

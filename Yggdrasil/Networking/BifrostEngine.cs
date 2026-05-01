@@ -8,9 +8,9 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// OmegaHTTPEngine is an HttpMessageHandler backed by
-// OmegaTLS, bypassing Schannel entirely. It is a drop-in
-// replacement for ManagedHttpHandler that uses Bouncy Castle
+// BifrostEngine is an HttpMessageHandler backed by
+// BifrostTLS, bypassing Schannel entirely. It is a drop-in
+// replacement for HttpClientHandler that uses Bouncy Castle
 // for TLS instead of SslStream, making it safe on Vista/Win7
 // with modern TLS cipher suites and TLS 1.3 support.
 /*==========================================================*/
@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace Yggdrasil.Networking
 {
-    public sealed class OmegaEngine : HttpMessageHandler
+    public sealed class BifrostEngine : HttpMessageHandler // i still am surprised HttpClient has an overload to accept a custom HttpMH, given that at this time there were literally none
     {
         private readonly Dictionary<string, Queue<Stream>> _pool
             = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);
@@ -42,7 +42,7 @@ namespace Yggdrasil.Networking
         /// </summary>
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.None;
 
-        public OmegaEngine(int maxPoolSize = 10)
+        public BifrostEngine(int maxPoolSize = 10)
         {
             _maxPoolSize = maxPoolSize;
         }
@@ -61,7 +61,7 @@ namespace Yggdrasil.Networking
             string poolKey = $"{host}:{port}";
 
             Stream stream = TryRentFromPool(poolKey)
-                ?? await OmegaTLS.OpenAsync(host, port, isHttps, cancellationToken)
+                ?? await BifrostTLS.OpenAsync(host, port, isHttps, cancellationToken)
                        .ConfigureAwait(false);
 
             try
@@ -85,7 +85,7 @@ namespace Yggdrasil.Networking
                 : null;
 
             var sb = new StringBuilder();
-            sb.Append($"{request.Method.Method} {uri.PathAndQuery} HTTP/1.1\r\n");
+            sb.Append($"{request.Method.Method} {uri.PathAndQuery} HTTP/1.1\r\n"); // idgaf im not implementing http/2
             sb.Append($"Host: {host}\r\n");
             sb.Append("Connection: keep-alive\r\n");
 
@@ -105,7 +105,7 @@ namespace Yggdrasil.Networking
             }
 
             sb.Append("\r\n");
-            Debug.WriteLine($"[OMEGA-HTTP] --> {request.Method.Method} {uri}");
+            Debug.WriteLine($"[BIFROST-HTTP] --> {request.Method.Method} {uri}");
 
             ct.ThrowIfCancellationRequested();
             byte[] requestBytes = Encoding.ASCII.GetBytes(sb.ToString());
@@ -162,38 +162,38 @@ namespace Yggdrasil.Networking
 
             if (hasNoBody)
             {
-                Debug.WriteLine($"[OMEGA-HTTP] Status {statusCode} has no body, skipping read.");
+                Debug.WriteLine($"[BIFROST-HTTP] Status {statusCode} has no body, skipping read.");
                 responseBody = Array.Empty<byte>();
             }
             else if (chunked)
             {
-                Debug.WriteLine("[OMEGA-HTTP] Reading chunked body.");
+                Debug.WriteLine("[BIFROST-HTTP] Reading chunked body.");
                 responseBody = await reader.ReadChunkedAsync(ct).ConfigureAwait(false);
             }
             else if (contentLength == 0)
             {
-                Debug.WriteLine("[OMEGA-HTTP] Content-Length: 0, empty body.");
+                Debug.WriteLine("[BIFROST-HTTP] Content-Length: 0, empty body.");
                 responseBody = Array.Empty<byte>();
             }
             else if (contentLength > 0)
             {
-                Debug.WriteLine($"[OMEGA-HTTP] Reading {contentLength} byte body.");
+                Debug.WriteLine($"[BIFROST-HTTP] Reading {contentLength} byte body.");
                 responseBody = await reader.ReadExactAsync(contentLength, ct).ConfigureAwait(false);
             }
             else if (connectionClose)
             {
-                Debug.WriteLine("[OMEGA-HTTP] Connection: close, reading to end of stream.");
+                Debug.WriteLine("[BIFROST-HTTP] Connection: close, reading to end of stream.");
                 responseBody = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
             }
             else
             {
-                Debug.WriteLine("[OMEGA-HTTP] Warning: keep-alive with no Content-Length or chunked. Treating as empty body.");
+                Debug.WriteLine("[BIFROST-HTTP] Warning: keep-alive with no Content-Length or chunked. Treating as empty body.");
                 responseBody = Array.Empty<byte>();
             }
 
-            Debug.WriteLine($"[OMEGA-HTTP] Body before decompression: {responseBody.Length} bytes.");
+            Debug.WriteLine($"[BIFROST-HTTP] Body before decompression: {responseBody.Length} bytes.");
             responseBody = await DecompressAsync(responseBody, responseHeaders, ct).ConfigureAwait(false);
-            Debug.WriteLine($"[OMEGA-HTTP] Body after decompression: {responseBody.Length} bytes.");
+            Debug.WriteLine($"[BIFROST-HTTP] Body after decompression: {responseBody.Length} bytes.");
 
             var content = new ByteArrayContent(responseBody);
             var response = new HttpResponseMessage((HttpStatusCode)statusCode)
@@ -214,13 +214,13 @@ namespace Yggdrasil.Networking
 
             if (connectionClose)
             {
-                Debug.WriteLine("[OMEGA-HTTP] Server closed connection, not returning to pool.");
+                Debug.WriteLine("[BIFROST-HTTP] Server closed connection, not returning to pool.");
                 stream.Dispose();
             }
             else
             {
                 ReturnToPool(poolKey, stream);
-                Debug.WriteLine($"[OMEGA-HTTP] Connection returned to pool for {poolKey}.");
+                Debug.WriteLine($"[BIFROST-HTTP] Connection returned to pool for {poolKey}.");
             }
 
             return response;
@@ -250,7 +250,7 @@ namespace Yggdrasil.Networking
                 default: description = "Unknown"; break;
             }
 
-            Debug.WriteLine($"[OMEGA-HTTP] <-- {statusCode} {description} ({uri})");
+            Debug.WriteLine($"[BIFROST-HTTP] <-- {statusCode} {description} ({uri})");
 
             foreach (var h in headers)
             {
@@ -262,7 +262,7 @@ namespace Yggdrasil.Networking
                  || h.Key.Equals("X-RateLimit-Reset", StringComparison.OrdinalIgnoreCase)
                  || h.Key.Equals("Retry-After", StringComparison.OrdinalIgnoreCase)
                  || h.Key.Equals("Connection", StringComparison.OrdinalIgnoreCase))
-                    Debug.WriteLine($"[OMEGA-HTTP]   {h.Key}: {h.Value}");
+                    Debug.WriteLine($"[BIFROST-HTTP]   {h.Key}: {h.Value}");
             }
         }
 
@@ -282,7 +282,7 @@ namespace Yggdrasil.Networking
             if (string.IsNullOrEmpty(encoding) || data.Length == 0)
                 return data;
 
-            Debug.WriteLine($"[OMEGA-HTTP] Decompressing: {encoding}");
+            Debug.WriteLine($"[BIFROST-HTTP] Decompressing: {encoding}");
 
             if (encoding == "gzip")
             {
@@ -315,7 +315,7 @@ namespace Yggdrasil.Networking
                 }
             }
 
-            Debug.WriteLine($"[OMEGA-HTTP] Warning: unsupported Content-Encoding '{encoding}', returning raw.");
+            Debug.WriteLine($"[BIFROST-HTTP] Warning: unsupported Content-Encoding '{encoding}', returning raw.");
             return data;
         }
 
@@ -325,7 +325,7 @@ namespace Yggdrasil.Networking
             {
                 if (_pool.TryGetValue(key, out var queue) && queue.Count > 0)
                 {
-                    Debug.WriteLine($"[OMEGA-HTTP] Reusing pooled connection for {key}.");
+                    Debug.WriteLine($"[BIFROST-HTTP] Reusing pooled connection for {key}.");
                     return queue.Dequeue();
                 }
             }

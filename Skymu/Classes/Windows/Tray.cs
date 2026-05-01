@@ -210,7 +210,7 @@ namespace Skymu
             }
 
             string iconToolTip = Settings.BrandingName + " (" + statusText + ")";
-            var resourceUri = new Uri("pack://application:,,,/Skymu;component/Skyaeris/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
+            var resourceUri = new Uri($"pack://application:,,,/Skymu;component/{Universal.Interface}/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
             var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
 
             if (Icon != null)

@@ -38,7 +38,7 @@ namespace Discord.Networking
 
         internal DiscordHttpClient()
         {
-            var handler = new OmegaEngine()
+            var handler = new BifrostEngine()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };

@@ -41,12 +41,12 @@ namespace Skymu
         internal static bool TestMode = false; // disables plugin login, signs you directly into stub
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.4.1-beta1";
-        public const string BuildName = "Eros Basilisk (BETA)";
+        public const string BuildVersion = "0.4.1";
+        public const string BuildName = "Eros Basilisk PB2";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
-        public const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
+        public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
 
@@ -120,7 +120,7 @@ namespace Skymu
             Universal.Terminate();
         }
 
-        internal static readonly HttpClient WebClient = new HttpClient(new OmegaEngine())
+        internal static readonly HttpClient WebClient = new HttpClient(new BifrostEngine())
         {
             Timeout = TimeSpan.FromSeconds(10),
         };

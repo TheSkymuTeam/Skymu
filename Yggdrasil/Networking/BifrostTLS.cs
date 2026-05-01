@@ -8,10 +8,10 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// OmegaTLS owns raw socket creation and the Bouncy Castle
-// TLS handshake. Both OmegaHttpHandler and OmegaWebSocket
+// BifrostTLS owns raw socket creation and the Bouncy Castle
+// TLS handshake. Both BifrostEngine and BifrostWebSocket
 // call OpenAsync() to get a ready-to-use Stream, then layer
-// their own protocol on top of it.
+// their own protocol on top of it. Truly based
 /*==========================================================*/
 
 using System;
@@ -28,12 +28,12 @@ using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 
 namespace Yggdrasil.Networking
 {
-    internal static class OmegaTLS
+    internal static class BifrostTLS
     {
         public static async Task<Stream> OpenAsync(
             string host, int port, bool isHttps, CancellationToken ct)
         {
-            Debug.WriteLine($"[OMEGA-TLS] Opening connection to {host}:{port}");
+            Debug.WriteLine($"[BIFROST-TLS] Opening connection to {host}:{port}");
 
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
@@ -56,7 +56,7 @@ namespace Yggdrasil.Networking
                 await connectTask.ConfigureAwait(false);
             }
 
-            Debug.WriteLine($"[OMEGA-TLS] TCP connected to {host}:{port}");
+            Debug.WriteLine($"[BIFROST-TLS] TCP connected to {host}:{port}");
 
             Stream stream = new NetworkStream(socket, ownsSocket: true);
 
@@ -68,19 +68,19 @@ namespace Yggdrasil.Networking
             await Task.Run(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                protocol.Connect(new OmegaTLSClient(host));
-                Debug.WriteLine($"[OMEGA-TLS] TLS handshake complete with {host}");
+                protocol.Connect(new BifrostTLSClient(host));
+                Debug.WriteLine($"[BIFROST-TLS] TLS handshake complete with {host}");
             }, ct).ConfigureAwait(false);
 
             return protocol.Stream;
         }
     }
 
-    internal sealed class OmegaTLSClient : DefaultTlsClient
+    internal sealed class BifrostTLSClient : DefaultTlsClient
     {
         private readonly string _host;
 
-        public OmegaTLSClient(string host)
+        public BifrostTLSClient(string host)
             : base(new BcTlsCrypto(new SecureRandom()))
         {
             _host = host;
@@ -89,25 +89,25 @@ namespace Yggdrasil.Networking
         public override ProtocolVersion[] GetProtocolVersions()
         {
             var versions = base.GetProtocolVersions();
-            // Debug.WriteLine($"[OMEGA-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}");
+            Debug.WriteLine($"[BIFROST-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}"); // debug to check if tls 1.3 is working for you (it should be)
             return versions;
         }
 
         public override void NotifySelectedCipherSuite(int selectedCipherSuite)
         {
             base.NotifySelectedCipherSuite(selectedCipherSuite);
-            Debug.WriteLine($"[OMEGA-TLS] Cipher suite: 0x{selectedCipherSuite:X4}");
+            Debug.WriteLine($"[BIFROST-TLS] Cipher suite: 0x{selectedCipherSuite:X4}");
         }
 
         public override void NotifyServerVersion(ProtocolVersion serverVersion)
         {
             base.NotifyServerVersion(serverVersion);
-            Debug.WriteLine($"[OMEGA-TLS] Negotiated TLS version: {serverVersion}");
+            Debug.WriteLine($"[BIFROST-TLS] Negotiated TLS version: {serverVersion}");
         }
 
         public override void NotifyAlertReceived(short alertLevel, short alertDescription)
         {
-            Debug.WriteLine($"[OMEGA-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
+            Debug.WriteLine($"[BIFROST-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
             base.NotifyAlertReceived(alertLevel, alertDescription);
         }
 
@@ -128,7 +128,7 @@ namespace Yggdrasil.Networking
                 if (bcCerts == null || bcCerts.Length == 0)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-                var dotnetCerts = new X509Certificate2Collection();
+                var dotnetCerts = new X509Certificate2Collection(); // i don't know what is causing the bad_certificate error but I suspect it's to do with outdated system certs, but that makes no sense...
                 foreach (var bcCert in bcCerts)
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
@@ -147,14 +147,14 @@ namespace Yggdrasil.Networking
                     if (!chainValid)
                     {
                         foreach (var status in chain.ChainStatus)
-                            Debug.WriteLine($"[OMEGA-TLS] Chain error: {status.StatusInformation}");
+                            Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
                     }
                 }
 
                 bool hostValid = HostMatchesCert(leaf, _host);
 
                 Debug.WriteLine(
-                    $"[OMEGA-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
+                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
 
                 if (!chainValid || !hostValid)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
@@ -178,18 +178,18 @@ namespace Yggdrasil.Networking
 
                         if (NameMatches(entry, host))
                         {
-                            Debug.WriteLine($"[OMEGA-TLS] Host matched SAN: {entry}");
+                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {entry}");
                             return true;
                         }
                     }
 
-                    Debug.WriteLine($"[OMEGA-TLS] SANs present but no match for {host}");
+                    Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
                     return false;
                 }
 
                 string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
                 bool cnMatch = NameMatches(cn, host);
-                Debug.WriteLine($"[OMEGA-TLS] CN fallback: CN={cn} match={cnMatch}");
+                Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
                 return cnMatch;
             }
 

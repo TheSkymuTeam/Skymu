@@ -19,7 +19,6 @@ using Yggdrasil.Classes;
 
 namespace Yggdrasil
 {
-
     public interface IMidgard // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;

@@ -28,7 +28,7 @@ namespace Skymu.UserDirectory
         public static readonly string WS_URL = $"wss://{DOMAIN_NAME}/ws";
 
         // REST API variables
-        private static readonly HttpClient client = new HttpClient(new OmegaEngine())
+        private static readonly HttpClient client = new HttpClient(new BifrostEngine())
         {
             BaseAddress = new Uri("https://" + DOMAIN_NAME),
         };
