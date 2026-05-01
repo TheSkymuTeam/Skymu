@@ -22,9 +22,9 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: 1. Build MiddleMan
+    - name: 1. Build Yggdrasil
       # -r (runtime) specifies the architecture, which overrides "Any CPU"
-      run: dotnet build MiddleMan/MiddleMan.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
     - name: 2. Build Plugins
       run: |
