@@ -4,17 +4,15 @@
 
 Use any version of Visual Studio from 2019 Community (recommended) onwards. Build MiddleMan first and the solution afterwards.
 
-Be warned, every project has to be set to build as either x86 or x64. Any CPU is not possible due to native code dependencies (the SQLite DLL)
-
 ![Client, chatting](Images/skymu-v0.4-chat.png) 
 
 ![Client, calling](Images/skymu-v0.4-call.png) 
 
 # How to create the installer
 
-* Install NSIS (Nullsoft Scriptable Install System) on your computer
-* Build Skymu in the "Release, x86" configuration (Important!)
-* Go to the NSIS directory and right click script.nsi and click "Compile NSIS Script"
+* Install NSIS (Nullsoft Scriptable Install System) on your computer, using the latest version is highly recommended
+* Build Skymu in the "Release" configuration
+* Go to the NSIS directory and right click the script you want to use (depending on whether you want a standard installer or beta installer) and click "Compile NSIS Script"
 
 # Open-source software used
 
