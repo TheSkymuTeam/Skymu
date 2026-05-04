@@ -1,0 +1,157 @@
+* [33me21dae0c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m Fix GH Actions
+*   [33mb7153ea1[m EMRGE
+[32m|[m[33m\[m  
+* [33m|[m [33md6e200ac[m fix git shit
+* [33m|[m [33md2c55465[m fix some problems introduced by finx
+[33m|[m[33m/[m  
+* [33m1da28df2[m das
+* [33mfa777765[m ds
+* [33m32333774[m Revise build and installer creation instructions
+* [33m997e1b84[m FINALLY FIX THE FUCKING WORDING
+* [33m983f6112[m ad
+*   [33m27a6508c[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[34m|[m[35m\[m  
+[34m|[m * [33mdffb848f[m middleman DOESNT EXIST!!1!1!1!1!1!1!1!
+* [35m|[m [33m6714fe93[m dasdasdasdasdasdasd
+[35m|[m[35m/[m  
+*   [33m69ab94a9[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[36m|[m[1;31m\[m  
+[36m|[m * [33m85265b63[m Tox should build automatically, right?
+* [1;31m|[m [33m3ef3590e[m Grammar fix
+[1;31m|[m[1;31m/[m  
+* [33m832612f0[m Final commit of code I'd worked on before retiring
+* [33meb59a7ed[m das
+* [33med4d5123[m fixes
+* [33mb74f2b20[m Put languages into the wrong place again
+* [33m1d150fa6[m Forgot to put back the languages oops
+* [33mfb6b34c8[m MiddleMan is now Yggdrasil, and Vista networking support is fixed
+* [33mc7d8ba5a[m das
+* [33m4b184edc[m Muahhahahahhaa
+* [33m589f62c3[m das
+* [33m727bd3c5[m fggaadfsfrqw3
+* [33md1111270[m das
+* [33m7a00c632[m Rename ICore to IMidgard
+* [33m6111fb78[m tgfEETGGESADasdf
+* [33mb03e8350[m Numerous fixes
+* [33mebfe6ecc[m Full network stack refactor, switch to pure managed .NET code, heavy cleanup and organization.
+* [33me4673ec0[m More sidebar fixes, "Add contact" visual
+* [33m244c58b3[m Shut up diagnostics, align with the usual coding style of strictly privating stuff
+* [33m42dbea68[m Load modern language at the same time for certain stuff
+* [33m2e39006f[m guys you cant add contacts rn please stop asking
+* [33m5f956210[m Pin C# version to shut up diagnostics and reduce issues
+* [33m2add7f57[m Quicker info dialog, and I don't think test mode should be on by default?
+* [33mec356b6b[m Remove a useless Diagnostics import
+* [33m49f759aa[m Conference OO blobs (incomplete? i forgor, but moving to a different machine, so I wanted to push)
+* [33me1370922[m Organization, minor fixes and stuff
+* [33mf012ffdc[m Message on small window size fix
+*   [33mda95f36b[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m868425e6[m Mild fix on the last commit
+[1;32m|[m * [33m34322477[m Better notification control, supress a warning
+* [1;33m|[m [33mfdffe458[m badfl[afk;gqe2wyt4sdfsdfsdfsdfsdfsdfsdfsdf
+[1;33m|[m[1;33m/[m  
+* [33mfac795f6[m Oops3
+* [33m4c13102f[m Oops2
+* [33md90957e0[m Oops
+*   [33m68dd5798[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[1;34m|[m[1;35m\[m  
+[1;34m|[m * [33m8c3d92af[m On-boot edge case fix
+[1;34m|[m * [33m5ce133df[m More sidebar fixes
+* [1;35m|[m [33m944a5de3[m Funny = bad
+[1;35m|[m[1;35m/[m  
+*   [33mb27345ab[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[1;36m|[m[31m\[m  
+[1;36m|[m * [33m4f0c118c[m i love my sidebar and my sidebar love me
+[1;36m|[m * [33m6de1ac9f[m Add Skype 1 sounds
+* [31m|[m [33mcb3643a5[m Renaming
+[31m|[m[31m/[m  
+* [33m5008e8d8[m Clean code
+*   [33m9fe41cab[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[32m|[m[33m\[m  
+[32m|[m * [33mc3b660a2[m A small chunk of missing code/file changes
+* [33m|[m [33m14ed7446[m Update licensing information
+[33m|[m[33m/[m  
+* [33m643bbd47[m Clean up code 2
+* [33ma3f2c66a[m Code clean up
+* [33m7a84b9e1[m d
+*   [33m10cb4900[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[34m|[m[35m\[m  
+[34m|[m * [33m26cc1b23[m Typing and database related fix (tox!!!!!)
+[34m|[m * [33mb7e50435[m More useless logging removal
+[34m|[m * [33m0909b8ba[m Tox crash fix on call
+[34m|[m * [33m6c2cd48f[m Stop typing on message send
+[34m|[m * [33m427ec64a[m No more auto-joining a group, type unsafety maxxing, few audit level changes
+[34m|[m * [33mc255ba59[m seanFinx Crazy Hack x64 fix
+[34m|[m * [33m212c88a1[m Remove useless logging
+* [35m|[m [33m1ae37726[m stuf
+[35m|[m[35m/[m  
+* [33mb846571a[m Update legal license info and fix small call button bug (I'm not actively developing, just a small fix)
+*   [33mfa0da49d[m d
+[36m|[m[1;31m\[m  
+[36m|[m * [33mfb0db737[m[33m ([m[1;33mtag: [m[1;33mv0.4.0[m[33m, [m[1;33mtag: [m[1;33mv0.4[m[33m)[m Bump version to 0.4
+[36m|[m * [33ma44b9530[m Tox refactor/OO-ifying (WIP)
+[36m|[m * [33mfc1add51[m Non-working "Add contact"
+[36m|[m * [33m412d2062[m Typing, minor changes (and Pontis Vonage)
+[36m|[m * [33madcbf5fc[m startup/other non-standard launching method fix
+[36m|[m * [33mc8835dbd[m Add privacy policy for Skyaeris and Pontis
+[36m|[m * [33m3c807b92[m Fix legacy? build
+[36m|[m * [33mab046e1d[m Tox build lazyness (no more manual copying)
+* [1;31m|[m [33mf4e8431f[m dsa
+[1;31m|[m[1;31m/[m  
+* [33m046363b6[m fqwqwfgqgwg
+* [33m55757d98[m ds
+* [33mbbd97a6e[m JEE
+*   [33m5877fb8e[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33mf9ba7f93[m Add a missing dark mode asset
+* [1;33m|[m [33m4b58a88b[m fga
+[1;33m|[m[1;33m/[m  
+* [33ma4425430[m Globgadukab
+* [33m2b8ad815[m Fullscreen calls, etc
+* [33m26026928[m Fix call screen using wrong texture for background
+* [33m6b149c19[m Fix call screen inaccuracies
+* [33m0b7f832b[m Fix long-standing message overlap bug when channel is switched too fast
+* [33m6edead7c[m rebrand nightly to beta and add seperate icon
+* [33m27ac413e[m galons
+* [33m4ad6903b[m Major title bar refactor and improve accuracy for Skype Basic
+*   [33m01af8084[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[1;34m|[m[1;35m\[m  
+[1;34m|[m *   [33mb725d507[m Merge pull request #42 from WowInceptionGood/master
+[1;34m|[m [1;36m|[m[31m\[m  
+[1;34m|[m [1;36m|[m * [33m4331d59c[m Cut the middle man on NSIS and add custom script
+[1;34m|[m [1;36m|[m * [33m76714248[m This should fix NSIS, right?
+[1;34m|[m [1;36m|[m * [33md7c3f00f[m Update ci-build.yml
+[1;34m|[m [1;36m|[m * [33mb5999aa5[m Update ci-build.yml
+[1;34m|[m [1;36m|[m * [33m88a52633[m Change output path
+[1;34m|[m [1;36m|[m[1;36m/[m  
+[1;34m|[m *   [33mc2ef3c50[m Merge pull request #40 from WowInceptionGood/master
+[1;34m|[m [32m|[m[33m\[m  
+[1;34m|[m [32m|[m * [33md0fe2a58[m Update ci-build.yml
+[1;34m|[m [32m|[m * [33ma83a1ce5[m Update ci-build.yml
+[1;34m|[m [32m|[m * [33mccb30cc4[m i'm an idiot
+[1;34m|[m [32m|[m * [33m26fada86[m shitty fix
+[1;34m|[m [32m|[m * [33m144c9ec5[m Update ci-build.yml
+[1;34m|[m [32m|[m * [33m224e70b7[m Update ci-build.yml
+[1;34m|[m [32m|[m * [33md4465b09[m Test
+[1;34m|[m [32m|[m[32m/[m  
+* [32m/[m [33mf311a1c2[m Code cleanup
+[32m|[m[32m/[m  
+* [33mea2fd6e4[m CS
+* [33m7f450ca0[m Fix linear race condition caused by accumulation of subscribed sockets
+* [33m958c7f2d[m EPic
+* [33mc3ea57b2[m Fix call TCS bug, refactor ICall to be more sensible, fix incoming call window bugs, etc.
+* [33mf8caafa7[m 'l=
+* [33ma663f292[m Accuracy and usability fixes to topbar
+* [33md2c16e50[m Call bar accuracy changes and otehr fixes
+* [33mf58d6225[m Remove stupid ring timeout
+* [33m51dcd631[m Sensei wu
+* [33mc576c0e3[m bruh
+*   [33m07d5df47[m Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[34m|[m[35m\[m  
+[34m|[m * [33m29976d15[m Tox encrypted save support! (it couldn't even load before lmao)
+* [35m|[m [33mbb8f3908[m change call-reconnect to call-out
+* [35m|[m [33m1b6cff1e[m Try catch fgor loading suer data exception prev silent
+[35m|[m[35m/[m  
+* [33m2c0bf81c[m Fix race condition while hanging up. Man calling has a lot of race conditions
+* [33m3d8f8552[m Fix silent call bug
+* [33m0
