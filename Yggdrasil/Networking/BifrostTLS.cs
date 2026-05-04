@@ -128,7 +128,7 @@ namespace Yggdrasil.Networking
                 if (bcCerts == null || bcCerts.Length == 0)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-                var dotnetCerts = new X509Certificate2Collection(); // i don't know what is causing the bad_certificate error but I suspect it's to do with outdated system certs, but that makes no sense...
+                var dotnetCerts = new X509Certificate2Collection(); // i don't know what is causing the bad_certificate (42) error but I suspect it's to do with outdated system certs, but that makes no sense...
                 foreach (var bcCert in bcCerts)
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
