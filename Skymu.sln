@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stub", "Plugins\Stub\Stub.c
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tox", "Plugins\Tox\Tox.csproj", "{DDE64A87-29EC-1573-F99C-3DB9CC076F43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkypeDBBrowser", "Plugins\Skype DB Browser\SkypeDBBrowser.csproj", "{D138A270-9B73-4E6A-8C21-3EE720BB0F52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skype DB Browser", "Plugins\Skype DB Browser\Skype DB Browser.csproj", "{D138A270-9B73-4E6A-8C21-3EE720BB0F52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
