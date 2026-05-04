@@ -1,0 +1,154 @@
+*   [33mcommit 6a95c5ac89a34e10cc4b05c0b91a969c237b5116[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+[31m|[m[32m\[m  Merge: e7a32053 20672d82
+[31m|[m [32m|[m Author: OmegaAOL <hackersword666@gmail.com>
+[31m|[m [32m|[m Date:   Sun May 3 20:32:36 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     Merge old history 2
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 20672d82a331d3481344f206a1c4de786eafe3d9[m[33m ([m[1;31mold2/master[m[33m, [m[1;32mold2-history[m[33m)[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Wed Mar 25 13:52:58 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     MessageBox fixes
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 618a6562fa33a48fe69bb9573a7f149d0caaa55f[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Tue Mar 24 03:45:32 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     Some edits
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit bf8452bf0d0e29efa0cd6f6f36c1190153e7f4f6[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Tue Mar 24 03:24:20 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     ds
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit c547dc7d9ac026411322d7daffbc21d4c6b4019e[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Tue Mar 24 03:24:15 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     ds
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 768f9aeb5b69b54ae36abb4c73dba53db68fb242[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Tue Mar 24 03:23:54 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     Fix matrix plugin, numerous accuracy changes and UI fixes
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 49f29f808d2889cc0e1a19dc2f3f85aeb8c29e58[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Mon Mar 23 08:28:56 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     Optimizations
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 5e814f01b1066534db0ef04fd7dbc9f8ca2a8c02[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Mon Mar 23 04:30:40 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     Clean up code in DatabaseManager.cs
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit 594d66689eb208ebfe2baa70e43ff8f39ea0f6f0[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Sun Mar 22 01:02:03 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     d
+[31m|[m [32m|[m 
+[31m|[m * [33mcommit a1f718ed63764f04ab52b90d0f0380ce6bf8ac65[m
+[31m|[m [32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [32m|[m Date:   Sun Mar 22 00:38:51 2026 -0700
+[31m|[m [32m|[m 
+[31m|[m [32m|[m     changes
+[31m|[m [32m|[m   
+[31m|[m *   [33mcommit 9299abbfdd77c00fb25837bf2921343a9e6c1a27[m
+[31m|[m [33m|[m[34m\[m  Merge: e4df3d88 acb89beb
+[31m|[m [33m|[m [34m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [33m|[m [34m|[m Date:   Fri Mar 20 07:13:55 2026 -0700
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m [34m|[m     Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m * [33mcommit acb89bebc44557c8962b986f530e62323c8a2e09[m
+[31m|[m [33m|[m [34m|[m Author: WeegLucas <129078979+Lucas-Amy@users.noreply.github.com>
+[31m|[m [33m|[m [34m|[m Date:   Fri Mar 20 12:46:37 2026 +0100
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m [34m|[m     sound - meh..
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m * [33mcommit 057e0505be0302cc29ca6bc8a1cc2ddf30712967[m
+[31m|[m [33m|[m [34m|[m Author: WeegLucas <129078979+Lucas-Amy@users.noreply.github.com>
+[31m|[m [33m|[m [34m|[m Date:   Fri Mar 20 12:10:29 2026 +0100
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m [34m|[m     first attempt at HQ call audio
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m * [33mcommit 3db85bbfa3b30b3bdee0ae182b693f2c3d3b2f81[m
+[31m|[m [33m|[m [34m|[m Author: WeegLucas <129078979+Lucas-Amy@users.noreply.github.com>
+[31m|[m [33m|[m [34m|[m Date:   Fri Mar 20 09:00:58 2026 +0100
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m [34m|[m     made busy & login sounds more accurate
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m * [33mcommit 0e8b279527e769962e1206aca85a61dc947154df[m
+[31m|[m [33m|[m [34m|[m Author: patricktbp <135556230+n1d3v@users.noreply.github.com>
+[31m|[m [33m|[m [34m|[m Date:   Thu Mar 19 21:18:30 2026 +0000
+[31m|[m [33m|[m [34m|[m 
+[31m|[m [33m|[m [34m|[m     update: Discord plugin (Work-in-progress changes)
+[31m|[m [33m|[m [34m|[m 
+[31m|[m * [34m|[m [33mcommit e4df3d88e9553b8e83863a87788c1f5381371193[m
+[31m|[m [34m|[m [34m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [34m|[m [34m|[m Date:   Fri Mar 20 07:13:47 2026 -0700
+[31m|[m [34m|[m [34m|[m 
+[31m|[m [34m|[m [34m|[m     Changes
+[31m|[m [34m|[m [34m|[m 
+[31m|[m * [34m|[m [33mcommit 2cbc0f08c96b6a16196de88992a1635666960db5[m
+[31m|[m [34m|[m[34m/[m  Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [34m|[m   Date:   Thu Mar 19 21:37:33 2026 -0700
+[31m|[m [34m|[m   
+[31m|[m [34m|[m       fix
+[31m|[m [34m|[m   
+[31m|[m *   [33mcommit c054adbd2adb30439456d2c07e7b5c2eea6eb8e9[m
+[31m|[m [35m|[m[36m\[m  Merge: e5e839b7 4165e3b5
+[31m|[m [35m|[m [36m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [35m|[m [36m|[m Date:   Wed Mar 18 23:05:00 2026 -0700
+[31m|[m [35m|[m [36m|[m 
+[31m|[m [35m|[m [36m|[m     Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[31m|[m [35m|[m [36m|[m 
+[31m|[m [35m|[m * [33mcommit 4165e3b5d73e8f09eed949874fdbfb9303882057[m
+[31m|[m [35m|[m [36m|[m Author: WeegLucas <129078979+Lucas-Amy@users.noreply.github.com>
+[31m|[m [35m|[m [36m|[m Date:   Wed Mar 18 20:57:01 2026 +0100
+[31m|[m [35m|[m [36m|[m 
+[31m|[m [35m|[m [36m|[m     this commit makes options a bit unusable
+[31m|[m [35m|[m [36m|[m     
+[31m|[m [35m|[m [36m|[m     this is because the way it was started was a bit flawed, and I just cannot be bothered right now, sorry
+[31m|[m [35m|[m [36m|[m 
+[31m|[m * [36m|[m [33mcommit e5e839b7625324b5f0cd2e14758189b31ac54199[m
+[31m|[m [36m|[m[36m/[m  Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [36m|[m   Date:   Wed Mar 18 23:04:55 2026 -0700
+[31m|[m [36m|[m   
+[31m|[m [36m|[m       epic gamer
+[31m|[m [36m|[m 
+[31m|[m * [33mcommit 01f890aceda368f5774f7483ffb6098809cde5c3[m
+[31m|[m [36m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [36m|[m Date:   Tue Mar 17 23:44:18 2026 -0700
+[31m|[m [36m|[m 
+[31m|[m [36m|[m     Improve database system
+[31m|[m [36m|[m 
+[31m|[m * [33mcommit afa48ba13ea5467f0352fb9b487c75cebe4ee540[m
+[31m|[m [36m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [36m|[m Date:   Tue Mar 17 02:15:19 2026 -0700
+[31m|[m [36m|[m 
+[31m|[m [36m|[m     sdf
+[31m|[m [36m|[m 
+[31m|[m * [33mcommit 41110f12bbaa871e2c2498cf76ef5003e3b06b9d[m
+[31m|[m [36m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [36m|[m Date:   Tue Mar 17 01:41:02 2026 -0700
+[31m|[m [36m|[m 
+[31m|[m [36m|[m     das
+[31m|[m [36m|[m   
+[31m|[m *   [33mcommit f8877e40285a408089df428e8852590db2523e2a[m
+[31m|[m [1;31m|[m[1;32m\[m  Merge: e4966a53 ce1895e4
+[31m|[m [1;31m|[m [1;32m|[m Author: OmegaAOL <semmalkumar9@yahoo.com>
+[31m|[m [1;31m|[m [1;32m|[m Date:   Mon Mar 16 21:59:44 2026 -0700
+[31m|[m [1;31m|[m [1;32m|[m 
+[31m|[m [1;31m|[m [1;32m|[m     Merge branch 'master' of https://github.com/TheSkymuTeam/Skymu
+[31m|[m [1;31m|[m [1;32m|[m 
+[31m|[m [1;31m|[m * [33mcommit ce1895e401012662030653af75df3fbd2ae7879c[m
+[31m|[m [1;31m|[m [1;32m|[m Author: supermariobrothers <marioluiginc@gmail.com>
+[31m|[m [1;31m|[m [1;32m|[m Date:   Mon Mar 16 19:53:51 2026 +0100
+[31m|[m [1;31m|[m 
