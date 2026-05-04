@@ -31,7 +31,7 @@ using Yggdrasil.Enumerations;
 
 namespace Discord
 {
-    public class Core : IMidgard, ICall
+    public class Core : ICore, ICall
     {
         #region Variables and plugin metadata
 

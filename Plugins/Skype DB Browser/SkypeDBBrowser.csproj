@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>SkypeDBBrowser</RootNamespace>
+		<AssemblyTitle>SkypeDBBrowser</AssemblyTitle>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<Platforms>AnyCPU</Platforms>
+		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
+		<AssemblyName>plugin-SkypeDBBrowser</AssemblyName>
+		<LangVersion>7.3</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.3" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
+	</ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+	</PropertyGroup>
+</Project>

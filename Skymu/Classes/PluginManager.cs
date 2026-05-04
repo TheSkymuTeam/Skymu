@@ -20,9 +20,9 @@ namespace Skymu.Plugins
 {
     internal class PluginManager
     {
-        public static IMidgard[] Load(string path)
+        public static ICore[] Load(string path)
         {
-            var PluginList = new List<IMidgard>();
+            var PluginList = new List<ICore>();
 
             if (!Directory.Exists(path))
             {
@@ -38,9 +38,9 @@ namespace Skymu.Plugins
 
                     foreach (Type t in asm.GetTypes())
                     {
-                        if (typeof(IMidgard).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+                        if (typeof(ICore).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                         {
-                            IMidgard instance = (IMidgard)Activator.CreateInstance(t);
+                            ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;
                             instance.OnWarning += Universal.PluginWarningHandler;
                             instance.MessageEvent += Universal.PluginNotificationHandler;

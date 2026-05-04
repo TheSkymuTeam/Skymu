@@ -32,13 +32,14 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
-        public static IMidgard Plugin;
+        public static ICore Plugin;
         public static ICall CallPlugin;
-        public static IMidgard[] PluginList;
+        public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
         internal static bool TestMode = false; // disables plugin login, signs you directly into stub
+        internal static bool DisableAutoLogin = true; // disables plugin auto login for testing
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4.1";
@@ -63,7 +64,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        var core = (IMidgard)sender;
+                        var core = (ICore)sender;
                         new Dialog(
                             itype,
                             e.Message,

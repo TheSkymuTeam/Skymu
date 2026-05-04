@@ -20,7 +20,7 @@ using Yggdrasil.Enumerations;
 
 namespace Stub
 {
-    public class Core : IMidgard, ICall
+    public class Core : ICore, ICall
     {
         #region Variables
 

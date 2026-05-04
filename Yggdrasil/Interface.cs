@@ -22,7 +22,7 @@ using Yggdrasil.Enumerations;
 
 namespace Yggdrasil
 {
-    public interface IMidgard // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
+    public interface ICore // For methods/variables that ALL plugins have to contain, e.g. plugin details, authentication
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;

@@ -25,7 +25,7 @@ using Yggdrasil.Networking;
 
 namespace Matrix
 {
-    public class Core : IMidgard
+    public class Core : ICore
     {
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
