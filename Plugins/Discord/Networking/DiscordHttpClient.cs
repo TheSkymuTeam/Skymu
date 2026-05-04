@@ -118,7 +118,7 @@ namespace Discord.Networking
                 }
                 catch (Exception ex)
                 {
-                    return $"[API/RequestError]{ex.Message}\nURL: {url}";
+                    return $"[API/RequestError]{ex.InnerException?.Message ?? ex.Message}\nURL: {url}";
                 }
             }
         }

@@ -126,9 +126,9 @@ namespace Yggdrasil.Networking
             {
                 var bcCerts = serverCert.Certificate.GetCertificateList();
                 if (bcCerts == null || bcCerts.Length == 0)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: The server did not provide any certificates [42]"));
 
-                var dotnetCerts = new X509Certificate2Collection(); // i don't know what is causing the bad_certificate (42) error but I suspect it's to do with outdated system certs, but that makes no sense...
+                var dotnetCerts = new X509Certificate2Collection(); 
                 foreach (var bcCert in bcCerts)
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
@@ -156,8 +156,14 @@ namespace Yggdrasil.Networking
                 Debug.WriteLine(
                     $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
 
-                if (!chainValid || !hostValid)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                if (!chainValid && !hostValid)
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Both certificate chain and host are invalid [42]"));
+
+                if (!chainValid)
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Certificate chain is invalid [42]"));
+
+                if (!hostValid)
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception($"BifrostTLS error: Host is invalid, '{_host}' does not match certificate [42]"));
             }
 
             private static bool HostMatchesCert(X509Certificate2 cert, string host)
