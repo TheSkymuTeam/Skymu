@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mm="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Title="Skymu"
     Width="1448"
@@ -121,7 +121,7 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
         <!--  User template  -->
-        <DataTemplate DataType="{x:Type mm:DirectMessage}">
+        <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
             <Grid Height="32" Margin="2,4,0,4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2" />
@@ -199,7 +199,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!--  Group template  -->
-        <DataTemplate DataType="{x:Type mm:Group}">
+        <DataTemplate DataType="{x:Type yggdrasil:Group}">
             <Grid Height="32" Margin="2,4,0,4">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2" />
@@ -277,7 +277,7 @@
             </DataTemplate.Triggers>
         </DataTemplate>
         <!--  Server template  -->
-        <HierarchicalDataTemplate DataType="{x:Type mm:Server}" ItemsSource="{Binding GroupedChannels}">
+        <HierarchicalDataTemplate DataType="{x:Type yggdrasil:Server}" ItemsSource="{Binding GroupedChannels}">
             <HierarchicalDataTemplate.ItemTemplate>
                 <DataTemplate>
                     <ContentControl Content="{Binding}">
@@ -297,7 +297,7 @@
                                         Text="{Binding CategoryName}" />
                                 </Border>
                             </DataTemplate>
-                            <DataTemplate DataType="{x:Type mm:ServerChannel}">
+                            <DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
                                 <Grid Height="22" Margin="0,0,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="24" />
@@ -451,7 +451,7 @@
                     Text="{Binding DateText}" />
             </Border>
         </DataTemplate>
-        <DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type mm:DirectMessage}">
+        <DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type yggdrasil:DirectMessage}">
             <Grid Height="22" Margin="8,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="18" />
@@ -486,7 +486,7 @@
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
-        <DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type mm:Group}">
+        <DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type yggdrasil:Group}">
             <Grid Height="22" Margin="8,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="18" />
@@ -524,7 +524,7 @@
         <!--  COMPACT RECENTS TEMPLATES END  -->
         <!--  CONVERSATION ITEM TEMPLATES START  -->
         <!--  MessageItem Template  -->
-        <DataTemplate DataType="{x:Type mm:Message}">
+        <DataTemplate DataType="{x:Type yggdrasil:Message}">
             <Grid HorizontalAlignment="Stretch">
                 <Grid
                     x:Name="ConversationGrid"
@@ -657,7 +657,7 @@
             </Grid>
         </DataTemplate>
         <!--  CallStartedItem Template  -->
-        <DataTemplate DataType="{x:Type mm:CallStartedNotice}">
+        <DataTemplate DataType="{x:Type yggdrasil:CallStartedNotice}">
             <Grid Margin="0,9.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="114" />
@@ -681,7 +681,7 @@
             </Grid>
         </DataTemplate>
         <!--  CallEndedItem Template  -->
-        <DataTemplate DataType="{x:Type mm:CallEndedNotice}">
+        <DataTemplate DataType="{x:Type yggdrasil:CallEndedNotice}">
             <Grid Margin="0,9.5,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="114" />
@@ -1642,7 +1642,7 @@
                                         <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
                                         <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                             <ContentControl.Resources>
-                                                <DataTemplate DataType="{x:Type mm:DirectMessage}">
+                                                <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
@@ -1735,7 +1735,7 @@
                                                         </StackPanel>
                                                     </Grid>
                                                 </DataTemplate>
-                                                <DataTemplate DataType="{x:Type mm:Group}">
+                                                <DataTemplate DataType="{x:Type yggdrasil:Group}">
                                                     <ItemsControl ItemsSource="{Binding Members}">
                                                         <ItemsControl.ItemsPanel>
                                                             <ItemsPanelTemplate>
@@ -1746,7 +1746,7 @@
                                                             </ItemsPanelTemplate>
                                                         </ItemsControl.ItemsPanel>
                                                         <ItemsControl.ItemTemplate>
-                                                            <DataTemplate DataType="{x:Type mm:User}">
+                                                            <DataTemplate DataType="{x:Type yggdrasil:User}">
                                                                 <StackPanel
                                                                     Width="120"
                                                                     Margin="10,0"
@@ -1801,7 +1801,7 @@
                                                         </ItemsControl.ItemTemplate>
                                                     </ItemsControl>
                                                 </DataTemplate>
-                                                <DataTemplate DataType="{x:Type mm:Server}">
+                                                <DataTemplate DataType="{x:Type yggdrasil:Server}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
@@ -1859,7 +1859,7 @@
                                                         </StackPanel>
                                                     </Grid>
                                                 </DataTemplate>
-                                                <DataTemplate DataType="{x:Type mm:ServerChannel}">
+                                                <DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />

@@ -8,7 +8,7 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:local="clr-namespace:Skymu.SeanKype"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mm="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:vm="clr-namespace:Skymu.ViewModels"
     Title="Skype"
     Width="960"
@@ -339,7 +339,7 @@
         <conv:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImage" />
 
         <!--  SIDEBAR CONVERSATION DATA TEMPLATES  -->
-        <DataTemplate x:Key="DirectMessageTemplate" DataType="{x:Type mm:DirectMessage}">
+        <DataTemplate x:Key="DirectMessageTemplate" DataType="{x:Type yggdrasil:DirectMessage}">
             <Grid
                 Height="50"
                 Margin="0,0,4,0"
@@ -385,7 +385,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="GroupTemplate" DataType="{x:Type mm:Group}">
+        <DataTemplate x:Key="GroupTemplate" DataType="{x:Type yggdrasil:Group}">
             <Grid
                 Height="50"
                 Margin="0,0,4,0"
@@ -589,7 +589,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServerTemplate" DataType="{x:Type mm:Server}">
+        <DataTemplate x:Key="ServerTemplate" DataType="{x:Type yggdrasil:Server}">
             <Grid
                 Height="50"
                 Margin="0,0,4,0"
@@ -631,7 +631,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ServerChannelTemplate" DataType="{x:Type mm:ServerChannel}">
+        <DataTemplate x:Key="ServerChannelTemplate" DataType="{x:Type yggdrasil:ServerChannel}">
             <Grid
                 Height="25"
                 Margin="0,0,4,0"
