@@ -34,8 +34,8 @@ namespace SkypeDBBrowser
         public event EventHandler<PluginMessageEventArgs> OnWarning;
         public event EventHandler<MessageEventArgs> MessageEvent;
 
-        public string Name => "Skype DB Browser";
-        public string InternalName => "db-browser";
+        public string Name => "Skype database browser";
+        public string InternalName => "skype-database-browser";
 
         public bool SupportsServers
         {
