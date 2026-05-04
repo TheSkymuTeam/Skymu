@@ -8,6 +8,11 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
+// Yggdrasil was previously known as 'MiddleMan' but renamed
+// because it stopped solely being a plugin API. It is 
+// recommended that you make the necessary changes to your
+// code to accomodate this.
+/*==========================================================*/
 
 using System;
 using System.Collections.ObjectModel;
