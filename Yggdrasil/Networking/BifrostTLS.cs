@@ -137,7 +137,7 @@ namespace Yggdrasil.Networking
                 bool chainValid;
                 using (var chain = new X509Chain())
                 {
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Offline;
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
 
                     for (int i = 1; i < dotnetCerts.Count; i++)
                         chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
