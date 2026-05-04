@@ -10,26 +10,11 @@
 /*==========================================================*/
 
 
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
-using Skymu.Formatting;
-After:
-using Skymu.Formatting;
-*/
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.Windows.Media.Imaging;
-After:
-using System.Windows.Media.Imaging;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
-*/
+
 
 
 namespace Skymu.Converters

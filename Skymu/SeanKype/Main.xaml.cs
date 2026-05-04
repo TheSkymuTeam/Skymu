@@ -16,24 +16,6 @@
 
 using Skymu.Converters;
 using Skymu.Emoticons;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.Collections.Generic;
-using System.Diagnostics;
-using System;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Linq;
-After:
-using System.Formatting;
-using Skymu.Helpers;
-using System.Preferences;
-using Skymu.ViewModels;
-using Skymu.Views;
-using System;
-using System.Collections.Generic;
-*/
 using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
@@ -41,29 +23,11 @@ using Skymu.ViewModels;
 using Skymu.Views;
 using System;
 using System.Diagnostics;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Skymu.Converters;
-After:
-using System.Linq;
-*/
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using Skymu.Preferences;
-using Skymu.Formatting;
-using Skymu.ViewModels;
-After:
-using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.ViewModels;
-*/
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yggdrasil.Classes;

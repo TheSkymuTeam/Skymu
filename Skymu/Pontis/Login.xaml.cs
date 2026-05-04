@@ -17,15 +17,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-
-/* Unmerged change from project 'Skymu (net5.0-windows)'
-Before:
-using System.Windows.Navigation;
-After:
-using System.Windows.Navigation;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
-*/
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
 
