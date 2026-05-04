@@ -1,4 +1,4 @@
-name: Skymu Nightly
+name: Skymu (BETA)
 
 on:
   push:
@@ -10,7 +10,6 @@ jobs:
     
     strategy:
       matrix:
-        # This creates two parallel runs: one for x86 and one for x64
         architecture: [x86, x64]
 
     steps:
@@ -23,7 +22,6 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: 1. Build Yggdrasil
-      # -r (runtime) specifies the architecture, which overrides "Any CPU"
       run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
 
     - name: 2. Build Plugins
@@ -41,7 +39,6 @@ jobs:
     - name: 5. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
       with:
-        # Separate the names so the x86 and x64 files don't overwrite each other
-        name: nightly-build-${{ matrix.architecture }}
+        name: beta-build-${{ matrix.architecture }}
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
