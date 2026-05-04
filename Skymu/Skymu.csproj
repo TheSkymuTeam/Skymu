@@ -100,6 +100,7 @@
 
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
+		<None Remove="Properties\**" />
 		<Page Remove="Emoji\**\*" />
 		<EmbeddedResource Remove="Emoji\Resources\**\*" />
 		<Compile Remove="Emoji\**\*" />
@@ -114,8 +115,11 @@
 
 		<!-- Sounds -->
 		<None Remove="Sounds*\**\*" />
+		<Page Remove="Properties\**" />
 		<Page Remove="Sounds*\**\*" />
+		<EmbeddedResource Remove="Properties\**" />
 		<EmbeddedResource Remove="Sounds*\**\*" />
+		<Compile Remove="Properties\**" />
 		<Compile Remove="Sounds*\**\*" />
 		<Resource Include="Sounds*\**\*" />
 		
@@ -136,6 +140,9 @@
 		<Content Include="Home\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Remove="Properties\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -238,10 +245,6 @@
 	  <Page Update="Forms\IncomingCall.xaml">
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\" />
 	</ItemGroup>
 
 </Project>
