@@ -17,12 +17,9 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using Yggdrasil;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Views;
@@ -31,6 +28,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Yggdrasil;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.ViewModels
 {

@@ -14,17 +14,17 @@
 // their own protocol on top of it. Truly based
 /*==========================================================*/
 
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tls;
-using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 
 namespace Yggdrasil.Networking
 {
@@ -137,7 +137,7 @@ namespace Yggdrasil.Networking
                 bool chainValid;
                 using (var chain = new X509Chain())
                 {
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Offline;
 
                     for (int i = 1; i < dotnetCerts.Count; i++)
                         chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
@@ -162,7 +162,7 @@ namespace Yggdrasil.Networking
 
             private static bool HostMatchesCert(X509Certificate2 cert, string host)
             {
-                var sanExt = cert.Extensions["2.5.29.17"]; 
+                var sanExt = cert.Extensions["2.5.29.17"];
                 if (sanExt != null)
                 {
                     string sanText = sanExt.Format(true);
@@ -204,7 +204,7 @@ namespace Yggdrasil.Networking
                 if (!pattern.StartsWith("*.") || pattern.Length < 3)
                     return false;
 
-                string suffix = pattern.Substring(1); 
+                string suffix = pattern.Substring(1);
 
                 if (!host.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
                     return false;

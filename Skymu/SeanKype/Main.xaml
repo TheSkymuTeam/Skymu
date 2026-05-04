@@ -6,8 +6,10 @@
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
+    xmlns:local="clr-namespace:Skymu.SeanKype"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mm="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
+    xmlns:vm="clr-namespace:Skymu.ViewModels"
     Title="Skype"
     Width="960"
     Height="560"
@@ -53,11 +55,11 @@
         <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
         <converters:SenderToColorConverter x:Key="SenderToColorConverter" />
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter" />
-        <converters:NullDependentMargin x:Key="NullDependentMargin" />
+        <converters:NullDependentMarginConverter x:Key="NullDependentMarginConverter" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <converters:ForwardedChecker x:Key="ForwardedChecker" />
+        <converters:ForwardedMessageStatusConverter x:Key="ForwardedChecker" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
@@ -426,7 +428,7 @@
         </DataTemplate>
 
         <!--  Chat message DataTemplate...one group represnents one bubble  -->
-        <DataTemplate x:Key="MessageTemplate" DataType="{x:Type conv:MessageGroup}">
+        <DataTemplate x:Key="MessageTemplate" DataType="{x:Type vm:MessageGroup}">
             <Grid Margin="0,12,0,0" HorizontalAlignment="Stretch">
 
                 <!--  RECIEVED BUBBLE  -->
@@ -647,7 +649,7 @@
         </DataTemplate>
 
         <!--  Sidebar Template Selector  -->
-        <conv:SeanKypeSidebarTemplateSelector
+        <local:SeanKypeSidebarTemplateSelector
             x:Key="SidebarSelector"
             DirectMessageTemplate="{StaticResource DirectMessageTemplate}"
             GroupTemplate="{StaticResource GroupTemplate}"

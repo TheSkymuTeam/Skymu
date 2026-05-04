@@ -10,12 +10,10 @@
 /*==========================================================*/
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using Yggdrasil.Enumerations;
 using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Yggdrasil
 {

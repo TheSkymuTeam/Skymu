@@ -9,14 +9,14 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Stub
 {
@@ -105,7 +105,7 @@ namespace Stub
             return null;
         }
 
-        public Task<string> GetQRCode() 
+        public Task<string> GetQRCode()
         {
             return Task.FromResult(String.Empty);
         }
@@ -411,12 +411,14 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public Task<bool> SetConnectionStatus(PresenceStatus status) {
+        public Task<bool> SetConnectionStatus(PresenceStatus status)
+        {
             return Task.FromResult(true);
         }
 
         public int TypingTimeout => 5000;
-        public Task<bool> SetTyping(string idenfitier, bool typing) {
+        public Task<bool> SetTyping(string idenfitier, bool typing)
+        {
 
             return Task.FromResult(false);
         }

@@ -9,12 +9,12 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
 using Skymu.Helpers;
 using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Yggdrasil.Classes;
 
 namespace Skymu.Views
 {

@@ -9,8 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
+using Skymu.Converters;
 using Skymu.Formatting;
 using Skymu.Preferences;
 using Skymu.ViewModels;
@@ -23,6 +22,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Views
 {
@@ -61,7 +62,7 @@ namespace Skymu.Views
                 {
                     if (blue_background == null)
                     {
-                        blue_background = Converters.Helpers.AssetPathGenerator(
+                        blue_background = ConversionHelpers.AssetPathGenerator(
                             "Notifications/bubble-blue.png",
                             false
                         );
@@ -177,7 +178,7 @@ namespace Skymu.Views
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = Helpers.ImageHelper.Generate(Converters.Helpers.GetAssetBasePrefix(null, true) + "Icon Bitmap/skype-status.png"),
+                Source = Helpers.ImageHelper.Generate(ConversionHelpers.GetAssetBasePrefix(null, true) + "Icon Bitmap/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat

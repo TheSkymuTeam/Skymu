@@ -9,9 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using Skymu.Classes;
+using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
@@ -33,6 +32,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Pontis
 {
@@ -91,9 +92,9 @@ namespace Skymu.Pontis
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private readonly BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/contacts.png", false);
-        private readonly BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator("Sidebar/recents.png", false);
-        private readonly BitmapImage sidebarBtnEmpty = Converters.Helpers.AssetPathGenerator("Sidebar/empty.png", false);
+        private readonly BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator("Sidebar/contacts.png", false);
+        private readonly BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator("Sidebar/recents.png", false);
+        private readonly BitmapImage sidebarBtnEmpty = ConversionHelpers.AssetPathGenerator("Sidebar/empty.png", false);
 
         private Metadata SelectedContact;
 
@@ -103,7 +104,7 @@ namespace Skymu.Pontis
 
         private static BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = Converters.Helpers.GetAssetBasePrefix("Pontis") + "Profile Pictures/" + avatar + ".png";
+            string AvatarPath = ConversionHelpers.GetAssetBasePrefix("Pontis") + "Profile Pictures/" + avatar + ".png";
             return ImageHelper.Generate(AvatarPath);
         }
 
@@ -408,7 +409,7 @@ namespace Skymu.Pontis
                 mainWindow.Dispatcher.Invoke(mainWindow.ConfigureCompactRecentsList);
             }
         }
-        
+
         private async void SelectTopButton(SliceControl to_select)
         {
             if (to_select == AddContactButton)
@@ -820,7 +821,8 @@ namespace Skymu.Pontis
             }
         }
 
-        private void AddContact_Click(object sender, MouseButtonEventArgs e) {
+        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        {
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
                 tab.SetState(ButtonVisualState.Default);
             SidebarTabs.Visibility = Visibility.Collapsed;
@@ -840,7 +842,7 @@ namespace Skymu.Pontis
         {
             await vmodel.RunSpeedTest();
         }
-       
+
 
         private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1384,7 +1386,7 @@ namespace Skymu.Pontis
             _ = SelectTab(btnRecents);
             ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
-            
+
             if (!Universal.Plugin.SupportsServers)
             {
                 btnServers.Visibility = Visibility.Collapsed;

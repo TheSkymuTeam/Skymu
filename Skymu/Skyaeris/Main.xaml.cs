@@ -9,9 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using Skymu.Classes;
+using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
@@ -35,6 +34,8 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Skyaeris
 {
@@ -110,19 +111,19 @@ namespace Skymu.Skyaeris
             "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
         );
 
-        private BitmapImage contactsBtnImage = Converters.Helpers.AssetPathGenerator(
+        private BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator(
             "Sidebar/contacts.png",
             false
         );
-        private BitmapImage recentsBtnImage = Converters.Helpers.AssetPathGenerator(
+        private BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator(
             "Sidebar/recents.png",
             false
         );
-        private BitmapImage contactsBtnImageEmpty = Converters.Helpers.AssetPathGenerator(
+        private BitmapImage contactsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
             "Sidebar/contacts-empty.png",
             false
         );
-        private BitmapImage recentsBtnImageEmpty = Converters.Helpers.AssetPathGenerator(
+        private BitmapImage recentsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
             "Sidebar/recents-empty.png",
             false
         );
@@ -145,7 +146,7 @@ namespace Skymu.Skyaeris
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath =
-                Converters.Helpers.GetAssetBasePrefix("Skyaeris")
+                ConversionHelpers.GetAssetBasePrefix("Skyaeris")
                 + "Profile Pictures/"
                 + avatar
                 + ".png";
@@ -1175,7 +1176,7 @@ namespace Skymu.Skyaeris
             }
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(true, false);
-           
+
             screen = new CallScreen(partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;

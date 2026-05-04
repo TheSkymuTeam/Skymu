@@ -17,11 +17,11 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using Yggdrasil.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil.Networking;
 
 namespace Discord.Networking
 {

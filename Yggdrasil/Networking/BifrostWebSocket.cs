@@ -159,14 +159,14 @@ namespace Yggdrasil.Networking
                         _currentMessageOpcode = opcode;
                         goto case 0x00;
 
-                    case 0x00: 
+                    case 0x00:
                         {
                             var msgType = _currentMessageOpcode == 0x01
                                 ? WebSocketMessageType.Text
                                 : WebSocketMessageType.Binary;
 
                             if (fin)
-                                _currentMessageOpcode = 0; 
+                                _currentMessageOpcode = 0;
 
                             int copy = Math.Min(payload.Length, buffer.Count);
                             Buffer.BlockCopy(payload, 0, buffer.Array, buffer.Offset, copy);

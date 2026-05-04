@@ -9,12 +9,12 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Enumerations;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using Yggdrasil.Enumerations;
 using Winforms = System.Windows.Forms;
 
 # pragma warning disable CA1416

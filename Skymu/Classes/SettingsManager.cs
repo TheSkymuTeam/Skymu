@@ -300,7 +300,7 @@ namespace Skymu.Preferences
 
         private static NotificationTriggerType S(string k, NotificationTriggerType def) =>
             Enum.TryParse<NotificationTriggerType>(Get(k, def.ToString()), out var v) ? v : def;
-        
+
         private static double Xd(string k, double def) =>
             double.TryParse(Get(k, def.ToString()), out var v) ? v : def;
 

@@ -464,7 +464,7 @@ namespace Yggdrasil.Networking
                         if (chunkSize == 0) break;
                         byte[] chunk = await ReadExactAsync(chunkSize, ct).ConfigureAwait(false);
                         ms.Write(chunk, 0, chunk.Length);
-                        await ReadExactAsync(2, ct).ConfigureAwait(false); 
+                        await ReadExactAsync(2, ct).ConfigureAwait(false);
                     }
                     return ms.ToArray();
                 }

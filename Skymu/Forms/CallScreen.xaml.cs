@@ -9,20 +9,20 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using Skymu.Helpers;
+using Skymu.Preferences;
 using System;
 using System.Threading;
-using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Skymu.Preferences;
+using System.Windows.Navigation;
 using System.Windows.Threading;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Views
 {

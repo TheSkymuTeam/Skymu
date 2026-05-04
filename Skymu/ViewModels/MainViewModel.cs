@@ -15,8 +15,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using Skymu.Converters;
 using Skymu.Credentials;
 using Skymu.Databases;
@@ -36,6 +34,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.ViewModels
 {
@@ -836,7 +836,7 @@ namespace Skymu.ViewModels
                     while (!token.IsCancellationRequested)
                     {
                         string uri =
-                            Converters.Helpers.GetAssetBasePrefix()
+                            ConversionHelpers.GetAssetBasePrefix()
                             + "Chat/"
                             + PREFIX
                             + (idx + 1)
@@ -878,7 +878,7 @@ namespace Skymu.ViewModels
             }
 
             SpeedTestIconUpdated?.Invoke(
-                Converters.Helpers.GetAssetBasePrefix() + "Chat/" + final + ".png"
+                ConversionHelpers.GetAssetBasePrefix() + "Chat/" + final + ".png"
             );
         }
 
@@ -1085,6 +1085,34 @@ namespace Skymu.ViewModels
                     return;
                 }
             }
+        }
+    }
+
+    public class MessageGroup
+    {
+        public ObservableCollection<Message> Messages { get; }
+        public bool ShowSenderName { get; }
+        public User Sender => Messages.Count > 0 ? Messages[0].Sender : null;
+        public DateTime Time =>
+            Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
+
+        public bool IsImageGroup
+        {
+            get
+            {
+                if (Messages.Count != 1 || Messages[0].Attachments == null)
+                    return false;
+                foreach (var a in Messages[0].Attachments)
+                    if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage)
+                        return true;
+                return false;
+            }
+        }
+
+        public MessageGroup(IList<Message> messages, bool showSenderName)
+        {
+            Messages = new ObservableCollection<Message>(messages);
+            ShowSenderName = showSenderName;
         }
     }
 }

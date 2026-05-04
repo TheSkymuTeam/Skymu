@@ -11,8 +11,6 @@
 
 using Discord.Networking.Managers;
 using Discord.Users;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +21,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Yggdrasil.Enumerations;
 
 namespace Discord.Helpers
 {

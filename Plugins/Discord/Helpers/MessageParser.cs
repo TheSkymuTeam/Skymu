@@ -10,12 +10,12 @@
 /*==========================================================*/
 
 using Discord.Users;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Discord.Helpers
 {

@@ -9,8 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil;
-using Yggdrasil.Classes;
 using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
@@ -19,7 +17,6 @@ using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Views;
 using System;
-using Yggdrasil.Networking;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -27,6 +24,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Yggdrasil;
+using Yggdrasil.Classes;
+using Yggdrasil.Networking;
 
 namespace Skymu
 {

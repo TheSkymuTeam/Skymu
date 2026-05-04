@@ -10,9 +10,9 @@
 /*==========================================================*/
 
 using Discord.Helpers;
-using Yggdrasil.Classes;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Yggdrasil.Classes;
 
 namespace Discord.Users
 {

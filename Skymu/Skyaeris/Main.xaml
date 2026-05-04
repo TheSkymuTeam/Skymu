@@ -41,11 +41,11 @@
         <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
         <converters:SenderToColorConverter x:Key="SenderToColorConverter" />
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter" />
-        <converters:NullDependentMargin x:Key="NullDependentMargin" />
+        <converters:NullDependentMarginConverter x:Key="NullDependentMarginConverter" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <converters:ForwardedChecker x:Key="ForwardedChecker" />
+        <converters:ForwardedMessageStatusConverter x:Key="ForwardedMessageStatusConverter" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
@@ -558,7 +558,7 @@
                             </MultiBinding>
                         </TextBlock.Foreground>
                         <TextBlock.Text>
-                            <MultiBinding Converter="{StaticResource ForwardedChecker}">
+                            <MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
                                 <Binding Path="Sender.DisplayName" />
                                 <Binding Path="IsForwarded" />
                             </MultiBinding>
@@ -614,7 +614,7 @@
                         <Image
                             MaxWidth="300"
                             MaxHeight="300"
-                            Margin="{Binding Text, Converter={StaticResource NullDependentMargin}}"
+                            Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
                             HorizontalAlignment="Left"
                             Cursor="Hand"
                             RenderOptions.BitmapScalingMode="HighQuality"

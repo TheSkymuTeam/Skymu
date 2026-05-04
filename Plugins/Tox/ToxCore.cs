@@ -1414,7 +1414,7 @@ public static class ToxCore
     #region Group chat message sending
 
     public enum Tox_Err_Group_Send_Message
-    { 
+    {
         OK,
         GROUP_NOT_FOUND,
         TOO_LONG,
@@ -1554,7 +1554,7 @@ public static class ToxCore
     {
         QUIT,
         TIMEOUT,
-        DISCONNECTED,  
+        DISCONNECTED,
         SELF_DISCONNECTED,
         KICK,
         SYNC_ERROR,
@@ -1922,12 +1922,14 @@ public static class ToxCore
         {
             UInt32 gc = Ftox_group_get_group_list_size(tox);
             UInt32[] gl = new UInt32[gc];
-            for (UInt32 i = 0; i < UInt32.MaxValue && gl.Length < gc; i++) {
-		        tox_group_self_get_peer_id(tox, i, out Tox_Err_Group_Self_Query err);
-                if (err == Tox_Err_Group_Self_Query.OK) {
+            for (UInt32 i = 0; i < UInt32.MaxValue && gl.Length < gc; i++)
+            {
+                tox_group_self_get_peer_id(tox, i, out Tox_Err_Group_Self_Query err);
+                if (err == Tox_Err_Group_Self_Query.OK)
+                {
                     gl[i] = i;
-		        }
-	        }
+                }
+            }
         }
     }
 

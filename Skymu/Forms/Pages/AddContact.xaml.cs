@@ -11,14 +11,10 @@
 
 using Skymu.Preferences;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using System.Windows.Input;
-using static Skymu.Views.Pages.Updater;
 
 namespace Skymu.Views.Pages
 {

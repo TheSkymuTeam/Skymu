@@ -14,9 +14,6 @@ using Discord.Networking;
 using Discord.Networking.Managers;
 using Discord.Protobuf;
 using Discord.Users;
-using Yggdrasil;
-using Yggdrasil.Enumerations;
-using Yggdrasil.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +25,9 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Discord
 {
@@ -662,7 +662,8 @@ namespace Discord
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
                 return false;
 
-            try {
+            try
+            {
                 string msgResponse = await Client.Send($"/channels/{channelId}/typing", HttpMethod.Post, DiscordToken).ConfigureAwait(false);
                 return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
             }

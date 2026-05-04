@@ -29,15 +29,15 @@
 
 
 using Microsoft.Data.Sqlite;
-using Skymu.Preferences;
-using System;
 using Skymu.Helpers;
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
+using Skymu.Preferences;
+using Skymu.Views;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Skymu.Views;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Databases
 {

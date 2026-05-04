@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Enumerations;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -19,6 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Skyaeris
 {

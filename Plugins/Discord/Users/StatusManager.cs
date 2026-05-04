@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using System.Diagnostics;
 using System.Text.Json.Nodes;
 
 namespace Discord.Users

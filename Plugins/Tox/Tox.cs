@@ -9,9 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil;
-using Yggdrasil.Enumerations;
-using Yggdrasil.Classes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +19,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ToxOO;
+using Yggdrasil;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using static Tox.Helper;
 using static ToxCore;
 
@@ -388,7 +388,7 @@ namespace Tox
                 try
                 {
                     tox.Bootstrap(node.ip, node.port, node.public_key);
-                     BootstrapSuccess = true;
+                    BootstrapSuccess = true;
                     Debug.WriteLine($"Tox: Bootstrapped with node {node.ip}:{node.port}");
                 }
                 catch (Exception e)
@@ -414,7 +414,7 @@ namespace Tox
             uname = tox.name;
 
             var status = tox.statusMessage;
-            
+
             var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
             if (File.Exists(avatarPath))
                 currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Online, File.ReadAllBytes(avatarPath));

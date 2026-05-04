@@ -9,11 +9,11 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Yggdrasil.Enumerations;
 
 namespace Yggdrasil.Classes
 {

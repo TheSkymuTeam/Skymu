@@ -9,8 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +16,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using ToxOO;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 using static Tox.Helper;
 using static ToxCore;
 

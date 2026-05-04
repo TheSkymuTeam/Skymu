@@ -33,7 +33,8 @@ class Shit
     }
 }
 
-namespace ToxOO {
+namespace ToxOO
+{
     public class Options
     {
         public IntPtr ptr;
@@ -559,7 +560,7 @@ namespace ToxOO {
                 return stat;
             }
             set
-            { 
+            {
                 if (!tox_self_set_typing(ptr, id, value, out var err))
                     switch (err)
                     {
@@ -586,7 +587,7 @@ namespace ToxOO {
             return mid;
         }
     }
-    
+
     public class Conference
     {
         public IntPtr ptr;

@@ -14,26 +14,60 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using Yggdrasil.Classes;
-using Yggdrasil.Enumerations;
+using Skymu.Converters;
+using Skymu.Emoticons;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Linq;
+After:
+using System.Formatting;
+using Skymu.Helpers;
+using System.Preferences;
+using Skymu.ViewModels;
 using Skymu.Views;
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+*/
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using Skymu.Views;
+using System;
+using System.Diagnostics;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
+using Skymu.Converters;
+After:
+using System.Linq;
+*/
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+
+/* Unmerged change from project 'Skymu (net5.0-windows)'
+Before:
 using Skymu.Preferences;
 using Skymu.Formatting;
 using Skymu.ViewModels;
-using Skymu.Helpers;
-using Skymu.Emoticons;
+After:
 using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.ViewModels;
+*/
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
 
 
 namespace Skymu.SeanKype
@@ -411,7 +445,7 @@ namespace Skymu.SeanKype
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = Converters.Helpers.GetAssetBasePrefix("SeanKype") + "Profile Pictures/" + avatar + ".png";
+            string AvatarPath = ConversionHelpers.GetAssetBasePrefix("SeanKype") + "Profile Pictures/" + avatar + ".png";
             return ImageHelper.Generate(AvatarPath);
         }
 
@@ -575,5 +609,26 @@ namespace Skymu.SeanKype
         }
 
         #endregion
+    }
+
+    public class SeanKypeSidebarTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DirectMessageTemplate { get; set; }
+        public DataTemplate GroupTemplate { get; set; }
+        public DataTemplate ServerTemplate { get; set; }
+        public DataTemplate ServerChannelTemplate { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is ServerChannel)
+                return ServerChannelTemplate;
+            if (item is DirectMessage)
+                return DirectMessageTemplate;
+            if (item is Group)
+                return GroupTemplate;
+            if (item is Server)
+                return ServerTemplate;
+            return base.SelectTemplate(item, container);
+        }
     }
 }
