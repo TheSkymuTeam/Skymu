@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
@@ -43,6 +44,7 @@ namespace Skymu.Pontis
 
         // Constants
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
+        private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
         private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
@@ -548,8 +550,6 @@ namespace Skymu.Pontis
 
                 i = end + 4;
             }
-
-            AddContactHint.Text = input.Replace(torepl_start, "").Replace("</a>", "");
         }
 
         #endregion
@@ -823,6 +823,13 @@ namespace Skymu.Pontis
 
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
+            if (!(Universal.Plugin is IListManagement))
+            {
+                AddContactButton.SetState(ButtonVisualState.Default);
+                Sounds.Play("call-error");
+                Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+                return;
+            }
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
                 tab.SetState(ButtonVisualState.Default);
             SidebarTabs.Visibility = Visibility.Collapsed;

@@ -34,6 +34,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
@@ -45,6 +46,7 @@ namespace Skymu.Skyaeris
 
         // Constants
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
+        private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
         private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
@@ -947,7 +949,13 @@ namespace Skymu.Skyaeris
 
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
-            new AddContact();
+            if (Universal.Plugin is IListManagement)
+                new AddContact();
+            else
+            {
+                Sounds.Play("call-error");
+                Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+            }
         }
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
