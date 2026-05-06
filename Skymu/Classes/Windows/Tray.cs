@@ -9,19 +9,19 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using CommunityToolkit.Mvvm.Input;
 using Skymu.Preferences;
+using Skymu.Views;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using Yggdrasil.Enumerations;
-using Winforms = System.Windows.Forms;
-
-# pragma warning disable CA1416
 
 namespace Skymu
 {
-    class Tray
+    public class Tray
     {
         public static readonly Dictionary<PresenceStatus, string> StatusMap = new Dictionary<PresenceStatus, string>()
         {
@@ -29,7 +29,8 @@ namespace Skymu
             { PresenceStatus.Away, Universal.Lang["sTRAYHINT_USER_AWAY"] },
             { PresenceStatus.Offline, Universal.Lang["sTRAYHINT_USER_OFFLINE"] },
             { PresenceStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
-            { PresenceStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
+            { PresenceStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] },
+            { PresenceStatus.LoggedOut, Universal.Lang["sTRAYHINT_PROFILE_LOGGED_OUT"] }
         };
 
         public static readonly Dictionary<PresenceStatus, string> SIconTextMap = new Dictionary<PresenceStatus, string>()
@@ -38,205 +39,119 @@ namespace Skymu
             { PresenceStatus.Away, "away" },
             { PresenceStatus.Offline, "offline" },
             { PresenceStatus.DoNotDisturb, "dnd" },
-            { PresenceStatus.Invisible, "offline" }
+            { PresenceStatus.Invisible, "offline" },
+            { PresenceStatus.LoggedOut, "logged-out" }
         };
 
-        private static Winforms.NotifyIcon Icon;
-        private static IntPtr hMenu = IntPtr.Zero;
-        private static NativeWindow messageWindow;
-
-        #region PInvoke Declarations
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr CreatePopupMenu();
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool AppendMenu(IntPtr hMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern uint TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int nReserved, IntPtr hwnd, IntPtr prcRect);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool DestroyMenu(IntPtr hMenu);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        private const uint MF_STRING = 0x00000000;
-        private const uint MF_SEPARATOR = 0x00000800;
-        private const uint MF_GRAYED = 0x00000001;
-        private const uint TPM_LEFTALIGN = 0x0000;
-        private const uint TPM_RETURNCMD = 0x0100;
-        private const uint WM_COMMAND = 0x0111;
-
-        // Menu item IDs
-        private const uint MENU_OPEN_SKYPE = 1001;
-        private const uint MENU_SIGN_IN = 1002;
-        private const uint MENU_QUIT = 1003;
-
-        #endregion
-
-        private class NativeWindow : Winforms.NativeWindow
+        static readonly RelayCommand OpenSkype = new RelayCommand(() =>
         {
-            private Action<uint> commandHandler;
-
-            public NativeWindow(Action<uint> handler)
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                commandHandler = handler;
-                CreateHandle(new Winforms.CreateParams
+                foreach (System.Windows.Window window in System.Windows.Application.Current.Windows)
                 {
-                    Parent = new IntPtr(-3) // HWND_MESSAGE
-                });
-            }
-
-            protected override void WndProc(ref Winforms.Message m)
-            {
-                if (m.Msg == WM_COMMAND)
-                {
-                    uint commandId = (uint)(m.WParam.ToInt32() & 0xFFFF);
-                    commandHandler?.Invoke(commandId);
+                    if (window.IsInitialized)
+                    {
+                        window.Show();
+                        window.WindowState = System.Windows.WindowState.Normal;
+                        window.Activate();
+                    }
                 }
-                base.WndProc(ref m);
-            }
-        }
+            });
+        });
 
-        public static void DisposeIcon()
+        static Image IICN(string iconName) => new Image
         {
-            if (Icon != null)
-            {
-                Icon.Visible = false;
-                Icon.Icon = null;
-                Icon.Dispose();
-                Icon = null;
-            }
+            Width = 16,
+            Height = 16,
+            Source = ICON(iconName)
+        };
+        static BitmapFrame ICON(string iconName) => BitmapFrame.Create(new Uri($"pack://application:,,,/{Universal.Interface}/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute));
 
-            if (hMenu != IntPtr.Zero)
-            {
-                DestroyMenu(hMenu);
-                hMenu = IntPtr.Zero;
-            }
-
-            if (messageWindow != null)
-            {
-                messageWindow.DestroyHandle();
-                messageWindow = null;
-            }
-        }
-
-        private static void HandleMenuCommand(uint commandId)
+        static async void SS(PresenceStatus status)
         {
-            switch (commandId)
+            if (status == PresenceStatus.DoNotDisturb)
             {
-                case MENU_OPEN_SKYPE:
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        foreach (System.Windows.Window window in System.Windows.Application.Current.Windows)
-                        {
-                            if (window.IsInitialized)
-                            {
-                                window.Show();
-                                window.WindowState = System.Windows.WindowState.Normal;
-                                window.Activate();
-                            }
-                        }
-                    });
-                    break;
+                new Dialog(
+                    WindowBase.IconType.Information,
+                    Universal.Lang["sINFORM_DND"],
+                    Universal.Lang["sINFORM_DND_CAP"],
+                    Universal.Lang["sINFORM_DND_TITLE"],
+                    brText: "OK"
+                ).ShowDialog();
+                // TODO: Do not display this information again
+            }
 
-                case MENU_SIGN_IN:
-                    if (System.Windows.Application.Current.Windows != null)
-                    {
-                    }
-                    else
-                    {
-                    }
-                    break;
+            var currentStatus = Universal.CurrentUser.ConnectionStatus;
+            PushIcon(status);
 
-                case MENU_QUIT:
-                    Universal.Close();
-                    break;
+            if (!await Universal.Plugin.SetConnectionStatus(status))
+            {
+                status = currentStatus;
+                if (Universal.CurrentUser != null)
+                    Universal.CurrentUser.ConnectionStatus = status;
+                PushIcon(status);
             }
         }
 
-        private static void ShowContextMenu()
+        static readonly ObservableCollection<Control> LoginItems = new ObservableCollection<Control>()
         {
-            var cursorPos = System.Windows.Forms.Cursor.Position;
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_SHOWFRIENDS"], Command = OpenSkype },
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_LOGIN"], Command = new RelayCommand(() => { /* TODO */ }) },
+            new Separator(),
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_QUIT"], Command = new RelayCommand(() => Universal.Close()) }
+        };
 
-            if (hMenu == IntPtr.Zero)
-            {
-                hMenu = CreatePopupMenu();
+        static readonly ObservableCollection<Control> StatusItems = new ObservableCollection<Control>()
+        {
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_ONLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Online)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_AWAY"], Command = new RelayCommand(() => SS(PresenceStatus.Away)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_DND"], Command = new RelayCommand(() => SS(PresenceStatus.DoNotDisturb)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_INVISIBLE"], Command = new RelayCommand(() => SS(PresenceStatus.Invisible)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_OFFLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Offline)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new Separator(),
+            new MenuItem() { Header = Universal.Lang["sSTATUSMENU_CAPTION_CF_OPTIONS2"], Command = new RelayCommand(() => Universal.NotImplemented("Call forwarding")) }
+        };
 
-                AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_OPEN_SKYPE, Universal.Lang["sTRAYMENU_SHOWFRIENDS"]);
-                AppendMenu(hMenu, MF_STRING | MF_GRAYED, (UIntPtr)MENU_SIGN_IN, Universal.Lang["sTRAYMENU_LOGIN"]);
-                AppendMenu(hMenu, MF_SEPARATOR, UIntPtr.Zero, null);
-                AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_QUIT, Universal.Lang["sTRAYMENU_QUIT"]);
-            }
+        static readonly ObservableCollection<Control> MainItems = new ObservableCollection<Control>()
+        {
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_CHANGESTATUS"], ItemsSource = StatusItems},
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_SHOWFRIENDS"], Command = OpenSkype },
+            new Separator(),
+            new MenuItem() { Header = Universal.Lang["sTRAYMENU_QUIT"], Command = new RelayCommand(() => Universal.Close()) }
+        };
 
-            SetForegroundWindow(messageWindow.Handle);
+        public static NullSoftware.ToolKit.TrayIcon trayIcon = new NullSoftware.ToolKit.TrayIcon()
+        {
+            Title = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})",
+            IconSource = ICON("logged-out"),
+            ClickCommand = OpenSkype,
+            ContextMenu = new ContextMenu() { ItemsSource = MainItems }
+        };
 
-            uint command = TrackPopupMenu(
-                hMenu,
-                TPM_LEFTALIGN | TPM_RETURNCMD,
-                cursorPos.X,
-                cursorPos.Y,
-                0,
-                messageWindow.Handle,
-                IntPtr.Zero
-            );
+        public static void DisposeIcon() => trayIcon.Dispose();
 
-            if (command != 0)
-            {
-                HandleMenuCommand(command);
-            }
-
-            if (messageWindow != null) { PostMessage(messageWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero); }
-        }
-
-        public static void PushIcon(PresenceStatus icon, bool is_signed_in = true)
+        public static void PushIcon(PresenceStatus icon, bool isSignedIn = true)
         {
             string iconName;
             if (!SIconTextMap.TryGetValue(icon, out iconName))
             {
-                iconName = "offline";
+                iconName = "question";
             }
 
             string statusText;
-            if (!is_signed_in) statusText = Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"];
+            if (!isSignedIn) statusText = Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"];
             else if (!StatusMap.TryGetValue(icon, out statusText))
             {
                 statusText = Universal.Lang["sTRAYHINT_USER_OFFLINE"];
             }
 
-            string iconToolTip = Settings.BrandingName + " (" + statusText + ")";
-            var resourceUri = new Uri($"pack://application:,,,/Skymu;component/{Universal.Interface}/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute);
-            var resourceStreamInfo = Universal.GetResourceStream(resourceUri);
+            trayIcon.IconSource = ICON(iconName);
+            trayIcon.Title = $"{Settings.BrandingName} ({statusText})";
 
-            if (Icon != null)
-            {
-                Icon.Icon = new Icon(resourceStreamInfo.Stream);
-            }
+            if (!isSignedIn)
+                trayIcon.ContextMenu = new ContextMenu() { ItemsSource = LoginItems };
             else
-            {
-                messageWindow = new NativeWindow(HandleMenuCommand);
-
-                Icon = new Winforms.NotifyIcon();
-                Icon.Icon = new Icon(resourceStreamInfo.Stream);
-                Icon.MouseClick += (s, e) =>
-                {
-                    if (e.Button == Winforms.MouseButtons.Right)
-                        ShowContextMenu();
-                };
-                Icon.MouseDoubleClick += (s, e) =>
-                {
-                    if (e.Button == Winforms.MouseButtons.Left)
-                        HandleMenuCommand(MENU_OPEN_SKYPE);
-                };
-                Icon.Visible = true;
-            }
-
-            Icon.Text = iconToolTip;
+                trayIcon.ContextMenu = new ContextMenu() { ItemsSource = MainItems };
         }
     }
 }

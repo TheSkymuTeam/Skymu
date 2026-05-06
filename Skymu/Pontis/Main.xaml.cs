@@ -1341,6 +1341,11 @@ namespace Skymu.Pontis
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
+                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
+                {
+                    if (ee.PropertyName == nameof(User.ConnectionStatus))
+                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                };
                 Ready?.Invoke(this, EventArgs.Empty);
             };
 

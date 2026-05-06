@@ -1475,6 +1475,11 @@ namespace Skymu.Skyaeris
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
+                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
+                {
+                    if (ee.PropertyName == nameof(User.ConnectionStatus))
+                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                };
                 Ready?.Invoke(this, EventArgs.Empty);
             };
 
@@ -1617,6 +1622,7 @@ namespace Skymu.Skyaeris
                     Universal.Lang["sINFORM_DND_TITLE"],
                     brText: "OK"
                 ).ShowDialog();
+                // TODO: Do not display this information again
             }
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
