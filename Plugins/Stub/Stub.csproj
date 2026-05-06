@@ -4,15 +4,25 @@
 		<AssemblyName>plugin-Stub</AssemblyName>
 		<AssemblyTitle>Stub Plugin</AssemblyTitle>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<FileVersion>1.0.0.0</FileVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="NAudio" Version="2.3.0" />
+		<PackageReference Include="System.Threading.Channels" Version="5.0.0" />
+	</ItemGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="WebiWabo.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 </Project>
