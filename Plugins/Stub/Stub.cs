@@ -9,9 +9,18 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+// Say "Call me!" without the quotes to get called by the active conversation
+
+using NAudio;
+using NAudio.CoreAudioApi;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
@@ -66,6 +75,7 @@ namespace Stub
             new ObservableCollection<User>();
 
         private SynchronizationContext _uiContext;
+        private Conversation _currentConversation;
         private User Me;
 
         #endregion
@@ -117,6 +127,24 @@ namespace Stub
             string parent_message_identifier
         )
         {
+            // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
+            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
+                new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text), false)
+            );
+            
+            // Invoke a call
+            if (text == "Call me!")
+            {
+                User user;
+                if (_currentConversation is DirectMessage dm)
+                    user = dm.Partner;
+                else if (_currentConversation is Group group)
+                    user = group.Members[0];
+                else
+                    return Task.FromResult(false);
+                OnIncomingCall?.Invoke(this, new CallEventArgs("TotallyRandomIncomingCall", CallState.Ringing, user));
+                return Task.FromResult(true);
+            }
             if (text != null)
             {
                 if (attachment != null)
@@ -150,6 +178,7 @@ namespace Stub
             string identifier
         )
         { // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
+            _currentConversation = conversation;
             TypingUsersList.Clear();
             List<ConversationItem> messageList = new List<ConversationItem>();
 
@@ -417,13 +446,20 @@ namespace Stub
         }
 
         public int TypingTimeout => 5000;
+        public int TypingRepeat => 9000;
         public Task<bool> SetTyping(string idenfitier, bool typing)
         {
-
             return Task.FromResult(false);
         }
 
-        #region Calls (remove this entire region and remove `, ICall` to disable
+        #region Calls (remove this entire region and remove `, ICall`, among some others to disable
+
+        private Thread _callThread;
+        private WasapiOut _out;
+
+        private WasapiOut WasapiDispenser() => new WasapiOut(
+            new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications),
+            AudioClientShareMode.Shared, false, 50);
 
         // Call will be picked up as soon as something is returned
         public async Task<ActiveCall> StartCall(
@@ -432,25 +468,49 @@ namespace Stub
             bool start_muted
         )
         {
+            _out?.Dispose();
+            // Audio stuff (decent amount of this will be moved later)
+            string dir = Path.GetDirectoryName(
+                    Assembly.GetExecutingAssembly().Location);
+
+            string path = Path.Combine(dir, "WebiWabo.mp3");
+            var _reader = new AudioFileReader(path);
+
+            _out = WasapiDispenser();
+
+            var silence = new SilenceProvider(new WaveFormat(48000, 16, 2));
+
+            _out.Init(silence);
+            _out.Play();
+
             TaskCompletionSource<bool> waiter = new TaskCompletionSource<bool>();
             Thread thread = new Thread(_ =>
             {
-                Thread.Sleep(5000);
+                Thread.Sleep(7500);
                 waiter.SetResult(true);
             });
             thread.Start();
 
             _ = await waiter.Task;
 
+            _out.Stop();
+            _out.Dispose();
+
+            _out = WasapiDispenser();
+
+            _out.Init(_reader);
+            _out.Play();
+
             return new ActiveCall("STUBCALL", convo_id, is_video_call, new User[0]);
         }
 
-        public async Task<bool> EndCall(ActiveCall call) => true;
-
-        public async Task<ActiveCall> AnswerCall(string convo_id)
+        public async Task<bool> EndCall(ActiveCall call)
         {
-            return await StartCall(convo_id, false, true);
+            _out?.Stop();
+            return true;
         }
+
+        public async Task<ActiveCall> AnswerCall(string convo_id) => await StartCall(convo_id, false, true);
 
         public async Task<bool> DeclineCall(string convo_id) => false;
 
