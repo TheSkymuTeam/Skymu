@@ -665,6 +665,7 @@ namespace Tox
             };
 
             tox.status = tstatus;
+            currentUser.ConnectionStatus = status;
             return true;
         }
 
