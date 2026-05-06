@@ -18,6 +18,7 @@ namespace Skymu.Views
 {
     public partial class WindowBase : Window
     {
+        private Action BELAction;
         private Action BLAction;
         private Action BMAction;
         private Action BRAction;
@@ -80,6 +81,12 @@ namespace Skymu.Views
             set => HeaderImage.DefaultIndex = Settings.NikoIcons ? (int)IconType.Niko : (int)value;
         }
 
+        public string ButtonEdgeLeftText
+        {
+            get => ButtonEdgeLeft.Content.ToString();
+            set => ButtonEdgeLeft.Content = value;
+        }
+
         public string ButtonLeftText
         {
             get => ButtonLeft.Content.ToString();
@@ -98,6 +105,12 @@ namespace Skymu.Views
             set => ButtonRight.Content = value;
         }
 
+        public Action ButtonEdgeLeftAction
+        {
+            get => BELAction;
+            set => BELAction = value;
+        }
+
         public Action ButtonLeftAction
         {
             get => BLAction;
@@ -108,6 +121,12 @@ namespace Skymu.Views
         {
             get => BMAction;
             set => BMAction = value;
+        }
+
+        public bool ButtonEdgeLeftEnabled
+        {
+            get => ButtonEdgeLeft.Visibility == Visibility.Visible ? true : false;
+            set => ButtonEdgeLeft.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public bool ButtonMiddleEnabled
@@ -122,6 +141,7 @@ namespace Skymu.Views
             set => BRAction = value;
         }
 
+        private void bELClick(object sender, RoutedEventArgs e) { BELAction.Invoke(); }
         private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
         private void bMClick(object sender, RoutedEventArgs e) { BMAction.Invoke(); }
         private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }

@@ -82,6 +82,20 @@
                     </LinearGradientBrush>
                 </Border.Background>
             </Border>
+            <Button
+                x:Name="ButtonEdgeLeft"
+                Height="23"
+                MinWidth="73"
+                Margin="10,0,0,0"
+                Padding="12,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Click="bELClick"
+                Content="Back"
+                FontFamily="Tahoma"
+                FontSize="11"
+                IsDefault="False"
+                Visibility="Collapsed" />
             <StackPanel
                 x:Name="BottomControlsGrid"
                 HorizontalAlignment="Right"
@@ -92,7 +106,7 @@
                     MinWidth="73"
                     Margin="0,0,10,0"
                     Padding="12,0"
-                    HorizontalAlignment="Right"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Click="bLClick"
                     Content="OK"
