@@ -463,7 +463,10 @@ namespace Tox
         void ToxUpdate(object state)
         {
             tox.Iterate(user_data);
-            toxTimer?.Change(tox.iterationInterval, Timeout.Infinite);
+            try
+            {
+                toxTimer?.Change(tox.iterationInterval, Timeout.Infinite);
+            } catch { }
         }
 
         #region Populate
