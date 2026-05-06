@@ -9,6 +9,8 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+// Also grab ToxOO.cs if you prefer object-oriented.
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
