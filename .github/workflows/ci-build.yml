@@ -1,6 +1,7 @@
 name: Skymu (BETA)
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "**" ]
 
