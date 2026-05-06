@@ -122,14 +122,14 @@ namespace Tox
         void OnFriendName(IntPtr tox, UInt32 fid, string name, UIntPtr length, IntPtr user_data)
         {
             Core core = GC(user_data);
-            core.ContactsList[(int)fid].DisplayName = name;
-            foreach (Metadata u in core.RecentsList)
+            User user = core.users[fid];
+            core.UCP(_ =>
             {
-                if (u is DirectMessage && u.Identifier == fid.ToString())
-                {
-                    u.DisplayName = name;
-                }
-            }
+                user.DisplayName = name;
+            });
+            _ = core.PopulateContactsList();
+            _ = core.PopulateRecentsList();
+            // TODO: fixme if broken
         }
 
         tox_friend_status_message_cb _OnFriendStatusMessage;
@@ -404,7 +404,7 @@ namespace Tox
         void OnConferencePeerName(IntPtr tox, UInt32 cid, UInt32 pid, string name, UIntPtr length, IntPtr user_data)
         {
             // Too lazy to come up with something blazingly fast
-            // TODO: Optimize this and PLChanged
+            // TODO: Optimize this and PLChanged and others
             GC(user_data).UCP(_ =>
             {
                 PeerListRefresh(GC(user_data), tox, new Conference(tox, cid));

@@ -126,19 +126,17 @@ namespace Tox
 
             var pksize = (int)tox_public_key_size();
 
-            for (UInt32 pid = 0; pid < conference.peerCount; pid++)
-            {
-                var p = new ConferencePeer(tox, conference.id, pid); 
+            foreach (var p in conference.peers)
+            { 
                 var pkey = BATS(p.publicKey);
-                users.Add(pid, new User(p.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Online));
+                users.Add(p.id, new User(p.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Online));
             }
             ua = users.Values.ToList();
             // Who needs to access offline users anyways.
-            for (UInt32 pid = 0; pid < conference.offlinePeerCount; pid++)
+            foreach (var p in conference.offlinePeers)
             {
-                var opeer = new COfflinePeer(tox, conference.id, pid);
-                var pkey = BATS(opeer.publicKey);
-                ua.Add(new User(opeer.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Offline));
+                var pkey = BATS(p.publicKey);
+                ua.Add(new User(p.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Offline));
             }
             if (core.conferences.ContainsKey(conference.id))
             {

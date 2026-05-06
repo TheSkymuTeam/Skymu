@@ -700,7 +700,7 @@ namespace Tox
             if (metadata is User user)
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
-                users[fid] = new User(user.Username, user.Username.Substring(0, (int)Size.publicKey), fid.ToString());
+                users[fid] = new User(user.Username, user.Identifier, fid.ToString());
             }
             else
             {

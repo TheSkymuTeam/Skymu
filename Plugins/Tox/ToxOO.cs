@@ -894,11 +894,6 @@ namespace ToxOO
 
         public AnyConferencePeer(IntPtr tox, UInt32 cid, UInt32 id)
         {
-            tox_conference_peer_get_name_size(tox, cid, id, out var err);
-            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
-                throw new ObjectDisposedException("Conference");
-            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
-                throw new ObjectDisposedException("Peer");
             ptr = tox;
             this.cid = cid;
             this.id = id;
@@ -906,7 +901,14 @@ namespace ToxOO
     }
     public class ConferencePeer : AnyConferencePeer
     {
-        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id)
+        {
+            tox_conference_peer_get_name_size(tox, cid, id, out var err);
+            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
+                throw new ObjectDisposedException("Conference");
+            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
+                throw new ObjectDisposedException("Peer");
+        }
 
         public string name
         {
@@ -935,7 +937,14 @@ namespace ToxOO
     }
     public class COfflinePeer : AnyConferencePeer
     {
-        public COfflinePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+        public COfflinePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id)
+        {
+            tox_conference_offline_peer_get_name_size(tox, cid, id, out var err);
+            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
+                throw new ObjectDisposedException("Conference");
+            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
+                throw new ObjectDisposedException("Offline peer");
+        }
 
         public string name
         {
