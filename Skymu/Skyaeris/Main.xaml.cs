@@ -940,6 +940,10 @@ namespace Skymu.Skyaeris
             new Updater(true);
         }
 
+        private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
+
+        private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
+
         private void OnSignOut(object sender, RoutedEventArgs e)
         {
             InitiateSignOut();

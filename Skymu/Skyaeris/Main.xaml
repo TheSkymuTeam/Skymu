@@ -846,7 +846,7 @@
                         <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                     </MenuItem>
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnAddContact" Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -875,7 +875,7 @@
                         <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE], Source={StaticResource Lang}}" IsEnabled="False" />
                     </MenuItem>
                     <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
-                        <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnCall" Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
                         <MenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CALL_ANSWER], Source={StaticResource Lang}}" IsEnabled="False" />
                         <Separator />
