@@ -57,7 +57,8 @@
                 <Image
                     x:Name="throbber"
                     Height="4608"
-		            Source="Assets/Universal/Animations/spinner-accurate.png">
+		            Source="Assets/Universal/Animations/spinner-accurate.png"
+                    Visibility="Collapsed">
                     <Image.RenderTransform>
                         <TranslateTransform x:Name="throbberTransform"/>
                     </Image.RenderTransform>
