@@ -1,5 +1,5 @@
-!define SOURCE_DIR_MODERN "..\Skymu\bin\SkymuCore\Release"
-!define SOURCE_DIR_LEGACY "..\Skymu\bin\SkymuFramework\Release"
+!define SOURCE_DIR_MODERN "..\bin\x64\Release"
+!define SOURCE_DIR_LEGACY "..\bin\x86\Release"
 !define PRODUCT_NAME "Skymu"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://skymu.app"
