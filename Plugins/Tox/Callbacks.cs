@@ -60,10 +60,6 @@ namespace Tox
             _OnGroupSelfJoin = null;
             #endregion
         }
-        internal void LogInit(Options opt)
-        {
-            _OnLog = OnLog; opt.logCallback = _OnLog;
-        }
         internal void Init(ToxOO.Tox tox, IntPtr user_data, IntPtr av)
         {
             _OnConnectionStatus = OnConnectionStatus; tox.selfConnectionStatus = _OnConnectionStatus;
@@ -83,10 +79,10 @@ namespace Tox
             _OnFileRecvChunk = OnFileRecvChunk; tox_callback_file_recv_chunk(tox.ptr, _OnFileRecvChunk);
             #endregion
             #region conference
-            _OnConferenceMessage = OnConferenceMessage; tox_callback_conference_message(tox.ptr, _OnConferenceMessage);
-            _OnConferenceTitle = OnConferenceTitle; tox_callback_conference_title(tox.ptr, _OnConferenceTitle);
-            _OnConferencePeerName = OnConferencePeerName; tox_callback_conference_peer_name(tox.ptr, _OnConferencePeerName);
-            _OnConferencePeerListChanged = OnConferencePeerListChanged; tox_callback_conference_peer_list_changed(tox.ptr, _OnConferencePeerListChanged);
+            _OnConferenceMessage = OnConferenceMessage; tox.conferenceMessage = _OnConferenceMessage;
+            _OnConferenceTitle = OnConferenceTitle; tox.conferenceTitle = _OnConferenceTitle;
+            _OnConferencePeerName = OnConferencePeerName; tox.conferencePeerName = _OnConferencePeerName;
+            _OnConferencePeerListChanged = OnConferencePeerListChanged; tox.conferencePeerListChanged = _OnConferencePeerListChanged;
             #endregion
             #region av
             _OnCall = OnCall; toxav_callback_call(av, _OnCall, user_data);
@@ -100,12 +96,12 @@ namespace Tox
             #endregion
         }
 
-        tox_log_cb _OnLog;
         static void OnLog(IntPtr tox, Tox_Log_Level level, string file, UInt32 line, string func, string message, IntPtr user_data)
         {
-            // TODO: Uncomment: if (level == Tox_Log_Level.TRACE || level == Tox_Log_Level.DEBUG) return;
-            Debug.WriteLine($"Tox: [{level}] {func}: {message}");
+            // Maybe: Uncomment: if (level == Tox_Log_Level.TRACE || level == Tox_Log_Level.DEBUG) return;
+            Debug.WriteLine($"Tox: [{level}] {func}: {message} ({file}:{line})");
         }
+        public tox_log_cb OnLogPtr = OnLog;
 
         #region self, core
 
@@ -140,7 +136,7 @@ namespace Tox
         void OnFriendStatusMessage(IntPtr tox, UInt32 fid, string message, UIntPtr length, IntPtr user_data)
         {
             Core core = GC(user_data);
-            User user = core.users[(int)fid];
+            User user = core.users[fid];
             core.UCP(_ =>
             {
                 user.Status = message;
@@ -152,7 +148,7 @@ namespace Tox
         void OnFriendStatus(IntPtr tox, UInt32 fid, Tox_User_Status status, IntPtr user_data)
         {
             Core core = GC(user_data);
-            User user = core.users[(int)fid];
+            User user = core.users[fid];
             core.UCP(_ =>
             {
                 user.ConnectionStatus = MapStatus(status);
@@ -165,8 +161,8 @@ namespace Tox
             if (connection_status != Tox_Connection.NONE)
             {
                 if (connection_status == Tox_Connection.NONE) return;
+                Debug.WriteLine($"Tox: Sending my PFP to {fid} as a {connection_status} connection was established");
                 Core core = GC(user_data);
-                User user = core.users[(int)fid];
                 byte[] pfp = core.currentUser.ProfilePicture;
                 byte[] hash = new byte[tox_hash_length()];
                 tox_hash(hash, pfp, (UIntPtr)pfp.Length);
@@ -178,7 +174,6 @@ namespace Tox
                 }
                 core.transfers.Add(trid, core.currentUser.ProfilePicture);
                 core.transfer_info.Add(trid, (Tox_File_Kind.AVATAR, ""));
-                Debug.WriteLine($"Tox: Sending my PFP to {fid} as a {connection_status} connection was established");
             }
             else
                 Debug.WriteLine($"Tox: Connection with {fid} got terminated");
@@ -195,24 +190,24 @@ namespace Tox
                 core.typingUsersPerChannel.Add(fids, new HashSet<User>());
 
             if (typing)
-                core.typingUsersPerChannel[fids].Add(core.users[(int)fid]);
+                core.typingUsersPerChannel[fids].Add(core.users[fid]);
             else
-                core.typingUsersPerChannel[fids].Remove(core.users[(int)fid]);
+                core.typingUsersPerChannel[fids].Remove(core.users[fid]);
 
             core.UCP(_ =>
             {
                 if (core.activecid == fids)
                     if (typing)
-                        core.TypingUsersList.Add(core.users[(int)fid]);
+                        core.TypingUsersList.Add(core.users[fid]);
                     else
-                        core.TypingUsersList.Remove(core.users[(int)fid]);
+                        core.TypingUsersList.Remove(core.users[fid]);
             });
         }
 
         // TODO: friend_read_receipt
 
         tox_friend_request_cb _OnFriendRequest;
-        void OnFriendRequest(IntPtr tox, string public_key, string message, UIntPtr length, IntPtr user_data)
+        void OnFriendRequest(IntPtr tox, byte[] public_key, string message, UIntPtr length, IntPtr user_data)
         {
             var core = GC(user_data);
             tox_friend_add_norequest(tox, public_key, out var err);
@@ -229,7 +224,7 @@ namespace Tox
             var core = GC(user_data);
             core.UCP(_ =>
             {
-                var message = new Message($"{fid}_{GUID()}", core.users[(int)fid], TIME(), msg);
+                var message = new Message($"{fid}_{GUID()}", core.users[fid], TIME(), msg);
                 core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
             });
         }
@@ -280,7 +275,7 @@ namespace Tox
             Debug.WriteLine($"Tox: Got file {file_number} of kind {kind} from {fid} with {file_size} bytes as the length");
             if (kind == Tox_File_Kind.AVATAR)
             {
-                User friend = core.users[(int)fid];
+                User friend = core.users[fid];
                 if (file_size == 0)
                 { // no pfp anymore (unoriginal af) 
                     core.UCP(_ =>
@@ -313,7 +308,7 @@ namespace Tox
                 var pkey = BATS(core.tox.friends[fid].publicKey);
                 core.UCP(_ =>
                 {
-                    Message message = new Message($"{sfid}_{GUID()}", core.users[(int)fid], TIME(), $"I have tried to send you a file {filename}, but the Tox plugin currently does not support that.");
+                    Message message = new Message($"{sfid}_{GUID()}", core.users[fid], TIME(), $"I have tried to send you a file {filename}, but the Tox plugin currently does not support that.");
                     core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
                 });
                 tox_file_control(tox, fid, file_number, Tox_File_Control.CANCEL, out _);
@@ -346,7 +341,7 @@ namespace Tox
                     File.WriteAllBytes(Path.Combine(avatar_cache_dir, BATS(pubkey) + ".png"), bdata);
                     core.UCP(_ =>
                     {
-                        core.users[(int)fid].ProfilePicture = bdata;
+                        core.users[fid].ProfilePicture = bdata;
                     });
                 }
                 core.transfers.Remove(file_number);
@@ -379,16 +374,18 @@ namespace Tox
         tox_conference_message_cb _OnConferenceMessage;
         void OnConferenceMessage(IntPtr tox, UInt32 cid, UInt32 pid, Tox_Message_Type type, string msg, UIntPtr length, IntPtr user_data)
         {
+            Debug.WriteLine($"Tox: New conference message in {cid} by {pid}");
             var core = GC(user_data);
-            var pkeyb = new byte[tox_public_key_size()];
-            tox_conference_peer_get_public_key(tox, cid, pid, pkeyb, out _);
+            var c = new Conference(tox, cid);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
-            if (BATS(pkeyb) != core.currentUser.Identifier)
-                core.UCP(_ =>
-                {
-                    var message = new Message($"{cid}/{pid}_{GUID()}", core.conferences[cid].users[pid], TIME(), msg);
-                    core.RaiseMessageEvent(new MessageRecievedEventArgs("C" + cid, message, false));
-                });
+            User sender = core.conferences[cid].users[pid];
+            if (BATS(c.peers[pid].publicKey) == core.currentUser.Identifier)
+                sender = core.currentUser;
+            core.UCP(_ =>
+            {
+                var message = new Message($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg);
+                core.RaiseMessageEvent(new MessageRecievedEventArgs("C"+BATS(c.cid), message, false));
+            });
         }
 
 
@@ -396,26 +393,10 @@ namespace Tox
         void OnConferenceTitle(IntPtr tox, UInt32 cid, UInt32 pid, string title, UIntPtr length, IntPtr user_data)
         {
             var core = GC(user_data);
-            var g = core.conferences[cid].conference;
-            var orig = g.DisplayName;
-            g.DisplayName = title;
-            var uname_size = tox_conference_peer_get_name_size(tox, cid, pid, out var err);
-            string uname;
-            if (uname_size == UIntPtr.Zero || err != Tox_Err_Conference_Peer_Query.OK)
-            {
-                var pkeyb = new byte[tox_public_key_size()];
-                uname = BATS(pkeyb);
-            }
-            else
-            {
-                var unameb = new byte[(int)uname_size];
-                tox_conference_peer_get_name(tox, cid, pid, unameb, out _);
-                uname = Encoding.ASCII.GetString(unameb);
-            }
             core.UCP(_ =>
             {
                 core.conferences[cid].conference.DisplayName = title;
-                PeerListRefresh(core, tox, cid);
+                PeerListRefresh(core, tox, new Conference(tox, cid));
             });
         }
 
@@ -423,9 +404,10 @@ namespace Tox
         void OnConferencePeerName(IntPtr tox, UInt32 cid, UInt32 pid, string name, UIntPtr length, IntPtr user_data)
         {
             // Too lazy to come up with something blazingly fast
+            // TODO: Optimize this and PLChanged
             GC(user_data).UCP(_ =>
             {
-                PeerListRefresh(GC(user_data), tox, cid);
+                PeerListRefresh(GC(user_data), tox, new Conference(tox, cid));
             });
         }
 
@@ -433,7 +415,10 @@ namespace Tox
         void OnConferencePeerListChanged(IntPtr tox, UInt32 cid, IntPtr user_data)
         {
             Debug.WriteLine($"Tox: Peer list for conference {cid} changed");
-            PeerListRefresh(GC(user_data), tox, cid);
+            GC(user_data).UCP(_ =>
+            {
+                PeerListRefresh(GC(user_data), tox, new Conference(tox, cid));
+            });
         }
 
         #endregion
@@ -494,7 +479,7 @@ namespace Tox
         {
             var core = GC(user_data);
             Debug.WriteLine($"Tox: Incoming call from {fid} with audio {audio_enabled}, video {video_enabled}");
-            core.CALL(new CallEventArgs(fid.ToString(), CallState.Ringing, core.users[(int)fid]));
+            core.CALL(new CallEventArgs(fid.ToString(), CallState.Ringing, core.users[fid]));
         }
 
         // TODO: call_state
