@@ -326,7 +326,7 @@ namespace Skymu
                 var customResources = new ResourceDictionary();
                 foreach (var key in Resources.Keys)
                 {
-                    if (key.ToString() != "")
+                    if (key.ToString() != string.Empty)
                         customResources[key] = Resources[key];
                 }
 

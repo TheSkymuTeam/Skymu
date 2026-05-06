@@ -65,7 +65,7 @@ namespace Skymu
                 sp.Load();
                 players[key] = sp;
             }
-            else if (fallback != String.Empty && path != fallback)
+            else if (fallback != string.Empty && path != fallback)
             {
                 Load(key, filename, fallback, "Skymu");
             }

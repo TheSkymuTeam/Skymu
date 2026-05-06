@@ -167,7 +167,7 @@ namespace Matrix
                     using (var req1 = new HttpRequestMessage(HttpMethod.Post, "https://api.beeper.com/user/login"))
                     {
                         req1.Headers.Add("Authorization", "Bearer BEEPER-PRIVATE-API-PLEASE-DONT-USE");
-                        req1.Content = new StringContent("", Encoding.UTF8, "application/json");
+                        req1.Content = new StringContent(string.Empty, Encoding.UTF8, "application/json");
                         using (var res1 = await _httpClient.SendAsync(req1))
                         {
                             res1Body = await res1.Content.ReadAsStringAsync();
@@ -736,7 +736,7 @@ namespace Matrix
         {
             try
             {
-                string bodyJson = JsonSerializer.Serialize(new { presence = "online", status_msg = status ?? "" });
+                string bodyJson = JsonSerializer.Serialize(new { presence = "online", status_msg = status ?? string.Empty });
                 using (var response = await _httpClient.PutAsync(
                     $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
                     new StringContent(bodyJson, Encoding.UTF8, "application/json")))
@@ -772,7 +772,7 @@ namespace Matrix
             {
                 int limit = Math.Max(1, Math.Min(message_count, 100));
                 string dir = fetch_type == Fetch.Oldest ? "f" : "b";
-                string fromToken = "";
+                string fromToken = string.Empty;
                 if ((fetch_type == Fetch.BeforeIdentifier || fetch_type == Fetch.AfterIdentifier ||
                      fetch_type == Fetch.NewestAfterIdentifier) && !string.IsNullOrEmpty(identifier))
                     fromToken = $"&from={Uri.EscapeDataString(identifier)}";
@@ -834,7 +834,7 @@ namespace Matrix
                         continue;
 
                     string msgtype = msgtypeProp.GetString();
-                    string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                    string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : string.Empty;
                     Attachment[] attachments = null;
 
                     if (msgtype == "m.image" && content.TryGetProperty("url", out var urlProp))
@@ -1004,7 +1004,7 @@ namespace Matrix
                 string senderMsg = evt.GetProperty("sender").GetString();
                 long tMs = evt.GetProperty("origin_server_ts").GetInt64();
                 DateTime timestampMsg = DateTimeOffset.FromUnixTimeMilliseconds(tMs).DateTime;
-                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : string.Empty;
 
                 string dName = _displayNameCache.TryGetValue(senderMsg, out var dn)
                     ? dn : await GetDisplayNameForUser(senderMsg, roomId);
@@ -1104,7 +1104,7 @@ namespace Matrix
                         "==This is an **encrypted message**, which is not currently supported.==", null, null);
 
                 var content = eventData.GetProperty("content");
-                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : "";
+                string body = content.TryGetProperty("body", out var bodyProp) ? bodyProp.GetString() : string.Empty;
                 return new Message(eventId, senderData, timestamp, body, null, null);
             }
             catch

@@ -34,7 +34,7 @@ namespace Skymu.Converters
                 return count.ToString() + " members";
             }
             else
-                return values[0] ?? String.Empty;
+                return values[0] ?? string.Empty;
         }
 
         public object[] ConvertBack(

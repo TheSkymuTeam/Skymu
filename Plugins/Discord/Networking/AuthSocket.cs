@@ -375,7 +375,7 @@ namespace Discord.Networking
         private void HandleMessage(string data)
         {
             var json = JsonObject.Parse(data);
-            string op = json["op"]?.GetValue<string>() ?? "";
+            string op = json["op"]?.GetValue<string>() ?? string.Empty;
 
             switch (op)
             {

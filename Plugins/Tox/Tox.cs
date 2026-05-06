@@ -235,7 +235,7 @@ namespace Tox
         {
             // savepass is filled = encrypted save = saving the pass goes against the point of encrypting it
             if (string.IsNullOrEmpty(savepass))
-                return new SavedCredential(currentUser, "", AuthenticationMethod.Token, InternalName);
+                return new SavedCredential(currentUser, string.Empty, AuthenticationMethod.Token, InternalName);
             return null;
         }
 

@@ -111,13 +111,13 @@ namespace Stub
 
         public async Task<SavedCredential> StoreCredential()
         {
-            // TODO: Fix logout return new SavedCredential(MyInformation, "", AuthenticationMethod.Token, InternalName);
+            // TODO: Fix logout return new SavedCredential(MyInformation, string.Empty, AuthenticationMethod.Token, InternalName);
             return null;
         }
 
         public Task<string> GetQRCode()
         {
-            return Task.FromResult(String.Empty);
+            return Task.FromResult(string.Empty);
         }
 
         public Task<bool> SendMessage(

@@ -138,7 +138,7 @@ namespace Skymu.UserDirectory
                 {
                     await ws.CloseAsync(
                         WebSocketCloseStatus.NormalClosure,
-                        "",
+                        string.Empty,
                         CancellationToken.None
                     );
                 }

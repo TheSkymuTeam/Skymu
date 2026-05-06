@@ -272,7 +272,7 @@ namespace Discord.Networking
         private void HandleVoiceStateUpdate(JsonNode data)
         {
             if (data is null) return;
-            voice_details = new VoiceServerUpdateEventArgs(String.Empty, String.Empty, String.Empty, String.Empty);
+            voice_details = new VoiceServerUpdateEventArgs(string.Empty, string.Empty, string.Empty, string.Empty);
             voice_details.UserId = data["user_id"]?.GetValue<string>();
             voice_details.SessionId = data["session_id"]?.GetValue<string>();
         }
@@ -303,7 +303,7 @@ namespace Discord.Networking
                 switch (opCode)
                 {
                     case 0:
-                        string eventType = json["t"]?.GetValue<string>() ?? "";
+                        string eventType = json["t"]?.GetValue<string>() ?? string.Empty;
 
                         switch (eventType)
                         {

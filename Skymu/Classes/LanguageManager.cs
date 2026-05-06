@@ -68,11 +68,11 @@ namespace Skymu
                 );
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
                 // TODO: Load ones for other languages too
-                if (!Load(llist.TryGetValue("English (Skype 7.39)", out var mlpath) ? mlpath : String.Empty))
+                if (!Load(llist.TryGetValue("English (Skype 7.39)", out var mlpath) ? mlpath : string.Empty))
                     Universal.ExceptionHandler(
                         new Exception("Could not load the Skype 7.39 language. Certain parts might be untranslated.")
                     );
-            if (!Load(llist.TryGetValue(lang, out var path) ? path : String.Empty))
+            if (!Load(llist.TryGetValue(lang, out var path) ? path : string.Empty))
                 Universal.ExceptionHandler(
                     new Exception("Could not load language \"" + lang + "\".")
                 );

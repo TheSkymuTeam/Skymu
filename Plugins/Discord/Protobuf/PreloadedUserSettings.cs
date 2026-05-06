@@ -4323,7 +4323,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
 
         /// <summary>Field number for the "dismissed_guild_content" field.</summary>
         public const int DismissedGuildContentFieldNumber = 5;
-        private pb::ByteString dismissedGuildContent_ = pb::ByteString.Empty;
+        private pb::ByteString dismissedGuildContent_ = pb::Bytestring.Empty;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public pb::ByteString DismissedGuildContent {
@@ -5362,7 +5362,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
 
         /// <summary>Field number for the "dismissed_contents" field.</summary>
         public const int DismissedContentsFieldNumber = 1;
-        private pb::ByteString dismissedContents_ = pb::ByteString.Empty;
+        private pb::ByteString dismissedContents_ = pb::Bytestring.Empty;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public pb::ByteString DismissedContents {

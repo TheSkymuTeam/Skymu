@@ -135,7 +135,7 @@ namespace SkypeDBBrowser
 
         public Task<string> GetQRCode()
         {
-            return Task.FromResult(String.Empty);
+            return Task.FromResult(string.Empty);
         }
 
         public Task<LoginResult> AuthenticateTwoFA(string code)
@@ -266,7 +266,7 @@ namespace SkypeDBBrowser
                                     var displayName = reader.IsDBNull(2)
                                         ? author
                                         : reader.GetString(2);
-                                    var body = reader.IsDBNull(3) ? "" : reader.GetString(3);
+                                    var body = reader.IsDBNull(3) ? string.Empty : reader.GetString(3);
                                     var timestamp = reader.IsDBNull(4) ? 0 : reader.GetInt64(4);
 
                                     var dateTime = DateTimeOffset
@@ -307,7 +307,6 @@ namespace SkypeDBBrowser
             return Task.FromResult(true);
         }
         public int TypingTimeout => 5000;
-        public int TypingRepeat => 5000;
         public Task<bool> SetTyping(string idenfitier, bool typing)
         {
 
@@ -358,7 +357,7 @@ namespace SkypeDBBrowser
                                 var displayName = reader.IsDBNull(1)
                                     ? skypename
                                     : reader.GetString(1);
-                                var mood = reader.IsDBNull(2) ? "" : reader.GetString(2);
+                                var mood = reader.IsDBNull(2) ? string.Empty : reader.GetString(2);
                                 var availability = reader.IsDBNull(3) ? 0 : reader.GetInt32(3);
                                 var avatarBytes = reader.IsDBNull(4)
                                     ? null
@@ -438,7 +437,7 @@ namespace SkypeDBBrowser
                                 if (string.IsNullOrEmpty(skypename))
                                     continue;
 
-                                var mood = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                                var mood = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
                                 var availability = reader.IsDBNull(2) ? 0 : reader.GetInt32(2);
                                 var avatarBytes = reader.IsDBNull(3)
                                     ? null
@@ -704,16 +703,16 @@ namespace SkypeDBBrowser
             );
 
             // remove quote tags
-            body = body.Replace("<quote>", "");
-            body = body.Replace("</quote>", "");
+            body = body.Replace("<quote>", string.Empty);
+            body = body.Replace("</quote>", string.Empty);
 
             // remove formatting tags but keep content
-            body = body.Replace("<b>", "");
-            body = body.Replace("</b>", "");
-            body = body.Replace("<i>", "");
-            body = body.Replace("</i>", "");
-            body = body.Replace("<s>", "");
-            body = body.Replace("</s>", "");
+            body = body.Replace("<b>", string.Empty);
+            body = body.Replace("</b>", string.Empty);
+            body = body.Replace("<i>", string.Empty);
+            body = body.Replace("</i>", string.Empty);
+            body = body.Replace("<s>", string.Empty);
+            body = body.Replace("</s>", string.Empty);
 
             // Convert links to markdown-style
             body = body.Replace("<a href=\"", "[");
@@ -722,7 +721,7 @@ namespace SkypeDBBrowser
 
             // remove any remaining XML-like tags (catch-all for malformed or unknown tags)
             var tagPattern = new System.Text.RegularExpressions.Regex(@"<[^>]*>");
-            body = tagPattern.Replace(body, "");
+            body = tagPattern.Replace(body, string.Empty);
 
             return body.Trim();
         }

@@ -28,7 +28,7 @@ namespace Tox
         #region Generic
 
         // ByteArrayToString
-        public static string BATS(byte[] ba) => BitConverter.ToString(ba).Replace("-", "");
+        public static string BATS(byte[] ba) => BitConverter.ToString(ba).Replace("-", string.Empty);
         // GrabCore
         public static Core GC(IntPtr user_data) => (Core)GCHandle.FromIntPtr(user_data).Target;
         // GUID

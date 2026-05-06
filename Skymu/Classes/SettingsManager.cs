@@ -147,7 +147,7 @@ namespace Skymu.Preferences
         }
         public static string SkippedVersion
         {
-            get => S("SkippedVersion", "");
+            get => S("SkippedVersion", string.Empty);
             set => W("SkippedVersion", value, nameof(SkippedVersion));
         }
         public static string SoundPack

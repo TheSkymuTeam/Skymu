@@ -209,7 +209,7 @@ namespace Discord
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", "")));
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", string.Empty)));
                 }
                 else
                 {
@@ -468,7 +468,7 @@ namespace Discord
                                         {
                                             foreach (var perm in perms.OfType<JsonObject>())
                                             {
-                                                string permId = perm["id"]?.GetValue<string>() ?? "";
+                                                string permId = perm["id"]?.GetValue<string>() ?? string.Empty;
                                                 if (permId != guildId) continue;
 
                                                 int deny = 0;
@@ -553,7 +553,7 @@ namespace Discord
                 {
                     if (parsed is JsonObject msg)
                     {
-                        string text = String.Empty;
+                        string text = string.Empty;
                         switch (msg["code"].GetValue<int>())
                         {
                             case 50001:
@@ -625,9 +625,9 @@ namespace Discord
                 object payloadJson = null;
 
                 if (parent_message_identifier != null)
-                    payloadJson = new { content = text ?? "", message_reference = new { message_id = parent_message_identifier } };
+                    payloadJson = new { content = text ?? string.Empty, message_reference = new { message_id = parent_message_identifier } };
                 else
-                    payloadJson = new { content = text ?? "" };
+                    payloadJson = new { content = text ?? string.Empty };
 
                 if (attachment != null)
                 {

@@ -63,7 +63,7 @@ namespace Skymu.Pontis
         internal static bool IsWindowActive = false;
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
-        private string PlaceholderTextMTB = String.Empty;
+        private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
         private CancellationTokenSource _TitleBarIconHoldTokenSource;

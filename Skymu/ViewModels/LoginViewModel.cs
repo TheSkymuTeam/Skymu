@@ -81,7 +81,7 @@ namespace Skymu.ViewModels
             {
                 if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
-                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), String.Empty, AuthenticationMethod.Password, plugin.InternalName.ToLowerInvariant());
+                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), string.Empty, AuthenticationMethod.Password, plugin.InternalName.ToLowerInvariant());
                     Universal.Plugin = plugin;
                     Universal.CallPlugin = Universal.Plugin as ICall;
                     return;
@@ -240,7 +240,7 @@ namespace Skymu.ViewModels
 
             if (!Settings.SuppressOldRuntimeWarnings)
             {
-                string newNetLink = String.Empty;
+                string newNetLink = string.Empty;
                 int netVersion = Runtime.DetectNetVersion();
                 if (netVersion < 5) return; // framework or early core (former is to be ignored, latter is impossible)
                 else if (netVersion < 10)

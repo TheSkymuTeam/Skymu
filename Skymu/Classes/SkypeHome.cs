@@ -156,7 +156,7 @@ namespace Skymu
             LocalUser = new LocalUserObject
             {
                 handle = user.Username,
-                MoodText = user.Status ?? "",
+                MoodText = user.Status ?? string.Empty,
             };
             _account = new AccountObject { ContactsCount = contacts?.Length ?? 0 };
         }
@@ -257,19 +257,19 @@ namespace Skymu
     [ComVisible(true)]
     public class UserEntry
     {
-        public string Handle = "";
+        public string Handle = string.Empty;
         public int Popularity = 0;
     }
 
     [ComVisible(true)]
     public class LocalUserObject
     {
-        public string handle = "";
-        public string MoodText = "";
+        public string handle = string.Empty;
+        public string MoodText = string.Empty;
 
         public bool hasCapability(int capId) => false;
 
-        public string PhoneMobile = "";
+        public string PhoneMobile = string.Empty;
     }
 
     [ComVisible(true)]
@@ -277,12 +277,12 @@ namespace Skymu
     {
         public SubscriptionsObject Subscriptions = new SubscriptionsObject();
         public int Balance = 0;
-        public string BalanceCurrency = "";
+        public string BalanceCurrency = string.Empty;
         public long RegistrationTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 60;
         public int ContactsCount = 0;
         public PartnerCollection Partners = new PartnerCollection();
-        public string IPCountry = "";
-        public string PartnerChannelStatus = "";
+        public string IPCountry = string.Empty;
+        public string PartnerChannelStatus = string.Empty;
         public int BalancePrecision = 0;
     }
 
@@ -320,9 +320,9 @@ namespace Skymu
     [ComVisible(true)]
     public class PartnerObject
     {
-        public string getName() => "";
+        public string getName() => string.Empty;
 
-        public string getId() => "";
+        public string getId() => string.Empty;
 
         public bool canOptout() => false;
 
@@ -334,14 +334,14 @@ namespace Skymu
     [ComVisible(true)]
     public class AlertObject
     {
-        public string PartnerNameDCURI = "";
+        public string PartnerNameDCURI = string.Empty;
         public bool IsUnseen = false;
-        public string PartnerID = "";
-        public string PartnerHeaderDCURI = "";
-        public string MessageButtonCaption = "";
-        public string MessageButtonURI = "";
-        public string MessageHeaderTitle = "";
-        public string MessageContent = "";
+        public string PartnerID = string.Empty;
+        public string PartnerHeaderDCURI = string.Empty;
+        public string MessageButtonCaption = string.Empty;
+        public string MessageButtonURI = string.Empty;
+        public string MessageHeaderTitle = string.Empty;
+        public string MessageContent = string.Empty;
         public long Timestamp = 0;
 
         public bool getReadStatus() => !IsUnseen;

@@ -68,7 +68,7 @@ namespace Skymu.Skyaeris
         internal static bool IsWindowActive = false;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
-        private string PlaceholderTextMTB = String.Empty;
+        private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
         private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show

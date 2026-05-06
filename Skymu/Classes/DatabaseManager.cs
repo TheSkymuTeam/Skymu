@@ -1923,7 +1923,7 @@ namespace Skymu.Databases
                             cmd.Parameters["@convo_id"].Value = conversationIncrementalId;
                             cmd.Parameters["@pk_id"].Value =
                                 (object)message.Identifier ?? DBNull.Value;
-                            cmd.Parameters["@fullsize_url"].Value = attachment.Url ?? String.Empty;
+                            cmd.Parameters["@fullsize_url"].Value = attachment.Url ?? string.Empty;
                             cmd.Parameters["@chatmsg_index"].Value = attachmentIndex;
 
                             cmd.ExecuteNonQuery();
@@ -2029,8 +2029,8 @@ namespace Skymu.Databases
                     {
                         string beforeClause = beforeTimestampMs.HasValue
                             ? " AND timestamp__ms < @before_ms"
-                            : "";
-                        string limitClause = limit > 0 ? $" LIMIT {limit}" : "";
+                            : string.Empty;
+                        string limitClause = limit > 0 ? $" LIMIT {limit}" : string.Empty;
 
                         cmd.CommandText =
                             limit > 0
@@ -2177,7 +2177,7 @@ namespace Skymu.Databases
                             long tsSec = r.IsDBNull(6) ? 0 : r.GetInt64(6);
                             string pid = r.IsDBNull(7) ? null : r.GetString(7);
 
-                            contactMap.TryGetValue(authorId ?? "", out User sender);
+                            contactMap.TryGetValue(authorId ?? string.Empty, out User sender);
                             if (sender == null && authorId != null)
                                 sender = new User(authorDisp, authorUser, authorId);
 

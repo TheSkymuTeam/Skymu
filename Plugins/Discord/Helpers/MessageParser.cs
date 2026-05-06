@@ -130,7 +130,7 @@ namespace Discord.Helpers
                 }
             }
 
-            string sizeParams = (width.HasValue && height.HasValue) ? $"&width={width}&height={height}" : "";
+            string sizeParams = (width.HasValue && height.HasValue) ? $"&width={width}&height={height}" : string.Empty;
             string url = originalUrl.Replace("cdn.discordapp.com", "media.discordapp.net") + $"&=&format=png{sizeParams}";
 
             try // skip double buffering and thusly extra RAM usage
