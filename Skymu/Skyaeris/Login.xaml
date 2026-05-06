@@ -48,39 +48,21 @@
                 Width="510"
                 Height="371"
                 Stretch="Fill" />
-            <Image
-                x:Name="throbber"
+            <Grid
+                x:Name="throbberGrid"
                 Width="128"
                 Height="128"
                 Margin="0,0,0,48"
-                RenderOptions.BitmapScalingMode="HighQuality"
-                RenderTransformOrigin="0.50785,0.5001"
-                Source="Assets/Universal/Animations/spinner.png"
-                Visibility="Collapsed">
-                <Image.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform x:Name="SpinnerRotate" Angle="0" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Image.RenderTransform>
-                <Image.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation
-                                    RepeatBehavior="Forever"
-                                    Storyboard.TargetName="SpinnerRotate"
-                                    Storyboard.TargetProperty="Angle"
-                                    From="0"
-                                    To="360"
-                                    Duration="0:0:2.133333" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Image.Triggers>
-            </Image>
+                ClipToBounds="True">
+                <Image
+                    x:Name="throbber"
+                    Height="4608"
+		            Source="Assets/Universal/Animations/spinner-accurate.png">
+                    <Image.RenderTransform>
+                        <TranslateTransform x:Name="throbberTransform"/>
+                    </Image.RenderTransform>
+                </Image>
+            </Grid>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
