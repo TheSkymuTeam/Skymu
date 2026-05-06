@@ -32,6 +32,7 @@ namespace Yggdrasil
         AuthTypeInfo[] AuthenticationTypes { get; } // OAuth, Passwordless, and Standard (Standard is most commonly used). Return an array of supported types.
         bool SupportsServers { get; } // Does the plugin support servers or not? (Most don't)
         int TypingTimeout { get; } // timeout for typing status
+        int TypingRepeat { get; } // repeat interval for typing status
         Task<SavedCredential> StoreCredential(); // stores credential for future auto-login. This is called after a successful login, and the returned SavedCredential object is stored in the database.
         Task<string> GetQRCode(); // Returns a string that can be used to generate a QR code for QR code authentication. This is only called if AuthenticationType includes QRCode.
         Task<LoginResult> Authenticate(
@@ -82,5 +83,11 @@ namespace Yggdrasil
         Task<bool> EndCall(ActiveCall call);
         Task<bool> SetMuted(ActiveCall call, bool muted);
         Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);
+    }
+
+    public interface IListManagement
+    {
+        Task<Metadata[]> FindNewContact(string query); // step 1, find for contacts. return a dummy one, like "Add me!" if your protocol does not support finding
+        Task<bool> AddContact(Metadata metadatas, string message); // step 2, actually add the contact
     }
 }

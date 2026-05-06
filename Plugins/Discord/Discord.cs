@@ -654,6 +654,7 @@ namespace Discord
         #region Typing
 
         public int TypingTimeout => 5000;
+        public int TypingRepeat => 10000;
         public async Task<bool> SetTyping(string identifier, bool typing)
         {
             if (!typing || string.IsNullOrWhiteSpace(identifier))

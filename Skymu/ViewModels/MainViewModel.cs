@@ -166,6 +166,7 @@ namespace Skymu.ViewModels
         private bool _typingIndicatorSubscribed;
         private bool _typingActive;
         private Timer _typingTimer;
+        private Timer _typingRepeatTimer;
 
         private const string SKYMU_PREFIX = "@skymu/";
         private const string SKYMU_SENDING = SKYMU_PREFIX + "sending";
@@ -229,6 +230,18 @@ namespace Skymu.ViewModels
                 _ =>
                 {
                     Universal.Plugin.SetTyping(SelectedConversation?.Identifier, false);
+                    _typingRepeatTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                    _typingActive = false;
+                },
+                null,
+                Timeout.Infinite,
+                Timeout.Infinite
+            );
+
+            _typingRepeatTimer = new Timer(
+                _ =>
+                {
+                    Universal.Plugin.SetTyping(SelectedConversation?.Identifier, true);
                     _typingActive = false;
                 },
                 null,
@@ -245,17 +258,27 @@ namespace Skymu.ViewModels
 
         public async Task InitSidebar()
         {
-            await Universal.Plugin.PopulateUserInformation();
-            await Universal.Plugin.PopulateRecentsList();
+            try
+            {
+                await Universal.Plugin.PopulateUserInformation();
+                await Universal.Plugin.PopulateRecentsList();
+            }
+            catch (Exception ex)
+            {
+                Universal.PluginErrorHandler(Universal.Plugin, new PluginMessageEventArgs("Error when populating informations: " + ex.Message));
+                return;
+            }
             Universal.CurrentUser = Universal.Plugin.MyInformation;
 
             if (string.IsNullOrEmpty(Universal.CurrentUser?.Identifier))
+            {
                 Universal.ExceptionHandler(
                     new InvalidOperationException(
                         "Plugin did not return a valid user object to initialize the database."
                     )
                 );
-
+                return;
+            }
             _database = new DatabaseManager(Universal.CurrentUser);
             _database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
             _ = LoadAndCacheContacts();
@@ -817,6 +840,7 @@ namespace Skymu.ViewModels
             if (!_typingActive)
             {
                 Universal.Plugin.SetTyping(SelectedConversation?.Identifier, true);
+                _typingRepeatTimer.Change(Universal.Plugin.TypingRepeat, Universal.Plugin.TypingRepeat);
                 _typingActive = true;
             }
         }
