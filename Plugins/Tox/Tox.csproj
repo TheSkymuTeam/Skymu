@@ -9,7 +9,7 @@
 		<LangVersion>7.3</LangVersion>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\</OutputPath>
+		<OutputPath>..\..\bin\AnyCPU\$(Configuration)\Plugins\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
@@ -24,14 +24,16 @@
 			<Private>False</Private>
 		</ProjectReference>
 	</ItemGroup>
-	<Target Name="Copyx86Dlls" AfterTargets="Build">
-		<Copy SourceFiles="@(x86Dlls)" DestinationFolder="..\..\Skymu\bin\SkymuFramework\$(Configuration)\Plugins\" SkipUnchangedFiles="false" />
+	<Target Name="Copyx86Libs" AfterTargets="Build">
+		<ItemGroup>
+			<PluginFiles Include="lib86\**\*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\..\bin\x86\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
-	<Target Name="Copyx64Dlls" AfterTargets="Build">
-		<Copy SourceFiles="@(x64Dlls)" DestinationFolder="..\..\Skymu\bin\SkymuCore\$(Configuration)\Plugins\" SkipUnchangedFiles="false" />
+	<Target Name="Copyx64Libs" AfterTargets="Build">
+		<ItemGroup>
+			<PluginFiles Include="lib64\**\*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\..\bin\x64\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
-	<ItemGroup>
-		<x86Dlls Include="lib86\*.dll" />
-		<x64Dlls Include="lib64\*.dll" />
-	</ItemGroup>
 </Project>
