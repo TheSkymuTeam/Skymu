@@ -31,6 +31,31 @@ class Shit
             default: throw new Exception(err.ToString());
         }
     }
+    internal static void cperr(Tox_Err_Conference_Peer_Query err)
+    {
+        if (err != Tox_Err_Conference_Peer_Query.OK)
+            switch (err)
+            {
+                case Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
+                case Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND: throw new ObjectDisposedException("Peer");
+                case Tox_Err_Conference_Peer_Query.NO_CONNECTION: throw new InvalidOperationException("No connection");
+                default: throw new Exception(err.ToString());
+            }
+    }
+    internal static byte[] FromHex(string hex, UInt32 leng = 64)
+    {
+        var len = hex.Length;
+        if (len != leng)
+        {
+            throw new ArgumentException($"Hex string must be {leng} characters long, got {len}");
+        }
+        var result = new byte[len / 2];
+
+        for (int i = 0; i < leng; i += 2)
+            result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+
+        return result;
+    }
 }
 
 namespace ToxOO
@@ -173,6 +198,7 @@ namespace ToxOO
         public static UInt32 major { get => tox_version_major(); }
         public static UInt32 minor { get => tox_version_minor(); }
         public static UInt32 patch { get => tox_version_patch(); }
+        public static string str { get => $"{major}.{minor}.{patch}"; }
         public static bool Compatible(UInt32 major, UInt32 minor, UInt32 patch) => tox_version_is_compatible(major, minor, patch);
     }
 
@@ -183,6 +209,15 @@ namespace ToxOO
         public static UInt32 dhtId { get => tox_dht_id_size(); }
         public static UInt32 conferenceUid { get => tox_conference_uid_size(); }
         public static UInt32 conferenceId { get => tox_conference_id_size(); }
+        public static UInt32 groupTopic { get => tox_group_max_topic_length(); }
+        public static UInt32 groupPart { get => tox_group_max_part_length(); }
+        public static UInt32 groupMessage { get => tox_group_max_message_length(); }
+        public static UInt32 groupCustomLossyPacket { get => tox_group_max_custom_lossy_packet_length(); }
+        public static UInt32 groupCustomLosslessPacket { get => tox_group_max_custom_lossless_packet_length(); }
+        public static UInt32 groupName { get => tox_group_max_group_name_length(); }
+        public static UInt32 groupPassword { get => tox_group_max_group_name_length(); }
+        public static UInt32 groupId { get => tox_group_chat_id_size(); }
+        public static UInt32 groupPeerPublicKey { get => tox_group_peer_public_key_size(); }
         public static UInt32 nospam { get => tox_nospam_size(); }
         public static UInt32 address { get => tox_address_size(); }
         public static UInt32 name { get => tox_max_name_length(); }
@@ -340,7 +375,9 @@ namespace ToxOO
 
         #region friend
 
-        public UInt32 FriendAdd(string address, string message = null)
+        public UInt32 FriendAdd(string address, string message = null) => FriendAdd(Shit.FromHex(address, Size.address * 2), message);
+
+        public UInt32 FriendAdd(byte[] address, string message = null)
         {
             UInt32 fid;
             Tox_Err_Friend_Add err;
@@ -446,12 +483,100 @@ namespace ToxOO
         #endregion
 
         #region conference
+
+        void caexp(Tox_Err_Conference_Join err)
+        {
+            if (err != Tox_Err_Conference_Join.OK)
+                switch (err)
+                {
+                    case Tox_Err_Conference_Join.INVALIID_LENGTH: throw new ArgumentException("Invalid length");
+                    case Tox_Err_Conference_Join.WRONG_TYPE: throw new ArgumentException("Invalid cookie?");
+                    case Tox_Err_Conference_Join.FRIEND_NOT_FOUND: throw new ArgumentException("Friend not found");
+                    case Tox_Err_Conference_Join.DUPLICATE: throw new InvalidOperationException("Duplicate/already joined");
+                    case Tox_Err_Conference_Join.INIT_FAIL: throw new ExternalException("Failed to initialize");
+                    case Tox_Err_Conference_Join.FAIL_SEND: throw new ExternalException("Failed to send join packet");
+                    case Tox_Err_Conference_Join.NULL: throw new ArgumentNullException("Cookie was NULL");
+                    default: throw new Exception(err.ToString());
+                }
+        }
+        public UInt32 ConferenceAdd(UInt32 fid, string cookie)
+        {
+            var cid = tox_conference_join(ptr, fid, cookie, (UIntPtr)cookie.Length, out var err);
+            caexp(err);
+            return fid;
+        }
+        public UInt32 ConferenceAdd(UInt32 fid, byte[] cookie)
+        {
+            var cid = tox_conference_join(ptr, fid, cookie, (UIntPtr)cookie.Length, out var err);
+            caexp(err);
+            return fid;
+        }
+        public void ConferenceDelete(UInt32 cid)
+        {
+            if (!tox_conference_delete(ptr, cid, out Tox_Err_Conference_Delete err))
+                switch (err)
+                {
+                    case Tox_Err_Conference_Delete.CONFERENCE_NOT_FOUND: throw new ArgumentException("Conference not found");
+                    default: throw new Exception(err.ToString());
+                }
+        }
+        public Conference ConferenceById(byte[] id)
+        {
+            UInt32 cid = tox_conference_by_id(ptr, id, out Tox_Err_Conference_By_Id err);
+            if (err != Tox_Err_Conference_By_Id.OK)
+                switch (err)
+                {
+                    case Tox_Err_Conference_By_Id.NULL: throw new ArgumentNullException();
+                    case Tox_Err_Conference_By_Id.NOT_FOUND: return null;
+                    default: throw new Exception(err.ToString());
+                }
+            return new Conference(ptr, cid);
+        }
+        public UIntPtr conferenceCount { get => tox_conference_get_chatlist_size(ptr); }
+        public UInt32[] conferenceIds
+        {
+            get
+            {
+                UInt32[] clist = new UInt32[(int)conferenceCount];
+                tox_conference_get_chatlist(ptr, clist);
+                return clist;
+            }
+        }
+        public Dictionary<UInt32, Conference> conferences
+        {
+            get
+            {
+                Dictionary<UInt32, Conference> Conferences = new Dictionary<UInt32, Conference>();
+                foreach (UInt32 cid in conferenceIds)
+                {
+                    Conferences[cid] = new Conference(ptr, cid);
+                }
+                return Conferences;
+            }
+        }
+        public Conference[] conferenceArray
+        {
+            get
+            {
+                Conference[] Conferences = new Conference[(int)conferenceCount];
+                int i = 0;
+                foreach (UInt32 cid in conferenceIds)
+                {
+                    Conferences[i] = new Conference(ptr, cid);
+                    i++;
+                }
+                return Conferences;
+            }
+        }
+        public Conference GetConference(UInt32 cid) => new Conference(ptr, cid);
+
         public tox_conference_invite_cb conferenceInvite { set => tox_callback_conference_invite(ptr, value); }
         public tox_conference_connected_cb conferenceConnected { set => tox_callback_conference_connected(ptr, value); }
         public tox_conference_message_cb conferenceMessage { set => tox_callback_conference_message(ptr, value); }
         public tox_conference_title_cb conferenceTitle { set => tox_callback_conference_title(ptr, value); }
         public tox_conference_peer_name_cb conferencePeerName { set => tox_callback_conference_peer_name(ptr, value); }
         public tox_conference_peer_list_changed_cb conferencePeerListChanged { set => tox_callback_conference_peer_list_changed(ptr, value); }
+
         #endregion
     }
 
@@ -530,6 +655,7 @@ namespace ToxOO
                 return Encoding.ASCII.GetString(stat);
             }
         }
+        /* Deprecated
         public Tox_User_Status status
         {
             get
@@ -540,6 +666,7 @@ namespace ToxOO
                 return stat;
             }
         }
+        */
         public Tox_Connection connectionStatus
         {
             get
@@ -597,7 +724,7 @@ namespace ToxOO
         {
             tox_conference_get_type(tox, id, out var err);
             if (err == Tox_Err_Conference_Get_Type.CONFERENCE_NOT_FOUND)
-                throw new ArgumentException("Conference not found");
+                throw new ObjectDisposedException("Conference");
             ptr = tox;
             this.id = id;
         }
@@ -611,21 +738,6 @@ namespace ToxOO
                     default: throw new Exception(err.ToString());
                 }
             ptr = tox;
-        }
-
-        public Tox_Conference_Type Type
-        {
-            get
-            {
-                var type = tox_conference_get_type(ptr, id, out var err);
-                if (err != Tox_Err_Conference_Get_Type.OK)
-                    switch (err)
-                    {
-                        case Tox_Err_Conference_Get_Type.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
-                        default: throw new Exception(err.ToString());
-                    }
-                return type;
-            }
         }
 
         /// <summary>Please dispose the object properly after this!</summary>
@@ -660,16 +772,112 @@ namespace ToxOO
                 return ps;
             }
         }
+        // name, pubkey, numer_is_ours
+
+        public UInt32 offlinePeerCount
+        {
+            get
+            {
+                UInt32 peerCount = tox_conference_offline_peer_count(ptr, id, out var err);
+                Shit.pqerr(err);
+                return peerCount;
+            }
+        }
+        public COfflinePeer[] offlinePeers
+        {
+            get
+            {
+                var ps = new COfflinePeer[offlinePeerCount];
+                for (UInt32 i = 0; i < ps.Length; i++)
+                {
+                    ps[i] = new COfflinePeer(ptr, id, i);
+                }
+                return ps;
+            }
+        }
+        // offline name, pkey, last active
+
+        // set max offline, invite
+        public bool sendMessage(Tox_Message_Type type, string message)
+        {
+            var suc = tox_conference_send_message(ptr, id, type, message, (UIntPtr)message.Length, out var err);
+            if (err != Tox_Err_Conference_Send_Message.OK)
+                switch (err)
+                {
+                    case Tox_Err_Conference_Send_Message.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Friend");
+                    case Tox_Err_Conference_Send_Message.TOO_LONG: throw new ArgumentException("Message too long");
+                    case Tox_Err_Conference_Send_Message.NO_CONNECTION: return false;
+                    case Tox_Err_Conference_Send_Message.FAIL_SEND: throw new ExternalException(err.ToString());
+                }
+            return suc;
+        }
+
+        void cterr(Tox_Err_Conference_Title err)
+        {
+            switch (err)
+            {
+                case Tox_Err_Conference_Title.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference not found");
+                case Tox_Err_Conference_Title.INVALID_LENGTH: throw new ObjectDisposedException("Conference not found");
+                case Tox_Err_Conference_Title.FAIL_SEND: throw new ObjectDisposedException("Conference not found");
+                default: throw new Exception(err.ToString());
+            }
+        }
+        public string title
+        {
+            get
+            {
+                var size = tox_conference_get_title_size(ptr, id, out var serr);
+                if (size == (UIntPtr)0 || serr != Tox_Err_Conference_Title.OK)
+                    return BATS(cid);
+                var title = new byte[(int)size];
+                if (!tox_conference_get_title(ptr, id, title, out var err))
+                    cterr(err);
+                var uname = Encoding.ASCII.GetString(title);
+                
+                return uname;
+            }
+            set
+            {
+                if (!tox_conference_set_title(ptr, id, value, (UIntPtr)value.Length, out var err))
+                    cterr(err);
+            }
+        }
+        public Tox_Conference_Type Type
+        {
+            get
+            {
+                var type = tox_conference_get_type(ptr, id, out var err);
+                if (err != Tox_Err_Conference_Get_Type.OK)
+                    switch (err)
+                    {
+                        case Tox_Err_Conference_Get_Type.CONFERENCE_NOT_FOUND: throw new ObjectDisposedException("Conference");
+                        default: throw new Exception(err.ToString());
+                    }
+                return type;
+            }
+        }
+        /// <summary>This is not the internal ID.</summary>
+        public byte[] cid
+        {
+            get
+            {
+                var cid = new byte[Size.conferenceId];
+                if (!tox_conference_get_id(ptr, id, cid))
+                    throw new ExternalException();
+                return cid;
+            }
+        }
     }
-    public class ConferencePeer
+    /// <summary>INTERNAL - DO NOT USE</summary>
+    public class AnyConferencePeer
     {
         public IntPtr ptr;
         public UInt32 cid;
         public UInt32 id;
 
-        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id)
+        public AnyConferencePeer(IntPtr tox, UInt32 cid, UInt32 id)
         {
-            tox_conference_peer_get_name_size(ptr, cid, id, out var err);
+            tox_conference_peer_get_name_size(tox, cid, id, out var err);
             if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
                 throw new ObjectDisposedException("Conference");
             else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
@@ -677,6 +885,64 @@ namespace ToxOO
             ptr = tox;
             this.cid = cid;
             this.id = id;
+        }
+    }
+    public class ConferencePeer : AnyConferencePeer
+    {
+        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+
+        public string name
+        {
+            get
+            {
+                var name = new byte[(int)tox_conference_peer_get_name_size(ptr, cid, id, out var serr)];
+                Shit.cperr(serr);
+                if (!tox_conference_peer_get_name(ptr, cid, id, name, out var err))
+                    Shit.cperr(err);
+                var uname = Encoding.ASCII.GetString(name);
+                if (String.IsNullOrEmpty(uname))
+                    return BATS(publicKey);
+                return uname;
+            }
+        }
+        public byte[] publicKey
+        {
+            get
+            {
+                var pubkey = new byte[Size.publicKey];
+                tox_conference_peer_get_public_key(ptr, cid, id, pubkey, out var err);
+                Shit.cperr(err);
+                return pubkey;
+            }
+        }
+    }
+    public class COfflinePeer : AnyConferencePeer
+    {
+        public COfflinePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+
+        public string name
+        {
+            get
+            {
+                var name = new byte[(int)tox_conference_offline_peer_get_name_size(ptr, cid, id, out var serr)];
+                Shit.cperr(serr);
+                if (!tox_conference_offline_peer_get_name(ptr, cid, id, name, out var err))
+                    Shit.cperr(err);
+                var uname = Encoding.ASCII.GetString(name);
+                if (String.IsNullOrEmpty(uname))
+                    return BATS(publicKey);
+                return uname;
+            }
+        }
+        public byte[] publicKey
+        {
+            get
+            {
+                var pubkey = new byte[Size.publicKey];
+                tox_conference_offline_peer_get_public_key(ptr, cid, id, pubkey, out var err);
+                Shit.cperr(err);
+                return pubkey;
+            }
         }
     }
 }
