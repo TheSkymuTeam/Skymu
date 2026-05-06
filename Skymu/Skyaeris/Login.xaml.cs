@@ -234,7 +234,7 @@ namespace Skymu.Skyaeris
                 LoginControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
                 header.Text = Universal.Lang["sF_LOGIN_WELCOME"];
-                _timer.Stop();
+                _timer?.Stop();
             }
         }
 
