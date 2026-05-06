@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.Input;
+using NullSoftware.ToolKit;
 using Skymu.Preferences;
 using Skymu.Views;
 using System;
@@ -120,7 +121,7 @@ namespace Skymu
             new MenuItem() { Header = Universal.Lang["sTRAYMENU_QUIT"], Command = new RelayCommand(() => Universal.Close()) }
         };
 
-        public static NullSoftware.ToolKit.TrayIcon trayIcon = new NullSoftware.ToolKit.TrayIcon()
+        public static TrayIcon trayIcon = new TrayIcon()
         {
             Title = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})",
             IconSource = ICON("logged-out"),
