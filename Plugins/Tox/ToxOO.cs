@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -176,7 +177,10 @@ namespace ToxOO
                 Marshal.Copy(ptr, data, 0, size);
                 return data;
             }
-            set => tox_options_set_savedata_data(ptr, value, (UIntPtr)value.Length);
+        }
+        public bool setSavedata(byte[] data)
+        {
+            return tox_options_set_savedata_data(ptr, data, (UIntPtr)data.Length);
         }
         public tox_log_cb logCallback
         {
@@ -271,6 +275,10 @@ namespace ToxOO
                         throw new ArgumentException(err.ToString());
                     default: throw new Exception(err.ToString());
                 }
+        }
+        public Tox(IntPtr ptr)
+        {
+            this.ptr = ptr;
         }
         public void Dispose()
         {
@@ -426,17 +434,17 @@ namespace ToxOO
                     default: throw new Exception(err.ToString());
                 }
         }
-        public UInt32 FriendByPublicKey(byte[] public_key)
+        public Friend FriendByPublicKey(byte[] public_key)
         {
             UInt32 fid = tox_friend_by_public_key(ptr, public_key, out Tox_Err_Friend_By_Public_Key err);
             if (err != Tox_Err_Friend_By_Public_Key.OK)
                 switch (err)
                 {
                     case Tox_Err_Friend_By_Public_Key.NULL: throw new ArgumentNullException();
-                    case Tox_Err_Friend_By_Public_Key.NOT_FOUND: throw new ArgumentException("Friend not found");
+                    case Tox_Err_Friend_By_Public_Key.NOT_FOUND: return null;
                     default: throw new Exception(err.ToString());
                 }
-            return fid;
+            return new Friend(ptr, fid);
         }
         public bool FriendExists(UInt32 fid) => tox_friend_exists(ptr, fid);
         public UIntPtr friendCount { get => tox_self_get_friend_list_size(ptr); }
@@ -485,6 +493,7 @@ namespace ToxOO
         public tox_friend_read_receipt_cb friendReadReceipt { set => tox_callback_friend_read_receipt(ptr, value); }
         public tox_friend_request_cb friendRequest { set => tox_callback_friend_request(ptr, value); }
         public tox_friend_message_cb friendMessage { set => tox_callback_friend_message(ptr, value); }
+        public tox_friend_lossless_packet_cb friendLosslessPacket { set => tox_callback_friend_lossless_packet(ptr, value); }
 
         #endregion
 
@@ -789,7 +798,7 @@ namespace ToxOO
                 return ps;
             }
         }
-        // name, pubkey, numer_is_ours
+        // name, pubkey, number_is_ours
 
         public UInt32 offlinePeerCount
         {

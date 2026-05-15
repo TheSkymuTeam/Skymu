@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -33,6 +34,7 @@ namespace Tox
 
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
@@ -64,9 +66,8 @@ namespace Tox
         Timer avTimer;
         readonly Callbacks cbs = new Callbacks();
         internal User currentUser;
-        internal Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)> conferences
-            = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
         bool disposed = false;
+        internal Dictionary<UInt32, User> friends = new Dictionary<uint, User>();
         internal string profile;
         internal FileStream profilelock;
         internal string savepass;
@@ -79,7 +80,6 @@ namespace Tox
         internal Dictionary<string, HashSet<User>> typingUsersPerChannel
             = new Dictionary<string, HashSet<User>>();
         internal SynchronizationContext uiContext;
-        internal Dictionary<UInt32, User> users = new Dictionary<UInt32, User>();
         IntPtr user_data;
 
         public void Dispose() => IDispose();
@@ -99,7 +99,7 @@ namespace Tox
             }
             catch (Exception e)
             {
-                ERR("An error occured trying to flush AV: " + e);
+                ERR("An error occurred trying to flush AV: " + e);
             }
             toxav_kill(av);
             toxTimer?.Dispose();
@@ -110,7 +110,7 @@ namespace Tox
                 }
                 catch (Exception e)
                 {
-                    ERR("An error occured trying to save profile. Some of your progress is lost. " + e);
+                    ERR("An error occurred trying to save profile. Some of your progress is lost. " + e);
                 }
             tox?.Dispose();
             Debug.WriteLine("Tox: Flushed Tox");
@@ -122,7 +122,7 @@ namespace Tox
             }
             catch (Exception e)
             {
-                ERR("An error occured trying to release profile lock. " + e);
+                ERR("An error occurred trying to release profile lock. " + e);
             }
             cbs.Dispose();
 
@@ -131,7 +131,7 @@ namespace Tox
             avFinished = new TaskCompletionSource<bool>();
             avWaiter = new TaskCompletionSource<bool>();
             currentUser = null;
-            conferences = new Dictionary<UInt32, (Dictionary<UInt32, User> users, Group conference)>();
+            friends = new Dictionary<uint, User>();
             profile = null;
             savepass = null;
             transfers = new Dictionary<UInt32, byte[]>();
@@ -139,7 +139,6 @@ namespace Tox
             tox_started = new TaskCompletionSource<bool>();
             typingUsersPerChannel = new Dictionary<string, HashSet<User>>();
             uiContext = null;
-            users = new Dictionary<UInt32, User>();
             user_data = IntPtr.Zero;
             Debug.WriteLine("Tox: Entire dispose process has finished");
         }
@@ -159,50 +158,14 @@ namespace Tox
         internal void CSC(CallEventArgs cea) => OnCallStateChanged?.Invoke(this, cea);
         // SAVE. Any other questions?
         internal void SAVE() => save(tox, profile, this);
-        internal byte[] GrabAvatar(UInt32 fid)
-        {
-            var avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
-            if (!Directory.Exists(avatar_cache_dir)) return null;
-
-            string pkey;
-            try
-            {
-                pkey = BATS(tox.GetFriend(fid).publicKey);
-            }
-            catch
-            {
-                return null;
-            }
-
-            var path = Path.Combine(avatar_cache_dir, pkey + ".png");
-            if (!File.Exists(path)) return null;
-            return File.ReadAllBytes(path);
-        }
+        // ShowYesNo
+        internal void SYN(PluginYesNoEventArgs e) => ShowYesNo?.Invoke(this, e);
 
         // https://stackoverflow.com/a/3202085
         static bool IsFileLocked(IOException exception)
         {
             var errorCode = Marshal.GetHRForException(exception) & ((1 << 16) - 1);
             return errorCode == 32 || errorCode == 33;
-        }
-
-        bool HasConversation(string identifier, ObservableCollection<Conversation> list)
-        {
-            foreach (Conversation c in list)
-            {
-                if (c.Identifier == identifier)
-                    return true;
-            }
-            return false;
-        }
-        bool HasConversation(string identifier, ObservableCollection<DirectMessage> list)
-        {
-            foreach (DirectMessage c in list)
-            {
-                if (c.Identifier == identifier)
-                    return true;
-            }
-            return false;
         }
 
         #endregion
@@ -212,7 +175,18 @@ namespace Tox
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
             if (authType == AuthenticationMethod.Password)
+            {
+                if (!File.Exists(Path.Combine(toxDir, profile + ".tox")))
+                {
+                    TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+                    ShowYesNo?.Invoke(this, new PluginYesNoEventArgs(
+                        "Are you sure that you want to create an encrypted profile? Since the password is not stored, avoid this option unless you want the security.",
+                        (yes) => tcs.TrySetResult(yes)));
+                    bool choice = await tcs.Task;
+                    if (!choice) return LoginResult.Failure;
+                }
                 savepass = password;
+            }
             else if (authType == AuthenticationMethod.Token) { }
             else
                 return LoginResult.UnsupportedAuthType;
@@ -222,9 +196,7 @@ namespace Tox
         }
         public async Task<LoginResult> Authenticate(SavedCredential creds)
         {
-            if (creds.AuthenticationType == AuthenticationMethod.Password)
-                savepass = creds.PasswordOrToken;
-            else if (creds.AuthenticationType == AuthenticationMethod.Token) { }
+            if (creds.AuthenticationType == AuthenticationMethod.Token) { }
             else
                 return LoginResult.UnsupportedAuthType;
             profile = creds.User.Username;
@@ -351,7 +323,13 @@ namespace Tox
                     File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
                 }
 
-                opt.savedata = data;
+                if (!opt.setSavedata(data))
+                {
+                    OnError?.Invoke(this, new PluginMessageEventArgs("Something went wrong setting the savedata."));
+                    profilelock.Dispose();
+                    File.Delete(lockpath);
+                    return LoginResult.Failure;
+                }
             }
             else
             {
@@ -426,7 +404,7 @@ namespace Tox
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
-                OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
+                    OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
             currentUser.PublicUsername = tid;
 
@@ -449,6 +427,8 @@ namespace Tox
             Ftox_group_get_group_list(tox.ptr, gl);
 
             tox_group_disconnect(tox.ptr, gl[0], out _);
+
+            FriendListRefresh(this);
 
             // This is where you usually get stuck logging in. If you have any issues like that,
             // please ensure that you are connected, can reach even one of the bootstrap nodes
@@ -478,99 +458,9 @@ namespace Tox
             return true;
         }
 
-        public async Task<bool> PopulateContactsList()
-        {
-            foreach (Friend f in tox.friendArray)
-            {
-                if (!HasConversation(f.id.ToString(), ContactsList))
-                {
-                    User user;
-                    var idx = f.id;
-                    if (idx >= 0 && idx < users.Count && users[idx] != null)
-                        user = users[idx];
-                    else
-                    {
-                        var pubkey = BATS(f.publicKey);
-                        user = new User(
-                            f.name ?? pubkey,
-                            pubkey,
-                            pubkey,
-                            f.statusMessage,
-                            PresenceStatus.Offline,
-                            GrabAvatar(f.id)
-                        );
-                    }
+        public async Task<bool> PopulateContactsList() => FriendListRefresh(this, false);
 
-                    if (!users.ContainsKey(f.id))
-                    {
-                        users[f.id] = user;
-                    }
-                    else
-                    {
-                        users[idx].Username = f.name;
-                        users[idx].Status = f.statusMessage;
-                    }
-                    var dm = new DirectMessage(user, 0, f.id.ToString());
-                    ContactsList.Add(dm);
-                }
-            }
-            return true;
-        }
-
-        public async Task<bool> PopulateRecentsList()
-        {
-            foreach (Friend f in tox.friendArray)
-            {
-                if (!HasConversation(f.id.ToString(), RecentsList))
-                {
-                    User user;
-                    var idx = f.id;
-                    if (idx >= 0 && idx < users.Count && users[idx] != null)
-                        user = users[idx];
-                    else
-                    {
-                        var pubkey = BATS(f.publicKey);
-                        user = new User(
-                            f.name ?? pubkey,
-                            pubkey,
-                            pubkey,
-                            f.statusMessage,
-                            PresenceStatus.Offline,
-                            GrabAvatar(f.id)
-                        );
-                    }
-
-                    if (!users.ContainsKey(f.id))
-                    {
-                        users[f.id] = user;
-                    }
-                    else
-                    {
-                        users[idx].Username = f.name;
-                        users[idx].Status = f.statusMessage;
-                    }
-                    var dm = new DirectMessage(user, 0, f.id.ToString());
-                    RecentsList.Add(dm);
-                }
-            }
-
-            foreach (var pair in tox.conferences)
-            {
-                PeerListRefresh(this, tox.ptr, pair.Value);
-            }
-
-            var grouplist = new UInt32[(int)Ftox_group_get_group_list_size(tox.ptr)];
-            if (grouplist.Length != 0)
-            {
-                Ftox_group_get_group_list(tox.ptr, grouplist);
-                foreach (UInt32 gid in grouplist)
-                {
-                    Debug.WriteLine("Found group: " + gid);
-                }
-            }
-
-            return true;
-        }
+        public async Task<bool> PopulateRecentsList() => FriendListRefresh(this, false);
 
         #endregion
 
@@ -587,43 +477,42 @@ namespace Tox
 
             try
             {
-                if (identifier.StartsWith("C"))
+                Conference c;
+                try
                 {
-                    var c = tox.ConferenceById(FromHex(identifier.Substring(1), (int)Size.conferenceId * 2));
-                    if (c == null) return false;
-                    if (!c.sendMessage(type, text))
+                    c = tox.ConferenceById(FromHex(identifier, (int)Size.conferenceId * 2));
+                    if (c != null)
                     {
-                        _ = Task.Run(async () =>
+                        if (!c.sendMessage(type, text))
                         {
-                            await Task.Delay(1000);
-                            if (!disposed)
-                                await SendMessage(identifier, otext, attachment, parent_message_identifier);
-                        });
+                            _ = Task.Run(async () =>
+                            {
+                                await Task.Delay(1000);
+                                if (!disposed)
+                                    await SendMessage(identifier, otext, attachment, parent_message_identifier);
+                            });
+                            return true;
+                        }
                         return true;
                     }
-                    //UCP(_ => RaiseMessageEvent(new MessageRecievedEventArgs(identifier,
-                    //    new Message($"{c.cid}/SELF_{GUID()}", currentUser, TIME(), text), false)
-                    //));
-                    return true;
-                }
-                else
+                } catch { }
+                var f = tox.FriendByPublicKey(FromHex(identifier, (int)Size.publicKey * 2));
+                if (f == null) return false;
+                var mid = f.SendMessage(type, text);
+                if (mid == null)
                 {
-                    var mid = tox.friends[UInt32.Parse(identifier)].SendMessage(type, text);
-                    if (mid == null)
+                    _ = Task.Run(async () =>
                     {
-                        _ = Task.Run(async () =>
-                        {
-                            Thread.Sleep(1000);
-                            if (!disposed)
-                                await SendMessage(identifier, otext, attachment, parent_message_identifier);
-                        });
-                        return true;
-                    }
-                    UCP(_ => RaiseMessageEvent(new MessageRecievedEventArgs(identifier,
-                        new Message(mid.ToString(), currentUser, TIME(), text), false)
-                    ));
+                        Thread.Sleep(1000);
+                        if (!disposed)
+                            await SendMessage(identifier, otext, attachment, parent_message_identifier);
+                    });
                     return true;
                 }
+                UCP(_ => RaiseMessageEvent(new MessageRecievedEventArgs(identifier,
+                    new Message(mid+"_"+GUID(), currentUser, TIME(), text), false)
+                ));
+                return true;
             }
             catch (Exception ex)
             {
@@ -636,13 +525,12 @@ namespace Tox
         {
             activecid = conversation.Identifier;
             TypingUsersList.Clear();
-            if (typingUsersPerChannel.ContainsKey(conversation.Identifier))
+            try
             {
-                foreach (User user in typingUsersPerChannel[conversation.Identifier])
-                {
-                    TypingUsersList.Add(user);
-                }
-            }
+                var f = tox.FriendByPublicKey(FromHex(activecid, (int)Size.publicKey * 2));
+                if (f != null && f.typing)
+                    TypingUsersList.Add(friends[f.id]);
+            } catch (ArgumentException) { }
             return new ConversationItem[0];
         }
 
@@ -679,7 +567,7 @@ namespace Tox
         {
             Debug.WriteLine($"Tox: Typing in {identifier}, {typing}");
             if (UInt32.TryParse(identifier, out UInt32 fid))
-                tox.friends[fid].typing = typing;
+                tox.GetFriend(fid).typing = typing;
             return true;
         }
 
@@ -688,9 +576,9 @@ namespace Tox
             bool user = query.Length == Size.address * 2;
             bool group = query.Length == Size.groupId * 2;
             if (user)
-                return new Metadata[1] { new User("Add me! (user)", "Add me! (user)", query) };
+                return new Metadata[1] { new User(query, "ToxUser", query) };
             else if (group)
-                return new Metadata[1] { new Group("Add me! (group)", query, 0, new User[0]) };
+                return new Metadata[1] { new Group(query, query, 0, new User[0]) };
             else
                 return new Metadata[0];
         }
@@ -700,7 +588,10 @@ namespace Tox
             if (metadata is User user)
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
-                users[fid] = new User(user.Username, user.Identifier, fid.ToString());
+                var f = friends[fid];
+                var dm = new DirectMessage(f, 0, f.Identifier);
+                ContactsList.Add(dm);
+                RecentsList.Add(dm);
             }
             else
             {
@@ -709,9 +600,8 @@ namespace Tox
 
                 var gid = tox_group_join(tox.ptr, idt, currentUser.DisplayName, (UIntPtr)currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
+                RecentsList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
             }
-            _ = PopulateContactsList();
-            _ = PopulateRecentsList();
             SAVE();
             return true;
         }
@@ -746,23 +636,22 @@ namespace Tox
             avACall = new CallStruct
             {
                 SAudio = true,
-                Identifier = UInt32.Parse(convo_id),
+                Identifier = tox.FriendByPublicKey(FromHex(convo_id, (int)Size.publicKey*2)).id,
                 Active = true
             };
             if (accept)
             {
-                if (!toxav_answer(av, UInt32.Parse(convo_id), 64, 0, out var err))
+                if (!toxav_answer(av, avACall.Identifier, 64, 0, out var err))
                 {
-                    ERR("An error occured when answering the call: " + err);
+                    ERR("An error occurred when answering the call: " + err);
                     avACall = new CallStruct();
                     return null;
                 }
             }
             else
             {
-                UInt32 cid = UInt32.Parse(convo_id);
                 avWaiter = new TaskCompletionSource<bool>();
-                if (!toxav_call(av, cid, 64, 0, out var err))
+                if (!toxav_call(av, avACall.Identifier, 64, 0, out var err))
                 {
                     ERR($"Failed to start a call with friend {convo_id}: {err}");
                     avWaiter = null;
@@ -786,9 +675,10 @@ namespace Tox
 
         public async Task<bool> EndCall(ActiveCall call)
         {
+            var cid = avACall.Identifier;
             avACall.caller?.Stop();
             avACall = new CallStruct();
-            if (!toxav_call_control(av, UInt32.Parse(call.ConversationId), Toxav_Call_Control.CANCEL, out var err))
+            if (!toxav_call_control(av, cid, Toxav_Call_Control.CANCEL, out var err))
             {
                 ERR($"Could not finish call: {err}");
                 return false;

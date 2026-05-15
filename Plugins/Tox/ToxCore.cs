@@ -29,6 +29,7 @@
 // Also grab ToxOO.cs if you prefer object-oriented.
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -625,7 +626,7 @@ public static class ToxCore
     public static extern void tox_callback_friend_read_receipt(IntPtr tox, tox_friend_read_receipt_cb callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_friend_request_cb(IntPtr tox, byte[] public_key, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
+    public delegate void tox_friend_request_cb(IntPtr tox, IntPtr public_key, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_friend_request(IntPtr tox, tox_friend_request_cb callback);
 
@@ -1038,12 +1039,12 @@ public static class ToxCore
     public static extern bool tox_friend_send_lossless_packet(IntPtr tox, UInt32 friend_number, [MarshalAs(UnmanagedType.LPStr)] string data, UIntPtr length, out Tox_Err_Friend_Custom_Packet error);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_friend_lossy_packet_cb(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, IntPtr user_data);
+    public delegate void tox_friend_lossy_packet_cb(IntPtr tox, UInt32 friend_number, IntPtr data, UIntPtr length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_friend_lossy_packet(IntPtr tox, tox_friend_lossy_packet_cb callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_friend_lossless_packet_cb(IntPtr tox, UInt32 friend_number, byte[] data, UIntPtr length, IntPtr user_data);
+    public delegate void tox_friend_lossless_packet_cb(IntPtr tox, UInt32 friend_number, IntPtr data, UIntPtr length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_friend_lossless_packet(IntPtr tox, tox_friend_lossless_packet_cb callback);
 
@@ -1520,12 +1521,12 @@ public static class ToxCore
     public static extern void tox_callback_group_private_message(IntPtr tox, tox_group_private_message_cb callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_group_custom_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, byte[] data, UIntPtr data_length, IntPtr user_data);
+    public delegate void tox_group_custom_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, IntPtr data, UIntPtr data_length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_group_custom_packet(IntPtr tox, tox_group_custom_packet_cb callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_group_custom_private_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, Tox_Message_Type message_type, byte[] data, UIntPtr data_length, IntPtr user_data);
+    public delegate void tox_group_custom_private_packet_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, IntPtr data, UIntPtr data_length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_group_custom_private_packet(IntPtr tox, tox_group_custom_packet_cb callback);
 
@@ -1567,7 +1568,7 @@ public static class ToxCore
     public static extern bool tox_group_invite_accept(IntPtr tox, UInt32 friend_number, byte[] invite_data, UIntPtr length, [MarshalAs(UnmanagedType.LPStr)] string name, UIntPtr name_length, [MarshalAs(UnmanagedType.LPStr)] string password, UIntPtr password_length, out Tox_Err_Group_Invite_Accept error);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_group_invite_cb(IntPtr tox, UInt32 friend_number, byte[] invite_data, UIntPtr invite_data_length, [MarshalAs(UnmanagedType.LPStr)] string group_name, UIntPtr group_name_length, IntPtr user_data);
+    public delegate void tox_group_invite_cb(IntPtr tox, UInt32 friend_number, IntPtr invite_data, UIntPtr invite_data_length, [MarshalAs(UnmanagedType.LPStr)] string group_name, UIntPtr group_name_length, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_group_invite(IntPtr tox, tox_group_invite_cb callback);
 
@@ -1938,7 +1939,7 @@ public static class ToxCore
         {
             return tox_group_get_group_list_size(tox);
         }
-        catch (EntryPointNotFoundException _)
+        catch (EntryPointNotFoundException)
         {
             return tox_group_get_number_groups(tox);
         }
@@ -1950,7 +1951,7 @@ public static class ToxCore
         {
             tox_group_get_group_list(tox, group_list);
         }
-        catch (EntryPointNotFoundException _)
+        catch (EntryPointNotFoundException)
         {
             UInt32 gc = Ftox_group_get_group_list_size(tox);
             for (UInt32 i = 0; i < UInt32.MaxValue && group_list.Length < gc; i++)
