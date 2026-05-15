@@ -289,6 +289,15 @@ namespace Skymu.ViewModels
 
             _ = SkymuApiStatusHandler();
 
+            var curContext = SynchronizationContext.Current;
+            Universal.CurrentUser.PropertyChanged += (o, e) =>
+            {
+                if (e.PropertyName == "ConnectionStatus")
+                    curContext.Post(_ =>
+                        Tray.PushIcon(Universal.CurrentUser.ConnectionStatus)
+                    , null);
+            };
+
             Ready?.Invoke(this, EventArgs.Empty);
         }
 

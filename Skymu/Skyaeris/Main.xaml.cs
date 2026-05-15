@@ -1635,7 +1635,6 @@ namespace Skymu.Skyaeris
                 return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.PushIcon(status);
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
@@ -1643,7 +1642,6 @@ namespace Skymu.Skyaeris
                 if (Universal.CurrentUser != null)
                     Universal.CurrentUser.ConnectionStatus = status;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.PushIcon(status);
             }
         }
 
