@@ -55,6 +55,7 @@ namespace Skymu
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;
         public static BitmapImage GroupAvatar;
+        public static BitmapImage UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
 
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
