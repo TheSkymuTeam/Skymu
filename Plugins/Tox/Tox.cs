@@ -76,7 +76,6 @@ namespace Tox
         internal Dictionary<UInt32, byte[]> transfers = new Dictionary<UInt32, byte[]>();
         internal Dictionary<UInt32, (Tox_File_Kind kind, string path)> transfer_info
             = new Dictionary<UInt32, (Tox_File_Kind kind, string path)>();
-        internal TaskCompletionSource<bool> tox_started = new TaskCompletionSource<bool>();
         internal Dictionary<string, HashSet<User>> typingUsersPerChannel
             = new Dictionary<string, HashSet<User>>();
         internal SynchronizationContext uiContext;
@@ -136,7 +135,6 @@ namespace Tox
             savepass = null;
             transfers = new Dictionary<UInt32, byte[]>();
             transfer_info = new Dictionary<UInt32, (Tox_File_Kind kind, string path)>();
-            tox_started = new TaskCompletionSource<bool>();
             typingUsersPerChannel = new Dictionary<string, HashSet<User>>();
             uiContext = null;
             user_data = IntPtr.Zero;
@@ -396,15 +394,12 @@ namespace Tox
             var status = tox.statusMessage;
 
             var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
-            if (File.Exists(avatarPath))
-                currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Online, File.ReadAllBytes(avatarPath));
-            else
-                currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Online);
+            currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Offline, File.Exists(avatarPath) ? File.ReadAllBytes(avatarPath) : null);
 
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
+                OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
             currentUser.PublicUsername = tid;
 
@@ -420,20 +415,7 @@ namespace Tox
             });
             avThread.Start();
 
-            Debug.WriteLine($"Tox: NGC count: {Ftox_group_get_group_list_size(tox.ptr)}");
-
-            var gl = new UInt32[69];
-
-            Ftox_group_get_group_list(tox.ptr, gl);
-
-            tox_group_disconnect(tox.ptr, gl[0], out _);
-
             FriendListRefresh(this);
-
-            // This is where you usually get stuck logging in. If you have any issues like that,
-            // please ensure that you are connected, can reach even one of the bootstrap nodes
-            // (especially in censored countries), and that you are stuck here, and not somewhere else.
-            await tox_started.Task;
 
             return LoginResult.Success;
         }

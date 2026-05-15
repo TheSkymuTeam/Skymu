@@ -113,8 +113,12 @@ namespace Tox
         tox_self_connection_status_cb _OnConnectionStatus;
         void OnConnectionStatus(IntPtr tox, Tox_Connection status, IntPtr user_data)
         {
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: Got connection status {status}");
-            GC(user_data).tox_started?.TrySetResult(true);
+            if (status == Tox_Connection.NONE)
+                core.currentUser.ConnectionStatus = PresenceStatus.Offline;
+            else
+                core.currentUser.ConnectionStatus = MapStatus(core.tox.status);
         }
 
         #endregion
