@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -203,7 +204,10 @@ namespace Skymu.Skyaeris
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    browser.Visibility = Visibility.Visible;
+                    if (Settings.EnableSkypeHome)
+                        browser.Visibility = Visibility.Visible;
+                    else
+                        NoHomeGrid.Visibility = Visibility.Visible;
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ConversationList.SelectedItem = null;
                     SelectedContact = null;
@@ -218,6 +222,7 @@ namespace Skymu.Skyaeris
                     ChatProfileArea.Visibility = Visibility.Visible;
                     MessageWindow.Visibility = Visibility.Visible;
                     browser.Visibility = Visibility.Collapsed;
+                    NoHomeGrid.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -1528,6 +1533,7 @@ namespace Skymu.Skyaeris
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
+            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
 
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
@@ -1560,6 +1566,9 @@ namespace Skymu.Skyaeris
 
             Settings.Default.PropertyChanged += RefreshCreds;
             RefreshCreds();
+            if (!Settings.EnableSkypeHome)
+                RefreshNoHomeText(null, null);
+            Universal.Lang.PropertyChanged += RefreshNoHomeText;
 
             SourceInitialized += (s, e) =>
             {
@@ -1663,6 +1672,18 @@ namespace Skymu.Skyaeris
                 Settings.CredsText
                 + " - "
                 + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+        }
+
+        private void RefreshNoHomeText(object sender, PropertyChangedEventArgs e)
+        {
+            var el = SkypeHome.GetLanguage();
+            if (el == null) return;
+            var lang = (JsonElement)el;
+            NoHomeHead.Text = lang.GetProperty("header").GetString();
+            NoHomeBody.Text = lang.GetProperty("p1").GetString();
+            NoHomeListHead.Text = lang.GetProperty("p2").GetString();
+            NoHomeList1.Text = lang.GetProperty("list1li1").GetString();
+            NoHomeList2.Text = lang.GetProperty("list1li2").GetString();
         }
     }
 

@@ -437,6 +437,10 @@
                                             IsChecked="{Binding Path=[EnableSkypeHome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
+                                            Content="Enable the 'Skype Home' AdBlocker"
+                                            IsChecked="{Binding Path=[EnableAdBlock], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
                                             Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
                                             IsChecked="{Binding Path=[StartOnStartup], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox

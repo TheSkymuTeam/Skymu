@@ -193,6 +193,11 @@ namespace Skymu.Preferences
             get => S("EnableSkypeHome", true);
             set => W("EnableSkypeHome", value, nameof(EnableSkypeHome));
         }
+        public static bool EnableAdBlock
+        {
+            get => S("EnableAdBlock", false);
+            set => W("EnableAdBlock", value, nameof(EnableAdBlock));
+        }
         public static bool UseClearType
         {
             get => S("UseClearType", true);
