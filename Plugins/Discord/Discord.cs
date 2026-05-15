@@ -43,6 +43,7 @@ namespace Discord
         public bool SupportsVideoCalls => false; // not yet
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "discord"; } }

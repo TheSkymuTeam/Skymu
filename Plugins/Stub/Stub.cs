@@ -35,6 +35,7 @@ namespace Stub
 
         public event EventHandler<PluginMessageEventArgs> OnError;
         public event EventHandler<PluginMessageEventArgs> OnWarning;
+        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name
         {
