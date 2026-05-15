@@ -56,6 +56,7 @@ namespace Skymu.SeanKype
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
+            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;
