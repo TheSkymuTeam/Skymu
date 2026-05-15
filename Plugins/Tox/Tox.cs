@@ -71,6 +71,7 @@ namespace Tox
         internal string profile;
         internal FileStream profilelock;
         internal string savepass;
+        readonly string sessionid = GUID();
         internal ToxOO.Tox tox;
         Timer toxTimer;
         internal Dictionary<UInt32, byte[]> transfers = new Dictionary<UInt32, byte[]>();
@@ -243,7 +244,7 @@ namespace Tox
                                     try
                                     {
                                         Process proc = Process.GetProcessById(pid);
-                                        if (proc.ProcessName.ToLower().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName())
+                                        if (proc.ProcessName.ToLower().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName() && locklines[3] != sessionid)
                                         {
                                             ERR(FileLockedErrS + " by " + locklines[1] + FileLockedErrE);
                                             return LoginResult.Failure;
@@ -285,7 +286,7 @@ namespace Tox
                     file.Close();
                     profilelock = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                     profilelock.Lock(0, 0);
-                    File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{GUID()}");
+                    File.WriteAllText(lockpath, $"{Process.GetCurrentProcess().Id}\nskymu\n{Dns.GetHostName()}\n{sessionid}");
                     var salt = new byte[Size.salt];
                     IntPtr key;
                     Tox_Err_Key_Derivation kerr;
@@ -518,6 +519,11 @@ namespace Tox
 
         public async Task<bool> SetConnectionStatus(PresenceStatus status)
         {
+            if (currentUser.ConnectionStatus == PresenceStatus.Offline)
+            {
+                ERR("You need to wait until you're no longer offline to do that.");
+                return false;
+            }
             Tox_User_Status tstatus = Tox_User_Status.NONE;
             switch (status)
             {
