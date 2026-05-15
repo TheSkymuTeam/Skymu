@@ -36,4 +36,24 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\..\bin\x64\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
+	<Target Name="CopyPluginsTox86" AfterTargets="Build">
+		<ItemGroup>
+			<PluginFiles Include="..\..\bin\AnyCPU\$(Configuration)\Plugins\**\*.*" />
+		</ItemGroup>
+		<MakeDir Directories="..\..\bin\x86\$(Configuration)\Plugins\" />
+		<Copy
+			SkipUnchangedFiles="false"
+			SourceFiles="@(PluginFiles)"
+			DestinationFiles="@(PluginFiles->'..\..\bin\x86\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')"/>
+	</Target>
+	<Target Name="CopyPluginsTox64" AfterTargets="Build">
+		<ItemGroup>
+			<PluginFiles Include="..\..\bin\AnyCPU\$(Configuration)\Plugins\**\*.*" />
+		</ItemGroup>
+		<MakeDir Directories="..\..\bin\x64\$(Configuration)\Plugins\" />
+		<Copy
+			SkipUnchangedFiles="false"
+			SourceFiles="@(PluginFiles)"
+			DestinationFiles="@(PluginFiles->'..\..\bin\x64\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')"/>
+	</Target>
 </Project>
