@@ -209,6 +209,17 @@
                                                 SelectedValuePath="Key" />
                                         </StackPanel>
 
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <CheckBox
+                                                Content="Use system culture over one above"
+                                                IsChecked="{Binding Path=[UseSystemCulture], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="Requires restart" />
+                                        </StackPanel>
+
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
@@ -320,6 +331,16 @@
                                             </ComboBox>
                                         </StackPanel>
 
+
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Save window placement (size, position, sidebar size)"
+                                            IsChecked="{Binding Path=[SaveWindowPlacement], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Start minimized"
+                                            IsChecked="{Binding Path=[StartMinimized], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <CheckBox Margin="0,5" IsChecked="{Binding Path=[FallbackFillColors], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>

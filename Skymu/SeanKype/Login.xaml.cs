@@ -15,6 +15,7 @@
 // This also applies to the associated XAML file.
 /*==========================================================*/
 
+using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
@@ -47,7 +48,7 @@ namespace Skymu.SeanKype
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(PresenceStatus.LoggedOut, false);
+            Tray.PushIcon(Tray.loggedOut, false);
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -143,6 +144,9 @@ namespace Skymu.SeanKype
 
         private void Login_Loaded(object sender, RoutedEventArgs e)
         {
+            if (Settings.StartMinimized)
+                WindowState = WindowState.Minimized;
+
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
             _viewModel.LoadPlugins();

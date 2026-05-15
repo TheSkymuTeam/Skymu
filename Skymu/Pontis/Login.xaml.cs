@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
@@ -44,7 +45,7 @@ namespace Skymu.Pontis
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(PresenceStatus.LoggedOut, false);
+            Tray.PushIcon(Tray.loggedOut, false);
         }
 
         private async void buttonLaunch(object state, RoutedEventArgs e)
@@ -141,6 +142,9 @@ namespace Skymu.Pontis
 
         private void Login_Loaded(object sender, EventArgs e)
         {
+            if (Settings.StartMinimized)
+                WindowState = WindowState.Minimized;
+
             MenuBarRow.Height = new GridLength(0);
             var menuBar = new NativeMenuBar(this);
             menuBar.Create(
