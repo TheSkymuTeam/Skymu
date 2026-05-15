@@ -43,6 +43,7 @@ namespace Skymu.Plugins
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.OnError += Universal.PluginErrorHandler;
                             instance.OnWarning += Universal.PluginWarningHandler;
+                            instance.ShowYesNo += Universal.PluginYesNoHandler;
                             instance.MessageEvent += Universal.PluginNotificationHandler;
                             PluginList.Add(instance);
                             pluginCount++;
@@ -84,6 +85,7 @@ namespace Skymu.Plugins
                 {
                     plugin.OnError -= Universal.PluginErrorHandler;
                     plugin.OnWarning -= Universal.PluginWarningHandler;
+                    plugin.ShowYesNo -= Universal.PluginYesNoHandler;
                     plugin.MessageEvent -= Universal.PluginNotificationHandler;
 
                     if (plugin is IDisposable disposable)

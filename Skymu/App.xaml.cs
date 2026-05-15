@@ -18,6 +18,7 @@ using Skymu.UserDirectory;
 using Skymu.Views;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -77,6 +78,31 @@ namespace Skymu
 
         public static void PluginErrorHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Error in plugin ", WindowBase.IconType.Error);
         public static void PluginWarningHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Warning from plugin ", WindowBase.IconType.Information);
+        public static void PluginYesNoHandler(object sender, PluginYesNoEventArgs e)
+        {
+            Current.Dispatcher.BeginInvoke(
+                new Action(
+                    delegate
+                    {
+                        var core = (ICore)sender;
+                        Dialog dialog = new Dialog(
+                            WindowBase.IconType.Information,
+                            e.Message,
+                            core.Name + " requests your choice",
+                            null,
+                            null,
+                            Lang["sF_CONFIRM_YES"],
+                            true,
+                            null,
+                            Lang["sF_CONFIRM_NO_BTN"]
+                        );
+                        dialog.BRAction = () => { e.Action(true); dialog.Close(); };
+                        dialog.BLAction = () => { e.Action(false); dialog.Close(); };
+                        dialog.ShowDialog();
+                    }
+                )
+            );
+        }
 
         public static void PluginNotificationHandler(object sender, MessageEventArgs e)
         {
@@ -98,8 +124,21 @@ namespace Skymu
             };
         }
 
+        public static string GetCultureCode(string displayName)
+        {
+            return CultureInfo.GetCultures(CultureTypes.AllCultures)
+                .FirstOrDefault(c =>
+                    c.NativeName.StartsWith(displayName) ||
+                    c.DisplayName.StartsWith(displayName) ||
+                    c.EnglishName.StartsWith(displayName)
+                )?.Name ?? "en-US";
+        }
+
         private void App_Startup(object sender, StartupEventArgs e)
         {
+            if (!Settings.UseSystemCulture)
+                CultureInfo.CurrentCulture = new CultureInfo(GetCultureCode(Settings.Language), false);
+            // TODO: Dynamically switch language without restart
             switch (Interface)
             {
                 case "SeanKype":
