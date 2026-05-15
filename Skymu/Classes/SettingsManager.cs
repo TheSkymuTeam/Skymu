@@ -83,6 +83,18 @@ namespace Skymu.Preferences
             }
         }
 
+        public static bool SaveWindowPlacement
+        {
+            get => S("SaveWindowPlacement", true);
+            set => W("SaveWindowPlacement", value, nameof(SaveWindowPlacement));
+        }
+
+        public static bool StartMinimized
+        {
+            get => S("StartMinimized", false);
+            set => W("StartMinimized", value, nameof(StartMinimized));
+        }
+
         public static int WindowFrame
         {
             get => S("WindowFrame", 0);
@@ -135,6 +147,11 @@ namespace Skymu.Preferences
             get => S("Language", "English");
             set => W("Language", value, nameof(Language));
         }
+        public static bool UseSystemCulture
+        {
+            get => S("UseSystemCulture", true);
+            set => W("UseSystemCulture", value, nameof(UseSystemCulture));
+        }
         public static string Interface
         {
             get => S("Interface", "Skyaeris");
@@ -142,7 +159,7 @@ namespace Skymu.Preferences
         }
         public static bool RoomCallUI
         {
-            get => S("RoomCallUI", true);
+            get => S("RoomCallUI", false);
             set => W("RoomCallUI", value, nameof(RoomCallUI));
         }
         public static string SkippedVersion
