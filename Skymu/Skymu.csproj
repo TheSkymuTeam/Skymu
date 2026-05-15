@@ -81,10 +81,13 @@
 
 	<Target Name="CopyPluginsToArchedOnes" AfterTargets="Build">
 		<ItemGroup>
-			<PluginFiles Include="..\bin\AnyCPU\$(Configuration)\Plugins\**\*" />
+			<PluginFiles Include="..\bin\AnyCPU\$(Configuration)\Plugins\**\*.*" />
 		</ItemGroup>
 		<MakeDir Directories="..\bin\$(PlatformTarget)\$(Configuration)\Plugins\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\$(PlatformTarget)\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy
+			SkipUnchangedFiles="false"
+			SourceFiles="@(PluginFiles)"
+			DestinationFiles="@(PluginFiles->'..\bin\$(PlatformTarget)\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')"/>
 	</Target>
 
 	<!-- Resource Handling -->
@@ -162,7 +165,7 @@
 		<PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />
 		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
 		<PackageReference Include="System.Text.Json" Version="10.0.3" />
-		<PackageReference Include="TrayIcon" Version="1.1.3" />
+		<PackageReference Include="TrayIcon" Version="1.3.0" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
