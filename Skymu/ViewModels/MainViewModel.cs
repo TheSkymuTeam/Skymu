@@ -521,7 +521,8 @@ namespace Skymu.ViewModels
                 if (eR.Item is Message message)
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
-                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0)
+                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0 &&
+                        message.Sender.Identifier != Universal.CurrentUser?.Identifier)
                     {
                         new Views.Notification(eR);
                         return;
