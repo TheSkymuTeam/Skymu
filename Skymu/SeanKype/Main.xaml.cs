@@ -14,6 +14,7 @@
 // "SeanKype" project.
 /*==========================================================*/
 
+using Skymu.Classes;
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
@@ -121,6 +122,21 @@ namespace Skymu.SeanKype
 
             vmodel.SubscribeTypingIndicator();
             InitializeEmojiPicker();
+
+            SourceInitialized += (s, e) =>
+            {
+                WindowPlacement? wplc = WindowPlacementHelper.Load();
+                if (wplc != null)
+                {
+                    WindowPlacement wp = (WindowPlacement)wplc;
+                    this.Top = wp.Top;
+                    this.Left = wp.Left;
+                    this.Width = wp.Width;
+                    this.Height = wp.Height;
+                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
+                    LeftColumn.Width = wp.sidebarWidth;
+                }
+            };
         }
 
         public Task BeginLoading() => vmodel.InitSidebar();

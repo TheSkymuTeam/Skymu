@@ -1418,7 +1418,7 @@ namespace Skymu.Pontis
 
             SourceInitialized += (s, e) =>
             {
-                WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                WindowPlacement? wplc = WindowPlacementHelper.Load();
                 if (wplc != null)
                 {
                     WindowPlacement wp = (WindowPlacement)wplc;
@@ -1426,6 +1426,7 @@ namespace Skymu.Pontis
                     this.Left = wp.Left;
                     this.Width = wp.Width;
                     this.Height = wp.Height;
+                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
                     SidebarColumn.Width = new GridLength(wp.sidebarWidth);
                 }
                 Sidebar_SizeChanged_Refresh();
