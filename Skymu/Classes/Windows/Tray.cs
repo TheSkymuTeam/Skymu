@@ -24,6 +24,9 @@ namespace Skymu
 {
     public class Tray
     {
+        // Bump me in case we have more than 6969 statuses in the future
+        public static readonly PresenceStatus loggedOut = (PresenceStatus)6969;
+
         public static readonly Dictionary<PresenceStatus, string> StatusMap = new Dictionary<PresenceStatus, string>()
         {
             { PresenceStatus.Online, Universal.Lang["sTRAYHINT_USER_ONLINE"] },
@@ -31,17 +34,17 @@ namespace Skymu
             { PresenceStatus.Offline, Universal.Lang["sTRAYHINT_USER_OFFLINE"] },
             { PresenceStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
             { PresenceStatus.Invisible, Universal.Lang["sTRAYHINT_USER_INVISIBLE"] },
-            { PresenceStatus.LoggedOut, Universal.Lang["sTRAYHINT_PROFILE_LOGGED_OUT"] }
+            { loggedOut, Universal.Lang["sTRAYHINT_PROFILE_LOGGED_OUT"] }
         };
 
         public static readonly Dictionary<PresenceStatus, string> SIconTextMap = new Dictionary<PresenceStatus, string>()
         {
             { PresenceStatus.Online, "online" },
             { PresenceStatus.Away, "away" },
-            { PresenceStatus.Offline, "offline" },
-            { PresenceStatus.DoNotDisturb, "dnd" },
-            { PresenceStatus.Invisible, "offline" },
-            { PresenceStatus.LoggedOut, "logged-out" }
+            { PresenceStatus.Offline, "question" },
+            { PresenceStatus.DoNotDisturb, "logged-out" },
+            { PresenceStatus.Invisible, "logged-out" },
+            { loggedOut, "logged-out" }
         };
 
         static readonly RelayCommand OpenSkype = new RelayCommand(() =>
@@ -62,8 +65,8 @@ namespace Skymu
 
         static Image IICN(string iconName) => new Image
         {
-            Width = 16,
-            Height = 16,
+            Width = 64,
+            Height = 64,
             Source = ICON(iconName)
         };
         static BitmapFrame ICON(string iconName) => BitmapFrame.Create(new Uri($"pack://application:,,,/{Universal.Interface}/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute));
@@ -105,10 +108,10 @@ namespace Skymu
         static readonly ObservableCollection<Control> StatusItems = new ObservableCollection<Control>()
         {
             new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_ONLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Online)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_AWAY"], Command = new RelayCommand(() => SS(PresenceStatus.Away)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_DND"], Command = new RelayCommand(() => SS(PresenceStatus.DoNotDisturb)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_INVISIBLE"], Command = new RelayCommand(() => SS(PresenceStatus.Invisible)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_OFFLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Offline)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_AWAY"], Command = new RelayCommand(() => SS(PresenceStatus.Away)), Icon = IICN(SIconTextMap[PresenceStatus.Away]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_DND"], Command = new RelayCommand(() => SS(PresenceStatus.DoNotDisturb)), Icon = IICN(SIconTextMap[PresenceStatus.DoNotDisturb]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_INVISIBLE"], Command = new RelayCommand(() => SS(PresenceStatus.Invisible)), Icon = IICN(SIconTextMap[PresenceStatus.Invisible]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_OFFLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Offline)), Icon = IICN(SIconTextMap[PresenceStatus.Offline]) },
             new Separator(),
             new MenuItem() { Header = Universal.Lang["sSTATUSMENU_CAPTION_CF_OPTIONS2"], Command = new RelayCommand(() => Universal.NotImplemented("Call forwarding")) }
         };
@@ -126,7 +129,8 @@ namespace Skymu
             Title = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})",
             IconSource = ICON("logged-out"),
             ClickCommand = OpenSkype,
-            ContextMenu = new ContextMenu() { ItemsSource = MainItems }
+            ContextMenu = new ContextMenu() { ItemsSource = MainItems },
+            ContextMenuVariation = ContextMenuVariation.ContextMenuStrip
         };
 
         public static void DisposeIcon() => trayIcon.Dispose();
@@ -150,9 +154,9 @@ namespace Skymu
             trayIcon.Title = $"{Settings.BrandingName} ({statusText})";
 
             if (!isSignedIn)
-                trayIcon.ContextMenu = new ContextMenu() { ItemsSource = LoginItems };
+                trayIcon.ContextMenu.ItemsSource = LoginItems;
             else
-                trayIcon.ContextMenu = new ContextMenu() { ItemsSource = MainItems };
+                trayIcon.ContextMenu.ItemsSource = MainItems;
         }
     }
 }
