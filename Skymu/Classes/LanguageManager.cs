@@ -41,41 +41,31 @@ namespace Skymu
 
         public LanguageManager()
         {
-            if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-            {
-                string dir = AppDomain.CurrentDomain.BaseDirectory;
-                while (dir != null)
-                {
-                    string newerlang = Path.Combine(dir, "languages", "english-skype-7.39.lang");
-                    if (File.Exists(newerlang))
-                    {
-                        Load(newerlang);
-                    }
-                    string candidate = Path.Combine(dir, "languages", "english.lang");
-                    if (File.Exists(candidate))
-                    {
-                        Load(candidate);
-                        break;
-                    }
-                    dir = Directory.GetParent(dir)?.FullName;
-                }
-                return;
-            }
+            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return; // no localization in designer
+
             string lang = Settings.Language ?? "English";
             if (!Scan())
-                Universal.ExceptionHandler(
-                    new Exception("Could not find any compatible files in directory /languages.")
-                );
+            {
+                Universal.ExceptionHandler(new Exception("Could not find any compatible files in directory /languages."));
+            }
+
+            /*  omega: we are not doing this yet, it's very hacky, for now use the 5.10 langs as the base
+
             if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
-                // TODO: Load ones for other languages too
+            {
                 if (!Load(llist.TryGetValue("English (Skype 7.39)", out var mlpath) ? mlpath : string.Empty))
-                    Universal.ExceptionHandler(
-                        new Exception("Could not load the Skype 7.39 language. Certain parts might be untranslated.")
-                    );
+                {
+                    Universal.ExceptionHandler(new Exception("Could not load the Skype 7.39 language. Certain parts might be untranslated."));
+                }
+            }
+
+            */
+
             if (!Load(llist.TryGetValue(lang, out var path) ? path : string.Empty))
-                Universal.ExceptionHandler(
-                    new Exception("Could not load language \"" + lang + "\".")
-                );
+            {
+                Universal.ExceptionHandler(new Exception("Could not load language \"" + lang + "\"."));
+            }
+
             Settings.Default.PropertyChanged += Settings_PropertyChanged;
         }
 
@@ -102,7 +92,7 @@ namespace Skymu
             if (String.IsNullOrEmpty(path) || !File.Exists(path))
                 return false;
             currentPath = path;
-            // ldict.Clear(); Not needed?
+            ldict.Clear(); // omega: well it doesn't hurt
             foreach (string line in File.ReadLines(currentPath))
             {
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
