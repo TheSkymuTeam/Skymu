@@ -39,6 +39,7 @@ namespace Tox
             _OnFriendStatus = null;
             _OnFriendConnectionStatus = null;
             _OnFriendTyping = null;
+            _OnFriendReadReceipt = null;
             _OnFriendRequest = null;
             _OnFriendMessage = null;
             _OnFriendLosslessPacket = null;
@@ -73,6 +74,7 @@ namespace Tox
             _OnFriendStatus = OnFriendStatus; tox.friendStatus = _OnFriendStatus;
             _OnFriendConnectionStatus = OnFriendConnectionStatus; tox.friendConnectionStatus = _OnFriendConnectionStatus;
             _OnFriendTyping = OnFriendTyping; tox.friendTyping = _OnFriendTyping;
+            _OnFriendReadReceipt = OnFriendReadReceipt; tox.friendReadReceipt = _OnFriendReadReceipt;
             _OnFriendRequest = OnFriendRequest; tox.friendRequest = _OnFriendRequest;
             _OnFriendMessage = OnFriendMessage; tox.friendMessage = _OnFriendMessage;
             _OnFriendLosslessPacket = OnFriendLosslessPacket; tox.friendLosslessPacket = _OnFriendLosslessPacket;
@@ -188,9 +190,19 @@ namespace Tox
                     core.TypingUsersList.Add(f);
                 else
                     core.TypingUsersList.Remove(f);
-        }
+        }   
 
         // TODO: friend_read_receipt
+        tox_friend_read_receipt_cb _OnFriendReadReceipt;
+        void OnFriendReadReceipt(IntPtr tox, UInt32 fid, UInt32 mid, IntPtr user_data)
+        {
+            var core = GC(user_data);
+            if (core.messages.TryGetValue(fid, out var message))
+            {
+                message.Time = TIME();
+                core.UCP(_ => core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(new Friend(tox, fid).publicKey), message, false)));
+            }
+        }
 
         tox_friend_request_cb _OnFriendRequest;
         void OnFriendRequest(IntPtr tox, IntPtr public_key, string message, UIntPtr length, IntPtr user_data)

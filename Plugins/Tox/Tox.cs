@@ -68,6 +68,7 @@ namespace Tox
         internal User currentUser;
         bool disposed = false;
         internal Dictionary<UInt32, User> friends = new Dictionary<uint, User>();
+        internal Dictionary<UInt32, Message> messages = new Dictionary<uint, Message>();
         internal string profile;
         internal FileStream profilelock;
         internal string savepass;
@@ -132,6 +133,7 @@ namespace Tox
             avWaiter = new TaskCompletionSource<bool>();
             currentUser = null;
             friends = new Dictionary<uint, User>();
+            messages = new Dictionary<uint, Message>();
             profile = null;
             savepass = null;
             transfers = new Dictionary<UInt32, byte[]>();
@@ -492,9 +494,7 @@ namespace Tox
                     });
                     return true;
                 }
-                UCP(_ => RaiseMessageEvent(new MessageRecievedEventArgs(identifier,
-                    new Message(mid+"_"+GUID(), currentUser, TIME(), text), false)
-                ));
+                messages.Add((uint)mid, new Message(mid + "_" + GUID(), currentUser, new DateTime(), text));
                 return true;
             }
             catch (Exception ex)
