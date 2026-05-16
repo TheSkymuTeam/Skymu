@@ -37,7 +37,7 @@ namespace Tox
         // PtrToStringAnsi
         public static string PTSA(IntPtr ptr) => Marshal.PtrToStringAnsi(ptr);
         // TIMEstamp
-        public static DateTime TIME() => DateTimeOffset.UtcNow.DateTime;
+        public static DateTime TIME() => DateTimeOffset.Now.DateTime;
 
         public static byte[] FromHex(string hex) => FromHex(hex, 64);
         public static byte[] FromHex(string hex, int len)
