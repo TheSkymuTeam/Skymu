@@ -621,7 +621,7 @@ public static class ToxCore
     public static extern UInt32 tox_friend_send_message(IntPtr tox, UInt32 friend_number, Tox_Message_Type type, [MarshalAs(UnmanagedType.LPStr)] string message, UIntPtr length, out Tox_Err_Friend_Send_Message error);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void tox_friend_read_receipt_cb(IntPtr tox, UInt32 friend_number, UInt32 message_id, UIntPtr length, IntPtr user_data);
+    public delegate void tox_friend_read_receipt_cb(IntPtr tox, UInt32 friend_number, UInt32 message_id, IntPtr user_data);
     [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_friend_read_receipt(IntPtr tox, tox_friend_read_receipt_cb callback);
 
