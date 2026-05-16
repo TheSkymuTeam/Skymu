@@ -146,6 +146,9 @@ namespace Skymu.SeanKype
                 }
             };
 
+            if (!Universal.Plugin.SupportsServers)
+                TabServersText.Visibility = Visibility.Collapsed;
+
             SetActiveTab(3); // default to Home tab
         }
 
