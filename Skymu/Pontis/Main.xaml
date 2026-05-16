@@ -1182,6 +1182,8 @@
                                                         Text="{Binding Path='[sADD_CONTACT_PANEL_MESSAGE]', Source={StaticResource Lang}}"
                                                         TextAlignment="Center"
                                                         TextWrapping="Wrap" />
+                                                    <TextBlock
+                                                        Text="WARNING: NOT IMPLEMENTED"/>
                                                 </StackPanel>
                                             </Grid>
 
