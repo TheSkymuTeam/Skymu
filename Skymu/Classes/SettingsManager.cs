@@ -225,7 +225,7 @@ namespace Skymu.Preferences
         }
         public static bool Anonymize
         {
-            get => S("Anonymize", false);
+            get => S("Anonymize", true);
             set => W("Anonymize", value, nameof(Anonymize));
         }
         public static bool FirstRunCompleted

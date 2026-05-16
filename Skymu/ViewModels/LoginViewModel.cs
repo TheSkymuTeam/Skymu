@@ -182,9 +182,6 @@ namespace Skymu.ViewModels
 
             if (!Settings.FirstRunCompleted)
             {
-                Settings.FirstRunCompleted = true;
-                Settings.Save();
-
                 Dialog dlg = null;
                 dlg = new Dialog(
                     WindowBase.IconType.Question,
@@ -196,6 +193,7 @@ namespace Skymu.ViewModels
                     new Action(() =>
                     {
                         Settings.Anonymize = true;
+                        Settings.FirstRunCompleted = true;
                         Settings.Save();
                         dlg.Close();
                     }),
@@ -203,6 +201,7 @@ namespace Skymu.ViewModels
                     true,
                     new Action(() =>
                     {
+                        Settings.FirstRunCompleted = true;
                         Settings.Anonymize = false;
                         Settings.Save();
                         dlg.Close();
