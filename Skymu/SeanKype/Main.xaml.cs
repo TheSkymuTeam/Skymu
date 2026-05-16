@@ -63,7 +63,7 @@ namespace Skymu.SeanKype
 
             vmodel.Ready += (s, e) =>
             {
-                LabelUsername.Content = Universal.CurrentUser?.DisplayName;
+                LabelUsername.Text = Universal.CurrentUser?.DisplayName;
                 LabelStatus.Text = Universal.CurrentUser?.Status;
                 this.Title =
                     Settings.BrandingName

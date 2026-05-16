@@ -762,21 +762,22 @@
                             </VisualBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Label
+                    <TextBlock
                         x:Name="LabelUsername"
                         Width="207"
                         Height="27"
-                        Margin="64.5,19.8,0,0"
+                        Margin="69.5,24.8,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Content=""
                         FontFamily="Segoe UI Historic"
                         FontSize="13"
-                        Foreground="{DynamicResource SkBlack}">
-                        <Label.LayoutTransform>
+                        Foreground="{DynamicResource SkBlack}"
+                        Text="Sean Kevin"
+                        TextTrimming="CharacterEllipsis">
+                        <TextBlock.LayoutTransform>
                             <ScaleTransform ScaleX="1.01" />
-                        </Label.LayoutTransform>
-                    </Label>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
                     <TextBlock
                         x:Name="LabelStatus"
                         Margin="70,47,20,47"
@@ -812,6 +813,7 @@
                         FontSize="13"
                         Foreground="{DynamicResource SkMidGray}"
                         Text="Search">
+                        <!-- TODO: Use LANG for above -->
                         <TextBox.LayoutTransform>
                             <ScaleTransform ScaleX="1.02" />
                         </TextBox.LayoutTransform>
@@ -867,7 +869,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkBlack}"
                         MouseLeftButtonUp="TabContacts_Click"
-                        Text="CONTACTS"
+                        Text="{Binding [sRECENTS_LINK_CAPS], Source='{StaticResource Lang}'}"
                         TextAlignment="Left"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
@@ -886,7 +888,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkDarkBlue}"
                         MouseLeftButtonUp="TabRecent_Click"
-                        Text="RECENT"
+                        Text="{Binding [sCONTACTS_LINK_CAPS], Source='{StaticResource Lang}'}"
                         TextAlignment="Center"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
