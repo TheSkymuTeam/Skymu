@@ -29,6 +29,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -914,6 +916,44 @@ namespace Skymu.ViewModels
             SpeedTestIconUpdated?.Invoke(
                 ConversionHelpers.GetAssetBasePrefix() + "Chat/" + final + ".png"
             );
+        }
+
+        public static bool ConnectionMetered()
+        {
+            Type type = Type.GetTypeFromCLSID(
+                new Guid("DCB00C01-570F-4A9B-8D69-199FDBA5723B"));
+
+            dynamic nlm = Activator.CreateInstance(type);
+
+            foreach (dynamic connection in nlm.GetNetworkConnections())
+            {
+                try
+                {
+                    bool connected = connection.IsConnectedToInternet;
+
+                    if (!connected)
+                        continue;
+
+                    // anything not 1 = metered-ish
+                    return connection.GetCost() != 1;
+                }
+                catch
+                {
+                }
+            }
+            return false;
+        }
+        
+        const string CONNECTION_URL = "https://skymu.app/home/i/production/CONNECTION.txt";
+        public static bool SkypeHomeUnavailable()
+        {
+            try
+            {
+                var task = Task.Run(() => new HttpClient().GetStringAsync(CONNECTION_URL));
+                task.Wait();
+                if (task.Result?.StartsWith("OK") == true) return false;
+            } catch { }
+            return true;
         }
 
         private async Task HandleCallToggle()

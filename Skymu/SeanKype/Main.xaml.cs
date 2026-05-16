@@ -77,7 +77,8 @@ namespace Skymu.SeanKype
                     );
                 else
                     UserPicture.Source = Universal.AnonymousAvatar;
-                _ = vmodel.RunSpeedTest();
+                if (!MainViewModel.ConnectionMetered())
+                    _ = vmodel.RunSpeedTest();
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
