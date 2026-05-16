@@ -84,6 +84,12 @@ namespace Skymu.SeanKype
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => _currentStatusIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
+                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                    SkypeHome.Generate(
+                        browser,
+                        Universal.CurrentUser,
+                        Universal.Plugin.ContactsList.ToArray()
+                    );
                 Ready?.Invoke(this, EventArgs.Empty);
             };
 
@@ -136,9 +142,11 @@ namespace Skymu.SeanKype
                     this.Width = wp.Width;
                     this.Height = wp.Height;
                     this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
-                    LeftColumn.Width = wp.sidebarWidth;
+                    LeftColumnDefinition.Width = new GridLength(wp.sidebarWidth);
                 }
             };
+
+            SetActiveTab(3); // default to Home tab
         }
 
         public Task BeginLoading() => vmodel.InitSidebar();
@@ -169,6 +177,10 @@ namespace Skymu.SeanKype
         {
             _userScrolledUp = false;
             ClearConversation();
+
+            RightColumn.Visibility = Visibility.Visible;
+            browser.Visibility = Visibility.Collapsed;
+            NoHomeGrid.Visibility = Visibility.Collapsed;
 
             var conv = vmodel.SelectedConversation;
             LabelUsername1.Content = conv?.DisplayName;
@@ -374,6 +386,12 @@ namespace Skymu.SeanKype
 
         #endregion
 
+        private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LeftColumnDefinition.MaxWidth = this.ActualWidth / 2;
+            SidebarGrid.MaxWidth = LeftColumnDefinition.MaxWidth;
+        }
+
         private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             HandleConversationSelection(((ListBox)sender).SelectedItem);
@@ -562,13 +580,29 @@ namespace Skymu.SeanKype
             // RECENT   centre ≈ 135px → leftMargin = -141.5 (original)
             // SERVERS  centre ≈ 216px → leftMargin = 216-280 = -64
             double waveLeft;
-            if (tab == 0)
-                waveLeft = -232;
-            else if (tab == 1)
-                waveLeft = -141.5;
-            else
-                waveLeft = -64;
+            switch (tab)
+            {
+                case 0: waveLeft = -232; break;
+                case 1: waveLeft = -141.5; break;
+                case 2: waveLeft = -64; break;
+                case 3:
+                default:
+                    waveLeft = 0;
+                    break;
+            }
             TabWave.Margin = new Thickness(waveLeft, 185, 0, 0);
+            if (tab == 3)
+            {
+                RightColumn.Visibility = Visibility.Collapsed;
+                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                    browser.Visibility = Visibility.Visible;
+                else
+                    NoHomeGrid.Visibility = Visibility.Visible;
+                return;
+            }
+            RightColumn.Visibility = Visibility.Visible;
+            browser.Visibility = Visibility.Collapsed;
+            NoHomeGrid.Visibility = Visibility.Collapsed;
         }
 
         private async void TabContacts_Click(object sender, MouseButtonEventArgs e)
@@ -591,6 +625,16 @@ namespace Skymu.SeanKype
             if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1)
                 await Universal.Plugin.PopulateServerList();
             ConversationList.ItemsSource = Universal.Plugin.ServerList;
+        }
+
+        private void TabHome_Click(object sender, MouseButtonEventArgs e)
+        {
+            SetActiveTab(3);
+        }
+
+        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        {
+            Universal.NotImplemented("Adding contacts on Skype 7");
         }
 
         #endregion
