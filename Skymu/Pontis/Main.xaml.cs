@@ -68,9 +68,6 @@ namespace Skymu.Pontis
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
-        private CancellationTokenSource _TitleBarIconHoldTokenSource;
-        private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
-
         private enum WindowType
         {
             Home,
@@ -722,40 +719,6 @@ namespace Skymu.Pontis
         private void Window_Deactivated(object sender, EventArgs e)
         {
             HandleWindowDeactivated();
-        }
-
-        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
-        {
-            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
-            {
-
-                try
-                {
-                    await Task.Delay(1500, _TitleBarIconHoldTokenSource.Token); // holding for 2 sec? I hope??
-
-                    string url;
-                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                    else
-                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
-
-                    Universal.OpenUrl(url);
-                }
-                catch (TaskCanceledException)
-                {
-                    // ass
-                }
-            }
-        }
-
-        // Method triggered if the user lets go of the click OR moves their mouse away
-        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
-        {
-            // If a timer is currently running, cancel it
-            if (_TitleBarIconHoldTokenSource != null && !_TitleBarIconHoldTokenSource.IsCancellationRequested)
-            {
-                _TitleBarIconHoldTokenSource.Cancel();
-            }
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
