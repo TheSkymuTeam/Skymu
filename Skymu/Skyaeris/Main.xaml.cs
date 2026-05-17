@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,6 +73,7 @@ namespace Skymu.Skyaeris
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
+        private CancellationTokenSource _TitleBarIconHoldTokenSource;
         private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
 
         private enum WindowType
@@ -882,24 +884,36 @@ namespace Skymu.Skyaeris
 
         private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-
-            try
+            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
             {
-                // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                await Sounds.PlayAsync("busy");
-                string url;
-                if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                    url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                else
-                    url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+                try
+                {
+                    // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
+                    await Sounds.PlayAsync("busy");
+                    if (_TitleBarIconHoldTokenSource.IsCancellationRequested) return;
+                    string url;
+                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                    else
+                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
 
-                Universal.OpenUrl(url);
+                    Universal.OpenUrl(url);
+                }
+                catch (TaskCanceledException)
+                {
+                    // ass
+                }
             }
-            catch (TaskCanceledException)
+            _TitleBarIconHoldTokenSource = null;
+        }
+
+        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
+        {
+            // If a timer is currently running, cancel it
+            if (_TitleBarIconHoldTokenSource?.IsCancellationRequested == false)
             {
-                // ass
+                _TitleBarIconHoldTokenSource.Cancel();
             }
-
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
