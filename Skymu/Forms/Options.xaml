@@ -460,6 +460,58 @@
                                             <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server and the updater (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
                                         </CheckBox>
 
+                                        <StackPanel Margin="0,8" Orientation="Horizontal">
+                                            <CheckBox
+                                                VerticalAlignment="Center"
+                                                Content="Use the system certificate store"
+                                                IsChecked="{Binding Path=[SysCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="Requires restart" />
+                                        </StackPanel>
+
+
+                                        <Grid Margin="0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Grid.Column="0" x:Name="UseCustomCert"
+                                                VerticalAlignment="Top"
+                                                Margin="0,3,0,0"
+                                                IsChecked="{Binding Path=[UseCustomCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0,10,0" VerticalAlignment="Center">
+                                                <TextBlock
+                                                    Text="Use custom certificate store (cacert.pem)" />
+                                                <TextBlock
+                                                    Margin="0,2,0,0"
+                                                    FontSize="11"
+                                                    Foreground="{StaticResource Text.MediumContrast}"
+                                                    Text="Requires restart" />
+                                            </StackPanel>
+
+                                            <TextBox Grid.Column="2" x:Name="SC_CertPathBox"
+                                                Width="120"
+                                                FontFamily="Tahoma"
+                                                VerticalAlignment="Top"
+                                                Margin="0,1,0,0"
+                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
+                                                Text="{Binding Path=[CertPath], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <Button Grid.Column="3" Content="Browse"
+                                                Margin="5,0,0,0"
+                                                Padding="6,1"
+                                                VerticalAlignment="Top"
+                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
+                                                Click="CertBrowseButtonClick"/>
+                                        </Grid>
+
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>
