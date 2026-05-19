@@ -18,13 +18,16 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Yggdrasil.Networking
 {
@@ -93,6 +96,16 @@ namespace Yggdrasil.Networking
             return versions;
         }
 
+        public override System.Collections.Generic.IDictionary<int, byte[]> GetClientExtensions()
+        {
+            var extensions = base.GetClientExtensions() ?? new System.Collections.Generic.Dictionary<int, byte[]>();
+            byte[] nameBytes = System.Text.Encoding.UTF8.GetBytes(_host);
+            var serverName = new ServerName(NameType.host_name, nameBytes);
+            TlsExtensionsUtilities.AddServerNameExtensionClient(extensions, new[] { serverName });
+
+            return extensions;
+        }
+
         public override void NotifySelectedCipherSuite(int selectedCipherSuite)
         {
             base.NotifySelectedCipherSuite(selectedCipherSuite);
@@ -134,66 +147,241 @@ namespace Yggdrasil.Networking
 
                 var leaf = dotnetCerts[0];
 
-                bool chainValid;
-                using (var chain = new X509Chain())
+                // Default configurations if shared.xml doesn't exist
+                bool isSysCert = false;
+                bool useCustom = false;
+                string customPath = string.Empty;
+
+                try
                 {
-                    chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+                    string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                    string xmlPath = Path.Combine(appData, "Skymu", "shared.xml");
 
-                    for (int i = 1; i < dotnetCerts.Count; i++)
-                        chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
-
-                    chainValid = chain.Build(leaf);
-
-                    if (!chainValid)
+                    if (File.Exists(xmlPath))
                     {
+                        var doc = XDocument.Load(xmlPath);
+
+                        var sysCertEl = doc.Descendants("SysCert").FirstOrDefault();
+                        var useCustomCertEl = doc.Descendants("UseCustomCert").FirstOrDefault();
+                        var certPathEl = doc.Descendants("CertPath").FirstOrDefault();
+
+                        if (sysCertEl != null) bool.TryParse(sysCertEl.Value, out isSysCert);
+                        if (useCustomCertEl != null) bool.TryParse(useCustomCertEl.Value, out useCustom);
+                        if (certPathEl != null) customPath = certPathEl.Value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[BIFROST-TLS] Failed to parse shared.xml config: {ex.Message}");
+                }
+
+                // prefer custom certs over sys
+                if (useCustom)
+                {
+                    isSysCert = false;
+                }
+
+                bool chainValid = false;
+
+                if (isSysCert)
+                {
+                    Debug.WriteLine($"[BIFROST-TLS] Using system certificate chain");
+                    using (var chain = new X509Chain())
+                    {
+                        chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+
+                        for (int i = 1; i < dotnetCerts.Count; i++)
+                            chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
+
+                        chainValid = chain.Build(leaf);
+
+                        if (!chainValid)
+                            foreach (var status in chain.ChainStatus)
+                                Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
+                    }
+                }
+                else
+                {
+                    var trustedThumbprints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var pemCerts = new X509Certificate2Collection();
+
+                    try
+                    {
+                        string appDirRootPem = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cacert.pem");
+
+                        if (useCustom && !string.IsNullOrWhiteSpace(customPath) && File.Exists(customPath))
+                        {
+                            Debug.WriteLine($"[BIFROST-TLS] Using custom cacert.pem");
+                            using (var fs = File.OpenRead(customPath))
+                                LoadPemCerts(fs, trustedThumbprints, pemCerts);
+                        }
+                        else if (File.Exists(appDirRootPem))
+                        {
+                            Debug.WriteLine($"[BIFROST-TLS] Using custom cacert.pem");
+                            using (var fs = File.OpenRead(appDirRootPem))
+                                LoadPemCerts(fs, trustedThumbprints, pemCerts);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"[BIFROST-TLS] Using built-in cacert.pem");
+                            var assembly = Assembly.GetExecutingAssembly();
+                            string resourceName = assembly.GetManifestResourceNames()
+                                .FirstOrDefault(n => n.EndsWith("cacert.pem", StringComparison.OrdinalIgnoreCase));
+
+                            if (resourceName != null)
+                            {
+                                using (var stream = assembly.GetManifestResourceStream(resourceName))
+                                    LoadPemCerts(stream, trustedThumbprints, pemCerts);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        if (useCustom)
+                            throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: Could not load the provided cacert.pem file."));
+                        else
+                            throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("BifrostTLS error: Could not load embedded or localized cacert.pem resources."));
+                    }
+
+                    if (trustedThumbprints.Count == 0 && useCustom)
+                        throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: cacert.pem is empty or invalid."));
+
+                    using (var chain = new X509Chain())
+                    {
+                        chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+
+                        for (int i = 1; i < dotnetCerts.Count; i++)
+                            chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
+
+                        foreach (var pc in pemCerts)
+                            chain.ChainPolicy.ExtraStore.Add(pc);
+
+                        chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                        chain.Build(leaf);
+
+                        bool foundTrustedAnchor = false;
+                        foreach (var element in chain.ChainElements)
+                        {
+                            if (trustedThumbprints.Contains(element.Certificate.Thumbprint))
+                            {
+                                foundTrustedAnchor = true;
+                                break;
+                            }
+
+                            foreach (var pemCert in pemCerts)
+                            {
+                                if (element.Certificate.Issuer == pemCert.Subject)
+                                {
+                                    foundTrustedAnchor = true;
+                                    break;
+                                }
+                            }
+
+                            if (foundTrustedAnchor)
+                                break;
+                        }
+
+                        bool hasFatalErrors = false;
                         foreach (var status in chain.ChainStatus)
-                            Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
+                        {
+                            if (status.Status != X509ChainStatusFlags.NoError &&
+                                status.Status != X509ChainStatusFlags.UntrustedRoot &&
+                                status.Status != X509ChainStatusFlags.PartialChain &&
+                                status.Status != X509ChainStatusFlags.OfflineRevocation &&
+                                status.Status != X509ChainStatusFlags.RevocationStatusUnknown)
+                            {
+                                hasFatalErrors = true;
+                                Debug.WriteLine($"[BIFROST-TLS] Fatal chain error: {status.StatusInformation}");
+                            }
+                        }
+
+                        chainValid = foundTrustedAnchor && !hasFatalErrors;
+
+                        if (!chainValid)
+                            foreach (var status in chain.ChainStatus)
+                                Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
                     }
                 }
 
-                bool hostValid = HostMatchesCert(leaf, _host);
+                byte[] leafEncodedBytes = bcCerts[0].GetEncoded();
+                Org.BouncyCastle.X509.X509Certificate leafX509 =
+                    new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(leafEncodedBytes);
+
+                bool hostValid = HostMatchesCert(leafX509, _host);
 
                 Debug.WriteLine(
                     $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
 
                 if (!chainValid && !hostValid)
+                {
+                    if (useCustom)
+                        throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("Invalid Custom Certificate chain AND invalid host."));
                     throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Both certificate chain and host are invalid [42]"));
+                }
 
                 if (!chainValid)
+                {
+                    if (useCustom)
+                        throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("Invalid Custom Certificate chain."));
                     throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Certificate chain is invalid [42]"));
+                }
 
                 if (!hostValid)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception($"BifrostTLS error: Host is invalid, '{_host}' does not match certificate [42]"));
             }
 
-            private static bool HostMatchesCert(X509Certificate2 cert, string host)
+            private void LoadPemCerts(Stream stream, HashSet<string> thumbprints, X509Certificate2Collection extraStore)
             {
-                var sanExt = cert.Extensions["2.5.29.17"];
-                if (sanExt != null)
+                if (stream == null) return;
+
+                var parser = new Org.BouncyCastle.X509.X509CertificateParser();
+                var certs = parser.ReadCertificates(stream);
+
+                foreach (Org.BouncyCastle.X509.X509Certificate c in certs)
                 {
-                    string sanText = sanExt.Format(true);
-                    foreach (var line in sanText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                    var dotNetCert = new X509Certificate2(c.GetEncoded());
+                    thumbprints.Add(dotNetCert.Thumbprint);
+                    extraStore.Add(dotNetCert);
+                }
+            }
+
+            private static bool HostMatchesCert(Org.BouncyCastle.X509.X509Certificate bcCert, string host)
+            {
+                try
+                {
+                    var sans = bcCert.GetSubjectAlternativeNames();
+                    if (sans != null && sans.Count > 0)
                     {
-                        string entry = null;
-                        if (line.StartsWith("DNS Name=", StringComparison.OrdinalIgnoreCase))
-                            entry = line.Substring("DNS Name=".Length).Trim();
-                        else if (line.StartsWith("DNS:", StringComparison.OrdinalIgnoreCase))
-                            entry = line.Substring("DNS:".Length).Trim();
-
-                        if (entry == null) continue;
-
-                        if (NameMatches(entry, host))
+                        foreach (System.Collections.IList san in sans)
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {entry}");
-                            return true;
+                            int nameType = (int)san[0];
+                            if (nameType == 2)
+                            {
+                                string entry = san[1]?.ToString();
+                                if (NameMatches(entry, host))
+                                {
+                                    Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {entry}");
+                                    return true;
+                                }
+                            }
                         }
-                    }
 
-                    Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
-                    return false;
+                        Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[BIFROST-TLS] Error parsing ASN.1 SANs: {ex.Message}");
                 }
 
-                string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
+                string cn = null;
+                var cnList = bcCert.SubjectDN.GetValueList(Org.BouncyCastle.Asn1.X509.X509Name.CN);
+                if (cnList != null && cnList.Count > 0)
+                {
+                    cn = cnList[0]?.ToString();
+                }
+
                 bool cnMatch = NameMatches(cn, host);
                 Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
                 return cnMatch;

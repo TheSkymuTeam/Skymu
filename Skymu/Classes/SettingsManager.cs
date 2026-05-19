@@ -258,6 +258,23 @@ namespace Skymu.Preferences
             get => S("SuppressOldRuntimeWarnings", false);
             set => W("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings));
         }
+        public static bool SysCert
+        {
+            get => S("SysCert", false);
+            set => W("SysCert", value, nameof(SysCert));
+        }
+
+        public static bool UseCustomCert
+        {
+            get => S("UseCustomCert", false);
+            set => W("UseCustomCert", value, nameof(UseCustomCert));
+        }
+
+        public static string CertPath
+        {
+            get => S("CertPath", string.Empty);
+            set => W("CertPath", value, nameof(CertPath));
+        }
 
         public static void Save() { }
 
