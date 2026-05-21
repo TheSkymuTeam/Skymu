@@ -296,7 +296,7 @@ namespace Skymu.ViewModels
             {
                 if (e.PropertyName == "ConnectionStatus")
                     curContext.Post(_ =>
-                        Tray.PushIcon(Universal.CurrentUser.ConnectionStatus)
+                        Tray.SetStatus(Universal.CurrentUser.ConnectionStatus)
                     , null);
             };
 

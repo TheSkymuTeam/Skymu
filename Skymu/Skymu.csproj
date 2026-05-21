@@ -40,7 +40,7 @@
 		<Product>Skymu</Product>
 	</PropertyGroup>
 
-	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME INSTEAD) -->
+	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME (OMEGA) INSTEAD) -->
 	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '5.0'))">
 		<TargetFrameworks>net461;net5.0-windows</TargetFrameworks>
 	</PropertyGroup>
@@ -256,17 +256,5 @@
 	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 	  </Page>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-x86\native\e_sqlite3.dll" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-x64\native\e_sqlite3.dll" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-arm\native\e_sqlite3.dll" />
-	</ItemGroup>
-
+	
 </Project>
