@@ -32,15 +32,6 @@ namespace Skymu.Skyaeris
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
 
-        private BitmapImage _sheet;
-        private DispatcherTimer _timer;
-
-        private int _frame;
-
-        private const int FrameSize = 128;
-        private const int FrameCount = 36;
-
-
         public Login()
         {
             InitializeComponent();
@@ -212,33 +203,12 @@ namespace Skymu.Skyaeris
                 LoginControls.Visibility = Visibility.Collapsed;
                 throbber.Visibility = Visibility.Visible;
                 header.Text = Universal.Lang["sSTATUSTEXT_PROFILE_LOGGING_IN"];
-
-                _timer = new DispatcherTimer
-                {
-                    Interval = TimeSpan.FromMilliseconds(60)
-                };
-
-                _timer.Tick += (_, __) =>
-                {
-                    throbber.Source = new CroppedBitmap(
-                        throbberImage,
-                        new Int32Rect(
-                            0,
-                            _frame * FrameSize,
-                            FrameSize,
-                            FrameSize));
-
-                    _frame = (_frame + 1) % FrameCount;
-                };
-
-                _timer.Start();
             }
             else
             {
                 LoginControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
                 header.Text = Universal.Lang["sF_LOGIN_WELCOME"];
-                _timer?.Stop();
             }
         }
 
