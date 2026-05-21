@@ -27,12 +27,14 @@ namespace Skymu.Classes
         public double Width;
         public double Height;
         public double sidebarWidth;
+        public bool maximized;
     };
 
     public class WindowPlacementHelper
     {
-        public static WindowPlacement? Load(Window window, ColumnDefinition sidebar)
+        public static WindowPlacement? Load()
         {
+            if (!Settings.SaveWindowPlacement) return null;
             var wp = Settings.WindowPlacement;
             if (wp.Top != 0 ||
                 wp.Left != 0 ||
@@ -51,13 +53,15 @@ namespace Skymu.Classes
 
         public static void Save(Window window, ColumnDefinition sidebar)
         {
+            if (!Settings.SaveWindowPlacement) return;
             Settings.WindowPlacement = new WindowPlacement
             {
                 Left = window.Left,
                 Top = window.Top,
                 Width = window.Width,
                 Height = window.Height,
-                sidebarWidth = sidebar.ActualWidth
+                sidebarWidth = sidebar.ActualWidth,
+                maximized = window.WindowState == WindowState.Maximized
             };
             Settings.Save();
         }

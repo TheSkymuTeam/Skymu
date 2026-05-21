@@ -11,6 +11,7 @@
 
 using Skymu.Preferences;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -73,6 +74,22 @@ namespace Skymu.Views
             Settings.Reset();
             Settings.Save();
             LoadVisualSettings();
+        }
+
+        private void CertBrowseButtonClick(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "PEM certificates (*.pem)|*.pem|All files (*.*)|*.*",
+                Title = "Select cacert.pem"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Settings.CertPath = openFileDialog.FileName;
+                var expression = SC_CertPathBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty);
+                expression?.UpdateTarget();
+            }
         }
     }
 }

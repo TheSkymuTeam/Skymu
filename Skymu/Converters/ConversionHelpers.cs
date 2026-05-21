@@ -48,7 +48,7 @@ namespace Skymu.Converters
 
             if (!String.IsNullOrEmpty(theme_root))
             {
-                string baseFolder = Settings.Interface;
+                string baseFolder = Universal.Interface;
                 if (!String.IsNullOrEmpty(era))
                     baseFolder = era;
                 return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
@@ -65,7 +65,7 @@ namespace Skymu.Converters
         {
             string packUri;
             if (era == null)
-                era = Settings.Interface;
+                era = Universal.Interface;
             if (is_shared)
             {
                 packUri =

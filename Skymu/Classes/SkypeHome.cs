@@ -9,10 +9,15 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text.Json;
 using System.Web;
 using System.Windows.Controls;
 using Yggdrasil.Classes;
@@ -51,6 +56,15 @@ namespace Skymu
             }
         }
 
+        private static void InsertAdBlock()
+        {
+            dynamic doc = _browser.Document;
+            dynamic el = doc.createElement("style");
+            el.type = "text/css";
+            el.text = "#fancybox-wrap, #fancybox-overlay, promotion { visibility: collapse; }";
+            doc.body.appendChild(el);
+        }
+
         private static void OnLoadCompleted(
             object sender,
             System.Windows.Navigation.NavigationEventArgs e
@@ -71,6 +85,9 @@ namespace Skymu
                         InjectAvatar(dm.Partner.Username, dm.Partner.ProfilePicture);
                 });
             }
+
+            if (Settings.EnableAdBlock)
+                InsertAdBlock();
 
             // This makes the Skype Home page stretch horizontally like what I've seen in screenshots of the application, however for some reason it
             // doesn't provide a COM function to do this and I highly doubt Skype did this injection. In addition, it seems to have been a deliberate
@@ -108,6 +125,35 @@ namespace Skymu
                     + $"}}"
                     + $"}})();"
             );
+        }
+
+        public static JsonElement? GetLanguage()
+        {
+            string json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", "home.json"));
+
+            string cultureName =
+                CultureInfo
+                    .GetCultures(CultureTypes.AllCultures)
+                    .FirstOrDefault(c =>
+                        c.NativeName.StartsWith(Settings.Language) ||
+                        c.DisplayName.StartsWith(Settings.Language) ||
+                        c.EnglishName.StartsWith(Settings.Language)
+                    )?.Name ?? "en-US";
+
+            string langChunk = cultureName.Split('-')[0];
+
+            JsonDocument doc = JsonDocument.Parse(json);
+
+            if (doc.RootElement.TryGetProperty(langChunk, out JsonElement lang))
+            {
+                return lang;
+            }
+            else if (doc.RootElement.TryGetProperty("en", out JsonElement fallbackLang))
+            {
+                return fallbackLang;
+            }
+
+            return null;
         }
     }
 

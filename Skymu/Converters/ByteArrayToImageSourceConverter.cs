@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Org.BouncyCastle.Bcpg.Sig;
 using Skymu.Helpers;
 using System;
 using System.Globalization;
@@ -35,6 +36,8 @@ namespace Skymu.Converters
 
             if (type == "group")
                 return Universal.GroupAvatar;
+            else if (type == "unknown")
+                return Universal.UnknownAvatar;
             else
                 return Universal.AnonymousAvatar;
         }

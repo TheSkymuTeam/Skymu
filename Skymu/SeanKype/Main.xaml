@@ -18,6 +18,7 @@
     Activated="Window_Activated"
     Closing="Window_Closing"
     Deactivated="Window_Deactivated"
+    SizeChanged="Main_SizeChanged"
     SourceInitialized="Window_SourceInitialized"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
@@ -688,8 +689,7 @@
             <ColumnDefinition
                 x:Name="LeftColumnDefinition"
                 Width="277"
-                MinWidth="240"
-                MaxWidth="360" />
+                MinWidth="240" />
             <ColumnDefinition Width="6" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -697,9 +697,9 @@
         <!--  ====== LEFT COLUMN ======  -->
         <Grid x:Name="LeftColumn" Grid.Column="0">
             <Grid
-                MinWidth="240"
-                MaxWidth="360"
+                x:Name="SidebarGrid"
                 Background="{DynamicResource SkLight}"
+                MinWidth="240"
                 ClipToBounds="True">
 
                 <!--  Header area (height 110)  -->
@@ -762,21 +762,22 @@
                             </VisualBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Label
+                    <TextBlock
                         x:Name="LabelUsername"
                         Width="207"
                         Height="27"
-                        Margin="64.5,19.8,0,0"
+                        Margin="69.5,24.8,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Content=""
                         FontFamily="Segoe UI Historic"
                         FontSize="13"
-                        Foreground="{DynamicResource SkBlack}">
-                        <Label.LayoutTransform>
+                        Foreground="{DynamicResource SkBlack}"
+                        Text="Sean Kevin"
+                        TextTrimming="CharacterEllipsis">
+                        <TextBlock.LayoutTransform>
                             <ScaleTransform ScaleX="1.01" />
-                        </Label.LayoutTransform>
-                    </Label>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
                     <TextBlock
                         x:Name="LabelStatus"
                         Margin="70,47,20,47"
@@ -812,6 +813,7 @@
                         FontSize="13"
                         Foreground="{DynamicResource SkMidGray}"
                         Text="Search">
+                        <!-- TODO: Use LANG for above -->
                         <TextBox.LayoutTransform>
                             <ScaleTransform ScaleX="1.02" />
                         </TextBox.LayoutTransform>
@@ -845,6 +847,7 @@
                         Margin="15,15,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
+                        MouseLeftButtonUp="TabHome_Click"
                         Source="{DynamicResource HomeDrawingImage}" />
                     <Image
                         Width="12"
@@ -852,6 +855,7 @@
                         Margin="176,15,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
+                        MouseLeftButtonUp="AddContact_Click"
                         Source="{DynamicResource PlusDrawingImage}" />
                     <TextBlock
                         x:Name="TabContactsText"
@@ -865,7 +869,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkBlack}"
                         MouseLeftButtonUp="TabContacts_Click"
-                        Text="CONTACTS"
+                        Text="{Binding [sRECENTS_LINK_CAPS], Source='{StaticResource Lang}'}"
                         TextAlignment="Left"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
@@ -884,7 +888,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkDarkBlue}"
                         MouseLeftButtonUp="TabRecent_Click"
-                        Text="RECENT"
+                        Text="{Binding [sCONTACTS_LINK_CAPS], Source='{StaticResource Lang}'}"
                         TextAlignment="Center"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
@@ -910,6 +914,7 @@
                     </TextBlock>
                 </Grid>
 
+                <!-- TODO: Fix this length on loooong sidebars -->
                 <Image
                     x:Name="TabWave"
                     Width="560"
@@ -958,6 +963,89 @@
             ShowsPreview="False" />
 
         <!--  ====== RIGHT COLUMN ======  -->
+        <Grid
+            Grid.Column="2"
+            Margin="-5,0,0,0">
+            <WebBrowser
+                x:Name="browser"
+                Visibility="Collapsed" />
+            <Grid
+                x:Name="NoHomeGrid"
+                Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="24,46,0,0"
+                    Orientation="Horizontal">
+                    <Image
+                        Width="48"
+                        Height="48"
+                        Source="Assets/Universal/Home/warning.png"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+                    <StackPanel
+                        Margin="16,0,0,0"
+                        Orientation="Vertical">
+                        <TextBlock
+                            x:Name="NoHomeHead"
+                            Margin="0,6,0,0"
+                            FontFamily="Helvetica"
+                            FontSize="17"
+                            FontWeight="Bold"
+                            Foreground="#333"
+                            Text="Skype Home unavailable" />
+                        <TextBlock
+                            x:Name="NoHomeBody"
+                            Margin="0,12,0,0"
+                            FontFamily="Helvetica"
+                            FontSize="13"
+                            Foreground="#333"
+                            Text="Skype Home is unavailable at the moment. Check back later to see your news and alerts." />
+                        <TextBlock
+                            x:Name="NoHomeListHead"
+                            Margin="0,32,0,0"
+                            FontFamily="Helvetica"
+                            FontSize="13"
+                            Foreground="#333"
+                            Text="It's easy to start a conversation on Skype:" />
+                        <BulletDecorator Margin="0,12,0,0">
+                            <BulletDecorator.Bullet>
+                                <Ellipse Width="6" Height="6" Fill="#333"/>
+                            </BulletDecorator.Bullet>
+                            <TextBlock
+                                x:Name="NoHomeList1"
+                                Margin="14,0,0,0"
+                                FontFamily="Helvetica"
+                                FontSize="13"
+                                Foreground="#333"
+                                Text="Choose a contact and start talking" />
+                        </BulletDecorator>
+                        <BulletDecorator Margin="0,12,0,0">
+                            <BulletDecorator.Bullet>
+                                <Ellipse Width="6" Height="6" Fill="#333"/>
+                            </BulletDecorator.Bullet>
+                            <TextBlock
+                                x:Name="NoHomeList2"
+                                Margin="14,0,0,0"
+                                FontFamily="Helvetica"
+                                FontSize="13"
+                                Foreground="#333"
+                                Text="Call a phone or mobile from the dial pad, or send an SMS." />
+                        </BulletDecorator>
+                    </StackPanel>
+                </StackPanel>
+                <Image
+                    Grid.Row="1"
+                    Width="650"
+                    Height="190"
+                    Source="Assets/Universal/Home/footer.png"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom" />
+            </Grid>
+        </Grid>
         <Grid
             x:Name="RightColumn"
             Grid.Column="2"

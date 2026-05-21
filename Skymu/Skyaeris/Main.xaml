@@ -784,6 +784,7 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     MouseLeftButtonDown="TitleBarIcon_MouseDown"
+                    MouseLeftButtonUp="TitleBarIcon_CancelHold"
                     Source="Assets/Universal/Branding/logo-window-frame.png"
                     Style="{StaticResource LongIconStyle}" />
                 <Grid Margin="6,0">
@@ -847,7 +848,7 @@
                         <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                     </MenuItem>
                     <MenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
-                        <MenuItem Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnAddContact" Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -876,7 +877,7 @@
                         <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE], Source={StaticResource Lang}}" IsEnabled="False" />
                     </MenuItem>
                     <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
-                        <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnCall" Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
                         <MenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_CALL_ANSWER], Source={StaticResource Lang}}" IsEnabled="False" />
                         <Separator />
@@ -1475,7 +1476,7 @@
                                 DataContext="{Binding SelectedItem, ElementName=ConversationList}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="32" />
-                                    <RowDefinition x:Name="TopbarWindowRow" Height="120" />
+                                    <RowDefinition x:Name="TopbarWindowRow" Height="130" />
                                     <RowDefinition x:Name="MessageWindowRow" Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid
@@ -1640,6 +1641,83 @@
                                             x:Name="browser"
                                             Grid.Row="1"
                                             Visibility="Collapsed" />
+                                        <Grid
+                                            x:Name="NoHomeGrid"
+                                            Grid.Row="1"
+                                            Visibility="Collapsed">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel
+                                                Grid.Row="0"
+                                                Margin="24,46,0,0"
+                                                Orientation="Horizontal">
+                                                <Image
+                                                    Width="48"
+                                                    Height="48"
+                                                    Source="Assets/Universal/Home/warning.png"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Top" />
+                                                <StackPanel
+                                                    Margin="16,0,0,0"
+                                                    Orientation="Vertical">
+                                                    <TextBlock
+                                                        x:Name="NoHomeHead"
+                                                        Margin="0,6,0,0"
+                                                        FontFamily="Helvetica"
+                                                        FontSize="17"
+                                                        FontWeight="Bold"
+                                                        Foreground="#333"
+                                                        Text="Skype Home unavailable" />
+                                                    <TextBlock
+                                                        x:Name="NoHomeBody"
+                                                        Margin="0,12,0,0"
+                                                        FontFamily="Helvetica"
+                                                        FontSize="13"
+                                                        Foreground="#333"
+                                                        Text="Skype Home is unavailable at the moment. Check back later to see your news and alerts." />
+                                                    <TextBlock
+                                                        x:Name="NoHomeListHead"
+                                                        Margin="0,32,0,0"
+                                                        FontFamily="Helvetica"
+                                                        FontSize="13"
+                                                        Foreground="#333"
+                                                        Text="It's easy to start a conversation on Skype:" />
+                                                    <BulletDecorator Margin="0,12,0,0">
+                                                        <BulletDecorator.Bullet>
+                                                            <Ellipse Width="6" Height="6" Fill="#333"/>
+                                                        </BulletDecorator.Bullet>
+                                                        <TextBlock
+                                                            x:Name="NoHomeList1"
+                                                            Margin="14,0,0,0"
+                                                            FontFamily="Helvetica"
+                                                            FontSize="13"
+                                                            Foreground="#333"
+                                                            Text="Choose a contact and start talking" />
+                                                    </BulletDecorator>
+                                                    <BulletDecorator Margin="0,12,0,0">
+                                                        <BulletDecorator.Bullet>
+                                                            <Ellipse Width="6" Height="6" Fill="#333"/>
+                                                        </BulletDecorator.Bullet>
+                                                        <TextBlock
+                                                            x:Name="NoHomeList2"
+                                                            Margin="14,0,0,0"
+                                                            FontFamily="Helvetica"
+                                                            FontSize="13"
+                                                            Foreground="#333"
+                                                            Text="Call a phone or mobile from the dial pad, or send an SMS." />
+                                                    </BulletDecorator>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Image
+                                                Grid.Row="1"
+                                                Width="650"
+                                                Height="190"
+                                                Source="Assets/Universal/Home/footer.png"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom" />
+                                        </Grid>
                                         <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
                                         <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                             <ContentControl.Resources>

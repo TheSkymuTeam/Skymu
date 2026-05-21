@@ -1,8 +1,11 @@
 ![Skymu Logo](Images/logo.png) 
 
+# What is Skymu?
+Skymu is a Skype revival project, clients looking like Skype 5, Skype 7, etc and plugins to make those clients able to connect to other platforms like Discord for example.
+
 # Build Guide
 
-Use any version of Visual Studio from 2019 Community (recommended) onwards. Build MiddleMan first and the solution afterwards.
+Use any version of Visual Studio from 2019 Community (recommended) onwards. Build Yggdrasil (formerly MiddleMan) first and the solution afterwards.
 
 ![Client, chatting](Images/skymu-v0.4-chat.png) 
 
