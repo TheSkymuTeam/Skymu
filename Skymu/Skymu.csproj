@@ -114,7 +114,7 @@
 		<EmbeddedResource Remove="Emoji\Resources\**\*" />
 		<Compile Remove="Emoji\**\*" />
 		<Resource Include="Emoji\**\*" />
-		
+
 		<!-- Page assets -->
 		<None Remove="Forms\Pages\Assets\**\*" />
 		<Page Remove="Forms\Pages\Assets\**\*" />
@@ -131,7 +131,7 @@
 		<Compile Remove="Properties\**" />
 		<Compile Remove="Sounds*\**\*" />
 		<Resource Include="Sounds*\**\*" />
-		
+
 		<!-- Languages as Content -->
 		<None Remove="Languages\**\*" />
 		<Page Remove="Languages\**\*" />
@@ -151,7 +151,7 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-	  <Resource Remove="Properties\**" />
+		<Resource Remove="Properties\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -173,29 +173,29 @@
 		<PackageReference Include="System.Text.Json" Version="10.0.3" />
 		<PackageReference Include="TrayIcon" Version="1.1.3" />
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-  <Reference Include="PresentationFramework.Aero">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="PresentationFramework.Aero2">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="PresentationFramework.AeroLite">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="PresentationFramework.Classic">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="PresentationFramework.Luna">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="PresentationFramework.Royale">
-    <Private>True</Private>
-  </Reference>
-  <Reference Include="System.Security" />
-  <Reference Include="System.Web" />
-</ItemGroup>
+		<Reference Include="PresentationFramework.Aero">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Aero2">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.AeroLite">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Classic">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Luna">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="PresentationFramework.Royale">
+			<Private>True</Private>
+		</Reference>
+		<Reference Include="System.Security" />
+		<Reference Include="System.Web" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<AppDesigner Include="Properties\" />
@@ -219,22 +219,22 @@
 
 	<ItemGroup>
 		<None Include="Themes\newdiscord.xaml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <SubType>Designer</SubType>
-		  <Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
 		</None>
 		<None Include="Themes\discord.xaml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <SubType>Designer</SubType>
-		  <Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
 		</None>
 		<None Include="Themes\red.xaml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Generator>MSBuild:Compile</Generator>
 		</None>
 		<None Include="Themes\pink.xaml">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Generator>MSBuild:Compile</Generator>
 		</None>
 		<None Include="Themes\default.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -243,18 +243,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Forms\CallScreen.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	  </Page>
-	  <Page Update="SeanKype\Login.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	  </Page>
-	  <Page Update="SeanKype\Main.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	  </Page>
-	  <Page Update="Forms\IncomingCall.xaml">
-	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	  </Page>
+		<Page Update="Forms\CallScreen.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="SeanKype\Login.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="SeanKype\Main.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+		<Page Update="Forms\IncomingCall.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
 	</ItemGroup>
-	
+
 </Project>
