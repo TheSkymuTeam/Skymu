@@ -49,11 +49,11 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Core\</OutputPath>
+		<OutputPath>bin\Skymu.Legacy\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Legacy\</OutputPath>
+		<OutputPath>bin\Skymu.Core\</OutputPath>
 	</PropertyGroup>
 
 	<!-- Build configurations -->
@@ -255,6 +255,18 @@
 		<Page Update="Forms\IncomingCall.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-x86\native\e_sqlite3.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-x64\native\e_sqlite3.dll" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="C:\Users\semmal\.nuget\packages\sqlitepclraw.lib.e_sqlite3\2.1.11\buildTransitive\net461\..\..\runtimes\win-arm\native\e_sqlite3.dll" />
 	</ItemGroup>
 
 </Project>
