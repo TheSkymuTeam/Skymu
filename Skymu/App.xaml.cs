@@ -44,7 +44,7 @@ namespace Skymu
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4.1";
-        public const string BuildName = "Eros Basilisk PB4";
+        public const string BuildName = "BASED Build 05-21-2026";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
