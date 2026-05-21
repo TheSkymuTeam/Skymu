@@ -103,10 +103,10 @@ namespace Skymu
         static readonly ObservableCollection<Control> StatusItems = new ObservableCollection<Control>()
         {
             new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_ONLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Online)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_AWAY"], Command = new RelayCommand(() => SS(PresenceStatus.Away)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_DND"], Command = new RelayCommand(() => SS(PresenceStatus.DoNotDisturb)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_INVISIBLE"], Command = new RelayCommand(() => SS(PresenceStatus.Invisible)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
-            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_OFFLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Offline)), Icon = IICN(SIconTextMap[PresenceStatus.Online]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_AWAY"], Command = new RelayCommand(() => SS(PresenceStatus.Away)), Icon = IICN(SIconTextMap[PresenceStatus.Away]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_DND"], Command = new RelayCommand(() => SS(PresenceStatus.DoNotDisturb)), Icon = IICN(SIconTextMap[PresenceStatus.DoNotDisturb]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_INVISIBLE"], Command = new RelayCommand(() => SS(PresenceStatus.Invisible)), Icon = IICN(SIconTextMap[PresenceStatus.Invisible]) },
+            new MenuItem() { Header = Universal.Lang["sTRAYHINT_USER_OFFLINE"], Command = new RelayCommand(() => SS(PresenceStatus.Offline)), Icon = IICN(SIconTextMap[PresenceStatus.Offline]) },
             new Separator(),
             new MenuItem() { Header = Universal.Lang["sSTATUSMENU_CAPTION_CF_OPTIONS2"], Command = new RelayCommand(() => Universal.NotImplemented("Call forwarding")) }
         };
