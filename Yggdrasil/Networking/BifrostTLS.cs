@@ -17,6 +17,8 @@
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Asn1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -307,27 +309,80 @@ namespace Yggdrasil.Networking
                 Org.BouncyCastle.X509.X509Certificate leafX509 =
                     new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(leafEncodedBytes);
 
-                bool hostValid = HostMatchesCert(leafX509, _host);
+                (bool, List<string>) certHostInfo = GetCertificateHostInformation(leaf, _host);
 
                 Debug.WriteLine(
-                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
+                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={certHostInfo.Item1} host={_host}"
+                );
 
-                if (!chainValid && !hostValid)
+                string customText = useCustom ? "Using custom certificate: " : string.Empty;
+
+                if (!chainValid && !certHostInfo.Item1)
                 {
-                    if (useCustom)
-                        throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("Invalid Custom Certificate chain AND invalid host."));
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Both certificate chain and host are invalid [42]"));
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception(
+                            $"BifrostTLS error: {customText}Certificate chain is invalid. In addition, host is also invalid, '{_host}' does"
+                                + $" not match certificate [42].\n\nCertificate information:\n{leaf.GetNameInfo(X509NameType.SimpleName, false)}"
+                        )
+                    );
                 }
 
                 if (!chainValid)
                 {
-                    if (useCustom)
-                        throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("Invalid Custom Certificate chain."));
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Certificate chain is invalid [42]"));
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception($"BifrostTLS error: {customText}Certificate chain is invalid [42]")
+                    );
                 }
 
-                if (!hostValid)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception($"BifrostTLS error: Host is invalid, '{_host}' does not match certificate [42]"));
+                else if (!certHostInfo.Item1)
+                {
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception(
+                            $"BifrostTLS error: Host is invalid, '{_host}' does "
+                                + $"not match certificate [42].\n\nThe certificate is valid for the following domains:\n{string.Join(Environment.NewLine, certHostInfo.Item2.ToArray())}"
+                        )
+                    );
+                }
+            }
+
+            private static (bool, List<string>) GetCertificateHostInformation(X509Certificate2 cert, string host)
+            {
+                var domains = new List<string>();
+
+                // check SAN extension for domain names
+                var bcCert = DotNetUtilities.FromX509Certificate(cert);
+                var sanRaw = bcCert.GetExtensionValue(X509Extensions.SubjectAlternativeName);
+                if (sanRaw != null)
+                {
+                    var san = GeneralNames.GetInstance(Asn1Object.FromByteArray(sanRaw.GetOctets()));
+
+                    foreach (var name in san.GetNames())
+                    {
+                        if (name.TagNo != GeneralName.DnsName) continue;
+
+                        var dnsName = name.Name.ToString();
+                        domains.Add(dnsName);
+
+                        if (NameMatches(dnsName, host))
+                        {
+                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {dnsName}");
+                            return (true, domains);
+                        }
+                    }
+
+                    Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
+                    return (false, domains);
+                }
+
+                // fall back to CN if no SAN extension (for older stuff?)
+                string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
+                domains.Add(cn);
+                bool cnMatch = NameMatches(cn, host);
+                Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
+                return (cnMatch, domains);
             }
 
             private void LoadPemCerts(Stream stream, HashSet<string> thumbprints, X509Certificate2Collection extraStore)
@@ -343,48 +398,6 @@ namespace Yggdrasil.Networking
                     thumbprints.Add(dotNetCert.Thumbprint);
                     extraStore.Add(dotNetCert);
                 }
-            }
-
-            private static bool HostMatchesCert(Org.BouncyCastle.X509.X509Certificate bcCert, string host)
-            {
-                try
-                {
-                    var sans = bcCert.GetSubjectAlternativeNames();
-                    if (sans != null && sans.Count > 0)
-                    {
-                        foreach (System.Collections.IList san in sans)
-                        {
-                            int nameType = (int)san[0];
-                            if (nameType == 2)
-                            {
-                                string entry = san[1]?.ToString();
-                                if (NameMatches(entry, host))
-                                {
-                                    Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {entry}");
-                                    return true;
-                                }
-                            }
-                        }
-
-                        Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
-                        return false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[BIFROST-TLS] Error parsing ASN.1 SANs: {ex.Message}");
-                }
-
-                string cn = null;
-                var cnList = bcCert.SubjectDN.GetValueList(Org.BouncyCastle.Asn1.X509.X509Name.CN);
-                if (cnList != null && cnList.Count > 0)
-                {
-                    cn = cnList[0]?.ToString();
-                }
-
-                bool cnMatch = NameMatches(cn, host);
-                Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
-                return cnMatch;
             }
 
             private static bool NameMatches(string pattern, string host)
