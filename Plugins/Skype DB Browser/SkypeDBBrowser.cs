@@ -310,7 +310,6 @@ namespace SkypeDBBrowser
             return Task.FromResult(true);
         }
         public int TypingTimeout => 5000;
-        public int TypingRepeat => 5000;
         public Task<bool> SetTyping(string idenfitier, bool typing)
         {
 

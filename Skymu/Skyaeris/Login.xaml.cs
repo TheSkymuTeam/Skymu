@@ -56,7 +56,7 @@ namespace Skymu.Skyaeris
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(Tray.loggedOut, false);
+            Tray.SetStatus(PresenceStatus.Offline);
         }
 
         private async void buttonLaunch(object state, RoutedEventArgs e)
