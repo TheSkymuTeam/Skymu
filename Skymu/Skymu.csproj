@@ -40,7 +40,7 @@
 		<Product>Skymu</Product>
 	</PropertyGroup>
 
-	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME INSTEAD) -->
+	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME (OMEGA) INSTEAD) -->
 	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '5.0'))">
 		<TargetFrameworks>net461;net5.0-windows</TargetFrameworks>
 	</PropertyGroup>
