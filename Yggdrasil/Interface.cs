@@ -26,6 +26,7 @@ namespace Yggdrasil
     {
         event EventHandler<PluginMessageEventArgs> OnError;
         event EventHandler<PluginMessageEventArgs> OnWarning;
+        event EventHandler<PluginYesNoEventArgs> ShowYesNo;
         event EventHandler<MessageEventArgs> MessageEvent;
         string Name { get; } // Name of the protocol. (e.g. Discord)
         string InternalName { get; } // Internal name of the plugin (e.g. skymu-discord-plugin)

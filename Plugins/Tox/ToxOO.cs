@@ -1,16 +1,34 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
-// For any inquiries or concerns, email contact@skymu.app.
+// This file is licensed in MIT.
 /*==========================================================*/
-// Modification or redistribution of this code is contingent
-// on your agreement to be bound by the terms of our License.
-// If you do not wish to abide by those terms, you may not
-// use, modify, or distribute any code from the Skymu project.
-// License: https://skymu.app/legal/license
+// Copyright 2026 The Skymu Team
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated
+// documentation files (the “Software”), to deal in the
+// Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute,
+// sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so,
+// subject to the following conditions:
+//
+// The above copyright notice and this permission notice
+// shall be included in all copies or substantial portions of
+// the Software.
+//
+// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY
+// KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+// WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+// OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /*==========================================================*/
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -159,7 +177,10 @@ namespace ToxOO
                 Marshal.Copy(ptr, data, 0, size);
                 return data;
             }
-            set => tox_options_set_savedata_data(ptr, value, (UIntPtr)value.Length);
+        }
+        public bool setSavedata(byte[] data)
+        {
+            return tox_options_set_savedata_data(ptr, data, (UIntPtr)data.Length);
         }
         public tox_log_cb logCallback
         {
@@ -254,6 +275,10 @@ namespace ToxOO
                         throw new ArgumentException(err.ToString());
                     default: throw new Exception(err.ToString());
                 }
+        }
+        public Tox(IntPtr ptr)
+        {
+            this.ptr = ptr;
         }
         public void Dispose()
         {
@@ -409,17 +434,17 @@ namespace ToxOO
                     default: throw new Exception(err.ToString());
                 }
         }
-        public UInt32 FriendByPublicKey(byte[] public_key)
+        public Friend FriendByPublicKey(byte[] public_key)
         {
             UInt32 fid = tox_friend_by_public_key(ptr, public_key, out Tox_Err_Friend_By_Public_Key err);
             if (err != Tox_Err_Friend_By_Public_Key.OK)
                 switch (err)
                 {
                     case Tox_Err_Friend_By_Public_Key.NULL: throw new ArgumentNullException();
-                    case Tox_Err_Friend_By_Public_Key.NOT_FOUND: throw new ArgumentException("Friend not found");
+                    case Tox_Err_Friend_By_Public_Key.NOT_FOUND: return null;
                     default: throw new Exception(err.ToString());
                 }
-            return fid;
+            return new Friend(ptr, fid);
         }
         public bool FriendExists(UInt32 fid) => tox_friend_exists(ptr, fid);
         public UIntPtr friendCount { get => tox_self_get_friend_list_size(ptr); }
@@ -468,6 +493,7 @@ namespace ToxOO
         public tox_friend_read_receipt_cb friendReadReceipt { set => tox_callback_friend_read_receipt(ptr, value); }
         public tox_friend_request_cb friendRequest { set => tox_callback_friend_request(ptr, value); }
         public tox_friend_message_cb friendMessage { set => tox_callback_friend_message(ptr, value); }
+        public tox_friend_lossless_packet_cb friendLosslessPacket { set => tox_callback_friend_lossless_packet(ptr, value); }
 
         #endregion
 
@@ -772,7 +798,7 @@ namespace ToxOO
                 return ps;
             }
         }
-        // name, pubkey, numer_is_ours
+        // name, pubkey, number_is_ours
 
         public UInt32 offlinePeerCount
         {
@@ -877,11 +903,6 @@ namespace ToxOO
 
         public AnyConferencePeer(IntPtr tox, UInt32 cid, UInt32 id)
         {
-            tox_conference_peer_get_name_size(tox, cid, id, out var err);
-            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
-                throw new ObjectDisposedException("Conference");
-            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
-                throw new ObjectDisposedException("Peer");
             ptr = tox;
             this.cid = cid;
             this.id = id;
@@ -889,7 +910,14 @@ namespace ToxOO
     }
     public class ConferencePeer : AnyConferencePeer
     {
-        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+        public ConferencePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id)
+        {
+            tox_conference_peer_get_name_size(tox, cid, id, out var err);
+            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
+                throw new ObjectDisposedException("Conference");
+            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
+                throw new ObjectDisposedException("Peer");
+        }
 
         public string name
         {
@@ -918,7 +946,14 @@ namespace ToxOO
     }
     public class COfflinePeer : AnyConferencePeer
     {
-        public COfflinePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id) { }
+        public COfflinePeer(IntPtr tox, UInt32 cid, UInt32 id) : base(tox, cid, id)
+        {
+            tox_conference_offline_peer_get_name_size(tox, cid, id, out var err);
+            if (err == Tox_Err_Conference_Peer_Query.CONFERENCE_NOT_FOUND)
+                throw new ObjectDisposedException("Conference");
+            else if (err == Tox_Err_Conference_Peer_Query.PEER_NOT_FOUND)
+                throw new ObjectDisposedException("Offline peer");
+        }
 
         public string name
         {

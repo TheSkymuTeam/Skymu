@@ -424,6 +424,19 @@ namespace Yggdrasil.Classes
         }
     }
 
+    public class PluginYesNoEventArgs : EventArgs
+    {
+        public string Message { get; }
+        public Func<bool, object> Action { get; }
+
+        /// <summary>argument is true if "yes" is selected, "no" with all other cases including window close. Function return does nothing.</summary>
+        public PluginYesNoEventArgs(string message, Func<bool, object> action)
+        {
+            Message = message;
+            Action = action;
+        }
+    }
+
     public abstract class MessageEventArgs : EventArgs
     {
         public string ConversationId { get; }

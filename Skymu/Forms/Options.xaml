@@ -209,6 +209,17 @@
                                                 SelectedValuePath="Key" />
                                         </StackPanel>
 
+                                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                                            <CheckBox
+                                                Content="Use system culture over one above"
+                                                IsChecked="{Binding Path=[UseSystemCulture], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                            <TextBlock
+                                                Margin="8,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="Requires restart" />
+                                        </StackPanel>
+
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
                                             <TextBlock
@@ -321,6 +332,16 @@
                                         </StackPanel>
 
 
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Save window placement (size, position, sidebar size)"
+                                            IsChecked="{Binding Path=[SaveWindowPlacement], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Content="Start minimized"
+                                            IsChecked="{Binding Path=[StartMinimized], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+
                                         <CheckBox Margin="0,5" IsChecked="{Binding Path=[FallbackFillColors], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Use Skype fallback window colors, and do not switch the color scheme based on window activation state. Useful for users with visual motion sickness or if you think the colors are ugly." /></TextBlock>
                                         </CheckBox>
@@ -416,6 +437,10 @@
                                             IsChecked="{Binding Path=[EnableSkypeHome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
                                             Margin="0,5"
+                                            Content="Enable the 'Skype Home' AdBlocker"
+                                            IsChecked="{Binding Path=[EnableAdBlock], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                        <CheckBox
+                                            Margin="0,5"
                                             Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
                                             IsChecked="{Binding Path=[StartOnStartup], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                         <CheckBox
@@ -434,6 +459,58 @@
                                             IsChecked="{Binding Path=[DisablePingbacks], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
                                             <TextBlock TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server and the updater (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
                                         </CheckBox>
+
+                                        <StackPanel Margin="0,8" Orientation="Horizontal">
+                                            <CheckBox
+                                                VerticalAlignment="Center"
+                                                Content="Use the system certificate store"
+                                                IsChecked="{Binding Path=[SysCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                            <TextBlock
+                                                Margin="12,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource Text.MediumContrast}"
+                                                Text="Requires restart" />
+                                        </StackPanel>
+
+
+                                        <Grid Margin="0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <CheckBox Grid.Column="0" x:Name="UseCustomCert"
+                                                VerticalAlignment="Top"
+                                                Margin="0,3,0,0"
+                                                IsChecked="{Binding Path=[UseCustomCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0,10,0" VerticalAlignment="Center">
+                                                <TextBlock
+                                                    Text="Use custom certificate store (cacert.pem)" />
+                                                <TextBlock
+                                                    Margin="0,2,0,0"
+                                                    FontSize="11"
+                                                    Foreground="{StaticResource Text.MediumContrast}"
+                                                    Text="Requires restart" />
+                                            </StackPanel>
+
+                                            <TextBox Grid.Column="2" x:Name="SC_CertPathBox"
+                                                Width="120"
+                                                FontFamily="Tahoma"
+                                                VerticalAlignment="Top"
+                                                Margin="0,1,0,0"
+                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
+                                                Text="{Binding Path=[CertPath], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <Button Grid.Column="3" Content="Browse"
+                                                Margin="5,0,0,0"
+                                                Padding="6,1"
+                                                VerticalAlignment="Top"
+                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
+                                                Click="CertBrowseButtonClick"/>
+                                        </Grid>
 
                                     </StackPanel>
                                 </ScrollViewer>

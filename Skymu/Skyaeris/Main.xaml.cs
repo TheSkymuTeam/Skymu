@@ -24,6 +24,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -71,6 +73,7 @@ namespace Skymu.Skyaeris
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
+        private CancellationTokenSource _TitleBarIconHoldTokenSource;
         private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
 
         private enum WindowType
@@ -81,10 +84,10 @@ namespace Skymu.Skyaeris
 
         private enum WindowFrame
         {
+            Native,
             SkypeAero,
             SkypeBasic,
-            Native,
-            SkypeAeroCustom
+            SkypeAeroCustom,
         };
 
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
@@ -203,7 +206,10 @@ namespace Skymu.Skyaeris
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    browser.Visibility = Visibility.Visible;
+                    if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                        browser.Visibility = Visibility.Visible;
+                    else
+                        NoHomeGrid.Visibility = Visibility.Visible;
                     MainPageButton.SetState(ButtonVisualState.Pressed);
                     ConversationList.SelectedItem = null;
                     SelectedContact = null;
@@ -218,6 +224,7 @@ namespace Skymu.Skyaeris
                     ChatProfileArea.Visibility = Visibility.Visible;
                     MessageWindow.Visibility = Visibility.Visible;
                     browser.Visibility = Visibility.Collapsed;
+                    NoHomeGrid.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -877,24 +884,36 @@ namespace Skymu.Skyaeris
 
         private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
         {
-
-            try
+            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
             {
-                // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                await Sounds.PlayAsync("busy");
-                string url;
-                if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                    url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                else
-                    url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+                try
+                {
+                    // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
+                    await Sounds.PlayAsync("busy");
+                    if (_TitleBarIconHoldTokenSource.IsCancellationRequested) return;
+                    string url;
+                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                    else
+                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
 
-                Universal.OpenUrl(url);
+                    Universal.OpenUrl(url);
+                }
+                catch (TaskCanceledException)
+                {
+                    // ass
+                }
             }
-            catch (TaskCanceledException)
+            _TitleBarIconHoldTokenSource = null;
+        }
+
+        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
+        {
+            // If a timer is currently running, cancel it
+            if (_TitleBarIconHoldTokenSource?.IsCancellationRequested == false)
             {
-                // ass
+                _TitleBarIconHoldTokenSource.Cancel();
             }
-
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
@@ -939,6 +958,10 @@ namespace Skymu.Skyaeris
         {
             new Updater(true);
         }
+
+        private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
+
+        private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
 
         private void OnSignOut(object sender, RoutedEventArgs e)
         {
@@ -1466,16 +1489,16 @@ namespace Skymu.Skyaeris
                     Universal.CurrentUser.ConnectionStatus
                 );
                 ConfigureCompactRecentsList();
-                if (Settings.EnableSkypeHome)
+                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
                     SkypeHome.Generate(
                         browser,
                         Universal.CurrentUser,
                         Universal.Plugin.ContactsList.ToArray()
                     );
-                string suffix = Universal.TestMode ? " [TEST MODE]" : string.Empty;
-                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username + suffix;
+                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                vmodel.RunSpeedTestCommand.Execute(null);
+                if (!MainViewModel.ConnectionMetered())
+                    vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
@@ -1525,6 +1548,7 @@ namespace Skymu.Skyaeris
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
+            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
 
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
@@ -1557,10 +1581,12 @@ namespace Skymu.Skyaeris
 
             Settings.Default.PropertyChanged += RefreshCreds;
             RefreshCreds();
+            RefreshNoHomeText(null, null);
+            Universal.Lang.PropertyChanged += RefreshNoHomeText;
 
             SourceInitialized += (s, e) =>
             {
-                WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                WindowPlacement? wplc = WindowPlacementHelper.Load();
                 if (wplc != null)
                 {
                     WindowPlacement wp = (WindowPlacement)wplc;
@@ -1568,6 +1594,7 @@ namespace Skymu.Skyaeris
                     this.Left = wp.Left;
                     this.Width = wp.Width;
                     this.Height = wp.Height;
+                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
                     SidebarColumn.Width = new GridLength(wp.sidebarWidth);
                 }
                 Sidebar_SizeChanged_Refresh();
@@ -1631,7 +1658,6 @@ namespace Skymu.Skyaeris
                 return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.SetStatus(status);
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
@@ -1639,7 +1665,6 @@ namespace Skymu.Skyaeris
                 if (Universal.CurrentUser != null)
                     Universal.CurrentUser.ConnectionStatus = status;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.SetStatus(status);
             }
         }
 
@@ -1661,6 +1686,18 @@ namespace Skymu.Skyaeris
                 Settings.CredsText
                 + " - "
                 + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+        }
+
+        private void RefreshNoHomeText(object sender, PropertyChangedEventArgs e)
+        {
+            var el = SkypeHome.GetLanguage();
+            if (el == null) return;
+            var lang = (JsonElement)el;
+            NoHomeHead.Text = lang.GetProperty("header").GetString();
+            NoHomeBody.Text = lang.GetProperty("p1").GetString();
+            NoHomeListHead.Text = lang.GetProperty("p2").GetString();
+            NoHomeList1.Text = lang.GetProperty("list1li1").GetString();
+            NoHomeList2.Text = lang.GetProperty("list1li2").GetString();
         }
     }
 

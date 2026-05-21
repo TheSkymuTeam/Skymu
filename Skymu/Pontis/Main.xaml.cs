@@ -20,9 +20,11 @@ using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,9 +67,6 @@ namespace Skymu.Pontis
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
-
-        private CancellationTokenSource _TitleBarIconHoldTokenSource;
-        private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
 
         private enum WindowType
         {
@@ -156,7 +155,10 @@ namespace Skymu.Pontis
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    browser.Visibility = Visibility.Visible;
+                    if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                        browser.Visibility = Visibility.Visible;
+                    else
+                        NoHomeGrid.Visibility = Visibility.Visible;
                     ConversationList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
                     SelectedContact = null;
@@ -168,6 +170,7 @@ namespace Skymu.Pontis
                     ChatProfileArea.Visibility = Visibility.Visible;
                     MessageWindow.Visibility = Visibility.Visible;
                     browser.Visibility = Visibility.Collapsed;
+                    NoHomeGrid.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -716,40 +719,6 @@ namespace Skymu.Pontis
         private void Window_Deactivated(object sender, EventArgs e)
         {
             HandleWindowDeactivated();
-        }
-
-        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
-        {
-            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
-            {
-
-                try
-                {
-                    await Task.Delay(1500, _TitleBarIconHoldTokenSource.Token); // holding for 2 sec? I hope??
-
-                    string url;
-                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                    else
-                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
-
-                    Universal.OpenUrl(url);
-                }
-                catch (TaskCanceledException)
-                {
-                    // ass
-                }
-            }
-        }
-
-        // Method triggered if the user lets go of the click OR moves their mouse away
-        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
-        {
-            // If a timer is currently running, cancel it
-            if (_TitleBarIconHoldTokenSource != null && !_TitleBarIconHoldTokenSource.IsCancellationRequested)
-            {
-                _TitleBarIconHoldTokenSource.Cancel();
-            }
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
@@ -1337,10 +1306,12 @@ namespace Skymu.Pontis
                 StatusBox.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
                 ConfigureCompactRecentsList();
-                if (Settings.EnableSkypeHome) SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
+                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                    SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                vmodel.RunSpeedTestCommand.Execute(null);
+                if (!MainViewModel.ConnectionMetered())
+                    vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
@@ -1383,6 +1354,7 @@ namespace Skymu.Pontis
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
+            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
 
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
@@ -1416,9 +1388,12 @@ namespace Skymu.Pontis
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
             btnRecents.OverlayText.TextTrimming = TextTrimming.None;
 
+            RefreshNoHomeText(null, null);
+            Universal.Lang.PropertyChanged += RefreshNoHomeText;
+
             SourceInitialized += (s, e) =>
             {
-                WindowPlacement? wplc = WindowPlacementHelper.Load(this, SidebarColumn);
+                WindowPlacement? wplc = WindowPlacementHelper.Load();
                 if (wplc != null)
                 {
                     WindowPlacement wp = (WindowPlacement)wplc;
@@ -1426,6 +1401,7 @@ namespace Skymu.Pontis
                     this.Left = wp.Left;
                     this.Width = wp.Width;
                     this.Height = wp.Height;
+                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
                     SidebarColumn.Width = new GridLength(wp.sidebarWidth);
                 }
                 Sidebar_SizeChanged_Refresh();
@@ -1468,14 +1444,24 @@ namespace Skymu.Pontis
             if (status == PresenceStatus.Unknown) return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.SetStatus(status);
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
                 status = currentStatus;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.SetStatus(status);
             }
+        }
+
+        private void RefreshNoHomeText(object sender, PropertyChangedEventArgs e)
+        {
+            var el = SkypeHome.GetLanguage();
+            if (el == null) return;
+            var lang = (JsonElement)el;
+            NoHomeHead.Text = lang.GetProperty("header").GetString();
+            NoHomeBody.Text = lang.GetProperty("p1").GetString();
+            NoHomeListHead.Text = lang.GetProperty("p2").GetString();
+            NoHomeList1.Text = lang.GetProperty("list1li1").GetString();
+            NoHomeList2.Text = lang.GetProperty("list1li2").GetString();
         }
 
         #endregion

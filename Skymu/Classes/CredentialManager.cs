@@ -25,7 +25,11 @@ namespace Skymu.Credentials
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Skymu",
+#if DEBUG
+            "credentialsDebug.xml"
+#else
             "credentials.xml"
+#endif
         );
 
         private static XDocument ReadFile()

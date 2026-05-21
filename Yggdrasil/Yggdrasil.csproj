@@ -24,6 +24,10 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="C:\Users\semmal\.nuget\packages\libcurl.net.x64\1.4.1\build\\LibCurlShim.dll" />
+	  <None Remove="Networking\cacert.pem" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Networking\cacert.pem" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="libcurl-x64.dll">

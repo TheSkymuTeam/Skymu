@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using ToxOO;
 using Yggdrasil.Classes;
@@ -36,7 +37,7 @@ namespace Tox
         // PtrToStringAnsi
         public static string PTSA(IntPtr ptr) => Marshal.PtrToStringAnsi(ptr);
         // TIMEstamp
-        public static DateTime TIME() => DateTimeOffset.UtcNow.DateTime;
+        public static DateTime TIME() => DateTimeOffset.Now.DateTime;
 
         public static byte[] FromHex(string hex) => FromHex(hex, 64);
         public static byte[] FromHex(string hex, int len)
@@ -119,115 +120,126 @@ namespace Tox
             core.profilelock.Lock(0, 0);
         }
 
-        public static void PeerListRefresh(Core core, IntPtr tox, Conference conference)
+        /// <summary>The public key should be in hex</summary>
+        public static byte[] GrabAvatar(ToxOO.Tox tox, string pkey)
         {
-            var users = new Dictionary<UInt32, User>();
-            var ua = new List<User>();
-
-            var pksize = (int)tox_public_key_size();
-
-            for (UInt32 pid = 0; pid < conference.peerCount; pid++)
-            {
-                var p = new ConferencePeer(tox, conference.id, pid); 
-                var pkey = BATS(p.publicKey);
-                users.Add(pid, new User(p.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Online));
-            }
-            ua = users.Values.ToList();
-            // Who needs to access offline users anyways.
-            for (UInt32 pid = 0; pid < conference.offlinePeerCount; pid++)
-            {
-                var opeer = new COfflinePeer(tox, conference.id, pid);
-                var pkey = BATS(opeer.publicKey);
-                ua.Add(new User(opeer.name, pkey, "C" + conference.cid + "/" + pkey, null, PresenceStatus.Offline));
-            }
-            if (core.conferences.ContainsKey(conference.id))
-            {
-                core.conferences[conference.id].users.Clear();
-                foreach (var kvp in users)
-                {
-                    core.conferences[conference.id].users[kvp.Key] = kvp.Value;
-                    core.conferences[conference.id].conference.Members = ua.ToArray();
-                }
-            }
-            else
-            {
-                var group = new Group(conference.title, "C"+BATS(conference.cid), 0, ua.ToArray());
-                core.conferences.Add(conference.id, (users, group));
-                core.RecentsList.Add(group);
-            }
+            var avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
+            if (!Directory.Exists(avatar_cache_dir)) return null;
+            var path = Path.Combine(avatar_cache_dir, pkey + ".png");
+            if (!File.Exists(path)) return null;
+            return File.ReadAllBytes(path);
         }
 
-        public static void PeerListRefreshGC(Core core, IntPtr tox, UInt32 cid)
+        public static bool FriendListRefresh(Core core, bool ucp = true)
         {
-            var pkbyte = new byte[Size.groupId];
-            if (!tox_group_get_chat_id(tox, cid, pkbyte, out var err))
-            {
-                core.ERR($"Failed to get public key for conference {cid}: {err}");
-                return;
-            }
-            var pubkey = BATS(pkbyte);
-            var name = pubkey;
-            var titleb = new byte[(int)tox_group_get_name_size(tox, cid, out var gnerr)];
-            if (titleb.Length != 0)
-            {
-                tox_group_get_name(tox, cid, titleb, out gnerr);
-                name = Encoding.ASCII.GetString(titleb);
-            }
-
-            var pc = tox_conference_peer_count(tox, cid, out var cpcerr);
-            if (cpcerr != Tox_Err_Conference_Peer_Query.OK)
-            {
-                core.ERR($"Failed to get peer count for conference {cid}: {PTSA(tox_err_conference_peer_query_to_string(cpcerr))}");
-                return;
-            }
-
             var users = new Dictionary<UInt32, User>();
-            var ua = new List<User>();
-
-            var pksize = (int)tox_public_key_size();
-
-            for (UInt32 pid = 0; pid < pc; pid++)
+            foreach (var f in core.tox.friendArray)
             {
-                var pubkeyb = new byte[pksize];
-                tox_conference_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
-                string ppkey = BATS(pubkeyb);
-
-                var nameb = new byte[(int)tox_conference_peer_get_name_size(tox, cid, pid, out _)];
-                if (nameb.Length != 0)
-                    tox_conference_peer_get_name(tox, cid, pid, nameb, out _);
-                string pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
-
-                users.Add(pid, new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Online));
+                if (!core.friends.ContainsKey(f.id))
+                    core.friends.Add(f.id, new User(
+                        f.name,
+                        BATS(f.publicKey),
+                        BATS(f.publicKey),
+                        f.statusMessage,
+                        PresenceStatus.Offline,
+                        GrabAvatar(core.tox, BATS(f.publicKey))
+                        ));
+                users.Add(f.id, core.friends[f.id]);
             }
-            ua = users.Values.ToList();
-
-            for (UInt32 pid = 0; pid < tox_conference_offline_peer_count(tox, cid, out _); pid++)
+            var conferences = new Dictionary<UInt32, Group>();
+            foreach (var c in core.tox.conferenceArray)
             {
-                var pubkeyb = new byte[pksize];
-                tox_conference_offline_peer_get_public_key(tox, cid, pid, pubkeyb, out _);
-                var ppkey = BATS(pubkeyb);
-                var nameb = new byte[(int)tox_conference_offline_peer_get_name_size(tox, cid, pid, out _)];
-                if (nameb.Length != 0)
-                    tox_conference_offline_peer_get_name(tox, cid, pid, nameb, out _);
-                var pname = nameb.Length != 0 ? Encoding.ASCII.GetString(nameb) : ppkey;
-
-                ua.Add(new User(pname, ppkey, "C" + cid + "/" + ppkey, null, PresenceStatus.Offline));
+                var peers = new User[c.peerCount + c.offlinePeerCount];
+                int i = 0;
+                foreach (var p in c.peers)
+                {
+                    var pkey = BATS(p.publicKey);
+                    foreach (var u in users.Values)
+                    {
+                        if (u.PublicUsername == pkey)
+                        {
+                            peers[i++] = u;
+                            goto next;
+                        }
+                    }
+                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Online);
+                    next:;
+                }
+                foreach (var p in c.offlinePeers)
+                {
+                    var pkey = BATS(p.publicKey);
+                    foreach (var u in users.Values)
+                    {
+                        if (u.PublicUsername == pkey)
+                        {
+                            peers[i++] = u;
+                            goto next2;
+                        }
+                    }
+                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Offline);
+                    next2:;
+                }
+                conferences.Add(c.id, new Group(
+                    c.title,
+                    BATS(c.cid),
+                    0,
+                    peers
+                ));
             }
-            if (core.conferences.ContainsKey(cid))
+            Action act = () =>
             {
-                core.conferences[cid].users.Clear();
+                core.ContactsList.Clear();
+                core.RecentsList.Clear();
                 foreach (var kvp in users)
                 {
-                    core.conferences[cid].users[kvp.Key] = kvp.Value;
-                    core.conferences[cid].conference.Members = ua.ToArray();
+                    var dm = new DirectMessage(kvp.Value, 0, kvp.Value.Identifier);
+                    core.ContactsList.Add(dm);
+                    core.RecentsList.Add(dm);
                 }
-            }
+                foreach (var kvp in conferences)
+                {
+                    core.RecentsList.Add(kvp.Value);
+                }
+            };
+            if (ucp)
+                core.UCP(_ => act.Invoke());
             else
-            {
-                var group = new Group(name, "C" + cid, 0, ua.ToArray());
-                core.conferences.Add(cid, (users, group));
-                core.RecentsList.Add(group);
+                act.Invoke();
+            return true;
+        }
+
+        public static void ConferencePeerListRefresh(Core core, Conference conference)
+        {
+            var users = new Dictionary<UInt32, User>();
+            foreach (var p in conference.peers)
+            { 
+                var pkey = BATS(p.publicKey);
+                users.Add(p.id, new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(core.tox, pkey)));
             }
+            var ua = users.Values.ToList();
+            // Who needs to access offline users anyways.
+            foreach (var p in conference.offlinePeers)
+            {
+                var pkey = BATS(p.publicKey);
+                ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(core.tox, pkey)));
+            }
+            var cid = BATS(conference.cid);
+            foreach (var conv in core.RecentsList)
+                if (conv is Group c)
+                    if (c.Identifier == cid)
+                    {
+                        c.Members = ua.ToArray();
+                        break;
+                    }
+        }
+
+        public static int? UserIndex(Core core, UInt32 fid, Metadata[] list)
+        {
+            var pkey = BATS(core.tox.GetFriend(fid).publicKey);
+            for (int i = 0; i < list.Length; i++)
+                if (list[i].Identifier == pkey)
+                    return i;
+            return null;
         }
 
         #endregion
