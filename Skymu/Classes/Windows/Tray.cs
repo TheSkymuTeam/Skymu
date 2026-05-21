@@ -60,8 +60,8 @@ namespace Skymu
 
         static Image IICN(string iconName) => new Image
         {
-            Width = 16,
-            Height = 16,
+            Width = 64, // XXX look at this: raw bitmap only 16?
+            Height = 64,
             Source = ICON(iconName)
         };
         static BitmapFrame ICON(string iconName) => BitmapFrame.Create(new Uri($"pack://application:,,,/{Universal.Interface}/Assets/Universal/Icon/skype-" + iconName + ".ico", UriKind.Absolute));
