@@ -1,5 +1,5 @@
-!define SOURCE_DIR_MODERN "..\bin\x64\Release"
-!define SOURCE_DIR_LEGACY "..\bin\x86\Release"
+!define SOURCE_DIR_CORE "..\Skymu\bin\Skymu.Core"
+!define SOURCE_DIR_LEGACY "..\Skymu\bin\Skymu.Legacy"
 !define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://skymu.app"
@@ -13,8 +13,8 @@ RequestExecutionLevel admin
 !include "nsDialogs.nsh"
 
 !define MUI_ABORTWARNING
-!define MUI_ICON "beta.ico"
-!define MUI_UNICON "beta.ico"
+!define MUI_ICON "installer-beta.ico"
+!define MUI_UNICON "installer-beta.ico"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_BITMAP "header-beta.bmp"
 !define MUI_HEADERIMAGE_BITMAP_STRETCH "AspectFitHeight"
@@ -109,7 +109,7 @@ Section "Install"
     ${If} $IsLegacy == ${BST_CHECKED}
     File /r "${SOURCE_DIR_LEGACY}\*"
 ${Else}
-    File /r "${SOURCE_DIR_MODERN}\*"
+    File /r "${SOURCE_DIR_CORE}\*"
 ${EndIf}
 
     WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Skymu.exe"

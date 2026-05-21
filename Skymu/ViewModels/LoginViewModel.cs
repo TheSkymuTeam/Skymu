@@ -171,7 +171,7 @@ namespace Skymu.ViewModels
 
         public void RunPostLogin(IMainWindowHolder mainWindow)
         {
-            Tray.PushIcon(Universal.CurrentUser.ConnectionStatus);
+            Tray.SetStatus(Universal.CurrentUser.ConnectionStatus);
             Universal.HasLoggedIn = true;
             mainWindow.Show();
             Sounds.Play("login", true);
@@ -296,6 +296,8 @@ namespace Skymu.ViewModels
                 return;
             }
 
+            Tray.SetConnecting();
+
             LoginResult lr = await Task.Run(async () =>
                 await Universal.Plugin.Authenticate(PendingAutoLogin)
             );
@@ -306,6 +308,7 @@ namespace Skymu.ViewModels
             }
             else
             {
+                Tray.SetStatus(PresenceStatus.Offline);
                 PendingAutoLogin = null;
                 _selectedListing = PendingAutoLoginListing;
                 PluginSelectionUpdated?.Invoke(PendingAutoLoginListing);
@@ -319,6 +322,7 @@ namespace Skymu.ViewModels
         {
             if (_selectedListing == null) return;
             AnimationToggleRequested?.Invoke(true);
+            Tray.SetConnecting();
 
             var result = await Universal.Plugin.Authenticate(
                 _selectedListing.AuthenticationType,
@@ -338,6 +342,7 @@ namespace Skymu.ViewModels
                 return;
             }
 
+            Tray.SetStatus(PresenceStatus.Offline);
             AnimationToggleRequested?.Invoke(false);
             HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
         }

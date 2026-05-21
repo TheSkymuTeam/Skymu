@@ -8,9 +8,10 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:local="clr-namespace:Skymu.Pontis"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:uc="clr-namespace:Skymu.UserControls"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     Title="Skymu"
     Width="1448"
     Height="856"
@@ -1880,7 +1881,7 @@
                                                             </ScrollViewer>
                                                         </Border>
                                                     </Popup>
-                                                    <RichTextBox
+                                                    <uc:FastRichTextBox
                                                         x:Name="MessageTextBox"
                                                         MinHeight="37"
                                                         MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
@@ -1897,12 +1898,12 @@
                                                         TextChanged="MessageTextBox_TextChanged"
                                                         UseLayoutRounding="True"
                                                         VerticalScrollBarVisibility="Auto">
-                                                        <RichTextBox.Document>
+                                                        <uc:FastRichTextBox.Document>
                                                             <FlowDocument>
                                                                 <Paragraph Margin="0" />
                                                             </FlowDocument>
-                                                        </RichTextBox.Document>
-                                                    </RichTextBox>
+                                                        </uc:FastRichTextBox.Document>
+                                                    </uc:FastRichTextBox>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>

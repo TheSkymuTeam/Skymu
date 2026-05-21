@@ -1921,7 +1921,7 @@ public static class ToxCore
         {
             return tox_group_get_group_list_size(tox);
         }
-        catch (EntryPointNotFoundException _)
+        catch (EntryPointNotFoundException)
         {
             return tox_group_get_number_groups(tox);
         }
@@ -1933,7 +1933,7 @@ public static class ToxCore
         {
             tox_group_get_group_list(tox, group_list);
         }
-        catch (EntryPointNotFoundException _)
+        catch (EntryPointNotFoundException)
         {
             UInt32 gc = Ftox_group_get_group_list_size(tox);
             for (UInt32 i = 0; i < UInt32.MaxValue && group_list.Length < gc; i++)

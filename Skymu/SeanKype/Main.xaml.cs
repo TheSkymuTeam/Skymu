@@ -519,14 +519,14 @@ namespace Skymu.SeanKype
             if (status == PresenceStatus.Unknown) return;
 
             _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.PushIcon(status);
+            Tray.SetStatus(status);
             LabelStatus.Text = status.ToString();
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
                 status = current;
                 _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.PushIcon(status);
+                Tray.SetStatus(status);
                 LabelStatus.Text = status.ToString();
             }
         }

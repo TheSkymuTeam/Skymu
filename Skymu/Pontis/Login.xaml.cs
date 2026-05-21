@@ -44,7 +44,7 @@ namespace Skymu.Pontis
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(PresenceStatus.LoggedOut, false);
+            Tray.SetStatus(PresenceStatus.Offline);
         }
 
         private async void buttonLaunch(object state, RoutedEventArgs e)

@@ -9,18 +9,15 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-// Say "Call me!" without the quotes to get called by the active conversation
+// Type "Call me!" without the quotes to get called by the active conversation
 
-using NAudio;
-using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using NLayer.NAudioSupport;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
@@ -416,7 +413,7 @@ namespace Stub
             );
 
             if (presenceTimer == null)
-                presenceTimer = new Timer(UpdatePresence, null, 0, 1);
+                presenceTimer = new Timer(UpdatePresence, null, 0, 500);
 
             return Task.FromResult(true);
         }
@@ -452,14 +449,15 @@ namespace Stub
             return Task.FromResult(false);
         }
 
-        #region Calls (remove this entire region and remove `, ICall`, among some others to disable
+        #region Calls
+        // remove this entire region and remove ICall among some others to disable
 
-        private Thread _callThread;
-        private WasapiOut _out;
+        private WaveOutEvent _out;
 
-        private WasapiOut WasapiDispenser() => new WasapiOut(
-            new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Communications),
-            AudioClientShareMode.Shared, false, 50);
+        private WaveOutEvent WaveDispenser()
+        {
+            return new WaveOutEvent();
+        }
 
         // Call will be picked up as soon as something is returned
         public async Task<ActiveCall> StartCall(
@@ -469,39 +467,54 @@ namespace Stub
         )
         {
             _out?.Dispose();
+
             // Audio stuff (decent amount of this will be moved later)
+            // Modified by omega lol
             string dir = Path.GetDirectoryName(
-                    Assembly.GetExecutingAssembly().Location);
+                Assembly.GetExecutingAssembly().Location);
 
             string path = Path.Combine(dir, "WebiWabo.mp3");
-            var _reader = new AudioFileReader(path);
 
-            _out = WasapiDispenser();
+            FileStream fs = File.OpenRead(path);
 
-            var silence = new SilenceProvider(new WaveFormat(48000, 16, 2));
+            ManagedMpegStream reader =
+                new ManagedMpegStream(fs);
+
+            _out = WaveDispenser();
+
+            var silence = new SilenceProvider(
+                new WaveFormat(48000, 16, 2));
 
             _out.Init(silence);
             _out.Play();
 
-            TaskCompletionSource<bool> waiter = new TaskCompletionSource<bool>();
+            TaskCompletionSource<bool> waiter =
+                new TaskCompletionSource<bool>();
+
             Thread thread = new Thread(_ =>
             {
-                Thread.Sleep(7500);
+                Thread.Sleep(3200);
                 waiter.SetResult(true);
             });
+
             thread.Start();
 
-            _ = await waiter.Task;
+            await waiter.Task;
 
             _out.Stop();
             _out.Dispose();
 
-            _out = WasapiDispenser();
+            _out = WaveDispenser();
 
-            _out.Init(_reader);
+            _out.Init(reader);
             _out.Play();
 
-            return new ActiveCall("STUBCALL", convo_id, is_video_call, new User[0]);
+            return new ActiveCall(
+                "STUBCALL",
+                convo_id,
+                is_video_call,
+                new User[0]
+            );
         }
 
         public async Task<bool> EndCall(ActiveCall call)

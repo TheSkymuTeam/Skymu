@@ -14,10 +14,8 @@
 // their own protocol on top of it. Truly based
 /*==========================================================*/
 
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tls;
-using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -25,19 +23,28 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using Org.BouncyCastle.Security;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 
 namespace Yggdrasil.Networking
 {
     internal static class BifrostTLS
     {
         public static async Task<Stream> OpenAsync(
-            string host, int port, bool isHttps, CancellationToken ct)
+            string host,
+            int port,
+            bool isHttps,
+            CancellationToken ct
+        )
         {
             Debug.WriteLine($"[BIFROST-TLS] Opening connection to {host}:{port}");
 
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
-                NoDelay = true
+                NoDelay = true,
             };
 
             var connectTcs = new TaskCompletionSource<bool>();
@@ -46,8 +53,10 @@ namespace Yggdrasil.Networking
                 var ar = socket.BeginConnect(host, port, null, null);
                 var connectTask = Task.Factory.FromAsync(ar, socket.EndConnect);
 
-                if (await Task.WhenAny(connectTask, connectTcs.Task).ConfigureAwait(false)
-                    == connectTcs.Task)
+                if (
+                    await Task.WhenAny(connectTask, connectTcs.Task).ConfigureAwait(false)
+                    == connectTcs.Task
+                )
                 {
                     socket.Dispose();
                     ct.ThrowIfCancellationRequested();
@@ -65,12 +74,16 @@ namespace Yggdrasil.Networking
 
             var protocol = new TlsClientProtocol(stream);
 
-            await Task.Run(() =>
-            {
-                ct.ThrowIfCancellationRequested();
-                protocol.Connect(new BifrostTLSClient(host));
-                Debug.WriteLine($"[BIFROST-TLS] TLS handshake complete with {host}");
-            }, ct).ConfigureAwait(false);
+            await Task.Run(
+                    () =>
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        protocol.Connect(new BifrostTLSClient(host));
+                        Debug.WriteLine($"[BIFROST-TLS] TLS handshake complete with {host}");
+                    },
+                    ct
+                )
+                .ConfigureAwait(false);
 
             return protocol.Stream;
         }
@@ -89,7 +102,9 @@ namespace Yggdrasil.Networking
         public override ProtocolVersion[] GetProtocolVersions()
         {
             var versions = base.GetProtocolVersions();
-            Debug.WriteLine($"[BIFROST-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}"); // debug to check if tls 1.3 is working for you (it should be)
+            Debug.WriteLine(
+                $"[BIFROST-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}"
+            ); // debug to check if tls 1.3 is working for you (it should be)
             return versions;
         }
 
@@ -107,12 +122,13 @@ namespace Yggdrasil.Networking
 
         public override void NotifyAlertReceived(short alertLevel, short alertDescription)
         {
-            Debug.WriteLine($"[BIFROST-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
+            Debug.WriteLine(
+                $"[BIFROST-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}"
+            );
             base.NotifyAlertReceived(alertLevel, alertDescription);
         }
 
-        public override TlsAuthentication GetAuthentication()
-            => new BouncyCertAuth(_host);
+        public override TlsAuthentication GetAuthentication() => new BouncyCertAuth(_host);
 
         private sealed class BouncyCertAuth : TlsAuthentication
         {
@@ -126,9 +142,14 @@ namespace Yggdrasil.Networking
             {
                 var bcCerts = serverCert.Certificate.GetCertificateList();
                 if (bcCerts == null || bcCerts.Length == 0)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: The server did not provide any certificates [42]"));
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception(
+                            "BifrostTLS error: The server did not provide any certificates [42]"
+                        )
+                    );
 
-                var dotnetCerts = new X509Certificate2Collection(); 
+                var dotnetCerts = new X509Certificate2Collection();
                 foreach (var bcCert in bcCerts)
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
@@ -147,56 +168,81 @@ namespace Yggdrasil.Networking
                     if (!chainValid)
                     {
                         foreach (var status in chain.ChainStatus)
-                            Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
+                            Debug.WriteLine(
+                                $"[BIFROST-TLS] Chain error: {status.StatusInformation}"
+                            );
                     }
                 }
 
-                bool hostValid = HostMatchesCert(leaf, _host);
-
+                (bool, List<string>) certHostInfo = GetCertificateHostInformation(leaf, _host);
                 Debug.WriteLine(
-                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostValid} host={_host}");
+                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={certHostInfo.Item1} host={_host}"
+                );
 
-                if (!chainValid && !hostValid)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Both certificate chain and host are invalid [42]"));
-
-                if (!chainValid)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: Certificate chain is invalid [42]"));
-
-                if (!hostValid)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception($"BifrostTLS error: Host is invalid, '{_host}' does not match certificate [42]"));
+                if (!chainValid && !certHostInfo.Item1)
+                {
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception(
+                            $"BifrostTLS error: Certificate chain is invalid. In addition, host is also invalid, '{_host}' does"
+                                + $" not match certificate [42].\n\nCertificate information:\n{leaf.GetNameInfo(X509NameType.SimpleName, false)}"
+                        )
+                    );
+                }
+                else if (!chainValid)
+                {
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception("BifrostTLS error: Certificate chain is invalid [42]")
+                    );
+                }
+                else if (!certHostInfo.Item1)
+                {
+                    throw new TlsFatalAlert(
+                        AlertDescription.bad_certificate,
+                        new Exception(
+                            $"BifrostTLS error: Host is invalid, '{_host}' does "
+                                + $"not match certificate [42].\n\nThe certificate is valid for the following domains:\n{string.Join(Environment.NewLine, certHostInfo.Item2.ToArray())}"
+                        )
+                    );
+                }
             }
 
-            private static bool HostMatchesCert(X509Certificate2 cert, string host)
+            private static (bool, List<string>) GetCertificateHostInformation(X509Certificate2 cert, string host)
             {
-                var sanExt = cert.Extensions["2.5.29.17"];
-                if (sanExt != null)
+                var domains = new List<string>();
+
+                // check SAN extension for domain names
+                var bcCert = DotNetUtilities.FromX509Certificate(cert);
+                var sanRaw = bcCert.GetExtensionValue(X509Extensions.SubjectAlternativeName);
+                if (sanRaw != null)
                 {
-                    string sanText = sanExt.Format(true);
-                    foreach (var line in sanText.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                    var san = GeneralNames.GetInstance(Asn1Object.FromByteArray(sanRaw.GetOctets()));
+                    
+                    foreach (var name in san.GetNames())
                     {
-                        string entry = null;
-                        if (line.StartsWith("DNS Name=", StringComparison.OrdinalIgnoreCase))
-                            entry = line.Substring("DNS Name=".Length).Trim();
-                        else if (line.StartsWith("DNS:", StringComparison.OrdinalIgnoreCase))
-                            entry = line.Substring("DNS:".Length).Trim();
+                        if (name.TagNo != GeneralName.DnsName) continue;
 
-                        if (entry == null) continue;
+                        var dnsName = name.Name.ToString();
+                        domains.Add(dnsName);
 
-                        if (NameMatches(entry, host))
+                        if (NameMatches(dnsName, host))
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {entry}");
-                            return true;
+                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {dnsName}");
+                            return (true, domains);
                         }
                     }
 
                     Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
-                    return false;
+                    return (false, domains);
                 }
 
+                // fall back to CN if no SAN extension (for older stuff?)
                 string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
+                domains.Add(cn);
                 bool cnMatch = NameMatches(cn, host);
                 Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
-                return cnMatch;
+                return (cnMatch, domains);
             }
 
             private static bool NameMatches(string pattern, string host)

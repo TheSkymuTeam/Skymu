@@ -1468,13 +1468,13 @@ namespace Skymu.Pontis
             if (status == PresenceStatus.Unknown) return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.PushIcon(status);
+            Tray.SetStatus(status);
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
                 status = currentStatus;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.PushIcon(status);
+                Tray.SetStatus(status);
             }
         }
 

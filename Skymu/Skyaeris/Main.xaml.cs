@@ -81,10 +81,10 @@ namespace Skymu.Skyaeris
 
         private enum WindowFrame
         {
-            Native,
             SkypeAero,
             SkypeBasic,
-            SkypeAeroCustom,
+            Native,
+            SkypeAeroCustom
         };
 
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
@@ -1472,7 +1472,8 @@ namespace Skymu.Skyaeris
                         Universal.CurrentUser,
                         Universal.Plugin.ContactsList.ToArray()
                     );
-                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
+                string suffix = Universal.TestMode ? " [TEST MODE]" : string.Empty;
+                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username + suffix;
                 this.Title = WindowTitle;
                 vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
@@ -1630,7 +1631,7 @@ namespace Skymu.Skyaeris
                 return;
 
             StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.PushIcon(status);
+            Tray.SetStatus(status);
 
             if (!await Universal.Plugin.SetConnectionStatus(status))
             {
@@ -1638,7 +1639,7 @@ namespace Skymu.Skyaeris
                 if (Universal.CurrentUser != null)
                     Universal.CurrentUser.ConnectionStatus = status;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-                Tray.PushIcon(status);
+                Tray.SetStatus(status);
             }
         }
 

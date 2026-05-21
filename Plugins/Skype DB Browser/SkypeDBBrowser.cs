@@ -37,6 +37,8 @@ namespace SkypeDBBrowser
         public string Name => "Skype database browser";
         public string InternalName => "skype-database-browser";
 
+        public int TypingRepeat => 9000;
+
         public bool SupportsServers
         {
             get { return false; }

@@ -47,7 +47,7 @@ namespace Skymu.SeanKype
             _viewModel.MainWindowReady += OnMainWindowReady;
 
             Sounds.Init();
-            Tray.PushIcon(PresenceStatus.LoggedOut, false);
+            Tray.SetStatus(PresenceStatus.Offline);
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)

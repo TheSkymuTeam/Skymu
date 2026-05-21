@@ -39,8 +39,7 @@ namespace Yggdrasil.Enumerations
         Invisible,
         Blocked,
         Offline,
-        Unknown,
-        LoggedOut
+        Unknown
     }
 
     public enum ChannelType

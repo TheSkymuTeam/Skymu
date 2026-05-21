@@ -6,8 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:uc="clr-namespace:Skymu.UserControls"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     Title="Skymu"
     Width="1448"
     Height="856"
@@ -2213,7 +2214,7 @@
                                                     </StackPanel>
                                                 </Grid>
                                                 <!--  Message box typing area  -->
-                                                <RichTextBox
+                                                <uc:FastRichTextBox
                                                     x:Name="MessageTextBox"
                                                     MinHeight="35"
                                                     MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
@@ -2230,12 +2231,12 @@
                                                     TextChanged="MessageTextBox_TextChanged"
                                                     UseLayoutRounding="True"
                                                     VerticalScrollBarVisibility="Auto">
-                                                    <RichTextBox.Document>
+                                                    <uc:FastRichTextBox.Document>
                                                         <FlowDocument>
                                                             <Paragraph Margin="0" />
                                                         </FlowDocument>
-                                                    </RichTextBox.Document>
-                                                </RichTextBox>
+                                                    </uc:FastRichTextBox.Document>
+                                                </uc:FastRichTextBox>
                                             </StackPanel>
                                             <global:SliceControl
                                                 x:Name="SendMsgButton"
