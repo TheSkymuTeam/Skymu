@@ -532,8 +532,8 @@ namespace Skymu.ViewModels
                 if (eR.Item is Message message)
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
-                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0 &&
-                        message.Sender.Identifier != Universal.CurrentUser?.Identifier)
+                    if (message.Sender?.Identifier == Universal.CurrentUser?.Identifier) return;
+                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0)
                     {
                         new Views.Notification(eR);
                         return;
@@ -551,7 +551,7 @@ namespace Skymu.ViewModels
                         { /* case 1 is true, continue */
                         }
                         else if (
-                            !string.IsNullOrEmpty(message.Text)
+                            !string.IsNullOrEmpty(message.Text) 
                             && !string.IsNullOrEmpty(Universal.CurrentUser?.DisplayName)
                             && message.Text.Contains($"<@{Universal.CurrentUser.DisplayName}>")
                         )
@@ -566,9 +566,7 @@ namespace Skymu.ViewModels
                     }
                     else
                     {
-                        if (
-                            message.Sender.Identifier != Universal.CurrentUser?.Identifier
-                            && (Settings.NotificationTrigger & Classes.NotificationTriggerType.DM) != 0
+                        if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.DM) != 0
                         )
                         {
                             if (
