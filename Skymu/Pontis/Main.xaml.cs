@@ -726,7 +726,7 @@ namespace Skymu.Pontis
             HandleStatusItemClick(sender as MenuItem);
         }
 
-        private void Main_Closing(object sender, System.ComponentModel.CancelEventArgs ev)
+        private void Main_Closing(object sender, CancelEventArgs ev)
         {
             if (!noCloseEvent)
                 Universal.Hide(ev);

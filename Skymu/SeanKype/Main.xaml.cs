@@ -33,7 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
-
+using System.ComponentModel;
 
 namespace Skymu.SeanKype
 {
@@ -426,7 +426,7 @@ namespace Skymu.SeanKype
                 vmodel.IsWindowActive = false;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs ev)
+        private void Window_Closing(object sender, CancelEventArgs ev)
         {
             if (!noCloseEvent)
                 Universal.Hide(ev);

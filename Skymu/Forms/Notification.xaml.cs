@@ -14,6 +14,7 @@ using Skymu.Formatting;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;
+using System.Windows.Input;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -252,24 +253,24 @@ namespace Skymu.Views
             this.Top = workingArea.Bottom - this.ActualHeight - 1;
         }
 
-        private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Window_MouseEnter(object sender, MouseEventArgs e)
         {
             close.Visibility = Visibility.Visible;
         }
 
-        private void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
             close.Visibility = Visibility.Hidden;
         }
 
-        private void CloseButton_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void CloseButton_Click(object sender, MouseButtonEventArgs e)
         {
             Close();
         }
 
         private void Window_MouseRightButtonDown(
             object sender,
-            System.Windows.Input.MouseButtonEventArgs e
+            MouseButtonEventArgs e
         )
         {
             Close();

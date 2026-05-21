@@ -24,7 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
-
+using System.Windows.Input;
 
 
 namespace Skymu.SeanKype
@@ -196,7 +196,7 @@ namespace Skymu.SeanKype
             e.Handled = true;
         }
 
-        private void FooterLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void FooterLink_Click(object sender, MouseButtonEventArgs e)
         {
             Universal.OpenUrl(DISCORD_SERVER_INVITE);
         }

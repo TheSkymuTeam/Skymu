@@ -12,6 +12,7 @@
 using Skymu.Helpers;
 using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Yggdrasil.Classes;
@@ -45,20 +46,20 @@ namespace Skymu.Views
             CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", _call.Caller.DisplayName);
         }
 
-        private void OnClose(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnClose(object sender, MouseButtonEventArgs e)
         {
             Sounds.StopPlayback("call-in");
             Close();
         }
 
-        private void OnAnswer(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnAnswer(object sender, MouseButtonEventArgs e)
         {
             Answered?.Invoke(this, new EventArgs());
             Sounds.StopPlayback("call-in");
             Close();
         }
 
-        private void OnDrag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnDrag(object sender, MouseButtonEventArgs e)
         {
             var source = e.OriginalSource as DependencyObject;
             while (source != null)
@@ -70,7 +71,7 @@ namespace Skymu.Views
             DragMove();
         }
 
-        private void OnDecline(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OnDecline(object sender, MouseButtonEventArgs e)
         {
             Sounds.StopPlayback("call-in");
             _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
