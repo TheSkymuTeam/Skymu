@@ -49,11 +49,11 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Legacy\</OutputPath>
+		<OutputPath>bin\Skymu.Legacy\$(Configuration)\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Core\</OutputPath>
+		<OutputPath>bin\Skymu.Core\$(Configuration)\</OutputPath>
 	</PropertyGroup>
 
 	<!-- Build configurations -->
@@ -84,16 +84,16 @@
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<MakeDir Directories="bin\Skymu.Legacy\Plugins\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Legacy\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<MakeDir Directories="bin\Skymu.Legacy\$(Configuration)\Plugins\" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Legacy\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<Target Name="CopyPluginsSkymuCore" AfterTargets="Build" Condition="'$(TargetFramework)' == 'net5.0-windows'">
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<MakeDir Directories="bin\Skymu.Core\Plugins\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Core\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<MakeDir Directories="bin\Skymu.Core\$(Configuration)\Plugins\" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Core\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->

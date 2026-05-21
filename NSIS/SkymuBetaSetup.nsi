@@ -1,5 +1,5 @@
-!define SOURCE_DIR_CORE "..\Skymu\bin\Skymu.Core"
-!define SOURCE_DIR_LEGACY "..\Skymu\bin\Skymu.Legacy"
+!define SOURCE_DIR_CORE "..\Skymu\bin\Skymu.Core\Release"
+!define SOURCE_DIR_LEGACY "..\Skymu\bin\Skymu.Legacy\Release"
 !define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://skymu.app"
