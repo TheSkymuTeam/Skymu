@@ -210,9 +210,7 @@
                                         </StackPanel>
 
                                         <StackPanel Margin="0,5" Orientation="Horizontal">
-                                            <CheckBox
-                                                Content="Use system culture over one above"
-                                                IsChecked="{Binding Path=[UseSystemCulture], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                            <CheckBox Content="Use system culture over one above" IsChecked="{Binding Path=[UseSystemCulture], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                                             <TextBlock
                                                 Margin="8,0,0,0"
                                                 VerticalAlignment="Center"
@@ -475,20 +473,25 @@
 
                                         <Grid Margin="0,5">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <CheckBox Grid.Column="0" x:Name="UseCustomCert"
-                                                VerticalAlignment="Top"
+                                            <CheckBox
+                                                x:Name="UseCustomCert"
+                                                Grid.Column="0"
                                                 Margin="0,3,0,0"
-                                                IsChecked="{Binding Path=[UseCustomCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}"/>
+                                                VerticalAlignment="Top"
+                                                IsChecked="{Binding Path=[UseCustomCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
 
-                                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="6,0,10,0" VerticalAlignment="Center">
-                                                <TextBlock
-                                                    Text="Use custom certificate store (cacert.pem)" />
+                                            <StackPanel
+                                                Grid.Column="1"
+                                                Margin="6,0,10,0"
+                                                VerticalAlignment="Center"
+                                                Orientation="Vertical">
+                                                <TextBlock Text="Use custom certificate store (cacert.pem)" />
                                                 <TextBlock
                                                     Margin="0,2,0,0"
                                                     FontSize="11"
@@ -496,20 +499,24 @@
                                                     Text="Requires restart" />
                                             </StackPanel>
 
-                                            <TextBox Grid.Column="2" x:Name="SC_CertPathBox"
+                                            <TextBox
+                                                x:Name="SC_CertPathBox"
+                                                Grid.Column="2"
                                                 Width="120"
-                                                FontFamily="Tahoma"
-                                                VerticalAlignment="Top"
                                                 Margin="0,1,0,0"
+                                                VerticalAlignment="Top"
+                                                FontFamily="Tahoma"
                                                 IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
                                                 Text="{Binding Path=[CertPath], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
 
-                                            <Button Grid.Column="3" Content="Browse"
+                                            <Button
+                                                Grid.Column="3"
                                                 Margin="5,0,0,0"
                                                 Padding="6,1"
                                                 VerticalAlignment="Top"
-                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}"
-                                                Click="CertBrowseButtonClick"/>
+                                                Click="CertBrowseButtonClick"
+                                                Content="Browse"
+                                                IsEnabled="{Binding ElementName=UseCustomCert, Path=IsChecked}" />
                                         </Grid>
 
                                     </StackPanel>

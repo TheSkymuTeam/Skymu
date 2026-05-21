@@ -8,8 +8,8 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:local="clr-namespace:Skymu.SeanKype"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     xmlns:vm="clr-namespace:Skymu.ViewModels"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     Title="Skype"
     Width="960"
     Height="560"
@@ -63,6 +63,7 @@
         <converters:ForwardedMessageStatusConverter x:Key="ForwardedChecker" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
+        <converters:StringToUpperConverter x:Key="ToUpperConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <converters:ChannelTypeConverter x:Key="ChannelTypeConverter" />
         <converters:TextStatusConverter x:Key="TextStatusConverter" />
@@ -698,8 +699,8 @@
         <Grid x:Name="LeftColumn" Grid.Column="0">
             <Grid
                 x:Name="SidebarGrid"
-                Background="{DynamicResource SkLight}"
                 MinWidth="240"
+                Background="{DynamicResource SkLight}"
                 ClipToBounds="True">
 
                 <!--  Header area (height 110)  -->
@@ -813,7 +814,7 @@
                         FontSize="13"
                         Foreground="{DynamicResource SkMidGray}"
                         Text="Search">
-                        <!-- TODO: Use LANG for above -->
+                        <!--  TODO: Use LANG for above  -->
                         <TextBox.LayoutTransform>
                             <ScaleTransform ScaleX="1.02" />
                         </TextBox.LayoutTransform>
@@ -869,7 +870,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkBlack}"
                         MouseLeftButtonUp="TabContacts_Click"
-                        Text="{Binding [sRECENTS_LINK_CAPS], Source='{StaticResource Lang}'}"
+                        Text="{Binding [sZAPBUTTON_CONTACTS], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Left"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
@@ -888,7 +889,7 @@
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource SkDarkBlue}"
                         MouseLeftButtonUp="TabRecent_Click"
-                        Text="{Binding [sCONTACTS_LINK_CAPS], Source='{StaticResource Lang}'}"
+                        Text="{Binding [sRECENTS_TAB_TEXT], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Center"
                         TextWrapping="NoWrap">
                         <TextBlock.LayoutTransform>
@@ -914,7 +915,7 @@
                     </TextBlock>
                 </Grid>
 
-                <!-- TODO: Fix this length on loooong sidebars -->
+                <!--  TODO: Fix this length on loooong sidebars  -->
                 <Image
                     x:Name="TabWave"
                     Width="560"
@@ -963,15 +964,9 @@
             ShowsPreview="False" />
 
         <!--  ====== RIGHT COLUMN ======  -->
-        <Grid
-            Grid.Column="2"
-            Margin="-5,0,0,0">
-            <WebBrowser
-                x:Name="browser"
-                Visibility="Collapsed" />
-            <Grid
-                x:Name="NoHomeGrid"
-                Visibility="Collapsed">
+        <Grid Grid.Column="2" Margin="-5,0,0,0">
+            <WebBrowser x:Name="browser" Visibility="Collapsed" />
+            <Grid x:Name="NoHomeGrid" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -983,12 +978,10 @@
                     <Image
                         Width="48"
                         Height="48"
-                        Source="Assets/Universal/Home/warning.png"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top" />
-                    <StackPanel
-                        Margin="16,0,0,0"
-                        Orientation="Vertical">
+                        VerticalAlignment="Top"
+                        Source="Assets/Universal/Home/warning.png" />
+                    <StackPanel Margin="16,0,0,0" Orientation="Vertical">
                         <TextBlock
                             x:Name="NoHomeHead"
                             Margin="0,6,0,0"
@@ -1013,7 +1006,10 @@
                             Text="It's easy to start a conversation on Skype:" />
                         <BulletDecorator Margin="0,12,0,0">
                             <BulletDecorator.Bullet>
-                                <Ellipse Width="6" Height="6" Fill="#333"/>
+                                <Ellipse
+                                    Width="6"
+                                    Height="6"
+                                    Fill="#333" />
                             </BulletDecorator.Bullet>
                             <TextBlock
                                 x:Name="NoHomeList1"
@@ -1025,7 +1021,10 @@
                         </BulletDecorator>
                         <BulletDecorator Margin="0,12,0,0">
                             <BulletDecorator.Bullet>
-                                <Ellipse Width="6" Height="6" Fill="#333"/>
+                                <Ellipse
+                                    Width="6"
+                                    Height="6"
+                                    Fill="#333" />
                             </BulletDecorator.Bullet>
                             <TextBlock
                                 x:Name="NoHomeList2"
@@ -1041,9 +1040,9 @@
                     Grid.Row="1"
                     Width="650"
                     Height="190"
-                    Source="Assets/Universal/Home/footer.png"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom" />
+                    VerticalAlignment="Bottom"
+                    Source="Assets/Universal/Home/footer.png" />
             </Grid>
         </Grid>
         <Grid

@@ -43,7 +43,7 @@ namespace Skymu
         internal static bool DisableAutoLogin = false; // disables plugin auto login for testing
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.4.1";
+        public const string BuildVersion = "0.2.1";
         public const string BuildName = "BASED Build 05-21-2026";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;

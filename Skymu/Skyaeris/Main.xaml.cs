@@ -84,9 +84,9 @@ namespace Skymu.Skyaeris
 
         private enum WindowFrame
         {
-            Native,
             SkypeAero,
             SkypeBasic,
+            Native,
             SkypeAeroCustom,
         };
 
