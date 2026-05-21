@@ -248,23 +248,19 @@ namespace Yggdrasil.Networking
                     if (trustedThumbprints.Count == 0 && useCustom)
                         throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: cacert.pem is empty or invalid."));
 
-                    using (var chain = new X509Chain())
+                    bool foundTrustedAnchor = false;
+                    bool hasFatalErrors = false;
+
+                    try
                     {
-                        chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                        var bcParser = new Org.BouncyCastle.X509.X509CertificateParser();
 
-                        for (int i = 1; i < dotnetCerts.Count; i++)
-                            chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
-
-                        foreach (var pc in pemCerts)
-                            chain.ChainPolicy.ExtraStore.Add(pc);
-
-                        chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                        chain.Build(leaf);
-
-                        bool foundTrustedAnchor = false;
-                        foreach (var element in chain.ChainElements)
+                        foreach (var tlsCert in bcCerts)
                         {
-                            if (trustedThumbprints.Contains(element.Certificate.Thumbprint))
+                            var serverBcCert = bcParser.ReadCertificate(tlsCert.GetEncoded());
+                            var dotNetCert = new X509Certificate2(tlsCert.GetEncoded());
+
+                            if (trustedThumbprints.Contains(dotNetCert.Thumbprint))
                             {
                                 foundTrustedAnchor = true;
                                 break;
@@ -272,37 +268,34 @@ namespace Yggdrasil.Networking
 
                             foreach (var pemCert in pemCerts)
                             {
-                                if (element.Certificate.Issuer == pemCert.Subject)
+                                if (dotNetCert.Issuer == pemCert.Subject)
                                 {
-                                    foundTrustedAnchor = true;
-                                    break;
+                                    try
+                                    {
+                                        var pemBcCert = bcParser.ReadCertificate(pemCert.RawData);
+                                        serverBcCert.Verify(pemBcCert.GetPublicKey());
+                                        foundTrustedAnchor = true;
+                                        break;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.WriteLine($"[BIFROST-TLS] Fatal chain error: {ex.Message}");
+                                        hasFatalErrors = true;
+                                    }
                                 }
                             }
 
                             if (foundTrustedAnchor)
                                 break;
                         }
-
-                        bool hasFatalErrors = false;
-                        foreach (var status in chain.ChainStatus)
-                        {
-                            if (status.Status != X509ChainStatusFlags.NoError &&
-                                status.Status != X509ChainStatusFlags.UntrustedRoot &&
-                                status.Status != X509ChainStatusFlags.PartialChain &&
-                                status.Status != X509ChainStatusFlags.OfflineRevocation &&
-                                status.Status != X509ChainStatusFlags.RevocationStatusUnknown)
-                            {
-                                hasFatalErrors = true;
-                                Debug.WriteLine($"[BIFROST-TLS] Fatal chain error: {status.StatusInformation}");
-                            }
-                        }
-
-                        chainValid = foundTrustedAnchor && !hasFatalErrors;
-
-                        if (!chainValid)
-                            foreach (var status in chain.ChainStatus)
-                                Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
                     }
+                    catch (Exception ex)
+                    {
+                        hasFatalErrors = true;
+                        Debug.WriteLine($"[BIFROST-TLS] Chain error: {ex.Message}");
+                    }
+
+                    chainValid = foundTrustedAnchor && !hasFatalErrors;
                 }
 
                 byte[] leafEncodedBytes = bcCerts[0].GetEncoded();
