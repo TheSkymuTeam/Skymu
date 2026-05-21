@@ -155,7 +155,7 @@ namespace Skymu.Pontis
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                    if (Settings.EnableSkypeHome)
                         browser.Visibility = Visibility.Visible;
                     else
                         NoHomeGrid.Visibility = Visibility.Visible;
@@ -1306,7 +1306,7 @@ namespace Skymu.Pontis
                 StatusBox.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
                 ConfigureCompactRecentsList();
-                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                if (Settings.EnableSkypeHome)
                     SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;

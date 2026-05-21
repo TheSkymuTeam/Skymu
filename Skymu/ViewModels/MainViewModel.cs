@@ -943,18 +943,6 @@ namespace Skymu.ViewModels
             }
             return false;
         }
-        
-        const string CONNECTION_URL = "https://skymu.app/home/i/production/CONNECTION.txt";
-        public static bool SkypeHomeUnavailable()
-        {
-            try
-            {
-                var task = Task.Run(() => new HttpClient().GetStringAsync(CONNECTION_URL));
-                task.Wait();
-                if (task.Result?.StartsWith("OK") == true) return false;
-            } catch { }
-            return true;
-        }
 
         private async Task HandleCallToggle()
         {

@@ -217,7 +217,7 @@ namespace Skymu.ViewModels
                 else if (platform < PlatformType.Windows2000)
                 {
                     if (platform == PlatformType.WineLegacy)
-                        message = brand + " does not support Wine versions below 10.0. You may encounter significant bugs.";
+                        message = brand + " does not support Wine versions older than 10. You may encounter significant bugs.";
                     else if (platform == PlatformType.Wine10)
                         message = brand + " has limited support for Wine 10. Some features may not work as expected.";
                     else if (platform == PlatformType.Wine11)

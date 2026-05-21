@@ -206,7 +206,7 @@ namespace Skymu.Skyaeris
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                    if (Settings.EnableSkypeHome)
                         browser.Visibility = Visibility.Visible;
                     else
                         NoHomeGrid.Visibility = Visibility.Visible;
@@ -1489,7 +1489,7 @@ namespace Skymu.Skyaeris
                     Universal.CurrentUser.ConnectionStatus
                 );
                 ConfigureCompactRecentsList();
-                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                if (Settings.EnableSkypeHome)
                     SkypeHome.Generate(
                         browser,
                         Universal.CurrentUser,

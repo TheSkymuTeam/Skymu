@@ -84,7 +84,7 @@ namespace Skymu.SeanKype
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => _currentStatusIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
-                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                if (Settings.EnableSkypeHome)
                     SkypeHome.Generate(
                         browser,
                         Universal.CurrentUser,
@@ -597,7 +597,7 @@ namespace Skymu.SeanKype
             if (tab == 3)
             {
                 RightColumn.Visibility = Visibility.Collapsed;
-                if (Settings.EnableSkypeHome && !MainViewModel.SkypeHomeUnavailable())
+                if (Settings.EnableSkypeHome)
                     browser.Visibility = Visibility.Visible;
                 else
                     NoHomeGrid.Visibility = Visibility.Visible;

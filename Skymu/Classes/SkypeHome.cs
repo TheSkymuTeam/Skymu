@@ -37,7 +37,11 @@ namespace Skymu
             _contacts = contacts;
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
-            _browser.Navigate(new Uri("https://skymu.app/home"));
+
+            // _browser.Navigate(new Uri("https://skymu.app/home")); not using the web home for now
+
+            string local_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Home", "index.html");
+            _browser.Navigate(new Uri(local_path));
         }
 
         private static void InvokeEval(string script)
