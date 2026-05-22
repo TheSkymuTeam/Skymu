@@ -158,7 +158,7 @@ namespace Tox
         // CallStateChanged
         internal void CSC(CallEventArgs cea) => OnCallStateChanged?.Invoke(this, cea);
         // SAVE. Any other questions?
-        internal void SAVE() => save(tox, profile, this);
+        internal void SAVE() => Save(tox, profile, this);
         // ShowYesNo
         internal void SYN(PluginYesNoEventArgs e) => ShowYesNo?.Invoke(this, e);
 
@@ -200,7 +200,7 @@ namespace Tox
             if (creds.AuthenticationType == AuthenticationMethod.Token) { }
             else
                 return LoginResult.UnsupportedAuthType;
-            profile = creds.User.Username;
+            profile = creds.PasswordOrToken;
 
             return StartClient();
         }
@@ -208,7 +208,7 @@ namespace Tox
         {
             // savepass is filled = encrypted save = saving the pass goes against the point of encrypting it
             if (string.IsNullOrEmpty(savepass))
-                return new SavedCredential(currentUser, string.Empty, AuthenticationMethod.Token, InternalName);
+                return new SavedCredential(currentUser, profile, AuthenticationMethod.Token, InternalName);
             return null;
         }
 
@@ -235,8 +235,10 @@ namespace Tox
             Debug.WriteLine($"Tox: Running on {ToxOO.Version.str}");
             if (!ToxOO.Version.Compatible(0, 2, 22))
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
-            var opt = new Options();
-            opt.logCallback = cbs.OnLogPtr;
+            var opt = new Options
+            {
+                logCallback = cbs.OnLogPtr
+            };
 
             var newprofile = false;
             var path = Path.Combine(toxDir, profile + ".tox");
@@ -601,7 +603,7 @@ namespace Tox
                 var group = metadata as Group;
                 var idt = FromHex(group.Identifier, (int)ToxOO.Size.groupId*2);
 
-                var gid = tox_group_join(tox.ptr, idt, currentUser.DisplayName, (UIntPtr)currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
+                tox_group_join(tox.ptr, idt, currentUser.DisplayName, (UIntPtr)currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
                 RecentsList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
             }
@@ -672,6 +674,9 @@ namespace Tox
             }
             avACall.caller = new ToxCall(av, avACall.Identifier);
             avACall.caller.Start();
+
+            if (start_muted)
+                toxav_call_control(av, avACall.Identifier, Toxav_Call_Control.MUTE_AUDIO, out _);
 
             return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0]);
         }

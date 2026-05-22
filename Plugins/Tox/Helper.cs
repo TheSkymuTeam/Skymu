@@ -16,8 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
 using ToxOO;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
@@ -75,7 +73,7 @@ namespace Tox
             return PresenceStatus.Unknown;
         }
 
-        public static void save(ToxOO.Tox tox, string savename, Core core)
+        public static void Save(ToxOO.Tox tox, string savename, Core core)
         {
             core.profilelock?.Dispose();
             var path = Path.Combine(ToxCore.toxDir, savename + ".tox");
@@ -93,7 +91,7 @@ namespace Tox
                 var salt = new byte[Size.salt];
                 IntPtr key;
                 Tox_Err_Key_Derivation kerr;
-                if (tox_get_salt(esave, salt, out var err))
+                if (tox_get_salt(esave, salt, out var _))
                 {
                     key = tox_pass_key_derive_with_salt(core.savepass, (UIntPtr)core.savepass.Length, salt, out kerr);
                 }
@@ -122,7 +120,7 @@ namespace Tox
         }
 
         /// <summary>The public key should be in hex</summary>
-        public static byte[] GrabAvatar(ToxOO.Tox tox, string pkey)
+        public static byte[] GrabAvatar(string pkey)
         {
             var avatar_cache_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox", "avatars");
             if (!Directory.Exists(avatar_cache_dir)) return null;
@@ -143,7 +141,7 @@ namespace Tox
                         BATS(f.publicKey),
                         f.statusMessage,
                         PresenceStatus.Offline,
-                        GrabAvatar(core.tox, BATS(f.publicKey))
+                        GrabAvatar(BATS(f.publicKey))
                         ));
                 users.Add(f.id, core.friends[f.id]);
             }
@@ -187,26 +185,27 @@ namespace Tox
                     peers
                 ));
             }
-            Action act = () =>
-            {
-                core.ContactsList.Clear();
-                core.RecentsList.Clear();
-                foreach (var kvp in users)
-                {
-                    var dm = new DirectMessage(kvp.Value, 0, kvp.Value.Identifier);
-                    core.ContactsList.Add(dm);
-                    core.RecentsList.Add(dm);
-                }
-                foreach (var kvp in conferences)
-                {
-                    core.RecentsList.Add(kvp.Value);
-                }
-            };
             if (ucp)
-                core.UCP(_ => act.Invoke());
+                core.UCP(_ => ListsAdd(core, users, conferences));
             else
-                act.Invoke();
+                ListsAdd(core, users, conferences);
             return true;
+        }
+
+        static void ListsAdd(Core core, Dictionary<UInt32, User> users, Dictionary<UInt32, Group> conferences)
+        {
+            core.ContactsList.Clear();
+            core.RecentsList.Clear();
+            foreach (var kvp in users)
+            {
+                var dm = new DirectMessage(kvp.Value, 0, kvp.Value.Identifier);
+                core.ContactsList.Add(dm);
+                core.RecentsList.Add(dm);
+            }
+            foreach (var kvp in conferences)
+            {
+                core.RecentsList.Add(kvp.Value);
+            }
         }
 
         public static void ConferencePeerListRefresh(Core core, Conference conference)
@@ -215,14 +214,14 @@ namespace Tox
             foreach (var p in conference.peers)
             { 
                 var pkey = BATS(p.publicKey);
-                users.Add(p.id, new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(core.tox, pkey)));
+                users.Add(p.id, new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey)));
             }
             var ua = users.Values.ToList();
             // Who needs to access offline users anyways.
             foreach (var p in conference.offlinePeers)
             {
                 var pkey = BATS(p.publicKey);
-                ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(core.tox, pkey)));
+                ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(pkey)));
             }
             var cid = BATS(conference.cid);
             foreach (var conv in core.RecentsList)

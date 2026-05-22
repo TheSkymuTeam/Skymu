@@ -406,7 +406,7 @@ namespace Tox
             var p = new ConferencePeer(tox, cid, pid);
             var pkey = BATS(p.publicKey);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
-            User sender = new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(core.tox, pkey));
+            User sender = new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey));
             if (BATS(c.peers[pid].publicKey) == core.currentUser.Identifier)
                 sender = core.currentUser;
             core.UCP(_ =>
