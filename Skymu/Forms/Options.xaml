@@ -530,6 +530,12 @@
                                             Content="Enable automatic login if credentials are saved"
                                             IsChecked="{Binding Path=[AutoLogin], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
+                                        <CheckBox
+                                            x:Name="CredDebugSepCB"
+                                            Margin="0,5"
+                                            Content="Separate credentials when Skymu is built as debug"
+                                            IsChecked="{Binding Path=[SeparateCredentialsForDebug], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                                            Visibility="Collapsed" />
 
 
 

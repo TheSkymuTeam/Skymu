@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +26,11 @@ namespace Skymu.Credentials
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Skymu",
+#if DEBUG
+            Settings.SeparateCredentialsForDebug ? "credentialsDebug.xml" : "credentials.xml"
+#else
             "credentials.xml"
+#endif
         );
 
         private static XDocument ReadFile()
