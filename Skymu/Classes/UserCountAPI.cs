@@ -35,7 +35,7 @@ namespace Skymu.UserDirectory
         public static string ApiTkn = null;
 
         // WebSocket variables
-        private static System.Net.WebSockets.Managed.ClientWebSocket ws;
+        private static Yggdrasil.Networking.BifrostWebSocket ws;
         private static CancellationTokenSource cts = new CancellationTokenSource();
         public static event Action<int> OnUserCountUpdate;
 
@@ -112,7 +112,7 @@ namespace Skymu.UserDirectory
         // WebSocket functions
         public static async Task ConnectWS()
         {
-            ws = new System.Net.WebSockets.Managed.ClientWebSocket();
+            ws = new Yggdrasil.Networking.BifrostWebSocket();
             await ws.ConnectAsync(new Uri(WS_URL), cts.Token);
 
             var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
