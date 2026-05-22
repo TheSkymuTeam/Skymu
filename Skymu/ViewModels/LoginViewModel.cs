@@ -63,6 +63,7 @@ namespace Skymu.ViewModels
 
         public SavedCredential PendingAutoLogin { get; private set; }
         public PluginListing PendingAutoLoginListing { get; private set; }
+        public SavedCredential[] SavedCredentials { get; private set; }
 
 
         public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
@@ -76,15 +77,15 @@ namespace Skymu.ViewModels
             Universal.PluginList = PluginManager.Load(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins"));
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
+            SavedCredentials = savedCredentials;
 
             foreach (var plugin in Universal.PluginList)
             {
                 if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
-                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), string.Empty, AuthenticationMethod.Password, plugin.InternalName.ToLowerInvariant());
+                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
                     Universal.Plugin = plugin;
                     Universal.CallPlugin = Universal.Plugin as ICall;
-                    return;
                 }
 
                 SavedCredential match = null;
@@ -102,10 +103,11 @@ namespace Skymu.ViewModels
                     var listing = new PluginListing(
                         plugin.Name,
                         pluginIndex,
+                        plugin.InternalName,
                         plugin.AuthenticationTypes[0].AuthType,
                         plugin.AuthenticationTypes[0].CustomTextUsername
                     );
-                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !Universal.DisableAutoLogin)
+                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !Universal.DisableAutoLogin && !Universal.TestMode)
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
@@ -113,6 +115,8 @@ namespace Skymu.ViewModels
                         Universal.CallPlugin = Universal.Plugin as ICall;
                     }
                     PluginItems.Add(listing);
+                    if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
+                        PendingAutoLoginListing = listing;
                 }
                 else
                 {
@@ -146,7 +150,7 @@ namespace Skymu.ViewModels
                                     continue;
                             }
                         }
-                        var listing = new PluginListing(name, pluginIndex, ati.AuthType, ati.CustomTextUsername);
+                        var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername);
                         if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !Universal.DisableAutoLogin) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
@@ -162,11 +166,17 @@ namespace Skymu.ViewModels
         }
         public void HandleProtocolSelected(PluginListing listing)
         {
-            if (listing == null || PendingAutoLogin != null || Universal.TestMode) return;
+            if (listing == null || PendingAutoLogin != null) return;
             _selectedListing = listing;
             Universal.Plugin = Universal.PluginList[listing.PluginIndex];
             Universal.CallPlugin = Universal.Plugin as ICall;
             PluginSelectionUpdated?.Invoke(listing);
+        }
+
+        public void ClearPendingAutoLogin()
+        {
+            PendingAutoLogin = null;
+            PendingAutoLoginListing = null;
         }
 
         public void RunPostLogin(IMainWindowHolder mainWindow)
@@ -427,18 +437,20 @@ namespace Skymu.ViewModels
 
         public class PluginListing
         {
-            public PluginListing(string name, int index, AuthenticationMethod authType, string textUsername)
+            public PluginListing(string name, int index, string internalName, AuthenticationMethod authType, string textUsername)
             {
                 DisplayName = name;
                 PluginIndex = index;
+                InternalName = internalName;
                 AuthenticationType = authType;
                 TextUsername = textUsername;
             }
 
             public string DisplayName { get; private set; }
-            public string TextUsername { get; private set; }
             public int PluginIndex { get; private set; }
+            public string InternalName { get; private set; }
             public AuthenticationMethod AuthenticationType { get; private set; }
+            public string TextUsername { get; private set; }
         }
     }
 }

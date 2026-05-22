@@ -963,10 +963,9 @@ namespace Skymu.Skyaeris
 
         private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
 
-        private void OnSignOut(object sender, RoutedEventArgs e)
-        {
-            InitiateSignOut();
-        }
+        private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
+
+        private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
@@ -1514,7 +1513,7 @@ namespace Skymu.Skyaeris
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login().Show();
+                new Login(e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1581,8 +1580,6 @@ namespace Skymu.Skyaeris
 
             Settings.Default.PropertyChanged += RefreshCreds;
             RefreshCreds();
-            RefreshNoHomeText(null, null);
-            Universal.Lang.PropertyChanged += RefreshNoHomeText;
 
             SourceInitialized += (s, e) =>
             {
@@ -1622,7 +1619,7 @@ namespace Skymu.Skyaeris
             this.AllowsTransparency = false;
         }
 
-        private void InitiateSignOut() => vmodel.InitiateSignOut();
+        private void InitiateSignOut(bool switchuser = false) => vmodel.InitiateSignOut(switchuser);
 
         #endregion
 

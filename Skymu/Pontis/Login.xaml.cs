@@ -19,6 +19,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Pontis
@@ -28,9 +29,11 @@ namespace Skymu.Pontis
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
+        private bool switchuser = false;
 
-        public Login()
+        public Login(bool switchuser = false)
         {
+            this.switchuser = switchuser;
             InitializeComponent();
             //ThemeManager.Load("default"); // TODO themes login
             usernameBox.KeyUp += BoxKeyUp;
@@ -176,22 +179,56 @@ namespace Skymu.Pontis
             foreach (var item in _viewModel.PluginItems)
                 comboProtocolBox.Items.Add(item);
 
-            if (_viewModel.PendingAutoLogin != null)
+            if (_viewModel.PendingAutoLogin != null && !switchuser)
                 LoginToggleAnimation(true);
             else
                 comboProtocolBox.SelectedIndex = 0;
+
+            if (switchuser && _viewModel.PendingAutoLogin != null)
+            {
+                var pal = _viewModel.PendingAutoLoginListing;
+                var pa = _viewModel.PendingAutoLogin;
+                _viewModel.ClearPendingAutoLogin();
+                comboProtocolBox.SelectedItem = pal;
+                ProtocolSelectionChanged(null, null);
+                SetProtocolSelection(pal, pa);
+            }
+        }
+
+        private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
+        {
+            _viewModel.HandleProtocolSelected(listing);
+            OnPluginSelectionUpdated(listing);
+            if (creds.AuthenticationType == AuthenticationMethod.QRCode) return;
+            if (creds.AuthenticationType == AuthenticationMethod.Token)
+            {
+                usernameBox.Text = !String.IsNullOrEmpty(creds.PasswordOrToken) ? creds.PasswordOrToken : creds.User.Username;
+                CheckEnableLoginButton();
+                return;
+            }
+            usernameBox.Text = creds.User.Username;
+            passwordTokenBox.Password = creds.PasswordOrToken;
+            CheckEnableLoginButton();
         }
 
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listing = (LoginViewModel.PluginListing)comboProtocolBox.SelectedItem;
+            foreach (var cred in _viewModel.SavedCredentials)
+            {
+                if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
+                {
+                    SetProtocolSelection(listing, cred);
+                }
+            }
             if (listing != null)
                 _viewModel.HandleProtocolSelected(listing);
         }
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            await _viewModel.TryAutoLogin();
+            if (!switchuser)
+                await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && comboProtocolBox.SelectedIndex == -1)
                 comboProtocolBox.SelectedIndex = 0;
         }

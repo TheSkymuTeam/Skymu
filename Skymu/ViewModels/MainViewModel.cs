@@ -109,7 +109,7 @@ namespace Skymu.ViewModels
 
         public event EventHandler ConversationItemChanged;
 
-        public event EventHandler SignOutRequested;
+        public event EventHandler<SignOutRequestedEventArgs> SignOutRequested;
 
         public event Action<string> UserCountUpdated;
 
@@ -123,7 +123,6 @@ namespace Skymu.ViewModels
 
         public IAsyncRelayCommand<string> SendMessageCommand { get; }
         public IAsyncRelayCommand RunSpeedTestCommand { get; }
-        public IRelayCommand SignOutCommand { get; }
         private bool _isDownloading = false;
         public ICommand OpenImageCommand =>
             new RelayCommand<Attachment[]>(async attachments =>
@@ -253,7 +252,6 @@ namespace Skymu.ViewModels
 
             SendMessageCommand = new AsyncRelayCommand<string>(SendMessage);
             RunSpeedTestCommand = new AsyncRelayCommand(RunSpeedTest);
-            SignOutCommand = new RelayCommand(InitiateSignOut);
             VideoCallCommand = new RelayCommand(HandleVideoCall);
             CallCommand = new AsyncRelayCommand(HandleCall);
         }
@@ -741,12 +739,23 @@ namespace Skymu.ViewModels
 
         #region Sign out
 
-        public void InitiateSignOut()
+        public class SignOutRequestedEventArgs : EventArgs
         {
-            CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
+            public bool switchuser { get; }
+
+            public SignOutRequestedEventArgs(bool switchuser)
+            {
+                this.switchuser = switchuser;
+            }
+        }
+
+        public void InitiateSignOut(bool switchuser = false)
+        {
+            if (!switchuser)
+                CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
             Sounds.Play("logout");
             Universal.HasLoggedIn = false;
-            SignOutRequested?.Invoke(this, EventArgs.Empty);
+            SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
             _ = UserCountAPI.CloseWS();
         }
         #endregion

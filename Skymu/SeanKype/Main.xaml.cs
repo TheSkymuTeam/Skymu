@@ -100,7 +100,7 @@ namespace Skymu.SeanKype
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login().Show();
+                new Login(e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -215,7 +215,7 @@ namespace Skymu.SeanKype
             await vmodel.SendMessage(message_body);
         }
 
-        private void InitiateSignOut() => vmodel.InitiateSignOut();
+        private void InitiateSignOut(bool switchuser = false) => vmodel.InitiateSignOut(switchuser);
 
         #region Event handlers
 
@@ -382,10 +382,9 @@ namespace Skymu.SeanKype
             new Views.Pages.Updater(true);
         }
 
-        private void OnSignOut(object sender, RoutedEventArgs e)
-        {
-            InitiateSignOut();
-        }
+        private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
+
+        private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
         #endregion
 
