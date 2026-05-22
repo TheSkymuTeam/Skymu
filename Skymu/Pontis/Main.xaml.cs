@@ -296,8 +296,8 @@ namespace Skymu.Pontis
             );
 
             _menuBar.Create(L("sMAINMENU_VIEW"),
-                MI(L("sMAINMENU_VIEW_CONTACTS")),
-                MI(L("sMAINMENU_VIEW_CONVERSATIONS")),
+                MI(L("sMAINMENU_VIEW_CONTACTS"), (s, e2) => OnContacts(null, null)),
+                MI(L("sMAINMENU_VIEW_CONVERSATIONS"), (s, e2) => OnRecent(null, null)),
                 MI(L("sMAINMENU_VIEW_VOICEMAILS")),
                 MI(L("sMAINMENU_VIEW_FILESSENT")),
                 MI(L("sMAINMENU_VIEW_SMSMESSAGES")),
@@ -451,6 +451,7 @@ namespace Skymu.Pontis
             GridLength dynamic = new GridLength(1, GridUnitType.Star);
             GridLength small = new GridLength(32);
 
+            tab_to_select.SetState(ButtonVisualState.Pressed);
             if (Universal.Plugin.SupportsServers)
                 buttonToColumn[tab_to_select].Width = dynamic;
             tab_to_select.SetState(ButtonVisualState.Pressed);
@@ -740,6 +741,16 @@ namespace Skymu.Pontis
         private void OnClose(object sender, RoutedEventArgs e)
         {
             Universal.Close();
+        }
+
+        private void OnContacts(object sender, RoutedEventArgs e)
+        {
+            _ = SelectTab(btnContacts);
+        }
+
+        private void OnRecent(object sender, RoutedEventArgs e)
+        {
+            _ = SelectTab(btnRecents);
         }
 
         private void OnOptions(object sender, RoutedEventArgs e)

@@ -600,6 +600,7 @@ namespace Skymu.Skyaeris
             GridLength dynamic = new GridLength(1, GridUnitType.Star);
             GridLength small = new GridLength(32);
 
+            tab_to_select.SetState(ButtonVisualState.Pressed);
             if (Universal.Plugin.SupportsServers)
                 buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
@@ -937,6 +938,16 @@ namespace Skymu.Skyaeris
         private void OnClose(object sender, RoutedEventArgs e)
         {
             Universal.Close();
+        }
+
+        private void OnContacts(object sender, RoutedEventArgs e)
+        {
+            _ = SelectTab(btnContacts);
+        }
+
+        private void OnRecent(object sender, RoutedEventArgs e)
+        {
+            _ = SelectTab(btnRecents);
         }
 
         private void OnOptions(object sender, RoutedEventArgs e)
