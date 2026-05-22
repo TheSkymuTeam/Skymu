@@ -32,7 +32,7 @@ namespace Yggdrasil.Networking
     public sealed class BifrostEngine : HttpMessageHandler // i still am surprised HttpClient has an overload to accept a custom HttpMH, given that at this time there were literally none
     {
         private readonly Dictionary<string, Queue<Stream>> _pool
-            = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);
+            = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);  
         private readonly object _poolLock = new object();
         private readonly int _maxPoolSize;
         private bool _disposed;
