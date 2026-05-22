@@ -211,7 +211,7 @@
                                 Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                IsChecked="True" />
+                                IsChecked="{Binding Path=[AutoLogin], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                             <CheckBox
                                 x:Name="StartOnWinStart"
                                 Height="16"
@@ -219,7 +219,7 @@
                                 Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                IsChecked="{Binding Source={x:Static preferences:Settings.Default}, Path=[StartOnStartup], Mode=TwoWay}" />
+                                IsChecked="{Binding Path=[StartOnStartup], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                         </StackPanel>
                     </Border>
                 </Grid>
