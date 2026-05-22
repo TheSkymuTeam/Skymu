@@ -1,7 +1,7 @@
 ![Skymu Logo](Images/logo.png) 
 
 # What is Skymu?
-Skymu is a Skype revival project, clients looking like Skype 5, Skype 7, etc and plugins to make those clients able to connect to other platforms like Discord for example.
+Skymu is a modern multiprotocol IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 5, 6, and 7. Currently supported messaging services include Discord, Matrix, Tox, and MSNP11.
 
 # Build Guide
 
