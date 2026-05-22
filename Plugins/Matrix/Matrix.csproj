@@ -12,7 +12,6 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Net.WebSockets.Client.Managed" Version="1.0.22" />
 		<PackageReference Include="System.Text.Json" Version="10.0.3" />
 	</ItemGroup>
 	<ItemGroup>

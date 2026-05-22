@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
+using Yggdrasil.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -53,7 +54,7 @@ namespace Discord.Networking
         private bool _isMuted = false;
 
         // The actual WebSocketClient
-        public System.Net.WebSockets.Managed.ClientWebSocket WSClient { get; private set; }
+        public BifrostWebSocket WSClient { get; private set; }
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
@@ -140,11 +141,10 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
-            WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
             var uri = new Uri(gatewayUrl);
 
-            await WSClient.ConnectAsync(uri, CancellationToken.None).ConfigureAwait(false);
+            await WSClient.ConnectAsync(uri, CancellationToken.None);
             await SendPayload();
 
             _receiveCts = new CancellationTokenSource();
