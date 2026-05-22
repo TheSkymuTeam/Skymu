@@ -178,6 +178,11 @@ namespace Skymu.Preferences
             get => S("AutoLogin", true);
             set => W("AutoLogin", value, nameof(AutoLogin));
         }
+        public static bool SeparateCredentialsForDebug
+        {
+            get => S("SeparateCredentialsForDebug", false);
+            set => W("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug));
+        }
         public static bool EnableNotifications
         {
             get => S("EnableNotifications", true);
