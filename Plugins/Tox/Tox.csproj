@@ -9,6 +9,7 @@
 		<LangVersion>7.3</LangVersion>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Prefer32Bit>false</Prefer32Bit>
 		<OutputPath>..\bin\</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -28,12 +29,14 @@
 		<ItemGroup>
 			<PluginFiles Include="Lib.x64\**\*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<MakeDir Directories="..\bin\Lib.x64\" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\Lib.x64\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 	<Target Name="Copyx64Libs" AfterTargets="Build">
 		<ItemGroup>
 			<PluginFiles Include="Lib.x86\**\*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<MakeDir Directories="..\bin\Lib.x86\" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\Lib.x86\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 </Project>

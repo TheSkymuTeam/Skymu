@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -240,6 +241,53 @@ namespace Tox
                 if (list[i].Identifier == pkey)
                     return i;
             return null;
+        }
+
+        #endregion
+
+        #region native fun
+
+        const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
+        const uint LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100;
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern IntPtr AddDllDirectory(string path);
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+        static extern IntPtr LoadLibraryEx(
+            string lpFileName,
+            IntPtr hFile,
+            uint dwFlags
+        );
+
+        public static void ImportLibraryFromPath(string library)
+        {
+            string arch;
+
+            if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                arch = "x64";
+            else if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
+                arch = "x86";
+            else
+                throw new PlatformNotSupportedException();
+
+            string dir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Lib."+arch);
+
+            Debug.WriteLine($"Tox: Loading the ToxCore DLL ({library}) from {dir}");
+
+            AddDllDirectory(dir);
+
+            string dll = Path.Combine(dir, library);
+
+            IntPtr handle = LoadLibraryEx(
+                dll,
+                IntPtr.Zero,
+                LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
+                LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR
+            );
+
+            if (handle == IntPtr.Zero)
+                throw new DllNotFoundException(dll);
         }
 
         #endregion

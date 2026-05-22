@@ -193,7 +193,7 @@ namespace Tox
                 return LoginResult.UnsupportedAuthType;
             profile = username;
 
-            return await StartClient();
+            return StartClient();
         }
         public async Task<LoginResult> Authenticate(SavedCredential creds)
         {
@@ -202,7 +202,7 @@ namespace Tox
                 return LoginResult.UnsupportedAuthType;
             profile = creds.User.Username;
 
-            return await StartClient();
+            return StartClient();
         }
         public async Task<SavedCredential> StoreCredential()
         {
@@ -215,8 +215,23 @@ namespace Tox
         const string FileLockedErrS = "Tox profile is locked";
         const string FileLockedErrE = ". Are you running an another instance of this program, or an another Tox client?";
         const string FileLockedErr = FileLockedErrS + FileLockedErrE;
-        async Task<LoginResult> StartClient()
+        LoginResult StartClient()
         {
+            try
+            {
+                ImportLibraryFromPath("libtoxcore.dll");
+            }
+            catch (PlatformNotSupportedException)
+            {
+                ERR("This plugin does not support your current architecture.");
+                return LoginResult.Failure;
+            }
+            catch (DllNotFoundException)
+            {
+                ERR("libtoxcore.dll was not found.\nNote: Using encrypted mode will NOT fix this issue.");
+                return LoginResult.Failure;
+            }
+
             Debug.WriteLine($"Tox: Running on {ToxOO.Version.str}");
             if (!ToxOO.Version.Compatible(0, 2, 22))
                 OnWarning?.Invoke(this, new PluginMessageEventArgs("Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
