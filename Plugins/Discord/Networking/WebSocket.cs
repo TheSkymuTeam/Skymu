@@ -68,7 +68,7 @@ namespace Discord.Networking
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
-        public System.Net.WebSockets.Managed.ClientWebSocket WSClient { get; private set; }
+        public Yggdrasil.Networking.BifrostWebSocket WSClient { get; private set; }
         private readonly Core _core;
 
         // Reusable buffers for memory efficiency
@@ -163,11 +163,10 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
-            WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
             _inflater = new Inflater();
             var uri = new Uri(gatewayUrl);
-            await WSClient.ConnectAsync(uri, CancellationToken.None).ConfigureAwait(false);
+            await WSClient.ConnectAsync(uri, CancellationToken.None);
 
             await SendPayload();
 

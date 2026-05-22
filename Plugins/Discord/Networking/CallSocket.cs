@@ -53,7 +53,7 @@ namespace Discord.Networking
         private bool _isMuted = false;
 
         // The actual WebSocketClient
-        public System.Net.WebSockets.Managed.ClientWebSocket WSClient { get; private set; }
+        public Yggdrasil.Networking.BifrostWebSocket WSClient { get; private set; }
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
@@ -140,11 +140,10 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
-            WSClient.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
             var uri = new Uri(gatewayUrl);
 
-            await WSClient.ConnectAsync(uri, CancellationToken.None).ConfigureAwait(false);
+            await WSClient.ConnectAsync(uri, CancellationToken.None);
             await SendPayload();
 
             _receiveCts = new CancellationTokenSource();
