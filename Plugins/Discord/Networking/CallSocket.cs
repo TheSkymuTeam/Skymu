@@ -18,6 +18,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
+using Yggdrasil.Networking;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -53,7 +54,7 @@ namespace Discord.Networking
         private bool _isMuted = false;
 
         // The actual WebSocketClient
-        public Yggdrasil.Networking.BifrostWebSocket WSClient { get; private set; }
+        public BifrostWebSocket WSClient { get; private set; }
 
         // Reusable buffers for memory efficiency
         private readonly byte[] _receiveBuffer = new byte[8192];
