@@ -20,12 +20,13 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil.Networking;
 
 namespace Discord.Networking
 {
     internal class AuthSocket : IDisposable
     {
-        private Yggdrasil.Networking.BifrostWebSocket WSClient = null;
+        private BifrostWebSocket WSClient = null;
         internal event EventHandler<string> QRCodeGenerated;
         internal event EventHandler PendingMobileVerification;
         internal event EventHandler<string> TokenRecieved;
