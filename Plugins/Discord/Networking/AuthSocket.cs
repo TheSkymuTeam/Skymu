@@ -266,7 +266,7 @@ namespace Discord.Networking
             if (WSClient != null)
                 return true;
 
-            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
+            WSClient = new BifrostWebSocket();
             WSClient.Options.SetRequestHeader("Origin", "https://discord.com");
 
             await WSClient.ConnectAsync(new Uri(gatewayUrl), CancellationToken.None);

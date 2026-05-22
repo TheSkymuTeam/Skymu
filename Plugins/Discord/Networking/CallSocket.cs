@@ -141,7 +141,7 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
+            WSClient = new BifrostWebSocket();
             var uri = new Uri(gatewayUrl);
 
             await WSClient.ConnectAsync(uri, CancellationToken.None);

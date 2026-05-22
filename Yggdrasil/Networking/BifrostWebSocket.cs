@@ -12,6 +12,7 @@
 // bypassing Schannel entirely. It connects via raw TCP +
 // Bouncy Castle TLS, performs the HTTP/1.1 Upgrade handshake,
 // then speaks the RFC 6455 WebSocket framing protocol.
+/*==========================================================*/
 
 using System;
 using System.Collections.Generic;
