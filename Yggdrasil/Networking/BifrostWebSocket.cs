@@ -12,13 +12,6 @@
 // bypassing Schannel entirely. It connects via raw TCP +
 // Bouncy Castle TLS, performs the HTTP/1.1 Upgrade handshake,
 // then speaks the RFC 6455 WebSocket framing protocol.
-/*==========================================================*/
-// DO NOT USE THIS NOW! It is expiremental and not ready. I
-// believe there is some sort of issue with skipped payloads
-// which compounds if zlib-stream is used. Race condition
-// perhaps. Whatever it is, this is not suitable for 
-// production use. You have been warned.
-/*==========================================================*/
 
 using System;
 using System.Collections.Generic;
@@ -56,6 +49,9 @@ namespace Yggdrasil.Networking
         private byte _currentMessageOpcode = 0;
         private readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1, 1);
         private readonly SemaphoreSlim _readLock = new SemaphoreSlim(1, 1);
+        private byte[] _activeFramePayload = null;
+        private int _activeFrameOffset = 0;
+        private WebSocketMessageType _activeFrameMsgType;
 
         public WebSocketState State
         {
@@ -148,61 +144,82 @@ namespace Yggdrasil.Networking
         {
             EnsureOpen(allowClosing: true);
 
-            while (true)
+            await _readLock.WaitAsync(ct).ConfigureAwait(false);
+            try
             {
-                (byte opcode, bool fin, byte[] payload) = await ReadFrameAsync(ct).ConfigureAwait(false);
-
-                switch (opcode)
+                if (_activeFramePayload != null)
                 {
-                    case 0x01:
-                    case 0x02:
-                        _currentMessageOpcode = opcode;
-                        goto case 0x00;
+                    int remaining = _activeFramePayload.Length - _activeFrameOffset;
+                    int copyCount = Math.Min(remaining, buffer.Count);
+                    Buffer.BlockCopy(_activeFramePayload, _activeFrameOffset, buffer.Array, buffer.Offset, copyCount);
 
-                    case 0x00:
-                        {
-                            var msgType = _currentMessageOpcode == 0x01
-                                ? WebSocketMessageType.Text
-                                : WebSocketMessageType.Binary;
+                    _activeFrameOffset += copyCount;
+                    bool isFin = _activeFrameOffset >= _activeFramePayload.Length;
 
-                            if (fin)
-                                _currentMessageOpcode = 0;
+                    if (isFin)
+                        _activeFramePayload = null;
 
-                            int copy = Math.Min(payload.Length, buffer.Count);
-                            Buffer.BlockCopy(payload, 0, buffer.Array, buffer.Offset, copy);
-                            return new WebSocketReceiveResult(copy, msgType, fin);
-                        }
-
-                    case 0x09: // ping; auto-pong; keep waiting
-                        Debug.WriteLine("[BIFROST-WS] Received ping, sending pong.");
-                        await SendPongAsync(payload, ct).ConfigureAwait(false);
-                        continue;
-
-                    case 0x0A: // pong; ignore; keep waiting
-                        Debug.WriteLine("[BIFROST-WS] Received pong.");
-                        continue;
-
-                    case 0x08: // close
-                        {
-                            var closeStatus = WebSocketCloseStatus.NormalClosure;
-                            string closeDesc = string.Empty;
-                            if (payload.Length >= 2)
-                            {
-                                closeStatus = (WebSocketCloseStatus)((payload[0] << 8) | payload[1]);
-                                if (payload.Length > 2)
-                                    closeDesc = Encoding.UTF8.GetString(payload, 2, payload.Length - 2);
-                            }
-                            CloseStatus = closeStatus;
-                            CloseStatusDescription = closeDesc;
-                            lock (_stateLock) _state = WebSocketState.CloseReceived;
-                            Debug.WriteLine($"[BIFROST-WS] Close received: {closeStatus} '{closeDesc}'");
-                            return new WebSocketReceiveResult(0, WebSocketMessageType.Close, true,
-                                closeStatus, closeDesc);
-                        }
-
-                    default:
-                        throw new WebSocketException($"Unknown WebSocket opcode 0x{opcode:X2}.");
+                    return new WebSocketReceiveResult(copyCount, _activeFrameMsgType, isFin);
                 }
+
+                while (true)
+                {
+                    (byte opcode, bool fin, byte[] payload) = await ReadFrameAsync(ct).ConfigureAwait(false);
+
+                    switch (opcode)
+                    {
+                        case 0x01:
+                        case 0x02:
+                            _currentMessageOpcode = opcode;
+                            goto case 0x00;
+
+                        case 0x00:
+                            {
+                                var msgType = _currentMessageOpcode == 0x01
+                                    ? WebSocketMessageType.Text
+                                    : WebSocketMessageType.Binary;
+
+                                if (fin)
+                                    _currentMessageOpcode = 0;
+
+                                if (payload.Length <= buffer.Count)
+                                {
+                                    Buffer.BlockCopy(payload, 0, buffer.Array, buffer.Offset, payload.Length);
+                                    return new WebSocketReceiveResult(payload.Length, msgType, fin);
+                                }
+
+                                _activeFramePayload = payload;
+                                _activeFrameMsgType = msgType;
+
+                                int firstTake = buffer.Count;
+                                Buffer.BlockCopy(_activeFramePayload, 0, buffer.Array, buffer.Offset, firstTake);
+                                _activeFrameOffset = firstTake;
+
+                                return new WebSocketReceiveResult(firstTake, msgType, false);
+                            }
+
+                        case 0x09:
+                            await SendPongAsync(payload, ct).ConfigureAwait(false);
+                            break;
+
+                        case 0x0A:
+                            break;
+
+                        case 0x08:
+                            byte[] closeCodeBuf = new byte[2];
+                            if (payload.Length >= 2)
+                                Buffer.BlockCopy(payload, 0, closeCodeBuf, 0, 2);
+                            _state = WebSocketState.CloseReceived;
+                            return new WebSocketReceiveResult(payload.Length, WebSocketMessageType.Close, true);
+
+                        default:
+                            throw new WebSocketException($"Unknown WebSocket opcode 0x{opcode:X2}.");
+                    }
+                }
+            }
+            finally
+            {
+                _readLock.Release();
             }
         }
 
@@ -331,7 +348,7 @@ namespace Yggdrasil.Networking
             }
         }
 
-        private static byte[] BuildFrame( // i really fucking hate this goofy shit 
+        private static byte[] BuildFrame(
             byte opcode, bool fin, byte[] data, int offset, int count)
         {
             var maskKey = new byte[4];
@@ -368,48 +385,42 @@ namespace Yggdrasil.Networking
             return frame;
         }
 
-        private async Task<(byte opcode, bool fin, byte[] payload)> ReadFrameAsync( // i really fucking hate this goofy shit part 2
+        private async Task<(byte opcode, bool fin, byte[] payload)> ReadFrameAsync(
             CancellationToken ct)
         {
-            await _readLock.WaitAsync(ct).ConfigureAwait(false);
-            try
+            byte[] header = await ReadExactAsync(2, ct).ConfigureAwait(false);
+
+            bool fin = (header[0] & 0x80) != 0;
+            byte opcode = (byte)(header[0] & 0x0F);
+            bool masked = (header[1] & 0x80) != 0;
+            long length = header[1] & 0x7F;
+
+            if (length == 126)
             {
-                byte[] header = await ReadExactLockedAsync(2, ct).ConfigureAwait(false);
-
-                bool fin = (header[0] & 0x80) != 0;
-                byte opcode = (byte)(header[0] & 0x0F);
-                bool masked = (header[1] & 0x80) != 0;
-                long length = header[1] & 0x7F;
-
-                if (length == 126)
-                {
-                    byte[] ext = await ReadExactLockedAsync(2, ct).ConfigureAwait(false);
-                    length = (ext[0] << 8) | ext[1];
-                }
-                else if (length == 127)
-                {
-                    byte[] ext = await ReadExactLockedAsync(8, ct).ConfigureAwait(false);
-                    length = 0;
-                    for (int i = 0; i < 8; i++)
-                        length = (length << 8) | ext[i];
-                }
-
-                byte[] maskKey = masked
-                    ? await ReadExactLockedAsync(4, ct).ConfigureAwait(false)
-                    : null;
-
-                byte[] payload = await ReadExactLockedAsync((int)length, ct).ConfigureAwait(false);
-
-                if (masked && maskKey != null)
-                    for (int i = 0; i < payload.Length; i++)
-                        payload[i] ^= maskKey[i % 4];
-
-                return (opcode, fin, payload);
+                byte[] ext = await ReadExactAsync(2, ct).ConfigureAwait(false);
+                length = (ext[0] << 8) | ext[1];
             }
-            finally
+            else if (length == 127)
             {
-                _readLock.Release();
+                byte[] ext = await ReadExactAsync(8, ct).ConfigureAwait(false);
+                length = 0;
+                for (int i = 0; i < 8; i++)
+                    length = (length << 8) | ext[i];
             }
+
+            byte[] maskKey = masked
+                ? await ReadExactAsync(4, ct).ConfigureAwait(false)
+                : null;
+
+            byte[] payload = await ReadExactAsync((int)length, ct).ConfigureAwait(false);
+
+            if (masked && maskKey != null)
+            {
+                for (int i = 0; i < payload.Length; i++)
+                    payload[i] ^= maskKey[i % 4];
+            }
+
+            return (opcode, fin, payload);
         }
 
         private async Task SendPongAsync(byte[] pingPayload, CancellationToken ct)
@@ -427,14 +438,14 @@ namespace Yggdrasil.Networking
             }
         }
 
-        private async Task<byte[]> ReadExactLockedAsync(int count, CancellationToken ct)
+        private async Task<byte[]> ReadExactAsync(int count, CancellationToken ct)
         {
             var buf = new byte[count];
             int read = 0;
             while (read < count)
             {
                 int n = await _stream.ReadAsync(buf, read, count - read, ct).ConfigureAwait(false);
-                if (n == 0)
+                if (n <= 0)
                     throw new WebSocketException(
                         "Connection closed unexpectedly while reading WebSocket frame.");
                 read += n;

@@ -20,12 +20,13 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil.Networking;
 
 namespace Discord.Networking
 {
     internal class AuthSocket : IDisposable
     {
-        private System.Net.WebSockets.Managed.ClientWebSocket WSClient = null;
+        private BifrostWebSocket WSClient = null;
         internal event EventHandler<string> QRCodeGenerated;
         internal event EventHandler PendingMobileVerification;
         internal event EventHandler<string> TokenRecieved;
@@ -265,7 +266,7 @@ namespace Discord.Networking
             if (WSClient != null)
                 return true;
 
-            WSClient = new System.Net.WebSockets.Managed.ClientWebSocket();
+            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
             WSClient.Options.SetRequestHeader("Origin", "https://discord.com");
 
             await WSClient.ConnectAsync(new Uri(gatewayUrl), CancellationToken.None);
