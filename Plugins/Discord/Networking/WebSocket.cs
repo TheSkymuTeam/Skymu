@@ -21,6 +21,7 @@
 using Discord.Helpers;
 using Discord.Networking.Managers;
 using Discord.Users;
+using Yggdrasil.Networking;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using System;
 using System.Buffers;
@@ -68,7 +69,7 @@ namespace Discord.Networking
         // The interval Discord sends back to us from WebSocket
         private int heartbeatInterval;
 
-        public Yggdrasil.Networking.BifrostWebSocket WSClient { get; private set; }
+        public BifrostWebSocket WSClient { get; private set; }
         private readonly Core _core;
 
         // Reusable buffers for memory efficiency
@@ -163,7 +164,7 @@ namespace Discord.Networking
 
         private async Task InitWS()
         {
-            WSClient = new Yggdrasil.Networking.BifrostWebSocket();
+            WSClient = new BifrostWebSocket();
             _inflater = new Inflater();
             var uri = new Uri(gatewayUrl);
             await WSClient.ConnectAsync(uri, CancellationToken.None);
