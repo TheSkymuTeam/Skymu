@@ -38,4 +38,5 @@ Use any version of Visual Studio from 2019 Community (recommended) onwards. Buil
 | System.Text.Json | Microsoft | [MIT](https://choosealicense.com/licenses/mit/) | Skymu, Discord, Matrix | [Repo](https://github.com/dotnet/dotnet) |
 | System.Threading.Channels | Microsoft | [MIT](https://choosealicense.com/licenses/mit/) | Skymu, Discord, Stub, Tox | [Repo](https://github.com/dotnet/dotnet) |
 | TrayIcon | nullsoftware | [MIT](https://choosealicense.com/licenses/mit/) | Skymu | [Repo](https://github.com/nullsoftware/TrayIcon) |
+
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
