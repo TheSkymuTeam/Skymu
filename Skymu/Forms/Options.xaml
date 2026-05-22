@@ -30,6 +30,7 @@
     </Window.Title>
 
     <Window.Resources>
+        <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
         <converters:StringToDoubleConverter x:Key="StringToDoubleConverter" />
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
@@ -418,17 +419,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="FontRenderingModeGroup">
-                                                    <RadioButton.Style>
-                                                        <Style BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="RadioButton">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=UseClearTypeRadio, Path=IsChecked}" Value="False">
-                                                                    <Setter Property="IsChecked" Value="True" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </RadioButton.Style>
-                                                </RadioButton>
+                                                    GroupName="FontRenderingModeGroup"
+                                                    IsChecked="{Binding Path=[UseClearType], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource BoolInverterConverter}}" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -493,18 +485,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="SidebarTabSizeModeGroup">
-                                                    <RadioButton.Style>
-                                                        <Style BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="RadioButton">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=DynamicSidebarTabsRadio, Path=IsChecked}" Value="False">
-                                                                    <Setter Property="IsChecked" Value="True" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </RadioButton.Style>
-                                                </RadioButton>
-
+                                                    GroupName="SidebarTabSizeModeGroup"
+                                                    IsChecked="{Binding Path=[DynamicSidebarTabs], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource BoolInverterConverter}}" />
                                                 <StackPanel
                                                     Grid.Column="1"
                                                     Margin="5,1,10,0"
@@ -706,17 +688,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="CertSourceGroup">
-                                                    <RadioButton.Style>
-                                                        <Style BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="RadioButton">
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=UseCustomCert, Path=IsChecked}" Value="False">
-                                                                    <Setter Property="IsChecked" Value="True" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </RadioButton.Style>
-                                                </RadioButton>
+                                                    GroupName="CertSourceGroup"
+                                                    IsChecked="{Binding Path=[UseCustomCert], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource BoolInverterConverter}}" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
