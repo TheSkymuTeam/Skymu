@@ -158,7 +158,7 @@ namespace Skymu.Pontis
                     if (Settings.EnableSkypeHome)
                         browser.Visibility = Visibility.Visible;
                     else
-                        NoHomeGrid.Visibility = Visibility.Visible;
+                        HomeUnavailable.Visibility = Visibility.Visible;
                     ConversationList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
                     SelectedContact = null;
@@ -170,7 +170,7 @@ namespace Skymu.Pontis
                     ChatProfileArea.Visibility = Visibility.Visible;
                     MessageWindow.Visibility = Visibility.Visible;
                     browser.Visibility = Visibility.Collapsed;
-                    NoHomeGrid.Visibility = Visibility.Collapsed;
+                    HomeUnavailable.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -1387,8 +1387,7 @@ namespace Skymu.Pontis
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
             btnRecents.OverlayText.TextTrimming = TextTrimming.None;
 
-            RefreshNoHomeText(null, null);
-            Universal.Lang.PropertyChanged += RefreshNoHomeText;
+            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {
@@ -1449,18 +1448,6 @@ namespace Skymu.Pontis
                 status = currentStatus;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
             }
-        }
-
-        private void RefreshNoHomeText(object sender, PropertyChangedEventArgs e)
-        {
-            var el = SkypeHome.GetLanguage();
-            if (el == null) return;
-            var lang = (JsonElement)el;
-            NoHomeHead.Text = lang.GetProperty("header").GetString();
-            NoHomeBody.Text = lang.GetProperty("p1").GetString();
-            NoHomeListHead.Text = lang.GetProperty("p2").GetString();
-            NoHomeList1.Text = lang.GetProperty("list1li1").GetString();
-            NoHomeList2.Text = lang.GetProperty("list1li2").GetString();
         }
 
         #endregion

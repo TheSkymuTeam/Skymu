@@ -966,84 +966,10 @@
         <!--  ====== RIGHT COLUMN ======  -->
         <Grid Grid.Column="2" Margin="-5,0,0,0">
             <WebBrowser x:Name="browser" Visibility="Collapsed" />
-            <Grid x:Name="NoHomeGrid" Visibility="Collapsed">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <StackPanel
-                    Grid.Row="0"
-                    Margin="24,46,0,0"
-                    Orientation="Horizontal">
-                    <Image
-                        Width="48"
-                        Height="48"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Source="Assets/Universal/Home/warning.png" />
-                    <StackPanel Margin="16,0,0,0" Orientation="Vertical">
-                        <TextBlock
-                            x:Name="NoHomeHead"
-                            Margin="0,6,0,0"
-                            FontFamily="Helvetica"
-                            FontSize="17"
-                            FontWeight="Bold"
-                            Foreground="#333"
-                            Text="Skype Home unavailable" />
-                        <TextBlock
-                            x:Name="NoHomeBody"
-                            Margin="0,12,0,0"
-                            FontFamily="Helvetica"
-                            FontSize="13"
-                            Foreground="#333"
-                            Text="Skype Home is unavailable at the moment. Check back later to see your news and alerts." />
-                        <TextBlock
-                            x:Name="NoHomeListHead"
-                            Margin="0,32,0,0"
-                            FontFamily="Helvetica"
-                            FontSize="13"
-                            Foreground="#333"
-                            Text="It's easy to start a conversation on Skype:" />
-                        <BulletDecorator Margin="0,12,0,0">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="6"
-                                    Height="6"
-                                    Fill="#333" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock
-                                x:Name="NoHomeList1"
-                                Margin="14,0,0,0"
-                                FontFamily="Helvetica"
-                                FontSize="13"
-                                Foreground="#333"
-                                Text="Choose a contact and start talking" />
-                        </BulletDecorator>
-                        <BulletDecorator Margin="0,12,0,0">
-                            <BulletDecorator.Bullet>
-                                <Ellipse
-                                    Width="6"
-                                    Height="6"
-                                    Fill="#333" />
-                            </BulletDecorator.Bullet>
-                            <TextBlock
-                                x:Name="NoHomeList2"
-                                Margin="14,0,0,0"
-                                FontFamily="Helvetica"
-                                FontSize="13"
-                                Foreground="#333"
-                                Text="Call a phone or mobile from the dial pad, or send an SMS." />
-                        </BulletDecorator>
-                    </StackPanel>
-                </StackPanel>
-                <Image
-                    Grid.Row="1"
-                    Width="650"
-                    Height="190"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom"
-                    Source="Assets/Universal/Home/footer.png" />
-            </Grid>
+            <Frame
+                x:Name="HomeUnavailable"
+                Grid.Row="1"
+                Visibility="Collapsed" />
         </Grid>
         <Grid
             x:Name="RightColumn"

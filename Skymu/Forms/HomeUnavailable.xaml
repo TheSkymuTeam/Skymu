@@ -1,0 +1,89 @@
+﻿<Page x:Class="Skymu.Forms.HomeUnavailable"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:converters="clr-namespace:Skymu.Converters"
+      mc:Ignorable="d" 
+      d:DesignHeight="504.143" d:DesignWidth="692.735"
+      Title="HomeUnavailable">
+
+    <Page.Resources>
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="0"
+            Margin="24,46,0,0"
+            Orientation="Horizontal">
+            <Image
+                Width="48"
+                Height="48"
+                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Home/warning.png'}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top" />
+            <StackPanel
+                Margin="16,0,0,0"
+                Orientation="Vertical">
+                <TextBlock
+                    x:Name="NoHomeHead"
+                    Margin="0,6,0,0"
+                    FontFamily="Helvetica"
+                    FontSize="17"
+                    FontWeight="Bold"
+                    Foreground="#333"
+                    Text="Skype Home unavailable" />
+                <TextBlock
+                    x:Name="NoHomeBody"
+                    Margin="0,12,0,0"
+                    FontFamily="Helvetica"
+                    FontSize="13"
+                    Foreground="#333"
+                    Text="Skype Home is unavailable at the moment. Check back later to see your news and alerts." />
+                <TextBlock
+                    x:Name="NoHomeListHead"
+                    Margin="0,32,0,0"
+                    FontFamily="Helvetica"
+                    FontSize="13"
+                    Foreground="#333"
+                    Text="It's easy to start a conversation on Skype:" />
+                <BulletDecorator Margin="0,12,0,0">
+                    <BulletDecorator.Bullet>
+                        <Ellipse Width="6" Height="6" Fill="#333"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock
+                        x:Name="NoHomeList1"
+                        Margin="14,0,0,0"
+                        FontFamily="Helvetica"
+                        FontSize="13"
+                        Foreground="#333"
+                        Text="Choose a contact and start talking" />
+                </BulletDecorator>
+                <BulletDecorator Margin="0,12,0,0">
+                    <BulletDecorator.Bullet>
+                        <Ellipse Width="6" Height="6" Fill="#333"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock
+                        x:Name="NoHomeList2"
+                        Margin="14,0,0,0"
+                        FontFamily="Helvetica"
+                        FontSize="13"
+                        Foreground="#333"
+                        Text="Call a phone or mobile from the dial pad, or send an SMS." />
+                </BulletDecorator>
+            </StackPanel>
+        </StackPanel>
+        <Image
+            Grid.Row="1"
+            Width="650"
+            Height="190"
+            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Home/footer.png'}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" />
+    </Grid>
+</Page>

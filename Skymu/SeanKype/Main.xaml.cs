@@ -131,6 +131,8 @@ namespace Skymu.SeanKype
             vmodel.SubscribeTypingIndicator();
             InitializeEmojiPicker();
 
+            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
+
             SourceInitialized += (s, e) =>
             {
                 WindowPlacement? wplc = WindowPlacementHelper.Load();
@@ -183,7 +185,7 @@ namespace Skymu.SeanKype
 
             RightColumn.Visibility = Visibility.Visible;
             browser.Visibility = Visibility.Collapsed;
-            NoHomeGrid.Visibility = Visibility.Collapsed;
+            HomeUnavailable.Visibility = Visibility.Collapsed;
 
             var conv = vmodel.SelectedConversation;
             LabelUsername1.Content = conv?.DisplayName;
@@ -599,12 +601,12 @@ namespace Skymu.SeanKype
                 if (Settings.EnableSkypeHome)
                     browser.Visibility = Visibility.Visible;
                 else
-                    NoHomeGrid.Visibility = Visibility.Visible;
+                    HomeUnavailable.Visibility = Visibility.Visible;
                 return;
             }
             RightColumn.Visibility = Visibility.Visible;
             browser.Visibility = Visibility.Collapsed;
-            NoHomeGrid.Visibility = Visibility.Collapsed;
+            HomeUnavailable.Visibility = Visibility.Collapsed;
         }
 
         private async void TabContacts_Click(object sender, MouseButtonEventArgs e)
