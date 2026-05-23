@@ -177,7 +177,7 @@ namespace Skymu.Views.Pages
             _ = IAddFriend();
         }
  
-        async void IAddFriend()
+        async Task IAddFriend()
         {
             bool suc = false;
             bool exed = false;
