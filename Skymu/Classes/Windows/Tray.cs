@@ -117,6 +117,7 @@ namespace Skymu
             new MenuItem() { Header = Universal.Lang["sTRAYMENU_SHOWFRIENDS"], Command = OpenSkype },
             new Separator(),
             new MenuItem() { Header = Universal.Lang["sTRAYMENU_QUIT"], Command = new RelayCommand(() => Universal.Close()) }
+            // TODO: Hang up menu with list of contacts with active calls (and "hang up all"? I'm not sure about that)
         };
 
         public static TrayIcon trayIcon = new TrayIcon()
