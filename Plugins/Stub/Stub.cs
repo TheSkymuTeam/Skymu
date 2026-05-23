@@ -460,6 +460,8 @@ namespace Stub
             return new WaveOutEvent();
         }
 
+        private TaskCompletionSource<bool> _waiter;
+
         // Call will be picked up as soon as something is returned
         public async Task<ActiveCall> StartCall(
             string convo_id,
@@ -489,18 +491,20 @@ namespace Stub
             _out.Init(silence);
             _out.Play();
 
-            TaskCompletionSource<bool> waiter =
+            _waiter =
                 new TaskCompletionSource<bool>();
 
             Thread thread = new Thread(_ =>
             {
                 Thread.Sleep(3200);
-                waiter.SetResult(true);
+                _waiter?.TrySetResult(true);
             });
 
             thread.Start();
 
-            await waiter.Task;
+            bool cont = await _waiter.Task;
+
+            if (!cont) return null;
 
             _out.Stop();
             _out.Dispose();
@@ -520,7 +524,9 @@ namespace Stub
 
         public async Task<bool> EndCall(ActiveCall call)
         {
+            _waiter?.TrySetResult(false);
             _out?.Stop();
+            _out?.Dispose();
             return true;
         }
 
