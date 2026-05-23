@@ -39,7 +39,7 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
-        internal static bool TestMode = false; // disables plugin login, signs you directly into stub
+        internal static bool TestMode = true; // disables plugin login, signs you directly into stub
         internal static bool DisableAutoLogin = false; // disables plugin auto login for testing
 
         public const string Name = "Skymu";
@@ -127,12 +127,17 @@ namespace Skymu
 
         public static string GetCultureCode(string displayName)
         {
-            return CultureInfo.GetCultures(CultureTypes.AllCultures)
-                .FirstOrDefault(c =>
-                    c.NativeName.StartsWith(displayName) ||
-                    c.DisplayName.StartsWith(displayName) ||
-                    c.EnglishName.StartsWith(displayName)
-                )?.Name ?? "en-US";
+            try
+            {
+                return CultureInfo.GetCultures(CultureTypes.AllCultures)
+                    .FirstOrDefault(c =>
+                        c.NativeName.StartsWith(displayName) ||
+                        c.DisplayName.StartsWith(displayName) ||
+                        c.EnglishName.StartsWith(displayName)
+                    )?.Name ?? "en-US";
+            }
+            catch { }
+            return "en-US";
         }
 
         private void App_Startup(object sender, StartupEventArgs e)

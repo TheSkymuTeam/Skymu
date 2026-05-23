@@ -135,14 +135,16 @@ namespace Skymu
         {
             string json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", "home.json"));
 
-            string cultureName =
-                CultureInfo
-                    .GetCultures(CultureTypes.AllCultures)
+            string cultureName = "en-US";
+            try
+            {
+                cultureName = CultureInfo.GetCultures(CultureTypes.AllCultures)
                     .FirstOrDefault(c =>
                         c.NativeName.StartsWith(Settings.Language) ||
                         c.DisplayName.StartsWith(Settings.Language) ||
                         c.EnglishName.StartsWith(Settings.Language)
                     )?.Name ?? "en-US";
+            } catch { }
 
             string langChunk = cultureName.Split('-')[0];
 
