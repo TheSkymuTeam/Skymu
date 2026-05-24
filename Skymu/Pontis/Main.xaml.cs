@@ -232,8 +232,11 @@ namespace Skymu.Pontis
         #region Menu bar
 
         private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
+        private static (string, NativeSubMenu) MI(string label, NativeSubMenu subMenu) { return (label, subMenu); }
+        private static (string, EventHandler, IntPtr?) MI(string label, EventHandler handler, IntPtr? hBitmap) { return (label, handler, hBitmap); }
         private static (string, EventHandler) MI(string label) { return (label, null); }
         private static (string, EventHandler) SEP() { return ("$", null); }
+        private static IntPtr ICN(int index) => BitmapHelper.IconFromSheet($"pack://application:,,,/Pontis/Assets/Universal/Icon Bitmap/skype-status-big.png", index);
 
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
@@ -242,7 +245,15 @@ namespace Skymu.Pontis
             _menuBar = new NativeMenuBar(this);
 
             _menuBar.Create(L("sMAINMENU_SKYPE"),
-                MI(L("sMAINMENU_SKYPE_ONLINESTATUS")),
+                MI(L("sMAINMENU_SKYPE_ONLINESTATUS"), new NativeSubMenu(_menuBar).CreateWithIcons(L("sMAINMENU_SKYPE_ONLINESTATUS"),
+                    MI(L("sTRAYHINT_USER_ONLINE"), (s, e2) => OnStatus(PresenceStatus.Online), ICN(2)),
+                    MI(L("sTRAYHINT_USER_AWAY"), (s, e2) => OnStatus(PresenceStatus.Away), ICN(3)),
+                    MI(L("sTRAYHINT_USER_DND"), (s, e2) => OnStatus(PresenceStatus.DoNotDisturb), ICN(5)),
+                    MI(L("sTRAYHINT_USER_INVISIBLE"), (s, e2) => OnStatus(PresenceStatus.Invisible), ICN(6)),
+                    MI(L("sTRAYHINT_USER_OFFLINE"), (s, e2) => OnStatus(PresenceStatus.Offline), ICN(6)),
+                    ("$", null, null),
+                    MI(L("sSTATUSMENU_CAPTION_CF_OPTIONS2"), null, ICN(13))
+                )),
                 SEP(),
                 MI(L("sMAINMENU_SKYPE_PRIVACY")),
                 MI(L("sMAINMENU_SKYPE_ACCOUNT")),
@@ -255,7 +266,7 @@ namespace Skymu.Pontis
             );
 
             _menuBar.Create(L("sMAINMENU_CONTACTS"),
-                MI(L("sMAINMENU_CONTACTS_ADD_CONTACT")),
+                MI(L("sMAINMENU_CONTACTS_ADD_CONTACT"), (s, e2) => OnAddContact(null, null)),
                 MI(L("sMAINMENU_CONTACTS_NEW_CONTACT")),
                 MI(L("sMAINMENU_CONTACTS_SEARCH")),
                 MI(L("sMAINMENU_CONTACTS_IMPORT")),
@@ -286,7 +297,7 @@ namespace Skymu.Pontis
             );
 
             _menuBar.Create(L("sMAINMENU_CALL"),
-                MI(L("sMAINMENU_CALL")),
+                MI(L("sMAINMENU_CALL"), (s, e2) => OnCall(null, null)),
                 MI(L("sMAINMENU_CALL_START_VIDEO")),
                 MI(L("sMAINMENU_CALL_ANSWER")),
                 SEP(),
@@ -316,7 +327,7 @@ namespace Skymu.Pontis
                 MI(L("sMAINMENU_VIEW_SMSMESSAGES")),
                 MI(L("sMAINMENU_VIEW_INSTANT_MESSAGES")),
                 SEP(),
-                MI(L("sMAINMENU_VIEW_HOME")),
+                MI(L("sMAINMENU_VIEW_HOME"), (s, e2) => OnHome(null, null)),
                 MI(L("sMAINMENU_VIEW_PROFILE")),
                 MI(L("sMAINMENU_VIEW_CALL_PHONES")),
                 MI(L("sMAINMENU_VIEW_SNAPSHOTS_GALLERY")),
@@ -813,6 +824,8 @@ namespace Skymu.Pontis
             _ = SelectTab(btnRecents);
         }
 
+        private void OnHome(object sender, RoutedEventArgs e) => SetWindow(WindowType.Home);
+
         private void OnOptions(object sender, RoutedEventArgs e)
         {
             new Options("Metro.Background").Show();
@@ -833,9 +846,13 @@ namespace Skymu.Pontis
             new Updater(true);
         }
 
+        private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
+
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
+
+        private async void OnStatus(PresenceStatus status) => _ = Universal.Plugin.SetConnectionStatus(status);
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
@@ -878,6 +895,8 @@ namespace Skymu.Pontis
             SelectSidebarTopRowButton(AddContactButton);
             SearchBox.Focus();
         }
+
+        private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(sender, null);
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
         {
