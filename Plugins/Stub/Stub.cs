@@ -79,7 +79,11 @@ namespace Stub
         #endregion
 
         // Also called on logout
-        public void Dispose() { }
+        public void Dispose() {
+            _out.Stop();
+            _out.Dispose();
+            _out = null;
+        }
 
         public async Task<LoginResult> Authenticate(
             AuthenticationMethod authType,
@@ -527,6 +531,7 @@ namespace Stub
             _waiter?.TrySetResult(false);
             _out?.Stop();
             _out?.Dispose();
+            _out = null;
             return true;
         }
 
