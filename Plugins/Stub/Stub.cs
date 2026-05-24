@@ -80,8 +80,8 @@ namespace Stub
 
         // Also called on logout
         public void Dispose() {
-            _out.Stop();
-            _out.Dispose();
+            _out?.Stop();
+            _out?.Dispose();
             _out = null;
         }
 
@@ -444,6 +444,7 @@ namespace Stub
 
         public Task<bool> SetConnectionStatus(PresenceStatus status)
         {
+            Me.ConnectionStatus = status;
             return Task.FromResult(true);
         }
 
