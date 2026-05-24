@@ -717,7 +717,7 @@
                                 x:Name="SidebarColumn"
                                 Width="300"
                                 MinWidth="172" />
-                            <ColumnDefinition Width="4" />
+                            <ColumnDefinition x:Name="SkypeSplitterColumn" Width="4" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid
@@ -1285,8 +1285,9 @@
                             Margin="0,1"
                             DataContext="{Binding SelectedItem, ElementName=ConversationList}">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition x:Name="TopbarWindowRow" Height="120" />
+                                <RowDefinition x:Name="ChatTopBarRow" Height="Auto" />
+                                <RowDefinition x:Name="TopbarWindowRow" Height="120" MinHeight="120" MaxHeight="256" />
+                                <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                 <RowDefinition x:Name="MessageWindowRow" Height="*" />
                             </Grid.RowDefinitions>
                             <Border
@@ -1609,14 +1610,21 @@
                                 </ContentControl>
                             </Grid>
 
+                            <Rectangle
+                                x:Name="ChatTopBarSplitter"
+                                Grid.Row="2"
+                                Cursor="SizeNS"
+                                Fill="Transparent"
+                                MouseLeftButtonDown="ChatTopBarSplitter_Press"
+                                MouseMove="ChatTopBarSplitter_MouseMove" />
                             <Border
                                 x:Name="MessageWindow"
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Margin="0,4,0,0"
                                 Background="{StaticResource Metro.Background}">
                                 <Grid>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="34" />
+                                        <RowDefinition x:Name="ChatButtonRow" Height="34" />
                                         <RowDefinition Height="1" />
                                         <RowDefinition Height="181*" />
                                         <RowDefinition Height="367*" />
