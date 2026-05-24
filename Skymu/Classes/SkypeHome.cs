@@ -12,6 +12,7 @@
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,10 @@ namespace Skymu
             // _browser.Navigate(new Uri("https://skymu.app/home")); not using the web home for now
 
             string local_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Home", "index.html");
+            // file://127.0.0.1/c$/path/to/Home/index.html
+            // https://stackoverflow.com/a/956152
+            local_path = "file://127.0.0.1/" + local_path.Substring(0, 1) + "$" + local_path.Substring(2);
+            Debug.WriteLine($"Navigating to {local_path}");
             _browser.Navigate(new Uri(local_path));
         }
 
