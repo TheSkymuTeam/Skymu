@@ -197,8 +197,9 @@ namespace Tox
         void OnFriendReadReceipt(IntPtr tox, UInt32 fid, UInt32 mid, IntPtr user_data)
         {
             var core = GC(user_data);
-            if (core.messages.TryGetValue(fid, out var message))
+            if (core.messages.TryGetValue(mid, out var message))
             {
+                core.messages.Remove(mid);
                 message.Time = TIME();
                 core.UCP(_ => core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(new Friend(tox, fid).publicKey), message, false)));
             }
