@@ -98,7 +98,7 @@ namespace Skymu.Helpers
                 BitmapEncoder enc = new PngBitmapEncoder();
 
                 enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-
+                enc.Save(outStream);
                 outStream.Position = 0;
 
                 Bitmap bitmap = new Bitmap(outStream);
