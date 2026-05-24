@@ -702,7 +702,12 @@ namespace Discord
                     proto._proto.Status.Status = "offline";
                     break;
             }
-            return await proto.UpdateProtoSettings(proto._proto);
+            if (await proto.UpdateProtoSettings(proto._proto))
+            {
+                _currentUser.ConnectionStatus = status;
+                return true;
+            }
+            else return false;
         }
 
         public async Task<bool> SetTextStatus(string custStatus)

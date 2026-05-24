@@ -723,6 +723,8 @@ namespace Matrix
                     $"{_homeserver}/_matrix/client/r0/presence/{Uri.EscapeDataString(_user.Identifier)}/status?access_token={_accessToken}",
                     new StringContent(bodyJson, Encoding.UTF8, "application/json")))
                 {
+                    if (response.IsSuccessStatusCode)
+                        _user.ConnectionStatus = status;
                     return response.IsSuccessStatusCode;
                 }
             }
