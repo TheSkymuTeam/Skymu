@@ -9,26 +9,56 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using NAudio.Wave;
 using Skymu.Preferences;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
-using System.Media;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
-# pragma warning disable CA1416
 
 namespace Skymu
 {
     static class Sounds
     {
-        static readonly Dictionary<string, SoundPlayer> players =
-            new Dictionary<string, SoundPlayer>();
+        class CachedSound
+        {
+            public byte[] Data;
+
+            public CachedSound(byte[] data)
+            {
+                Data = data;
+            }
+
+            public WaveFileReader CreateReader()
+            {
+                return new WaveFileReader(new MemoryStream(Data, false));
+            }
+        }
+
+        static Dictionary<string, CachedSound> sounds =
+            new Dictionary<string, CachedSound>();
+
+        static readonly ConcurrentDictionary<string, WaveOutEvent> loops =
+            new ConcurrentDictionary<string, WaveOutEvent>();
 
         public static void Init()
         {
+            Settings.Default.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == "SoundPack")
+                {
+                    LoadSounds();
+                }
+            };
+            LoadSounds();
+        }
+
+        static void LoadSounds()
+        {
+            sounds = new Dictionary<string, CachedSound>();
             Load("message-sent", "IM_SENT.WAV");
             Load("message-recieved", "IM.WAV");
             Load("call-error", "CALL_ERROR1.WAV");
@@ -46,89 +76,178 @@ namespace Skymu
         {
             if (path == "")
                 path = Settings.SoundPack;
-            var uri = new Uri($"pack://application:,,,/Sounds/{path}/{filename}", UriKind.Absolute);
-            bool suc = false;
-            System.Windows.Resources.StreamResourceInfo streamInfo = null;
+
+            var uri = new Uri(
+                $"pack://application:,,,/Sounds/{path}/{filename}",
+                UriKind.Absolute
+            );
+
             try
             {
-                streamInfo = Application.GetResourceStream(uri);
-                suc = true;
-            }
-            catch (IOException) { }
-            if (suc && streamInfo?.Stream != null)
-            {
-                var ms = new MemoryStream();
-                streamInfo.Stream.CopyTo(ms);
-                ms.Position = 0;
+                var sri = Application.GetResourceStream(uri);
 
-                var sp = new SoundPlayer(ms);
-                sp.Load();
-                players[key] = sp;
-            }
-            else if (fallback != string.Empty && path != fallback)
-            {
-                Load(key, filename, fallback, "Skymu");
-            }
-        }
-
-        public static bool forcelock = false;
-
-        public static void Play(string key, bool force = false)
-        {
-            if (!players.TryGetValue(key, out var sp))
-                return;
-
-            if (force)
-            {
-                forcelock = true;
-                Task.Run(() =>
+                if (sri?.Stream != null)
                 {
-                    sp.PlaySync();
-                    forcelock = false;
-                });
-            }
-            else
-            {
-                if (!forcelock)
-                {
-                    sp.Play();
+                    using (var ms = new MemoryStream())
+                    {
+                        sri.Stream.CopyTo(ms);
+                        sounds[key] = new CachedSound(ms.ToArray());
+                    }
+
+                    return;
                 }
             }
+            catch
+            {
+            }
+
+            if (fallback != string.Empty && path != fallback)
+                Load(key, filename, fallback, "Skymu");
+        }
+
+        public static void Play(string key)
+        {
+            if (!sounds.TryGetValue(key, out var snd))
+                return;
+
+            Task.Run(() =>
+            {
+                var output = new WaveOutEvent();
+                var reader = snd.CreateReader();
+
+                output.Init(reader);
+
+                output.PlaybackStopped += (s, e) =>
+                {
+                    reader.Dispose();
+                    output.Dispose();
+                };
+
+                output.Play();
+
+                while (output.PlaybackState == PlaybackState.Playing)
+                    Thread.Sleep(10);
+            });
         }
 
         public static async Task PlayAsync(string key, CancellationToken token = default)
         {
-            if (!players.TryGetValue(key, out var sp))
+            if (!sounds.TryGetValue(key, out var snd))
                 return;
-            await Task.Run(
-                () =>
-                {
-                    if (token.IsCancellationRequested)
-                        return;
-                    sp.PlaySync();
-                },
-                token
-            );
-        }
 
-        public static void StopPlayback(string key)
-        {
-            if (!players.TryGetValue(key, out var sp))
-                return;
-            Task.Run(() => sp.Stop());
+            await Task.Run(() =>
+            {
+                if (token.IsCancellationRequested)
+                    return;
+
+                using (var output = new WaveOutEvent())
+                using (var reader = snd.CreateReader())
+                {
+                    output.Init(reader);
+                    output.Play();
+
+                    while (
+                        output.PlaybackState == PlaybackState.Playing &&
+                        !token.IsCancellationRequested
+                    )
+                    {
+                        Thread.Sleep(10);
+                    }
+
+                    if (token.IsCancellationRequested)
+                        output.Stop();
+                }
+            }, token);
         }
 
         public static void PlayLoop(string key)
         {
-            if (!players.TryGetValue(key, out var sp))
+            StopPlayback(key);
+
+            if (!sounds.TryGetValue(key, out var snd))
                 return;
-            sp.PlayLooping();
+
+            var output = new WaveOutEvent();
+            var reader = snd.CreateReader();
+            var loop = new LoopStream(reader);
+
+            output.Init(loop);
+            output.Play();
+
+            loops[key] = output;
+        }
+
+        public static void StopPlayback(string key)
+        {
+            if (loops.TryRemove(key, out var output))
+            {
+                output.Stop();
+                output.Dispose();
+            }
         }
 
         public static void PlaySynchronous(string key)
         {
-            if (players.TryGetValue(key, out var sp))
-                sp.PlaySync();
+            if (!sounds.TryGetValue(key, out var snd))
+                return;
+
+            using (var output = new WaveOutEvent())
+            using (var reader = snd.CreateReader())
+            {
+                output.Init(reader);
+                output.Play();
+
+                while (output.PlaybackState == PlaybackState.Playing)
+                    Thread.Sleep(10);
+            }
+        }
+    }
+
+    class LoopStream : WaveStream
+    {
+        readonly WaveStream source;
+
+        public LoopStream(WaveStream source)
+        {
+            this.source = source;
+        }
+
+        public override WaveFormat WaveFormat => source.WaveFormat;
+
+        public override long Length => long.MaxValue;
+
+        public override long Position
+        {
+            get => source.Position;
+            set => source.Position = value;
+        }
+
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            int total = 0;
+
+            while (total < count)
+            {
+                int read = source.Read(buffer, offset + total, count - total);
+
+                if (read == 0)
+                {
+                    source.Position = 0;
+                    continue;
+                }
+
+                total += read;
+            }
+
+            return total;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                source.Dispose();
+
+            base.Dispose(disposing);
         }
     }
 }

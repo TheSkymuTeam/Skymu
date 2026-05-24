@@ -132,7 +132,7 @@ namespace Skymu.Views
                     return;
                 while (!token.IsCancellationRequested)
                 {
-                    await Sounds.PlayAsync("call-out", token);
+                    await Sounds.PlayAsync(Settings.CallOutToReconnectSound ? "call-reconnect" : "call-out", token);
                 }
             });
 
@@ -151,7 +151,7 @@ namespace Skymu.Views
 
             if (call == null)
             {
-                Sounds.Play("call-error", true);
+                Sounds.Play("call-error");
                 HangUpRequested(this, EventArgs.Empty);
             }
             else
@@ -336,7 +336,7 @@ namespace Skymu.Views
             _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;
-            Sounds.Play("call-end", true);
+            Sounds.Play("call-end");
 
             if (isFullscreen)
             {

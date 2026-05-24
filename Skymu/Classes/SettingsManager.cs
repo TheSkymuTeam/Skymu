@@ -162,6 +162,11 @@ namespace Skymu.Preferences
             get => S("RoomCallUI", false);
             set => W("RoomCallUI", value, nameof(RoomCallUI));
         }
+        public static bool CallOutToReconnectSound
+        {
+            get => S("CallOutToReconnectSound", false);
+            set => W("CallOutToReconnectSound", value, nameof(CallOutToReconnectSound));
+        }
         public static string SkippedVersion
         {
             get => S("SkippedVersion", string.Empty);
