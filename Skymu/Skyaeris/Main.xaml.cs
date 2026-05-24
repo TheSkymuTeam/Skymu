@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using NullSoftware.ToolKit;
 using Skymu.Classes;
 using Skymu.Converters;
 using Skymu.Emoticons;
@@ -992,8 +993,6 @@ namespace Skymu.Skyaeris
         protected override void OnClosed(EventArgs e)
         {
             WindowPlacementHelper.Save(this, SidebarColumn);
-
-            Settings.Default.PropertyChanged -= RefreshCreds;
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -1011,9 +1010,11 @@ namespace Skymu.Skyaeris
             _ = SelectTab(btnRecents);
         }
 
+        private void OnHome(object sender, RoutedEventArgs e) => SetWindow(WindowType.Home);
+
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.Options("Background").Show();
+            new Views.OptionsNew("Background").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)
@@ -1038,6 +1039,35 @@ namespace Skymu.Skyaeris
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
+
+        private PresenceStatus[] _indexToStatus = new PresenceStatus[]
+        {
+            PresenceStatus.Online,
+            PresenceStatus.Away,
+            PresenceStatus.DoNotDisturb,
+            PresenceStatus.Invisible
+        };
+        private async void OnStatus(object sender, RoutedEventArgs e)
+        {
+            int i = 0;
+            foreach (var item in MenubarStatusHolder.Items)
+            {
+                if (!(item is MenuItem mitem) || ((MenuItem)sender).Header != mitem.Header)
+                {
+                    if (item is MenuItem mitemm)
+                        Debug.WriteLine(mitemm?.Header);
+                    i++;
+                    continue;
+                }
+                _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
+                return;
+            }
+            Universal.MessageBox(
+                "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
+                "Failed to set connection status",
+                WindowBase.IconType.Error
+            );
+        }
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
@@ -1740,6 +1770,7 @@ namespace Skymu.Skyaeris
             MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
 
             Settings.Default.PropertyChanged += RefreshCreds;
+            Universal.Lang.PropertyChanged += RefreshCreds;
             RefreshCreds();
 
             
@@ -1818,15 +1849,7 @@ namespace Skymu.Skyaeris
             if (status == PresenceStatus.Unknown)
                 return;
 
-            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-
-            if (!await Universal.Plugin.SetConnectionStatus(status))
-            {
-                status = currentStatus;
-                if (Universal.CurrentUser != null)
-                    Universal.CurrentUser.ConnectionStatus = status;
-                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            }
+            _ = Universal.Plugin.SetConnectionStatus(status);
         }
 
         #endregion
