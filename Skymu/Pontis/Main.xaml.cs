@@ -162,6 +162,14 @@ namespace Skymu.Pontis
                     ConversationList.SelectedItem = null;
                     ClearTreeSelection(ServersList);
                     SelectedContact = null;
+
+                    MessageWindowRow.Height = new GridLength(0);
+
+                    ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                    topbarWindowRowHeight = TopbarWindowRow.Height.Value;
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
                     break;
 
                 case WindowType.Chat:
@@ -172,8 +180,13 @@ namespace Skymu.Pontis
                     browser.Visibility = Visibility.Collapsed;
                     HomeUnavailable.Visibility = Visibility.Collapsed;
 
-                    TopbarWindowRow.Height = new GridLength(120);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+
+                    ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
+                    TopbarWindowRow.MaxHeight = screen == null ? topbarWindowRowOrigMaxHeight : ChatArea.ActualHeight * 0.7;
+                    if (location != null)
+                        SetCallPageLocation(location);
                     break;
             }
         }
@@ -558,15 +571,19 @@ namespace Skymu.Pontis
 
         #endregion
 
-        #region Sidebar resizing
+        #region Resizing stuff
 
-        private bool isDragging = false;
+        private double topbarWindowRowOrigMaxHeight;
+        private double topbarWindowRowOrigHeight;
+
+        private bool SkypeSplitterIsDragging = false;
+        private bool ChatTopBarSplitterIsDragging = false;
         private Point dragStart;
         private UIElement capturedElement = null;
 
         private void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDragging)
+            if (SkypeSplitterIsDragging)
             {
                 Point current = e.GetPosition(this);
                 Vector delta = current - dragStart;
@@ -589,7 +606,46 @@ namespace Skymu.Pontis
 
         private void SkypeSplitter_Press(object sender, MouseButtonEventArgs e)
         {
-            isDragging = true;
+            MouseRelease(null, null); // Release previous element first. Potentially avoids weird behavior on touch screen, etc.
+            SkypeSplitterIsDragging = true;
+            dragStart = e.GetPosition(this);
+            capturedElement = sender as UIElement;
+
+            if (capturedElement != null)
+            {
+                capturedElement.CaptureMouse();
+                e.Handled = true;
+            }
+        }
+
+        private void ChatTopBarSplitter_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ChatTopBarSplitterIsDragging)
+            {
+                Point current = e.GetPosition(this);
+                Vector delta = current - dragStart;
+                RowDefinition row = ChatArea.RowDefinitions[1];
+                double max = row.MaxHeight;
+                double min = row.MinHeight;
+
+                double newWidth = row.Height.Value + delta.Y;
+
+                if (newWidth < min)
+                    newWidth = min;
+                if (newWidth > max)
+                    newWidth = max;
+
+                row.Height = new GridLength(newWidth);
+                dragStart = current;
+
+                Sidebar_SizeChanged_Refresh();
+            }
+        }
+
+        private void ChatTopBarSplitter_Press(object sender, MouseButtonEventArgs e)
+        {
+            MouseRelease(null, null);
+            ChatTopBarSplitterIsDragging = true;
             dragStart = e.GetPosition(this);
             capturedElement = sender as UIElement;
 
@@ -602,16 +658,18 @@ namespace Skymu.Pontis
 
         private void MouseRelease(object sender, MouseButtonEventArgs e)
         {
-            if (isDragging)
+            if (SkypeSplitterIsDragging || ChatTopBarSplitterIsDragging)
             {
-                isDragging = false;
+                SkypeSplitterIsDragging = false;
+                ChatTopBarSplitterIsDragging = false;
 
                 if (capturedElement != null && capturedElement.IsMouseCaptured)
                 {
                     capturedElement.ReleaseMouseCapture();
                 }
                 capturedElement = null;
-                e.Handled = true;
+                if (e != null)
+                    e.Handled = true;
             }
         }
 
@@ -671,6 +729,8 @@ namespace Skymu.Pontis
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
+            if (screen != null)
+                TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
         }
 
         private void ServersList_SelectedItemChanged(
@@ -928,18 +988,51 @@ namespace Skymu.Pontis
 
         private Frame frame;
         private CallScreen screen;
+        private CallScreen.LocationChangeEventArgs location;
+
+        private double sidebarOrigWidth; // dynamic
+        private double sidebarOrigMinWidth;
+        private GridLength skypeSplitterColumnOrigWidth;
+        private double topbarWindowRowHeight;
+        private double topbarWindowRowOrigMinHeight;
+        private double topbarWindowRowOrigMaxHeight4C; // 4C = 4 call
+        private double chatButtonRowOrigHeight;
 
         private async void StartCall(User partner = null)
         {
             bool answer_call = true;
             if (Universal.CallPlugin == null)
                 return;
-            if (!(vmodel.SelectedConversation is DirectMessage dm))
-                return; // group calls not supported yet
 
-            if (partner == null) { partner = dm.Partner; answer_call = false; }
+            if (partner == null)
+            {
+                if (!(vmodel.SelectedConversation is DirectMessage dm))
+                    return; // group calls not supported yet
+                partner = dm.Partner;
+                answer_call = false;
+            }
+            // TODO: Retain on recall/reboot optionally
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(true, false);
+
+            if (topbarWindowRowOrigHeight == default)
+                topbarWindowRowOrigHeight = TopbarWindowRow.Height.Value;
+            if (skypeSplitterColumnOrigWidth == default)
+                skypeSplitterColumnOrigWidth = SkypeSplitterColumn.Width;
+            if (sidebarOrigMinWidth == default)
+                sidebarOrigMinWidth = SidebarColumn.MinWidth;
+            if (topbarWindowRowOrigMinHeight == default)
+                topbarWindowRowOrigMinHeight = TopbarWindowRow.MinHeight;
+            if (topbarWindowRowOrigMaxHeight4C == default)
+                topbarWindowRowOrigMaxHeight4C = TopbarWindowRow.MaxHeight;
+            if (chatButtonRowOrigHeight == default)
+                chatButtonRowOrigHeight = ChatButtonRow.Height.Value;
+            sidebarOrigWidth = SidebarColumn.Width.Value;
+            TopbarWindowRow.MinHeight = 250;
+            TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
+            TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
+            ChatButtonRow.Height = new GridLength(0);
+
             screen = new CallScreen(partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
@@ -962,13 +1055,28 @@ namespace Skymu.Pontis
 
         private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
         {
-            frame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-            frame.VerticalContentAlignment = VerticalAlignment.Stretch;
-            frame.HorizontalAlignment = HorizontalAlignment.Stretch;
-            frame.VerticalAlignment = VerticalAlignment.Stretch;
+            this.location = location;
+            if (frame != null)
+            {
+                frame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                frame.VerticalContentAlignment = VerticalAlignment.Stretch;
+                frame.HorizontalAlignment = HorizontalAlignment.Stretch;
+                frame.VerticalAlignment = VerticalAlignment.Stretch;
+            }
 
             if (location == null)
             {
+                SetCallPageLocation(new CallScreen.LocationChangeEventArgs(true, true)); // quickly reset stuff
+                if (FillWindowHost.Content == frame)
+                    FillWindowHost.Content = null;
+                if (FillMessagePanelHost.Content == frame)
+                    FillMessagePanelHost.Content = null;
+                ChatProfileArea.Visibility = Visibility.Visible;
+                FillMessagePanelHost.Visibility = Visibility.Collapsed;
+                TopbarWindowRow.MinHeight = topbarWindowRowOrigMinHeight;
+                TopbarWindowRow.MaxHeight = topbarWindowRowOrigMaxHeight4C;
+                TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
+                ChatButtonRow.Height = new GridLength(chatButtonRowOrigHeight);
                 if (screen != null)
                 {
                     screen.HangUpRequested -= OnHangUp;
@@ -979,33 +1087,77 @@ namespace Skymu.Pontis
                     frame.Content = null;
                     frame = null;
                 }
-                if (FillWindowHost.Content == frame)
-                    FillWindowHost.Content = null;
-                if (FillMessagePanelHost.Content == frame)
-                    FillMessagePanelHost.Content = null;
-                ContentArea.Visibility = Visibility.Visible;
+                this.location = null;
                 SetWindow(WindowType.Chat, true);
             }
             else
             {
+                // Disable it here (bugfix)
+                ChatProfileArea.Visibility = Visibility.Collapsed;
+                // Show ContentArea here, as it is visible in all cases except with both sidebar and chat hidden
+                ContentArea.Visibility = Visibility.Visible;
+                // Same for this, but with chat hidden only now
+                ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+
+
+                if (FillWindowHost.Content == frame)
+                    FillWindowHost.Content = null;
+                if (FillMessagePanelHost.Content == frame)
+                    FillMessagePanelHost.Content = null;
+
+                // Show sidebar
                 if (location.SidebarToggle)
                 {
-                    if (FillWindowHost.Content == frame)
-                        FillWindowHost.Content = null;
-                    ContentArea.Visibility = Visibility.Visible;
-                    ChatProfileArea.Visibility = Visibility.Collapsed;
-                    FillMessagePanelHost.Visibility = Visibility.Visible;
-                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    MessageWindowRow.Height = new GridLength(0);
-                    FillMessagePanelHost.Content = frame;
+                    SidebarColumn.Width = new GridLength(sidebarOrigWidth);
+                    SidebarColumn.MinWidth = sidebarOrigMinWidth;
+                    SkypeSplitterColumn.Width = skypeSplitterColumnOrigWidth;
                 }
-                else if (!location.SidebarToggle)
+                // Show chat
+                if (location.ChatToggle)
                 {
-                    if (FillMessagePanelHost.Content == frame)
-                        FillMessagePanelHost.Content = null;
+                    if (topbarWindowRowHeight == default)
+                        topbarWindowRowHeight = ChatArea.ActualHeight * 0.7;
+                    TopbarWindowRow.Height = new GridLength(topbarWindowRowHeight);
+                    MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
+                    ChatTopBarSplitter.Visibility = Visibility.Visible;
+                }
+                // Show everything
+                if (location.SidebarToggle && location.ChatToggle)
+                {
+                    TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
+                    MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    FillMessagePanelHost.Content = frame;
+                    ChatTopBarRow.MaxHeight = Double.PositiveInfinity;
+                    return;
+                }
+                // Show nothing
+                if (!location.SidebarToggle && !location.ChatToggle)
+                {
                     ContentArea.Visibility = Visibility.Collapsed;
                     FillWindowHost.Content = frame;
+                    return;
                 }
+                // Hide sidebar (also the ChatTopbar)
+                if (!location.SidebarToggle)
+                {
+                    sidebarOrigWidth = SidebarColumn.Width.Value;
+                    SidebarColumn.Width = new GridLength(0);
+                    SidebarColumn.MinWidth = 0;
+                    SkypeSplitterColumn.Width = new GridLength(0);
+                    ChatTopBarRow.MaxHeight = 0;
+                }
+                // Hide chat
+                else if (!location.ChatToggle)
+                {
+                    topbarWindowRowHeight = TopbarWindowRow.Height.Value;
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    MessageWindowRow.Height = new GridLength(0);
+                    TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
+                }
+                // We fill the message panel in sidebar or chat shown cases
+                FillMessagePanelHost.Visibility = Visibility.Visible;
+                FillMessagePanelHost.Content = frame;
             }
         }
 
@@ -1327,6 +1479,7 @@ namespace Skymu.Pontis
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
+                Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
 
@@ -1393,6 +1546,7 @@ namespace Skymu.Pontis
 
             vmodel.SubscribeTypingIndicator();
 
+            topbarWindowRowOrigMaxHeight = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
             // seanFinx Crazy Hack
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;

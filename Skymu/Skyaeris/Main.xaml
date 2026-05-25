@@ -1475,8 +1475,9 @@
                                 Grid.Column="2"
                                 DataContext="{Binding SelectedItem, ElementName=ConversationList}">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="32" />
-                                    <RowDefinition x:Name="TopbarWindowRow" Height="130" />
+                                    <RowDefinition x:Name="ChatTopBarRow" Height="32" />
+                                    <RowDefinition x:Name="TopbarWindowRow" Height="130" MinHeight="130" MaxHeight="256" />
+                                    <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                     <RowDefinition x:Name="MessageWindowRow" Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid
@@ -1927,17 +1928,23 @@
                                         </ContentControl>
                                     </Grid>
                                 </Border>
+                                <Rectangle
+                                    x:Name="ChatTopBarSplitter"
+                                    Grid.Row="2"
+                                    Cursor="SizeNS"
+                                    Fill="Transparent"
+                                    MouseLeftButtonDown="ChatTopBarSplitter_Press"
+                                    MouseMove="ChatTopBarSplitter_MouseMove" />
                                 <Border
                                     x:Name="MessageWindow"
-                                    Grid.Row="2"
-                                    Margin="0,4,0,0"
+                                    Grid.Row="3"
                                     Background="{StaticResource Card.Background}"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,1,1,1"
                                     CornerRadius="4,4,4,4">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="34" />
+                                            <RowDefinition x:Name="ChatButtonRow" Height="34" />
                                             <RowDefinition Height="1" />
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="20" />

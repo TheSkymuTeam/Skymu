@@ -39,6 +39,7 @@ namespace Skymu
     public partial class SliceControl : UserControl
     {
         #region Constructor
+        private Brush _background;
         private ButtonVisualState _visualState = ButtonVisualState.Default;
         private static DispatcherTimer _sharedAnimationTimer;
         private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
@@ -64,11 +65,12 @@ namespace Skymu
         private ImageBrush _overlayMidBrush;
         private ImageBrush _overlayRightBrush;
 
-        private const double PressedTextOffsetY = 1.0;
+        private const double PressedDefaultOffsetY = 1.0;
 
         public SliceControl()
         {
             InitializeComponent();
+            _background = Background;
             _overlayRects = new[] { OverlayLeft, OverlayMiddle, OverlayRight };
 
             // Mouse events
@@ -76,8 +78,7 @@ namespace Skymu
             {
                 if (!IsEnabled)
                     return;
-                if (HoverIndex != -1)
-                    SetStateInternal(ButtonVisualState.Hover);
+                SetStateInternal(ButtonVisualState.Hover);
             };
 
             MouseLeave += (s, e) =>
@@ -93,13 +94,9 @@ namespace Skymu
             {
                 if (!IsEnabled)
                     return;
-
-                if (PressedIndex != -1)
-                {
-                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
-                        return;
-                    SetStateInternal(ButtonVisualState.Pressed);
-                }
+                if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
+                    return;
+                SetStateInternal(ButtonVisualState.Pressed);
             };
 
             MouseLeftButtonUp += (s, e) =>
@@ -107,17 +104,14 @@ namespace Skymu
                 if (!IsEnabled)
                     return;
 
-                if (PressedIndex != -1)
-                {
-                    var newState =
-                        (IsMouseOver && HoverIndex != -1)
-                            ? ButtonVisualState.Hover
-                            : ButtonVisualState.Default;
+                var newState =
+                    (IsMouseOver && HoverIndex != -1)
+                        ? ButtonVisualState.Hover
+                        : ButtonVisualState.Default;
 
-                    if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
-                        return;
-                    SetStateInternal(newState);
-                }
+                if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
+                    return;
+                SetStateInternal(newState);
 
                 if (Command != null)
                 {
@@ -186,6 +180,7 @@ namespace Skymu
             {
                 UpdateHitTestState();
                 UpdateTextOffset();
+                UpdateIconOffset();
                 SetStateInternal(IsEnabled ? ButtonStateOnInit : ButtonVisualState.Disabled);
                 _animatingControls.Remove(this);
                 UpdateAnimation();
@@ -211,6 +206,32 @@ namespace Skymu
         #endregion
 
         #region Properties
+
+        public Brush BackgroundHover
+        {
+            get { return (Brush)GetValue(BackgroundHoverProperty); }
+            set { SetValue(BackgroundHoverProperty, value); }
+        }
+        public static readonly DependencyProperty BackgroundHoverProperty =
+            DependencyProperty.Register(
+               nameof(BackgroundHover),
+               typeof(Brush),
+               typeof(SliceControl),
+               new PropertyMetadata(null, OnAnyPropertyChanged)
+           );
+
+        public Brush BackgroundPressed 
+        {
+            get { return (Brush)GetValue(BackgroundPressedProperty); }
+            set { SetValue(BackgroundPressedProperty, value); }
+        }
+        public static readonly DependencyProperty BackgroundPressedProperty =
+            DependencyProperty.Register(
+               nameof(BackgroundPressed),
+               typeof(Brush),
+               typeof(SliceControl),
+               new PropertyMetadata(null, OnAnyPropertyChanged)
+           );
 
         public int ElementSpan
         {
@@ -306,6 +327,71 @@ namespace Skymu
                 typeof(bool),
                 typeof(SliceControl),
                 new PropertyMetadata(true)
+            );
+
+        public ImageSource IconSource
+        {
+            get { return (ImageSource)GetValue(IconSourceProperty); }
+            set { SetValue(IconSourceProperty, value); }
+        }
+        public static readonly DependencyProperty IconSourceProperty =
+            DependencyProperty.Register(
+                nameof(IconSource),
+                typeof(ImageSource),
+                typeof(SliceControl),
+                new PropertyMetadata(null, OnIconChanged)
+            );
+
+        public double IconWidth
+        {
+            get { return (double)GetValue(IconWidthProperty); }
+            set { SetValue(IconWidthProperty, value); }
+        }
+        public static readonly DependencyProperty IconWidthProperty =
+            DependencyProperty.Register(
+                nameof(IconWidth),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(double.NaN, OnIconChanged)
+            );
+
+        public double IconHeight
+        {
+            get { return (double)GetValue(IconHeightProperty); }
+            set { SetValue(IconHeightProperty, value); }
+        }
+        public static readonly DependencyProperty IconHeightProperty =
+            DependencyProperty.Register(
+                nameof(IconHeight),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(double.NaN, OnIconChanged)
+            );
+
+        public int IconLeftMargin
+        {
+            get { return (int)GetValue(IconLeftMarginProperty); }
+            set { SetValue(IconLeftMarginProperty, value); }
+        }
+        public static readonly DependencyProperty IconLeftMarginProperty =
+            DependencyProperty.Register(
+                nameof(IconLeftMargin),
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnTextChanged)
+            );
+
+        public int IconRightMargin
+        {
+            get { return (int)GetValue(IconRightMarginProperty); }
+            set { SetValue(IconRightMarginProperty, value); }
+        }
+        public static readonly DependencyProperty IconRightMarginProperty =
+            DependencyProperty.Register(
+                nameof(IconRightMargin),
+                typeof(int),
+                typeof(SliceControl),
+                new PropertyMetadata(0, OnTextChanged)
             );
 
         public ImageSource Source
@@ -608,6 +694,19 @@ namespace Skymu
                 new PropertyMetadata(8, OnTextChanged)
             );
 
+        public double PressedOffsetY
+        {
+            get { return (double)GetValue(PressedOffsetYProperty); }
+            set { SetValue(PressedOffsetYProperty, value); }
+        }
+        public static readonly DependencyProperty PressedOffsetYProperty =
+            DependencyProperty.Register(
+                nameof(PressedOffsetY),
+                typeof(double),
+                typeof(SliceControl),
+                new PropertyMetadata(1.0, OnOffsetChanged)
+            );
+
         public int SliceMode
         {
             get { return (int)GetValue(SliceModeProperty); }
@@ -830,6 +929,8 @@ namespace Skymu
             UpdateHitTestState();
             UpdateSlices();
             UpdateTextOffset();
+            UpdateIconOffset();
+            UpdateBackground();
         }
 
         public ButtonVisualState GetState()
@@ -843,10 +944,42 @@ namespace Skymu
                 return;
             OverlayText.Margin = new Thickness(
                 TextLeftMargin,
-                _visualState == ButtonVisualState.Pressed ? PressedTextOffsetY : 0.0,
+                _visualState == ButtonVisualState.Pressed ? PressedOffsetY : 0.0,
                 TextRightMargin,
                 0
             );
+        }
+
+        private void UpdateIconOffset()
+        {
+            if (OverlayImage == null)
+                return;
+            OverlayImage.Margin = new Thickness(
+                IconLeftMargin,
+                _visualState == ButtonVisualState.Pressed ? PressedOffsetY : 0.0,
+                IconRightMargin,
+                0
+            );
+        }
+
+        private void UpdateBackground()
+        {
+            switch (_visualState)
+            {
+                case ButtonVisualState.Default:
+                    if (_background != null)
+                        Background = _background;
+                    break;
+                case ButtonVisualState.Hover:
+                    if (BackgroundHover != null)
+                        Background = BackgroundHover;
+                    break;
+                case ButtonVisualState.Pressed:
+                    if (BackgroundPressed != null)
+                        Background = BackgroundPressed;
+                    break;
+                    // TODO: Disabled
+            }
         }
 
         private static void OnAnimationPropertyChanged(
@@ -880,11 +1013,24 @@ namespace Skymu
             DependencyPropertyChangedEventArgs e
         ) => ((SliceControl)d).UpdateSlices();
 
+        private static void OnOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (SliceControl)d;
+            control.UpdateIconOffset();
+            control.UpdateTextOffset();
+        }
+
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (SliceControl)d;
             control.UpdateText();
             control.UpdateTextOffset();
+        }
+
+        private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (SliceControl)d; 
+            control.UpdateIconOffset();
         }
 
         private void UpdateText()

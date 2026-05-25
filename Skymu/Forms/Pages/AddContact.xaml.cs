@@ -47,7 +47,7 @@ namespace Skymu.Views.Pages
             ShowWindow();
         }
 
-        public async void ShowWindow()
+        public void ShowWindow()
         {
             lmg = Universal.Plugin as IListManagement;
             window = new WindowBase(this)
@@ -96,7 +96,7 @@ namespace Skymu.Views.Pages
             FindPBar.IsIndeterminate = false;
         }
 
-        async void FindFriend(object o, RoutedEventArgs e)
+        void FindFriend(object o, RoutedEventArgs e)
         {
             ErrorField.Visibility = Visibility.Collapsed;
             if ((string)UserFindBtn.Tag == TAG_STOP)
@@ -115,16 +115,16 @@ namespace Skymu.Views.Pages
             FindPBar.IsIndeterminate = true;
             window.ButtonLeft.IsEnabled = false;
             cts = new CancellationTokenSource();
-            IFindFriend(UserDetailsInput.Text);
+            _ = IFindFriend(UserDetailsInput.Text);
         }
 
-        async void IFindFriend(string query)
+        async Task IFindFriend(string query)
         {
             Metadata[] result = Array.Empty<Metadata>();
             findTask = Task.Run(async () => result = await lmg.FindNewContact(query), cts.Token);
             try
             {
-                findTask.Wait();
+                await findTask;
             }
             catch (TaskCanceledException) { }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace Skymu.Views.Pages
 
         private void UserListView_Selected(object sender, SelectionChangedEventArgs e) => window.ButtonLeft.IsEnabled = e.AddedItems.Count >= 1;
 
-        async void NextStep()
+        void NextStep()
         {
             FoundData = UserListView.SelectedItem as Metadata;
             NextStepGrid.Visibility = Visibility.Visible;
@@ -172,24 +172,31 @@ namespace Skymu.Views.Pages
             ParseBold(TopCaptionNS);
         }
 
-        async void AddFriend()
+        void AddFriend()
+        {
+            _ = IAddFriend();
+        }
+ 
+        async Task IAddFriend()
         {
             bool suc = false;
             bool exed = false;
+            var task = Task.Run(async () => suc = await lmg.AddContact(FoundData, ContactMessage.Text));;
             try
             {
-                suc = await lmg.AddContact(FoundData, ContactMessage.Text);
+                await task;
+                suc = task.Result;
             }
-            catch (OperationCanceledException ex) // TODO change
+            catch (Exception ex) // TODO change
             {
                 exed = true;
                 Universal.PluginErrorHandler(Universal.Plugin, new PluginMessageEventArgs(ex.Message));
             }
             if (!suc)
             {
-                if (!exed)
-                    Universal.MessageBox("Something went wrong adding the contact");
-                // TODO: Failed to add handling
+                if (exed)
+                    // TODO: "Something went wrong" text. I need references...
+                // TODO: Failed to add handling. Refernce please...
                 return;
             }
             NextStepGrid.Visibility = Visibility.Collapsed;

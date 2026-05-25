@@ -22,4 +22,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
 	</ItemGroup>
+	<Target Name="CopyWebiWabo" AfterTargets="Build">
+		<ItemGroup>
+			<WebiWaboFiles Include="WebiWabo.mp3" />
+		</ItemGroup>
+		<Copy SourceFiles="@(WebiWaboFiles)" DestinationFiles="@(WebiWaboFiles->'..\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
 </Project>

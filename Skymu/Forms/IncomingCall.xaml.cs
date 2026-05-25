@@ -75,7 +75,7 @@ namespace Skymu.Views
         {
             Sounds.StopPlayback("call-in");
             _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
-            Sounds.Play("call-end", true);
+            Sounds.Play("call-end");
             Close();
         }
     }

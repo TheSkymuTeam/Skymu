@@ -11,7 +11,6 @@
 
 using Skymu.Preferences;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -24,6 +23,9 @@ namespace Skymu.Views
             InitializeComponent();
             Background = (SolidColorBrush)Application.Current.Resources[brush];
             LoadVisualSettings();
+#if DEBUG
+            CredDebugSepCB.Visibility = Visibility.Visible;
+#endif
         }
 
         private void LoadVisualSettings()
