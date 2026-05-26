@@ -283,15 +283,15 @@ namespace Skymu
             frame.ShowDialog();
         }
 
-        public static void MessageBox(string content, string title = "Information")
+        public static void MessageBox(string content, string title = "Information", WindowBase.IconType icon = WindowBase.IconType.Information)
         {
             new Dialog(
-                WindowBase.IconType.Information,
+                icon,
                 content,
                 title,
                 null,
                 null,
-                "OK"
+                Universal.Lang["sF_CONFIRM_OK_BTN"]
             ).ShowDialog();
         }
 

@@ -1014,7 +1014,7 @@ namespace Skymu.Skyaeris
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.OptionsNew("Background").Show();
+            new Views.Options("Background").Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)
