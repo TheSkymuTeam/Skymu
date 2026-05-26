@@ -1183,8 +1183,7 @@
                                                         Text="{Binding Path='[sADD_CONTACT_PANEL_MESSAGE]', Source={StaticResource Lang}}"
                                                         TextAlignment="Center"
                                                         TextWrapping="Wrap" />
-                                                    <TextBlock
-                                                        Text="WARNING: NOT IMPLEMENTED"/>
+                                                    <TextBlock Text="WARNING: NOT IMPLEMENTED" />
                                                 </StackPanel>
                                             </Grid>
 
@@ -1286,7 +1285,11 @@
                             DataContext="{Binding SelectedItem, ElementName=ConversationList}">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="ChatTopBarRow" Height="Auto" />
-                                <RowDefinition x:Name="TopbarWindowRow" Height="120" MinHeight="120" MaxHeight="256" />
+                                <RowDefinition
+                                    x:Name="TopbarWindowRow"
+                                    Height="120"
+                                    MinHeight="120"
+                                    MaxHeight="256" />
                                 <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                 <RowDefinition x:Name="MessageWindowRow" Height="*" />
                             </Grid.RowDefinitions>
@@ -1895,7 +1898,7 @@
                                                             </ScrollViewer>
                                                         </Border>
                                                     </Popup>
-                                                    <uc:FastRichTextBox
+                                                    <RichTextBox
                                                         x:Name="MessageTextBox"
                                                         MinHeight="37"
                                                         MaxHeight="{Binding ActualHeight, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
@@ -1912,12 +1915,12 @@
                                                         TextChanged="MessageTextBox_TextChanged"
                                                         UseLayoutRounding="True"
                                                         VerticalScrollBarVisibility="Auto">
-                                                        <uc:FastRichTextBox.Document>
+                                                        <RichTextBox.Document>
                                                             <FlowDocument>
                                                                 <Paragraph Margin="0" />
                                                             </FlowDocument>
-                                                        </uc:FastRichTextBox.Document>
-                                                    </uc:FastRichTextBox>
+                                                        </RichTextBox.Document>
+                                                    </RichTextBox>
                                                 </Grid>
                                             </Border>
                                         </StackPanel>
