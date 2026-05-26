@@ -246,11 +246,7 @@ namespace Tox
 
         #region native fun
 
-        const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
-        const uint LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100;
-
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
-        static extern IntPtr AddDllDirectory(string path);
+        const uint LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
 
         [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern IntPtr LoadLibraryEx(
@@ -274,15 +270,11 @@ namespace Tox
 
             Debug.WriteLine($"Tox: Loading the ToxCore DLL ({library}) from {dir}");
 
-            AddDllDirectory(dir);
-
             string dll = Path.Combine(dir, library);
-
             IntPtr handle = LoadLibraryEx(
                 dll,
                 IntPtr.Zero,
-                LOAD_LIBRARY_SEARCH_DEFAULT_DIRS |
-                LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR
+                LOAD_WITH_ALTERED_SEARCH_PATH
             );
 
             if (handle == IntPtr.Zero)
