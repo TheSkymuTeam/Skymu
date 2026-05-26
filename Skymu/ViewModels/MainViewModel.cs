@@ -292,7 +292,7 @@ namespace Skymu.ViewModels
             var curContext = SynchronizationContext.Current;
             Universal.CurrentUser.PropertyChanged += (o, e) =>
             {
-                if (e.PropertyName == "ConnectionStatus")
+                if (e.PropertyName == nameof(User.ConnectionStatus))
                     curContext.Post(_ =>
                         Tray.SetStatus(Universal.CurrentUser.ConnectionStatus)
                     , null);
