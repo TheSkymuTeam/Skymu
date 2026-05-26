@@ -399,7 +399,7 @@ namespace Yggdrasil.Classes
     public class ClickableConfiguration
     {
         public string DelimiterLeft { get; set; } // left delimiter for clickable item, e.g. '<@', '@'.
-        public string DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space -> left-only delimitation in practice.
+        public string DelimiterRight { get; set; } // right delimiter for clickable item, e.g. '>'. Space means left-only delimitation in practice.
         public ClickableItemType Type { get; set; } // items that are clickable within the clickability delimiter range
 
         public ClickableConfiguration(
