@@ -9,8 +9,13 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -76,6 +81,61 @@ namespace Skymu
 
     }
 
+    public class BitmapHelper
+    {
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        struct MENUITEMINFO
+        {
+            public uint cbSize;
+            public uint fMask;
+            public uint fType;
+            public uint fState;
+            public uint wID;
+            public IntPtr hSubMenu;
+            public IntPtr hbmpChecked;
+            public IntPtr hbmpUnchecked;
+            public IntPtr dwItemData;
+            public string dwTypeData;
+            public uint cch;
+            public IntPtr hbmpItem;
+        }
+
+        [DllImport("user32.dll")]
+        static extern bool SetMenuItemInfo(IntPtr hMenu, uint item, bool byPosition, ref MENUITEMINFO info);
+
+        const uint MIIM_BITMAP = 0x00000080;
+
+        public static IntPtr IconFromSheet(string path, int index)
+        {
+            var spriteSheet = ImageHelper.BitmapImageToBitmap(ImageHelper.Generate(path));
+            int h = spriteSheet.Height;
+
+            Bitmap bmp = new Bitmap(h, h, PixelFormat.Format32bppArgb);
+
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(Color.Transparent);
+
+                g.CompositingMode = CompositingMode.SourceCopy;
+                g.DrawImage(spriteSheet, new Rectangle(0, 0, h, h),　new Rectangle(h * index, 0, h, h), GraphicsUnit.Pixel);
+            }
+
+            bmp.Save("test.png");
+
+            return bmp.GetHbitmap(Color.FromArgb(0));
+        }
+
+        public static void SetIcon(IntPtr menu, int id, IntPtr hBitmap)
+        {
+            var mii = new MENUITEMINFO();
+            mii.cbSize = (uint)Marshal.SizeOf<MENUITEMINFO>();
+            mii.fMask = MIIM_BITMAP;
+            mii.hbmpItem = hBitmap;
+
+            SetMenuItemInfo(menu, (uint)id, false, ref mii);
+        }
+    }
+
     public class NativeMenuBar
     {
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -94,8 +154,8 @@ namespace Skymu
 
         IntPtr hwnd;
         IntPtr hMenu;
-        int nextId = 1;
-        readonly Dictionary<int, EventHandler> callbacks = new Dictionary<int, EventHandler>();
+        internal int nextId = 1;
+        internal readonly Dictionary<int, EventHandler> callbacks = new Dictionary<int, EventHandler>();
 
         public NativeMenuBar(Window window)
         {
@@ -106,10 +166,10 @@ namespace Skymu
             SetMenu(hwnd, hMenu);
         }
 
-        public void Create(string title, params (string label, EventHandler handler)[] items)
+        public void Create(string title, params (string label, object child)[] items)
         {
             IntPtr menu = CreatePopupMenu();
-            foreach (var (label, handler) in items)
+            foreach (var (label, child) in items)
             {
                 if (label == "$")
                 {
@@ -118,20 +178,25 @@ namespace Skymu
                 else
                 {
                     uint flags = MF_STRING;
-                    if (handler == null)
+                    if (child == null)
                     {
                         flags |= MF_GRAYED;
                         AppendMenu(menu, flags, UIntPtr.Zero, label);
                     }
-                    else
+                    else if (child is EventHandler handler)
                     {
                         int id = nextId++;
                         callbacks[id] = handler;
                         AppendMenu(menu, flags, (UIntPtr)id, label);
                     }
+                    else if (child is NativeSubMenu subMenu)
+                    {
+                        AppendMenu(menu, flags | MF_POPUP, unchecked((UIntPtr)(long)(ulong)subMenu.hSubMenu), label);
+                    }
+                    else throw new ArgumentException("Only EventHandler or NativeSubMenu is supported");
                 }
             }
-            AppendMenu(hMenu, MF_POPUP, new UIntPtr((uint)menu.ToInt32()), title);
+            AppendMenu(hMenu, MF_POPUP, unchecked((UIntPtr)(ulong)menu.ToInt64()), title);
         }
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -147,6 +212,63 @@ namespace Skymu
                 }
             }
             return IntPtr.Zero;
+        }
+    }
+
+    public class NativeSubMenu
+    {
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern IntPtr CreatePopupMenu();
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern bool AppendMenu(IntPtr hSubMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
+
+        const uint MF_STRING = 0x0000;
+        const uint MF_GRAYED = 0x0001;
+        const uint MF_POPUP = 0x0010;
+        const uint MF_SEPARATOR = 0x0800;
+
+        NativeMenuBar bar;
+        internal IntPtr hSubMenu;
+        internal int id;
+
+        public NativeSubMenu(NativeMenuBar bar)
+        {
+            hSubMenu = CreatePopupMenu();
+            this.bar = bar;
+        }
+
+        // TODO: Create (without icons)
+
+        public NativeSubMenu CreateWithIcons(string title, params (string label, EventHandler handler, IntPtr? hBitmap)[] items)
+        {
+            foreach (var (label, handler, hBitmap) in items)
+            {
+                if (label == "$")
+                {
+                    AppendMenu(hSubMenu, MF_SEPARATOR, UIntPtr.Zero, null);
+                }
+                else
+                {
+                    uint flags = MF_STRING;
+                    int id = -1;
+                    if (handler == null)
+                    {
+                        if (hBitmap != null)
+                            id = bar.nextId++;
+                        flags |= MF_GRAYED;
+                        AppendMenu(hSubMenu, flags, id == -1 ? UIntPtr.Zero : (UIntPtr)id, label);
+                    }
+                    else
+                    {
+                        id = bar.nextId++;
+                        bar.callbacks[id] = handler;
+                        AppendMenu(hSubMenu, flags, (UIntPtr)id, label);
+                    }
+                    if (hBitmap != null)
+                        BitmapHelper.SetIcon(hSubMenu, id, (IntPtr)hBitmap);
+                }
+            }
+            return this;
         }
     }
 

@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -88,6 +89,21 @@ namespace Skymu.Helpers
             }
 
             return existingName; // couldn't find proper extension, just save without an extension
+        }
+
+        public static Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new PngBitmapEncoder();
+
+                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+                enc.Save(outStream);
+                outStream.Position = 0;
+
+                Bitmap bitmap = new Bitmap(outStream);
+                return new Bitmap(bitmap);
+            }
         }
     }
 }

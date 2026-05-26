@@ -80,16 +80,7 @@ namespace Skymu
                 // TODO: Do not display this information again
             }
 
-            var currentStatus = Universal.CurrentUser.ConnectionStatus;
-            SetStatus(status);
-
-            if (!await Universal.Plugin.SetConnectionStatus(status))
-            {
-                status = currentStatus;
-                if (Universal.CurrentUser != null)
-                    Universal.CurrentUser.ConnectionStatus = status;
-                SetStatus(status);
-            }
+            _ = Universal.Plugin.SetConnectionStatus(status);
         }
 
         static readonly ObservableCollection<Control> LoginItems = new ObservableCollection<Control>()

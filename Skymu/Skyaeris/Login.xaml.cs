@@ -144,33 +144,38 @@ namespace Skymu.Skyaeris
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
         private void OnClose(object sender, EventArgs e) { Universal.Close(false); }
 
+        private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
+        private static (string, EventHandler) SEP() { return ("$", null); }
+
         private void Login_Loaded(object sender, EventArgs e)
         {
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
 
+            string L(string key) => Universal.Lang[key];
+
             MenuBarRow.Height = new GridLength(0);
             var menuBar = new NativeMenuBar(this);
             menuBar.Create(
-                "&" + Universal.Lang["sMAINMENU_SKYPE"],
-                (Universal.Lang["sMAINMENU_SKYPE_CLOSE"], OnClose)
+                "&" + L("sMAINMENU_SKYPE"),
+                MI(L("sMAINMENU_SKYPE_CLOSE"), OnClose)
             );
             menuBar.Create(
-                "&" + Universal.Lang["sMAINMENU_TOOLS"],
-                (Universal.Lang["sLOGIN_CHANGE_LANGUAGE"], OnChangeLanguage),
-                ("$", null),
-                (Universal.Lang["sLOGIN_CONNECTION_OPTIONS"], OnConnectionOptions),
-                ("$", null),
-                (Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"], OnAccessibility)
+                "&" + L("sMAINMENU_TOOLS"),
+                MI(L("sLOGIN_CHANGE_LANGUAGE"), OnChangeLanguage),
+                SEP(),
+                MI(L("sLOGIN_CONNECTION_OPTIONS"), OnConnectionOptions),
+                SEP(),
+                MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"), OnAccessibility)
             );
             menuBar.Create(
-                "&" + Universal.Lang["sMAINMENU_HELP"],
-                (Universal.Lang["sMAINMENU_HELP_HELP"], OnHelp),
-                ("$", null),
-                (Universal.Lang["sMAINMENU_HELP_UPDATES"], OnCheckUpdates),
-                ("$", null),
-                (Universal.Lang["sMAINMENU_HELP_PRIVACY"], OnPrivacy),
-                (Universal.Lang["sMAINMENU_HELP_ABOUT"], OnAbout)
+                "&" + L("sMAINMENU_HELP"),
+                MI(L("sMAINMENU_HELP_HELP"), OnHelp),
+                SEP(),
+                MI(L("sMAINMENU_HELP_UPDATES"), OnCheckUpdates),
+                SEP(),
+                MI(L("sMAINMENU_HELP_PRIVACY"), OnPrivacy),
+                MI(L("sMAINMENU_HELP_ABOUT"), OnAbout)
             );
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";
