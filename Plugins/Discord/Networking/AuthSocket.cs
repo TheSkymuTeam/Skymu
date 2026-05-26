@@ -30,8 +30,8 @@ namespace Discord.Networking
         internal event EventHandler<string> QRCodeGenerated;
         internal event EventHandler PendingMobileVerification;
         internal event EventHandler<string> TokenRecieved;
-        private string gatewayUrl = "wss://remote-auth-gateway.discord.gg/?v=2";
-        private string authUrl = "https://discord.com/ra/";
+        private const string gatewayUrl = "wss://remote-auth-gateway.discord.gg/?v=2";
+        private const string authUrl = "https://discord.com/ra/";
 
         private RSAParameters _cryptoKeyParams;
 

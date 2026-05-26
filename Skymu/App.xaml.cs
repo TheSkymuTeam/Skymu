@@ -49,7 +49,7 @@ namespace Skymu
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
         public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
-        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/help";
+        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
 
         public static User CurrentUser;
