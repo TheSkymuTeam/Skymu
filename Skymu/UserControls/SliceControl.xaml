@@ -99,8 +99,8 @@
             VerticalAlignment="Center"
             IsHitTestVisible="False"
             SnapsToDevicePixels="True"
-            UseLayoutRounding="True"
-            Source="{Binding IconSource, RelativeSource={RelativeSource AncestorType=global:SliceControl}}" />
+            Source="{Binding IconSource, RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
+            UseLayoutRounding="True" />
 
         <TextBlock
             x:Name="OverlayText"

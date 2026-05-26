@@ -7,7 +7,6 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:uc="clr-namespace:Skymu.UserControls"
     xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     Title="Skymu"
     Width="1448"
