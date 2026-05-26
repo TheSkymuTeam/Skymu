@@ -1842,14 +1842,20 @@ namespace Skymu.Skyaeris
                     Universal.Lang["sINFORM_DND_TITLE"],
                     brText: "OK"
                 ).ShowDialog();
-                // TODO: Do not display this information again
+                // TODO add "Do not show again" option to this warning
             }
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == PresenceStatus.Unknown)
-                return;
+            if (status == PresenceStatus.Unknown) return;
 
-            _ = Universal.Plugin.SetConnectionStatus(status);
+            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
+            Tray.SetStatus(status);
+
+            if (!await Universal.Plugin.SetConnectionStatus(status))
+            {
+                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(currentStatus);
+                Tray.SetStatus(currentStatus);
+            }
         }
 
         #endregion
