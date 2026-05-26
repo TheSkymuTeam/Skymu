@@ -835,7 +835,89 @@
                     FontFamily="Tahoma"
                     FontSize="11">
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
-                        <MenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}" >
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                        Width="14"
+                                        DefaultIndex="2"
+                                        ElementCount="22"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                        Width="14"
+                                        DefaultIndex="3"
+                                        ElementCount="22"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                        Width="14"
+                                        DefaultIndex="5"
+                                        ElementCount="22"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                        Width="14"
+                                        DefaultIndex="14"
+                                        ElementCount="22"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                        Width="14"
+                                        DefaultIndex="14"
+                                        ElementCount="22"
+                                        DisabledIndex="-1"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False" >
+                                <MenuItem.Icon>
+                                    <global:SliceControl
+                                    Width="14"
+                                    DefaultIndex="12"
+                                    ElementCount="22"
+                                    DisabledIndex="-1"
+                                    HoverIndex="-1"
+                                    PressedIndex="-1"
+                                    SliceMode="0"
+                                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                    StackDirection="Horizontal" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
                         <Separator />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -905,7 +987,7 @@
                         <MenuItem Header="{Binding [sMAINMENU_VIEW_SMSMESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_VIEW_INSTANT_MESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
                         <Separator />
-                        <MenuItem Header="{Binding [sMAINMENU_VIEW_HOME], Source={StaticResource Lang}}" IsEnabled="False" />
+                        <MenuItem Click="OnHome" Header="{Binding [sMAINMENU_VIEW_HOME], Source={StaticResource Lang}}" />
                         <MenuItem Header="{Binding [sMAINMENU_VIEW_PROFILE], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_VIEW_CALL_PHONES], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_VIEW_SNAPSHOTS_GALLERY], Source={StaticResource Lang}}" IsEnabled="False" />
@@ -1280,16 +1362,13 @@
                                             Height="1"
                                             Fill="{StaticResource Sidebar.Divider.Opaque}" />
                                         <ListBox
-                                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                             x:Name="ConversationList"
                                             Grid.Row="2"
                                             BorderThickness="0"
                                             ScrollViewer.CanContentScroll="True"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                             SelectionChanged="ContactList_SelectionChanged"
-                                            Style="{StaticResource NoInsetListBox}"
-                                            mc:Ignorable="d">
+                                            Style="{StaticResource NoInsetListBox}">
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
@@ -1473,6 +1552,7 @@
                                 x:Name="ChatArea"
                                 Grid.Column="2"
                                 DataContext="{Binding SelectedItem, ElementName=ConversationList}">
+
                                 <Grid.RowDefinitions>
                                     <RowDefinition x:Name="ChatTopBarRow" Height="32" />
                                     <RowDefinition
