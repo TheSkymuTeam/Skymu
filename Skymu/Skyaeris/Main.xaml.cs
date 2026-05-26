@@ -1685,7 +1685,7 @@ namespace Skymu.Skyaeris
                     );
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                if (!MainViewModel.ConnectionMetered())
+                if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {

@@ -183,6 +183,13 @@ namespace Skymu.Preferences
             get => S("AutoLogin", true);
             set => W("AutoLogin", value, nameof(AutoLogin));
         }
+
+        public static bool AutoSpeedTest
+        {
+            get => S("AutoSpeedTest", false);
+            set => W("AutoSpeedTest", value, nameof(AutoSpeedTest));
+        }
+
         public static bool SeparateCredentialsForDebug
         {
             get => S("SeparateCredentialsForDebug", false);

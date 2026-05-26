@@ -925,32 +925,6 @@ namespace Skymu.ViewModels
             );
         }
 
-        public static bool ConnectionMetered()
-        {
-            Type type = Type.GetTypeFromCLSID(
-                new Guid("DCB00C01-570F-4A9B-8D69-199FDBA5723B"));
-
-            dynamic nlm = Activator.CreateInstance(type);
-
-            foreach (dynamic connection in nlm.GetNetworkConnections())
-            {
-                try
-                {
-                    bool connected = connection.IsConnectedToInternet;
-
-                    if (!connected)
-                        continue;
-
-                    // anything not 1 = metered-ish
-                    return connection.GetCost() != 1;
-                }
-                catch
-                {
-                }
-            }
-            return false;
-        }
-
         private async Task HandleCallToggle()
         {
             if (IsCallActive)

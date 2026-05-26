@@ -1491,7 +1491,7 @@ namespace Skymu.Pontis
                     SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                if (!MainViewModel.ConnectionMetered())
+                if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
