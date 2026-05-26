@@ -223,14 +223,14 @@ namespace Skymu
             SetMenuItemInfo(hMenu, itemId, false, ref info);
         }
 
-        private static void ClearMenuBitmaps()
+        private static void ClearMenuBitmaps() 
         {
             foreach (IntPtr hbm in _menuBitmaps)
                 DeleteObject(hbm);
             _menuBitmaps.Clear();
         }
 
-        private static IntPtr BuildLoginMenu()
+        private static IntPtr BuildLoggedOutMenu() // menu to show when logged out
         {
             IntPtr hMenu = CreatePopupMenu();
             AppendMenu(hMenu, MF_STRING, (UIntPtr)MENU_SHOWFRIENDS, Universal.Lang["sTRAYMENU_SHOWFRIENDS"]);
@@ -240,10 +240,9 @@ namespace Skymu
             return hMenu;
         }
 
-        private static IntPtr BuildMainMenu()
+        private static IntPtr BuildLoggedInMenu() // menu to show when logged in
         {
-            ClearMenuBitmaps();
-
+            ClearMenuBitmaps(); // wouldnt want any memory leaks hmm
             IntPtr hStatus = CreatePopupMenu();
 
             void AddStatusItem(uint menuId, PresenceStatus status, string langKey)
@@ -281,7 +280,7 @@ namespace Skymu
         private static void ShowContextMenu()
         {
             var pos = Cursor.Position;
-            IntPtr hMenu = _isSignedIn ? BuildMainMenu() : BuildLoginMenu();
+            IntPtr hMenu = _isSignedIn ? BuildLoggedInMenu() : BuildLoggedOutMenu();
 
             SetForegroundWindow(_msgWindow.Handle);
 
