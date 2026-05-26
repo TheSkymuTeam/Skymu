@@ -45,7 +45,7 @@ namespace Skymu
             // file://127.0.0.1/c$/path/to/Home/index.html
             // https://stackoverflow.com/a/956152
             local_path = "file://127.0.0.1/" + local_path.Substring(0, 1) + "$" + local_path.Substring(2);
-            Debug.WriteLine($"Navigating to {local_path}");
+            Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {local_path}");
             _browser.Navigate(new Uri(local_path));
         }
 
@@ -149,7 +149,8 @@ namespace Skymu
                         c.DisplayName.StartsWith(Settings.Language) ||
                         c.EnglishName.StartsWith(Settings.Language)
                     )?.Name ?? "en-US";
-            } catch { }
+            }
+            catch { }
 
             string langChunk = cultureName.Split('-')[0];
 
@@ -296,6 +297,18 @@ namespace Skymu
         public void FireShowingChanged(bool isShowing) => _showingListener?.call(null, isShowing);
 
         public void FireLiveChanged(bool isLive) => _liveListener?.call(null, isLive);
+
+        public string FetchAdList()
+        {
+            try
+            {
+                return Universal.SkymuHttpClient.GetStringAsync("https://www.skymu.app/ads/list.json").Result;
+            }
+            catch
+            {
+                return "[]";
+            }
+        }
     }
 
     // Returned by SkypeAPI.Users().

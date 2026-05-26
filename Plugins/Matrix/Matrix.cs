@@ -1194,6 +1194,6 @@ namespace Matrix
 
         public int TypingTimeout => 5000;
         public int TypingRepeat => 9000;
-        public async Task<bool> SetTyping(string identifier, bool typing) => false;
+        public Task<bool> SetTyping(string identifier, bool typing) => Task.FromResult(false);
     }
 }

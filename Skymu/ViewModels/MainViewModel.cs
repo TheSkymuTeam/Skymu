@@ -133,7 +133,7 @@ namespace Skymu.ViewModels
 
                 string url = attachments[0].Url;
                 string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
-                using (var response = await Universal.WebClient.GetStreamAsync(url))
+                using (var response = await Universal.SkymuHttpClient.GetStreamAsync(url))
                 using (var fileStream = File.Create(tempPath))
                 {
                     await response.CopyToAsync(fileStream);
@@ -896,7 +896,7 @@ namespace Skymu.ViewModels
             try
             {
                 var sw = Stopwatch.StartNew();
-                var data = await Universal.WebClient.GetByteArrayAsync(TEST_URL);
+                var data = await Universal.SkymuHttpClient.GetByteArrayAsync(TEST_URL);
                 sw.Stop();
                 double mbps = (data.Length * 8.0) / 1_000_000 / sw.Elapsed.TotalSeconds;
                 if (mbps >= 50)

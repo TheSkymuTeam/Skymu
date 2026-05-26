@@ -4891,119 +4891,86 @@ imgWrapper.border = "0";
         printDebug("Showing community ad: " + ad.Name + " at " + dimension);
     };
 
-    var loadAndShow = function() {
-    if (adShown) {
-        printDebug("Ad already shown this session, skipping.");
-        return;
-    }
-    if ($("div.communityAd").length > 0) {
-        printDebug("Ad already in DOM, skipping.");
-        return;
-    }
+    var loadAndShow = function () {
+        if (adShown) return;
+        if ($("div.communityAd").length > 0) return;
 
-    adShown = true;
+        adShown = true;
 
-    var requestedAdSlug = null;
-    var queryMatch = window.location.search.match(/[?&]ad=([^&]*)/);
-    if (queryMatch && queryMatch[1]) {
-        requestedAdSlug = decodeURIComponent(queryMatch[1])
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-z0-9\-]/g, "");
-    }
+        var requestedAdSlug = null;
+        var queryMatch = window.location.search.match(/[?&]ad=([^&]*)/);
+        if (queryMatch && queryMatch[1]) {
+            requestedAdSlug = decodeURIComponent(queryMatch[1])
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9\-]/g, "");
+        }
 
-    var allDimensions = ["300x250", "640x420", "650x90"];
-    var shuffledDims = allDimensions.slice();
-    var i = shuffledDims.length, j, temp;
-    while (i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        temp = shuffledDims[i];
-        shuffledDims[i] = shuffledDims[j];
-        shuffledDims[j] = temp;
-    }
+        var allDimensions = ["300x250", "640x420", "650x90"];
+        var shuffledDims = allDimensions.slice();
+        var i = shuffledDims.length, j, temp;
+        while (i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            temp = shuffledDims[i];
+            shuffledDims[i] = shuffledDims[j];
+            shuffledDims[j] = temp;
+        }
 
-    var xhr;
-    try { xhr = new XDomainRequest(); }
-    catch(e1) { try { xhr = new XMLHttpRequest(); }
-    catch(e2) { try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); }
-    catch(e3) { try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); }
-    catch(e4) { printDebug("No XHR available."); adShown = false; return; } } } }
+        var jsonStr = null;
+        try { jsonStr = window.external.getapi(0).FetchAdList(); } catch (e) { }
 
-    try { 
-    xhr.open("GET", "https://www.skymu.app/ads/list.json?v=" + new Date().getTime(), true); 
-} catch (e) { 
-    adShown = false; 
-    return; 
-}
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                var data;
-                try { data = $.parseJSON(xhr.responseText); }
-                catch(e) { printDebug("Failed to parse list.json: " + e); adShown = false; return; }
+        if (!jsonStr) { adShown = false; return; }
 
+        var data;
+        try { data = $.parseJSON(jsonStr); } catch (e) { adShown = false; return; }
 
-                if (requestedAdSlug) {
-                    for (var a = 0; a < data.length; a++) {
-                        if (data[a].Enabled === false) { continue; }
-                        var slug = data[a].Name.toLowerCase().replace(/\s+/g, "-");
-                        if (slug === requestedAdSlug) {
-
-                            var adDims = data[a].Dimensions;
-                            for (var d = 0; d < shuffledDims.length; d++) {
-                                for (var k = 0; k < adDims.length; k++) {
-                                    if (adDims[k] === shuffledDims[d]) {
-                                        printDebug("Forced ad via ?ad= param: " + data[a].Name);
-                                        showAd(data[a], adDims[k]);
-                                        return;
-                                    }
-                                }
-                            }
-
-                            printDebug("Ad '" + requestedAdSlug + "' found but no supported dimension.");
-                            break;
-                        }
-                    }
-                    printDebug("?ad= param specified but no matching ad found, falling through to random.");
-                }
-
-
-                var chosenDimension = null;
-                var eligibleAds = null;
-
-                for (var d = 0; d < shuffledDims.length; d++) {
-                    var dim = shuffledDims[d];
-                    var matching = [];
-                    for (var a = 0; a < data.length; a++) {
-                        if (data[a].Enabled === false) { continue; }
-                        var adDims = data[a].Dimensions;
+        if (requestedAdSlug) {
+            for (var a = 0; a < data.length; a++) {
+                if (data[a].Enabled === false) { continue; }
+                var slug = data[a].Name.toLowerCase().replace(/\s+/g, "-");
+                if (slug === requestedAdSlug) {
+                    var adDims = data[a].Dimensions;
+                    for (var d = 0; d < shuffledDims.length; d++) {
                         for (var k = 0; k < adDims.length; k++) {
-                            if (adDims[k] == dim) { matching.push(data[a]); break; }
+                            if (adDims[k] === shuffledDims[d]) {
+                                showAd(data[a], adDims[k]);
+                                return;
+                            }
                         }
                     }
-                    if (matching.length > 0) {
-                        chosenDimension = dim;
-                        eligibleAds = matching;
-                        break;
-                    }
+                    break;
                 }
-
-                if (!chosenDimension || !eligibleAds || eligibleAds.length == 0) {
-                    printDebug("No eligible ads found.");
-                    adShown = false;
-                    return;
-                }
-
-                var chosenAd = eligibleAds[Math.floor(Math.random() * eligibleAds.length)];
-                showAd(chosenAd, chosenDimension);
-            } else {
-                printDebug("XHR failed with status: " + xhr.status);
-                adShown = false;
             }
         }
+
+        var chosenDimension = null;
+        var eligibleAds = null;
+
+        for (var d = 0; d < shuffledDims.length; d++) {
+            var dim = shuffledDims[d];
+            var matching = [];
+            for (var a = 0; a < data.length; a++) {
+                if (data[a].Enabled === false) { continue; }
+                var adDims = data[a].Dimensions;
+                for (var k = 0; k < adDims.length; k++) {
+                    if (adDims[k] == dim) { matching.push(data[a]); break; }
+                }
+            }
+            if (matching.length > 0) {
+                chosenDimension = dim;
+                eligibleAds = matching;
+                break;
+            }
+        }
+
+        if (!chosenDimension || !eligibleAds || eligibleAds.length == 0) {
+            adShown = false;
+            return;
+        }
+
+        var chosenAd = eligibleAds[Math.floor(Math.random() * eligibleAds.length)];
+        showAd(chosenAd, chosenDimension);
     };
-    xhr.send(null);
-};
 
     return {
         init: function() {

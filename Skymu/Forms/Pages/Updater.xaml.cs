@@ -196,7 +196,7 @@ namespace Skymu.Views.Pages
                 _cts = new CancellationTokenSource();
 
                 using (
-                    HttpResponseMessage response = await Universal.WebClient.GetAsync(
+                    HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(
                         downloadUrl,
                         HttpCompletionOption.ResponseHeadersRead,
                         _cts.Token
@@ -278,7 +278,7 @@ namespace Skymu.Views.Pages
             {
                 string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
 
-                using (HttpResponseMessage response = await Universal.WebClient.GetAsync(url))
+                using (HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(url))
                 {
                     if (!response.IsSuccessStatusCode)
                         return null;

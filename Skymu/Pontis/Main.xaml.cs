@@ -428,7 +428,7 @@ namespace Skymu.Pontis
             }
         }
 
-        private async void SelectTopButton(SliceControl to_select)
+        private void SelectSidebarTopRowButton(SliceControl to_select)
         {
             if (to_select == AddContactButton)
                 ApplyPlaceholderTb(SearchBox, Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"], true);
@@ -759,7 +759,7 @@ namespace Skymu.Pontis
         {
             _ = SelectTab(_currentTab);
             SetWindow(WindowType.Home);
-            SelectTopButton(HomeButton);
+            SelectSidebarTopRowButton(HomeButton);
         }
 
         private void StatusArea_Click(object sender, MouseButtonEventArgs e)
@@ -843,10 +843,10 @@ namespace Skymu.Pontis
         {
             await SelectTab(_currentTab);
             if (current_window == WindowType.Home)
-                SelectTopButton(HomeButton);
+                SelectSidebarTopRowButton(HomeButton);
             else
             {
-                SelectTopButton(null);
+                SelectSidebarTopRowButton(null);
                 foreach (object item in ConversationList.Items)
                 {
                     if (
@@ -875,7 +875,7 @@ namespace Skymu.Pontis
             ConversationList.Visibility = Visibility.Collapsed;
             ServersList.Visibility = Visibility.Collapsed;
             AddContactGrid.Visibility = Visibility.Visible;
-            SelectTopButton(AddContactButton);
+            SelectSidebarTopRowButton(AddContactButton);
             SearchBox.Focus();
         }
 
