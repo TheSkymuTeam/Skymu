@@ -181,11 +181,9 @@ namespace Skymu.Views.Pages
         {
             bool suc = false;
             bool exed = false;
-            var task = Task.Run(async () => suc = await lmg.AddContact(FoundData, ContactMessage.Text));;
             try
             {
-                await task;
-                suc = task.Result;
+                suc = await lmg.AddContact(FoundData, ContactMessage.Text);
             }
             catch (Exception ex) // TODO change
             {
