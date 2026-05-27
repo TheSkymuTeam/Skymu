@@ -348,11 +348,6 @@
                                                     Content="Skype 8"
                                                     Tag="{x:Static enums:Soundpack.Skype8}" />
                                             </ComboBox>
-                                            <TextBlock
-                                                Margin="8,0,0,0"
-                                                VerticalAlignment="Center"
-                                                Foreground="{StaticResource Text.MediumContrast}"
-                                                Text="(Requires restart)" />
                                         </StackPanel>
 
 
