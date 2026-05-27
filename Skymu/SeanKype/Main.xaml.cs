@@ -244,7 +244,7 @@ namespace Skymu.SeanKype
                 SEP(),
                 MI(L("sMAINMENU_SKYPE_CHANGEPASSWORD")),
                 MI(L("sMAINMENU_SKYPE_SIGN_OUT"), (s, e2) => OnSignOut(null, null)),
-                MI(L("sMAINMENU_SKYPE_SWITCH_USER")),
+                MI(L("sMAINMENU_SKYPE_SWITCH_USER"), (s, e2) => OnSwitchUser(null, null)),
                 MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
             );
 
