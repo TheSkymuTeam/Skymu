@@ -1612,16 +1612,7 @@ namespace Skymu.Pontis
             var currentStatus = vmodel.GetStatusFromInt(StatusIcon.DefaultIndex);
 
             if (name == "dnd")
-            {
-                new Dialog(
-                    WindowBase.IconType.Information,
-                    Universal.Lang["sINFORM_DND"],
-                    Universal.Lang["sINFORM_DND_CAP"],
-                    Universal.Lang["sINFORM_DND_TITLE"],
-                    brText: "OK"
-                ).ShowDialog();
-                // TODO add "Do not show again" option to this warning
-            }
+                Universal.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
             if (status == PresenceStatus.Unknown) return;

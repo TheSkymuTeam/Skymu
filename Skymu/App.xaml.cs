@@ -60,6 +60,26 @@ namespace Skymu
 
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
+        public static void InformDND()
+        {
+            if (Settings.InformDND != 1)
+                Current.Dispatcher.Invoke(() =>
+                    new Dialog(
+                        WindowBase.IconType.Information,
+                        Lang["sINFORM_DND"],
+                        Lang["sINFORM_DND_CAP"],
+                        Lang["sINFORM_DND_TITLE"],
+                        brText: "OK",
+                        cbEnabled: true,
+                        onClosing: (s, e) =>
+                        {
+                            if (((Dialog)s).CheckBox.IsChecked == true)
+                                Settings.InformDND = 1;
+                        }
+                    ).ShowDialog()
+                );
+        }
+
         private static void PluginPopup(object sender, PluginMessageEventArgs e, string prefix, WindowBase.IconType itype)
         {
             Current.Dispatcher.BeginInvoke(
@@ -85,17 +105,13 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        var core = (ICore)sender;
                         Dialog dialog = new Dialog(
-                            WindowBase.IconType.Information,
-                            e.Message,
-                            core.Name + " requests your choice",
-                            null,
-                            null,
-                            Lang["sF_CONFIRM_YES"],
-                            true,
-                            null,
-                            Lang["sF_CONFIRM_NO_BTN"]
+                            type: WindowBase.IconType.Information,
+                            content: e.Message,
+                            header: ((ICore)sender).Name + " requests your choice",
+                            brText: Lang["sF_CONFIRM_YES"],
+                            blEnabled: true,
+                            blText: Lang["sF_CONFIRM_NO_BTN"]
                         );
                         dialog.BRAction = () => { e.Action(true); dialog.Close(); };
                         dialog.BLAction = () => { e.Action(false); dialog.Close(); };
