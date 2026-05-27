@@ -39,8 +39,9 @@ namespace Skymu
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
 
-            // _browser.Navigate(new Uri("https://skymu.app/home")); not using the web home for now
-
+            // _browser.Navigate(new Uri("https://skymu.app/home")); we do not fetch Home from the internet anymore
+            
+                
             string local_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Home", "index.html");
             // file://127.0.0.1/c$/path/to/Home/index.html
             // https://stackoverflow.com/a/956152
