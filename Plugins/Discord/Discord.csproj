@@ -3,7 +3,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<OutputType>Library</OutputType>
-		<AssemblyName>plugin</AssemblyName>
+		<AssemblyName>plugin-Discord</AssemblyName>
 		<AssemblyTitle>Discord</AssemblyTitle>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>

@@ -38,7 +38,12 @@ namespace Skymu.Plugins
             {
                 try
                 {
-                    string dll = Path.Combine(smp, "plugin.dll");
+                    string dll = Directory.GetFiles(smp, "plugin*.dll").FirstOrDefault();
+                    if (string.IsNullOrEmpty(dll))
+                    {
+                        Debug.WriteLine($"[PluginManager] No plugin dll found in folder: {smp}");
+                        continue;
+                    }
                     // Universal.MessageBox(dll); // DEBUG if you want to check plugin loading
                     Assembly asm = Assembly.LoadFrom(dll);
 

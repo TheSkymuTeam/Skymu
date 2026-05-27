@@ -7,7 +7,7 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<Platforms>AnyCPU</Platforms>
 		<OutputPath>..\bin\sdb-browser.smp</OutputPath>
-		<AssemblyName>plugin</AssemblyName>
+		<AssemblyName>plugin-SkypeDBBrowser</AssemblyName>
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
