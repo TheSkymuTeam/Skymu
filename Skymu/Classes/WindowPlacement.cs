@@ -40,13 +40,14 @@ namespace Skymu.Classes
                 wp.Left != 0 ||
                 wp.Width != 0 ||
                 wp.Height != 0 ||
-                wp.sidebarWidth != 0)
+                wp.sidebarWidth != 0 ||
+                wp.maximized != false)
             {
                 return wp;
             }
             else
             {
-                Debug.WriteLine("Window position not restoring, as one or more field(s) is/are set to 0");
+                Debug.WriteLine("Window position not restoring, all fields are set to 0");
             }
             return null;
         }
