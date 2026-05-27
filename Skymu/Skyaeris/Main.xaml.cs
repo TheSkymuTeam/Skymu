@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using NullSoftware.ToolKit;
 using Skymu.Classes;
 using Skymu.Converters;
 using Skymu.Emoticons;
