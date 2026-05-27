@@ -322,7 +322,7 @@
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 3 to 7"
-                                                    Tag="SeanKype" />
+                                                    Tag="Skype7" />
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 8"
@@ -405,6 +405,12 @@
                                             Padding="6,0"
                                             Content="Use the unreleased 'room-style' call UI from the mid-2012 Skype 5.5 mockups"
                                             IsChecked="{Binding Path=[RoomCallUI], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+
+                                        <CheckBox
+                                            Margin="0,5"
+                                            Padding="6,0"
+                                            Content="Use the call reconnecting sound instead of normal call out sound"
+                                            IsChecked="{Binding Path=[CallOutToReconnectSound], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
                                         <StackPanel Margin="0,5,0,10" Grid.IsSharedSizeScope="True">
 
