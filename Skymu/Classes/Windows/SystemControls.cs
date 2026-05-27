@@ -229,7 +229,6 @@ namespace Skymu
 
         NativeMenuBar bar;
         internal IntPtr hSubMenu;
-        internal int id;
 
         public NativeSubMenu(NativeMenuBar bar)
         {
