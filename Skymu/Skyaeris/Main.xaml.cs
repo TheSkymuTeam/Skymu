@@ -211,6 +211,7 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(0);
 
                     ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                    ChatTopbarSplitterRow.MaxHeight = 0;
                     topbarWindowRowHeight = TopbarWindowRow.Height.Value;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
@@ -230,6 +231,7 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 
                     ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    ChatTopbarSplitterRow.MaxHeight = chatTopbarRowOrigMaxHeight;
                     TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
                     TopbarWindowRow.MaxHeight = screen == null ? topbarWindowRowOrigMaxHeight : ChatArea.ActualHeight * 0.7;
                     if (location != null)
@@ -683,6 +685,7 @@ namespace Skymu.Skyaeris
 
         #region Resizing stuff
 
+        private double chatTopbarRowOrigMaxHeight;
         private double topbarWindowRowOrigMaxHeight;
         private double topbarWindowRowOrigHeight;
 
@@ -1754,6 +1757,7 @@ namespace Skymu.Skyaeris
 
             vmodel.SubscribeTypingIndicator();
 
+            chatTopbarRowOrigMaxHeight = ChatTopBarRow.MaxHeight;
             topbarWindowRowOrigMaxHeight = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
             RefreshChatSendButton();
