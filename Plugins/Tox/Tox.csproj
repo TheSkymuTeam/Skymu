@@ -3,14 +3,15 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<OutputType>Library</OutputType>
-		<AssemblyName>plugin-Tox</AssemblyName>
+		<AssemblyName>plugin</AssemblyName>
+		<AssemblyTitle>Tox</AssemblyTitle>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<LangVersion>7.3</LangVersion>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Prefer32Bit>false</Prefer32Bit>
-		<OutputPath>..\bin\</OutputPath>
+		<OutputPath>..\bin\tox.smp</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
@@ -25,18 +26,12 @@
 			<Private>False</Private>
 		</ProjectReference>
 	</ItemGroup>
-	<Target Name="Copyx86Libs" AfterTargets="Build">
-		<ItemGroup>
-			<PluginFiles Include="Lib.x64\**\*" />
-		</ItemGroup>
-		<MakeDir Directories="..\bin\Lib.x64\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\Lib.x64\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
-	<Target Name="Copyx64Libs" AfterTargets="Build">
-		<ItemGroup>
-			<PluginFiles Include="Lib.x86\**\*" />
-		</ItemGroup>
-		<MakeDir Directories="..\bin\Lib.x86\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'..\bin\Lib.x86\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
+	<ItemGroup>
+	  <None Update="libtox32.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="libtox64.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

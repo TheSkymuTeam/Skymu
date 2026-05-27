@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<AssemblyName>plugin-Stub</AssemblyName>
-		<AssemblyTitle>Stub Plugin</AssemblyTitle>
+		<AssemblyName>plugin</AssemblyName>
+		<AssemblyTitle>Stub</AssemblyTitle>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<FileVersion>1.0.0.0</FileVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>..\bin\</OutputPath>
+		<OutputPath>..\bin\stub.smp</OutputPath>
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
@@ -22,10 +22,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
 	</ItemGroup>
-	<Target Name="CopyWebiWabo" AfterTargets="Build">
-		<ItemGroup>
-			<WebiWaboFiles Include="WebiWabo.mp3" />
-		</ItemGroup>
-		<Copy SourceFiles="@(WebiWaboFiles)" DestinationFiles="@(WebiWaboFiles->'..\bin\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
+	<ItemGroup>
+	  <None Update="WebiWabo.mp3">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

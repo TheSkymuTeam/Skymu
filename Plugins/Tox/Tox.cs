@@ -23,6 +23,7 @@ using ToxOO;
 using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Tools.Windows;
 using static Tox.Helper;
 using static ToxCore;
 
@@ -219,7 +220,7 @@ namespace Tox
         {
             try
             {
-                ImportLibraryFromPath("libtoxcore.dll");
+                ArchedLibHelper.ImportLibraryFromPath("libtox.dll");
             }
             catch (PlatformNotSupportedException)
             {

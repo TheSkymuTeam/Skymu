@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using Yggdrasil;
 
 namespace Skymu.Plugins
@@ -30,10 +31,15 @@ namespace Skymu.Plugins
             }
 
             int pluginCount = 0;
-            foreach (string dll in Directory.GetFiles(path, "plugin*.dll"))
+
+            string[] smp_list = Directory.EnumerateDirectories(path, "*.smp", SearchOption.TopDirectoryOnly).ToArray();
+
+            foreach (string smp in smp_list)
             {
                 try
                 {
+                    string dll = Path.Combine(smp, "plugin.dll");
+                    // Universal.MessageBox(dll); // DEBUG if you want to check plugin loading
                     Assembly asm = Assembly.LoadFrom(dll);
 
                     foreach (Type t in asm.GetTypes())
