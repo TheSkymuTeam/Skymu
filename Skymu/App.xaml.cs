@@ -308,7 +308,13 @@ namespace Skymu
         }
 
         protected override void OnStartup(StartupEventArgs ev)
-        {
+        { 
+            // don't use debug features if not in debug mode
+            #if !DEBUG
+            TestMode = false;
+            DisableAutoLogin = false;
+            #endif
+        
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresFrame);
