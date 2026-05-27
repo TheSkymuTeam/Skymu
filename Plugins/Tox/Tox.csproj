@@ -3,7 +3,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<OutputType>Library</OutputType>
-		<AssemblyName>plugin-Tox</AssemblyName>
+		<AssemblyName>smp.tox</AssemblyName>
 		<AssemblyTitle>Tox</AssemblyTitle>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
