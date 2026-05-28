@@ -777,7 +777,7 @@
                                                     VerticalAlignment="Center"
                                                     Orientation="Vertical">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="Use custom certificate store (cacert.pem)" /> 
+                                                        <TextBlock Text="Use custom certificate store (cacert.pem)" />
                                                     </StackPanel>
 
                                                     <StackPanel Margin="0,7,0,0" Orientation="Horizontal">
