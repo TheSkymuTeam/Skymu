@@ -229,7 +229,7 @@ namespace Tox
             }
             catch (DllNotFoundException)
             {
-                ERR("libtoxcore.dll was not found.\nNote: Using encrypted mode will NOT fix this issue.");
+                ERR("libtox.dll was not found.\nNote: Using encrypted mode will NOT fix this issue.");
                 return LoginResult.Failure;
             }
 

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Yggdrasil.Tools.Windows;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -32,6 +33,7 @@ namespace Discord.Dave
 
         public DaveSession()
         {
+            LibraryHelper.ImportDllFromArchedFolder(DaveInterop.LibDave);
             _failureCb = OnMlsFailure;
             _session = DaveInterop.daveSessionCreate(
                 IntPtr.Zero,

@@ -45,7 +45,10 @@ namespace Yggdrasil.Tools.Windows
             else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm)
                 arch = arm32;
             else
+            {
+                Debug.WriteLine($"[YGGDRASIL-TOOLS-WINDOWS] Could not load DLL: your runtime architecture is not supported by Yggdrasil.");
                 throw new PlatformNotSupportedException();
+            }
 
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), arch, dll); // XXX Windows only!
             Debug.WriteLine($"[YGGDRASIL-TOOLS] Loading native DLL ({dll}) from path ({path})");
@@ -56,7 +59,10 @@ namespace Yggdrasil.Tools.Windows
             );
 
             if (handle == IntPtr.Zero)
+            {
+                Debug.WriteLine($"[YGGDRASIL-TOOLS-WINDOWS] DLL not found. This probably means that binaries for your platform ({arch}) are not distributed with this plugin.");
                 throw new DllNotFoundException(path);
+            }
         }
 
     }

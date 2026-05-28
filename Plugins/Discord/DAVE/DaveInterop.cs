@@ -16,7 +16,7 @@ namespace Discord.Dave
 {
     internal static class DaveInterop
     {
-        private const string LibDave = "libdave.dll";
+        internal const string LibDave = "libdave.dll";
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void DAVEMLSFailureCallback(
