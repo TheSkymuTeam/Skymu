@@ -64,10 +64,16 @@
     <SolidColorBrush x:Key="Sidebar.Header" Color="#E5E5E5" />
     <SolidColorBrush x:Key="Sidebar.Divider.Opaque" Color="#E6D9D9" />
     <SolidColorBrush x:Key="Sidebar.Divider.Translucent" Color="#D1C5C5C5" />
+    <!--  TODO  -->
+    <SolidColorBrush x:Key="SidebarProfile.Background" Color="#77a2d9" />
+    <SolidColorBrush x:Key="SidebarProfile.Inactive" Color="#b8babf" />
     <SolidColorBrush x:Key="Avatar.Border" Color="#80BBBBBB" />
 
     <SolidColorBrush x:Key="EmojiFlyout.Background" Color="#CC202020" />
     <SolidColorBrush x:Key="EmojiFlyout.Border" Color="#666666" />
+
+    <!--  TODO  -->
+    <SolidColorBrush x:Key="Settings.ActiveTab" Color="#85c0fc" />
 
     <Color x:Key="Avatar.Shadow">#80A0A0A0</Color>
     <Color x:Key="WindowFrame.Button.Close.Glow">#FF0000</Color>
