@@ -2193,86 +2193,94 @@
                                             <RowDefinition Height="20" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <StackPanel
-                                            Grid.Row="0"
-                                            Margin="7,1,0,0"
-                                            HorizontalAlignment="Left"
-                                            Orientation="Horizontal">
-                                            <global:SliceControl
-                                                x:Name="VideoCallButton"
-                                                Width="Auto"
-                                                Margin="0,0,10,0"
-                                                Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                IsEnabled="False"
-                                                LeftWidth="22"
-                                                PressedIndex="2"
-                                                RightWidth="22"
-                                                Source="Assets/Universal/Chat/btn_video_call.png"
-                                                StackDirection="Vertical"
-                                                Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
-                                                TextColor="White"
-                                                TextFont="Arial"
-                                                TextLeftMargin="25"
-                                                TextRightMargin="9"
-                                                TextSize="13"
-                                                TextWeight="Bold" />
-                                            <!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
-                                            <global:SliceControl
-                                                x:Name="CallButton"
-                                                Width="Auto"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                LeftWidth="23"
-                                                MouseLeftButtonUp="CallButtonClick"
-                                                PressedIndex="2"
-                                                RightWidth="4"
-                                                Source="Assets/Universal/Chat/btn_call_left.png"
-                                                StackDirection="Vertical"
-                                                Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
-                                                TextColor="White"
-                                                TextFont="Arial"
-                                                TextLeftMargin="26"
-                                                TextSize="13"
-                                                TextWeight="Bold" />
-                                            <global:SliceControl
-                                                x:Name="CallDropdown"
-                                                Width="24"
-                                                Margin="0,0,10,0"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                LeftWidth="1"
-                                                PressedIndex="2"
-                                                RightWidth="1"
-                                                Source="Assets/Universal/Chat/btn_call_right.png"
-                                                StackDirection="Vertical" />
-                                            <global:SliceControl
-                                                Width="44"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                MouseLeftButtonUp="AddButtonClick"
-                                                PressedIndex="2"
-                                                SliceMode="0"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/add.png'}"
-                                                StackDirection="Vertical" />
+                                        <Grid Grid.Row="0" Margin="7,1,0,0">
+                                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                <global:SliceControl
+                                                    x:Name="VideoCallButton"
+                                                    Width="Auto"
+                                                    Margin="0,0,10,0"
+                                                    Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    DefaultIndex="0"
+                                                    ElementCount="5"
+                                                    HoverIndex="1"
+                                                    IsEnabled="False"
+                                                    LeftWidth="22"
+                                                    PressedIndex="2"
+                                                    RightWidth="22"
+                                                    Source="Assets/Universal/Chat/btn_video_call.png"
+                                                    StackDirection="Vertical"
+                                                    Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
+                                                    TextColor="White"
+                                                    TextFont="Arial"
+                                                    TextLeftMargin="25"
+                                                    TextRightMargin="9"
+                                                    TextSize="13"
+                                                    TextWeight="Bold" />
+                                                <!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
+                                                <global:SliceControl
+                                                    x:Name="CallButton"
+                                                    Width="Auto"
+                                                    DefaultIndex="0"
+                                                    ElementCount="5"
+                                                    HoverIndex="1"
+                                                    LeftWidth="23"
+                                                    MouseLeftButtonUp="CallButtonClick"
+                                                    PressedIndex="2"
+                                                    RightWidth="4"
+                                                    Source="Assets/Universal/Chat/btn_call_left.png"
+                                                    StackDirection="Vertical"
+                                                    Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
+                                                    TextColor="White"
+                                                    TextFont="Arial"
+                                                    TextLeftMargin="26"
+                                                    TextSize="13"
+                                                    TextWeight="Bold" />
+                                                <global:SliceControl
+                                                    x:Name="CallDropdown"
+                                                    Width="24"
+                                                    Margin="0,0,10,0"
+                                                    DefaultIndex="0"
+                                                    ElementCount="5"
+                                                    HoverIndex="1"
+                                                    LeftWidth="1"
+                                                    PressedIndex="2"
+                                                    RightWidth="1"
+                                                    Source="Assets/Universal/Chat/btn_call_right.png"
+                                                    StackDirection="Vertical" />
+                                                <global:SliceControl
+                                                    Width="44"
+                                                    DefaultIndex="0"
+                                                    ElementCount="5"
+                                                    HoverIndex="1"
+                                                    MouseLeftButtonUp="AddButtonClick"
+                                                    PressedIndex="2"
+                                                    SliceMode="0"
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/add.png'}"
+                                                    StackDirection="Vertical" />
+
+                                            </StackPanel>
                                             <global:SliceControl
                                                 x:Name="WifiButton"
-                                                Width="44"
-                                                Margin="10,0,0,0"
+                                                Margin="10,0"
+                                                HorizontalAlignment="Right"
                                                 Command="{Binding DataContext.RunSpeedTestCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                LeftWidth="12"
                                                 PressedIndex="2"
-                                                SliceMode="0"
+                                                RightWidth="35"
+                                                SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/network-none.png'}"
-                                                StackDirection="Vertical" />
-                                        </StackPanel>
+                                                StackDirection="Vertical"
+                                                Text="Check settings"
+                                                TextColor="{StaticResource Text.HighContrast}"
+                                                TextFont="Tahoma"
+                                                TextLeftMargin="10"
+                                                TextRightMargin="45"
+                                                TextSize="11"
+                                                TextWeight="Bold" />
+                                        </Grid>
                                         <Rectangle
                                             Grid.Row="1"
                                             Height="1"
