@@ -1057,7 +1057,7 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0">
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
                                     <Grid x:Name="SidebarStatus" VerticalAlignment="Top">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="24" />
@@ -1212,99 +1212,135 @@
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
                                         </StackPanel>
                                         <!--  TODO: Make this collapsable  -->
-                                        <Grid
+                                        <Border
                                             x:Name="ProfileGrid"
                                             Grid.Row="1"
-                                            HorizontalAlignment="Stretch"
-                                            Background="{StaticResource SidebarProfile.Background}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="77" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Grid
-                                                Grid.RowSpan="2"
-                                                Grid.Column="0"
-                                                Width="74"
-                                                Height="74"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                Background="#FFFFFF">
-                                                <Border Background="Transparent">
-                                                    <Border.Effect>
-                                                        <DropShadowEffect
-                                                            BlurRadius="2"
-                                                            Direction="270"
-                                                            ShadowDepth="1"
-                                                            Color="{StaticResource Avatar.Shadow}" />
-                                                    </Border.Effect>
-                                                    <Grid>
-                                                        <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
-                                                            <Image.Source>
-                                                                <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
-                                                                    <Binding Path="ProfilePicture" />
-                                                                    <Binding Source="unknown" />
-                                                                </MultiBinding>
-                                                            </Image.Source>
-                                                        </Image>
-                                                        <Border BorderBrush="{StaticResource Avatar.Border}" BorderThickness="1" />
-                                                    </Grid>
-                                                </Border>
-                                            </Grid>
-                                            <!--  TODO: lang  -->
-                                            <Border
-                                                Grid.Column="1"
-                                                VerticalAlignment="Stretch"
-                                                Background="#FFFFFF">
-                                                <TextBlock
+                                            Background="{StaticResource SidebarProfile.Background}"
+                                            BorderBrush="{StaticResource SidebarProfile.Background}"
+                                            BorderThickness="4">
+                                            <Grid HorizontalAlignment="Stretch">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="74" />
+                                                    <ColumnDefinition Width="7" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <!--  Profile picture column  -->
+                                                <Grid
+                                                    Grid.RowSpan="2"
+                                                    Grid.Column="0"
+                                                    Width="74"
+                                                    Height="74"
+                                                    HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
-                                                    FontFamily="Tahoma"
-                                                    FontSize="11"
-                                                    Foreground="{StaticResource Text.LowContrast}"
-                                                    Text="Add video or write a message here for your friends to see."
-                                                    TextAlignment="Center"
-                                                    TextWrapping="Wrap" />
-                                            </Border>
-                                            <!--  TODO: On release, with context menu, use index 4 asset  -->
-                                            <!--  TODO: Dropdown arrow  -->
-                                            <Grid
-                                                Grid.Row="1"
-                                                Grid.Column="1"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Center">
+                                                    Background="#FFFFFF">
+                                                    <Border Background="Transparent">
+                                                        <Border.Effect>
+                                                            <DropShadowEffect
+                                                                BlurRadius="2"
+                                                                Direction="270"
+                                                                ShadowDepth="1"
+                                                                Color="{StaticResource Avatar.Shadow}" />
+                                                        </Border.Effect>
+                                                        <Grid>
+                                                            <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                                                <Image.Source>
+                                                                    <MultiBinding Converter="{StaticResource ProfilePictureConverter}">
+                                                                        <Binding Path="ProfilePicture" />
+                                                                        <Binding Source="unknown" />
+                                                                    </MultiBinding>
+                                                                </Image.Source>
+                                                            </Image>
+                                                            <Border BorderBrush="{StaticResource Avatar.Border}" BorderThickness="1" />
+                                                        </Grid>
+                                                    </Border>
+                                                </Grid>
+                                                <!--  Bubble column  -->
                                                 <global:SliceControl
-                                                    Grid.Row="1"
                                                     Grid.Column="1"
-                                                    Margin="0,5"
-                                                    DefaultIndex="0"
-                                                    ElementCount="5"
-                                                    HoverIndex="1"
-                                                    LeftWidth="10"
-                                                    PressedIndex="2"
-                                                    RightWidth="10"
-                                                    SliceMode="1"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}"
-                                                    Text="Personalize"
-                                                    TextColor="{StaticResource Text.HighContrast}"
-                                                    TextFont="Tahoma"
-                                                    TextLeftMargin="7"
-                                                    TextRightMargin="15"
-                                                    TextSize="11" />
+                                                    Width="8"
+                                                    Height="8"
+                                                    Margin="0,24,0,0"
+                                                    VerticalAlignment="Top"
+                                                    DefaultIndex="4"
+                                                    ElementCount="8"
+                                                    SliceMode="0"
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bubble-sprite.png'}"
+                                                    StackDirection="Vertical" />
                                                 <!--  TODO: lang  -->
+                                                <Grid Grid.Column="2">
+                                                    <global:SliceControl
+                                                        x:Name="PseudoMoodBox"
+                                                        HorizontalAlignment="Stretch"
+                                                        BottomHeight="6"
+                                                        Cursor="IBeam"
+                                                        DefaultIndex="0"
+                                                        ElementCount="2"
+                                                        HoverIndex="-1"
+                                                        Interactive="False"
+                                                        LeftWidth="6"
+                                                        PressedIndex="1"
+                                                        RightWidth="6"
+                                                        SliceMode="2"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/mood-box.png'}"
+                                                        StackDirection="Vertical"
+                                                        TopHeight="6" />
+                                                    <TextBox
+                                                        x:Name="MoodBox"
+                                                        Padding="10,0"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalContentAlignment="Center"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Cursor="IBeam"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Foreground="{StaticResource Text.LowContrast}"
+                                                        Text="Add video or write a message for your friends to see."
+                                                        TextAlignment="Center"
+                                                        TextWrapping="Wrap" />
+                                                </Grid>
+                                                <!--  TODO: On release, with context menu, use index 4 asset  -->
+                                                <!--  TODO: Dropdown arrow  -->
+                                                <Grid
+                                                    Grid.Row="1"
+                                                    Grid.Column="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center">
+                                                    <global:SliceControl
+                                                        Grid.Row="1"
+                                                        Grid.Column="1"
+                                                        Margin="0,5"
+                                                        DefaultIndex="0"
+                                                        ElementCount="5"
+                                                        HoverIndex="1"
+                                                        LeftWidth="10"
+                                                        PressedIndex="2"
+                                                        RightWidth="10"
+                                                        SliceMode="1"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}"
+                                                        Text="Personalize"
+                                                        TextColor="{StaticResource Text.HighContrast}"
+                                                        TextFont="Tahoma"
+                                                        TextLeftMargin="10"
+                                                        TextRightMargin="17"
+                                                        TextSize="11" />
+                                                    <!--  TODO: lang  -->
+                                                </Grid>
+                                                <Image
+                                                    Grid.Row="1"
+                                                    Grid.Column="2"
+                                                    Width="12"
+                                                    Height="16"
+                                                    Margin="0,2,2,0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Stretch"
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
                                             </Grid>
-                                            <Image
-                                                Grid.Row="1"
-                                                Grid.Column="1"
-                                                Width="12"
-                                                Height="16"
-                                                Margin="0,2,2,0"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Stretch"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
-                                        </Grid>
+                                        </Border>
                                         <Border
                                             x:Name="SkypeCreditBackground"
                                             Grid.Row="3"
@@ -1321,7 +1357,7 @@
                                             Foreground="#FFFFFF"
                                             Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}" />
                                     </Grid>
-                                    <Grid>
+                                    <Grid x:Name="ContactAddSearchRow" Margin="0,5,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -1453,22 +1489,28 @@
                                                 TextSize="13"
                                                 TextWeight="Bold" />
                                         </StackPanel>
-                                        <Grid Grid.Column="1">
+                                        <Grid Grid.Column="1" Margin="5,0,0,0">
                                             <!--  TODO accurate asset  -->
                                             <global:SliceControl
                                                 x:Name="PseudoSearchBox"
+                                                Grid.Row="0"
                                                 HorizontalAlignment="Stretch"
+                                                BottomHeight="5"
                                                 Cursor="IBeam"
                                                 DefaultIndex="1"
                                                 ElementCount="2"
                                                 HoverIndex="-1"
                                                 Interactive="False"
+                                                LeftWidth="5"
                                                 PressedIndex="0"
+                                                RightWidth="5"
+                                                SliceMode="2"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/search-box.png'}"
-                                                StackDirection="Vertical" />
+                                                StackDirection="Vertical"
+                                                TopHeight="5" />
                                             <TextBox
                                                 x:Name="SearchBox"
-                                                Padding="33,0,0,0"
+                                                Padding="10,0,0,0"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalContentAlignment="Center"
                                                 Background="Transparent"
@@ -1490,9 +1532,9 @@
                                             x:Name="btnContacts"
                                             Grid.Column="0"
                                             HorizontalAlignment="Stretch"
-                                            DefaultIndex="1"
+                                            DefaultIndex="0"
                                             ElementCount="5"
-                                            HoverIndex="-1"
+                                            HoverIndex="1"
                                             IsRadioButton="True"
                                             LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
@@ -1513,7 +1555,7 @@
                                             HorizontalAlignment="Stretch"
                                             DefaultIndex="0"
                                             ElementCount="5"
-                                            HoverIndex="-1"
+                                            HoverIndex="1"
                                             IsRadioButton="True"
                                             LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
@@ -1533,9 +1575,9 @@
                                             Grid.Column="2"
                                             HorizontalAlignment="Stretch"
                                             ButtonStateOnInit="Pressed"
-                                            DefaultIndex="1"
+                                            DefaultIndex="0"
                                             ElementCount="5"
-                                            HoverIndex="-1"
+                                            HoverIndex="1"
                                             IsRadioButton="True"
                                             LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
@@ -1649,60 +1691,64 @@
                                         </TreeView>
                                     </Grid>
                                 </Border>
-                                <StackPanel Grid.Row="2" Orientation="Vertical">
-                                    <Border
-                                        Margin="0,4,0,0"
-                                        BorderBrush="{StaticResource Card.Border}"
-                                        BorderThickness="1,0,1,0">
-                                        <Grid>
-                                            <global:SliceControl
-                                                HorizontalAlignment="Stretch"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                LeftWidth="10"
-                                                MouseLeftButtonUp="CallPhones_Click"
-                                                PressedIndex="2"
-                                                RightWidth="10"
-                                                SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
-                                                StackDirection="Vertical"
-                                                Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
-                                                TextColor="{StaticResource Text.HighContrast}"
-                                                TextFont="Arial"
-                                                TextLeftMargin="32"
-                                                TextSize="13"
-                                                TextWeight="Bold" />
-                                        </Grid>
-                                    </Border>
-                                    <Border
-                                        Margin="0,4,0,0"
-                                        BorderBrush="{StaticResource Card.Border}"
-                                        BorderThickness="1,0,1,0">
-                                        <Grid>
-                                            <global:SliceControl
-                                                HorizontalAlignment="Stretch"
-                                                DefaultIndex="0"
-                                                ElementCount="5"
-                                                HoverIndex="1"
-                                                LeftWidth="10"
-                                                MouseLeftButtonUp="Directory_Click"
-                                                PressedIndex="2"
-                                                RightWidth="10"
-                                                SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
-                                                StackDirection="Vertical"
-                                                Text="Directory"
-                                                TextColor="{StaticResource Text.HighContrast}"
-                                                TextFont="Arial"
-                                                TextLeftMargin="32"
-                                                TextSize="13"
-                                                TextWeight="Bold" />
-                                            <!--  TODO: lang  -->
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
+                                <StackPanel
+                                    x:Name="BottomButtons"
+                                    Grid.Row="2"
+                                    Margin="0,2,0,0"
+                                    Orientation="Vertical">
 
+                                    <Grid Margin="0,4,0,0">
+                                        <global:SliceControl
+                                            HorizontalAlignment="Stretch"
+                                            DefaultIndex="0"
+                                            ElementCount="5"
+                                            HoverIndex="1"
+                                            IconHeight="16"
+                                            IconLeftMargin="6"
+                                            IconSource="Assets/Universal/Sidebar/skypeout.png"
+                                            IconWidth="20"
+                                            LeftWidth="10"
+                                            MouseLeftButtonUp="CallPhones_Click"
+                                            PressedIndex="2"
+                                            RightWidth="10"
+                                            SliceMode="1"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
+                                            StackDirection="Vertical"
+                                            Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
+                                            TextColor="{StaticResource Text.HighContrast}"
+                                            TextFont="Arial"
+                                            TextLeftMargin="28"
+                                            TextSize="13"
+                                            TextWeight="Bold" />
+                                    </Grid>
+
+                                    <Grid Margin="0,4,0,0">
+                                        <global:SliceControl
+                                            HorizontalAlignment="Stretch"
+                                            DefaultIndex="0"
+                                            ElementCount="5"
+                                            HoverIndex="1"
+                                            IconHeight="16"
+                                            IconLeftMargin="6"
+                                            IconSource="Assets/Universal/Sidebar/directory.png"
+                                            IconWidth="20"
+                                            LeftWidth="10"
+                                            MouseLeftButtonUp="Directory_Click"
+                                            PressedIndex="2"
+                                            RightWidth="10"
+                                            SliceMode="1"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
+                                            StackDirection="Vertical"
+                                            Text="Directory"
+                                            TextColor="{StaticResource Text.HighContrast}"
+                                            TextFont="Arial"
+                                            TextLeftMargin="28"
+                                            TextSize="13"
+                                            TextWeight="Bold" />
+                                        <!--  TODO: lang  -->
+                                    </Grid>
+
+                                </StackPanel>
                             </Grid>
                             <ContentControl
                                 x:Name="SelectedItemHolder"
