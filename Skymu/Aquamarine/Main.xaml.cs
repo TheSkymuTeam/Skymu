@@ -1601,7 +1601,7 @@ namespace Skymu.Aquamarine
 
             vmodel.Ready += (s, e) =>
             {
-                StatusBox.Text = Universal.CurrentUser.DisplayName;
+                StatusHeader.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
                     Universal.CurrentUser.ConnectionStatus
                 );
