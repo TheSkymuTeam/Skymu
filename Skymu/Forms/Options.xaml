@@ -250,7 +250,7 @@
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 4"
-                                                    Tag="Aquamarine" />
+                                                    Tag="Sapphire" />
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 5"

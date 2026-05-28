@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="Skymu.Aquamarine.Main"
+    x:Class="Skymu.Sapphire.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
@@ -587,7 +587,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/reply-arrow.png'}" />
+                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/reply-arrow.png'}" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -1073,7 +1073,7 @@
                                             ElementCount="4"
                                             HoverIndex="1"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/header.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/header.png'}"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1209,7 +1209,7 @@
                                                 Width="12"
                                                 Height="16"
                                                 HorizontalAlignment="Left"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/dropdown.png'}" />
                                         </StackPanel>
                                         <!--  TODO: Make this collapsable  -->
                                         <Border
@@ -1268,7 +1268,7 @@
                                                     DefaultIndex="4"
                                                     ElementCount="8"
                                                     SliceMode="0"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bubble-sprite.png'}"
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/bubble-sprite.png'}"
                                                     StackDirection="Vertical" />
                                                 <!--  TODO: lang  -->
                                                 <Grid Grid.Column="2">
@@ -1285,7 +1285,7 @@
                                                         PressedIndex="1"
                                                         RightWidth="6"
                                                         SliceMode="2"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/status-box.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/status-box.png'}"
                                                         StackDirection="Vertical"
                                                         TopHeight="6" />
                                                     <TextBox
@@ -1321,7 +1321,7 @@
                                                         PressedIndex="2"
                                                         RightWidth="10"
                                                         SliceMode="1"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/profile.png'}"
                                                         Text="Personalize"
                                                         TextColor="{StaticResource Text.HighContrast}"
                                                         TextFont="Tahoma"
@@ -1338,7 +1338,7 @@
                                                     Margin="0,2,2,0"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Stretch"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/dropdown.png'}" />
                                             </Grid>
                                         </Border>
                                         <Border
@@ -1479,7 +1479,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="13"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/new.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/new.png'}"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_NEW], Source={StaticResource Lang}}"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -1505,7 +1505,7 @@
                                                 PressedIndex="0"
                                                 RightWidth="5"
                                                 SliceMode="2"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/search-box.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/search-box.png'}"
                                                 StackDirection="Vertical"
                                                 TopHeight="5" />
                                             <TextBox
@@ -1540,7 +1540,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-left.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/tab-left.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1561,7 +1561,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-middle.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/tab-middle.png'}"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1583,7 +1583,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-right.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/tab-right.png'}"
                                             StackDirection="Vertical"
                                             Text="Conversations"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1627,7 +1627,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1677,7 +1677,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1712,7 +1712,7 @@
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/bottom-buttons.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1737,7 +1737,7 @@
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/bottom-buttons.png'}"
                                             StackDirection="Vertical"
                                             Text="Directory"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1788,7 +1788,7 @@
                                         ElementCount="4"
                                         HoverIndex="1"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/header.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/header.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -2228,7 +2228,7 @@
                                                     MouseLeftButtonUp="AddButtonClick"
                                                     PressedIndex="2"
                                                     SliceMode="0"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/add.png'}"
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/add.png'}"
                                                     StackDirection="Vertical" />
 
                                             </StackPanel>
@@ -2244,7 +2244,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="35"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/network-none.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/network-none.png'}"
                                                 StackDirection="Vertical"
                                                 Text="Check settings"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -2340,7 +2340,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/message-box-header25.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/message-box-header25.png'}"
                                                 StackDirection="Vertical"
                                                 TopHeight="25" />
                                             <StackPanel
@@ -2366,7 +2366,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/emoji.png'}"
+                                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/emoji.png'}"
                                                             StackDirection="Vertical" />
                                                     </StackPanel>
                                                     <Popup

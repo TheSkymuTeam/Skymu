@@ -39,7 +39,7 @@ using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Aquamarine
+namespace Skymu.Sapphire
 {
     public partial class Main : Window, IMainWindowHolder
     {
