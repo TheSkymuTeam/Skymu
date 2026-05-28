@@ -202,7 +202,7 @@ namespace Skymu.Aquamarine
                     break;
 
                 case WindowType.Chat:
-                    StatusBox.SetState(ButtonVisualState.Default);
+                    StatusHeader.SetState(ButtonVisualState.Default);
                     Home.Visibility = Visibility.Collapsed;
                     ChatTopbar.Visibility = Visibility.Visible;
                     ChatProfileArea.Visibility = Visibility.Visible;

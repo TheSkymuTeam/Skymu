@@ -1066,14 +1066,14 @@
                                             <RowDefinition Height="24" />
                                         </Grid.RowDefinitions>
                                         <global:SliceControl
-                                            x:Name="StatusBox"
+                                            x:Name="StatusHeader"
                                             Grid.Row="0"
                                             HorizontalAlignment="Stretch"
                                             DefaultIndex="0"
                                             ElementCount="4"
                                             HoverIndex="1"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/status.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/header.png'}"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1273,7 +1273,7 @@
                                                 <!--  TODO: lang  -->
                                                 <Grid Grid.Column="2">
                                                     <global:SliceControl
-                                                        x:Name="PseudoMoodBox"
+                                                        x:Name="PseudoStatusBox"
                                                         HorizontalAlignment="Stretch"
                                                         BottomHeight="6"
                                                         Cursor="IBeam"
@@ -1285,11 +1285,11 @@
                                                         PressedIndex="1"
                                                         RightWidth="6"
                                                         SliceMode="2"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/mood-box.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/status-box.png'}"
                                                         StackDirection="Vertical"
                                                         TopHeight="6" />
                                                     <TextBox
-                                                        x:Name="MoodBox"
+                                                        x:Name="StatusBox"
                                                         Padding="10,0"
                                                         HorizontalAlignment="Stretch"
                                                         VerticalContentAlignment="Center"
@@ -1767,7 +1767,7 @@
                                 DataContext="{Binding SelectedItem, ElementName=ConversationList}">
 
                                 <Grid.RowDefinitions>
-                                    <RowDefinition x:Name="ChatTopBarRow" Height="32" />
+                                    <RowDefinition x:Name="ChatTopBarRow" Height="24" />
                                     <RowDefinition
                                         x:Name="TopbarWindowRow"
                                         MinHeight="130"
@@ -1785,10 +1785,10 @@
                                         Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         DefaultIndex="0"
-                                        ElementCount="5"
-                                        HoverIndex="-1"
-                                        PressedIndex="-1"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/tab-left.png'}"
+                                        ElementCount="4"
+                                        HoverIndex="1"
+                                        PressedIndex="2"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/header.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1796,33 +1796,6 @@
                                         TextLeftMargin="13"
                                         TextSize="13"
                                         TextWeight="Bold" />
-                                    <global:SliceControl
-                                        x:Name="ChatCloseButton"
-                                        Grid.Column="1"
-                                        Width="Auto"
-                                        HorizontalAlignment="Stretch"
-                                        DefaultIndex="0"
-                                        ElementCount="5"
-                                        HoverIndex="1"
-                                        MouseLeftButtonUp="Chat_Close"
-                                        PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/tab-right.png'}"
-                                        StackDirection="Vertical"
-                                        Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
-                                        TextColor="{StaticResource Text.HighContrast}"
-                                        TextFont="Arial"
-                                        TextLeftMargin="27"
-                                        TextRightMargin="16"
-                                        TextSize="13"
-                                        TextWeight="Bold" />
-                                    <Image
-                                        Grid.Column="1"
-                                        Width="16"
-                                        Height="16"
-                                        Margin="7,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        IsHitTestVisible="False"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/close.png'}" />
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
