@@ -30,8 +30,6 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +45,6 @@ namespace Skymu.ViewModels
         #region Shared state
 
         public ObservableCollection<ConversationItem> ActiveConversation { get; }
-        public ObservableCollection<MessageGroup> GroupedConversation { get; }
 
         internal DatabaseManager Database
         {
@@ -225,7 +222,6 @@ namespace Skymu.ViewModels
         {
             Universal.ActiveViewModel = this;
             ActiveConversation = new ObservableCollection<ConversationItem>();
-            GroupedConversation = new ObservableCollection<MessageGroup>();
             _pendingPreviewMessages = new Dictionary<string, Message>();
             _typingActive = false;
             _typingTimer = new Timer(
@@ -389,7 +385,6 @@ namespace Skymu.ViewModels
             }
 
             SubscribeConversationCollectionChanges();
-            Application.Current.Dispatcher.Invoke(() => BuildGroupedConversation());
 
             IsLoadingConversation = false;
             ConversationLoaded?.Invoke(this, EventArgs.Empty);
@@ -431,7 +426,6 @@ namespace Skymu.ViewModels
                             Application.Current.Dispatcher.BeginInvoke(
                                 new Action(() =>
                                 {
-                                    RemoveFromGroupedConversation(match);
                                     ActiveConversation.Remove(match);
                                 })
                             );
@@ -459,10 +453,6 @@ namespace Skymu.ViewModels
                     {
                         Sounds.Play("message-recieved");
                     }
-
-                    Application.Current.Dispatcher.BeginInvoke(
-                        new Action(() => AppendToGroupedConversation(message))
-                    );
                 }
 
                 ConversationItemChanged?.Invoke(this, EventArgs.Empty);
@@ -480,7 +470,6 @@ namespace Skymu.ViewModels
                 ActiveConversation.CollectionChanged -= _conversationCollectionHandler;
 
             ActiveConversation.Clear();
-            GroupedConversation.Clear();
             _conversationCollectionHandler = null;
         }
 
@@ -1033,131 +1022,6 @@ namespace Skymu.ViewModels
             }
             return status;
         }
-
-        public void BuildGroupedConversation()
-        {
-            GroupedConversation.Clear();
-            bool isGroupOrServer =
-                SelectedConversation is Group || SelectedConversation is ServerChannel;
-            int i = 0;
-            while (i < ActiveConversation.Count)
-            {
-                if (!(ActiveConversation[i] is Message firstMsg))
-                {
-                    i++;
-                    continue;
-                }
-                bool isSelf = firstMsg.Sender?.Identifier == Universal.CurrentUser?.Identifier;
-                bool showName = !isSelf && isGroupOrServer;
-                bool isImage =
-                    firstMsg.Attachments != null
-                    && firstMsg.Attachments.Any(a =>
-                        a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage
-                    );
-                if (isImage)
-                {
-                    GroupedConversation.Add(new MessageGroup(new[] { firstMsg }, showName));
-                    i++;
-                    continue;
-                }
-                var batch = new List<Message> { firstMsg };
-                int j = i + 1;
-                while (j < ActiveConversation.Count)
-                {
-                    if (!(ActiveConversation[j] is Message nextMsg))
-                        break;
-                    if (nextMsg.Sender?.Identifier != firstMsg.Sender?.Identifier)
-                        break;
-                    if ((nextMsg.Time - batch[batch.Count - 1].Time).TotalSeconds >= 60)
-                        break;
-                    if (
-                        nextMsg.Attachments != null
-                        && nextMsg.Attachments.Any(a =>
-                            a.Type == AttachmentType.Image
-                            || a.Type == AttachmentType.ThumbnailImage
-                        )
-                    )
-                        break;
-                    batch.Add(nextMsg);
-                    j++;
-                }
-                GroupedConversation.Add(new MessageGroup(batch, showName));
-                i = j;
-            }
-        }
-
-        private void AppendToGroupedConversation(Message message)
-        {
-            bool isGroupOrServer =
-                SelectedConversation is Group || SelectedConversation is ServerChannel;
-            bool isSelf = message.Sender?.Identifier == Universal.CurrentUser?.Identifier;
-            bool showName = !isSelf && isGroupOrServer;
-            bool isImage =
-                message.Attachments != null
-                && message.Attachments.Any(a =>
-                    a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage
-                );
-
-            if (!isImage && GroupedConversation.Count > 0)
-            {
-                var lastGroup = GroupedConversation[GroupedConversation.Count - 1];
-                if (
-                    !lastGroup.IsImageGroup
-                    && lastGroup.Sender?.Identifier == message.Sender?.Identifier
-                )
-                {
-                    var lastMsg = lastGroup.Messages[lastGroup.Messages.Count - 1];
-                    if ((message.Time - lastMsg.Time).TotalSeconds < 60)
-                    {
-                        lastGroup.Messages.Add(message);
-                        return;
-                    }
-                }
-            }
-            GroupedConversation.Add(new MessageGroup(new[] { message }, showName));
-        }
-
-        private void RemoveFromGroupedConversation(Message message)
-        {
-            for (int i = 0; i < GroupedConversation.Count; i++)
-            {
-                var group = GroupedConversation[i];
-                if (group.Messages.Contains(message))
-                {
-                    group.Messages.Remove(message);
-                    if (group.Messages.Count == 0)
-                        GroupedConversation.RemoveAt(i);
-                    return;
-                }
-            }
-        }
     }
 
-    public class MessageGroup
-    {
-        public ObservableCollection<Message> Messages { get; }
-        public bool ShowSenderName { get; }
-        public User Sender => Messages.Count > 0 ? Messages[0].Sender : null;
-        public DateTime Time =>
-            Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
-
-        public bool IsImageGroup
-        {
-            get
-            {
-                if (Messages.Count != 1 || Messages[0].Attachments == null)
-                    return false;
-                foreach (var a in Messages[0].Attachments)
-                    if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage)
-                        return true;
-                return false;
-            }
-        }
-
-        public MessageGroup(IList<Message> messages, bool showSenderName)
-        {
-            Messages = new ObservableCollection<Message>(messages);
-            ShowSenderName = showSenderName;
-        }
-    }
 }

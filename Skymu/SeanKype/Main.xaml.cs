@@ -40,6 +40,7 @@ namespace Skymu.SeanKype
     public partial class Main : Window, IMainWindowHolder
     {
         private MainViewModel vmodel;
+        private MessageGrouper _grouper;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private bool _userScrolledUp;
@@ -60,6 +61,8 @@ namespace Skymu.SeanKype
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;
+
+            _grouper = new MessageGrouper(vmodel.ActiveConversation);
 
             vmodel.Ready += (s, e) =>
             {
@@ -175,6 +178,7 @@ namespace Skymu.SeanKype
         {
             Universal.Plugin?.TypingUsersList?.Clear();
             ConversationItemsList.ItemsSource = null;
+            _grouper?.Clear();
             vmodel.ClearActiveConversation();
         }
 
@@ -202,7 +206,8 @@ namespace Skymu.SeanKype
             if (vmodel.SelectedConversation == null)
                 return;
 
-            ConversationItemsList.ItemsSource = vmodel.GroupedConversation;
+            _grouper.Build(vmodel.SelectedConversation);
+            ConversationItemsList.ItemsSource = _grouper.Grouped;
             throbber.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
         }
