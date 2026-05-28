@@ -240,6 +240,7 @@ namespace Tox
             {
                 logCallback = cbs.OnLogPtr
             };
+            if (!Directory.Exists(toxDir)) Directory.CreateDirectory(toxDir);
 
             var newprofile = false;
             var path = Path.Combine(toxDir, profile + ".tox");
