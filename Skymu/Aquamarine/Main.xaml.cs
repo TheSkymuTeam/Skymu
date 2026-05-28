@@ -581,22 +581,12 @@ namespace Skymu.Aquamarine
                 ConversationList.ItemsSource = null;
             }
 
-            GridLength dynamic = new GridLength(1, GridUnitType.Star);
-            GridLength small = new GridLength(32);
-
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.Plugin.SupportsServers)
-                buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.Plugin.SupportsServers)
-                    buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
-                        ? small
-                        : dynamic;
             }
 
             //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
