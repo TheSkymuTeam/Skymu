@@ -1542,7 +1542,7 @@
                                             RightWidth="5"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-left.png'}"
                                             StackDirection="Vertical"
-                                            Text="{Binding [Contacts], Source={StaticResource Lang}}"
+                                            Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="7"
