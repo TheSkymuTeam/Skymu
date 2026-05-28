@@ -276,8 +276,8 @@ namespace Skymu.Preferences
         /// <summary> 1 = do not inform </summary>
         public static int InformDND
         {
-            get => S("InformDND", 0);
-            set => W("InformDND", value, nameof(InformDND));
+            get => SELECT("InformDND", 0);
+            set => WRITE("InformDND", value, nameof(InformDND));
         }
         public static bool SuppressOldRuntimeWarnings
         {
