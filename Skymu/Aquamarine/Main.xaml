@@ -1076,7 +1076,7 @@
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/status.png'}"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
-                                            TextColor="{StaticResource Text.MediumContrast}"
+                                            TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="38"
                                             TextSize="13"
@@ -1500,11 +1500,11 @@
                                             RightWidth="5"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-left.png'}"
                                             StackDirection="Vertical"
-                                            Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
+                                            Text="{Binding [Contacts], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="7"
-                                            TextRightMargin="7"
+                                            TextRightMargin="12"
                                             TextSize="13"
                                             TextWeight="Bold" />
                                         <global:SliceControl
@@ -1525,7 +1525,7 @@
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="7"
-                                            TextRightMargin="7"
+                                            TextRightMargin="12"
                                             TextSize="13"
                                             TextWeight="Bold" />
                                         <global:SliceControl
@@ -1809,17 +1809,17 @@
                                                     Source="Assets/Universal/Home/leftarrow.png"
                                                     Text="Contacts"
                                                     TextColor="{StaticResource Text.HighContrast}"
-                                                    TextFont="Tahoma"
+                                                    TextFont="Arial"
                                                     TextLeftMargin="40"
-                                                    TextSize="16"
+                                                    TextSize="18"
                                                     TextWeight="Bold" />
                                                 <TextBlock
                                                     Margin="40,5,0,0"
-                                                    FontFamily="Tahoma"
+                                                    FontFamily="Arial"
                                                     FontSize="13"
                                                     FontWeight="SemiBold"
                                                     Foreground="{StaticResource Text.MediumContrast}"
-                                                    Text="Choose a contacts and start talking." />
+                                                    Text="Choose a contact and start talking." />
                                             </StackPanel>
                                             <StackPanel
                                                 Margin="30,0,0,0"
@@ -1829,13 +1829,13 @@
                                                     Source="Assets/Universal/Home/leftarrow.png"
                                                     Text="Phones and SMS"
                                                     TextColor="{StaticResource Text.HighContrast}"
-                                                    TextFont="Tahoma"
+                                                    TextFont="Arial"
                                                     TextLeftMargin="40"
-                                                    TextSize="16"
+                                                    TextSize="18"
                                                     TextWeight="Bold" />
                                                 <TextBlock
                                                     Margin="40,5,0,15"
-                                                    FontFamily="Tahoma"
+                                                    FontFamily="Arial"
                                                     FontSize="13"
                                                     FontWeight="SemiBold"
                                                     Foreground="{StaticResource Text.MediumContrast}"
