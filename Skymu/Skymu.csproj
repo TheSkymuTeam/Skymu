@@ -107,6 +107,9 @@
 		<!-- Pontis -->
 		<Resource Include="Pontis\Assets\**\*" />
 
+		<!-- Aquamarine -->
+		<Resource Include="Aquamarine\Assets\**\*" />
+
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
 		<None Remove="Properties\**" />

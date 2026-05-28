@@ -249,6 +249,10 @@
                                                 SelectedValuePath="Tag">
                                                 <ComboBoxItem
                                                     Padding="6,0"
+                                                    Content="Skype 4"
+                                                    Tag="Aquamarine" />
+                                                <ComboBoxItem
+                                                    Padding="6,0"
                                                     Content="Skype 5"
                                                     Tag="Skyaeris" />
                                                 <ComboBoxItem
