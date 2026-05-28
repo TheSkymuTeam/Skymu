@@ -169,7 +169,11 @@ namespace Skymu
                 case "Pontis":
                     new Pontis.Login().Show();
                     break;
+                case "Sonion":
+                    new Sonion.Login().Show();
+                    break;
                 case "Skyaeris":
+                default:
                     new Skyaeris.Login().Show();
                     break;
             }
