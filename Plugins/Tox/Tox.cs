@@ -220,7 +220,7 @@ namespace Tox
         {
             try
             {
-                ArchedLibHelper.ImportLibraryFromPath("libtox.dll");
+                ArchedLibHelper.ImportLibraryFromPath("libtox");
             }
             catch (PlatformNotSupportedException)
             {
