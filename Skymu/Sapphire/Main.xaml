@@ -1776,13 +1776,9 @@
                                     <RowDefinition x:Name="MessageWindowRow" Height="*" />
                                 </Grid.RowDefinitions>
                                 <Grid x:Name="ChatTopbar" Grid.Row="0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+
                                     <global:SliceControl
                                         x:Name="chatHeader"
-                                        Grid.Column="0"
                                         HorizontalAlignment="Stretch"
                                         DefaultIndex="0"
                                         ElementCount="4"
@@ -1793,9 +1789,72 @@
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
-                                        TextLeftMargin="13"
+                                        TextLeftMargin="32"
                                         TextSize="13"
                                         TextWeight="Bold" />
+
+                                    <ContentControl
+                                        Margin="8,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Content="{Binding}"
+                                        IsHitTestVisible="False">
+                                        <ContentControl.Resources>
+                                            <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
+                                                <global:SliceControl
+                                                    Width="16"
+                                                    Height="16"
+                                                    DefaultIndex="{Binding Partner.ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
+                                                    ElementCount="22"
+                                                    HoverIndex="-1"
+                                                    Interactive="False"
+                                                    PressedIndex="-1"
+                                                    SliceMode="0"
+                                                    Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                                    StackDirection="Horizontal" />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type yggdrasil:Group}">
+                                                <global:SliceControl
+                                                    Width="16"
+                                                    Height="16"
+                                                    DefaultIndex="21"
+                                                    ElementCount="22"
+                                                    HoverIndex="-1"
+                                                    Interactive="False"
+                                                    PressedIndex="-1"
+                                                    SliceMode="0"
+                                                    Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                                    StackDirection="Horizontal" />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type yggdrasil:Server}">
+                                                <global:SliceControl
+                                                    Width="16"
+                                                    Height="16"
+                                                    DefaultIndex="3"
+                                                    ElementCount="11"
+                                                    HoverIndex="-1"
+                                                    Interactive="False"
+                                                    PressedIndex="-1"
+                                                    SliceMode="0"
+                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
+                                                    StackDirection="Horizontal" />
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
+                                                <global:SliceControl
+                                                    Width="16"
+                                                    Height="16"
+                                                    DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}"
+                                                    ElementCount="11"
+                                                    HoverIndex="-1"
+                                                    Interactive="False"
+                                                    PressedIndex="-1"
+                                                    SliceMode="0"
+                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
+                                                    StackDirection="Horizontal" />
+                                            </DataTemplate>
+                                        </ContentControl.Resources>
+                                    </ContentControl>
+
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
@@ -1804,9 +1863,13 @@
                                     BorderThickness="1,0,1,1"
                                     CornerRadius="0,0,4,4">
                                     <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5*" />
+                                            <ColumnDefinition Width="556*" />
+                                        </Grid.ColumnDefinitions>
                                         <Grid
                                             x:Name="Home"
-                                            Grid.Row="1"
+                                            Grid.ColumnSpan="2"
                                             Visibility="Collapsed">
                                             <Rectangle>
                                                 <Rectangle.Fill>
@@ -1862,8 +1925,14 @@
                                                 <!--  TODO: The "Skype" text above  -->
                                             </StackPanel>
                                         </Grid>
-                                        <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
-                                        <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
+                                        <ContentControl
+                                            x:Name="FillMessagePanelHost"
+                                            Grid.ColumnSpan="2"
+                                            Visibility="Collapsed" />
+                                        <ContentControl
+                                            x:Name="ChatProfileArea"
+                                            Grid.ColumnSpan="2"
+                                            Content="{Binding DataContext, ElementName=ChatArea}">
                                             <ContentControl.Resources>
                                                 <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
                                                     <Grid>
@@ -2066,7 +2135,7 @@
                                                                 <global:SliceControl
                                                                     Width="14"
                                                                     Height="14"
-                                                                    DefaultIndex="2"
+                                                                    DefaultIndex="3"
                                                                     ElementCount="11"
                                                                     Interactive="False"
                                                                     SliceMode="0"
