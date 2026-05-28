@@ -445,8 +445,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="FontRenderingModeGroup"
-                                                    IsChecked="{Binding Path=[UseClearType], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource BoolInverterConverter}}" />
+                                                    Checked="UseDefaultFontRenderingRadio_Checked"
+                                                    GroupName="FontRenderingModeGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -467,8 +467,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="FontRenderingModeGroup"
-                                                    IsChecked="{Binding Path=[UseClearType], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                    Checked="UseClearTypeRadio_Checked"
+                                                    GroupName="FontRenderingModeGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -511,8 +511,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="SidebarTabSizeModeGroup"
-                                                    IsChecked="{Binding Path=[DynamicSidebarTabs], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource BoolInverterConverter}}" />
+                                                    Checked="StaticSidebarTabsRadio_Checked"
+                                                    GroupName="SidebarTabSizeModeGroup" />
                                                 <StackPanel
                                                     Grid.Column="1"
                                                     Margin="5,1,10,0"
@@ -531,8 +531,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="SidebarTabSizeModeGroup"
-                                                    IsChecked="{Binding Path=[DynamicSidebarTabs], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" />
+                                                    Checked="DynamicSidebarTabsRadio_Checked"
+                                                    GroupName="SidebarTabSizeModeGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -724,8 +724,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="CertSourceGroup"
-                                                    IsChecked="{Binding Path=[CertificateStore], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Embedded}" />
+                                                    Checked="UseEmbeddedCert_Checked"
+                                                    GroupName="CertSourceGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -746,8 +746,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="CertSourceGroup"
-                                                    IsChecked="{Binding Path=[CertificateStore], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=System}" />
+                                                    Checked="UseSystemCert_Checked"
+                                                    GroupName="CertSourceGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"
@@ -768,8 +768,8 @@
                                                     Grid.Column="0"
                                                     Margin="0,3,0,0"
                                                     VerticalAlignment="Top"
-                                                    GroupName="CertSourceGroup"
-                                                    IsChecked="{Binding Path=[CertificateStore], Mode=TwoWay, Source={x:Static preferences:Settings.Default}, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Custom}" />
+                                                    Checked="UseCustomCert_Checked"
+                                                    GroupName="CertSourceGroup" />
 
                                                 <StackPanel
                                                     Grid.Column="1"

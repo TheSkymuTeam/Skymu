@@ -27,7 +27,13 @@ namespace Skymu.Converters
             if (value == null || parameter == null) return Binding.DoNothing;
             if ((bool)value)
             {
-                return Enum.Parse(targetType, parameter.ToString());
+                var param = parameter.ToString();
+                foreach (var enumType in new[] { targetType })
+                {
+                    if (enumType.IsEnum)
+                        return Enum.Parse(enumType, param);
+                }
+                throw new ArgumentException($"targetType {targetType} is not an enum. Use x:Static or ensure binding targets an enum property.");
             }
             return Binding.DoNothing;
         }

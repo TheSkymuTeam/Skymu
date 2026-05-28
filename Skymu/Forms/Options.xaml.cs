@@ -13,6 +13,7 @@ using Skymu.Preferences;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Yggdrasil.Networking;
 using Skymu.Enumerations;
 
 namespace Skymu.Views
@@ -39,7 +40,37 @@ namespace Skymu.Views
             {
                 RadioClassic.IsChecked = true;
             }
+
+            // radio button logic (moving to code behind instead of XAML/converters to iron out bugs)
+            UseEmbeddedCert.IsChecked = Settings.CertificateStore == CertStore.Embedded;
+            UseSystemCert.IsChecked = Settings.CertificateStore == CertStore.System;
+            UseCustomCert.IsChecked = Settings.CertificateStore == CertStore.Custom;
+
+            UseDefaultFontRenderingRadio.IsChecked = !Settings.UseClearType;
+            UseClearTypeRadio.IsChecked = Settings.UseClearType;
+
+            StaticSidebarTabsRadio.IsChecked = !Settings.DynamicSidebarTabs;
+            DynamicSidebarTabsRadio.IsChecked = Settings.DynamicSidebarTabs;
         }
+
+        #region Radio button stuff
+
+        private void UseEmbeddedCert_Checked(object sender, RoutedEventArgs e) =>
+            Settings.CertificateStore = CertStore.Embedded;
+        private void UseSystemCert_Checked(object sender, RoutedEventArgs e) =>
+            Settings.CertificateStore = CertStore.System;
+        private void UseCustomCert_Checked(object sender, RoutedEventArgs e) =>
+            Settings.CertificateStore = CertStore.Custom;
+
+        private void UseDefaultFontRenderingRadio_Checked(object sender, RoutedEventArgs e) =>
+            Settings.UseClearType = false;
+        private void UseClearTypeRadio_Checked(object sender, RoutedEventArgs e) =>
+            Settings.UseClearType = true;
+
+        private void StaticSidebarTabsRadio_Checked(object sender, RoutedEventArgs e) =>
+            Settings.DynamicSidebarTabs = false;
+        private void DynamicSidebarTabsRadio_Checked(object sender, RoutedEventArgs e) =>
+            Settings.DynamicSidebarTabs = true;
 
         private void RadioSkype_Checked(object sender, RoutedEventArgs e)
         {
@@ -53,7 +84,7 @@ namespace Skymu.Views
             Settings.FallbackFillColors = true;
         }
 
-        private void CarouselGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) { }
+        #endregion
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {

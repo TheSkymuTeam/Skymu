@@ -280,14 +280,14 @@ namespace Skymu.Preferences
 
         public static CertStore CertificateStore
         {
-            get => SELECT("CertificateStore", CertStore.Embedded);
-            set => WRITE("CertificateStore", value, nameof(CertificateStore));
+            get => Y_SELECT("CertificateStore", CertStore.Embedded);
+            set => Y_WRITE("CertificateStore", value, nameof(CertificateStore));
         }
 
         public static string CertPath
         {
-            get => SELECT("CertPath", string.Empty);
-            set => WRITE("CertPath", value, nameof(CertPath));
+            get => Y_SELECT("CertPath", string.Empty);
+            set => Y_WRITE("CertPath", value, nameof(CertPath));
         }
 
         public static void Save() { }
@@ -402,5 +402,65 @@ namespace Skymu.Preferences
             Set(key, value.ToString());
             Default.Notify(propName);
         }
+
+        private static readonly string Y_FilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Yggdrasil",
+            "ratatoskr.xml"
+        );
+
+        #region Yggdrasil config
+
+        private static XDocument Y_LoadOrCreate()
+        {
+            if (File.Exists(Y_FilePath))
+                return XDocument.Load(Y_FilePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(Y_FilePath));
+            var doc = new XDocument(new XElement("config"));
+            doc.Save(Y_FilePath);
+            return doc;
+        }
+
+        private static T Y_SELECT<T>(string key, T def) where T : struct, Enum
+        {
+            try
+            {
+                var doc = Y_LoadOrCreate();
+                var raw = doc.Root.Element(key)?.Value;
+                if (raw != null && Enum.TryParse<T>(raw, true, out var result))
+                    return result;
+                return def;
+            }
+            catch { return def; }
+        }
+
+        private static string Y_SELECT(string key, string def)
+        {
+            try
+            {
+                var doc = Y_LoadOrCreate();
+                return doc.Root.Element(key)?.Value ?? def;
+            }
+            catch { return def; }
+        }
+
+        private static void Y_WRITE<T>(string key, T value, string propName)
+        {
+            try
+            {
+                var doc = Y_LoadOrCreate();
+                var el = doc.Root.Element(key);
+                if (el == null)
+                    doc.Root.Add(new XElement(key, value.ToString()));
+                else
+                    el.Value = value.ToString();
+                doc.Save(Y_FilePath);
+                Default.Notify(propName);
+            }
+            catch { }
+        }
+
+        #endregion
     }
 }

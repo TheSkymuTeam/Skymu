@@ -163,25 +163,27 @@ namespace Yggdrasil.Networking
 
                 try
                 {
-                    string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    string xmlPath = Path.Combine(appData, "Skymu", "shared.xml");
-
+                    string xmlPath = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        "Yggdrasil",
+                        "ratatoskr.xml"
+                    );
                     if (File.Exists(xmlPath))
                     {
                         var doc = XDocument.Load(xmlPath);
-
-                        var sysCertEl = doc.Descendants("SysCert").FirstOrDefault();
-                        var useCustomCertEl = doc.Descendants("UseCustomCert").FirstOrDefault();
-                        var certPathEl = doc.Descendants("CertPath").FirstOrDefault();
-
-                        if (sysCertEl != null) bool.TryParse(sysCertEl.Value, out isSysCert);
-                        if (useCustomCertEl != null) bool.TryParse(useCustomCertEl.Value, out useCustom);
+                        var certStoreEl = doc.Root.Element("CertificateStore");
+                        var certPathEl = doc.Root.Element("CertPath");
+                        if (certStoreEl != null && Enum.TryParse<CertStore>(certStoreEl.Value, true, out var certStore))
+                        {
+                            isSysCert = certStore == CertStore.System;
+                            useCustom = certStore == CertStore.Custom;
+                        }
                         if (certPathEl != null) customPath = certPathEl.Value;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[BIFROST-TLS] Failed to parse shared.xml config: {ex.Message}");
+                    Debug.WriteLine($"[BIFROST-TLS] Failed to parse Ratatoskr config: {ex.Message}");
                 }
 
                 // prefer custom certs over sys
