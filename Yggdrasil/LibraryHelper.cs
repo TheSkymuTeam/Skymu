@@ -21,7 +21,7 @@ using Yggdrasil.Enumerations;
 
 namespace Yggdrasil.Tools.Windows
 {
-    public class ArchedLibHelper
+    public class LibraryHelper
     {
         const uint LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
 
@@ -32,7 +32,7 @@ namespace Yggdrasil.Tools.Windows
             uint dwFlags
         );
 
-        public static void ImportLibraryFromPath(string library, string x86_suffix = "32", string x64_suffix = "64",  string arm64_suffix = "arm64")
+        public static string GetArchedLibrary(string library, string x86_suffix = "32", string x64_suffix = "64", string arm64_suffix = "arm64")
         {
             string arch;
 
@@ -45,17 +45,22 @@ namespace Yggdrasil.Tools.Windows
             else
                 throw new PlatformNotSupportedException();
 
-            library += arch;
-            string dll = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), library += ".dll"); // XXX Windows only!
-            Debug.WriteLine($"[YGGDRASIL-TOOLS] Loading the native DLL ({library}) from path ({dll})");
+            string dll = library + arch + ".dll";
+            return dll;
+        }
+
+        public static void Import(string library)
+        {
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), library); // XXX Windows only!
+            Debug.WriteLine($"[YGGDRASIL-TOOLS] Loading native DLL ({library}) from path ({path})");
             IntPtr handle = LoadLibraryEx(
-                dll,
+                path,
                 IntPtr.Zero,
                 LOAD_WITH_ALTERED_SEARCH_PATH
             );
 
             if (handle == IntPtr.Zero)
-                throw new DllNotFoundException(dll);
+                throw new DllNotFoundException(path);
         }
     }
 }

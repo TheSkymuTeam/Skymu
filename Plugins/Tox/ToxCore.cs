@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 public static class ToxCore
 {
-    private const string Lib = "libtoxcore.dll";
+    private static string Lib = "libtoxcore.dll";
     public static string toxDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "tox");
     public static string AvatarDir = Path.Combine(toxDir, "avatars");
 
