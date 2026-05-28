@@ -181,9 +181,7 @@ namespace Skymu.Sapphire
                     ClearConversation();
 
                     Home.Visibility = Visibility.Visible;
-                    ChatTopbar.Visibility = Visibility.Collapsed;
-                    ChatProfileArea.Visibility = Visibility.Collapsed;
-                    MessageWindow.Visibility = Visibility.Collapsed;
+                    ChatArea.Visibility = Visibility.Collapsed;
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
@@ -204,9 +202,7 @@ namespace Skymu.Sapphire
                 case WindowType.Chat:
                     StatusHeader.SetState(ButtonVisualState.Default);
                     Home.Visibility = Visibility.Collapsed;
-                    ChatTopbar.Visibility = Visibility.Visible;
-                    ChatProfileArea.Visibility = Visibility.Visible;
-                    MessageWindow.Visibility = Visibility.Visible;
+                    ChatArea.Visibility = Visibility.Visible;
 
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 

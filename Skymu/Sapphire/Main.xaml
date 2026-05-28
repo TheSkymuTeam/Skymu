@@ -1761,6 +1761,66 @@
                                 Fill="Transparent"
                                 MouseLeftButtonDown="SkypeSplitter_Press"
                                 MouseMove="SkypeSplitter_MouseMove" />
+                            <!--  Home  -->
+                            <Grid
+                                x:Name="Home"
+                                Grid.Column="2"
+                                Visibility="Collapsed">
+                                <Rectangle>
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Offset="0.0" Color="#e8f0f9" />
+                                            <GradientStop Offset="1.0" Color="#b4cff1" />
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Image
+                                    Width="937"
+                                    Height="222"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Source="Assets/Universal/Home/footer.png" />
+                                <!--  TODO: Localize. Requires Skype 4 lang files.  -->
+                                <StackPanel Margin="30,175,0,0" Orientation="Vertical">
+                                    <global:SliceControl
+                                        Source="Assets/Universal/Home/leftarrow.png"
+                                        Text="Contacts"
+                                        TextColor="{StaticResource Text.HighContrast}"
+                                        TextFont="Arial"
+                                        TextLeftMargin="40"
+                                        TextSize="18"
+                                        TextWeight="Bold" />
+                                    <TextBlock
+                                        Margin="40,5,0,0"
+                                        FontFamily="Arial"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource Text.MediumContrast}"
+                                        Text="Choose a contact and start talking." />
+                                </StackPanel>
+                                <StackPanel
+                                    Margin="30,0,0,0"
+                                    VerticalAlignment="Bottom"
+                                    Orientation="Vertical">
+                                    <global:SliceControl
+                                        Source="Assets/Universal/Home/leftarrow.png"
+                                        Text="Phones and SMS"
+                                        TextColor="{StaticResource Text.HighContrast}"
+                                        TextFont="Arial"
+                                        TextLeftMargin="40"
+                                        TextSize="18"
+                                        TextWeight="Bold" />
+                                    <TextBlock
+                                        Margin="40,5,0,15"
+                                        FontFamily="Arial"
+                                        FontSize="13"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource Text.MediumContrast}"
+                                        Text="You can also use Skype to call landlines and mobile phones." />
+                                    <!--  TODO: The "Skype" text above  -->
+                                </StackPanel>
+                            </Grid>
+                            <!--  Chat area  -->
                             <Grid
                                 x:Name="ChatArea"
                                 Grid.Column="2"
@@ -1867,64 +1927,6 @@
                                             <ColumnDefinition Width="5*" />
                                             <ColumnDefinition Width="556*" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid
-                                            x:Name="Home"
-                                            Grid.ColumnSpan="2"
-                                            Visibility="Collapsed">
-                                            <Rectangle>
-                                                <Rectangle.Fill>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Offset="0.0" Color="#e8f0f9" />
-                                                        <GradientStop Offset="1.0" Color="#b4cff1" />
-                                                    </LinearGradientBrush>
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                            <Image
-                                                Width="937"
-                                                Height="222"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Bottom"
-                                                Source="Assets/Universal/Home/footer.png" />
-                                            <!--  TODO: Localize. Requires Skype 4 lang files.  -->
-                                            <StackPanel Margin="30,175,0,0" Orientation="Vertical">
-                                                <global:SliceControl
-                                                    Source="Assets/Universal/Home/leftarrow.png"
-                                                    Text="Contacts"
-                                                    TextColor="{StaticResource Text.HighContrast}"
-                                                    TextFont="Arial"
-                                                    TextLeftMargin="40"
-                                                    TextSize="18"
-                                                    TextWeight="Bold" />
-                                                <TextBlock
-                                                    Margin="40,5,0,0"
-                                                    FontFamily="Arial"
-                                                    FontSize="13"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{StaticResource Text.MediumContrast}"
-                                                    Text="Choose a contact and start talking." />
-                                            </StackPanel>
-                                            <StackPanel
-                                                Margin="30,0,0,0"
-                                                VerticalAlignment="Bottom"
-                                                Orientation="Vertical">
-                                                <global:SliceControl
-                                                    Source="Assets/Universal/Home/leftarrow.png"
-                                                    Text="Phones and SMS"
-                                                    TextColor="{StaticResource Text.HighContrast}"
-                                                    TextFont="Arial"
-                                                    TextLeftMargin="40"
-                                                    TextSize="18"
-                                                    TextWeight="Bold" />
-                                                <TextBlock
-                                                    Margin="40,5,0,15"
-                                                    FontFamily="Arial"
-                                                    FontSize="13"
-                                                    FontWeight="SemiBold"
-                                                    Foreground="{StaticResource Text.MediumContrast}"
-                                                    Text="You can also use Skype to call landlines and mobile phones." />
-                                                <!--  TODO: The "Skype" text above  -->
-                                            </StackPanel>
-                                        </Grid>
                                         <ContentControl
                                             x:Name="FillMessagePanelHost"
                                             Grid.ColumnSpan="2"
