@@ -27,10 +27,10 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="libtox32.dll">
+	  <None Update="x86\libtox.dll">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="libtox64.dll">
+	  <None Update="x64\libtox.dll">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
