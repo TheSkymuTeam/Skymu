@@ -1282,7 +1282,9 @@
                                                     DefaultIndex="0"
                                                     ElementCount="5"
                                                     HoverIndex="1"
+                                                    LeftWidth="10"
                                                     PressedIndex="2"
+                                                    RightWidth="10"
                                                     SliceMode="1"
                                                     Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}" />
                                                 <!--  TODO: lang  -->
@@ -1648,8 +1650,10 @@
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                LeftWidth="10"
                                                 MouseLeftButtonUp="CallPhones_Click"
                                                 PressedIndex="2"
+                                                RightWidth="10"
                                                 SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
                                                 StackDirection="Vertical" />
@@ -1675,8 +1679,10 @@
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                LeftWidth="10"
                                                 MouseLeftButtonUp="Directory_Click"
                                                 PressedIndex="2"
+                                                RightWidth="10"
                                                 SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
                                                 StackDirection="Vertical" />
