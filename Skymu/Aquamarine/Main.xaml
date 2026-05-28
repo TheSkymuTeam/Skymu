@@ -1286,16 +1286,14 @@
                                                     PressedIndex="2"
                                                     RightWidth="10"
                                                     SliceMode="1"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}" />
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}"
+                                                    Text="Personalize"
+                                                    TextColor="{StaticResource Text.HighContrast}"
+                                                    TextFont="Tahoma"
+                                                    TextLeftMargin="7"
+                                                    TextRightMargin="15"
+                                                    TextSize="11" />
                                                 <!--  TODO: lang  -->
-                                                <TextBlock
-                                                    Margin="5,0,15,0"
-                                                    VerticalAlignment="Center"
-                                                    FontFamily="Tahoma"
-                                                    FontSize="11"
-                                                    Foreground="{StaticResource Text.MediumContrast}"
-                                                    IsHitTestVisible="False"
-                                                    Text="Personalize" />
                                             </Grid>
                                             <Image
                                                 Grid.Row="1"
@@ -1440,11 +1438,20 @@
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                LeftWidth="25"
                                                 MouseLeftButtonUp="SBNewBtn_Click"
                                                 PressedIndex="2"
-                                                SliceMode="0"
+                                                RightWidth="13"
+                                                SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/new.png'}"
-                                                StackDirection="Vertical" />
+                                                StackDirection="Vertical"
+                                                Text="{Binding [sZAPBUTTON_NEW], Source={StaticResource Lang}}"
+                                                TextColor="{StaticResource Text.HighContrast}"
+                                                TextFont="Arial"
+                                                TextLeftMargin="27"
+                                                TextRightMargin="17"
+                                                TextSize="13"
+                                                TextWeight="Bold" />
                                         </StackPanel>
                                         <Grid Grid.Column="1">
                                             <!--  TODO accurate asset  -->
@@ -1487,10 +1494,10 @@
                                             ElementCount="5"
                                             HoverIndex="-1"
                                             IsRadioButton="True"
-                                            LeftWidth="25"
+                                            LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
-                                            RightWidth="2"
+                                            RightWidth="5"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-left.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
@@ -1508,10 +1515,10 @@
                                             ElementCount="5"
                                             HoverIndex="-1"
                                             IsRadioButton="True"
-                                            LeftWidth="25"
+                                            LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
-                                            RightWidth="2"
+                                            RightWidth="5"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-middle.png'}"
                                             StackDirection="Vertical"
                                             Text="Servers"
@@ -1530,13 +1537,13 @@
                                             ElementCount="5"
                                             HoverIndex="-1"
                                             IsRadioButton="True"
-                                            LeftWidth="25"
+                                            LeftWidth="5"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
-                                            RightWidth="2"
+                                            RightWidth="5"
                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-right.png'}"
                                             StackDirection="Vertical"
-                                            Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
+                                            Text="Conversations"
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Arial"
                                             TextLeftMargin="7"
@@ -1659,17 +1666,13 @@
                                                 RightWidth="10"
                                                 SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
-                                                StackDirection="Vertical" />
-                                            <!--  TODO: Stretch SliceControl while having text for press animation for text  -->
-                                            <TextBlock
-                                                Margin="32,0,0,0"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Arial"
-                                                FontSize="13"
-                                                FontWeight="Bold"
-                                                Foreground="{StaticResource Text.MediumContrast}"
-                                                IsHitTestVisible="False"
-                                                Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}" />
+                                                StackDirection="Vertical"
+                                                Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
+                                                TextColor="{StaticResource Text.HighContrast}"
+                                                TextFont="Arial"
+                                                TextLeftMargin="32"
+                                                TextSize="13"
+                                                TextWeight="Bold" />
                                         </Grid>
                                     </Border>
                                     <Border
@@ -1688,18 +1691,14 @@
                                                 RightWidth="10"
                                                 SliceMode="1"
                                                 Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
-                                                StackDirection="Vertical" />
+                                                StackDirection="Vertical"
+                                                Text="Directory"
+                                                TextColor="{StaticResource Text.HighContrast}"
+                                                TextFont="Arial"
+                                                TextLeftMargin="32"
+                                                TextSize="13"
+                                                TextWeight="Bold" />
                                             <!--  TODO: lang  -->
-                                            <!--  TODO: Stretch SliceControl while having text for press animation for text  -->
-                                            <TextBlock
-                                                Margin="32,0,0,0"
-                                                VerticalAlignment="Center"
-                                                FontFamily="Arial"
-                                                FontSize="13"
-                                                FontWeight="Bold"
-                                                Foreground="{StaticResource Text.MediumContrast}"
-                                                IsHitTestVisible="False"
-                                                Text="Directory" />
                                         </Grid>
                                     </Border>
                                 </StackPanel>
