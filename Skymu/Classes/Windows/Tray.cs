@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using Skymu.Preferences;
+using Skymu.ViewModels;
 using Skymu.Views;
 using System;
 using System.Collections.Generic;
@@ -181,19 +182,7 @@ namespace Skymu
         static async void SS(PresenceStatus status)
         {
             if (status == PresenceStatus.DoNotDisturb)
-            {
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    new Dialog(
-                        WindowBase.IconType.Information,
-                        Universal.Lang["sINFORM_DND"],
-                        Universal.Lang["sINFORM_DND_CAP"],
-                        Universal.Lang["sINFORM_DND_TITLE"],
-                        brText: "OK"
-                    ).ShowDialog();
-                    // TODO: Do not display this information again
-                });
-            }
+                Universal.InformDND();
 
             _ = Universal.Plugin.SetConnectionStatus(status);
         }

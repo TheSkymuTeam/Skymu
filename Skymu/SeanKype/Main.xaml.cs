@@ -550,15 +550,7 @@ namespace Skymu.SeanKype
             var current = vmodel.GetStatusFromInt(_currentStatusIndex);
 
             if (name == "dnd")
-            {
-                new Views.Dialog(
-                    Views.WindowBase.IconType.Information,
-                    Universal.Lang["sINFORM_DND"],
-                    Universal.Lang["sINFORM_DND_CAP"],
-                    Universal.Lang["sINFORM_DND_TITLE"],
-                    brText: "OK"
-                ).ShowDialog();
-            }
+                Universal.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
             if (status == PresenceStatus.Unknown) return;

@@ -267,10 +267,17 @@ namespace Skymu.Preferences
             get => SELECT("NikoIcons", false);
             set => WRITE("NikoIcons", value, nameof(NikoIcons));
         }
+        // TODO: Rename to QuitWithoutAsking with migration
         public static bool QuitWithoutAsking
         {
             get => SELECT("QuitWithoutAsking", false);
             set => WRITE("QuitWithoutAsking", value, nameof(QuitWithoutAsking));
+        }
+        /// <summary> 1 = do not inform </summary>
+        public static int InformDND
+        {
+            get => SELECT("InformDND", 0);
+            set => WRITE("InformDND", value, nameof(InformDND));
         }
         public static bool SuppressOldRuntimeWarnings
         {

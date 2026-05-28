@@ -1,38 +1,12 @@
-We, the copyright holders of all Skymu-specific code and all Skymu-specific 
-assets in the Skymu project, formally declare that access to the Skymu 
-project is granted to you if you agree that your use and distribution
-of our code and assets is bound to the terms of the following license [1].
-
-We may grant Exceptions to specific people or organizations by providing them 
-with a written Statement of Exception [2] (hereby referred to as a Statement). This
-permits a person or organization to use and distribute our  copyrighted code and
-assets under a different license, specified in the Statement.
-
-Forks of the project may not issue their own Statements to people or
-organizations, and Statements are not transferrable, unless the ability
-to issue or transfer Statements is specifically granted in the terms of the Statement. 
-
-A list of all issued Statements is published for convenience [3].
-If a Statement does not exist in this list, it is invalid.
+Skymu and its source code is made available to you under the following license.
 
 We do not purport or declare the right to license the Skype assets found in
 certain distributions of the Skymu project, which are copyrighted by Microsoft
-Corporation, formerly by Skype Technologies S.A.R.L; they are 
-employed under the doctrine of fair use. The use and distribution of those 
-assets is not covered by this license.
+Corporation. They are employed under the doctrine of fair use and for purposes of
+historical preservation and education. The use and distribution of those assets is
+not covered by this license.
 
-[1] The standard license can be found at 
-http://skymu.app/legal/licenses/standard.txt.
-
-[2] A special license that applies only to those defined in a Statement of 
-Exception can be found at
-http://skymu.app/legal/licenses/exception.txt.
-
-[3] An authoritative list of all issued Statements of Exception can be
-found at
-http://skymu.app/legal/exceptions.
-
-                    GNU AFFERO GENERAL PUBLIC LICENSE
+                   GNU AFFERO GENERAL PUBLIC LICENSE
                        Version 3, 19 November 2007
 
  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>

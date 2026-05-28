@@ -11,6 +11,7 @@
 
 using Skymu.Preferences;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -39,7 +40,8 @@ namespace Skymu.Views
             bool bmEnabled = false,
             Action bmAction = null,
             string bmText = null,
-            bool cbEnabled = false
+            bool cbEnabled = false,
+            CancelEventHandler onClosing = null
         )
         {
             try
@@ -125,6 +127,8 @@ namespace Skymu.Views
                 BRAction = brAction;
                 BMAction = bmAction;
                 BLAction = blAction;
+                if (onClosing != null)
+                    Closing += onClosing;
                 DialogImage.DefaultIndex = Settings.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
                 if (blText != null)
                     ButtonLeft.Content = blText;

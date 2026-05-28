@@ -211,6 +211,7 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(0);
 
                     ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                    ChatTopbarSplitterRow.MaxHeight = 0;
                     topbarWindowRowHeight = TopbarWindowRow.Height.Value;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
@@ -230,6 +231,7 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 
                     ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    ChatTopbarSplitterRow.MaxHeight = chatTopbarRowOrigMaxHeight;
                     TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
                     TopbarWindowRow.MaxHeight = screen == null ? topbarWindowRowOrigMaxHeight : ChatArea.ActualHeight * 0.7;
                     if (location != null)
@@ -683,6 +685,7 @@ namespace Skymu.Skyaeris
 
         #region Resizing stuff
 
+        private double chatTopbarRowOrigMaxHeight;
         private double topbarWindowRowOrigMaxHeight;
         private double topbarWindowRowOrigHeight;
 
@@ -739,17 +742,17 @@ namespace Skymu.Skyaeris
                 double max = row.MaxHeight;
                 double min = row.MinHeight;
 
-                double newWidth = row.Height.Value + delta.Y;
+                double newHeight = row.Height.Value + delta.Y;
 
-                if (newWidth < min)
-                    newWidth = min;
-                if (newWidth > max)
-                    newWidth = max;
+                if (newHeight < min)
+                    newHeight = min;
+                if (newHeight > max)
+                    newHeight = max;
 
-                row.Height = new GridLength(newWidth);
+                row.Height = new GridLength(newHeight);
                 dragStart = current;
 
-                Sidebar_SizeChanged_Refresh();
+                topbarWindowRowHeight = newHeight;
             }
         }
 
@@ -1394,6 +1397,7 @@ namespace Skymu.Skyaeris
                 ContentArea.Visibility = Visibility.Visible;
                 // Same for this, but with chat hidden only now
                 ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                ChatTopbarSplitterRow.MaxHeight = 0;
 
 
                 if (FillWindowHost.Content == frame)
@@ -1417,14 +1421,15 @@ namespace Skymu.Skyaeris
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
                     ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    ChatTopbarSplitterRow.MaxHeight = int.MaxValue;
                 }
                 // Show everything
                 if (location.SidebarToggle && location.ChatToggle)
                 {
                     TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
+                    FillMessagePanelHost.Visibility = Visibility.Visible;
                     FillMessagePanelHost.Content = frame;
-                    ChatTopBarRow.MaxHeight = Double.PositiveInfinity;
                     return;
                 }
                 // Show nothing
@@ -1434,19 +1439,18 @@ namespace Skymu.Skyaeris
                     FillWindowHost.Content = frame;
                     return;
                 }
-                // Hide sidebar (also the ChatTopbar)
+                // Hide sidebar
                 if (!location.SidebarToggle)
                 {
                     sidebarOrigWidth = SidebarColumn.Width.Value;
                     SidebarColumn.Width = new GridLength(0);
                     SidebarColumn.MinWidth = 0;
                     SkypeSplitterColumn.Width = new GridLength(0);
-                    ChatTopBarRow.MaxHeight = 0;
                 }
                 // Hide chat
                 else if (!location.ChatToggle)
                 {
-                    topbarWindowRowHeight = TopbarWindowRow.Height.Value;
+                    topbarWindowRowHeight = TopbarWindowRow.ActualHeight;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
                     TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
@@ -1754,6 +1758,7 @@ namespace Skymu.Skyaeris
 
             vmodel.SubscribeTypingIndicator();
 
+            chatTopbarRowOrigMaxHeight = ChatTopBarRow.MaxHeight;
             topbarWindowRowOrigMaxHeight = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
             UpdateMessageSendButtonState();
@@ -1826,16 +1831,7 @@ namespace Skymu.Skyaeris
             var currentStatus = vmodel.GetStatusFromInt(StatusIcon.DefaultIndex);
 
             if (name == "dnd")
-            {
-                new Dialog(
-                    WindowBase.IconType.Information,
-                    Universal.Lang["sINFORM_DND"],
-                    Universal.Lang["sINFORM_DND_CAP"],
-                    Universal.Lang["sINFORM_DND_TITLE"],
-                    brText: "OK"
-                ).ShowDialog();
-                // TODO add "Do not show again" option to this warning
-            }
+                Universal.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
             if (status == PresenceStatus.Unknown) return;
