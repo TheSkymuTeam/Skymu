@@ -220,8 +220,7 @@ namespace Tox
         {
             try
             {
-                string tox_path = LibraryHelper.GetArchedLibrary("libtox");
-                LibraryHelper.Import(tox_path);
+                LibraryHelper.ImportDllFromArchedFolder(ToxCore.LibTox);
             }
             catch (PlatformNotSupportedException)
             {
