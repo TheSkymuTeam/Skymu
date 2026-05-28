@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="Skymu.Sonion.Main"
+    x:Class="Skymu.Aquamarine.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
@@ -587,7 +587,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/reply-arrow.png'}" />
+                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/reply-arrow.png'}" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -835,8 +835,8 @@
                     FontFamily="Tahoma"
                     FontSize="11">
                     <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
-                        <MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}" >
-                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}" >
+                        <MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}">
                                 <MenuItem.Icon>
                                     <global:SliceControl
                                         Width="14"
@@ -849,7 +849,7 @@
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}" >
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}">
                                 <MenuItem.Icon>
                                     <global:SliceControl
                                         Width="14"
@@ -862,7 +862,7 @@
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}" >
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}">
                                 <MenuItem.Icon>
                                     <global:SliceControl
                                         Width="14"
@@ -875,7 +875,7 @@
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}" >
+                            <MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}">
                                 <MenuItem.Icon>
                                     <global:SliceControl
                                         Width="14"
@@ -888,13 +888,13 @@
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False" >
+                            <MenuItem Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False">
                                 <MenuItem.Icon>
                                     <global:SliceControl
                                         Width="14"
                                         DefaultIndex="14"
-                                        ElementCount="22"
                                         DisabledIndex="-1"
+                                        ElementCount="22"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
@@ -903,18 +903,18 @@
                                 </MenuItem.Icon>
                             </MenuItem>
                             <Separator />
-                            <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False" >
+                            <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False">
                                 <MenuItem.Icon>
                                     <global:SliceControl
-                                    Width="14"
-                                    DefaultIndex="12"
-                                    ElementCount="22"
-                                    DisabledIndex="-1"
-                                    HoverIndex="-1"
-                                    PressedIndex="-1"
-                                    SliceMode="0"
-                                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                    StackDirection="Horizontal" />
+                                        Width="14"
+                                        DefaultIndex="12"
+                                        DisabledIndex="-1"
+                                        ElementCount="22"
+                                        HoverIndex="-1"
+                                        PressedIndex="-1"
+                                        SliceMode="0"
+                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuItem>
@@ -1058,9 +1058,7 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <StackPanel Grid.Row="0">
-                                    <Grid
-                                        x:Name="SidebarStatus"
-                                        VerticalAlignment="Top" >
+                                    <Grid x:Name="SidebarStatus" VerticalAlignment="Top">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="24" />
                                             <RowDefinition Height="80" />
@@ -1075,7 +1073,7 @@
                                             ElementCount="4"
                                             HoverIndex="1"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/status.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/status.png'}"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.MediumContrast}"
@@ -1211,30 +1209,30 @@
                                                 Width="12"
                                                 Height="16"
                                                 HorizontalAlignment="Left"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/dropdown.png'}" />
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
                                         </StackPanel>
                                         <!--  TODO: Make this collapsable  -->
                                         <Grid
                                             x:Name="ProfileGrid"
                                             Grid.Row="1"
                                             HorizontalAlignment="Stretch"
-                                            Background="{StaticResource SidebarProfile.Background}" >
+                                            Background="{StaticResource SidebarProfile.Background}">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="77"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="77" />
+                                                <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="*" />
                                                 <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
                                             <Grid
-                                                Grid.Column="0"
                                                 Grid.RowSpan="2"
-                                                d:Background="#FFFFFF"
+                                                Grid.Column="0"
                                                 Width="74"
                                                 Height="74"
                                                 HorizontalAlignment="Right"
-                                                VerticalAlignment="Center">
+                                                VerticalAlignment="Center"
+                                                d:Background="#FFFFFF">
                                                 <Border Background="Transparent">
                                                     <Border.Effect>
                                                         <DropShadowEffect
@@ -1260,7 +1258,7 @@
                                             <Border
                                                 Grid.Column="1"
                                                 VerticalAlignment="Stretch"
-                                                Background="#FFFFFF" >
+                                                Background="#FFFFFF">
                                                 <TextBlock
                                                     VerticalAlignment="Center"
                                                     FontFamily="Tahoma"
@@ -1270,23 +1268,23 @@
                                                     TextAlignment="Center"
                                                     TextWrapping="Wrap" />
                                             </Border>
-                                            <!--  TODO: On release, with context menu, use index 4 asset -->
+                                            <!--  TODO: On release, with context menu, use index 4 asset  -->
                                             <!--  TODO: Dropdown arrow  -->
                                             <Grid
-                                                Grid.Column="1"
                                                 Grid.Row="1"
+                                                Grid.Column="1"
                                                 HorizontalAlignment="Right"
-                                                VerticalAlignment="Center" >
+                                                VerticalAlignment="Center">
                                                 <global:SliceControl
-                                                    Grid.Column="1"
                                                     Grid.Row="1"
+                                                    Grid.Column="1"
                                                     Margin="0,5"
                                                     DefaultIndex="0"
                                                     ElementCount="5"
                                                     HoverIndex="1"
                                                     PressedIndex="2"
                                                     SliceMode="1"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/profile.png'}" />
+                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/profile.png'}" />
                                                 <!--  TODO: lang  -->
                                                 <TextBlock
                                                     Margin="5,0,15,0"
@@ -1298,14 +1296,14 @@
                                                     Text="Personalize" />
                                             </Grid>
                                             <Image
-                                                Grid.Column="1"
                                                 Grid.Row="1"
+                                                Grid.Column="1"
                                                 Width="12"
                                                 Height="16"
                                                 Margin="0,2,2,0"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Stretch"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/dropdown.png'}" />
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/dropdown.png'}" />
                                         </Grid>
                                         <Border
                                             x:Name="SkypeCreditBackground"
@@ -1314,8 +1312,8 @@
                                             CornerRadius="0,0,4,4" />
                                         <TextBlock
                                             x:Name="SkypeCreditBox"
-                                            Margin="5,0,0,0"
                                             Grid.Row="3"
+                                            Margin="5,0,0,0"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Center"
                                             FontFamily="Tahoma"
@@ -1330,8 +1328,8 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel
                                             x:Name="SBNewBtn"
-                                                Grid.Column="0"
-                                                Orientation="Horizontal">
+                                            Grid.Column="0"
+                                            Orientation="Horizontal">
                                             <StackPanel.Resources>
                                                 <ContextMenu x:Key="Menu">
                                                     <MenuItem
@@ -1439,11 +1437,11 @@
                                                 DefaultIndex="0"
                                                 ElementCount="5"
                                                 HoverIndex="1"
+                                                MouseLeftButtonUp="SBNewBtn_Click"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/new.png'}"
-                                                StackDirection="Vertical"
-                                                MouseLeftButtonUp="SBNewBtn_Click" />
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/new.png'}"
+                                                StackDirection="Vertical" />
                                         </StackPanel>
                                         <Grid Grid.Column="1">
                                             <!--  TODO accurate asset  -->
@@ -1456,7 +1454,7 @@
                                                 HoverIndex="-1"
                                                 Interactive="False"
                                                 PressedIndex="0"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/search-box.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/search-box.png'}"
                                                 StackDirection="Vertical" />
                                             <TextBox
                                                 x:Name="SearchBox"
@@ -1490,7 +1488,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/tab-left.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-left.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1510,7 +1508,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/tab-middle.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-middle.png'}"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1531,7 +1529,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/tab-right.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/tab-right.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1574,7 +1572,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1624,7 +1622,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1642,7 +1640,7 @@
                                     <Border
                                         Margin="0,4,0,0"
                                         BorderBrush="{StaticResource Card.Border}"
-                                        BorderThickness="1,0,1,0" >
+                                        BorderThickness="1,0,1,0">
                                         <Grid>
                                             <global:SliceControl
                                                 HorizontalAlignment="Stretch"
@@ -1652,7 +1650,7 @@
                                                 MouseLeftButtonUp="CallPhones_Click"
                                                 PressedIndex="2"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/bottom-buttons.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
                                                 StackDirection="Vertical" />
                                             <!--  TODO: Stretch SliceControl while having text for press animation for text  -->
                                             <TextBlock
@@ -1669,7 +1667,7 @@
                                     <Border
                                         Margin="0,4,0,0"
                                         BorderBrush="{StaticResource Card.Border}"
-                                        BorderThickness="1,0,1,0" >
+                                        BorderThickness="1,0,1,0">
                                         <Grid>
                                             <global:SliceControl
                                                 HorizontalAlignment="Stretch"
@@ -1679,7 +1677,7 @@
                                                 MouseLeftButtonUp="Directory_Click"
                                                 PressedIndex="2"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Sidebar/bottom-buttons.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Sidebar/bottom-buttons.png'}"
                                                 StackDirection="Vertical" />
                                             <!--  TODO: lang  -->
                                             <!--  TODO: Stretch SliceControl while having text for press animation for text  -->
@@ -1722,9 +1720,7 @@
                                     <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                     <RowDefinition x:Name="MessageWindowRow" Height="*" />
                                 </Grid.RowDefinitions>
-                                <Grid
-                                    x:Name="ChatTopbar"
-                                    Grid.Row="0" >
+                                <Grid x:Name="ChatTopbar" Grid.Row="0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -1737,7 +1733,7 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/tab-left.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/tab-left.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1755,7 +1751,7 @@
                                         HoverIndex="1"
                                         MouseLeftButtonUp="Chat_Close"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/tab-right.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/tab-right.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1771,7 +1767,7 @@
                                         Margin="7,0,0,0"
                                         HorizontalAlignment="Left"
                                         IsHitTestVisible="False"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/close.png'}" />
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/close.png'}" />
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
@@ -1787,8 +1783,8 @@
                                             <Rectangle>
                                                 <Rectangle.Fill>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Color="#e8f0f9" Offset="0.0" />
-                                                        <GradientStop Color="#b4cff1" Offset="1.0" />
+                                                        <GradientStop Offset="0.0" Color="#e8f0f9" />
+                                                        <GradientStop Offset="1.0" Color="#b4cff1" />
                                                     </LinearGradientBrush>
                                                 </Rectangle.Fill>
                                             </Rectangle>
@@ -1797,12 +1793,9 @@
                                                 Height="222"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Bottom"
-                                                Source="Assets/Universal/Home/footer.png"
-                                                />
+                                                Source="Assets/Universal/Home/footer.png" />
                                             <!--  TODO: Localize. Requires Skype 4 lang files.  -->
-                                            <StackPanel
-                                                Margin="30,175,0,0"
-                                                Orientation="Vertical" >
+                                            <StackPanel Margin="30,175,0,0" Orientation="Vertical">
                                                 <global:SliceControl
                                                     Source="Assets/Universal/Home/leftarrow.png"
                                                     Text="Contacts"
@@ -1817,12 +1810,12 @@
                                                     FontSize="13"
                                                     FontWeight="SemiBold"
                                                     Foreground="{StaticResource Text.MediumContrast}"
-                                                    Text="Choose a contacts and start talking."/>
+                                                    Text="Choose a contacts and start talking." />
                                             </StackPanel>
                                             <StackPanel
                                                 Margin="30,0,0,0"
-                                                Orientation="Vertical"
-                                                VerticalAlignment="Bottom" >
+                                                VerticalAlignment="Bottom"
+                                                Orientation="Vertical">
                                                 <global:SliceControl
                                                     Source="Assets/Universal/Home/leftarrow.png"
                                                     Text="Phones and SMS"
@@ -1837,7 +1830,7 @@
                                                     FontSize="13"
                                                     FontWeight="SemiBold"
                                                     Foreground="{StaticResource Text.MediumContrast}"
-                                                    Text="You can also use Skype to call landlines and mobile phones."/>
+                                                    Text="You can also use Skype to call landlines and mobile phones." />
                                                 <!--  TODO: The "Skype" text above  -->
                                             </StackPanel>
                                         </Grid>
@@ -2210,7 +2203,7 @@
                                                 MouseLeftButtonUp="AddButtonClick"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/add.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/add.png'}"
                                                 StackDirection="Vertical" />
                                             <global:SliceControl
                                                 x:Name="WifiButton"
@@ -2222,7 +2215,7 @@
                                                 HoverIndex="1"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/network-none.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/network-none.png'}"
                                                 StackDirection="Vertical" />
                                         </StackPanel>
                                         <Rectangle
@@ -2311,7 +2304,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/message-box-header25.png'}"
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/message-box-header25.png'}"
                                                 StackDirection="Vertical"
                                                 TopHeight="25" />
                                             <StackPanel
@@ -2337,7 +2330,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sonion, Source='Chat/emoji.png'}"
+                                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Aquamarine, Source='Chat/emoji.png'}"
                                                             StackDirection="Vertical" />
                                                     </StackPanel>
                                                     <Popup

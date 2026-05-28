@@ -24,7 +24,7 @@ using System.Windows.Threading;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Sonion
+namespace Skymu.Aquamarine
 {
     public partial class Login : Window
     {
