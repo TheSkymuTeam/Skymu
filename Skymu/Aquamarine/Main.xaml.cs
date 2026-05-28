@@ -299,7 +299,7 @@ namespace Skymu.Aquamarine
                     }
 
                     // Titlebar font styling
-                    TitleMain.FontFamily = new FontFamily("Segoe UI");
+                    TitleMain.FontFamily = new FontFamily("Arial");
                     TitleMain.FontWeight = FontWeights.Normal;
                     TitleMain.FontSize = 12;
                     TitleMain.Foreground = Brushes.Black;
