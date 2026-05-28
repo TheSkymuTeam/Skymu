@@ -1232,7 +1232,7 @@
                                                 Height="74"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Center"
-                                                d:Background="#FFFFFF">
+                                                Background="#FFFFFF">
                                                 <Border Background="Transparent">
                                                     <Border.Effect>
                                                         <DropShadowEffect
@@ -1330,6 +1330,7 @@
                                             x:Name="SBNewBtn"
                                             Grid.Column="0"
                                             Orientation="Horizontal">
+                                            <!-- TODO I don't know what this is supposed to do
                                             <StackPanel.Resources>
                                                 <ContextMenu x:Key="Menu">
                                                     <MenuItem
@@ -1431,7 +1432,7 @@
                                                         </MenuItem.Icon>
                                                     </MenuItem>
                                                 </ContextMenu>
-                                            </StackPanel.Resources>
+                                            </StackPanel.Resources>-->
                                             <global:SliceControl
                                                 Grid.Row="0"
                                                 DefaultIndex="0"
