@@ -51,7 +51,7 @@ Function VersionSelectPage
     Pop $VersionRadio_Modern
     ${NSD_Check} $VersionRadio_Modern
 
-    ${NSD_CreateLabel} 10u 38u 90% 20u ".NET Core version. Better performance, memory usage, and security."
+    ${NSD_CreateLabel} 10u 38u 90% 20u "For Windows 7 (Service Pack 1) and newer. Uses the latest installed .NET version."
     Pop $ModernDesc
     SetCtlColors $ModernDesc 0x808080 transparent
 
@@ -59,7 +59,7 @@ Function VersionSelectPage
     ${NSD_CreateRadioButton} 0 60u 100% 12u "Skymu Legacy"
     Pop $VersionRadio_Legacy
 
-    ${NSD_CreateLabel} 10u 73u 90% 20u "For Windows Vista or 32-bit systems. Uses .NET Framework 4.6.1."
+    ${NSD_CreateLabel} 10u 73u 90% 20u "For older operating systems like Windows XP and Vista. Uses .NET Framework 4.6.1."
     Pop $LegacyDesc
     SetCtlColors $LegacyDesc 0x808080 transparent
 	
@@ -73,12 +73,6 @@ FunctionEnd
 Function VersionSelectLeave
     ${NSD_GetState} $VersionRadio_Modern $IsModern
     ${NSD_GetState} $VersionRadio_Legacy $IsLegacy
-
-    ${If} $IsLegacy == ${BST_CHECKED}
-        StrCpy $INSTDIR "$PROGRAMFILES\Skymu"   ; x86 path
-    ${Else}
-        StrCpy $INSTDIR "$PROGRAMFILES64\Skymu" ; x64 path
-    ${EndIf}
 FunctionEnd
 
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW HideHeaderText
@@ -95,17 +89,26 @@ Page custom VersionSelectPage VersionSelectLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
+Function .onInit
+    System::Call "kernel32::GetSystemWow64Directory(t .r0, i ${NSIS_MAX_STRLEN})"
+    ${If} $0 != ""
+        StrCpy $INSTDIR "$PROGRAMFILES64\Skymu"
+    ${Else}
+        StrCpy $INSTDIR "$PROGRAMFILES\Skymu"
+    ${EndIf}
+FunctionEnd
+
 Name "${PRODUCT_NAME}"
 OutFile ".\Skymu Installer.exe"
-InstallDir "$PROGRAMFILES64\Skymu"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
 
 Section "Install"
     Call KillSkymuProcesses
+	RMDir /r "$INSTDIR"
     SetOutPath "$INSTDIR"
-    SetOverwrite ifnewer
+    SetOverwrite on
     ${If} $IsLegacy == ${BST_CHECKED}
     File /r "${SOURCE_DIR_LEGACY}\*"
 ${Else}
