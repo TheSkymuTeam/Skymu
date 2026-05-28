@@ -13,6 +13,7 @@ using Skymu.Preferences;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Skymu.Enumerations;
 
 namespace Skymu.Views
 {
@@ -30,11 +31,11 @@ namespace Skymu.Views
 
         private void LoadVisualSettings()
         {
-            if (Settings.WindowFrame == 0 && !Settings.FallbackFillColors)
+            if (Settings.WindowFrame == WindowFrame.SkypeAero && !Settings.FallbackFillColors)
             {
                 RadioSkype.IsChecked = true;
             }
-            else if (Settings.WindowFrame == 2 && Settings.FallbackFillColors)
+            else if (Settings.WindowFrame == WindowFrame.Native && Settings.FallbackFillColors)
             {
                 RadioClassic.IsChecked = true;
             }
@@ -42,13 +43,13 @@ namespace Skymu.Views
 
         private void RadioSkype_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.WindowFrame = 0;
+            Settings.WindowFrame = WindowFrame.SkypeAero;
             Settings.FallbackFillColors = false;
         }
 
         private void RadioClassic_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.WindowFrame = 2;
+            Settings.WindowFrame = WindowFrame.Native;
             Settings.FallbackFillColors = true;
         }
 

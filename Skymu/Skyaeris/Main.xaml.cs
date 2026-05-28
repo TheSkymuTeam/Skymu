@@ -11,6 +11,7 @@
 
 using Skymu.Classes;
 using Skymu.Converters;
+using Skymu.Enumerations;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
@@ -57,7 +58,7 @@ namespace Skymu.Skyaeris
         private MainViewModel vmodel;
 
         // Other file-level variables
-        private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
+        private readonly WindowFrame _currentFrame = Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
@@ -81,14 +82,6 @@ namespace Skymu.Skyaeris
             Home,
             Chat,
         }
-
-        private enum WindowFrame
-        {
-            SkypeAero,
-            SkypeBasic,
-            Native,
-            SkypeAeroCustom,
-        };
 
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
             "WindowTitle",

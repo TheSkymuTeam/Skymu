@@ -19,6 +19,7 @@ using Skymu.Converters;
 using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
+using Skymu.Enumerations;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.UserDirectory;
@@ -531,7 +532,7 @@ namespace Skymu.ViewModels
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (message.Sender?.Identifier == Universal.CurrentUser?.Identifier) return;
-                    if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.ALL) != 0)
+                    if ((Settings.NotificationTrigger & NotificationTriggerType.ALL) != 0)
                     {
                         new Views.Notification(eR);
                         return;
@@ -559,12 +560,12 @@ namespace Skymu.ViewModels
                         {
                             return;
                         }
-                        if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.PING) != 0)
+                        if ((Settings.NotificationTrigger & NotificationTriggerType.PING) != 0)
                             new Views.Notification(eR);
                     }
                     else
                     {
-                        if ((Settings.NotificationTrigger & Classes.NotificationTriggerType.DM) != 0
+                        if ((Settings.NotificationTrigger & NotificationTriggerType.DM) != 0
                         )
                         {
                             if (
@@ -798,6 +799,7 @@ namespace Skymu.ViewModels
         }
 
         #endregion
+
 
         public void SubscribeTypingIndicator()
         {

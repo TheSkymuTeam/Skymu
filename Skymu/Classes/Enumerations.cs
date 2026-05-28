@@ -9,15 +9,35 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Preferences;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Skymu.Migration
+namespace Skymu.Enumerations
 {
-    class Migrator
+    public enum WindowFrame
     {
-        public static void Run()
-        {
-            if (Settings.ThemeRoot != "Light") Settings.ThemeRoot = "Light"; // XXX dark theme doesn't work anyway, why have the option lol
-        }
+        SkypeAero,
+        SkypeBasic,
+        Native,
+        SkypeAeroCustom,
+    };
+
+    public enum Soundpack
+    {
+        Enhanced,
+        Skype2,
+        Skype7,
+        Skype8,
+    };
+
+    public enum NotificationTriggerType
+    {
+        ALL = 1,
+        PING = 2,
+        DM = 4,
+        PDM = PING | DM,
     }
 }

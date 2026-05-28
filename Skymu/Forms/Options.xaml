@@ -5,6 +5,7 @@
     xmlns:classes="clr-namespace:Skymu.Classes"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enums="clr-namespace:Skymu.Enumerations"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
@@ -271,10 +272,24 @@
                                                 Padding="0,0,10,0"
                                                 VerticalAlignment="Center"
                                                 Text="Window frame" />
-                                            <ComboBox Width="250" SelectedIndex="{Binding Path=[WindowFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
-                                                <ComboBoxItem Padding="6,0" Content="Skype Aero" />
-                                                <ComboBoxItem Padding="6,0" Content="Skype Basic" />
-                                                <ComboBoxItem Padding="6,0" Content="Use the system window frame" />
+                                            <ComboBox
+                                                Width="250"
+                                                SelectedValue="{Binding Path=[WindowFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                                                SelectedValuePath="Tag">
+                                                <ComboBoxItem
+                                                    Padding="6,0"
+                                                    Content="Skype Aero"
+                                                    Tag="{x:Static enums:WindowFrame.SkypeAero}" />
+
+                                                <ComboBoxItem
+                                                    Padding="6,0"
+                                                    Content="Skype Basic"
+                                                    Tag="{x:Static enums:WindowFrame.SkypeBasic}" />
+
+                                                <ComboBoxItem
+                                                    Padding="6,0"
+                                                    Content="Use the system window frame"
+                                                    Tag="{x:Static enums:WindowFrame.Native}" />
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"
@@ -311,22 +326,26 @@
                                                 Width="250"
                                                 SelectedValue="{Binding Path=[SoundPack], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                                                 SelectedValuePath="Tag">
+
                                                 <ComboBoxItem
                                                     Padding="6,0"
-                                                    Content="Standard"
-                                                    Tag="Skymu" />
+                                                    Content="Enhanced"
+                                                    Tag="{x:Static enums:Soundpack.Enhanced}" />
+
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 1 and 2"
-                                                    Tag="Skype1" />
+                                                    Tag="{x:Static enums:Soundpack.Skype2}" />
+
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 3 to 7"
-                                                    Tag="Skype7" />
+                                                    Tag="{x:Static enums:Soundpack.Skype7}" />
+
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="Skype 8"
-                                                    Tag="Skype8" />
+                                                    Tag="{x:Static enums:Soundpack.Skype8}" />
                                             </ComboBox>
                                             <TextBlock
                                                 Margin="8,0,0,0"
@@ -628,19 +647,19 @@
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="all recieved messages"
-                                                    Tag="{x:Static classes:NotificationTriggerType.ALL}" />
+                                                    Tag="{x:Static enums:NotificationTriggerType.ALL}" />
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="direct messages, replies, and pings"
-                                                    Tag="{x:Static classes:NotificationTriggerType.PDM}" />
+                                                    Tag="{x:Static enums:NotificationTriggerType.PDM}" />
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="replies and pings"
-                                                    Tag="{x:Static classes:NotificationTriggerType.PING}" />
+                                                    Tag="{x:Static enums:NotificationTriggerType.PING}" />
                                                 <ComboBoxItem
                                                     Padding="6,0"
                                                     Content="direct messages"
-                                                    Tag="{x:Static classes:NotificationTriggerType.DM}" />
+                                                    Tag="{x:Static enums:NotificationTriggerType.DM}" />
                                             </ComboBox>
                                         </StackPanel>
                                         <CheckBox

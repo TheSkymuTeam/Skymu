@@ -75,7 +75,7 @@ namespace Skymu
         static void Load(string key, string filename, string path = "", string fallback = "Skymu")
         {
             if (path == "")
-                path = Settings.SoundPack;
+                path = Settings.SoundPack.ToString();
 
             var uri = new Uri(
                 $"pack://application:,,,/Sounds/{path}/{filename}",

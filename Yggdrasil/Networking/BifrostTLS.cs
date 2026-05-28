@@ -33,6 +33,13 @@ using System.Xml.Linq;
 
 namespace Yggdrasil.Networking
 {
+    public enum CertStore
+    {
+        Embedded,
+        System,
+        Custom
+    }
+
     internal static class BifrostTLS
     {
         public static async Task<Stream> OpenAsync(
