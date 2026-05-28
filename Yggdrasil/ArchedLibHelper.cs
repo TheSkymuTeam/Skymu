@@ -46,7 +46,7 @@ namespace Yggdrasil.Tools.Windows
                 throw new PlatformNotSupportedException();
 
             library += arch;
-            string dll = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), library += ".dll"); // XXX Windows only!
+            string dll = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), library += ".dll"); // XXX Windows only!
             Debug.WriteLine($"[YGGDRASIL-TOOLS] Loading the native DLL ({library}) from path ({dll})");
             IntPtr handle = LoadLibraryEx(
                 dll,
