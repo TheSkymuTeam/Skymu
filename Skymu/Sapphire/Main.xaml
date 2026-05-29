@@ -1215,8 +1215,8 @@
                                         <Border
                                             x:Name="ProfileGrid"
                                             Grid.Row="1"
-                                            Background="{StaticResource SidebarProfile.Background}"
-                                            BorderBrush="{StaticResource SidebarProfile.Background}"
+                                            Background="{StaticResource Card.Border}"
+                                            BorderBrush="{StaticResource Card.Border}"
                                             BorderThickness="4">
                                             <Grid HorizontalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
@@ -1344,7 +1344,7 @@
                                         <Border
                                             x:Name="SkypeCreditBackground"
                                             Grid.Row="3"
-                                            Background="{StaticResource SidebarProfile.Background}"
+                                            Background="{StaticResource Card.Border}"
                                             CornerRadius="0,0,4,4" />
                                         <TextBlock
                                             x:Name="SkypeCreditBox"
@@ -1918,7 +1918,7 @@
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
-                                    Background="#FFF"
+                                    Background="#26000000"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,0,1,1"
                                     CornerRadius="0,0,4,4">
@@ -1935,6 +1935,7 @@
                                             x:Name="ChatProfileArea"
                                             Grid.ColumnSpan="2"
                                             Content="{Binding DataContext, ElementName=ChatArea}">
+
                                             <ContentControl.Resources>
                                                 <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
                                                     <Grid>
@@ -2005,27 +2006,7 @@
                                                                     Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
                                                                     TextTrimming="CharacterEllipsis" />
                                                             </StackPanel>
-                                                            <!--  Connection status row (online, offline, away, dnd)  -->
-                                                            <StackPanel
-                                                                x:Name="StatusRow"
-                                                                HorizontalAlignment="Left"
-                                                                Orientation="Horizontal">
-                                                                <global:SliceControl
-                                                                    Width="14"
-                                                                    Height="14"
-                                                                    DefaultIndex="{Binding Partner.ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
-                                                                    ElementCount="22"
-                                                                    Interactive="False"
-                                                                    SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                    StackDirection="Horizontal" />
-                                                                <TextBlock
-                                                                    Margin="11,0,0,0"
-                                                                    FontFamily="Tahoma"
-                                                                    FontSize="11"
-                                                                    Text="{Binding Partner.ConnectionStatus, Converter={StaticResource StatIntToText}}"
-                                                                    TextTrimming="CharacterEllipsis" />
-                                                            </StackPanel>
+
                                                         </StackPanel>
                                                     </Grid>
                                                 </DataTemplate>
@@ -2066,6 +2047,7 @@
                                                                             VerticalAlignment="Center"
                                                                             FontFamily="Tahoma"
                                                                             FontSize="11"
+                                                                            Foreground="{StaticResource Text.VeryHighContrast}"
                                                                             Text="{Binding DisplayName}"
                                                                             TextTrimming="CharacterEllipsis"
                                                                             TextWrapping="NoWrap" />
@@ -2134,15 +2116,6 @@
                                                                 x:Name="StatusRow"
                                                                 HorizontalAlignment="Left"
                                                                 Orientation="Horizontal">
-                                                                <global:SliceControl
-                                                                    Width="14"
-                                                                    Height="14"
-                                                                    DefaultIndex="3"
-                                                                    ElementCount="11"
-                                                                    Interactive="False"
-                                                                    SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
-                                                                    StackDirection="Horizontal" />
                                                                 <TextBlock
                                                                     Margin="11,0,0,0"
                                                                     FontFamily="Tahoma"
@@ -2192,15 +2165,6 @@
                                                                 x:Name="StatusRow"
                                                                 HorizontalAlignment="Left"
                                                                 Orientation="Horizontal">
-                                                                <global:SliceControl
-                                                                    Width="14"
-                                                                    Height="14"
-                                                                    DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}"
-                                                                    ElementCount="11"
-                                                                    Interactive="False"
-                                                                    SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
-                                                                    StackDirection="Horizontal" />
                                                                 <TextBlock
                                                                     Margin="11,0,0,0"
                                                                     FontFamily="Tahoma"

@@ -438,8 +438,6 @@ namespace Skymu.Sapphire
             ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.Background"];
             MainMenuBar.Background = (Brush)Application.Current.Resources["Active.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.Background"];
-            ProfileGrid.Background = (Brush)Application.Current.Resources["SidebarProfile.Background"];
-            SkypeCreditBackground.Background = (Brush)Application.Current.Resources["SidebarProfile.Background"];
 
             if (_currentFrame == WindowFrame.SkypeBasic)
             {
@@ -470,8 +468,6 @@ namespace Skymu.Sapphire
             MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
 
-            ProfileGrid.Background = (Brush)Application.Current.Resources["SidebarProfile.Inactive"];
-            SkypeCreditBackground.Background = (Brush)Application.Current.Resources["SidebarProfile.Inactive"];
 
             if (_currentFrame == WindowFrame.SkypeBasic)
             {

@@ -1716,7 +1716,7 @@
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
-                                    Background="#FFF"
+                                    Background="{StaticResource Card.Background}"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,0,1,1"
                                     CornerRadius="0,0,4,4">
@@ -1862,6 +1862,7 @@
                                                                             VerticalAlignment="Center"
                                                                             FontFamily="Tahoma"
                                                                             FontSize="11"
+                                                                            Foreground="{StaticResource Text.VeryHighContrast}"
                                                                             Text="{Binding DisplayName}"
                                                                             TextTrimming="CharacterEllipsis"
                                                                             TextWrapping="NoWrap" />
