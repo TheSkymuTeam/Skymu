@@ -83,7 +83,7 @@ namespace Skymu.Views.Pages
             };
             UserDetailsInput.TextChanged += OnTextInput;
 
-            window.ShowDialog();
+            window.Show();
         }
 
         void StopSearch()
