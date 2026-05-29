@@ -74,7 +74,10 @@ namespace Skymu
                         onClosing: (s, e) =>
                         {
                             if (((Dialog)s).CheckBox.IsChecked == true)
+                            {
                                 Settings.InformDND = 1;
+                                Settings.Save();
+                            }
                         }
                     ).ShowDialog()
                 );
