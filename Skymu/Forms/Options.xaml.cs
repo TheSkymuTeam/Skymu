@@ -10,81 +10,109 @@
 /*==========================================================*/
 
 using Skymu.Preferences;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Yggdrasil.Networking;
-using Skymu.Enumerations;
+using System.Windows.Navigation;
 
 namespace Skymu.Views
 {
     public partial class Options : Window
     {
+        readonly Dictionary<SliceControl, Grid> catToGrid;
+        readonly Dictionary<SliceControl, SliceControl[]> catToTabs;
+        readonly Dictionary<SliceControl, Func<Page>> tabDispenser;
+
+        SliceControl currentCategory;
+
         public Options(string brush)
         {
             InitializeComponent();
             Background = (SolidColorBrush)Application.Current.Resources[brush];
-            LoadVisualSettings();
-#if DEBUG
-            CredDebugSepCB.Visibility = Visibility.Visible;
-#endif
-        }
+            currentCategory = HGeneral;
 
-        private void LoadVisualSettings()
-        {
-            if (Settings.WindowFrame == WindowFrame.SkypeAero && !Settings.FallbackFillColors)
+            catToGrid = new Dictionary<SliceControl, Grid> {
+                { HGeneral, GGeneral },
+                { HPrivacy, GPrivacy },
+                { HNotifications, GNotifications },
+                { HCalls, GCalls },
+                { HChatsSMS, GChatsSMS },
+                { HAdvanced, GAdvanced }
+            };
+            catToTabs = new Dictionary<SliceControl, SliceControl[]>
             {
-                RadioSkype.IsChecked = true;
-            }
-            else if (Settings.WindowFrame == WindowFrame.Native && Settings.FallbackFillColors)
+                { HGeneral, new[] { GenGen, GenDevices, GenSounds, GenVideo, GenAccess } },
+                { HPrivacy, new[] { PriPri, PriBlocked } },
+                { HNotifications, new[] { NotNot, NotAlerts, NotSounds } },
+                { HCalls, new[] { CalCal, CalForwarding, CalVoicemail, CalVideo } },
+                { HChatsSMS, new[] { ChaIM, ChaIMAppearance, ChaSMS } },
+                { HAdvanced, new[] { AdvAdv, AdvConnection, AdvHotkeys } }
+            };
+            tabDispenser = new Dictionary<SliceControl, Func<Page>>
             {
-                RadioClassic.IsChecked = true;
+                { GenGen, () => new OptionPages.Skymu.Skymu() },
+                { GenSounds, () => new OptionPages.General.Sounds() }
+            };
+
+            SourceInitialized += (s, e) =>
+            {
+                foreach (var cat in catToGrid)
+                {
+                    cat.Key.ApplyTemplate();
+                    foreach (var tab in catToTabs[cat.Key])
+                        tab.ApplyTemplate();
+                }
+                TabSelect(GenGen, null);
+            };
+        }
+
+        private void CatSelect(object sender, MouseButtonEventArgs e)
+        {
+            var sc = (SliceControl)sender;
+            currentCategory = sc;
+            foreach (var cat in catToGrid)
+            {
+                if (ReferenceEquals(cat.Key, sc)) continue;
+                cat.Key.SetState(ButtonVisualState.Default);
+                cat.Key.DefaultIndex = 0;
+                cat.Key.HoverIndex = 1;
+                cat.Key.PressedIndex = 2;
+                cat.Value.Visibility = Visibility.Collapsed;
             }
+            sc.SetState(ButtonVisualState.Pressed);
+            catToGrid[sc].Visibility = Visibility.Visible;
+            sc.DefaultIndex = 3;
+            sc.HoverIndex = -1;
+            sc.PressedIndex = -1;
 
-            // radio button logic (moving to code behind instead of XAML/converters to iron out bugs)
-            UseEmbeddedCert.IsChecked = Settings.CertificateStore == CertStore.Embedded;
-            UseSystemCert.IsChecked = Settings.CertificateStore == CertStore.System;
-            UseCustomCert.IsChecked = Settings.CertificateStore == CertStore.Custom;
-
-            UseDefaultFontRenderingRadio.IsChecked = !Settings.UseClearType;
-            UseClearTypeRadio.IsChecked = Settings.UseClearType;
-
-            StaticSidebarTabsRadio.IsChecked = !Settings.DynamicSidebarTabs;
-            DynamicSidebarTabsRadio.IsChecked = Settings.DynamicSidebarTabs;
+            TabSelect(catToTabs[sc][0], null);
         }
 
-        #region Radio button stuff
-
-        private void UseEmbeddedCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.Embedded;
-        private void UseSystemCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.System;
-        private void UseCustomCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.Custom;
-
-        private void UseDefaultFontRenderingRadio_Checked(object sender, RoutedEventArgs e) =>
-            Settings.UseClearType = false;
-        private void UseClearTypeRadio_Checked(object sender, RoutedEventArgs e) =>
-            Settings.UseClearType = true;
-
-        private void StaticSidebarTabsRadio_Checked(object sender, RoutedEventArgs e) =>
-            Settings.DynamicSidebarTabs = false;
-        private void DynamicSidebarTabsRadio_Checked(object sender, RoutedEventArgs e) =>
-            Settings.DynamicSidebarTabs = true;
-
-        private void RadioSkype_Checked(object sender, RoutedEventArgs e)
+        private void TabSelect(object sender, MouseButtonEventArgs e)
         {
-            Settings.WindowFrame = WindowFrame.SkypeAero;
-            Settings.FallbackFillColors = false;
-        }
+            var sc = (SliceControl)sender;
+            foreach (var tab in catToTabs[currentCategory])
+            {
+                if (ReferenceEquals(tab, sc)) continue;
+                tab.SetState(ButtonVisualState.Default);
+                ((SliceControl)tab.Template.FindName("InnerSlice", tab))?.SetState(ButtonVisualState.Default);
+            }
+            sc.SetState(ButtonVisualState.Pressed);
+            ((SliceControl)sc.Template.FindName("InnerSlice", sc))?.SetState(ButtonVisualState.Pressed);
 
-        private void RadioClassic_Checked(object sender, RoutedEventArgs e)
-        {
-            Settings.WindowFrame = WindowFrame.Native;
-            Settings.FallbackFillColors = true;
+            if (!tabDispenser.TryGetValue(sc, out var pfact))
+            {
+                Debug.WriteLine("Tried to access an unknown tab " + sc.Name);
+                return;
+            }
+            var page = pfact();
+            JournalEntry.SetKeepAlive(page, false);
+            PageHost.Navigate(page);
         }
-
-        #endregion
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
@@ -107,23 +135,6 @@ namespace Skymu.Views
         {
             Settings.Reset();
             Settings.Save();
-            LoadVisualSettings();
-        }
-
-        private void CertBrowseButtonClick(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "PEM certificates (*.pem)|*.pem|All files (*.*)|*.*",
-                Title = "Select cacert.pem"
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                Settings.CertPath = openFileDialog.FileName;
-                var expression = SC_CertPathBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty);
-                expression?.UpdateTarget();
-            }
         }
     }
 }
