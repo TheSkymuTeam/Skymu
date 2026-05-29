@@ -286,7 +286,8 @@ namespace Skymu
             if (cmd != 0)
                 HandleMenuCommand(cmd);
 
-            PostMessage(_msgWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
+            if (_msgWindow != null)
+                PostMessage(_msgWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
         }
 
         private static Icon LoadIcon(string iconName)
