@@ -1287,8 +1287,8 @@
                                 <RowDefinition
                                     x:Name="TopbarWindowRow"
                                     Height="120"
-                                    MinHeight="120"
-                                    MaxHeight="256" />
+                                    MinHeight="107"
+                                    MaxHeight="171" />
                                 <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                 <RowDefinition x:Name="MessageWindowRow" Height="*" />
                             </Grid.RowDefinitions>
