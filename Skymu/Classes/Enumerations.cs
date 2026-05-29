@@ -9,12 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Skymu.Enumerations
 {
     public enum WindowFrame
