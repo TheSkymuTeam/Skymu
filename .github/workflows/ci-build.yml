@@ -8,10 +8,6 @@ on:
 jobs:
   build:
     runs-on: windows-2022
-    
-    strategy:
-      matrix:
-        architecture: [x86, x64]
 
     steps:
     - name: Checkout repository
@@ -23,23 +19,23 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: 1. Build Yggdrasil
-      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release -r win-${{ matrix.architecture }} --self-contained false
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
 
     - name: 2. Build Plugins
       run: |
         Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
-          dotnet build $_.FullName --configuration Release -r win-${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+          dotnet build $_.FullName --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
         }
-    
+
     - name: 3. Build Skymu
-      run: dotnet build Skymu/Skymu.csproj --configuration Release -r win-${{ matrix.architecture }} -p:PlatformTarget=${{ matrix.architecture }} -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+      run: dotnet build Skymu/Skymu.csproj --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
     - name: 4. Build NSIS
       run: makensis NSIS/SkymuBetaSetup.nsi
-      
+
     - name: 5. Export Release Folder to Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: beta-build-${{ matrix.architecture }}
+        name: beta-build
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
