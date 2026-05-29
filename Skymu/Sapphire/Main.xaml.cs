@@ -830,7 +830,13 @@ namespace Skymu.Sapphire
             switch(name)
             {
                 case "contact":
-                    _ = new AddContact();
+                    if (Universal.Plugin is IListManagement)
+                        _ = new AddContact();
+                    else
+                    {
+                        Sounds.Play("call-error");
+                        Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+                    }
                     break;
                 case "group":
                     Universal.NotImplemented("Creating group conversations");
