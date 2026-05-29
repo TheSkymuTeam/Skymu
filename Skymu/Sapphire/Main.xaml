@@ -1366,109 +1366,23 @@
                                             x:Name="SBNewBtn"
                                             Grid.Column="0"
                                             Orientation="Horizontal">
-                                            <!-- TODO I don't know what this is supposed to do
+                                            <!--  TODO lang for all of these buttons  -->
                                             <StackPanel.Resources>
                                                 <ContextMenu x:Key="Menu">
                                                     <MenuItem
-                                                        x:Name="sm_online"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="2"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
+                                                        x:Name="nb_contact"
+                                                        Click="NewMenuItemClick"
+                                                        Header="New Contact" />
                                                     <MenuItem
-                                                        x:Name="sm_away"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="3"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
+                                                        x:Name="nb_group"
+                                                        Click="NewMenuItemClick"
+                                                        Header="New Group Conversation" />
                                                     <MenuItem
-                                                        x:Name="sm_dnd"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="5"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        x:Name="sm_invisible"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="14"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <MenuItem
-                                                        x:Name="sm_offline"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
-                                                        IsEnabled="False">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="14"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
-                                                    <Separator />
-                                                    <MenuItem
-                                                        x:Name="sm_call_forwarding"
-                                                        Click="StatusMenuItemClick"
-                                                        Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
-                                                        <MenuItem.Icon>
-                                                            <global:SliceControl
-                                                                Width="14"
-                                                                DefaultIndex="13"
-                                                                ElementCount="22"
-                                                                HoverIndex="-1"
-                                                                PressedIndex="-1"
-                                                                SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
-                                                                StackDirection="Horizontal" />
-                                                        </MenuItem.Icon>
-                                                    </MenuItem>
+                                                        x:Name="nb_import"
+                                                        Click="NewMenuItemClick"
+                                                        Header="Import Contacts..." />
                                                 </ContextMenu>
-                                            </StackPanel.Resources>-->
+                                            </StackPanel.Resources>
                                             <global:SliceControl
                                                 Grid.Row="0"
                                                 DefaultIndex="0"
@@ -1689,6 +1603,82 @@
                                                 </Style>
                                             </TreeView.ItemContainerStyle>
                                         </TreeView>
+                                        <Grid x:Name="ConversationsHint">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Border
+                                                Margin="5"
+                                                Background="{StaticResource Card.Background}"
+                                                BorderBrush="{StaticResource Card.Border}"
+                                                BorderThickness="1,1,1,1"
+                                                CornerRadius="4,4,4,4"
+                                                >
+                                                <StackPanel Orientation="Vertical">
+                                                    <!--  TODO lang  -->
+                                                    <TextBlock
+                                                        FontFamily="Tahoma"
+                                                        FontSize="12"
+                                                        FontWeight="Bold"
+                                                        Foreground="{StaticResource Text.HighContrast}"
+                                                        Text="Conversation list"
+                                                        TextAlignment="Center" />
+                                                    <TextBlock
+                                                        Margin="0,25,0,0"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Foreground="{StaticResource Text.HighContrast}"
+                                                        Text="This is where you'll see a list of all the conversations you're having."
+                                                        TextAlignment="Center"
+                                                        TextWrapping="Wrap" />
+                                                    <TextBlock
+                                                        Margin="0,25,0,0"
+                                                        FontFamily="Tahoma"
+                                                        FontSize="11"
+                                                        Foreground="{StaticResource Text.HighContrast}"
+                                                        TextAlignment="Center"
+                                                        TextWrapping="Wrap">
+                                                        <!--  Sorry non-word wrap users. This had to be done to avoid a gap.  -->
+                                                        <Run Text="It's easy to start a conversation. Go to your " /><Run MouseLeftButtonUp="OnContactsLink" Text="Contacts" Foreground="{StaticResource Text.Hyperlink}" /><Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
+                                                    </TextBlock>
+                                                    <Grid Margin="0,8,0,12" HorizontalAlignment="Center" >
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <global:SliceControl
+                                                            ElementCount="5"
+                                                            DefaultIndex="0"
+                                                            HoverIndex="1"
+                                                            PressedIndex="2"
+                                                            LeftWidth="10"
+                                                            RightWidth="10"
+                                                            MouseLeftButtonUp="CloseConversationHint"
+                                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/profile.png'}"
+                                                            StackDirection="Vertical"
+                                                            Text="{Binding Path='[sZAPBUTTON_CLOSE]', Source={StaticResource Lang}}"
+                                                            TextColor="{StaticResource Text.MediumContrast}"
+                                                            TextLeftMargin="20" />
+                                                        <Image
+                                                            Margin="5,0,0,0"
+                                                            Width="12"
+                                                            HorizontalAlignment="Left"
+                                                            Source="Assets/Universal/Sidebar/close-icon.png" />
+                                                    </Grid>
+                                                </StackPanel>
+                                            </Border>
+                                            <global:SliceControl
+                                                Margin="10"
+                                                Width="14"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                ElementCount="5"
+                                                DefaultIndex="0"
+                                                HoverIndex="1"
+                                                PressedIndex="2"
+                                                MouseLeftButtonUp="CloseConversationHint"
+                                                Source="Assets/Universal/Sidebar/close-hint.png"
+                                                StackDirection="Vertical" />
+                                        </Grid>
                                     </Grid>
                                 </Border>
                                 <StackPanel
@@ -1830,8 +1820,8 @@
                                     <RowDefinition x:Name="ChatTopBarRow" Height="24" />
                                     <RowDefinition
                                         x:Name="TopbarWindowRow"
-                                        MinHeight="130"
-                                        MaxHeight="256" />
+                                        MinHeight="108"
+                                        MaxHeight="172" />
                                     <RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
                                     <RowDefinition x:Name="MessageWindowRow" Height="*" />
                                 </Grid.RowDefinitions>
@@ -2192,7 +2182,7 @@
                                     Background="{StaticResource Card.Background}"
                                     BorderBrush="{StaticResource Card.Border}"
                                     BorderThickness="1,1,1,1"
-                                    CornerRadius="4,4,4,4">
+                                    CornerRadius="0,4,4,4">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition x:Name="ChatButtonRow" Height="34" />
@@ -2203,10 +2193,29 @@
                                         </Grid.RowDefinitions>
                                         <Grid Grid.Row="0" Margin="7,1,0,0">
                                             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                <!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
+                                                <global:SliceControl
+                                                    x:Name="CallButton"
+                                                    Width="Auto"
+                                                    DefaultIndex="0"
+                                                    ElementCount="5"
+                                                    HoverIndex="1"
+                                                    LeftWidth="23"
+                                                    MouseLeftButtonUp="CallButtonClick"
+                                                    PressedIndex="2"
+                                                    RightWidth="4"
+                                                    Source="Assets/Universal/Chat/btn_call.png"
+                                                    StackDirection="Vertical"
+                                                    Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
+                                                    TextColor="White"
+                                                    TextFont="Arial"
+                                                    TextLeftMargin="26"
+                                                    TextSize="13"
+                                                    TextWeight="Bold" />
                                                 <global:SliceControl
                                                     x:Name="VideoCallButton"
                                                     Width="Auto"
-                                                    Margin="0,0,10,0"
+                                                    Margin="5,0,0,0"
                                                     Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     DefaultIndex="0"
                                                     ElementCount="5"
@@ -2224,48 +2233,6 @@
                                                     TextRightMargin="9"
                                                     TextSize="13"
                                                     TextWeight="Bold" />
-                                                <!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
-                                                <global:SliceControl
-                                                    x:Name="CallButton"
-                                                    Width="Auto"
-                                                    DefaultIndex="0"
-                                                    ElementCount="5"
-                                                    HoverIndex="1"
-                                                    LeftWidth="23"
-                                                    MouseLeftButtonUp="CallButtonClick"
-                                                    PressedIndex="2"
-                                                    RightWidth="4"
-                                                    Source="Assets/Universal/Chat/btn_call_left.png"
-                                                    StackDirection="Vertical"
-                                                    Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
-                                                    TextColor="White"
-                                                    TextFont="Arial"
-                                                    TextLeftMargin="26"
-                                                    TextSize="13"
-                                                    TextWeight="Bold" />
-                                                <global:SliceControl
-                                                    x:Name="CallDropdown"
-                                                    Width="24"
-                                                    Margin="0,0,10,0"
-                                                    DefaultIndex="0"
-                                                    ElementCount="5"
-                                                    HoverIndex="1"
-                                                    LeftWidth="1"
-                                                    PressedIndex="2"
-                                                    RightWidth="1"
-                                                    Source="Assets/Universal/Chat/btn_call_right.png"
-                                                    StackDirection="Vertical" />
-                                                <global:SliceControl
-                                                    Width="44"
-                                                    DefaultIndex="0"
-                                                    ElementCount="5"
-                                                    HoverIndex="1"
-                                                    MouseLeftButtonUp="AddButtonClick"
-                                                    PressedIndex="2"
-                                                    SliceMode="0"
-                                                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Chat/add.png'}"
-                                                    StackDirection="Vertical" />
-
                                             </StackPanel>
                                             <global:SliceControl
                                                 x:Name="WifiButton"

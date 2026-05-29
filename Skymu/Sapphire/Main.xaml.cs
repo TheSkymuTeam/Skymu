@@ -150,24 +150,19 @@ namespace Skymu.Sapphire
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.IsEnabled = false;
-                CallDropdown.IsEnabled = false;
                 CallButton.Visibility = Visibility.Visible;
-                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
             else if (vmodel.SelectedConversation is ServerChannel)
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.Visibility = Visibility.Collapsed;
-                CallDropdown.Visibility = Visibility.Collapsed;
             }
             else
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
-                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.IsEnabled = true;
-                CallDropdown.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -581,8 +576,7 @@ namespace Skymu.Sapphire
                 tab.SetState(ButtonVisualState.Default);
             }
 
-            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
-
+            ConversationsHint.Visibility = Visibility.Collapsed;
             switch (tab_to_select.Name)
             {
                 case "btnServers":
@@ -618,6 +612,8 @@ namespace Skymu.Sapphire
                     )
                         await Universal.Plugin.PopulateRecentsList();
                     ConfigureCompactRecentsList();
+                    if (Settings.InboxNoticeShown != 1)
+                        ConversationsHint.Visibility = Visibility.Visible;
                     break;
             }
             if (
@@ -823,14 +819,43 @@ namespace Skymu.Sapphire
         private void SBNewBtn_Click(object sender, MouseButtonEventArgs e)
         {
             var menu = (ContextMenu)SBNewBtn.Resources["Menu"];
-            menu.PlacementTarget = StatusArea;
+            menu.PlacementTarget = SBNewBtn;
             menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
             menu.IsOpen = true;
+        }
+
+        private void NewMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            string name = ((MenuItem)sender).Name.Substring(3);
+            switch(name)
+            {
+                case "contact":
+                    _ = new AddContact();
+                    break;
+                case "group":
+                    Universal.NotImplemented("Creating group conversations");
+                    break;
+                case "import":
+                    Universal.NotImplemented("Importing contacts");
+                    break;
+            }
         }
 
         private async void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
         {
             await SelectTab(sender as SliceControl);
+        }
+
+        private async void OnContactsLink(object sender, MouseButtonEventArgs e)
+        {
+            await SelectTab(btnContacts);
+        }
+
+        private void CloseConversationHint(object sender, MouseButtonEventArgs e)
+        {
+            ConversationsHint.Visibility = Visibility.Collapsed;
+            Settings.InboxNoticeShown = 1;
+            Settings.Save();
         }
 
         private void TitleButton_Click(object sender, MouseButtonEventArgs e)

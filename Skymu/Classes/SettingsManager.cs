@@ -279,6 +279,12 @@ namespace Skymu.Preferences
             get => SELECT("InformDND", 0);
             set => WRITE("InformDND", value, nameof(InformDND));
         }
+        /// <summary> 1 = already closed the "this is converstaions list" popup on Skype 4 </summary>
+        public static int InboxNoticeShown
+        {
+            get => SELECT("InboxNoticeShown", 0);
+            set => WRITE("InboxNoticeShown", value, nameof(InboxNoticeShown));
+        }
         public static bool SuppressOldRuntimeWarnings
         {
             get => SELECT("SuppressOldRuntimeWarnings", false);
