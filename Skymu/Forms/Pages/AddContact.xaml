@@ -120,7 +120,7 @@
                 Margin="0,15,0,26"
                 Text="{Binding Path='[sF_SEARCH_MANDALAY_LB_INTRO]', Source={StaticResource Lang}}"
                 TextWrapping="Wrap"/>
-            <!--TODO: Progressbar accuracy-->
+            <!--  TODO: Progressbar accuracy  -->
             <ProgressBar
                 x:Name="FindPBar"
                 Grid.Row="3"
@@ -156,35 +156,25 @@
                     TextLeftMargin="22"
                     TextSize="11"
                     TextWeight="Bold"/>
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <DockPanel Margin="20,0,0,0">
+                    <BulletDecorator VerticalAlignment="Center">
+                        <BulletDecorator.Bullet>
+                            <Ellipse Width="4" Height="4" Fill="Gray"/>
+                        </BulletDecorator.Bullet>
+                    </BulletDecorator>
                     <TextBlock
-                        Grid.Column="0"
-                        Foreground="Gray"
-                        VerticalAlignment="Center"
-                        Text="•"/>
-                    <TextBlock
-                        Grid.Column="1"
                         Margin="5,0,0,0"
                         VerticalAlignment="Bottom"
                         Text="{Binding Path='[sF_ADDFRIEND_LABEL4_1]', Source={StaticResource Lang}}"
                         TextWrapping="Wrap"/>
-                </Grid>
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                </DockPanel>
+                <DockPanel Margin="20,0,0,0">
+                    <BulletDecorator VerticalAlignment="Center">
+                        <BulletDecorator.Bullet>
+                            <Ellipse Width="4" Height="4" Fill="Gray"/>
+                        </BulletDecorator.Bullet>
+                    </BulletDecorator>
                     <TextBlock
-                        Grid.Column="0"
-                        Foreground="Gray"
-                        VerticalAlignment="Center"
-                        Text="•"/>
-                    <TextBlock
-                        Grid.Column="1"
                         Margin="5,0,0,0"
                         VerticalAlignment="Bottom"
                         TextWrapping="Wrap">
@@ -195,33 +185,28 @@
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
-                </Grid>
-                <Grid Margin="20,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                </DockPanel>
+                <DockPanel Margin="20,0,0,0">
+                    <BulletDecorator VerticalAlignment="Center">
+                        <BulletDecorator.Bullet>
+                            <Ellipse Width="4" Height="4" Fill="Gray"/>
+                        </BulletDecorator.Bullet>
+                    </BulletDecorator>
                     <TextBlock
-                        Grid.Column="0"
-                        Foreground="Gray"
-                        VerticalAlignment="Center"
-                        Text="•"/>
-                    <TextBlock
-                        Grid.Column="1"
                         Margin="5,0,0,0"
                         VerticalAlignment="Bottom"
                         TextWrapping="Wrap"
                         Text="{Binding Path='[sF_ADDFRIEND_LABEL4_4]', Source={StaticResource Lang}}"/>
-                </Grid>
+                </DockPanel>
                 <global:SliceControl
                     Margin="0,25,0,0"
                     Source="Assets/AddContact/megaphone.png"
                     Text="{Binding Path='[sAC_INVITE_UNFOUND]', Source={StaticResource Lang}}"
-                    TextColor="#0066ff"
+                    TextColor="{StaticResource Text.Hyperlink}"
                     TextLeftMargin="22"
                     TextSize="11"/>
             </StackPanel>
-            <!-- TOOD: Accuracy -->
+            <!--  TOOD: Accuracy  -->
             <ListView
                 x:Name="UserListView"
                 Grid.Row="5"
@@ -260,7 +245,7 @@
             <global:SliceControl
                 Source="Assets/AddContact/plus.png"
                 Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
-                TextColor="#0066ff"
+                TextColor="{StaticResource Text.Hyperlink}"
                 TextFont="Tahoma"
                 TextLeftMargin="22"
                 TextSize="11"/>
@@ -268,7 +253,7 @@
                 Margin="0,2,0,0"
                 Source="Assets/AddContact/add.png"
                 Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
-                TextColor="#0066ff"
+                TextColor="{StaticResource Text.Hyperlink}"
                 TextFont="Tahoma"
                 TextLeftMargin="22"
                 TextSize="11"/>
@@ -276,7 +261,7 @@
                 Margin="0,2,0,0"
                 Source="Assets/AddContact/megaphone.png"
                 Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
-                TextColor="#0066ff"
+                TextColor="{StaticResource Text.Hyperlink}"
                 TextFont="Tahoma"
                 TextLeftMargin="22"
                 TextSize="11"/>
@@ -301,14 +286,15 @@
                 FontSize="11"
                 Margin="0,0,0,10"
                 Text="{Binding Path='[sAC_ADD_CONFIRM_CAPTION]', Source={StaticResource Lang}}"/>
-            <!-- Temp -->
+            <!--  Temp  -->
             <TextBox
                 x:Name="ContactMessage"
                 Grid.Row="1"
                 Width="250"
                 FontFamily="Tahoma"
                 Text="Hello, Skymu user here!" />
-            <!-- Details of found contact -->
+            <!--  Details of found contact  -->
+            <!--  TODO: Fix this up  -->
             <Border
                 x:Name="FoundContactDetails"
                 Grid.Row="2"
