@@ -948,7 +948,7 @@ namespace Skymu.Skyaeris
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
                     await Sounds.PlayAsync("busy");
-                    if (_TitleBarIconHoldTokenSource.IsCancellationRequested) return;
+                    if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
                         url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
