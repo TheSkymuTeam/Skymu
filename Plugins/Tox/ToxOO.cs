@@ -613,9 +613,8 @@ namespace ToxOO
 
         public Friend(IntPtr tox, UInt32 id)
         {
-            tox_friend_get_last_online(tox, id, out var err);
-            if (err == Tox_Err_Friend_Get_Last_Online.FRIEND_NOT_FOUND)
-                throw new ArgumentException("Friend not found");
+            if (!tox_friend_exists(tox, id))
+                throw new ObjectDisposedException("Friend");
             ptr = tox;
             this.id = id;
         }
