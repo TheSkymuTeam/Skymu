@@ -360,14 +360,14 @@ namespace Stub
                         PresenceStatus.Online
                     ),
                     10,
-                    "32"
+                    "u1"
                 )
             );
             ContactsList.Add(
                 new DirectMessage(
                     new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
-                    "32"
+                    "u2"
                 )
             );
             return Task.FromResult(true);
