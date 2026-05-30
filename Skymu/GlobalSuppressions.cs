@@ -44,3 +44,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~M:Skymu.SkypeExternalObject.getapi(System.Int32)~System.Object")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "member", Target = "~M:Skymu.SkypeUserObject.getMoodMediaObject~System.Object")]
 [assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:Skymu.SubscriptionsObject.Call(System.Int32)~System.Object")]
+
+[assembly: SuppressMessage("Style", "IDE0130:Namespace does not match folder structure", Justification = "This is not necessary for us", Scope = "namespace", Target = "~N:Skymu")]

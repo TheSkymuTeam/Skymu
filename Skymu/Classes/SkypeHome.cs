@@ -22,7 +22,6 @@ using System.Security;
 using System.Text.Json;
 using System.Web;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 using Yggdrasil.Classes;
 
 namespace Skymu
@@ -473,6 +472,7 @@ namespace Skymu
             _contacts = contacts;
         }
 
+#pragma warning disable IDE1006
         public string FullName => ResolveDisplayName();
         public string DisplayName => ResolveDisplayName();
 
@@ -491,7 +491,11 @@ namespace Skymu
         }
 
         // TODO: Document
+#pragma warning disable IDE0060 // Remove unused parameter
         public string phoneOther(int index) => null;
+#pragma warning restore IDE0060 // Remove unused parameter 
+
+#pragma warning restore IDE1006 //Naming Styles
 
         private string ResolveDisplayName()
         {
