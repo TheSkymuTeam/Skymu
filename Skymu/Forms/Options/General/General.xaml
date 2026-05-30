@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Skymu.Views.OptionPages.General.Sounds"
+    x:Class="Skymu.Views.OptionPages.General.General"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:classes="clr-namespace:Skymu.Classes"
@@ -16,20 +16,25 @@
     FontSize="11"
     Style="{StaticResource Page}"
     mc:Ignorable="d"
-    d:Background="#FFFFFF" >
+    d:Background="#FFFFFF"
+    d:Width="514" d:Height="505" >
 
-    <StackPanel Margin="10,5,10,0" Orientation="Vertical">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <TextBlock
-            Padding="0,0,10,0"
-            VerticalAlignment="Center"
-            Foreground="Purple"
-            Text="Example page" />
-
-        <TextBlock
+            Grid.Row="0"
             Margin="50"
-            Text="Oops, this page is not ready yet. Check out later!"/>
+            Width="350"
+            Text="Oops, this page is not ready yet. Please use the Skymu page, and Debug in Advanced (if you built Skymu as debug) for now!"
+            TextWrapping="Wrap" />
 
-        <global:SliceControl
+        <Image
+            Grid.Row="1"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             Source="../../../Skyaeris/Assets/Universal/Home/footer.png" />
-    </StackPanel>
+    </Grid>
 </Page>

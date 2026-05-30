@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Skymu.Views.OptionPages.Skymu.Skymu"
+    x:Class="Skymu.Views.OptionPages.General.Skymu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:classes="clr-namespace:Skymu.Classes"
@@ -17,14 +17,18 @@
     FontSize="11"
     Style="{StaticResource Page}"
     mc:Ignorable="d"
-    d:Background="#FFFFFF" >
+    d:Background="#FFFFFF"
+    d:Width="514" >
+    <!--  Commented out as the page is a scrolling thing  -->
+    <!--  Re-add to Page when the view becomes small enough to not require a ScrollViewer  -->
+    <!--  d:Height="505"  -->
     <Page.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
     </Page.Resources>
 
-    <ScrollViewer>
+    <ScrollViewer Margin="5">
         <StackPanel Orientation="Vertical">
 
             <StackPanel Margin="0,5" Orientation="Horizontal">

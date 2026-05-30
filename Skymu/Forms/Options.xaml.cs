@@ -26,6 +26,7 @@ namespace Skymu.Views
         readonly Dictionary<SliceControl, Grid> catToGrid;
         readonly Dictionary<SliceControl, SliceControl[]> catToTabs;
         readonly Dictionary<SliceControl, Func<Page>> tabDispenser;
+        readonly Dictionary<SliceControl, string> tabToText;
 
         SliceControl currentCategory;
 
@@ -45,17 +46,24 @@ namespace Skymu.Views
             };
             catToTabs = new Dictionary<SliceControl, SliceControl[]>
             {
-                { HGeneral, new[] { GenGen, GenDevices, GenSounds, GenVideo, GenAccess } },
+                { HGeneral, new[] { GenGen, GenDevices, GenSounds, GenVideo, GenAccess, GenSkymu } },
                 { HPrivacy, new[] { PriPri, PriBlocked } },
                 { HNotifications, new[] { NotNot, NotAlerts, NotSounds } },
                 { HCalls, new[] { CalCal, CalForwarding, CalVoicemail, CalVideo } },
                 { HChatsSMS, new[] { ChaIM, ChaIMAppearance, ChaSMS } },
-                { HAdvanced, new[] { AdvAdv, AdvConnection, AdvHotkeys } }
+                { HAdvanced, new[] { AdvAdv, AdvUpdates, AdvConnection, AdvHotkeys, AdvDbg } }
             };
             tabDispenser = new Dictionary<SliceControl, Func<Page>>
             {
-                { GenGen, () => new OptionPages.Skymu.Skymu() },
-                { GenSounds, () => new OptionPages.General.Sounds() }
+                { GenGen, () => new OptionPages.General.General() },
+                { GenSkymu, () => new OptionPages.General.Skymu() },
+                { AdvDbg, () => new OptionPages.Advanced.Debug() }
+            };
+            tabToText = new Dictionary<SliceControl, string>
+            {
+                { GenGen, "SF_OPTIONS_GENERAL_CAPTION" },
+                { GenSkymu, "<b>Skymu Customization:</b> Modify the way Skymu looks, feels, and behaves" },
+                { AdvDbg, "<b>Debug options:</b> Options that only appears on \"Debug\" build variant" }
             };
 
             SourceInitialized += (s, e) =>
@@ -68,6 +76,10 @@ namespace Skymu.Views
                 }
                 TabSelect(GenGen, null);
             };
+
+#if DEBUG
+            AdvDbg.Visibility = Visibility.Visible;
+#endif
         }
 
         private void CatSelect(object sender, MouseButtonEventArgs e)
@@ -104,6 +116,18 @@ namespace Skymu.Views
             sc.SetState(ButtonVisualState.Pressed);
             ((SliceControl)sc.Template.FindName("InnerSlice", sc))?.SetState(ButtonVisualState.Pressed);
 
+            for (int once = 1; once == 1; once++) {
+                if (tabToText.TryGetValue(sc, out var title))
+                {
+                    if (title.ToLowerInvariant().StartsWith("s"))
+                        title = Universal.Lang[title];
+                    var i = title.IndexOf("</b>");
+                    if (i == -1)
+                        break;
+                    CTabTitle.Text = title.Substring(3, i - 3);
+                    CTabDescription.Text = title.Substring(i + 4);
+                }
+            }
             if (!tabDispenser.TryGetValue(sc, out var pfact))
             {
                 Debug.WriteLine("Tried to access an unknown tab " + sc.Name);

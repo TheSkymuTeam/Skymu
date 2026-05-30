@@ -161,6 +161,13 @@
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/access.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}"/>
+                        <!--  Skymu original  -->
+                        <global:SliceControl
+                            x:Name="GenSkymu"
+                            MouseLeftButtonDown="TabSelect"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/skymu.png}"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Text="Skymu" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
@@ -303,9 +310,16 @@
                         <global:SliceControl
                             x:Name="AdvAdv"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/updates.png}"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}"/>
+                            <!--  holy fuck why Skype  -->
+                        <global:SliceControl
+                            x:Name="AdvUpdates"
+                            MouseLeftButtonDown="TabSelect"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/updates.png}"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}"/>
                         <global:SliceControl
                             x:Name="AdvConnection"
                             MouseLeftButtonDown="TabSelect"
@@ -318,6 +332,14 @@
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/hotkeys.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}"/>
+                        <!--  Skymu original  -->
+                        <global:SliceControl
+                            x:Name="AdvDbg"
+                            MouseLeftButtonDown="TabSelect"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}"
+                            Style="{StaticResource SidebarButtonStyle}"
+                            Text="Debug"
+                            Visibility="Collapsed" />
                     </StackPanel>
                 </Grid>
             </StackPanel>
@@ -348,12 +370,14 @@
                         Panel.ZIndex="2"
                         Orientation="Horizontal">
                         <TextBlock
+                            x:Name="CTabTitle"
                             FontFamily="Tahoma"
                             FontSize="11"
                             FontWeight="Bold"
                             Foreground="{StaticResource Text.HighContrast}"
                             Text="Skymu Customization:" />
                         <TextBlock
+                            x:Name="CTabDescription"
                             Margin="7,0"
                             FontFamily="Tahoma"
                             FontSize="11"

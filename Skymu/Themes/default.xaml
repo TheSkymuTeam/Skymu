@@ -43,6 +43,7 @@
     <!--  ================= STANDARD COLORS =================  -->
 
     <SolidColorBrush x:Key="Background" Color="#D4E2F2" />
+    <SolidColorBrush x:Key="Separator" Color="#E4E4E4" />
     <SolidColorBrush x:Key="Card.Background" Color="#FFFFFF" />
     <SolidColorBrush x:Key="Card.Border" Color="#26000000" />
 

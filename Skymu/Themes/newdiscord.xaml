@@ -35,6 +35,8 @@
     <SolidColorBrush x:Key="Inactive.Background" Color="#FF232428" />
 
     <SolidColorBrush x:Key="Background" Color="#FF2B2D31" />
+    <!--  TODO  -->
+    <SolidColorBrush x:Key="Separator" Color="#E4E4E4" />
     <SolidColorBrush x:Key="Card.Background" Color="#FF313338" />
     <SolidColorBrush x:Key="Card.Border" Color="#26FFFFFF" />
 

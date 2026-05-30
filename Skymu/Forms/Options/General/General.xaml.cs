@@ -13,9 +13,9 @@ using System.Windows.Controls;
 
 namespace Skymu.Views.OptionPages.General
 {
-    public partial class Sounds : Page
+    public partial class General : Page
     {
-        public Sounds()
+        public General()
         {
             InitializeComponent();
         }
