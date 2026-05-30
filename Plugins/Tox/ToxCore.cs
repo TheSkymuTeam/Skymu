@@ -561,7 +561,7 @@ public static class ToxCore
     public static extern void tox_callback_friend_status_message(IntPtr tox, tox_friend_status_message_cb callback);
 
     /* Deprecated
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern Tox_User_Status tox_friend_get_status(IntPtr tox, UInt32 friend_number, out Tox_Err_Friend_Query error);
     */
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -1360,7 +1360,7 @@ public static class ToxCore
     /* 'cause it is something that doesn't exist
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void tox_group_name_cb(IntPtr tox, UInt32 group_number, UInt32 peer_id, IntPtr name, UIntPtr topic_length, IntPtr user_data);
-    [DllImport(Lib, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern void tox_callback_group_name(IntPtr tox, tox_group_topic_cb callback);
     */
 
