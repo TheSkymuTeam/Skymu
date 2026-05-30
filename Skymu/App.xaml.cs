@@ -367,12 +367,7 @@ namespace Skymu
                 frameworkName = "Aero.NormalColor";
 
             string assemblyName;
-            switch (frameworkName)
-            {
-                case "Classic":
-                    assemblyName = "PresentationFramework.Classic";
-                    break;
-                default:
+             
                     if (frameworkName.StartsWith("Luna"))
                         assemblyName = "PresentationFramework.Luna";
                     else if (frameworkName.StartsWith("Royale"))
@@ -383,9 +378,9 @@ namespace Skymu
                         assemblyName = "PresentationFramework.AeroLite";
                     else if (frameworkName.StartsWith("Aero"))
                         assemblyName = "PresentationFramework.Aero";
-                    else
-                        assemblyName = "PresentationFramework.Aero2";
-                    break;
+                    else if (frameworkName.StartsWith("Classic"))
+                        assemblyName = "PresentationFramework.Classic";
+                
             }
 
             try
@@ -416,7 +411,7 @@ namespace Skymu
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(
+                Universal.MessageBox(
                     $"Failed to apply presentation framework: {ex.Message}"
                 );
             }
