@@ -165,7 +165,7 @@ namespace Tox
                 byte[] pfp = core.currentUser.ProfilePicture;
                 byte[] hash = new byte[tox_hash_length()];
                 tox_hash(hash, pfp, (UIntPtr)pfp.Length);
-                UInt32 trid = tox_file_send(tox, fid, Tox_File_Kind.AVATAR, (UInt64)pfp.Length, 0, Encoding.ASCII.GetString(hash), (UIntPtr)tox_hash_length(), out var err);
+                UInt32 trid = tox_file_send(tox, fid, Tox_File_Kind.AVATAR, (UInt64)pfp.Length, 0, Encoding.ASCII.GetString(hash), (UIntPtr)tox_hash_length(), out var _);
                 if (core.transfers.ContainsKey(trid))
                 {
                     core.transfers.Remove(trid);
@@ -353,7 +353,6 @@ namespace Tox
             {
                 var sfid = fid.ToString();
                 var f = core.tox.GetFriend(fid);
-                var pkey = BATS(f.publicKey);
                 Message message = new Message($"{sfid}_{GUID()}",
                     core.friends[f.id],
                     TIME(),
