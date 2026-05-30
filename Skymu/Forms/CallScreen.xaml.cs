@@ -222,6 +222,8 @@ namespace Skymu.Views
         {
             location.SidebarToggle = !location.SidebarToggle;
             SetButtonSource(SidebarButton, location.SidebarToggle);
+            if (isFullscreen)
+                ExitFullscreen();
             if (LocationChangeRequested != null)
                 LocationChangeRequested(this, location);
         }
@@ -230,6 +232,8 @@ namespace Skymu.Views
         {
             location.ChatToggle = !location.ChatToggle;
             SetButtonSource(ChatButton, location.ChatToggle);
+            if (isFullscreen)
+                ExitFullscreen();
             if (LocationChangeRequested != null)
                 LocationChangeRequested(this, location);
         }
