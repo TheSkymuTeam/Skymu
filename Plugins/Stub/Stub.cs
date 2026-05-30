@@ -26,7 +26,7 @@ using Yggdrasil.Enumerations;
 
 namespace Stub
 {
-    public class Core : ICore, ICall
+    public class Core : ICore, ICall, IListManagement
     {
         #region Variables
 
@@ -548,6 +548,41 @@ namespace Stub
         public event EventHandler<CallEventArgs> OnCallStateChanged;
 
         public bool SupportsVideoCalls => false;
+
+        #endregion
+
+        #region Adding contacts
+        // remove this entire region and remove IListManagement to disable
+        // Enter number for the search query for group with that amount of members
+
+        public async Task<Metadata[]> FindNewContact(string query)
+        {
+            if (int.TryParse(query, out var memc))
+            {
+                var members = new User[memc];
+                for (int i = 0; i < memc; i++)
+                {
+                    members[i] = users[i % users.Length];
+                }
+                return new Metadata[2] {
+                    new Group("Mega Based Caolition", "mbc", 0, members),
+                    new User(query, query, query)
+                };
+            }
+            return new Metadata[1]
+            {
+                new User(query, query, query)
+            };
+        }
+
+        public async Task<bool> AddContact(Metadata contact, string message)
+        {
+            if (contact is User user)
+                ContactsList.Add(new DirectMessage(user, 0, user.Identifier));
+            else if (contact is Group group)
+                RecentsList.Add(group);
+            return false;
+        }
 
         #endregion
 
