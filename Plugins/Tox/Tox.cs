@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -52,24 +51,36 @@ namespace Tox
         public int TypingRepeat => 5000;
 
         public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
-        public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
-        public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
+        public ObservableCollection<DirectMessage> ContactsList { get; private set; }
+            = new ObservableCollection<DirectMessage>();
+        public ObservableCollection<Conversation> RecentsList { get; private set; }
+            = new ObservableCollection<Conversation>();
+        public ObservableCollection<Server> ServerList { get; private set; }
+            = new ObservableCollection<Server>();
+        public ObservableCollection<User> TypingUsersList { get; private set; }
+            = new ObservableCollection<User>();
 
         internal string activecid;
         IntPtr av;
         internal static CallStruct avACall; // avacall dot co dot uk call anywhere from india pakistan where only 4 pesos
         CancellationTokenSource avCts = new CancellationTokenSource();
-        internal TaskCompletionSource<bool> avFinished = new TaskCompletionSource<bool>();
-        internal TaskCompletionSource<bool> avWaiter = new TaskCompletionSource<bool>();
+        internal TaskCompletionSource<bool> avFinished 
+            = new TaskCompletionSource<bool>();
+        internal TaskCompletionSource<bool> avWaiter 
+            = new TaskCompletionSource<bool>();
         Thread avThread;
         Timer avTimer;
         readonly Callbacks cbs = new Callbacks();
         internal User currentUser;
         bool disposed = false;
-        internal Dictionary<UInt32, User> friends = new Dictionary<uint, User>();
-        internal Dictionary<UInt32, Message> messages = new Dictionary<uint, Message>();
+        internal Dictionary<UInt32, User> friends
+            = new Dictionary<uint, User>();
+        internal Dictionary<UInt32, Message> messages
+            = new Dictionary<uint, Message>();
+        internal Dictionary<UInt32, List<(Tox_Message_Type type, string text)>> pendingSendConference
+            = new Dictionary<uint, List<(Tox_Message_Type type, string text)>>();
+        internal Dictionary<UInt32, List<(Tox_Message_Type type, string text)>> pendingSendFriend
+            = new Dictionary<uint, List<(Tox_Message_Type type, string text)>>();
         internal string profile;
         internal FileStream profilelock;
         internal string savepass;
@@ -133,8 +144,10 @@ namespace Tox
             avFinished = new TaskCompletionSource<bool>();
             avWaiter = new TaskCompletionSource<bool>();
             currentUser = null;
-            friends = new Dictionary<uint, User>();
-            messages = new Dictionary<uint, Message>();
+            friends = new Dictionary<UInt32, User>();
+            messages = new Dictionary<UInt32, Message>();
+            pendingSendConference = new Dictionary<UInt32, List<(Tox_Message_Type type, string text)>>();
+            pendingSendFriend = new Dictionary<UInt32, List<(Tox_Message_Type type, string text)>>();
             profile = null;
             savepass = null;
             transfers = new Dictionary<UInt32, byte[]>();
@@ -220,7 +233,7 @@ namespace Tox
         {
             try
             {
-                LibraryHelper.ImportDllFromArchedFolder(ToxCore.LibTox);
+                LibraryHelper.ImportDllFromArchedFolder(LibTox);
             }
             catch (PlatformNotSupportedException)
             {
@@ -489,13 +502,11 @@ namespace Tox
                     {
                         if (!c.sendMessage(type, text))
                         {
-                            _ = Task.Run(async () =>
-                            {
-                                await Task.Delay(1000);
-                                if (!disposed)
-                                    await SendMessage(identifier, otext, attachment, parent_message_identifier);
-                            });
-                            return true;
+                            if (pendingSendConference.TryGetValue(c.id, out var ls))
+                                lock (ls)
+                                    ls.Add((type, text));
+                            else
+                                pendingSendConference[c.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
                         }
                         return true;
                     }
@@ -505,15 +516,14 @@ namespace Tox
                 var mid = f.SendMessage(type, text);
                 if (mid == null)
                 {
-                    _ = Task.Run(async () =>
-                    {
-                        Thread.Sleep(1000);
-                        if (!disposed)
-                            await SendMessage(identifier, otext, attachment, parent_message_identifier);
-                    });
+                    if (pendingSendFriend.TryGetValue(f.id, out var ls))
+                        lock (ls)
+                            ls.Add((type, text));
+                    else
+                        pendingSendFriend[f.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
                     return true;
                 }
-                messages.Add((uint)mid, new Message(mid + "_" + GUID(), currentUser, new DateTime(), text));
+                messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), currentUser, new DateTime(), text));
                 return true;
             }
             catch (Exception ex)

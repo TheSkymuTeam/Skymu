@@ -19,8 +19,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using ToxOO;
+using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
+using static System.Net.Mime.MediaTypeNames;
 using static Tox.Helper;
 using static ToxCore;
 
@@ -50,6 +52,7 @@ namespace Tox
             _OnFileRecvChunk = null;
             #endregion
             #region conference
+            _OnConferenceConnected = null;
             _OnConferenceMessage = null;
             _OnConferencePeerName = null;
             _OnConferencePeerListChanged = null;
@@ -86,6 +89,7 @@ namespace Tox
             _OnFileRecvChunk = OnFileRecvChunk; tox_callback_file_recv_chunk(tox.ptr, _OnFileRecvChunk);
             #endregion
             #region conference
+            _OnConferenceConnected = OnConferenceConnected; tox.conferenceConnected = _OnConferenceConnected;
             _OnConferenceMessage = OnConferenceMessage; tox.conferenceMessage = _OnConferenceMessage;
             _OnConferenceTitle = OnConferenceTitle; tox.conferenceTitle = _OnConferenceTitle;
             _OnConferencePeerName = OnConferencePeerName; tox.conferencePeerName = _OnConferencePeerName;
@@ -169,6 +173,29 @@ namespace Tox
                 }
                 core.transfers.Add(trid, core.currentUser.ProfilePicture);
                 core.transfer_info.Add(trid, (Tox_File_Kind.AVATAR, ""));
+                if (core.pendingSendFriend.TryGetValue(fid, out var ls))
+                {
+                    var f = new Friend(tox, fid);
+                    bool fail = false;
+                    var sucs = new List<(Tox_Message_Type, string)>();
+                    lock (ls)
+                        foreach (var msg in ls)
+                        {
+                            var mid = f.SendMessage(msg.type, msg.text);
+                            if (mid == null)
+                            { fail = true; break; }
+                            else
+                            {
+                                core.messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
+                                sucs.Add(msg);
+                            }
+                        }
+                    foreach (var msg in sucs)
+                        ls.Remove(msg);
+                    if (!fail)
+                        lock (ls)
+                            core.pendingSendFriend.Remove(fid);
+                }
             }
             else
             {
@@ -397,6 +424,36 @@ namespace Tox
         // TODO SOONISH: conference_invite - should be added soon
 
         // TODO LATER: conference_connected - not useful as of now
+
+        tox_conference_connected_cb _OnConferenceConnected;
+        void OnConferenceConnected(IntPtr tox, UInt32 cid, IntPtr user_data)
+        {
+            var core = GC(user_data);
+            if (core.pendingSendConference.TryGetValue(cid, out var ls))
+            {
+                var c = new Conference(tox, cid);
+                bool fail = false;
+                var sucs = new List<(Tox_Message_Type, string)>();
+                lock (ls)
+                    foreach (var msg in ls)
+                    {
+                        var ok = c.sendMessage(msg.type, msg.text);
+                        if (!ok)
+                        { fail = true; break; }
+                        else
+                        {
+                            core.UCP(_ =>
+                                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), new Message(GUID(), core.currentUser, TIME(), msg.text), false))
+                            );
+                            sucs.Add(msg);
+                        }
+                    }
+                foreach (var msg in sucs)
+                    ls.Remove(msg);
+                if (!fail)
+                    core.pendingSendConference.Remove(cid);
+            }
+        }
 
         tox_conference_message_cb _OnConferenceMessage;
         void OnConferenceMessage(IntPtr tox, UInt32 cid, UInt32 pid, Tox_Message_Type type, string msg, UIntPtr length, IntPtr user_data)
