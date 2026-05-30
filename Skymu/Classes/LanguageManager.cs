@@ -41,7 +41,7 @@ namespace Skymu
 
         public LanguageManager()
         {
-            if (DesignerProperties.GetIsInDesignMode(new DependencyObject())) return; // no localization in designer
+             if (!DebugConfig.LocalizeDesigner && DesignerProperties.GetIsInDesignMode(new DependencyObject())) return; // no localization in designer unless overridden
 
             string lang = Settings.Language ?? "English";
             if (!Scan())

@@ -39,9 +39,6 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Interface = Settings.Interface;
 
-        internal static bool TestMode = false; // disables plugin login, signs you directly into stub
-        internal static bool DisableAutoLogin = false; // disables plugin auto login for testing
-
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4.1";
         public const string BuildName = "Elusive Basilisk";

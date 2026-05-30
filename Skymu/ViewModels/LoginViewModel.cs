@@ -81,12 +81,14 @@ namespace Skymu.ViewModels
 
             foreach (var plugin in Universal.PluginList)
             {
-                if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
+#if DEBUG
+                if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
                     PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
                     Universal.Plugin = plugin;
                     Universal.CallPlugin = Universal.Plugin as ICall;
                 }
+#endif
 
                 SavedCredential match = null;
                 foreach (SavedCredential cred in savedCredentials)
@@ -107,16 +109,20 @@ namespace Skymu.ViewModels
                         plugin.AuthenticationTypes[0].AuthType,
                         plugin.AuthenticationTypes[0].CustomTextUsername
                     );
-                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !Universal.DisableAutoLogin && !Universal.TestMode)
+#if DEBUG
+                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode)
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
                         Universal.Plugin = plugin;
                         Universal.CallPlugin = Universal.Plugin as ICall;
                     }
+#endif
                     PluginItems.Add(listing);
-                    if (Universal.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
+#if DEBUG
+                    if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                         PendingAutoLoginListing = listing;
+#endif
                 }
                 else
                 {
@@ -151,13 +157,15 @@ namespace Skymu.ViewModels
                             }
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername);
-                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !Universal.DisableAutoLogin) // TODO check against authentication type too?
+#if DEBUG
+                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !DebugConfig.DisableAutoLogin) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
                             Universal.Plugin = plugin;
                             Universal.CallPlugin = Universal.Plugin as ICall;
                         }
+#endif
                         PluginItems.Add(listing);
                     }
                 }
