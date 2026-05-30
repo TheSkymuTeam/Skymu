@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Microsoft.Win32;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ using System.Security;
 using System.Text.Json;
 using System.Web;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using Yggdrasil.Classes;
 
 namespace Skymu
@@ -40,14 +42,35 @@ namespace Skymu
             _browser.LoadCompleted += OnLoadCompleted;
 
             // _browser.Navigate(new Uri("https://skymu.app/home")); we do not fetch Home from the internet anymore
-            
-                
+
+
             string local_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Home", "index.html");
-            // file://127.0.0.1/c$/path/to/Home/index.html
-            // https://stackoverflow.com/a/956152
-            local_path = "file://127.0.0.1/" + local_path.Substring(0, 1) + "$" + local_path.Substring(2);
-            Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {local_path}");
-            _browser.Navigate(new Uri(local_path));
+            bool ie9 = false;
+            // https://web.biz-prog.net/praxis/ie/version.html
+            try
+            {
+                using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Internet Explorer"))
+                {
+                    string k = (string)key.GetValue("Version");
+                    ie9 = k != null ? int.Parse(k.Substring(0, 1)) >= 2 : false;
+                }
+            }
+            catch
+            { }
+            if (ie9)
+            {
+                // file://127.0.0.1/c$/path/to/Home/index.html
+                // https://stackoverflow.com/a/956152
+                local_path = $"file://127.0.0.1/{local_path.Substring(0, 1)}${local_path.Substring(2)}";
+                Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {local_path}");
+                _browser.Navigate(new Uri(local_path));
+            }
+            else
+            {
+                // C:\path\to\Home\index.html
+                Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {local_path}");
+                _browser.Navigate(new Uri(local_path));
+            }
         }
 
         private static void InvokeEval(string script)
@@ -170,6 +193,13 @@ namespace Skymu
         }
     }
 
+    public enum CapabilityMap
+    {
+        voicemail = 0,
+        callforward = 4,
+        video = 5
+    }
+
     [ComVisible(true)]
     public class SkypeExternalObject
     {
@@ -243,6 +273,7 @@ namespace Skymu
             return new UsersCollection(items);
         }
 
+        // TODO?
         public bool isBuddy(string skypename) => false;
 
         public string encodeContent(string s) => HttpUtility.HtmlEncode(s);
@@ -446,6 +477,21 @@ namespace Skymu
         public string DisplayName => ResolveDisplayName();
 
         public object getMoodMediaObject() => null;
+
+        // TODO: Make this accurate once Yggdrasil implements it
+        public bool hasCapability(int cap)
+        {
+            switch((CapabilityMap)cap)
+            {
+                case CapabilityMap.voicemail: return false;
+                case CapabilityMap.callforward: return false;
+                case CapabilityMap.video: return false;
+            }
+            return false;
+        }
+
+        // TODO: Document
+        public string phoneOther(int index) => null;
 
         private string ResolveDisplayName()
         {
