@@ -366,8 +366,13 @@ namespace Skymu
             if (string.IsNullOrEmpty(frameworkName))
                 frameworkName = "Aero.NormalColor";
 
-            string assemblyName;
-             
+            string assemblyName = "";
+            switch (frameworkName)
+            {
+                case "Classic":
+                    assemblyName = "PresentationFramework.Classic";
+                    break;
+                default:
                     if (frameworkName.StartsWith("Luna"))
                         assemblyName = "PresentationFramework.Luna";
                     else if (frameworkName.StartsWith("Royale"))
@@ -380,7 +385,7 @@ namespace Skymu
                         assemblyName = "PresentationFramework.Aero";
                     else if (frameworkName.StartsWith("Classic"))
                         assemblyName = "PresentationFramework.Classic";
-                
+                    break;
             }
 
             try
