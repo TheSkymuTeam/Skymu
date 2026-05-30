@@ -2203,7 +2203,7 @@
                                                     LeftWidth="23"
                                                     MouseLeftButtonUp="CallButtonClick"
                                                     PressedIndex="2"
-                                                    RightWidth="4"
+                                                    RightWidth="15"
                                                     Source="Assets/Universal/Chat/btn_call.png"
                                                     StackDirection="Vertical"
                                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
