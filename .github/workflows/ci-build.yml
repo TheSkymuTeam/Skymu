@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '5.0.x'
 
     - name: 1. Build Yggdrasil
       run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
