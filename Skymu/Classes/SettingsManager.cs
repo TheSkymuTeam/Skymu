@@ -285,6 +285,12 @@ namespace Skymu.Preferences
             get => SELECT("InboxNoticeShown", 0);
             set => WRITE("InboxNoticeShown", value, nameof(InboxNoticeShown));
         }
+        /// <summary> 1 = hide the sidebar on call start </summary>
+        public static int HideLeftHandSide
+        {
+            get => SELECT("HideLeftHandSide", 0);
+            set => WRITE("HideLeftHandSide", value, nameof(HideLeftHandSide));
+        }
         public static bool SuppressOldRuntimeWarnings
         {
             get => SELECT("SuppressOldRuntimeWarnings", false);

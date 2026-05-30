@@ -763,7 +763,7 @@ namespace Skymu.Sapphire
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
-            if (screen != null)
+            if (screen != null && location.ChatToggle)
                 TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
             RefreshChatSendButton();
         }
@@ -1243,6 +1243,8 @@ namespace Skymu.Sapphire
         private Frame frame;
         private CallScreen screen;
         private CallScreen.LocationChangeEventArgs location;
+        private CallScreen.LocationChangeEventArgs initial_location =
+            new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != 1, false);
 
         private double sidebarOrigWidth; // dynamic
         private double sidebarOrigMinWidth;
@@ -1266,9 +1268,6 @@ namespace Skymu.Sapphire
                 partner = dm.Partner;
                 answer_call = false;
             }
-            // TODO: Retain on recall/reboot optionally
-            CallScreen.LocationChangeEventArgs initial_location =
-                new CallScreen.LocationChangeEventArgs(true, false);
 
             if (topbarWindowRowOrigHeight == default)
                 topbarWindowRowOrigHeight = TopbarWindowRow.Height.Value;
@@ -1308,9 +1307,8 @@ namespace Skymu.Sapphire
             SetCallPageLocation(null);
         }
 
-        private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location)
+        private void SetCallPageLocation(CallScreen.LocationChangeEventArgs location, bool storeChatStatus = true)
         {
-            this.location = location;
             if (frame != null)
             {
                 frame.HorizontalContentAlignment = HorizontalAlignment.Stretch;
@@ -1321,7 +1319,9 @@ namespace Skymu.Sapphire
 
             if (location == null)
             {
-                SetCallPageLocation(new CallScreen.LocationChangeEventArgs(true, true)); // quickly reset stuff
+                Settings.HideLeftHandSide = this.location.SidebarToggle ? 0 : 1;
+                Settings.Save();
+                SetCallPageLocation(new CallScreen.LocationChangeEventArgs(true, true), false); // quickly reset stuff
                 if (FillWindowHost.Content == frame)
                     FillWindowHost.Content = null;
                 if (FillMessagePanelHost.Content == frame)
@@ -1347,6 +1347,7 @@ namespace Skymu.Sapphire
             }
             else
             {
+                this.location = location;
                 // Disable it here (bugfix)
                 ChatProfileArea.Visibility = Visibility.Collapsed;
                 // Show ContentArea here, as it is visible in all cases except with both sidebar and chat hidden
@@ -1354,6 +1355,9 @@ namespace Skymu.Sapphire
                 // Same for this, but with chat hidden only now
                 ChatTopBarSplitter.Visibility = Visibility.Collapsed;
                 ChatTopbarSplitterRow.MaxHeight = 0;
+
+                if (storeChatStatus)
+                    initial_location.ChatToggle = location.ChatToggle;
 
 
                 if (FillWindowHost.Content == frame)
