@@ -19,9 +19,13 @@ using Skymu.Views;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -56,6 +60,8 @@ namespace Skymu
         public static ViewModels.MainViewModel ActiveViewModel;
 
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
+
+        private static Mutex mutex;
 
         public static void InformDND()
         {
@@ -135,6 +141,25 @@ namespace Skymu
 
         static Universal()
         {
+            if (!Settings.AllowMultipleInstances)
+            {
+                mutex = new Mutex(true, "Skymu_SingleInstance", out var created);
+
+                if (!created)
+                {
+                    foreach (var arg in Environment.GetCommandLineArgs())
+                    {
+                        if (arg.StartsWith("/uri:"))
+                        {
+                            var uri = arg.Substring(5 + 6);
+                            WriteToPipe("URI:" + uri);
+                        }
+                    }
+                    WriteToPipe("WINDOW_ACTIVATE");
+                    Application.Current.Shutdown();
+                    return;
+                }
+            }
             AppDomain.CurrentDomain.ProcessExit += (e, s) =>
             {
                 Tray.DisposeIcon();
@@ -177,6 +202,58 @@ namespace Skymu
                     new Skyaeris.Login().Show();
                     break;
             }
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var pipe = new NamedPipeServerStream("SkymuPipe", PipeDirection.In);
+
+                    pipe.WaitForConnection();
+
+                    var reader = new StreamReader(pipe);
+
+                    string msg = reader.ReadLine();
+
+                    if (msg == "WINDOW_ACTIVATE")
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (MainWindow.WindowState == WindowState.Minimized)
+                                MainWindow.WindowState = WindowState.Normal;
+                            MainWindow.Show();
+                            MainWindow.Activate();
+                        });
+                    else if (msg.StartsWith("URI:"))
+                    {
+                        msg = msg.Substring(msg.IndexOf(":") + 1);
+                        Debug.WriteLine($"[Universal] Got skymu URI: {msg}");
+                        var questionmark = msg.IndexOf("?");
+                        var skypename = msg.Substring(0, questionmark == -1 ? msg.Length : questionmark);
+                        if (ActiveViewModel != null)
+                        {
+                            Conversation found = null;
+                            foreach (var c in Universal.Plugin.RecentsList)
+                                if ((c is DirectMessage u) && u.Partner.Username == skypename)
+                                {
+                                    found = c; break;
+                                }
+                            if (found == null)
+                                foreach (DirectMessage u in Universal.Plugin.ContactsList)
+                                    if (u.Partner.Username == skypename)
+                                    {
+                                        found = u; break;
+                                    }
+                            if (found != null)
+                                Dispatcher.Invoke(() =>
+                                    ActiveViewModel.SelectConversation(found)
+                                );
+                        }
+                    }
+
+                    reader.Dispose();
+                    pipe.Dispose();
+                }
+            });
         }
 
         public static void Restart()
@@ -284,6 +361,8 @@ namespace Skymu
             catch { } // in case app is already too dead to clear icon by the time this is called
             finally
             {
+                if (!Settings.AllowMultipleInstances)
+                    mutex?.Close();
                 Application.Current.Shutdown();
             }
         }
@@ -327,14 +406,28 @@ namespace Skymu
             ).ShowDialog();
         }
 
+        private static void WriteToPipe(string data)
+        {
+            try
+            {
+                var pipe = new NamedPipeClientStream(".", "SkymuPipe", PipeDirection.Out);
+
+                pipe.Connect(1000);
+
+                var writer = new StreamWriter(pipe);
+                writer.AutoFlush = true;
+
+                writer.WriteLine(data);
+
+                writer.Dispose();
+                pipe.Dispose();
+            }
+            catch
+            { }
+        }
+
         protected override void OnStartup(StartupEventArgs ev)
-        { 
-            // don't use debug features if not in debug mode
-            #if !DEBUG
-            TestMode = false;
-            DisableAutoLogin = false;
-            #endif
-        
+        {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresFrame);

@@ -416,6 +416,11 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
+                Content="Allow running multiple instances"
+                IsChecked="{Binding Path=[AllowMultipleInstances], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+            <CheckBox
+                Margin="0,5"
+                Padding="6,0"
                 Content="Run the speed test on each startup (uses 10 MB of bandwidth for no real benefit)"
                 IsChecked="{Binding Path=[AutoSpeedTest], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             <CheckBox

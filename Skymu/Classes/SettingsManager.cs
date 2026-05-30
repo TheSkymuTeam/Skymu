@@ -97,6 +97,12 @@ namespace Skymu.Preferences
             set => WRITE("StartMinimized", value, nameof(StartMinimized));
         }
 
+        public static bool AllowMultipleInstances
+        {
+            get => SELECT("AllowMultipleInstances", false);
+            set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances));
+        }
+
         public static WindowFrame WindowFrame
         {
             get => SELECT("WindowFrame", WindowFrame.SkypeAero);

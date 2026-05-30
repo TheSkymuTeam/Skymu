@@ -1716,6 +1716,29 @@ namespace Skymu.Skyaeris
                     _conversationScrollViewer?.ScrollToEnd();
             };
 
+            vmodel.ConversationChanged += async (s, e) =>
+            {
+                if (!(s is Conversation sc)) return;
+                DirectMessage sdm = null;
+                if (sc is DirectMessage)
+                    sdm = sc as DirectMessage;
+                bool found = false;
+                foreach (var item in ConversationList.Items)
+                    if (item is Conversation c && c.Identifier == sc.Identifier)
+                        { ConversationList.SelectedItem = item as Conversation; found = true; break; }
+                if (!found)
+                {
+                    if (ConversationList.ItemsSource == Universal.Plugin.ContactsList)
+                        await SelectTab(btnRecents);
+                    else
+                        await SelectTab(btnContacts);
+                    foreach (var item in ConversationList.Items)
+                        if (item is Conversation c && c.Identifier == sc.Identifier)
+                            { ConversationList.SelectedItem = item as Conversation; break; }
+                }
+                _ = SetConversation();
+            };
+
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
