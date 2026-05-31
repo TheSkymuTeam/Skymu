@@ -1406,7 +1406,7 @@ namespace Skymu.Pontis
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
             btnRecents.OverlayText.TextTrimming = TextTrimming.None;
 
-            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
+            HomeUnavailable.Navigate(new HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {
