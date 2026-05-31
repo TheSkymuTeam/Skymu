@@ -24,7 +24,6 @@ namespace Skymu.Forms
     public partial class Options : Window
     {
         readonly Dictionary<SliceControl, Grid> catToGrid;
-        readonly Dictionary<SliceControl, SliceControl[]> catToTabs;
         readonly Dictionary<SliceControl, Func<Page>> tabDispenser;
         readonly Dictionary<SliceControl, string> tabToText;
 
@@ -49,39 +48,6 @@ namespace Skymu.Forms
                 { HCalls, GCalls },
                 { HChatsSMS, GChatsSMS },
                 { HAdvanced, GAdvanced },
-            };
-            catToTabs = new Dictionary<SliceControl, SliceControl[]>
-            {
-                {
-                    HGeneral,
-                    new[]
-                    {
-                        General_Main,
-                        General_Devices,
-                        General_Sounds,
-                        General_Video,
-                        General_Access,
-                        General_Skymu,
-                    }
-                },
-                { HPrivacy, new[] { Privacy_Main, Privacy_Blocked } },
-                {
-                    HNotifications,
-                    new[] { Notifications_Main, Notifications_Alerts, Notifications_Sounds }
-                },
-                { HCalls, new[] { Calls_Main, Calls_Forwarding, Calls_Voicemail, Calls_Video } },
-                { HChatsSMS, new[] { Chats_Main, Chats_Appearance, Chats_SMS } },
-                {
-                    HAdvanced,
-                    new[]
-                    {
-                        Advanced_Main,
-                        Advanced_Updates,
-                        Advanced_Connection,
-                        Advanced_Hotkeys,
-                        Advanced_Debug,
-                    }
-                },
             };
             tabDispenser = new Dictionary<SliceControl, Func<Page>>
             {
@@ -126,7 +92,7 @@ namespace Skymu.Forms
                 foreach (var cat in catToGrid)
                 {
                     cat.Key.ApplyTemplate();
-                    foreach (var tab in catToTabs[cat.Key])
+                    foreach (SliceControl tab in (cat.Value.Children[1] as StackPanel).Children)
                         tab.ApplyTemplate();
                 }
                 TabSelect(General_Skymu, null);
@@ -155,13 +121,13 @@ namespace Skymu.Forms
             sc.HoverIndex = -1;
             sc.PressedIndex = -1;
 
-            TabSelect(catToTabs[sc][0], null);
+            TabSelect((catToGrid[sc].Children[1] as StackPanel).Children[0], null);
         }
 
         private void TabSelect(object sender, MouseButtonEventArgs e)
         {
             var sc = (SliceControl)sender;
-            foreach (var tab in catToTabs[currentCategory])
+            foreach (SliceControl tab in (sc.Parent as StackPanel).Children)
             {
                 if (ReferenceEquals(tab, sc))
                     continue;
