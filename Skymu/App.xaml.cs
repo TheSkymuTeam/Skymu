@@ -9,20 +9,20 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Forms;
 using Skymu.Migration;
 using Skymu.Plugins;
 using Skymu.Preferences;
+using Skymu.Sounds;
 using Skymu.Theming;
 using Skymu.UserDirectory;
-using Skymu.Forms;
+using Skymu.Windows;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using Skymu.Windows;
 using System.IO.Pipes;
 using System.Linq;
-using Skymu.Sounds;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
