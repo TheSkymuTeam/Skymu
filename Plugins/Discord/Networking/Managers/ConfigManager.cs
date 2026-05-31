@@ -36,14 +36,14 @@ namespace Discord.Networking.Managers
         public string DCReferringDomain { get; set; } = string.Empty;
         public string DCReferringCurrent { get; set; } = "https://discord.com/";
         public string DCReferringCurrentDomain { get; set; } = "discord.com";
-        public string DCReleaseChannel { get; set; } = "canary";
-        public int DCClientBuild { get; set; } = 494673; // Latest build as of 7/2/26
+        public string DCReleaseChannel { get; set; } = "stable";
+        public int DCClientBuild { get; set; } = 553187; // Latest build as of 31/5/2026
         public string DCClientEvtSrc { get; set; } = null;
         public string DCClientState { get; set; } = "unfocused";
 
         // Browser related options
-        public string BrowserUA { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0";
-        public string BrowserVer { get; set; } = "115.0";
+        public string BrowserUA { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0";
+        public string BrowserVer { get; set; } = "151.0";
 
         public string GetXSPJson()
         {
