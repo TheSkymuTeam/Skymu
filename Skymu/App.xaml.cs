@@ -455,7 +455,7 @@ namespace Skymu
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            ApplyPresentationFramework(Settings.PresFrame);
+            ApplyPresentationFramework(Settings.PresentationFramework);
             OS.Initialize();
             if (!ThemeManager.Scan())
                 Universal.ExceptionHandler(
@@ -469,9 +469,9 @@ namespace Skymu
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {
-                if (args.PropertyName == "PresFrame")
+                if (args.PropertyName == "PresentationFramework")
                 {
-                    ApplyPresentationFramework(Settings.PresFrame);
+                    ApplyPresentationFramework(Settings.PresentationFramework);
                 }
             };
         }
