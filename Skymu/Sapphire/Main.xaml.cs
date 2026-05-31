@@ -593,7 +593,8 @@ namespace Skymu.Sapphire
                             server.CategoryMap
                         );
                     }
-
+                    SplashHeader.Text = "Servers";
+                    SplashDescription.Text = "Find a community and connect with the world.";
                     ServersList.ItemsSource = Universal.Plugin.ServerList;
                     break;
                 case "btnContacts":
@@ -604,6 +605,8 @@ namespace Skymu.Sapphire
                         await Universal.Plugin.PopulateContactsList();
                     ConversationList.ItemTemplateSelector = null;
                     ConversationList.ItemsSource = Universal.Plugin.ContactsList;
+                    SplashHeader.Text = Universal.Lang["sZAPBUTTON_CONTACTS"];
+                    SplashDescription.Text = "Choose a contact and start talking.";
                     break;
                 case "btnRecents":
                     if (
@@ -612,6 +615,8 @@ namespace Skymu.Sapphire
                     )
                         await Universal.Plugin.PopulateRecentsList();
                     ConfigureCompactRecentsList();
+                    SplashHeader.Text = "Conversations";
+                    SplashDescription.Text = "Choose a conversation to pick up again.";
                     if (Settings.InboxNoticeShown != 1)
                         ConversationsHint.Visibility = Visibility.Visible;
                     break;

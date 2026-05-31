@@ -1612,8 +1612,7 @@
                                                 Background="{StaticResource Card.Background}"
                                                 BorderBrush="{StaticResource Card.Border}"
                                                 BorderThickness="1,1,1,1"
-                                                CornerRadius="4,4,4,4"
-                                                >
+                                                CornerRadius="4,4,4,4">
                                                 <StackPanel Orientation="Vertical">
                                                     <!--  TODO lang  -->
                                                     <TextBlock
@@ -1639,43 +1638,47 @@
                                                         TextAlignment="Center"
                                                         TextWrapping="Wrap">
                                                         <!--  Sorry non-word wrap users. This had to be done to avoid a gap.  -->
-                                                        <Run Text="It's easy to start a conversation. Go to your " /><Run MouseLeftButtonUp="OnContactsLink" Text="Contacts" Foreground="{StaticResource Text.Hyperlink}" /><Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
+                                                        <Run Text="It's easy to start a conversation. Go to your " /><Run
+                                                            Foreground="{StaticResource Text.Hyperlink}"
+                                                            MouseLeftButtonUp="OnContactsLink"
+                                                            Text="Contacts" /><Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
                                                     </TextBlock>
-                                                    <Grid Margin="0,8,0,12" HorizontalAlignment="Center" >
+                                                    <Grid Margin="0,8,0,12" HorizontalAlignment="Center">
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
                                                         <global:SliceControl
-                                                            ElementCount="5"
                                                             DefaultIndex="0"
+                                                            ElementCount="5"
+                                                            FontFamily="Tahoma"
                                                             HoverIndex="1"
-                                                            PressedIndex="2"
                                                             LeftWidth="10"
-                                                            RightWidth="10"
                                                             MouseLeftButtonUp="CloseConversationHint"
+                                                            PressedIndex="2"
+                                                            RightWidth="10"
                                                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Sapphire, Source='Sidebar/profile.png'}"
                                                             StackDirection="Vertical"
                                                             Text="{Binding Path='[sZAPBUTTON_CLOSE]', Source={StaticResource Lang}}"
                                                             TextColor="{StaticResource Text.MediumContrast}"
                                                             TextLeftMargin="20" />
                                                         <Image
-                                                            Margin="5,0,0,0"
                                                             Width="12"
+                                                            Margin="5,0,0,0"
                                                             HorizontalAlignment="Left"
                                                             Source="Assets/Universal/Sidebar/close-icon.png" />
                                                     </Grid>
                                                 </StackPanel>
                                             </Border>
                                             <global:SliceControl
-                                                Margin="10"
                                                 Width="14"
+                                                Margin="10"
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
-                                                ElementCount="5"
                                                 DefaultIndex="0"
+                                                ElementCount="5"
                                                 HoverIndex="1"
-                                                PressedIndex="2"
                                                 MouseLeftButtonUp="CloseConversationHint"
+                                                PressedIndex="2"
                                                 Source="Assets/Universal/Sidebar/close-hint.png"
                                                 StackDirection="Vertical" />
                                         </Grid>
@@ -1773,20 +1776,20 @@
                                 <!--  TODO: Localize. Requires Skype 4 lang files.  -->
                                 <StackPanel Margin="30,175,0,0" Orientation="Vertical">
                                     <global:SliceControl
+                                        x:Name="SplashHeader"
                                         Source="Assets/Universal/Home/leftarrow.png"
-                                        Text="Contacts"
                                         TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="40"
                                         TextSize="18"
                                         TextWeight="Bold" />
                                     <TextBlock
+                                        x:Name="SplashDescription"
                                         Margin="40,5,0,0"
                                         FontFamily="Arial"
                                         FontSize="13"
                                         FontWeight="SemiBold"
-                                        Foreground="{StaticResource Text.MediumContrast}"
-                                        Text="Choose a contact and start talking." />
+                                        Foreground="{StaticResource Text.MediumContrast}" />
                                 </StackPanel>
                                 <StackPanel
                                     Margin="30,0,0,0"
