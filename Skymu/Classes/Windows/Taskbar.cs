@@ -41,7 +41,8 @@ namespace Skymu.Windows
 
         public static void Flash(Window window)
         {
-            if (window == null) return;
+            if (window == null)
+                return;
 
             WindowInteropHelper wih = new WindowInteropHelper(window);
 
@@ -50,12 +51,11 @@ namespace Skymu.Windows
                 cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
                 hwnd = wih.Handle,
                 dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG, // flash until focused
-                uCount = uint.MaxValue,                  // repeat indefinitely
-                dwTimeout = 0
+                uCount = uint.MaxValue, // repeat indefinitely
+                dwTimeout = 0,
             };
 
             FlashWindowEx(ref fw);
         }
-
     }
 }
