@@ -19,7 +19,6 @@
     Closing="Window_Closing"
     Deactivated="Window_Deactivated"
     SizeChanged="Main_SizeChanged"
-    SourceInitialized="Window_SourceInitialized"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
     mc:Ignorable="d">

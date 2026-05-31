@@ -24,7 +24,6 @@
     FontFamily="Tahoma"
     FontSize="11"
     ResizeMode="CanResize"
-    SourceInitialized="Window_SourceInitialized"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow"
