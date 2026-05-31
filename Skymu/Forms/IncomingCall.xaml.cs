@@ -18,7 +18,7 @@ using System.Windows.Media.Animation;
 using Yggdrasil.Classes;
 using Skymu.Sounds;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class IncomingCall : Window
     {

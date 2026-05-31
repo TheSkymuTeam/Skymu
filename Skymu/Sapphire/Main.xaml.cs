@@ -18,8 +18,8 @@ using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Windows;
 using Skymu.Sounds;
-using Skymu.Views;
-using Skymu.Views.Pages;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -970,12 +970,12 @@ namespace Skymu.Sapphire
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.Options("Background").Show();
+            new Options().Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)
         {
-            new Views.About().Show();
+            new About().Show();
         }
 
         private void OnPrivacyPolicy(object sender, RoutedEventArgs e)

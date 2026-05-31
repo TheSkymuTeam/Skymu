@@ -16,8 +16,8 @@ using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1010,12 +1010,12 @@ namespace Skymu.Skyaeris
 
         private void OnOptions(object sender, RoutedEventArgs e)
         {
-            new Views.Options("Background").Show();
+            new Options().Show();
         }
 
         private void OnAbout(object sender, RoutedEventArgs e)
         {
-            new Views.About().Show();
+            new About().Show();
         }
 
         private void OnPrivacyPolicy(object sender, RoutedEventArgs e)

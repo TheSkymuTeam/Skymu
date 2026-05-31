@@ -14,7 +14,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class WindowBase : Window
     {

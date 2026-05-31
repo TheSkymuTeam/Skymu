@@ -15,8 +15,8 @@ using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,7 +60,6 @@ namespace Skymu.Pontis
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private SliceControl _currentTab;
-        private NativeMenuBar _menuBar;
         private bool _userScrolledUp = false;
         private readonly Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         internal static bool IsWindowActive = false;
@@ -68,6 +67,7 @@ namespace Skymu.Pontis
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
+        private MMBController _mmbController;
 
         private enum WindowType
         {
@@ -226,142 +226,6 @@ namespace Skymu.Pontis
             }
 
             return null;
-        }
-
-        #endregion
-
-        #region Menu bar
-
-        private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
-        private static (string, NativeSubMenu) MI(string label, NativeSubMenu subMenu) { return (label, subMenu); }
-        private static (string, EventHandler, IntPtr?) MI(string label, EventHandler handler, IntPtr? hBitmap) { return (label, handler, hBitmap); }
-        private static (string, EventHandler) MI(string label) { return (label, null); }
-        private static (string, EventHandler) SEP() { return ("$", null); }
-        private static IntPtr ICN(int index) => IconHelper.LoadHBitmapFromSheet(index);
-
-        private void Window_SourceInitialized(object sender, EventArgs e)
-        {
-            string L(string key) => Universal.Lang[key];
-
-            _menuBar = new NativeMenuBar(this);
-
-            _menuBar.Create(L("sMAINMENU_SKYPE"),
-                MI(L("sMAINMENU_SKYPE_ONLINESTATUS"), new NativeSubMenu(_menuBar).CreateWithIcons(L("sMAINMENU_SKYPE_ONLINESTATUS"),
-                    MI(L("sTRAYHINT_USER_ONLINE"), (s, e2) => OnStatus(PresenceStatus.Online), ICN(2)),
-                    MI(L("sTRAYHINT_USER_AWAY"), (s, e2) => OnStatus(PresenceStatus.Away), ICN(3)),
-                    MI(L("sTRAYHINT_USER_DND"), (s, e2) => OnStatus(PresenceStatus.DoNotDisturb), ICN(5)),
-                    MI(L("sTRAYHINT_USER_INVISIBLE"), (s, e2) => OnStatus(PresenceStatus.Invisible), ICN(6)),
-                    MI(L("sTRAYHINT_USER_OFFLINE"), (s, e2) => OnStatus(PresenceStatus.Offline), ICN(6)),
-                    ("$", null, null),
-                    MI(L("sSTATUSMENU_CAPTION_CF_OPTIONS2"), null, ICN(13))
-                )),
-                SEP(),
-                MI(L("sMAINMENU_SKYPE_PRIVACY")),
-                MI(L("sMAINMENU_SKYPE_ACCOUNT")),
-                MI(L("sMAINMENU_SKYPE_BUYCREDIT")),
-                SEP(),
-                MI(L("sMAINMENU_SKYPE_CHANGEPASSWORD")),
-                MI(L("sMAINMENU_SKYPE_SIGN_OUT"), (s, e2) => OnSignOut(null, null)),
-                MI(L("sMAINMENU_SKYPE_SWITCH_USER")),
-                MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
-            );
-
-            _menuBar.Create(L("sMAINMENU_CONTACTS"),
-                MI(L("sMAINMENU_CONTACTS_ADD_CONTACT"), (s, e2) => OnAddContact(null, null)),
-                MI(L("sMAINMENU_CONTACTS_NEW_CONTACT")),
-                MI(L("sMAINMENU_CONTACTS_SEARCH")),
-                MI(L("sMAINMENU_CONTACTS_IMPORT")),
-                MI(L("sMAINMENU_CONTACTS_NEW_GROUP")),
-                SEP(),
-                MI(L("sMAINMENU_CONTACTS_GROUPS")),
-                MI(L("sMAINMENU_CONTACTS_SHOW_OUTLOOK")),
-                SEP(),
-                MI(L("sBUDDYMENU_REMOVE"))
-            );
-
-            _menuBar.Create(L("sMAINMENU_CONVERSATION"),
-                MI(L("sMAINMENU_CONVERSATION_PROFILE_PANEL")),
-                MI(L("sMAINMENU_CONVERSATION_ADD_TO_CONTACTS")),
-                MI(L("sMAINMENU_CONVERSATION_ADD_PEOPLE")),
-                MI(L("sMAINMENU_CONVERSATION_RENAME")),
-                MI(L("sMAINMENU_CONVERSATION_LEAVE")),
-                MI(L("sMAINMENU_CONVERSATION_BLOCK")),
-                MI(L("sMAINMENU_CONVERSATION_UNBLOCK")),
-                MI(L("sCONVERSATION_MENU_NOTIFICATIONS")),
-                SEP(),
-                MI(L("sMAINMENU_CONVERSATION_SEARCH")),
-                MI(L("sMAINMENU_CONVERSATION_OLD_MESSAGES")),
-                SEP(),
-                MI(L("sCONVERSATION_MARK_UNREAD")),
-                MI(L("sCONVERSATION_MARK_READ")),
-                MI(L("sMAINMENU_CONVERSATION_HIDE"))
-            );
-
-            _menuBar.Create(L("sMAINMENU_CALL"),
-                MI(L("sMAINMENU_CALL"), (s, e2) => OnCall(null, null)),
-                MI(L("sMAINMENU_CALL_START_VIDEO")),
-                MI(L("sMAINMENU_CALL_ANSWER")),
-                SEP(),
-                MI(L("sMAINMENU_CALL_IGNORE")),
-                MI(L("sMAINMENU_CALL_MUTE")),
-                MI(L("sMAINMENU_CALL_UNMUTE")),
-                MI(L("sMAINMENU_CALL_HOLD")),
-                MI(L("sMAINMENU_CALL_RESUME")),
-                MI(L("sMAINMENU_CALL_TRANSFER")),
-                MI(L("sMAINMENU_CALL_HANG_UP")),
-                SEP(),
-                MI(L("sMAINMENU_CALL_CALL_A_PHONE_NUMBER")),
-                SEP(),
-                MI(L("sMAINMENU_CALL_AUDIO")),
-                MI(L("sMAINMENU_CALL_VIDEO_SETTINGS")),
-                MI(L("sMAINMENU_CALL_VIDEO_SNAPSHOT")),
-                SEP(),
-                MI(L("sMAINMENU_CALL_QUALITY")),
-                MI(L("sCALL_TOOLBAR_TECHNICAL_INFO"))
-            );
-
-            _menuBar.Create(L("sMAINMENU_VIEW"),
-                MI(L("sMAINMENU_VIEW_CONTACTS"), (s, e2) => OnContacts(null, null)),
-                MI(L("sMAINMENU_VIEW_CONVERSATIONS"), (s, e2) => OnRecent(null, null)),
-                MI(L("sMAINMENU_VIEW_VOICEMAILS")),
-                MI(L("sMAINMENU_VIEW_FILESSENT")),
-                MI(L("sMAINMENU_VIEW_SMSMESSAGES")),
-                MI(L("sMAINMENU_VIEW_INSTANT_MESSAGES")),
-                SEP(),
-                MI(L("sMAINMENU_VIEW_HOME"), (s, e2) => OnHome(null, null)),
-                MI(L("sMAINMENU_VIEW_PROFILE")),
-                MI(L("sMAINMENU_VIEW_CALL_PHONES")),
-                MI(L("sMAINMENU_VIEW_SNAPSHOTS_GALLERY")),
-                SEP(),
-                MI(L("sMAINMENU_VIEW_SINGLE_WINDOW_MODE")),
-                MI(L("sMAINMENU_VIEW_MULTI_WINDOW_MODE")),
-                MI(L("sMAINMENU_VIEW_FULLSCREEN")),
-                SEP(),
-                MI(L("sMAINMENU_SHOW_HIDDEN_CONV"))
-            );
-
-            _menuBar.Create(L("sMAINMENU_TOOLS"),
-                MI(L("sMAINMENU_TOOLS_EXTRAS")),
-                SEP(),
-                MI(L("sMAINMENU_TOOLS_LANGUAGE")),
-                SEP(),
-                MI(L("sMAINMENU_TOOLS_ACCESSIBILITY")),
-                MI(L("sMAINMENU_TOOLS_SHARE")),
-                SEP(),
-                MI(L("sMAINMENU_TOOLS_OPTIONS"), (s, e2) => OnOptions(null, null))
-            );
-
-            _menuBar.Create(L("sMAINMENU_HELP"),
-                MI(L("sMAINMENU_HELP_HELP")),
-                MI(L("sMAINMENU_HELP_HEARTBEAT")),
-                SEP(),
-                MI(L("sMAINMENU_HELP_QUALITY")),
-                MI(L("sMAINMENU_HELP_UPDATES"), (s, e2) => OnCheckUpdates(null, null)),
-                MI(L("sZAPBUTTON_FEEDBACK")),
-                SEP(),
-                MI(L("sMAINMENU_HELP_ABOUT"), (s, e2) => OnAbout(null, null)),
-                MI(L("sMAINMENU_HELP_PRIVACY"), (s, e2) => OnPrivacyPolicy(null, null))
-            );
         }
 
         #endregion
@@ -810,50 +674,6 @@ namespace Skymu.Pontis
             vmodel.SavePositioning(this, SidebarColumn);
         }
 
-        private void OnClose(object sender, RoutedEventArgs e)
-        {
-            Universal.Close();
-        }
-
-        private void OnContacts(object sender, RoutedEventArgs e)
-        {
-            _ = SelectTab(btnContacts);
-        }
-
-        private void OnRecent(object sender, RoutedEventArgs e)
-        {
-            _ = SelectTab(btnRecents);
-        }
-
-        private void OnHome(object sender, RoutedEventArgs e) => SetWindow(WindowType.Home);
-
-        private void OnOptions(object sender, RoutedEventArgs e)
-        {
-            new Options("Metro.Background").Show();
-        }
-
-        private void OnAbout(object sender, RoutedEventArgs e)
-        {
-            new About().Show();
-        }
-
-        private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
-        {
-            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
-        }
-
-        private void OnCheckUpdates(object sender, RoutedEventArgs e)
-        {
-            new Updater(true);
-        }
-
-        private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
-
-        private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
-
-        private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
-
-        private async void OnStatus(PresenceStatus status) => _ = Universal.Plugin.SetConnectionStatus(status);
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
 
@@ -896,8 +716,6 @@ namespace Skymu.Pontis
             SelectSidebarTopRowButton(AddContactButton);
             SearchBox.Focus();
         }
-
-        private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(sender, null);
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
         {
@@ -1551,6 +1369,20 @@ namespace Skymu.Pontis
                         vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
             };
 
+            _mmbController = new MMBController(this);
+            _mmbController.ActionRequested += (s, action) =>
+            {
+                switch (action)
+                {
+                    case MMBController.Action.Home: SetWindow(WindowType.Home); break;
+                    case MMBController.Action.Contacts: _ = SelectTab(btnContacts); break;
+                    case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
+                    case MMBController.Action.Call: CallButtonClick(null, null); break;
+                    case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                }
+            };
+            _mmbController.Build();
+
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
             Universal.UnknownAvatar = GenerateAvatarImage("unknown");
@@ -1606,8 +1438,6 @@ namespace Skymu.Pontis
 
             this.AllowsTransparency = false;
         }
-
-        private void InitiateSignOut(bool switchuser = false) => vmodel.InitiateSignOut(switchuser);
 
         #endregion
 

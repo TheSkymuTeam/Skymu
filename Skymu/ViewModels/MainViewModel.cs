@@ -20,6 +20,7 @@ using Skymu.Windows;
 using Skymu.Helpers;
 using Skymu.Sounds;
 using Skymu.Preferences;
+using Skymu.Forms;
 using Skymu.UserDirectory;
 using Microsoft.Win32;
 using System;
@@ -533,7 +534,7 @@ namespace Skymu.ViewModels
                     if (message.Sender?.Identifier == Universal.CurrentUser?.Identifier) return;
                     if ((Settings.NotificationTrigger & NotificationTriggerType.ALL) != 0)
                     {
-                        new Views.Notification(eR);
+                        new Notification(eR);
                         return;
                     }
                     if (eR.SentInServerChannel)
@@ -560,7 +561,7 @@ namespace Skymu.ViewModels
                             return;
                         }
                         if ((Settings.NotificationTrigger & NotificationTriggerType.PING) != 0)
-                            new Views.Notification(eR);
+                            new Notification(eR);
                     }
                     else
                     {
@@ -571,7 +572,7 @@ namespace Skymu.ViewModels
                                 !IsWindowActive
                                 || SelectedConversation?.Identifier != eR.ConversationId
                             )
-                                new Views.Notification(eR);
+                                new Notification(eR);
                         }
                     }
                 }
@@ -798,7 +799,6 @@ namespace Skymu.ViewModels
         }
 
         #endregion
-
 
         public async Task SendFile()
         {

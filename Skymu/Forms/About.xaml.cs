@@ -11,7 +11,7 @@
 
 using System.Windows;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class About : Window
     {

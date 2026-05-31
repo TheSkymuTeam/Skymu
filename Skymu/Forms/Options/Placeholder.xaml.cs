@@ -11,7 +11,7 @@
 
 using System.Windows.Controls;
 
-namespace Skymu.Views.OptionPages
+namespace Skymu.Forms.OptionPages
 {
     public partial class Placeholder : Page
     {

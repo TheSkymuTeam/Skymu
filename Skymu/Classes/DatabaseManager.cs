@@ -29,7 +29,7 @@
 using Microsoft.Data.Sqlite;
 using Skymu.Helpers;
 using Skymu.Preferences;
-using Skymu.Views;
+using Skymu.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -120,7 +120,7 @@ namespace Skymu.Databases
                             $"{Settings.BrandingName} Database Manager",
                             new Action(() =>
                             {
-                                new Views.Pages.Updater();
+                                new Forms.Pages.Updater();
                             }),
                             $"Update {Settings.BrandingName}",
                             true,

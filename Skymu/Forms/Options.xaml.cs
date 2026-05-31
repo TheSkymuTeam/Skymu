@@ -19,7 +19,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using Skymu.Preferences;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class Options : Window
     {
@@ -30,10 +30,15 @@ namespace Skymu.Views
 
         SliceControl currentCategory;
 
-        public Options(string brush)
+        public Options()
         {
             InitializeComponent();
-            Background = (SolidColorBrush)Application.Current.Resources[brush];
+
+            string background_color;
+            if (Universal.Interface == "SeanKype" || Universal.Interface == "Pontis") background_color = "Metro.Background";
+            else background_color = "Background";
+            Background = (SolidColorBrush)Application.Current.Resources[background_color];
+
             currentCategory = HGeneral;
 
             catToGrid = new Dictionary<SliceControl, Grid>

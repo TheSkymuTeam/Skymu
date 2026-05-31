@@ -22,7 +22,7 @@ using System.Windows.Documents;
 using Yggdrasil;
 using Yggdrasil.Classes;
 
-namespace Skymu.Views.Pages
+namespace Skymu.Forms.Pages
 {
     public partial class AddContact : Page
     {
