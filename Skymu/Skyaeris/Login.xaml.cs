@@ -9,20 +9,19 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Preferences;
-using Skymu.ViewModels;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using Skymu.ViewModels;
+using Skymu.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using Skymu.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Skymu.Sounds;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
