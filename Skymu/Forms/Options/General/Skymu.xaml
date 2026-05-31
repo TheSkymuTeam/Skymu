@@ -326,7 +326,7 @@
                 Margin="0,5"
                 Padding="6,0"
                 Content="Remember positioning (window size, location, sidebar size)"
-                IsChecked="{Binding Path=[SaveWindowPlacement], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                IsChecked="{Binding Path=[SaveWindowPosition], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
 
 
