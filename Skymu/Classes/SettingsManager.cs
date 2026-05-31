@@ -22,6 +22,7 @@ namespace Skymu.Preferences
 {
     public static class Settings
     {
+        private const int ConfigRevision = 1;
         public static readonly SettingsProxy Default = new SettingsProxy();
 
         public class SettingsProxy : INotifyPropertyChanged
@@ -167,10 +168,10 @@ namespace Skymu.Preferences
             get => SELECT("ThemeRoot", "Light", "UI/General");
             set => WRITE("ThemeRoot", value, nameof(ThemeRoot), "UI/General");
         }
-        public static string PresFrame
+        public static string PresentationFramework
         {
-            get => SELECT("PresFrame", "Aero.NormalColor", "UI/General");
-            set => WRITE("PresFrame", value, nameof(PresFrame), "UI/General");
+            get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");
+            set => WRITE("PresentationFramework", value, nameof(PresentationFramework), "UI/General");
         }
         public static string Language
         {
@@ -210,8 +211,14 @@ namespace Skymu.Preferences
 
         public static bool AutoLogin
         {
-            get => SELECT("AutoLogin", true, "UI/General");
-            set => WRITE("AutoLogin", value, nameof(AutoLogin), "UI/General");
+            get => SELECT("AutoLogin", true, "UI/Login");
+            set => WRITE("AutoLogin", value, nameof(AutoLogin), "UI/Login");
+        }
+
+        public static bool SaveCredentials
+        {
+            get => SELECT("SaveCredentials", true, "UI/Login");
+            set => WRITE("SaveCredentials", value, nameof(SaveCredentials), "UI/Login");
         }
 
         public static bool AutoSpeedTest
@@ -354,16 +361,34 @@ namespace Skymu.Preferences
         private static XDocument LoadOrCreate()
         {
             if (File.Exists(FilePath))
-                return XDocument.Load(FilePath);
+            {
+                try
+                {
+                    var loaded = XDocument.Load(FilePath);
+                    if (loaded.Root != null)
+                    {
+                        var revision = (int?)loaded.Root.Attribute("revision");
+                        if (revision == ConfigRevision)
+                            return loaded;
+                    }
+                }
+                catch { }
+
+                System.Windows.MessageBox.Show(
+                    "Skymu has discovered that your configuration file is corrupt or from an older version of the application. " +
+                    "It has been reset and your settings have been wiped.",
+                    "Configuration file reset",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Warning
+                );
+                File.Delete(FilePath);
+            }
 
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-            var doc = new XDocument(
-                new XElement("config", new XElement("UI", new XElement("General")))
-            );
+            var doc = new XDocument(new XElement("config", new XAttribute("revision", ConfigRevision)));
             doc.Save(FilePath);
             return doc;
         }
-
         private static XElement GetOrCreateNode(XDocument doc, string path)
         {
             var parts = path.Split('/');

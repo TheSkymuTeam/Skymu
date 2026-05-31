@@ -2,7 +2,6 @@
     x:Class="Skymu.Views.OptionPages.General.Skymu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:enums="clr-namespace:Skymu.Enumerations"
@@ -12,13 +11,13 @@
     xmlns:theming="clr-namespace:Skymu.Theming"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
+    d:Background="#FFFFFF"
+    d:Width="514"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
     Style="{StaticResource Page}"
-    mc:Ignorable="d"
-    d:Background="#FFFFFF"
-    d:Width="514" >
+    mc:Ignorable="d">
     <!--  Commented out as the page is a scrolling thing  -->
     <!--  Re-add to Page when the view becomes small enough to not require a ScrollViewer  -->
     <!--  d:Height="505"  -->
@@ -209,7 +208,7 @@
                     Text="Base theme (scrollbar, buttons, etc)" />
                 <ComboBox
                     Width="250"
-                    SelectedValue="{Binding Path=[PresFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValue="{Binding Path=[PresentationFramework], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Tag">
                     <ComboBoxItem
                         Padding="6,0"
@@ -381,6 +380,12 @@
                 Margin="0,10,10,10"
                 Fill="{StaticResource Card.Border}" />
 
+
+            <CheckBox
+                Margin="0,5"
+                Padding="6,0"
+                Content="Save credentials to file (credentials.xml)"
+                IsChecked="{Binding Path=[SaveCredentials], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
             <CheckBox
                 Margin="0,5"
