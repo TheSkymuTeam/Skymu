@@ -207,7 +207,7 @@ namespace Skymu.Windows
 
         private static IntPtr BuildLoggedInMenu() // menu to show when logged in
         {
-            ClearMenuBitmaps(); // wouldnt want any memory leaks hmm
+            ClearMenuBitmaps(); 
             IntPtr hStatus = CreatePopupMenu();
 
             void AddStatusItem(uint menuId, PresenceStatus status, string langKey)
