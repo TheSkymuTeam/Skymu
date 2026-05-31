@@ -39,18 +39,36 @@ namespace Skymu.Windows
         [StructLayout(LayoutKind.Sequential)]
         struct BITMAPINFO
         {
-            public int biSize, biWidth, biHeight;
-            public short biPlanes, biBitCount;
-            public int biCompression, biSizeImage;
-            public int biXPelsPerMeter, biYPelsPerMeter;
-            public int biClrUsed, biClrImportant;
+            public int biSize,
+                biWidth,
+                biHeight;
+            public short biPlanes,
+                biBitCount;
+            public int biCompression,
+                biSizeImage;
+            public int biXPelsPerMeter,
+                biYPelsPerMeter;
+            public int biClrUsed,
+                biClrImportant;
         }
 
         [DllImport("user32.dll")]
-        static extern bool SetMenuItemInfo(IntPtr hMenu, uint item, bool byPosition, ref MENUITEMINFO info);
+        static extern bool SetMenuItemInfo(
+            IntPtr hMenu,
+            uint item,
+            bool byPosition,
+            ref MENUITEMINFO info
+        );
 
         [DllImport("gdi32.dll")]
-        static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO bmi, uint usage, out IntPtr bits, IntPtr hSection, uint offset);
+        static extern IntPtr CreateDIBSection(
+            IntPtr hdc,
+            ref BITMAPINFO bmi,
+            uint usage,
+            out IntPtr bits,
+            IntPtr hSection,
+            uint offset
+        );
 
         [DllImport("gdi32.dll")]
         static extern bool DeleteObject(IntPtr hObject);
@@ -64,7 +82,8 @@ namespace Skymu.Windows
                 : $"pack://application:,,,/{Preferences.Settings.Interface}/Assets/Universal/Icon/skype-status.png";
 
             var sri = System.Windows.Application.GetResourceStream(new Uri(path, UriKind.Absolute));
-            if (sri == null) return null;
+            if (sri == null)
+                return null;
 
             using (var spriteSheet = new Bitmap(sri.Stream))
             {
@@ -74,8 +93,12 @@ namespace Skymu.Windows
                 {
                     g.Clear(Color.Transparent);
                     g.CompositingMode = CompositingMode.SourceCopy;
-                    g.DrawImage(spriteSheet, new Rectangle(0, 0, h, h),
-                        new Rectangle(h * index, 0, h, h), GraphicsUnit.Pixel);
+                    g.DrawImage(
+                        spriteSheet,
+                        new Rectangle(0, 0, h, h),
+                        new Rectangle(h * index, 0, h, h),
+                        GraphicsUnit.Pixel
+                    );
                 }
                 return bmp;
             }
@@ -89,29 +112,33 @@ namespace Skymu.Windows
                 biWidth = src.Width,
                 biHeight = -src.Height,
                 biPlanes = 1,
-                biBitCount = 32
+                biBitCount = 32,
             };
 
             IntPtr bits;
             IntPtr hbmp = CreateDIBSection(IntPtr.Zero, ref bmi, 0, out bits, IntPtr.Zero, 0);
-            if (hbmp == IntPtr.Zero) return IntPtr.Zero;
+            if (hbmp == IntPtr.Zero)
+                return IntPtr.Zero;
 
-            var data = src.LockBits(new Rectangle(0, 0, src.Width, src.Height),
-                ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            var data = src.LockBits(
+                new Rectangle(0, 0, src.Width, src.Height),
+                ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb
+            );
 
             for (int y = 0; y < src.Height; y++)
-                for (int x = 0; x < src.Width; x++)
-                {
-                    int offset = y * data.Stride + x * 4;
-                    byte b = Marshal.ReadByte(data.Scan0, offset);
-                    byte g = Marshal.ReadByte(data.Scan0, offset + 1);
-                    byte r = Marshal.ReadByte(data.Scan0, offset + 2);
-                    byte a = Marshal.ReadByte(data.Scan0, offset + 3);
-                    Marshal.WriteByte(bits, offset, (byte)(b * a / 255));
-                    Marshal.WriteByte(bits, offset + 1, (byte)(g * a / 255));
-                    Marshal.WriteByte(bits, offset + 2, (byte)(r * a / 255));
-                    Marshal.WriteByte(bits, offset + 3, a);
-                }
+            for (int x = 0; x < src.Width; x++)
+            {
+                int offset = y * data.Stride + x * 4;
+                byte b = Marshal.ReadByte(data.Scan0, offset);
+                byte g = Marshal.ReadByte(data.Scan0, offset + 1);
+                byte r = Marshal.ReadByte(data.Scan0, offset + 2);
+                byte a = Marshal.ReadByte(data.Scan0, offset + 3);
+                Marshal.WriteByte(bits, offset, (byte)(b * a / 255));
+                Marshal.WriteByte(bits, offset + 1, (byte)(g * a / 255));
+                Marshal.WriteByte(bits, offset + 2, (byte)(r * a / 255));
+                Marshal.WriteByte(bits, offset + 3, a);
+            }
 
             src.UnlockBits(data);
             return hbmp;
