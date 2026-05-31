@@ -45,8 +45,8 @@ namespace Skymu
         public static readonly string Interface = Settings.Interface;
 
         public const string Name = "Skymu";
-        public const string BuildVersion = "0.4.1";
-        public const string BuildName = "Elusive Basilisk";
+        public const string BuildVersion = "0.4.2";
+        public const string BuildName = "Erudite Centaur";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 

@@ -11,11 +11,11 @@
 
 using System.Windows.Controls;
 
-namespace Skymu.Views.OptionPages.General
+namespace Skymu.Views.OptionPages
 {
-    public partial class General : Page
+    public partial class Placeholder : Page
     {
-        public General()
+        public Placeholder()
         {
             InitializeComponent();
         }

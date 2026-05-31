@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Skymu.Preferences;
 
 namespace Skymu.Views
 {
@@ -36,34 +36,84 @@ namespace Skymu.Views
             Background = (SolidColorBrush)Application.Current.Resources[brush];
             currentCategory = HGeneral;
 
-            catToGrid = new Dictionary<SliceControl, Grid> {
+            catToGrid = new Dictionary<SliceControl, Grid>
+            {
                 { HGeneral, GGeneral },
                 { HPrivacy, GPrivacy },
                 { HNotifications, GNotifications },
                 { HCalls, GCalls },
                 { HChatsSMS, GChatsSMS },
-                { HAdvanced, GAdvanced }
+                { HAdvanced, GAdvanced },
             };
             catToTabs = new Dictionary<SliceControl, SliceControl[]>
             {
-                { HGeneral, new[] { General_Main, General_Devices, General_Sounds, General_Video, General_Access, General_Skymu } },
+                {
+                    HGeneral,
+                    new[]
+                    {
+                        General_Main,
+                        General_Devices,
+                        General_Sounds,
+                        General_Video,
+                        General_Access,
+                        General_Skymu,
+                    }
+                },
                 { HPrivacy, new[] { Privacy_Main, Privacy_Blocked } },
-                { HNotifications, new[] { Notifications_Main, Notifications_Alerts, Notifications_Sounds } },
+                {
+                    HNotifications,
+                    new[] { Notifications_Main, Notifications_Alerts, Notifications_Sounds }
+                },
                 { HCalls, new[] { Calls_Main, Calls_Forwarding, Calls_Voicemail, Calls_Video } },
                 { HChatsSMS, new[] { Chats_Main, Chats_Appearance, Chats_SMS } },
-                { HAdvanced, new[] { Advanced_Main, Advanced_Updates, Advanced_Connection, Advanced_Hotkeys, Advanced_Debug } }
+                {
+                    HAdvanced,
+                    new[]
+                    {
+                        Advanced_Main,
+                        Advanced_Updates,
+                        Advanced_Connection,
+                        Advanced_Hotkeys,
+                        Advanced_Debug,
+                    }
+                },
             };
             tabDispenser = new Dictionary<SliceControl, Func<Page>>
             {
-                { General_Main, () => new OptionPages.General.General() },
                 { General_Skymu, () => new OptionPages.General.Skymu() },
-                { Advanced_Debug, () => new OptionPages.Advanced.Debug() }
+                { Advanced_Debug, () => new OptionPages.Advanced.Debug() },
             };
             tabToText = new Dictionary<SliceControl, string>
             {
                 { General_Main, "SF_OPTIONS_GENERAL_CAPTION" },
-                { General_Skymu, "<b>Skymu Customization:</b> Modify the way Skymu looks, feels, and behaves" },
-                { Advanced_Debug, "<b>Debug options:</b> Options that only appears on \"Debug\" build variant" }
+                { General_Devices, "sF_OPTIONS_AUDIO_CAPTION" },
+                { General_Sounds, "sF_OPTIONS_SOUNDS_CAPTION" },
+                { General_Video, "sF_OPTIONS_LBC_VIDEO" },
+                { General_Access, "sF_OPTIONS_LBC_SKYACCESS" },
+                {
+                    General_Skymu,
+                    "<b>Skymu Customization:</b> Modify the way Skymu looks, feels, and behaves"
+                },
+                { Privacy_Main, "sF_OPTIONS_LBC_PRIVACY" },
+                { Privacy_Blocked, "sF_OPTIONS_TNTB8" },
+                { Notifications_Main, "sF_OPTIONS_NOTIFICATIONS_CAPTION" },
+                { Notifications_Alerts, "sF_OPTIONS_LBC_ALERTS" },
+                { Notifications_Sounds, "sF_OPTIONS_SOUNDS_CAPTION" },
+                { Calls_Main, "sF_OPTIONS_SETUP_CALLS" },
+                { Calls_Forwarding, "sF_OPTIONS_LBC_FORWARDING" },
+                { Calls_Voicemail, "SF_OPTIONS_VOICEMAIL_CAPTION" },
+                { Calls_Video, "sF_OPTIONS_LBC_VIDEO" },
+                { Chats_Main, "sF_OPTIONS_LB_CHAT" },
+                { Chats_Appearance, "sF_OPTIONS_CHAT_LOOKS" },
+                { Chats_SMS, "sF_OPTIONS_LBC_SMS" },
+                { Advanced_Main, "sF_OPTIONS_LBC_UPDATES" },
+                { Advanced_Updates, "sF_OPTIONS_LBC_UPGRADES" },
+                { Advanced_Connection, "sF_OPTIONS_LBC_CONNECTION" },
+                { Advanced_Hotkeys, "sF_OPTIONS_LBC_HOTKEYS" },
+                {
+                    Advanced_Debug,
+                    "<b>Debug options:</b> Options that only appears on \"Debug\" build variant"
+                },
             };
 
             SourceInitialized += (s, e) =>
@@ -74,7 +124,7 @@ namespace Skymu.Views
                     foreach (var tab in catToTabs[cat.Key])
                         tab.ApplyTemplate();
                 }
-                TabSelect(General_Main, null);
+                TabSelect(General_Skymu, null);
             };
 
 #if DEBUG
@@ -88,7 +138,8 @@ namespace Skymu.Views
             currentCategory = sc;
             foreach (var cat in catToGrid)
             {
-                if (ReferenceEquals(cat.Key, sc)) continue;
+                if (ReferenceEquals(cat.Key, sc))
+                    continue;
                 cat.Key.SetState(ButtonVisualState.Default);
                 cat.Key.DefaultIndex = 0;
                 cat.Key.HoverIndex = 1;
@@ -109,29 +160,46 @@ namespace Skymu.Views
             var sc = (SliceControl)sender;
             foreach (var tab in catToTabs[currentCategory])
             {
-                if (ReferenceEquals(tab, sc)) continue;
+                if (ReferenceEquals(tab, sc))
+                    continue;
                 tab.SetState(ButtonVisualState.Default);
-                ((SliceControl)tab.Template.FindName("InnerSlice", tab))?.SetState(ButtonVisualState.Default);
+                ((SliceControl)tab.Template.FindName("InnerSlice", tab))?.SetState(
+                    ButtonVisualState.Default
+                );
             }
             sc.SetState(ButtonVisualState.Pressed);
-            ((SliceControl)sc.Template.FindName("InnerSlice", sc))?.SetState(ButtonVisualState.Pressed);
+            ((SliceControl)sc.Template.FindName("InnerSlice", sc))?.SetState(
+                ButtonVisualState.Pressed
+            );
 
-            for (int once = 1; once == 1; once++) {
-                if (tabToText.TryGetValue(sc, out var title))
+            for (int once = 1; once == 1; once++)
+            {
+                string title;
+
+                if (tabToText.TryGetValue(sc, out var td))
                 {
-                    if (title.ToLowerInvariant().StartsWith("s"))
-                        title = Universal.Lang[title];
-                    var i = title.IndexOf("</b>");
-                    if (i == -1)
-                        break;
-                    CTabTitle.Text = title.Substring(3, i - 3);
-                    CTabDescription.Text = title.Substring(i + 4);
+                    title = td;
                 }
+                else
+                {
+                    title =
+                        "<b>Placeholder:</b> We couldn't find the settings page you were looking for. Sorry!";
+                }
+
+                if (title.ToLowerInvariant().StartsWith("s"))
+                    title = Universal.Lang[title];
+                var i = title.IndexOf("</b>");
+                if (i == -1)
+                    break;
+                CTabTitle.Text = title.Substring(3, i - 3);
+                CTabDescription.Text = title.Substring(i + 4);
             }
             if (!tabDispenser.TryGetValue(sc, out var pfact))
             {
-                Debug.WriteLine("Tried to access an unknown tab " + sc.Name);
-                return;
+                pfact = () => new OptionPages.Placeholder();
+                Debug.WriteLine(
+                    "Tried to access an unknown tab: " + sc.Name + ". Displaying fallback page."
+                );
             }
             var page = pfact();
             JournalEntry.SetKeepAlive(page, false);
