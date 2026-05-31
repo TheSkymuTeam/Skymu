@@ -1,35 +1,7 @@
-﻿
-using Skymu.ViewModels;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Skymu.Converters;
-using Skymu.Credentials;
-using Skymu.Databases;
-using Skymu.Emoticons;
-using Skymu.Enumerations;
-using Skymu.Windows;
-using Skymu.Helpers;
-using Skymu.Sounds;
-using Skymu.Preferences;
-using Skymu.Forms;
-using Skymu.UserDirectory;
-using Microsoft.Win32;
+﻿using Skymu.Forms;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
-using System.Windows.Controls;
 
 namespace Skymu.Windows
 {
