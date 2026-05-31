@@ -381,9 +381,8 @@ namespace Yggdrasil.Classes
             Attachment[] attachments = null,
             Message parent_message = null,
             bool is_forwarded = false
-        ) 
-            : base(identifier, sender, time, text, attachments, parent_message, is_forwarded)
-        { }
+        )
+            : base(identifier, sender, time, text, attachments, parent_message, is_forwarded) { }
     }
 
     public class CallStartedNotice : ConversationItem
