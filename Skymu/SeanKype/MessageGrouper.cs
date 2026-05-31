@@ -21,7 +21,8 @@ namespace Skymu.SeanKype
     public class MessageGrouper
     {
         private readonly ObservableCollection<ConversationItem> _source;
-        public ObservableCollection<MessageGroup> Grouped { get; } = new ObservableCollection<MessageGroup>();
+        public ObservableCollection<MessageGroup> Grouped { get; } =
+            new ObservableCollection<MessageGroup>();
 
         private NotifyCollectionChangedEventHandler _handler;
 
@@ -87,10 +88,14 @@ namespace Skymu.SeanKype
             int j = i + 1;
             while (j < _source.Count)
             {
-                if (!(_source[j] is Message next)) break;
-                if (next.Sender?.Identifier != firstMsg.Sender?.Identifier) break;
-                if ((next.Time - batch[batch.Count - 1].Time).TotalSeconds >= 60) break;
-                if (IsImageMessage(next)) break;
+                if (!(_source[j] is Message next))
+                    break;
+                if (next.Sender?.Identifier != firstMsg.Sender?.Identifier)
+                    break;
+                if ((next.Time - batch[batch.Count - 1].Time).TotalSeconds >= 60)
+                    break;
+                if (IsImageMessage(next))
+                    break;
                 batch.Add(next);
                 j++;
             }
@@ -122,7 +127,8 @@ namespace Skymu.SeanKype
 
         private static bool IsImageMessage(Message m)
         {
-            if (m.Attachments == null) return false;
+            if (m.Attachments == null)
+                return false;
             foreach (var a in m.Attachments)
                 if (a.Type == AttachmentType.Image || a.Type == AttachmentType.ThumbnailImage)
                     return true;
