@@ -126,14 +126,10 @@ namespace Stub
             string identifier,
             string text,
             Attachment attachment,
-            string parent_message_identifier
+            string parent_message_identifier,
+            bool action
         )
         {
-            // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
-            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
-                new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text), false)
-            );
-            
             // Invoke a call
             if (text == "Call me!")
             {
@@ -152,10 +148,10 @@ namespace Stub
                 if (attachment != null)
                     OnWarning?.Invoke(
                         this,
-                        new PluginMessageEventArgs("Message with text and attachment sent.")
+                        new PluginMessageEventArgs((action ? "Action message" : "Message") + " with text and attachment sent.")
                     );
                 else
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only message sent."));
+                    OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only " + (action ? "action" : "") + " message sent."));
             }
             else
                 OnWarning?.Invoke(
@@ -170,6 +166,19 @@ namespace Stub
             TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
             TypingUsersList.Add(new User("Xaero", "20200", "20200"));
             TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
+                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
+                    action
+                    ? new ActionMessage(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                    : new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                    , false)
+                );
+            });
+
             return Task.FromResult(true);
         }
 

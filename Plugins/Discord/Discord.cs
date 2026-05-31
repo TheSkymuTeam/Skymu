@@ -600,13 +600,16 @@ namespace Discord
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier)
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
             if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment == null))
                 return false;
 
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
                 return false;
+
+            if (action)
+                text = $"_{text}_"; // just like how official Discord client does it
 
             try
             {

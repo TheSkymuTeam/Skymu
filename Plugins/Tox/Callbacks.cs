@@ -186,7 +186,10 @@ namespace Tox
                             { fail = true; break; }
                             else
                             {
-                                core.messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
+                                if (msg.type == Tox_Message_Type.ACTION)
+                                    core.messages.Add((UInt32)mid, new ActionMessage(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
+                                else
+                                    core.messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
                                 sucs.Add(msg);
                             }
                         }
@@ -266,7 +269,11 @@ namespace Tox
         void OnFriendMessage(IntPtr tox, UInt32 fid, Tox_Message_Type type, string msg, UIntPtr length, IntPtr user_data)
         {
             var core = GC(user_data);
-            var message = new Message($"{fid}_{GUID()}", core.friends[fid], TIME(), msg);
+            Message message;
+            if (type == Tox_Message_Type.ACTION)
+                message = new ActionMessage($"{fid}_{GUID()}", core.friends[fid], TIME(), msg);
+            else
+                message = new Message($"{fid}_{GUID()}", core.friends[fid], TIME(), msg);
             core.UCP(_ =>
                 core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(new Friend(tox, fid).publicKey), message, false))
             );
@@ -441,8 +448,13 @@ namespace Tox
                         { fail = true; break; }
                         else
                         {
+                            Message message;
+                            if (msg.type == Tox_Message_Type.ACTION)
+                                message = new ActionMessage(GUID(), core.currentUser, TIME(), msg.text);
+                            else
+                                message = new Message(GUID(), core.currentUser, TIME(), msg.text);
                             core.UCP(_ =>
-                                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), new Message(GUID(), core.currentUser, TIME(), msg.text), false))
+                                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), message, false))
                             );
                             sucs.Add(msg);
                         }
@@ -466,8 +478,13 @@ namespace Tox
             User sender = new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey));
             if (BATS(c.peers[pid].publicKey) == core.currentUser.Identifier)
                 sender = core.currentUser;
+            Message message;
+            if (type == Tox_Message_Type.ACTION)
+                message = new ActionMessage($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg);
+            else
+                message = new Message($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg);
             core.UCP(_ =>
-                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), new Message($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg), false))
+                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), message, false))
             );
         }
 

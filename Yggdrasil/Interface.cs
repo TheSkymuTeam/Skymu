@@ -47,7 +47,8 @@ namespace Yggdrasil
             string identifier,
             string text = null,
             Attachment attachment = null,
-            string parent_message_identifier = null
+            string parent_message_identifier = null,
+            bool action = false // /me, Tox calls them action messages
         ); // Sends a message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateUserInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
