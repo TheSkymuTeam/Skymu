@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Classes;
 using Skymu.Converters;
 using Skymu.Enumerations;
 using Skymu.Emoticons;
@@ -987,7 +986,7 @@ namespace Skymu.Skyaeris
 
         protected override void OnClosed(EventArgs e)
         {
-            WindowPlacementHelper.Save(this, SidebarColumn);
+            vmodel.SavePositioning(this, SidebarColumn);
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -1804,16 +1803,14 @@ namespace Skymu.Skyaeris
 
             SourceInitialized += (s, e) =>
             {
-                WindowPlacement? wplc = WindowPlacementHelper.Load();
-                if (wplc != null)
+                if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
-                    WindowPlacement wp = (WindowPlacement)wplc;
-                    this.Top = wp.Top;
-                    this.Left = wp.Left;
-                    this.Width = wp.Width;
-                    this.Height = wp.Height;
-                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
-                    SidebarColumn.Width = new GridLength(wp.sidebarWidth);
+                    this.Top = Settings.Y;
+                    this.Left = Settings.X;
+                    this.Width = Settings.Width;
+                    this.Height = Settings.Height;
+                    this.WindowState = Settings.Maximized ? WindowState.Maximized : this.WindowState;
+                    SidebarColumn.Width = new GridLength(Settings.ConvListWidth);
                 }
                 Sidebar_SizeChanged_Refresh();
             };

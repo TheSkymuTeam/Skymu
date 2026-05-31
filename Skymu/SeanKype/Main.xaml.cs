@@ -14,7 +14,7 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using Skymu.Classes;
+
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
@@ -161,16 +161,14 @@ namespace Skymu.SeanKype
 
             SourceInitialized += (s, e) =>
             {
-                WindowPlacement? wplc = WindowPlacementHelper.Load();
-                if (wplc != null)
+                if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
-                    WindowPlacement wp = (WindowPlacement)wplc;
-                    this.Top = wp.Top;
-                    this.Left = wp.Left;
-                    this.Width = wp.Width;
-                    this.Height = wp.Height;
-                    this.WindowState = wp.maximized ? WindowState.Maximized : this.WindowState;
-                    LeftColumnDefinition.Width = new GridLength(wp.sidebarWidth);
+                    this.Top = Settings.Y;
+                    this.Left = Settings.X;
+                    this.Width = Settings.Width;
+                    this.Height = Settings.Height;
+                    this.WindowState = Settings.Maximized ? WindowState.Maximized : this.WindowState;
+                    LeftColumnDefinition.Width = new GridLength(Settings.ConvListWidth);
                 }
             };
 

@@ -2,7 +2,7 @@
     x:Class="Skymu.Views.OptionPages.Advanced.Debug"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:classes="clr-namespace:Skymu.Classes"
+    
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
@@ -11,13 +11,14 @@
     xmlns:theming="clr-namespace:Skymu.Theming"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
+    d:Background="#FFFFFF"
+    d:Height="505"
+    d:Width="514"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
     Style="{StaticResource Page}"
-    mc:Ignorable="d"
-    d:Background="#FFFFFF"
-    d:Width="514" d:Height="505" >
+    mc:Ignorable="d">
 
     <Page.Resources>
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
@@ -39,28 +40,23 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Vertical" >
+        <StackPanel Orientation="Vertical">
             <CheckBox
                 Margin="0,5"
                 Content="Separate credentials when Skymu is built as debug"
                 IsChecked="{Binding Path=[SeparateCredentialsForDebug], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
         </StackPanel>
-        
+
         <StackPanel
             Grid.Row="1"
             VerticalAlignment="Bottom"
-            Orientation="Vertical" >
-            <TextBlock
-                Foreground="{StaticResource Text.Highlight}"
-                Text="{Binding Path='[sF_OPTIONS_LBC_OTHER]', Source={StaticResource Lang}}"/>
+            Orientation="Vertical">
+            <TextBlock Foreground="{StaticResource Text.Highlight}" Text="{Binding Path='[sF_OPTIONS_LBC_OTHER]', Source={StaticResource Lang}}" />
             <Separator Margin="0,10,0,10" Foreground="{StaticResource Separator}" />
             <!--  Do NOT use SliceControl here. Accurately, the image is unclickable.  -->
             <StackPanel Orientation="Horizontal">
-                <Image
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/connection.png}" />
-                <TextBlock
-                    Margin="15,0,0,0"
-                    VerticalAlignment="Center" >
+                <Image Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/connection.png}" />
+                <TextBlock Margin="15,0,0,0" VerticalAlignment="Center">
                     <Hyperlink NavigateUri="https://github.com/TheSkymuTeam/Skymu/pulls" RequestNavigate="OURL">Contribute to Skymu</Hyperlink>
                 </TextBlock>
             </StackPanel>

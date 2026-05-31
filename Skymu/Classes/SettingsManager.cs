@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,244 +62,267 @@ namespace Skymu.Preferences
             }
         }
 
-        public static WindowPlacement WindowPlacement
+        #region UI/MainWindow
+
+        public static double ConvListWidth
         {
-            get =>
-                new WindowPlacement
-                {
-                    Top = SELECT("WP_Top", (double)0),
-                    Left = SELECT("WP_Left", (double)0),
-                    Width = SELECT("WP_Width", (double)0),
-                    Height = SELECT("WP_Height", (double)0),
-                    sidebarWidth = SELECT("WP_SidebarWidth", (double)0),
-                };
-            set
-            {
-                Set("WP_Top", value.Top.ToString());
-                Set("WP_Left", value.Left.ToString());
-                Set("WP_Width", value.Width.ToString());
-                Set("WP_Height", value.Height.ToString());
-                Set("WP_SidebarWidth", value.sidebarWidth.ToString());
-                Default.Notify(nameof(WindowPlacement));
-            }
+            get => SELECT("ConvListWidth", -1.0, "UI/MainWindow");
+            set => WRITE("ConvListWidth", value, nameof(ConvListWidth), "UI/MainWindow");
         }
 
-        public static bool SaveWindowPlacement
+        public static bool SaveWindowPosition
         {
-            get => SELECT("SaveWindowPlacement", true);
-            set => WRITE("SaveWindowPlacement", value, nameof(SaveWindowPlacement));
+            get => SELECT("SaveWindowPosition", true, "UI/MainWindow");
+            set => WRITE("SaveWindowPosition", value, nameof(SaveWindowPosition), "UI/MainWindow");
         }
+
+        #endregion
+
+
+        #region UI/MainWindow40
+
+        public static double Height
+        {
+            get => SELECT("Height", (double)-1, "UI/MainWindow40");
+            set => WRITE("Height", value, nameof(Height), "UI/MainWindow40");
+        }
+
+        public static bool Maximized
+        {
+            get => SELECT("Maximized", false, "UI/MainWindow40");
+            set => WRITE("Maximized", value, nameof(Maximized), "UI/MainWindow40");
+        }
+
+        public static double Width
+        {
+            get => SELECT("Width", (double)-1, "UI/MainWindow40");
+            set => WRITE("Width", value, nameof(Width), "UI/MainWindow40");
+        }
+
+        public static double X
+        {
+            get => SELECT("X", (double)-1, "UI/MainWindow40");
+            set => WRITE("X", value, nameof(X), "UI/MainWindow40");
+        }
+
+        public static double Y
+        {
+            get => SELECT("Y", (double)-1, "UI/MainWindow40");
+            set => WRITE("Y", value, nameof(Y), "UI/MainWindow40");
+        }
+
+        #endregion
 
         public static bool StartMinimized
         {
-            get => SELECT("StartMinimized", false);
-            set => WRITE("StartMinimized", value, nameof(StartMinimized));
+            get => SELECT("StartMinimized", false, "UI/General");
+            set => WRITE("StartMinimized", value, nameof(StartMinimized), "UI/General");
         }
 
         public static bool AllowMultipleInstances
         {
-            get => SELECT("AllowMultipleInstances", false);
-            set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances));
+            get => SELECT("AllowMultipleInstances", false, "UI/General");
+            set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances), "UI/General");
         }
 
         public static WindowFrame WindowFrame
         {
-            get => SELECT("WindowFrame", WindowFrame.SkypeAero);
-            set => WRITE("WindowFrame", value, nameof(WindowFrame));
+            get => SELECT("WindowFrame", WindowFrame.SkypeAero, "UI/General");
+            set => WRITE("WindowFrame", value, nameof(WindowFrame), "UI/General");
         }
         public static int EmojiFps
         {
-            get => SELECT("EmojiFps", 50);
-            set => WRITE("EmojiFps", value, nameof(EmojiFps));
+            get => SELECT("EmojiFps", 50, "UI/General");
+            set => WRITE("EmojiFps", value, nameof(EmojiFps), "UI/General");
         }
         public static int MsgLoadCount
         {
-            get => SELECT("MsgLoadCount", 30);
-            set => WRITE("MsgLoadCount", value, nameof(MsgLoadCount));
+            get => SELECT("MsgLoadCount", 30, "UI/General");
+            set => WRITE("MsgLoadCount", value, nameof(MsgLoadCount), "UI/General");
         }
         public static int CredsSubCount
         {
-            get => SELECT("CredsSubCount", 0);
-            set => WRITE("CredsSubCount", value, nameof(CredsSubCount));
+            get => SELECT("CredsSubCount", 0, "UI/General");
+            set => WRITE("CredsSubCount", value, nameof(CredsSubCount), "UI/General");
         }
 
         public static string BrandingName
         {
-            get => SELECT("BrandingName", "Skype");
-            set => WRITE("BrandingName", value, nameof(BrandingName));
+            get => SELECT("BrandingName", "Skype", "UI/General");
+            set => WRITE("BrandingName", value, nameof(BrandingName), "UI/General");
         }
 
         public static string ColorTheme
         {
-            get => SELECT("ColorTheme", "Default");
-            set => WRITE("ColorTheme", value, nameof(ColorTheme));
+            get => SELECT("ColorTheme", "Default", "UI/General");
+            set => WRITE("ColorTheme", value, nameof(ColorTheme), "UI/General");
         }
         public static string CredsText
         {
-            get => SELECT("CredsText", "$ 0.00");
-            set => WRITE("CredsText", value, nameof(CredsText));
+            get => SELECT("CredsText", "$ 0.00", "UI/General");
+            set => WRITE("CredsText", value, nameof(CredsText), "UI/General");
         }
         public static string ThemeRoot
         {
-            get => SELECT("ThemeRoot", "Light");
-            set => WRITE("ThemeRoot", value, nameof(ThemeRoot));
+            get => SELECT("ThemeRoot", "Light", "UI/General");
+            set => WRITE("ThemeRoot", value, nameof(ThemeRoot), "UI/General");
         }
         public static string PresFrame
         {
-            get => SELECT("PresFrame", "Aero.NormalColor");
-            set => WRITE("PresFrame", value, nameof(PresFrame));
+            get => SELECT("PresFrame", "Aero.NormalColor", "UI/General");
+            set => WRITE("PresFrame", value, nameof(PresFrame), "UI/General");
         }
         public static string Language
         {
-            get => SELECT("Language", "English");
-            set => WRITE("Language", value, nameof(Language));
+            get => SELECT("Language", "English", "UI/General");
+            set => WRITE("Language", value, nameof(Language), "UI/General");
         }
         public static bool UseSystemCulture
         {
-            get => SELECT("UseSystemCulture", true);
-            set => WRITE("UseSystemCulture", value, nameof(UseSystemCulture));
+            get => SELECT("UseSystemCulture", true, "UI/General");
+            set => WRITE("UseSystemCulture", value, nameof(UseSystemCulture), "UI/General");
         }
         public static string Interface
         {
-            get => SELECT("Interface", "Skyaeris");
-            set => WRITE("Interface", value, nameof(Interface));
+            get => SELECT("Interface", "Skyaeris", "UI/General");
+            set => WRITE("Interface", value, nameof(Interface), "UI/General");
         }
         public static bool RoomCallUI
         {
-            get => SELECT("RoomCallUI", false);
-            set => WRITE("RoomCallUI", value, nameof(RoomCallUI));
+            get => SELECT("RoomCallUI", false, "UI/General");
+            set => WRITE("RoomCallUI", value, nameof(RoomCallUI), "UI/General");
         }
         public static bool CallOutToReconnectSound
         {
-            get => SELECT("CallOutToReconnectSound", false);
-            set => WRITE("CallOutToReconnectSound", value, nameof(CallOutToReconnectSound));
+            get => SELECT("CallOutToReconnectSound", false, "UI/General");
+            set => WRITE("CallOutToReconnectSound", value, nameof(CallOutToReconnectSound), "UI/General");
         }
         public static string SkippedVersion
         {
-            get => SELECT("SkippedVersion", string.Empty);
-            set => WRITE("SkippedVersion", value, nameof(SkippedVersion));
+            get => SELECT("SkippedVersion", string.Empty, "UI/General");
+            set => WRITE("SkippedVersion", value, nameof(SkippedVersion), "UI/General");
         }
         public static Soundpack SoundPack
         {
-            get => SELECT("SoundPack", Soundpack.Enhanced);
-            set => WRITE("SoundPack", value, nameof(SoundPack));
+            get => SELECT("SoundPack", Soundpack.Enhanced, "UI/General");
+            set => WRITE("SoundPack", value, nameof(SoundPack), "UI/General");
         }
 
         public static bool AutoLogin
         {
-            get => SELECT("AutoLogin", true);
-            set => WRITE("AutoLogin", value, nameof(AutoLogin));
+            get => SELECT("AutoLogin", true, "UI/General");
+            set => WRITE("AutoLogin", value, nameof(AutoLogin), "UI/General");
         }
 
         public static bool AutoSpeedTest
         {
-            get => SELECT("AutoSpeedTest", false);
-            set => WRITE("AutoSpeedTest", value, nameof(AutoSpeedTest));
+            get => SELECT("AutoSpeedTest", false, "UI/General");
+            set => WRITE("AutoSpeedTest", value, nameof(AutoSpeedTest), "UI/General");
         }
 
         public static bool SeparateCredentialsForDebug
         {
-            get => SELECT("SeparateCredentialsForDebug", false);
-            set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug));
+            get => SELECT("SeparateCredentialsForDebug", false, "UI/General");
+            set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug), "UI/General");
         }
         public static bool EnableNotifications
         {
-            get => SELECT("EnableNotifications", true);
-            set => WRITE("EnableNotifications", value, nameof(EnableNotifications));
+            get => SELECT("EnableNotifications", true, "UI/General");
+            set => WRITE("EnableNotifications", value, nameof(EnableNotifications), "UI/General");
         }
         public static NotificationTriggerType NotificationTrigger
         {
-            get => SELECT("NotificationTrigger", NotificationTriggerType.PDM);
-            set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger));
+            get => SELECT("NotificationTrigger", NotificationTriggerType.PDM, "UI/General");
+            set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger), "UI/General");
         }
         public static bool EnableSkypeHome
         {
-            get => SELECT("EnableSkypeHome", true);
-            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome));
+            get => SELECT("EnableSkypeHome", true, "UI/General");
+            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "UI/General");
         }
         public static bool EnableAdBlock
         {
-            get => SELECT("EnableAdBlock", false);
-            set => WRITE("EnableAdBlock", value, nameof(EnableAdBlock));
+            get => SELECT("EnableAdBlock", false, "UI/General");
+            set => WRITE("EnableAdBlock", value, nameof(EnableAdBlock), "UI/General");
         }
         public static bool UseClearType
         {
-            get => SELECT("UseClearType", true);
-            set => WRITE("UseClearType", value, nameof(UseClearType));
+            get => SELECT("UseClearType", true, "UI/General");
+            set => WRITE("UseClearType", value, nameof(UseClearType), "UI/General");
         }
         public static bool DynamicSidebarTabs
         {
-            get => SELECT("DynamicSidebarTabs", true);
-            set => WRITE("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs));
+            get => SELECT("DynamicSidebarTabs", true, "UI/General");
+            set => WRITE("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs), "UI/General");
         }
         public static bool BlueNotifications
         {
-            get => SELECT("BlueNotifications", false);
-            set => WRITE("BlueNotifications", value, nameof(BlueNotifications));
+            get => SELECT("BlueNotifications", false, "UI/General");
+            set => WRITE("BlueNotifications", value, nameof(BlueNotifications), "UI/General");
         }
         public static bool StartOnStartup
         {
-            get => SELECT("StartOnStartup", false);
-            set => WRITE("StartOnStartup", value, nameof(StartOnStartup));
+            get => SELECT("StartOnStartup", false, "UI/General");
+            set => WRITE("StartOnStartup", value, nameof(StartOnStartup), "UI/General");
         }
         public static bool FallbackFillColors
         {
-            get => SELECT("FallbackFillColors", false);
-            set => WRITE("FallbackFillColors", value, nameof(FallbackFillColors));
+            get => SELECT("FallbackFillColors", false, "UI/General");
+            set => WRITE("FallbackFillColors", value, nameof(FallbackFillColors), "UI/General");
         }
         public static bool Anonymize
         {
-            get => SELECT("Anonymize", true);
-            set => WRITE("Anonymize", value, nameof(Anonymize));
+            get => SELECT("Anonymize", true, "UI/General");
+            set => WRITE("Anonymize", value, nameof(Anonymize), "UI/General");
         }
         public static bool FirstRunCompleted
         {
-            get => SELECT("FirstRunCompleted", false);
-            set => WRITE("FirstRunCompleted", value, nameof(FirstRunCompleted));
+            get => SELECT("FirstRunCompleted", false, "UI/General");
+            set => WRITE("FirstRunCompleted", value, nameof(FirstRunCompleted), "UI/General");
         }
         public static bool DisablePingbacks
         {
-            get => SELECT("DisablePingbacks", false);
-            set => WRITE("DisablePingbacks", value, nameof(DisablePingbacks));
+            get => SELECT("DisablePingbacks", false, "UI/General");
+            set => WRITE("DisablePingbacks", value, nameof(DisablePingbacks), "UI/General");
         }
         public static bool MessageLogger
         {
-            get => SELECT("MessageLogger", false);
-            set => WRITE("MessageLogger", value, nameof(MessageLogger));
+            get => SELECT("MessageLogger", false, "UI/General");
+            set => WRITE("MessageLogger", value, nameof(MessageLogger), "UI/General");
         }
         public static bool NikoIcons
         {
-            get => SELECT("NikoIcons", false);
-            set => WRITE("NikoIcons", value, nameof(NikoIcons));
+            get => SELECT("NikoIcons", false, "UI/General");
+            set => WRITE("NikoIcons", value, nameof(NikoIcons), "UI/General");
         }
         // TODO: Rename to QuitWithoutAsking with migration
         public static bool QuitWithoutAsking
         {
-            get => SELECT("QuitWithoutAsking", false);
-            set => WRITE("QuitWithoutAsking", value, nameof(QuitWithoutAsking));
+            get => SELECT("QuitWithoutAsking", false, "UI/General");
+            set => WRITE("QuitWithoutAsking", value, nameof(QuitWithoutAsking), "UI/General");
         }
         /// <summary> true = do not inform </summary>
         public static bool InformDND
         {
-            get => SELECT("InformDND", false);
-            set => WRITE("InformDND", value, nameof(InformDND));
+            get => SELECT("InformDND", false, "UI/General");
+            set => WRITE("InformDND", value, nameof(InformDND), "UI/General");
         }
         /// <summary> true = already closed the "this is converstaions list" popup on Skype 4 </summary>
         public static bool InboxNoticeShown
         {
-            get => SELECT("InboxNoticeShown", false);
-            set => WRITE("InboxNoticeShown", value, nameof(InboxNoticeShown));
+            get => SELECT("InboxNoticeShown", false, "UI/General");
+            set => WRITE("InboxNoticeShown", value, nameof(InboxNoticeShown), "UI/General");
         }
         /// <summary> true = hide the sidebar on call start </summary>
         public static bool HideLeftHandSide
         {
-            get => SELECT("HideLeftHandSide", false);
-            set => WRITE("HideLeftHandSide", value, nameof(HideLeftHandSide));
+            get => SELECT("HideLeftHandSide", false, "UI/General");
+            set => WRITE("HideLeftHandSide", value, nameof(HideLeftHandSide), "UI/General");
         }
         public static bool SuppressOldRuntimeWarnings
         {
-            get => SELECT("SuppressOldRuntimeWarnings", false);
-            set => WRITE("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings));
+            get => SELECT("SuppressOldRuntimeWarnings", false, "UI/General");
+            set => WRITE("SuppressOldRuntimeWarnings", value, nameof(SuppressOldRuntimeWarnings), "UI/General");
         }
 
         public static CertStore CertificateStore
@@ -342,24 +364,40 @@ namespace Skymu.Preferences
             return doc;
         }
 
-        private static string Get(string key, string defaultValue = null)
+        private static XElement GetOrCreateNode(XDocument doc, string path)
+        {
+            var parts = path.Split('/');
+            XElement current = doc.Root;
+            foreach (var part in parts)
+            {
+                var next = current.Element(part);
+                if (next == null)
+                {
+                    next = new XElement(part);
+                    current.Add(next);
+                }
+                current = next;
+            }
+            return current;
+        }
+
+        private static string Get(string key, string default_value, string path_xml)
         {
             try
             {
                 var doc = LoadOrCreate();
-                return doc.Root.Element("UI")?.Element("General")?.Element(key)?.Value
-                    ?? defaultValue;
+                return GetOrCreateNode(doc, path_xml).Element(key)?.Value ?? default_value;
             }
             catch
             {
-                return defaultValue;
+                return default_value;
             }
         }
 
-        private static void Set(string key, string value)
+        private static void Set(string key, string value, string path_xml)
         {
             var doc = LoadOrCreate();
-            var node = doc.Root.Element("UI").Element("General");
+            var node = GetOrCreateNode(doc, path_xml);
             var el = node.Element(key);
             if (el == null)
                 node.Add(new XElement(key, value));
@@ -368,22 +406,22 @@ namespace Skymu.Preferences
             doc.Save(FilePath);
         }
 
-        private static string SELECT(string k, string def)
+        private static string SELECT(string key, string default_value, string path_xml)
         {
-            string rawValue = Get(k, null);
+            string rawValue = Get(key, null, path_xml);
 
             if (rawValue == null)
             {
-                Set(k, def);
-                return def;
+                Set(key, default_value, path_xml);
+                return default_value;
             }
 
             return rawValue;
         }
 
-        private static bool SELECT(string k, bool def)
+        private static bool SELECT(string key, bool default_value, string path_xml)
         {
-            string value = Get(k, def.ToString());
+            string value = Get(key, default_value.ToString(), path_xml);
 
             // (omega, nilFinx) Skype's settings parser is a little weird. It counted <= 0 as false and >= 1 as true.
             // Skymu's settings parser will reflect that even though there doesn't seem to be a use case for this.
@@ -398,50 +436,45 @@ namespace Skymu.Preferences
             if (bool.TryParse(value, out vb))
                 return vb;
 
-            Set(k, def.ToString());
-            return def;
+            Set(key, default_value.ToString(), path_xml);
+            return default_value;
         }
 
-        private static int SELECT(string k, int def)
+        private static int SELECT(string key, int default_value, string path_xml)
         {
-            if (int.TryParse(Get(k, def.ToString()), out var v))
+            if (int.TryParse(Get(key, default_value.ToString(), path_xml), out var v))
             {
                 return v;
             }
-            Set(k, def.ToString());
-            return def;
+            Set(key, default_value.ToString(), path_xml);
+            return default_value;
         }
 
-        private static double SELECT(string k, double def)
+        private static double SELECT(string key, double default_value, string path_xml)
         {
-            if (double.TryParse(Get(k, def.ToString()), out var v))
+            if (double.TryParse(Get(key, default_value.ToString(), path_xml), out var v))
             {
                 return v;
             }
-            Set(k, def.ToString());
-            return def;
+            Set(key, default_value.ToString(), path_xml);
+            return default_value;
         }
 
-        private static TEnum SELECT<TEnum>(string k, TEnum def) where TEnum : struct, Enum
+        private static TEnum SELECT<TEnum>(string key, TEnum default_value, string path_xml) where TEnum : struct, Enum
         {
-            string rawValue = Get(k, def.ToString());
+            string rawValue = Get(key, default_value.ToString(), path_xml);
             if (Enum.TryParse<TEnum>(rawValue, true, out var result))
             {
                 return result;
             }
-            Set(k, def.ToString());
-            return def;
+            Set(key, default_value.ToString(), path_xml);
+            return default_value;
         }
 
-        private static void WRITE<T>(string key, T value, string propName)
+        private static void WRITE<T>(string key, T value, string propName, string path_xml)
         {
-            Set(key, value.ToString());
-            Default.Notify(propName);
-        }
-
-        private static void WRITE(string key, bool value, string propName)
-        {
-            Set(key, value ? "1" : "0");
+            string serialized = value is bool b ? (b ? "1" : "0") : value.ToString();
+            Set(key, serialized, path_xml);
             Default.Notify(propName);
         }
 

@@ -2,7 +2,7 @@
     x:Class="Skymu.Views.Options"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:classes="clr-namespace:Skymu.Classes"
+    
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
@@ -55,17 +55,17 @@
                     <ControlTemplate TargetType="global:SliceControl">
                         <global:SliceControl
                             VerticalAlignment="Stretch"
-                            TopHeight="2"
                             BottomHeight="2"
+                            DefaultIndex="4"
                             ElementCount="5"
                             ElementSpan="1"
-                            DefaultIndex="4"
                             HoverIndex="-1"
-                            PressedIndex="-1"
                             Interactive="False"
+                            PressedIndex="-1"
                             SliceMode="2"
                             Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source=Options/header_background.png}"
-                            StackDirection="Vertical" />
+                            StackDirection="Vertical"
+                            TopHeight="2" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -77,7 +77,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="global:SliceControl">
                         <Grid Height="40">
-                            <global:SliceControl 
+                            <global:SliceControl
                                 x:Name="InnerSlice"
                                 Margin="4,-1,4,2"
                                 Background="#ffffff"
@@ -115,55 +115,54 @@
                 <global:SliceControl
                     x:Name="HGeneral"
                     ButtonStateOnInit="Pressed"
-	                DefaultIndex="3"
+                    DefaultIndex="3"
                     HoverIndex="-1"
-                    PressedIndex="-1"
-                    MouseLeftButtonUp="CatSelect"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/general.png}"
-	                Style="{StaticResource SidebarHeaderStyle}"
-	                Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
-                <Grid
-                    x:Name="GGeneral">
+                    MouseLeftButtonUp="CatSelect"
+                    PressedIndex="-1"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
+                <Grid x:Name="GGeneral">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel
-                        Margin="0,0,0,1"
                         Grid.Row="1"
+                        Margin="0,0,0,1"
                         Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="GenGen"
+                            x:Name="General_Main"
                             ButtonStateOnInit="Pressed"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/skype.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
                         <global:SliceControl
-                            x:Name="GenDevices"
+                            x:Name="General_Devices"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/audio.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_DEVICES]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_DEVICES]}" />
                         <global:SliceControl
-                            x:Name="GenSounds"
+                            x:Name="General_Sounds"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/sounds.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                         <global:SliceControl
-                            x:Name="GenVideo"
+                            x:Name="General_Video"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/video.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                         <global:SliceControl
-                            x:Name="GenAccess"
+                            x:Name="General_Access"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/access.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}" />
                         <!--  Skymu original  -->
                         <global:SliceControl
-                            x:Name="GenSkymu"
+                            x:Name="General_Skymu"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/skymu.png}"
                             Style="{StaticResource SidebarButtonStyle}"
@@ -172,169 +171,159 @@
                 </Grid>
                 <global:SliceControl
                     x:Name="HPrivacy"
-	                Style="{StaticResource SidebarHeaderStyle}"
-                    MouseLeftButtonUp="CatSelect"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/privacy.png}"
-	                Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
+                    MouseLeftButtonUp="CatSelect"
+                    Style="{StaticResource SidebarHeaderStyle}"
+                    Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
                 <Grid x:Name="GPrivacy" Visibility="Collapsed">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Orientation="Vertical">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="PriPri"
+                            x:Name="Privacy_Main"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/privacy_settings.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PRIVACY_SETTINGS]}"/>
+                            Text="{Binding [sF_OPTIONS_PRIVACY_SETTINGS]}" />
                         <global:SliceControl
-                            x:Name="PriBlocked"
+                            x:Name="Privacy_Blocked"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/blocked.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_BLOCKED_USERS]}"/>
+                            Text="{Binding [sF_OPTIONS_BLOCKED_USERS]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HNotifications"
-                    MouseLeftButtonUp="CatSelect"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/notifications.png}"
+                    MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
-	                Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
+                    Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
                 <Grid x:Name="GNotifications" Visibility="Collapsed">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Orientation="Vertical">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="NotNot"
+                            x:Name="Notifications_Main"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/notifications.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_LBC_NOTIFICATIONS]}"/>
+                            Text="{Binding [sF_OPTIONS_LBC_NOTIFICATIONS]}" />
                         <global:SliceControl
-                            x:Name="NotAlerts"
+                            x:Name="Notifications_Alerts"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/alerts.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_LBC_MESSAGES]}"/>
+                            Text="{Binding [sF_OPTIONS_LBC_MESSAGES]}" />
                         <global:SliceControl
-                            x:Name="NotSounds"
+                            x:Name="Notifications_Sounds"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/sounds.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HCalls"
-                    MouseLeftButtonUp="CatSelect"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/calls.png}"
+                    MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
-	                Text="{Binding [sF_OPTIONS_CALLS]}" />
+                    Text="{Binding [sF_OPTIONS_CALLS]}" />
                 <Grid x:Name="GCalls" Visibility="Collapsed">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Orientation="Vertical">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="CalCal"
+                            x:Name="Calls_Main"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/calls.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_LB_CALL]}"/>
+                            Text="{Binding [sF_OPTIONS_LB_CALL]}" />
                         <global:SliceControl
-                            x:Name="CalForwarding"
+                            x:Name="Calls_Forwarding"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/forwarding.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL]}" />
                         <global:SliceControl
-                            x:Name="CalVoicemail"
+                            x:Name="Calls_Voicemail"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/voicemail.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_LBC_VOICEMAIL]}"/>
+                            Text="{Binding [sF_OPTIONS_LBC_VOICEMAIL]}" />
                         <global:SliceControl
-                            x:Name="CalVideo"
+                            x:Name="Calls_Video"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/video.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HChatsSMS"
-                    MouseLeftButtonUp="CatSelect"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/im_and_sms.png}"
+                    MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
-	                Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
+                    Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
                 <Grid x:Name="GChatsSMS" Visibility="Collapsed">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Orientation="Vertical">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="ChaIM"
+                            x:Name="Chats_Main"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/im.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_LB_CHAT_SETTINGS]}"/>
+                            Text="{Binding [sF_OPTIONS_LB_CHAT_SETTINGS]}" />
                         <global:SliceControl
-                            x:Name="ChaIMAppearance"
+                            x:Name="Chats_Appearance"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/appearance.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_CHAT_APPEARANCE]}"/>
+                            Text="{Binding [sF_OPTIONS_CHAT_APPEARANCE]}" />
                         <global:SliceControl
-                            x:Name="ChaSMS"
+                            x:Name="Chats_SMS"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/sms.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_SMS]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_SMS]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HAdvanced"
-                    MouseLeftButtonUp="CatSelect"
                     IconSource="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}"
+                    MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
-	                Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
+                    Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
                 <Grid x:Name="GAdvanced" Visibility="Collapsed">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
-                    <StackPanel
-                        Grid.Row="1"
-                        Orientation="Vertical">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
-                            x:Name="AdvAdv"
+                            x:Name="Advanced_Main"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}"/>
-                            <!--  holy fuck why Skype  -->
+                            Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}" />
+                        <!--  holy fuck why Skype  -->
                         <global:SliceControl
-                            x:Name="AdvUpdates"
+                            x:Name="Advanced_Updates"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/updates.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}" />
                         <global:SliceControl
-                            x:Name="AdvConnection"
+                            x:Name="Advanced_Connection"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/connection.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_CONNECTION]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_CONNECTION]}" />
                         <global:SliceControl
-                            x:Name="AdvHotkeys"
+                            x:Name="Advanced_Hotkeys"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/hotkeys.png}"
                             Style="{StaticResource SidebarButtonStyle}"
-                            Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}"/>
+                            Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}" />
                         <!--  Skymu original  -->
                         <global:SliceControl
-                            x:Name="AdvDbg"
+                            x:Name="Advanced_Debug"
                             MouseLeftButtonDown="TabSelect"
                             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"

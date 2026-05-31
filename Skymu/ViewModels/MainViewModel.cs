@@ -38,6 +38,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
+using System.Windows.Controls;
 
 namespace Skymu.ViewModels
 {
@@ -767,7 +768,7 @@ namespace Skymu.ViewModels
             if (Settings.DisablePingbacks)
                 return;
             await UserCountAPI.GenerateUID();
-            await UserCountAPI.SetUsrStatus(
+            await UserCountAPI.SetUserStatus(
                 true,
                 Universal.CurrentUser?.DisplayName,
                 Universal.CurrentUser?.PublicUsername,
@@ -793,11 +794,23 @@ namespace Skymu.ViewModels
             while (true)
             {
                 await Task.Delay(45000);
-                await UserCountAPI.SendPingToServ();
+                await UserCountAPI.PingServer();
             }
         }
 
         #endregion
+
+        public void SavePositioning(Window window, ColumnDefinition sidebar)
+        {
+            if (!Settings.SaveWindowPosition) return;
+
+            Settings.ConvListWidth = sidebar.ActualWidth;
+            Settings.X = window.Left;
+            Settings.Y = window.Top;
+            Settings.Height = window.Height;
+            Settings.Width = window.Width;
+            Settings.Maximized = window.WindowState == WindowState.Maximized;
+        }
 
 
         public void SubscribeTypingIndicator()

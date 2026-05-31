@@ -59,7 +59,7 @@ namespace Skymu.UserDirectory
             return sb.ToString();
         }
 
-        public static async Task<bool> SetUsrStatus(
+        public static async Task<bool> SetUserStatus(
             bool online,
             string dn = null,
             string user = null,
@@ -92,7 +92,7 @@ namespace Skymu.UserDirectory
             return true;
         }
 
-        public static async Task<bool> SendPingToServ()
+        public static async Task<bool> PingServer()
         {
             var payload = new { token = ApiTkn };
 
@@ -172,7 +172,7 @@ namespace Skymu.UserDirectory
 
         public static async Task CloseWS()
         {
-            await SetUsrStatus(false);
+            await SetUserStatus(false);
             if (ws != null && ws.State == WebSocketState.Open)
             {
                 await ws.CloseAsync(

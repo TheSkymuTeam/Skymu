@@ -46,24 +46,24 @@ namespace Skymu.Views
             };
             catToTabs = new Dictionary<SliceControl, SliceControl[]>
             {
-                { HGeneral, new[] { GenGen, GenDevices, GenSounds, GenVideo, GenAccess, GenSkymu } },
-                { HPrivacy, new[] { PriPri, PriBlocked } },
-                { HNotifications, new[] { NotNot, NotAlerts, NotSounds } },
-                { HCalls, new[] { CalCal, CalForwarding, CalVoicemail, CalVideo } },
-                { HChatsSMS, new[] { ChaIM, ChaIMAppearance, ChaSMS } },
-                { HAdvanced, new[] { AdvAdv, AdvUpdates, AdvConnection, AdvHotkeys, AdvDbg } }
+                { HGeneral, new[] { General_Main, General_Devices, General_Sounds, General_Video, General_Access, General_Skymu } },
+                { HPrivacy, new[] { Privacy_Main, Privacy_Blocked } },
+                { HNotifications, new[] { Notifications_Main, Notifications_Alerts, Notifications_Sounds } },
+                { HCalls, new[] { Calls_Main, Calls_Forwarding, Calls_Voicemail, Calls_Video } },
+                { HChatsSMS, new[] { Chats_Main, Chats_Appearance, Chats_SMS } },
+                { HAdvanced, new[] { Advanced_Main, Advanced_Updates, Advanced_Connection, Advanced_Hotkeys, Advanced_Debug } }
             };
             tabDispenser = new Dictionary<SliceControl, Func<Page>>
             {
-                { GenGen, () => new OptionPages.General.General() },
-                { GenSkymu, () => new OptionPages.General.Skymu() },
-                { AdvDbg, () => new OptionPages.Advanced.Debug() }
+                { General_Main, () => new OptionPages.General.General() },
+                { General_Skymu, () => new OptionPages.General.Skymu() },
+                { Advanced_Debug, () => new OptionPages.Advanced.Debug() }
             };
             tabToText = new Dictionary<SliceControl, string>
             {
-                { GenGen, "SF_OPTIONS_GENERAL_CAPTION" },
-                { GenSkymu, "<b>Skymu Customization:</b> Modify the way Skymu looks, feels, and behaves" },
-                { AdvDbg, "<b>Debug options:</b> Options that only appears on \"Debug\" build variant" }
+                { General_Main, "SF_OPTIONS_GENERAL_CAPTION" },
+                { General_Skymu, "<b>Skymu Customization:</b> Modify the way Skymu looks, feels, and behaves" },
+                { Advanced_Debug, "<b>Debug options:</b> Options that only appears on \"Debug\" build variant" }
             };
 
             SourceInitialized += (s, e) =>
@@ -74,11 +74,11 @@ namespace Skymu.Views
                     foreach (var tab in catToTabs[cat.Key])
                         tab.ApplyTemplate();
                 }
-                TabSelect(GenGen, null);
+                TabSelect(General_Main, null);
             };
 
 #if DEBUG
-            AdvDbg.Visibility = Visibility.Visible;
+            Advanced_Debug.Visibility = Visibility.Visible;
 #endif
         }
 
