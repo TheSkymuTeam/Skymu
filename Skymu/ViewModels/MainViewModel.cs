@@ -801,15 +801,7 @@ namespace Skymu.ViewModels
         #endregion
 
         public async Task SendFile()
-        {
-            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
-    "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
-
-if (dlg.ShowDialog() == true)
-{
-    send file logic goes here
-}*/
-
+        {         
             var dlg = new OpenFileDialog
             {
                 Title = "Select a file to send",
