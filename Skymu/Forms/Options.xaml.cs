@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +18,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Skymu.Preferences;
 
 namespace Skymu.Forms
 {
