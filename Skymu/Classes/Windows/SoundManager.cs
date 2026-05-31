@@ -19,9 +19,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Skymu
+namespace Skymu.Sounds
 {
-    static class Sounds
+    static class SoundManager
     {
         class CachedSound
         {
@@ -38,7 +38,7 @@ namespace Skymu
             }
         }
 
-        static Dictionary<string, CachedSound> sounds =
+        static Dictionary<string, CachedSound> cached_sounds =
             new Dictionary<string, CachedSound>();
 
         static readonly ConcurrentDictionary<string, WaveOutEvent> loops =
@@ -58,7 +58,7 @@ namespace Skymu
 
         static void LoadSounds()
         {
-            sounds = new Dictionary<string, CachedSound>();
+            cached_sounds = new Dictionary<string, CachedSound>();
             Load("message-sent", "IM_SENT.WAV");
             Load("message-recieved", "IM.WAV");
             Load("call-error", "CALL_ERROR1.WAV");
@@ -91,7 +91,7 @@ namespace Skymu
                     using (var ms = new MemoryStream())
                     {
                         sri.Stream.CopyTo(ms);
-                        sounds[key] = new CachedSound(ms.ToArray());
+                        cached_sounds[key] = new CachedSound(ms.ToArray());
                     }
 
                     return;
@@ -107,7 +107,7 @@ namespace Skymu
 
         public static void Play(string key)
         {
-            if (!sounds.TryGetValue(key, out var snd))
+            if (!cached_sounds.TryGetValue(key, out var snd))
                 return;
 
             Task.Run(() =>
@@ -132,7 +132,7 @@ namespace Skymu
 
         public static async Task PlayAsync(string key, CancellationToken token = default)
         {
-            if (!sounds.TryGetValue(key, out var snd))
+            if (!cached_sounds.TryGetValue(key, out var snd))
                 return;
 
             await Task.Run(() =>
@@ -164,7 +164,7 @@ namespace Skymu
         {
             StopPlayback(key);
 
-            if (!sounds.TryGetValue(key, out var snd))
+            if (!cached_sounds.TryGetValue(key, out var snd))
                 return;
 
             var output = new WaveOutEvent();
@@ -188,7 +188,7 @@ namespace Skymu
 
         public static void PlaySynchronous(string key)
         {
-            if (!sounds.TryGetValue(key, out var snd))
+            if (!cached_sounds.TryGetValue(key, out var snd))
                 return;
 
             using (var output = new WaveOutEvent())

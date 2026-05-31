@@ -91,7 +91,7 @@ namespace Skymu.Helpers
             return existingName; // couldn't find proper extension, just save without an extension
         }
 
-        public static Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
+        public static Bitmap WpfToGdiBitmap(BitmapImage bitmapImage)
         {
             using (MemoryStream outStream = new MemoryStream())
             {

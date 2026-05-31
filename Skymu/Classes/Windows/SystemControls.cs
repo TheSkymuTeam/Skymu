@@ -9,133 +9,14 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Skymu
+namespace Skymu.Windows
 {
-
-    public class DwmHelper
-    {
-        [DllImport("dwmapi.dll", CharSet = CharSet.Unicode)]
-        private static extern int DwmIsCompositionEnabled(out bool enabled);
-
-        public static bool IsDwmEnabled()
-        {
-            if (Environment.OSVersion.Version.Major < 6)
-                return false;
-
-            bool enabled;
-            return DwmIsCompositionEnabled(out enabled) == 0 && enabled;
-        }
-    }
-
-    public class Taskbar
-    {
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct FLASHWINFO
-        {
-            public uint cbSize;
-            public IntPtr hwnd;
-            public uint dwFlags;
-            public uint uCount;
-            public uint dwTimeout;
-        }
-
-        private const uint FLASHW_STOP = 0;
-        private const uint FLASHW_CAPTION = 1;
-        private const uint FLASHW_TRAY = 2;
-        private const uint FLASHW_ALL = 3;
-        private const uint FLASHW_TIMER = 4;
-        private const uint FLASHW_TIMERNOFG = 12;
-
-        public static void Flash(Window window)
-        {
-            if (window == null) return;
-
-            WindowInteropHelper wih = new WindowInteropHelper(window);
-
-            FLASHWINFO fw = new FLASHWINFO
-            {
-                cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
-                hwnd = wih.Handle,
-                dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG, // flash until focused
-                uCount = uint.MaxValue,                  // repeat indefinitely
-                dwTimeout = 0
-            };
-
-            FlashWindowEx(ref fw);
-        }
-
-    }
-
-    public class BitmapHelper
-    {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        struct MENUITEMINFO
-        {
-            public uint cbSize;
-            public uint fMask;
-            public uint fType;
-            public uint fState;
-            public uint wID;
-            public IntPtr hSubMenu;
-            public IntPtr hbmpChecked;
-            public IntPtr hbmpUnchecked;
-            public IntPtr dwItemData;
-            public string dwTypeData;
-            public uint cch;
-            public IntPtr hbmpItem;
-        }
-
-        [DllImport("user32.dll")]
-        static extern bool SetMenuItemInfo(IntPtr hMenu, uint item, bool byPosition, ref MENUITEMINFO info);
-
-        const uint MIIM_BITMAP = 0x00000080;
-
-        public static IntPtr IconFromSheet(string path, int index)
-        {
-            var spriteSheet = ImageHelper.BitmapImageToBitmap(ImageHelper.Generate(path));
-            int h = spriteSheet.Height;
-
-            Bitmap bmp = new Bitmap(h, h, PixelFormat.Format32bppArgb);
-
-            using (Graphics g = Graphics.FromImage(bmp))
-            {
-                g.Clear(Color.Transparent);
-
-                g.CompositingMode = CompositingMode.SourceCopy;
-                g.DrawImage(spriteSheet, new Rectangle(0, 0, h, h),　new Rectangle(h * index, 0, h, h), GraphicsUnit.Pixel);
-            }
-
-            bmp.Save("test.png");
-
-            return bmp.GetHbitmap(Color.FromArgb(0));
-        }
-
-        public static void SetIcon(IntPtr menu, int id, IntPtr hBitmap)
-        {
-            var mii = new MENUITEMINFO();
-            mii.cbSize = (uint)Marshal.SizeOf<MENUITEMINFO>();
-            mii.fMask = MIIM_BITMAP;
-            mii.hbmpItem = hBitmap;
-
-            SetMenuItemInfo(menu, (uint)id, false, ref mii);
-        }
-    }
-
     public class NativeMenuBar
     {
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -264,7 +145,7 @@ namespace Skymu
                         AppendMenu(hSubMenu, flags, (UIntPtr)id, label);
                     }
                     if (hBitmap != null)
-                        BitmapHelper.SetIcon(hSubMenu, id, (IntPtr)hBitmap);
+                        IconHelper.SetIcon(hSubMenu, id, (IntPtr)hBitmap);
                 }
             }
             return this;

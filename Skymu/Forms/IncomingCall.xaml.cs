@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Yggdrasil.Classes;
+using Skymu.Sounds;
 
 namespace Skymu.Views
 {
@@ -38,7 +39,7 @@ namespace Skymu.Views
                 EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
             };
             BeginAnimation(OpacityProperty, animation);
-            Sounds.PlayLoop("call-in");
+            SoundManager.PlayLoop("call-in");
             if (_call.Caller.ProfilePicture != null)
                 CallerAvatar.Source = ImageHelper.GenerateFromArray(_call.Caller.ProfilePicture);
             else
@@ -48,14 +49,14 @@ namespace Skymu.Views
 
         private void OnClose(object sender, MouseButtonEventArgs e)
         {
-            Sounds.StopPlayback("call-in");
+            SoundManager.StopPlayback("call-in");
             Close();
         }
 
         private void OnAnswer(object sender, MouseButtonEventArgs e)
         {
             Answered?.Invoke(this, new EventArgs());
-            Sounds.StopPlayback("call-in");
+            SoundManager.StopPlayback("call-in");
             Close();
         }
 
@@ -73,9 +74,9 @@ namespace Skymu.Views
 
         private void OnDecline(object sender, MouseButtonEventArgs e)
         {
-            Sounds.StopPlayback("call-in");
+            SoundManager.StopPlayback("call-in");
             _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
-            Sounds.Play("call-end");
+            SoundManager.Play("call-end");
             Close();
         }
     }

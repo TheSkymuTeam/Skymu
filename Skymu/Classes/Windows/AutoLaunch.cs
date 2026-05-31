@@ -16,9 +16,9 @@ using System.Diagnostics;
 
 #pragma warning disable CA1416
 
-namespace Skymu
+namespace Skymu.Windows
 {
-    internal class OS
+    internal class AutoLaunch
     {
         private static bool _initialized;
 

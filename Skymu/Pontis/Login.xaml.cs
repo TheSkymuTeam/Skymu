@@ -13,12 +13,14 @@ using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Views;
 using Skymu.Views.Pages;
+using Skymu.Sounds;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Skymu.Windows;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
@@ -47,7 +49,7 @@ namespace Skymu.Pontis
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
 
-            Sounds.Init();
+            SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
         }
 

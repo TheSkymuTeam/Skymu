@@ -14,15 +14,14 @@ using Skymu.ViewModels;
 using Skymu.Views;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using Yggdrasil.Enumerations;
 
-#pragma warning disable CA1416
-
-namespace Skymu
+namespace Skymu.Windows
 {
     public class Tray
     {
@@ -33,15 +32,6 @@ namespace Skymu
             { PresenceStatus.Offline,      Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"] },
             { PresenceStatus.DoNotDisturb, Universal.Lang["sTRAYHINT_USER_DND"] },
             { PresenceStatus.Invisible,    Universal.Lang["sTRAYHINT_USER_INVISIBLE"] }
-        };
-
-        public static readonly Dictionary<PresenceStatus, string> SIconTextMap = new Dictionary<PresenceStatus, string>()
-        {
-            { PresenceStatus.Online,       "online" },
-            { PresenceStatus.Away,         "away" },
-            { PresenceStatus.Offline,      "offline" },
-            { PresenceStatus.DoNotDisturb, "dnd" },
-            { PresenceStatus.Invisible,    "offline" }
         };
 
         #region P/Invoke
@@ -109,7 +99,7 @@ namespace Skymu
 
             _icon = new NotifyIcon
             {
-                Icon = LoadIcon("offline"),
+                Icon = LoadIcon(PresenceStatus.Offline),
                 Text = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})",
                 Visible = true
             };
@@ -179,26 +169,12 @@ namespace Skymu
             }
         }
 
-        static async void SS(PresenceStatus status)
+        private static void SS(PresenceStatus status)
         {
             if (status == PresenceStatus.DoNotDisturb)
                 Universal.InformDND();
 
             _ = Universal.Plugin.SetConnectionStatus(status);
-        }
-
-        private static IntPtr LoadMenuBitmap(string iconName)
-        {
-            var uri = new Uri($"pack://application:,,,/{Universal.Interface}/Assets/Universal/Icon/skype-{iconName}.ico", UriKind.Absolute);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            if (stream == null) return IntPtr.Zero;
-
-            using (var iconFull = new Icon(stream))
-            using (var icon16 = new Icon(iconFull, 16, 16))
-            using (var bmp = icon16.ToBitmap())
-            {
-                return bmp.GetHbitmap(Color.FromArgb(0, 0, 0, 0));
-            }
         }
 
         private static void SetMenuItemBitmap(IntPtr hMenu, uint itemId, IntPtr hBitmap)
@@ -212,7 +188,7 @@ namespace Skymu
             SetMenuItemInfo(hMenu, itemId, false, ref info);
         }
 
-        private static void ClearMenuBitmaps() 
+        private static void ClearMenuBitmaps()
         {
             foreach (IntPtr hbm in _menuBitmaps)
                 DeleteObject(hbm);
@@ -238,14 +214,11 @@ namespace Skymu
             {
                 AppendMenu(hStatus, MF_STRING, (UIntPtr)menuId, Universal.Lang[langKey]);
 
-                if (SIconTextMap.TryGetValue(status, out string iconName))
+                IntPtr hBmp = IconHelper.LoadHBitmapFromSheet(MainViewModel.GetIntFromStatus(status));
+                if (hBmp != IntPtr.Zero)
                 {
-                    IntPtr hBmp = LoadMenuBitmap(iconName);
-                    if (hBmp != IntPtr.Zero)
-                    {
-                        SetMenuItemBitmap(hStatus, menuId, hBmp);
-                        _menuBitmaps.Add(hBmp); 
-                    }
+                    SetMenuItemBitmap(hStatus, menuId, hBmp);
+                    _menuBitmaps.Add(hBmp);
                 }
             }
 
@@ -290,13 +263,6 @@ namespace Skymu
                 PostMessage(_msgWindow.Handle, 0, IntPtr.Zero, IntPtr.Zero);
         }
 
-        private static Icon LoadIcon(string iconName)
-        {
-            var uri = new Uri($"pack://application:,,,/{Universal.Interface}/Assets/Universal/Icon/skype-{iconName}.ico", UriKind.Absolute);
-            var stream = System.Windows.Application.GetResourceStream(uri)?.Stream;
-            return stream != null ? new Icon(stream) : SystemIcons.Application;
-        }
-
         public static void DisposeIcon()
         {
             ClearMenuBitmaps(); // free any bitmaps still allocated from the last menu
@@ -310,10 +276,15 @@ namespace Skymu
             _msgWindow = null;
         }
 
-        private static void SetStatusInternal(string statusText, string iconName, bool isSignedIn)
+        private static Icon LoadIcon(PresenceStatus status)
+        {
+            return IconHelper.LoadIconFromSheet(MainViewModel.GetIntFromStatus(status));
+        }
+
+        private static void SetStatusInternal(string statusText, PresenceStatus status, bool isSignedIn)
         {
             _isSignedIn = isSignedIn;
-            _icon.Icon = LoadIcon(iconName);
+            _icon.Icon = LoadIcon(status);
             _icon.Text = $"{Settings.BrandingName} ({statusText})";
         }
 
@@ -321,18 +292,15 @@ namespace Skymu
         {
             bool isSignedIn = status != PresenceStatus.Offline;
 
-            if (!SIconTextMap.TryGetValue(status, out string iconName))
-                iconName = "question";
-
             if (!StatusMap.TryGetValue(status, out string statusText))
                 statusText = Universal.Lang["sSTATUS_UNKNOWN"];
 
-            SetStatusInternal(statusText, iconName, isSignedIn);
+            SetStatusInternal(statusText, status, isSignedIn);
         }
 
         public static void SetConnecting()
         {
-            SetStatusInternal(Universal.Lang["sTRAYHINT_CONN_CONNECTING"], "offline", false);
+            SetStatusInternal(Universal.Lang["sTRAYHINT_CONN_CONNECTING"], PresenceStatus.Offline, false);
         }
     }
 }

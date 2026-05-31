@@ -8,10 +8,6 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE. (ported by Xaero)
-// It is a port of logic that previously lived in Main.xaml.cs.
-/*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -20,7 +16,9 @@ using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
+using Skymu.Windows;
 using Skymu.Helpers;
+using Skymu.Sounds;
 using Skymu.Preferences;
 using Skymu.UserDirectory;
 using Microsoft.Win32;
@@ -463,7 +461,7 @@ namespace Skymu.ViewModels
                         && !_synchronizing
                     )
                     {
-                        Sounds.Play("message-recieved");
+                        SoundManager.Play("message-recieved");
                     }
                 }
 
@@ -675,7 +673,7 @@ namespace Skymu.ViewModels
 
             if (sent)
             {
-                Sounds.Play("message-sent");
+                SoundManager.Play("message-sent");
             }
             else
             {
@@ -755,7 +753,7 @@ namespace Skymu.ViewModels
         {
             if (!switchuser)
                 CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
-            Sounds.Play("logout");
+            SoundManager.Play("logout");
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
             _ = UserCountAPI.CloseWS();
@@ -972,16 +970,16 @@ if (dlg.ShowDialog() == true)
             if (IsCallActive)
             {
                 IsCallActive = false;
-                Sounds.StopPlayback("call-ring");
-                Sounds.Play("call-end");
+                SoundManager.StopPlayback("call-ring");
+                SoundManager.Play("call-end");
                 CallActiveChanged?.Invoke(false);
             }
             else
             {
                 IsCallActive = true;
                 CallActiveChanged?.Invoke(true);
-                await Task.Run(() => Sounds.PlaySynchronous("call-init"));
-                Sounds.PlayLoop("call-ring");
+                await Task.Run(() => SoundManager.PlaySynchronous("call-init"));
+                SoundManager.PlayLoop("call-ring");
             }
         }
 

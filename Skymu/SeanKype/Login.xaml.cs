@@ -20,10 +20,12 @@ using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using Skymu.Sounds;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
+using Skymu.Windows;
 using System.Windows.Input;
 using Yggdrasil.Classes;
 
@@ -49,7 +51,7 @@ namespace Skymu.SeanKype
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
 
-            Sounds.Init();
+            SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
         }
 

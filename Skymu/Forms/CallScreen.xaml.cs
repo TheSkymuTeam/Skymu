@@ -10,6 +10,7 @@
 /*==========================================================*/
 
 using Skymu.Helpers;
+using Skymu.Sounds;
 using Skymu.Preferences;
 using System;
 using System.Threading;
@@ -127,12 +128,12 @@ namespace Skymu.Views
 
             _ = Task.Run(async () =>
             {
-                await Sounds.PlayAsync("call-init", token);
+                await SoundManager.PlayAsync("call-init", token);
                 if (_is_answer)
                     return;
                 while (!token.IsCancellationRequested)
                 {
-                    await Sounds.PlayAsync(Settings.CallOutToReconnectSound ? "call-reconnect" : "call-out", token);
+                    await SoundManager.PlayAsync(Settings.CallOutToReconnectSound ? "call-reconnect" : "call-out", token);
                 }
             });
 
@@ -146,12 +147,12 @@ namespace Skymu.Views
                 return; // in case user has already hung up before the call is established
 
             _ringCts.Cancel();
-            Sounds.StopPlayback("call-out");
-            Sounds.StopPlayback("call-init");
+            SoundManager.StopPlayback("call-out");
+            SoundManager.StopPlayback("call-init");
 
             if (call == null)
             {
-                Sounds.Play("call-error");
+                SoundManager.Play("call-error");
                 HangUpRequested(this, EventArgs.Empty);
             }
             else
@@ -334,13 +335,13 @@ namespace Skymu.Views
         {
             _hangUpRequested = true;
             _ringCts?.Cancel();
-            Sounds.StopPlayback("call-out");
-            Sounds.StopPlayback("call-init");
+            SoundManager.StopPlayback("call-out");
+            SoundManager.StopPlayback("call-init");
             Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
             _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;
-            Sounds.Play("call-end");
+            SoundManager.Play("call-end");
 
             if (isFullscreen)
             {

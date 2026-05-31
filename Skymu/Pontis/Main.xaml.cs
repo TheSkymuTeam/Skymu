@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using Skymu.Sounds;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -30,6 +31,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using Skymu.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -235,7 +237,7 @@ namespace Skymu.Pontis
         private static (string, EventHandler, IntPtr?) MI(string label, EventHandler handler, IntPtr? hBitmap) { return (label, handler, hBitmap); }
         private static (string, EventHandler) MI(string label) { return (label, null); }
         private static (string, EventHandler) SEP() { return ("$", null); }
-        private static IntPtr ICN(int index) => BitmapHelper.IconFromSheet($"pack://application:,,,/Pontis/Assets/Universal/Icon Bitmap/skype-status-big.png", index);
+        private static IntPtr ICN(int index) => IconHelper.LoadHBitmapFromSheet(index);
 
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
@@ -881,7 +883,7 @@ namespace Skymu.Pontis
             if (!(Universal.Plugin is IListManagement))
             {
                 AddContactButton.SetState(ButtonVisualState.Default);
-                Sounds.Play("call-error");
+                SoundManager.Play("call-error");
                 Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
                 return;
             }
@@ -967,7 +969,7 @@ namespace Skymu.Pontis
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            Sounds.Play("call-error");
+            SoundManager.Play("call-error");
             Universal.MessageBox(VONAGE, VONAGE_CAPTION);
         }
 

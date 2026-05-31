@@ -22,6 +22,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Views;
+using Skymu.Windows;
 using System;
 using System.Diagnostics;
 using System.Linq;

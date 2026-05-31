@@ -16,10 +16,12 @@ using Skymu.ViewModels;
 using System;
 using System.Windows.Input;
 using System.Diagnostics;
+using Skymu.Sounds;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Skymu.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -135,7 +137,7 @@ namespace Skymu.Views
                 _activeNotification._closeTimer.Start();
             }
 
-            Sounds.Play("message-recieved");
+            SoundManager.Play("message-recieved");
         }
 
         private Notification() { }
@@ -179,7 +181,7 @@ namespace Skymu.Views
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = Helpers.ImageHelper.Generate(ConversionHelpers.GetAssetBasePrefix(null, true) + "Icon Bitmap/skype-status.png"),
+                Source = Helpers.ImageHelper.Generate(ConversionHelpers.GetAssetBasePrefix(null, true) + "Icon/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat

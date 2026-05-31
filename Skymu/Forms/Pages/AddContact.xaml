@@ -392,7 +392,7 @@
                                     ElementCount="22"
                                     Interactive="False"
                                     SliceMode="0"
-                                    Source="/Skyaeris/Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                    Source="/Skyaeris/Assets/Universal/Icon/skype-status-small.png"
                                     StackDirection="Horizontal" />
                                 <TextBlock
                                     Margin="11,0,0,0"

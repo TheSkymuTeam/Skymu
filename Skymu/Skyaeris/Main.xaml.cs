@@ -35,6 +35,8 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using Skymu.Windows;
+using Skymu.Sounds;
 using System.Windows.Threading;
 using Yggdrasil;
 using Yggdrasil.Classes;
@@ -946,7 +948,7 @@ namespace Skymu.Skyaeris
                 try
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    await Sounds.PlayAsync("busy");
+                    await SoundManager.PlayAsync("busy");
                     //if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
@@ -1071,7 +1073,7 @@ namespace Skymu.Skyaeris
                 new AddContact();
             else
             {
-                Sounds.Play("call-error");
+                SoundManager.Play("call-error");
                 Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
             }
         }
@@ -1140,7 +1142,7 @@ namespace Skymu.Skyaeris
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            Sounds.Play("call-error");
+            SoundManager.Play("call-error");
             Universal.MessageBox(VONAGE, VONAGE_CAPTION);
         }
 

@@ -26,8 +26,6 @@
 // incompatibiliies with old Skype database-reading software.
 /*==========================================================*/
 
-
-
 using Microsoft.Data.Sqlite;
 using Skymu.Helpers;
 using Skymu.Preferences;

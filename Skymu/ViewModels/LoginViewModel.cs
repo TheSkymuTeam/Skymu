@@ -24,6 +24,8 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Views;
 using Skymu.Views.Pages;
+using Skymu.Windows;
+using Skymu.Sounds;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -189,7 +191,7 @@ namespace Skymu.ViewModels
             Tray.SetStatus(Universal.CurrentUser.ConnectionStatus);
             Universal.HasLoggedIn = true;
             mainWindow.Show();
-            Sounds.Play("login");
+            SoundManager.Play("login");
             new Updater();
 
             string brand = Settings.BrandingName;

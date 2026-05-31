@@ -16,6 +16,8 @@ using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
+using Skymu.Windows;
+using Skymu.Sounds;
 using Skymu.Views;
 using Skymu.Views.Pages;
 using System;
@@ -839,7 +841,7 @@ namespace Skymu.Sapphire
                         _ = new AddContact();
                     else
                     {
-                        Sounds.Play("call-error");
+                        SoundManager.Play("call-error");
                         Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
                     }
                     break;
@@ -906,7 +908,7 @@ namespace Skymu.Sapphire
                 try
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    await Sounds.PlayAsync("busy");
+                    await SoundManager.PlayAsync("busy");
                     if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
@@ -1031,7 +1033,7 @@ namespace Skymu.Sapphire
                 new AddContact();
             else
             {
-                Sounds.Play("call-error");
+                SoundManager.Play("call-error");
                 Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
             }
         }
@@ -1100,7 +1102,7 @@ namespace Skymu.Sapphire
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            Sounds.Play("call-error");
+            SoundManager.Play("call-error");
             Universal.MessageBox(VONAGE, VONAGE_CAPTION);
         }
 

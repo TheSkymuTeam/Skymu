@@ -9,7 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
 using Skymu.Preferences;
@@ -20,8 +19,10 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Skymu.Windows;
 using System.IO.Pipes;
 using System.Linq;
+using Skymu.Sounds;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -461,7 +462,7 @@ DebugBuild = true;
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresentationFramework);
-            OS.Initialize();
+            AutoLaunch.Initialize();
             if (!ThemeManager.Scan())
                 Universal.ExceptionHandler(
                     new Exception(
@@ -557,7 +558,7 @@ DebugBuild = true;
             if (HasLoggedIn)
             {
                 PluginManager.DisposeAll();
-                Sounds.PlaySynchronous("logout");
+                SoundManager.PlaySynchronous("logout");
             }
             base.OnExit(ev);
         }

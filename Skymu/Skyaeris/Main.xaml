@@ -174,7 +174,7 @@
                     HoverIndex="-1"
                     PressedIndex="-1"
                     SliceMode="0"
-                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                    Source="Assets/Universal/Icon/skype-status-small.png"
                     StackDirection="Horizontal" />
                 <!--  Name + status text  -->
                 <TextBlock
@@ -252,7 +252,7 @@
                     HoverIndex="-1"
                     PressedIndex="-1"
                     SliceMode="0"
-                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                    Source="Assets/Universal/Icon/skype-status-small.png"
                     StackDirection="Horizontal" />
                 <!--  Name + member count  -->
                 <TextBlock
@@ -314,7 +314,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-channel.png"
+                                        Source="Assets/Universal/Icon/skype-channel.png"
                                         StackDirection="Horizontal" />
                                     <TextBlock
                                         x:Name="channelText"
@@ -469,7 +469,7 @@
                     HoverIndex="-1"
                     PressedIndex="-1"
                     SliceMode="0"
-                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                    Source="Assets/Universal/Icon/skype-status-small.png"
                     StackDirection="Horizontal" />
                 <TextBlock
                     x:Name="compactName"
@@ -504,7 +504,7 @@
                     HoverIndex="-1"
                     PressedIndex="-1"
                     SliceMode="0"
-                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                    Source="Assets/Universal/Icon/skype-status-small.png"
                     StackDirection="Horizontal" />
                 <TextBlock
                     x:Name="compactGroupName"
@@ -950,7 +950,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -963,7 +963,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -976,7 +976,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -989,7 +989,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -1003,7 +1003,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -1018,7 +1018,7 @@
                                         HoverIndex="-1"
                                         PressedIndex="-1"
                                         SliceMode="0"
-                                        Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                        Source="Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -1211,7 +1211,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1227,7 +1227,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1243,7 +1243,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1259,7 +1259,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1276,7 +1276,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1293,7 +1293,7 @@
                                                                 HoverIndex="-1"
                                                                 PressedIndex="-1"
                                                                 SliceMode="0"
-                                                                Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                Source="Assets/Universal/Icon/skype-status-small.png"
                                                                 StackDirection="Horizontal" />
                                                         </MenuItem.Icon>
                                                     </MenuItem>
@@ -1309,7 +1309,7 @@
                                                 HoverIndex="-1"
                                                 PressedIndex="-1"
                                                 SliceMode="0"
-                                                Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                                Source="Assets/Universal/Icon/skype-status.png"
                                                 StackDirection="Horizontal" />
                                             <Image
                                                 Grid.Row="0"
@@ -1918,7 +1918,7 @@
                                                                     ElementCount="22"
                                                                     Interactive="False"
                                                                     SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-status-small.png"
+                                                                    Source="Assets/Universal/Icon/skype-status-small.png"
                                                                     StackDirection="Horizontal" />
                                                                 <TextBlock
                                                                     Margin="11,0,0,0"
@@ -1959,7 +1959,7 @@
                                                                             ElementCount="22"
                                                                             Interactive="False"
                                                                             SliceMode="0"
-                                                                            Source="Assets/Universal/Icon Bitmap/skype-status.png"
+                                                                            Source="Assets/Universal/Icon/skype-status.png"
                                                                             StackDirection="Horizontal" />
                                                                         <TextBlock
                                                                             MaxWidth="100"
@@ -2043,7 +2043,7 @@
                                                                     ElementCount="11"
                                                                     Interactive="False"
                                                                     SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
+                                                                    Source="Assets/Universal/Icon/skype-channel.png"
                                                                     StackDirection="Horizontal" />
                                                                 <TextBlock
                                                                     Margin="11,0,0,0"
@@ -2101,7 +2101,7 @@
                                                                     ElementCount="11"
                                                                     Interactive="False"
                                                                     SliceMode="0"
-                                                                    Source="Assets/Universal/Icon Bitmap/skype-channel.png"
+                                                                    Source="Assets/Universal/Icon/skype-channel.png"
                                                                     StackDirection="Horizontal" />
                                                                 <TextBlock
                                                                     Margin="11,0,0,0"
