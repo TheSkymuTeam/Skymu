@@ -183,7 +183,10 @@ namespace Skymu.SeanKype
         private async void HandleConversationSelection(object selected_item)
         {
             if (selected_item == null)
+            {
+                ConversationList.SelectedIndex = -1; 
                 return;
+            }
 
             if (selected_item is Server srv)
             {
@@ -424,7 +427,10 @@ namespace Skymu.SeanKype
 
         private void ConversationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HandleConversationSelection(((ListBox)sender).SelectedItem);
+            if (sender == null)
+                HandleConversationSelection(null);
+            else
+                HandleConversationSelection(((ListBox)sender).SelectedItem);
         }
 
         private async void SendButton_Click(object sender, MouseButtonEventArgs e)
@@ -591,6 +597,8 @@ namespace Skymu.SeanKype
 
         #region Tab switching
 
+        // Recent is the default tab
+        private double waveLeft = -141.5;
         /// <summary> 0: Contacts, 1: Recent, 2: Servers </summary>
         private void SetActiveTab(int tab)
         {
@@ -599,16 +607,16 @@ namespace Skymu.SeanKype
             TabContactsText.Foreground = tab == 0 ? blue : black;
             TabRecentText.Foreground = tab == 1 ? blue : black;
             TabServersText.Foreground = tab == 2 ? blue : black;
+            // TODO: Use dynamic positioning instead of precompted values
             // CONTACTS centre ≈ 48px  → leftMargin = 48-280 = -232
             // RECENT   centre ≈ 135px → leftMargin = -141.5 (original)
             // SERVERS  centre ≈ 216px → leftMargin = 216-280 = -64
-            double waveLeft;
             switch (tab)
             {
                 case 0: waveLeft = -232; break;
                 case 1: waveLeft = -141.5; break;
                 case 2: waveLeft = -64; break;
-                case 3:
+                case 3: break; // retain the previous state
                 default:
                     waveLeft = 0;
                     break;
@@ -621,6 +629,7 @@ namespace Skymu.SeanKype
                     browser.Visibility = Visibility.Visible;
                 else
                     HomeUnavailable.Visibility = Visibility.Visible;
+                ConversationList_SelectionChanged(null, null);
                 return;
             }
             RightColumn.Visibility = Visibility.Visible;
