@@ -49,6 +49,7 @@ namespace Skymu
         public const string BuildName = "Erudite Centaur";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
+        public static bool DebugBuild = false;
 
         public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
@@ -164,6 +165,7 @@ namespace Skymu
                             }
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
+                        System.Windows.MessageBox.Show("Skymu is already running.\n\nYou can configure Skymu to allow running multiple instances at the same time in the Options menu.");
                         Terminate();
                         return;
                     }
@@ -453,6 +455,9 @@ namespace Skymu
 
         protected override void OnStartup(StartupEventArgs ev)
         {
+#if DEBUG
+DebugBuild = true;
+#endif
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresentationFramework);

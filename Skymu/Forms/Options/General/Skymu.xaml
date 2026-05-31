@@ -421,7 +421,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Allow running multiple instances"
+                Content="Allow multiple instances of the application to be open at the same time"
                 IsChecked="{Binding Path=[AllowMultipleInstances], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             <CheckBox
                 Margin="0,5"

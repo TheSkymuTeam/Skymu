@@ -109,15 +109,14 @@ namespace Skymu.ViewModels
                         plugin.AuthenticationTypes[0].AuthType,
                         plugin.AuthenticationTypes[0].CustomTextUsername
                     );
-#if DEBUG
-                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode)
+
+                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && (DebugConfig.DisableAutoLogin || DebugConfig.TestMode)))
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
                         Universal.Plugin = plugin;
                         Universal.CallPlugin = Universal.Plugin as ICall;
                     }
-#endif
                     PluginItems.Add(listing);
 #if DEBUG
                     if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
@@ -157,15 +156,13 @@ namespace Skymu.ViewModels
                             }
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername);
-#if DEBUG
-                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !DebugConfig.DisableAutoLogin) // TODO check against authentication type too?
+                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && DebugConfig.DisableAutoLogin)) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
                             Universal.Plugin = plugin;
                             Universal.CallPlugin = Universal.Plugin as ICall;
                         }
-#endif
                         PluginItems.Add(listing);
                     }
                 }
