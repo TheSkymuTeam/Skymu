@@ -14,16 +14,8 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-
-using Skymu.Converters;
-using Skymu.Emoticons;
-using Skymu.Formatting;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.ViewModels;
-using Skymu.Forms;
-using Skymu.Windows;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,9 +24,16 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Skymu.Converters;
+using Skymu.Emoticons;
+using Skymu.Formatting;
+using Skymu.Forms;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using Skymu.Windows;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
-using System.ComponentModel;
 
 namespace Skymu.SeanKype
 {
@@ -70,10 +69,7 @@ namespace Skymu.SeanKype
             {
                 LabelUsername.Text = Universal.CurrentUser?.DisplayName;
                 LabelStatus.Text = Universal.CurrentUser?.Status;
-                this.Title =
-                    Settings.BrandingName
-                    + "\u2122 - "
-                    + Universal.CurrentUser?.Username;
+                this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
                 ConversationList.ItemsSource = Universal.Plugin.RecentsList;
                 GlobalUserCount.Text = string.Empty;
                 if (Universal.CurrentUser?.ProfilePicture?.Length > 0)
@@ -87,7 +83,11 @@ namespace Skymu.SeanKype
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() => _currentStatusIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                        Dispatcher.Invoke(() =>
+                            _currentStatusIndex = MainViewModel.GetIntFromStatus(
+                                Universal.CurrentUser.ConnectionStatus
+                            )
+                        );
                 };
                 if (Settings.EnableSkypeHome)
                     SkypeHome.Generate(
@@ -118,14 +118,19 @@ namespace Skymu.SeanKype
 
             vmodel.ConversationChanged += async (s, e) =>
             {
-                if (!(s is Conversation sc)) return;
+                if (!(s is Conversation sc))
+                    return;
                 DirectMessage sdm = null;
                 if (sc is DirectMessage)
                     sdm = sc as DirectMessage;
                 bool found = false;
                 foreach (var item in ConversationList.Items)
                     if (item is Conversation c && c.Identifier == sc.Identifier)
-                    { ConversationList.SelectedItem = item as Conversation; found = true; break; }
+                    {
+                        ConversationList.SelectedItem = item as Conversation;
+                        found = true;
+                        break;
+                    }
                 if (!found)
                 {
                     if (ConversationList.ItemsSource == Universal.Plugin.ContactsList)
@@ -134,7 +139,10 @@ namespace Skymu.SeanKype
                         SetActiveTab(0);
                     foreach (var item in ConversationList.Items)
                         if (item is Conversation c && c.Identifier == sc.Identifier)
-                        { ConversationList.SelectedItem = item as Conversation; break; }
+                        {
+                            ConversationList.SelectedItem = item as Conversation;
+                            break;
+                        }
                 }
                 _ = SetConversation();
             };
@@ -169,12 +177,22 @@ namespace Skymu.SeanKype
                 {
                     switch (action)
                     {
-                        case MMBController.Action.Home: break; // TODO add code to transition back to Home
-                        case MMBController.Action.Contacts: TabContacts_Click(null, null); break;
-                        case MMBController.Action.Servers: TabServers_Click(null, null); break;
-                        case MMBController.Action.Recents: TabRecent_Click(null, null); break;
-                        case MMBController.Action.Call: break; // TODO add calling to SeanKype
-                        case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                        case MMBController.Action.Home:
+                            break; // TODO add code to transition back to Home
+                        case MMBController.Action.Contacts:
+                            TabContacts_Click(null, null);
+                            break;
+                        case MMBController.Action.Servers:
+                            TabServers_Click(null, null);
+                            break;
+                        case MMBController.Action.Recents:
+                            TabRecent_Click(null, null);
+                            break;
+                        case MMBController.Action.Call:
+                            break; // TODO add calling to SeanKype
+                        case MMBController.Action.AddContact:
+                            AddContact_Click(null, null);
+                            break;
                     }
                 };
                 _mmbController.Build();
@@ -185,7 +203,9 @@ namespace Skymu.SeanKype
                     this.Left = Settings.X;
                     this.Width = Settings.Width;
                     this.Height = Settings.Height;
-                    this.WindowState = Settings.Maximized ? WindowState.Maximized : this.WindowState;
+                    this.WindowState = Settings.Maximized
+                        ? WindowState.Maximized
+                        : this.WindowState;
                     LeftColumnDefinition.Width = new GridLength(Settings.ConvListWidth);
                 }
             };
@@ -202,7 +222,7 @@ namespace Skymu.SeanKype
         {
             if (selected_item == null)
             {
-                ConversationList.SelectedIndex = -1; 
+                ConversationList.SelectedIndex = -1;
                 return;
             }
 
@@ -335,7 +355,11 @@ namespace Skymu.SeanKype
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = ConversionHelpers.GetAssetBasePrefix("SeanKype") + "Profile Pictures/" + avatar + ".png";
+            string AvatarPath =
+                ConversionHelpers.GetAssetBasePrefix("SeanKype")
+                + "Profile Pictures/"
+                + avatar
+                + ".png";
             return ImageHelper.Generate(AvatarPath);
         }
 
@@ -429,7 +453,8 @@ namespace Skymu.SeanKype
                 Universal.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == PresenceStatus.Unknown) return;
+            if (status == PresenceStatus.Unknown)
+                return;
 
             _currentStatusIndex = MainViewModel.GetIntFromStatus(status);
             LabelStatus.Text = status.ToString();
@@ -448,6 +473,7 @@ namespace Skymu.SeanKype
 
         // Recent is the default tab
         private double waveLeft = -141.5;
+
         /// <summary> 0: Contacts, 1: Recent, 2: Servers </summary>
         private void SetActiveTab(int tab)
         {
@@ -462,10 +488,17 @@ namespace Skymu.SeanKype
             // SERVERS  centre ≈ 216px → leftMargin = 216-280 = -64
             switch (tab)
             {
-                case 0: waveLeft = -232; break;
-                case 1: waveLeft = -141.5; break;
-                case 2: waveLeft = -64; break;
-                case 3: break; // retain the previous state
+                case 0:
+                    waveLeft = -232;
+                    break;
+                case 1:
+                    waveLeft = -141.5;
+                    break;
+                case 2:
+                    waveLeft = -64;
+                    break;
+                case 3:
+                    break; // retain the previous state
                 default:
                     waveLeft = 0;
                     break;
