@@ -66,7 +66,6 @@ namespace Skymu.ViewModels
         public PluginListing PendingAutoLoginListing { get; private set; }
         public SavedCredential[] SavedCredentials { get; private set; }
 
-
         public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
         {
             _createMainWindow = createMainWindow;
