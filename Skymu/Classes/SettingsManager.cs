@@ -167,10 +167,10 @@ namespace Skymu.Preferences
             get => SELECT("ThemeRoot", "Light", "UI/General");
             set => WRITE("ThemeRoot", value, nameof(ThemeRoot), "UI/General");
         }
-        public static string PresFrame
+        public static string PresentationFramework
         {
-            get => SELECT("PresFrame", "Aero.NormalColor", "UI/General");
-            set => WRITE("PresFrame", value, nameof(PresFrame), "UI/General");
+            get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");
+            set => WRITE("PresentationFramework", value, nameof(PresentationFramework), "UI/General");
         }
         public static string Language
         {

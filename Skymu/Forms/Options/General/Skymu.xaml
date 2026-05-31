@@ -209,7 +209,7 @@
                     Text="Base theme (scrollbar, buttons, etc)" />
                 <ComboBox
                     Width="250"
-                    SelectedValue="{Binding Path=[PresFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValue="{Binding Path=[PresentationFramework], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Tag">
                     <ComboBoxItem
                         Padding="6,0"
