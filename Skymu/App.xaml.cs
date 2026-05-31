@@ -288,6 +288,8 @@ namespace Skymu
 
         public static void Restart()
         {
+            mutex?.Dispose();
+            mutex = null;
             string exePath = Process.GetCurrentProcess().MainModule.FileName;
             Process.Start(exePath);
             Universal.Terminate();
