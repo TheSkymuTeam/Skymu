@@ -59,8 +59,7 @@ namespace Skymu.SeanKype
                 return;
             await _viewModel.Login(
                 usernameBox.Text,
-                passwordTokenBox.Password,
-                SaveCredentials.IsChecked == true
+                passwordTokenBox.Password
             );
         }
 

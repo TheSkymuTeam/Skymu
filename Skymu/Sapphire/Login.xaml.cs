@@ -58,8 +58,7 @@ namespace Skymu.Sapphire
             if (comboProtocolBox.SelectedIndex == -1) return;
             await _viewModel.Login(
                 usernameBox.Text,
-                passwordTokenBox.Password,
-                SaveCredentials.IsChecked == true
+                passwordTokenBox.Password
             );
         }
 

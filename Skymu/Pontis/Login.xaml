@@ -219,7 +219,7 @@
                                 FontFamily="Tahoma"
                                 FontSize="11"
                                 Foreground="{StaticResource Text.VeryLowContrast}"
-                                IsChecked="{Binding Path=[AutoLogin], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                IsChecked="{Binding Path=[SaveCredentials], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                             <CheckBox
                                 x:Name="StartOnWinStart"
                                 Height="16"
