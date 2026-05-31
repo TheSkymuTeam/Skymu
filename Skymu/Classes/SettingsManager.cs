@@ -122,7 +122,7 @@ namespace Skymu.Preferences
 
         public static bool AllowMultipleInstances
         {
-            get => SELECT("AllowMultipleInstances", false, "UI/General");
+            get => SELECT("AllowMultipleInstances", true, "UI/General");
             set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances), "UI/General");
         }
 

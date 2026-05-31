@@ -27,7 +27,7 @@
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
     </Page.Resources>
 
-    <ScrollViewer Margin="5">
+    <ScrollViewer Margin="10">
         <StackPanel Orientation="Vertical">
 
             <StackPanel Margin="0,5" Orientation="Horizontal">
@@ -421,7 +421,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Allow multiple instances of the application to be open at the same time"
+                Content="Allow multiple instances of the application to run at the same time (disabling this is expiremental)"
                 IsChecked="{Binding Path=[AllowMultipleInstances], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             <CheckBox
                 Margin="0,5"
