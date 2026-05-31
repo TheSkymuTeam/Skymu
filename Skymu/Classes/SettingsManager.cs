@@ -385,16 +385,18 @@ namespace Skymu.Preferences
         {
             string value = Get(k, def.ToString());
 
-            // XXX find out why Skype considered "2" to map to true as well as "1"
-            if (value == "1" || value == "2")
-                return true;
+            // (omega, nilFinx) Skype's settings parser is a little weird. It counted <= 0 as false and >= 1 as true.
+            // Skymu's settings parser will reflect that even though there doesn't seem to be a use case for this.
 
-            if (value == "0")
-                return false;
+            int vi;
+            if (int.TryParse(value, out vi))
+                return vi > 0;
 
-            bool v;
-            if (bool.TryParse(value, out v))
-                return v;
+            // boolean parsing retained for backwards compatibility with old Skymu configuration files
+
+            bool vb;
+            if (bool.TryParse(value, out vb))
+                return vb;
 
             Set(k, def.ToString());
             return def;
