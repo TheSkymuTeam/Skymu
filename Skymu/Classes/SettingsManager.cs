@@ -9,14 +9,14 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Yggdrasil.Networking;
-using Skymu.Enumerations;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
+using Yggdrasil.Networking;
 
 namespace Skymu.Preferences
 {
