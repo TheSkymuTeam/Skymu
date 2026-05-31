@@ -84,7 +84,7 @@ namespace Skymu.SeanKype
                 return i + 1;
             }
 
-            var batch = new System.Collections.Generic.List<Message> { firstMsg };
+            var batch = new List<Message> { firstMsg };
             int j = i + 1;
             while (j < _source.Count)
             {
