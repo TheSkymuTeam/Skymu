@@ -174,7 +174,14 @@ namespace Discord
             };
             authSocket.QRCodeGenerated += handler;
             await authSocket.StartSocket();
-            return await tcs.Task;
+            string qr = await tcs.Task;
+            if (qr == "discord-close")
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs("Discord cancelled this QR login session. This can happen because:\n\n- You might be taking too long to scan the code" +
+                    "\n- Discord updated something on their side and the plugin doesn't work anymore\n- You tried to scan the code using an old version of the Discord app or something like Aliucord"));
+                return null;
+            }
+            else return qr;
         }
 
         public Task<SavedCredential> StoreCredential()

@@ -8,10 +8,8 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-
-/*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE.
+// OmegaAOL, patricktbp, or HUBAXE.
 // It is a port of logic that previously lived in Login.xaml.cs.
 // Please do not judge us on it.
 /*==========================================================*/
@@ -24,6 +22,7 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using System.Threading;
 using Skymu.Windows;
 using Skymu.Sounds;
 using System;
@@ -378,7 +377,7 @@ namespace Skymu.ViewModels
                         "Scan code to authenticate",
                         Settings.BrandingName + " - Login",
                         null,
-                        "Close",
+                        "Cancel",
                         false, null, null, false,
                         ImageHelper.GenerateFromArray(
                             new PngByteQRCode(
@@ -386,17 +385,18 @@ namespace Skymu.ViewModels
                             ).GetGraphic(20)
                         )
                     );
+                    EventHandler onClosed = (s, e) => AnimationToggleRequested?.Invoke(false);
+                    qrDialog.Closed += onClosed;
                     qrDialog.Show();
                     LoginResult qrResult = await Universal.Plugin.AuthenticateTwoFA(null);
+                    qrDialog.Closed -= onClosed;
                     qrDialog.Close();
-
                     if (qrResult == LoginResult.Success)
                     {
                         await InitiateMain();
                         return;
                     }
                 }
-
                 AnimationToggleRequested?.Invoke(false);
                 HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
                 return;

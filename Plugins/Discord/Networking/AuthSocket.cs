@@ -285,6 +285,7 @@ namespace Discord.Networking
                 );
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
+                    QRCodeGenerated?.Invoke(this, "discord-close");
                     await WSClient.CloseAsync(
                         WebSocketCloseStatus.NormalClosure,
                         string.Empty,
