@@ -160,7 +160,8 @@ namespace SkypeDBBrowser
             string identifier,
             string text,
             Attachment attachment,
-            string parent
+            string parent,
+            bool action
         ) // nice try
         {
             OnWarning?.Invoke(this, new PluginMessageEventArgs("Databases are read-only."));

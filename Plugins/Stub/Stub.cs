@@ -126,12 +126,16 @@ namespace Stub
             string identifier,
             string text,
             Attachment attachment,
-            string parent_message_identifier
+            string parent_message_identifier,
+            bool action
         )
         {
             // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
             MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
-                new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text), false)
+                action
+                ? new ActionMessage(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                : new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                , false)
             );
             
             // Invoke a call
@@ -152,10 +156,10 @@ namespace Stub
                 if (attachment != null)
                     OnWarning?.Invoke(
                         this,
-                        new PluginMessageEventArgs("Message with text and attachment sent.")
+                        new PluginMessageEventArgs((action ? "Action message" : "Message") + " with text and attachment sent.")
                     );
                 else
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only message sent."));
+                    OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only " + (action ? "action" : "") + " message sent."));
             }
             else
                 OnWarning?.Invoke(
