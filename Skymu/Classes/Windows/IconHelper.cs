@@ -9,16 +9,11 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace Skymu.Windows
 {
