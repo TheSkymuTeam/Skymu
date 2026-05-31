@@ -23,6 +23,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -143,21 +144,47 @@ namespace Skymu
         {
             if (!Settings.AllowMultipleInstances)
             {
-                mutex = new Mutex(true, "Skymu_SingleInstance", out var created);
-
-                if (!created)
+                try
                 {
-                    foreach (var arg in Environment.GetCommandLineArgs())
+                    mutex = new Mutex(true,
+                        "Local\\Skymu_SingleInstance_"
+                        + Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>() ?? "INVALIDGUID",
+                        out var created);
+
+                    Debug.WriteLine($"[Universal] Mutex creation: {created}");
+
+                    if (!created)
                     {
-                        if (arg.StartsWith("/uri:"))
+                        foreach (var arg in Environment.GetCommandLineArgs())
                         {
-                            var uri = arg.Substring(5 + 6);
-                            WriteToPipe("URI:" + uri);
+                            if (arg.StartsWith("/uri:"))
+                            {
+                                var uri = arg.Substring(5 + 6);
+                                WriteToPipe("URI:" + uri);
+                            }
+                        }
+                        WriteToPipe("WINDOW_ACTIVATE");
+                        Terminate();
+                        return;
+                    }
+                }
+                catch
+                {
+                    try
+                    {
+                        Terminate();
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            Application.Current.Shutdown();
+                        }
+                        catch
+                        {
+                            Environment.Exit(1);
                         }
                     }
-                    WriteToPipe("WINDOW_ACTIVATE");
-                    Terminate();
-                    return;
                 }
             }
             AppDomain.CurrentDomain.ProcessExit += (e, s) =>
