@@ -156,7 +156,7 @@ namespace Skymu
                         }
                     }
                     WriteToPipe("WINDOW_ACTIVATE");
-                    Application.Current.Shutdown();
+                    Terminate();
                     return;
                 }
             }
@@ -363,7 +363,8 @@ namespace Skymu
             {
                 if (!Settings.AllowMultipleInstances)
                     mutex?.Close();
-                Application.Current.Shutdown();
+                try { Application.Current.Shutdown(); }
+                catch { }
             }
         }
 
