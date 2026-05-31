@@ -28,6 +28,10 @@ namespace Skymu.Converters
             if (values.Length < 2)
                 return Visibility.Collapsed;
 
+            // if PreviousMessageIsAction is true, the visibility is always Visible
+            if (values[2] != null && (bool)values[2])
+                return Visibility.Visible;
+            
             return values[0] as string == values[1] as string
                 ? Visibility.Hidden
                 : Visibility.Visible;

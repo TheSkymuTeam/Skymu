@@ -72,7 +72,6 @@ namespace Tox
         Timer avTimer;
         readonly Callbacks cbs = new Callbacks();
         internal User currentUser;
-        bool disposed = false;
         internal Dictionary<UInt32, User> friends
             = new Dictionary<uint, User>();
         internal Dictionary<UInt32, Message> messages
@@ -98,8 +97,6 @@ namespace Tox
         public void Dispose() => IDispose();
         private void IDispose(bool save = true)
         {
-            disposed = true;
-
             Debug.WriteLine("Tox: Flushing");
             try
             {
@@ -483,14 +480,10 @@ namespace Tox
 
         #region Actions
 
-        public async Task<bool> SendMessage(string identifier, string otext, Attachment attachment, string parent_message_identifier)
+        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
             // Shitty /me impl that JUST WORKS!!!
-            var ME = otext.StartsWith("/me ");
-            var type = ME ? Tox_Message_Type.ACTION : Tox_Message_Type.NORMAL;
-            var text = otext;
-            if (ME)
-                text = otext.Substring(4);
+            var type = action ? Tox_Message_Type.ACTION : Tox_Message_Type.NORMAL;
 
             try
             {
@@ -523,7 +516,12 @@ namespace Tox
                         pendingSendFriend[f.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
                     return true;
                 }
-                messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), currentUser, new DateTime(), text));
+                Message message;
+                if (type == Tox_Message_Type.ACTION)
+                    message = new ActionMessage(mid + "_" + GUID(), currentUser, new DateTime(), text);
+                else
+                    message = new Message(mid + "_" + GUID(), currentUser, new DateTime(), text);
+                messages.Add((UInt32)mid, message);
                 return true;
             }
             catch (Exception ex)

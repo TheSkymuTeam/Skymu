@@ -336,7 +336,8 @@ namespace Yggdrasil.Classes
 
     public class Message : ConversationItem
     {
-        public string PreviousMessageIdentifier { get; set; } // TO REMOVE!!
+        public string PreviousMessageIdentifier { get; set; } // TODO: TO BE REMOVED!!
+        public bool PreviousMessageIsAction { get; set; } // TODO: REMOVE THIS TOO!!!
         public User Sender { get; set; } // Who sent the message
         public string Text { get; set; } // Message body
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
@@ -361,6 +362,21 @@ namespace Yggdrasil.Classes
             ParentMessage = parent_message;
             IsForwarded = is_forwarded;
         }
+    }
+
+    public class ActionMessage : Message
+    {
+        public ActionMessage(
+            string identifier,
+            User sender,
+            DateTime time,
+            string text = null,
+            Attachment[] attachments = null,
+            Message parent_message = null,
+            bool is_forwarded = false
+        ) 
+            : base(identifier, sender, time, text, attachments, parent_message, is_forwarded)
+        { }
     }
 
     public class CallStartedNotice : ConversationItem

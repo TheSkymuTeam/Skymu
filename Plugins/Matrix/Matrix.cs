@@ -533,7 +533,8 @@ namespace Matrix
             string identifier,
             string text,
             Attachment attachment = null,
-            string parent_message_identifier = null)
+            string parent_message_identifier = null,
+            bool action = false) // TODO: Action messages (on this plugin that nobody cares about)
         {
             if (string.IsNullOrEmpty(identifier))
                 return false;
