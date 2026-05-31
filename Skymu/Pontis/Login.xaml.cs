@@ -11,8 +11,8 @@
 
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Views;
-using Skymu.Views.Pages;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Sounds;
 using System;
 using System.ComponentModel;
@@ -136,7 +136,7 @@ namespace Skymu.Pontis
         }
 
         private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
-        private void OnConnectionOptions(object sender, EventArgs e) { new Options("Metro.Background").Show(); }
+        private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
         private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }

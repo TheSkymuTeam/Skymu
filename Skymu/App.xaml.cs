@@ -14,7 +14,7 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Theming;
 using Skymu.UserDirectory;
-using Skymu.Views;
+using Skymu.Forms;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -398,7 +398,7 @@ namespace Skymu
         public static void ExceptionHandler(Exception ex)
         {
             string brand = Settings.BrandingName;
-            Views.Pages.ErrorWindow page = new Views.Pages.ErrorWindow(ex.ToString());
+            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
             WindowBase frame = new WindowBase(page);
             frame.HeaderIcon = WindowBase.IconType.Crash;
             frame.HeaderText = "That wasn't supposed to happen...";

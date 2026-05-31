@@ -12,7 +12,7 @@
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
-namespace Skymu.Views.OptionPages.Advanced
+namespace Skymu.Forms.OptionPages.Advanced
 {
     public partial class Debug : Page
     {

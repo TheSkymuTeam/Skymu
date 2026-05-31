@@ -15,7 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Yggdrasil.Networking;
 
-namespace Skymu.Views.OptionPages.General
+namespace Skymu.Forms.OptionPages.General
 {
     public partial class Skymu : Page
     {

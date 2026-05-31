@@ -28,7 +28,7 @@ using System.Windows.Threading;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class Notification : Window
     {

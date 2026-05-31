@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using static System.String;
 
-namespace Skymu.Views.Pages
+namespace Skymu.Forms.Pages
 {
     public partial class Updater : Page
     {

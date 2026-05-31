@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Skymu.Views.Pages
+namespace Skymu.Forms.Pages
 {
     /// <summary>
     /// Interaction logic for ErrorWindow.xaml

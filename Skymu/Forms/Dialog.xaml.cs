@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace Skymu.Views
+namespace Skymu.Forms
 {
     public partial class Dialog : Window
     {
