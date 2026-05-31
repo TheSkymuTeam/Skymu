@@ -361,8 +361,6 @@ namespace Skymu
             catch { } // in case app is already too dead to clear icon by the time this is called
             finally
             {
-                if (!Settings.AllowMultipleInstances)
-                    mutex?.Close();
                 Application.Current.Shutdown();
             }
         }
