@@ -11,10 +11,8 @@
 
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Forms;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
