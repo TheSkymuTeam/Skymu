@@ -363,8 +363,7 @@ namespace Skymu
             {
                 if (!Settings.AllowMultipleInstances)
                     mutex?.Close();
-                try { Application.Current.Shutdown(); }
-                catch { }
+                Application.Current.Shutdown();
             }
         }
 
