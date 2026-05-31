@@ -8,9 +8,9 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// These dictionary mappings were generated using a large 
+// These dictionary mappings were generated using a large
 // language model. They may be incomplete or map to inaccurate
-// emoji. Please update this file if you find any such 
+// emoji. Please update this file if you find any such
 // inaccuracies or if there are missing mappings.
 /*==========================================================*/
 
