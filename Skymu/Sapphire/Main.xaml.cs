@@ -1106,23 +1106,9 @@ namespace Skymu.Sapphire
 
         private void Directory_Click(object sender, MouseButtonEventArgs e) => Universal.NotImplemented("Directory");
 
-        private void AddButtonClick(object sender, MouseButtonEventArgs e)
+        private async void AddButtonClick(object sender, MouseButtonEventArgs e)
         {
-            Universal.NotImplemented(NOTIMPL_ADD_CONTACTS_CHATS);
-
-            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
-                "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
-
-            var dlg = new OpenFileDialog
-            {
-                Title = "Select a file to send",
-                CheckFileExists = true
-            };
-
-            if (dlg.ShowDialog() == true)
-            {
-                send file logic goes here
-            }*/
+            await vmodel.SendFile();
         }
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)

@@ -269,16 +269,23 @@ namespace Yggdrasil.Classes
     public class Attachment
     {
         public string Name { get; set; }
-        public AttachmentType Type { get; set; }
         public byte[] File { get; set; }
         public string Url { get; set; }
+        public AttachmentType Type { get; set; }
+
+        public Attachment(byte[] file, string name)
+        {
+            File = file;
+            Name = name;
+            Type = AttachmentType.File;
+        }
 
         public Attachment(byte[] file, string name, string url, AttachmentType type)
         {
             File = file;
             Name = name;
-            Type = type;
             Url = url;
+            Type = type;
         }
 
         public Attachment(string location_url, string name)

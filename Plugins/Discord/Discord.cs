@@ -636,11 +636,6 @@ namespace Discord
                 if (attachment != null)
                 {
                     fileName = attachment?.Name ?? "file";
-                    if (attachment.Type != AttachmentType.Image && attachment.Type != AttachmentType.File)
-                    {
-                        OnWarning?.Invoke(this, new PluginMessageEventArgs($"Unsupported attachment type: {attachment.Type}. Discord supports image and file attachments.\n\nSending message without attachment."));
-                        attachment = null;
-                    }
                 }
 
                 string msgResponse = await Client.Send($"/channels/{channelId}/messages", HttpMethod.Post, DiscordToken, payloadJson, attachment != null ? attachment.File : null, fileName, discordOpts).ConfigureAwait(false);

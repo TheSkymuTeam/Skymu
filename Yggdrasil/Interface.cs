@@ -44,7 +44,7 @@ namespace Yggdrasil
         Task<LoginResult> Authenticate(SavedCredential credential); // Tries to log in with saved tokens/credentials
         Task<LoginResult> AuthenticateTwoFA(string code); // Step 2 of the login system, this is used for Multi-Factor Authentication. (TOTP)
         Task<bool> SendMessage(
-            string identifier,
+            string conversation_id,
             string text = null,
             Attachment attachment = null,
             string parent_message_identifier = null,

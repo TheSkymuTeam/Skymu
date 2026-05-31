@@ -23,6 +23,7 @@ using Skymu.Enumerations;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.UserDirectory;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -550,7 +551,7 @@ namespace Skymu.ViewModels
                         { /* case 1 is true, continue */
                         }
                         else if (
-                            !string.IsNullOrEmpty(message.Text) 
+                            !string.IsNullOrEmpty(message.Text)
                             && !string.IsNullOrEmpty(Universal.CurrentUser?.DisplayName)
                             && message.Text.Contains($"<@{Universal.CurrentUser.DisplayName}>")
                         )
@@ -799,6 +800,33 @@ namespace Skymu.ViewModels
         }
 
         #endregion
+
+
+        public async Task SendFile()
+        {
+            /*Universal.ShowMsg("Skymu file transfer is peer-to-peer, meaning no third party intercepts your data, and uses the Magic Wormhole protocol. If the recipient does not have Skymu, they " +
+    "will need to download a Magic Wormhole client and complete the transfer manually.", "Wormhole file transfer");
+
+if (dlg.ShowDialog() == true)
+{
+    send file logic goes here
+}*/
+
+            var dlg = new OpenFileDialog
+            {
+                Title = "Select a file to send",
+                CheckFileExists = true
+            };
+            if (dlg.ShowDialog() == true)
+            {
+                string filePath = dlg.FileName;
+                string fileName = Path.GetFileName(filePath);
+
+                byte[] data = File.ReadAllBytes(filePath);
+                Attachment file = new Attachment(data, fileName);
+                await Universal.Plugin.SendMessage(SelectedConversation.Identifier, null, file);
+            }
+        }
 
         public void SavePositioning(Window window, ColumnDefinition sidebar)
         {
