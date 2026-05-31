@@ -129,6 +129,7 @@ namespace Skymu.Windows
 
             _menuBar.Create(L("sMAINMENU_VIEW"),
                 MI(L("sMAINMENU_VIEW_CONTACTS"), (s, e2) => OnContacts(null, null)),
+                MI("Servers", (s, e2) => OnServers(null, null)),
                 MI(L("sMAINMENU_VIEW_CONVERSATIONS"), (s, e2) => OnRecent(null, null)),
                 MI(L("sMAINMENU_VIEW_VOICEMAILS")),
                 MI(L("sMAINMENU_VIEW_FILESSENT")),
@@ -175,7 +176,7 @@ namespace Skymu.Windows
 
         #region Event system
 
-        public enum Action { Home, Contacts, Recents, Call, AddContact }
+        public enum Action { Home, Contacts, Servers, Recents, Call, AddContact }
         public event EventHandler<Action> ActionRequested;
         private void Raise(Action action) => ActionRequested?.Invoke(this, action);
 
@@ -193,6 +194,7 @@ namespace Skymu.Windows
         private void OnCheckUpdates(object sender, EventArgs e) => new Forms.Pages.Updater(true);
         private void OnHome(object sender, EventArgs e) => Raise(Action.Home);
         private void OnContacts(object sender, EventArgs e) => Raise(Action.Contacts);
+        private void OnServers(object sender, EventArgs e) => Raise(Action.Servers);
         private void OnRecent(object sender, EventArgs e) => Raise(Action.Recents);
         private void OnCall(object sender, EventArgs e) => Raise(Action.Call);
         private void OnAddContact(object sender, EventArgs e) => Raise(Action.AddContact);

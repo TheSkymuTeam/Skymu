@@ -1369,20 +1369,6 @@ namespace Skymu.Pontis
                         vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
             };
 
-            _mmbController = new MMBController(this);
-            _mmbController.ActionRequested += (s, action) =>
-            {
-                switch (action)
-                {
-                    case MMBController.Action.Home: SetWindow(WindowType.Home); break;
-                    case MMBController.Action.Contacts: _ = SelectTab(btnContacts); break;
-                    case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
-                    case MMBController.Action.Call: CallButtonClick(null, null); break;
-                    case MMBController.Action.AddContact: AddContact_Click(null, null); break;
-                }
-            };
-            _mmbController.Build();
-
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
             Universal.UnknownAvatar = GenerateAvatarImage("unknown");
@@ -1424,6 +1410,21 @@ namespace Skymu.Pontis
 
             SourceInitialized += (s, e) =>
             {
+                _mmbController = new MMBController(this);
+                _mmbController.ActionRequested += (s2, action) =>
+                {
+                    switch (action)
+                    {
+                        case MMBController.Action.Home: SetWindow(WindowType.Home); break;
+                        case MMBController.Action.Contacts: _ = SelectTab(btnContacts); break;
+                        case MMBController.Action.Servers: _ = SelectTab(btnServers); break;
+                        case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
+                        case MMBController.Action.Call: CallButtonClick(null, null); break;
+                        case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                    }
+                };
+                _mmbController.Build();
+
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
                     this.Top = Settings.Y;

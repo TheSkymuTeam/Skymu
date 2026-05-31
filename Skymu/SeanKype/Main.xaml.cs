@@ -158,26 +158,27 @@ namespace Skymu.SeanKype
 
             vmodel.SubscribeTypingIndicator();
 
-            _mmbController = new MMBController(this);
-            _mmbController.ActionRequested += (s, action) =>
-            {
-                switch (action)
-                {
-                    case MMBController.Action.Home: break; // TODO add code to transition back to Home
-                    case MMBController.Action.Contacts: TabContacts_Click(null, null); break;
-                    case MMBController.Action.Recents: TabRecent_Click(null, null); break;
-                    case MMBController.Action.Call: break; // TODO add calling to SeanKype
-                    case MMBController.Action.AddContact: AddContact_Click(null, null); break;
-                }
-            };
-            _mmbController.Build();
-
             InitializeEmojiPicker();
 
             HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {
+                _mmbController = new MMBController(this);
+                _mmbController.ActionRequested += (s2, action) =>
+                {
+                    switch (action)
+                    {
+                        case MMBController.Action.Home: break; // TODO add code to transition back to Home
+                        case MMBController.Action.Contacts: TabContacts_Click(null, null); break;
+                        case MMBController.Action.Servers: TabServers_Click(null, null); break;
+                        case MMBController.Action.Recents: TabRecent_Click(null, null); break;
+                        case MMBController.Action.Call: break; // TODO add calling to SeanKype
+                        case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                    }
+                };
+                _mmbController.Build();
+
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
                     this.Top = Settings.Y;
