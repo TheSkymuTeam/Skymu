@@ -23,9 +23,7 @@ namespace Skymu.Views.OptionPages.General
         {
             InitializeComponent();
             LoadVisualSettings();
-#if DEBUG
-            CredDebugSepCB.Visibility = Visibility.Visible;
-#endif
+            if (Universal.DebugBuild) CredDebugSepCB.Visibility = Visibility.Visible;
         }
 
         private void LoadVisualSettings()
