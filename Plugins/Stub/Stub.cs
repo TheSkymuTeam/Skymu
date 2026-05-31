@@ -130,14 +130,6 @@ namespace Stub
             bool action
         )
         {
-            // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
-            MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
-                action
-                ? new ActionMessage(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
-                : new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
-                , false)
-            );
-            
             // Invoke a call
             if (text == "Call me!")
             {
@@ -174,6 +166,19 @@ namespace Stub
             TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
             TypingUsersList.Add(new User("Xaero", "20200", "20200"));
             TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(3000);
+                // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
+                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
+                    action
+                    ? new ActionMessage(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                    : new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                    , false)
+                );
+            });
+
             return Task.FromResult(true);
         }
 
