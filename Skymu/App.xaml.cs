@@ -65,7 +65,7 @@ namespace Skymu
 
         public static void InformDND()
         {
-            if (Settings.InformDND != 1)
+            if (Settings.InformDND != true)
                 Current.Dispatcher.Invoke(() =>
                     new Dialog(
                         WindowBase.IconType.Information,
@@ -78,7 +78,7 @@ namespace Skymu
                         {
                             if (((Dialog)s).CheckBox.IsChecked == true)
                             {
-                                Settings.InformDND = 1;
+                                Settings.InformDND = true;
                                 Settings.Save();
                             }
                         }

@@ -1288,7 +1288,7 @@ namespace Skymu.Skyaeris
         private CallScreen screen;
         private CallScreen.LocationChangeEventArgs location;
         private CallScreen.LocationChangeEventArgs initial_location =
-            new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != 1, false);
+            new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
         private double sidebarOrigWidth; // dynamic
         private double sidebarOrigMinWidth;
@@ -1313,7 +1313,7 @@ namespace Skymu.Skyaeris
                 answer_call = false;
             }
             CallScreen.LocationChangeEventArgs initial_location =
-                new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != 1, false);
+                new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
             if (topbarWindowRowOrigHeight == default)
                 topbarWindowRowOrigHeight = TopbarWindowRow.Height.Value;
@@ -1365,7 +1365,7 @@ namespace Skymu.Skyaeris
 
             if (location == null)
             {
-                Settings.HideLeftHandSide = this.location.SidebarToggle ? 0 : 1;
+                Settings.HideLeftHandSide = this.location.SidebarToggle ? false : true;
                 Settings.Save();
                 SetCallPageLocation(new CallScreen.LocationChangeEventArgs(true, true), false); // quickly reset stuff
                 if (FillWindowHost.Content == frame)

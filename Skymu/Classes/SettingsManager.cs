@@ -279,22 +279,22 @@ namespace Skymu.Preferences
             get => SELECT("QuitWithoutAsking", false);
             set => WRITE("QuitWithoutAsking", value, nameof(QuitWithoutAsking));
         }
-        /// <summary> 1 = do not inform </summary>
-        public static int InformDND
+        /// <summary> true = do not inform </summary>
+        public static bool InformDND
         {
-            get => SELECT("InformDND", 0);
+            get => SELECT("InformDND", false);
             set => WRITE("InformDND", value, nameof(InformDND));
         }
-        /// <summary> 1 = already closed the "this is converstaions list" popup on Skype 4 </summary>
-        public static int InboxNoticeShown
+        /// <summary> true = already closed the "this is converstaions list" popup on Skype 4 </summary>
+        public static bool InboxNoticeShown
         {
-            get => SELECT("InboxNoticeShown", 0);
+            get => SELECT("InboxNoticeShown", false);
             set => WRITE("InboxNoticeShown", value, nameof(InboxNoticeShown));
         }
-        /// <summary> 1 = hide the sidebar on call start </summary>
-        public static int HideLeftHandSide
+        /// <summary> true = hide the sidebar on call start </summary>
+        public static bool HideLeftHandSide
         {
-            get => SELECT("HideLeftHandSide", 0);
+            get => SELECT("HideLeftHandSide", false);
             set => WRITE("HideLeftHandSide", value, nameof(HideLeftHandSide));
         }
         public static bool SuppressOldRuntimeWarnings
@@ -383,10 +383,19 @@ namespace Skymu.Preferences
 
         private static bool SELECT(string k, bool def)
         {
-            if (bool.TryParse(Get(k, def.ToString()), out var v))
-            {
+            string value = Get(k, def.ToString());
+
+            // XXX find out why Skype considered "2" to map to true as well as "1"
+            if (value == "1" || value == "2")
+                return true;
+
+            if (value == "0")
+                return false;
+
+            bool v;
+            if (bool.TryParse(value, out v))
                 return v;
-            }
+
             Set(k, def.ToString());
             return def;
         }
@@ -425,6 +434,12 @@ namespace Skymu.Preferences
         private static void WRITE<T>(string key, T value, string propName)
         {
             Set(key, value.ToString());
+            Default.Notify(propName);
+        }
+
+        private static void WRITE(string key, bool value, string propName)
+        {
+            Set(key, value ? "1" : "0");
             Default.Notify(propName);
         }
 
