@@ -211,7 +211,7 @@
                                 Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
                                 FontFamily="Tahoma"
                                 FontSize="11"
-                                IsChecked="{Binding Path=[AutoLogin], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                                IsChecked="{Binding Path=[SaveCredentials], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                             <CheckBox
                                 x:Name="StartOnWinStart"
                                 Height="16"

@@ -321,7 +321,7 @@ namespace Skymu.ViewModels
 
             if (lr == LoginResult.Success)
             {
-                await InitiateMain(false);
+                await InitiateMain();
             }
             else
             {
@@ -335,7 +335,7 @@ namespace Skymu.ViewModels
             }
         }
 
-        public async Task Login(string username, string password, bool saveCredentials = false)
+        public async Task Login(string username, string password)
         {
             if (_selectedListing == null) return;
             AnimationToggleRequested?.Invoke(true);
@@ -349,13 +349,13 @@ namespace Skymu.ViewModels
 
             if (result == LoginResult.Success)
             {
-                await InitiateMain(saveCredentials);
+                await InitiateMain();
                 return;
             }
 
             if (result == LoginResult.TwoFARequired)
             {
-                await Handle2FA(saveCredentials);
+                await Handle2FA();
                 return;
             }
 
@@ -364,7 +364,7 @@ namespace Skymu.ViewModels
             HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
         }
 
-        private async Task Handle2FA(bool saveCredentials)
+        private async Task Handle2FA()
         {
             string totp = null;
 
@@ -393,7 +393,7 @@ namespace Skymu.ViewModels
 
                     if (qrResult == LoginResult.Success)
                     {
-                        await InitiateMain(saveCredentials);
+                        await InitiateMain();
                         return;
                     }
                 }
@@ -418,7 +418,7 @@ namespace Skymu.ViewModels
             LoginResult optResult = await Universal.Plugin.AuthenticateTwoFA(totp);
             if (optResult == LoginResult.Success)
             {
-                await InitiateMain(saveCredentials);
+                await InitiateMain();
                 return;
             }
 
@@ -426,10 +426,10 @@ namespace Skymu.ViewModels
             HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
         }
 
-        private async Task InitiateMain(bool saveCredentials)
+        private async Task InitiateMain()
         {
             Debug.WriteLine($"[SKYMU] Login success. Initiating main window...");
-            if (saveCredentials)
+            if (Settings.SaveCredentials)
             {
                 SavedCredential cred = await Universal.Plugin.StoreCredential();
                 if (cred != null)
