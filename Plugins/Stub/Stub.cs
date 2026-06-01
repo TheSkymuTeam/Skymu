@@ -26,7 +26,7 @@ using Yggdrasil.Enumerations;
 
 namespace Stub
 {
-    public class Core : ICore, ICall, IListManagement
+    public class Core : ICore, ICall, IListManagement, IExtras
     {
         #region Variables
 
@@ -79,7 +79,8 @@ namespace Stub
         #endregion
 
         // Also called on logout
-        public void Dispose() {
+        public void Dispose()
+        {
             _out?.Stop();
             _out?.Dispose();
             _out = null;
@@ -667,6 +668,19 @@ namespace Stub
                 null
             );
         }
+
+        #endregion
+
+        #region Extras
+        // Same as above. Remvoe IExtras and this region to disable.
+
+        public ObservableCollection<ExtraConfiguration> ExtraConfigurations => new ObservableCollection<ExtraConfiguration>()
+        {
+            new ExtraConfiguration(
+                "Hello world",
+                () => OnWarning?.Invoke(this, new PluginMessageEventArgs("Hello world!")),
+                "Show Hello World!")
+        };
 
         #endregion
     }

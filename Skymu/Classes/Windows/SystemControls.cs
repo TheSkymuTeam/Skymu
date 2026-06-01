@@ -102,11 +102,17 @@ namespace Skymu.Windows
         static extern IntPtr CreatePopupMenu();
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern bool AppendMenu(IntPtr hSubMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern bool RemoveMenu(IntPtr hMenu, uint uPosition, uint uFlags);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern bool DestroyMenu(IntPtr hMenu);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        static extern int GetMenuItemCount(IntPtr hMenu);
 
         const uint MF_STRING = 0x0000;
         const uint MF_GRAYED = 0x0001;
-        const uint MF_POPUP = 0x0010;
         const uint MF_SEPARATOR = 0x0800;
+        const uint MF_BYPOSITION = 0x0400;
 
         NativeMenuBar bar;
         internal IntPtr hSubMenu;
@@ -117,7 +123,44 @@ namespace Skymu.Windows
             this.bar = bar;
         }
 
-        // TODO: Create (without icons)
+        public void RefreshItems(params (string label, EventHandler handler)[] items)
+        {
+            int itemCount = GetMenuItemCount(hSubMenu);
+            for (int i = itemCount - 1; i >= 0; i--)
+            {
+                RemoveMenu(hSubMenu, (uint)i, MF_BYPOSITION);
+            }
+
+            Create("", items);
+        }
+
+        public NativeSubMenu Create(string title, params (string label, EventHandler handler)[] items)
+        {
+            foreach (var (label, handler) in items)
+            {
+                if (label == "$")
+                {
+                    AppendMenu(hSubMenu, MF_SEPARATOR, UIntPtr.Zero, null);
+                }
+                else
+                {
+                    uint flags = MF_STRING;
+                    int id = -1;
+                    if (handler == null)
+                    {
+                        flags |= MF_GRAYED;
+                        AppendMenu(hSubMenu, flags, id == -1 ? UIntPtr.Zero : (UIntPtr)id, label);
+                    }
+                    else
+                    {
+                        id = bar.nextId++;
+                        bar.callbacks[id] = handler;
+                        AppendMenu(hSubMenu, flags, (UIntPtr)id, label);
+                    }
+                }
+            }
+            return this;
+        }
 
         public NativeSubMenu CreateWithIcons(string title, params (string label, EventHandler handler, IntPtr? hBitmap)[] items)
         {

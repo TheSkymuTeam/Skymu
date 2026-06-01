@@ -436,13 +436,33 @@ namespace Yggdrasil.Classes
         }
     }
 
+    public class ExtraConfiguration
+    {
+        public string title { get; set; }
+        public string description { get; set; }
+        public Action onRun { get; set;  }
+
+        public ExtraConfiguration(
+            string title,
+            Action onRun,
+            string description = null
+        )
+        {
+            this.title = title;
+            this.description = description;
+            this.onRun = onRun;
+        }
+    }
+
     public class PluginMessageEventArgs : EventArgs
     {
         public string Message { get; }
+        public string CopyToClipboardText { get; } // text to copy to clipboard.
 
-        public PluginMessageEventArgs(string message)
+        public PluginMessageEventArgs(string message, string copyToClipboardText = null)
         {
             Message = message;
+            CopyToClipboardText = copyToClipboardText;
         }
     }
 

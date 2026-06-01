@@ -92,4 +92,10 @@ namespace Yggdrasil
         Task<Metadata[]> FindNewContact(string query); // step 1, find for contacts. return a dummy one, like "Add me!" if your protocol does not support finding
         Task<bool> AddContact(Metadata metadatas, string message); // step 2, actually add the contact
     }
+
+    // Extras can be invoked through a dedicated "extras" menu of your application, or other ways if you wish.
+    public interface IExtras
+    {
+        ObservableCollection<ExtraConfiguration> ExtraConfigurations { get; }
+    }
 }

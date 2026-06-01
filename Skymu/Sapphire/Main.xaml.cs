@@ -1636,6 +1636,11 @@ namespace Skymu.Sapphire
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
+                if (Universal.Plugin is IExtras iep)
+                {
+                    iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
+                    RefreshExtras();
+                }
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1805,6 +1810,30 @@ namespace Skymu.Sapphire
         }
 
         #endregion
+
+        private void RefreshExtras()
+        {
+            var ep = Universal.Plugin as IExtras;
+            ExtrasMenu.Items.Clear();
+            if (ep.ExtraConfigurations.Count == 0)
+            {
+                ExtrasMenu.Items.Add(GetExtrasMenuItem);
+                return;
+            }
+            ExtrasMenu.IsEnabled = true;
+            foreach (var extra in ep.ExtraConfigurations)
+            {
+                var item = new MenuItem()
+                {
+                    Header = extra.title,
+                    ToolTip = extra.description
+                };
+                item.Click += (_, __) => extra.onRun();
+                ExtrasMenu.Items.Add(item);
+            }
+            ExtrasMenu.Items.Add(new Separator());
+            ExtrasMenu.Items.Add(GetExtrasMenuItem);
+        }
 
         private void RefreshCreds(object sender = null, PropertyChangedEventArgs e = null)
         {

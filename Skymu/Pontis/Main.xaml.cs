@@ -1421,6 +1421,20 @@ namespace Skymu.Pontis
                     }
                 };
                 _mmbController.Build();
+                if (!(Universal.Plugin is IExtras ep) || ep.ExtraConfigurations.Count == 0)
+                    _mmbController.DisableExtras();
+                else
+                {
+                    var mitems = new (string, EventHandler)[ep.ExtraConfigurations.Count];
+                    int i = 0;
+                    foreach (var extra in ep.ExtraConfigurations)
+                    {
+                        mitems[i] = (extra.title, (ss, ee) => extra.onRun());
+                        i++;
+                    }
+                    _mmbController.RedoExtras(mitems);
+                }
+
 
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {

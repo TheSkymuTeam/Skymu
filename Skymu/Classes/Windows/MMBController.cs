@@ -1,5 +1,6 @@
 ﻿using Skymu.Forms;
 using System;
+using System.Linq;
 using System.Windows;
 using Yggdrasil.Enumerations;
 
@@ -8,9 +9,11 @@ namespace Skymu.Windows
     class MMBController
     {
         private readonly NativeMenuBar _menuBar;
+        private readonly NativeSubMenu _extrasMenu;
         public MMBController(Window window)
         {
             _menuBar = new NativeMenuBar(window);
+            _extrasMenu = new NativeSubMenu(_menuBar);
         }
 
         #region Constructor
@@ -121,7 +124,7 @@ namespace Skymu.Windows
             );
 
             _menuBar.Create(L("sMAINMENU_TOOLS"),
-                MI(L("sMAINMENU_TOOLS_EXTRAS")),
+                MI(L("sMAINMENU_TOOLS_EXTRAS"), _extrasMenu),
                 SEP(),
                 MI(L("sMAINMENU_TOOLS_LANGUAGE")),
                 SEP(),
@@ -172,5 +175,21 @@ namespace Skymu.Windows
         private void OnAddContact(object sender, EventArgs e) => Raise(Action.AddContact);
 
         #endregion
+
+        public void DisableExtras() =>
+            _extrasMenu.RefreshItems(
+                MI(L("sMENU_EXTRAS_GET_APPS_CAPTION"))
+            );
+
+        public void RedoExtras((string, EventHandler)[] items) =>
+            _extrasMenu.RefreshItems(
+                items
+                    .Concat(new[]
+                    {
+                        SEP(),
+                        MI(L("sMENU_EXTRAS_GET_APPS_CAPTION"))
+                    })
+                    .ToArray()
+            );
     }
 }

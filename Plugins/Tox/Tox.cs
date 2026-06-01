@@ -28,7 +28,7 @@ using static ToxCore;
 
 namespace Tox
 {
-    public class Core : ICore, ICall, IListManagement
+    public class Core : ICore, ICall, IListManagement, IExtras
     {
         #region Variables
 
@@ -46,6 +46,14 @@ namespace Tox
         {
             new AuthTypeInfo(AuthenticationMethod.Password, "Profile name", "Encrypted save"),
             new AuthTypeInfo(AuthenticationMethod.Token, "Profile name", "Unencrypted save")
+        };
+        public ObservableCollection<ExtraConfiguration> ExtraConfigurations => new ObservableCollection<ExtraConfiguration>()
+        {
+            new ExtraConfiguration("Get self Tox ID", () =>
+            {
+                var stid = tox.address;
+                OnWarning?.Invoke(this, new PluginMessageEventArgs($"Your Tox ID is: {stid}", stid));
+            })
         };
         public int TypingTimeout => 5000;
         public int TypingRepeat => 5000;
@@ -163,7 +171,7 @@ namespace Tox
         // UiContextPost
         internal void UCP(SendOrPostCallback d) => uiContext?.Post(d, null);
         // ERRor
-        internal void ERR(string err) { Debug.WriteLine("Tox: ERROR: " + err); OnError?.Invoke(this, new PluginMessageEventArgs(err)); }
+        internal void ERR(string err) { Debug.WriteLine("Tox: ERROR: " + err); OnError?.Invoke(this, new PluginMessageEventArgs(err, err)); }
         // onCALLincoming
         internal void CALL(CallEventArgs cea) => OnIncomingCall?.Invoke(this, cea);
         // CallStateChanged
