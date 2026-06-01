@@ -99,7 +99,14 @@ namespace Skymu
                         new Dialog(
                             itype,
                             e.Message,
-                            prefix + core.Name
+                            prefix + core.Name,
+                            blEnabled: !string.IsNullOrEmpty(e.CopyToClipboardText),
+                            blText: "Copy to clipboard",
+                            blAction: () =>
+                            {
+                                Clipboard.SetText(e.CopyToClipboardText);
+                                MessageBox("Copied to clipboard.");
+                            }
                         ).ShowDialog();
                     }
                 )
