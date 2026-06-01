@@ -53,7 +53,12 @@
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Foreground" Value="{StaticResource Text.Header}" />
                     </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Trigger>
                 </Style.Triggers>
+                <Setter Property="Foreground" Value="{StaticResource Text.Hyperlink}" />
+                <Setter Property="TextDecorations" Value="{x:Null}" />
             </Style>
             <Style BasedOn="{x:Null}" TargetType="{x:Type MenuItem}">
                 <!--  This fixes the horrible WPF Aero PresentationFramework menu items  -->
