@@ -58,6 +58,7 @@ namespace Skymu.Skyaeris
         private MainViewModel vmodel;
 
         // Other file-level variables
+        private AddContact _addContactWindow;
         private readonly WindowFrame _currentFrame = Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private bool noCloseEvent;
@@ -1069,7 +1070,10 @@ namespace Skymu.Skyaeris
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
             if (Universal.Plugin is IListManagement)
-                new AddContact();
+            {
+                _addContactWindow?.Close();
+                _addContactWindow = new AddContact();
+            }
             else
             {
                 SoundManager.Play("call-error");

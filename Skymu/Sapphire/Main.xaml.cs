@@ -58,6 +58,7 @@ namespace Skymu.Sapphire
         private MainViewModel vmodel;
 
         // Other file-level variables
+        private AddContact _addContactWindow;
         private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private bool noCloseEvent;
@@ -838,7 +839,10 @@ namespace Skymu.Sapphire
             {
                 case "contact":
                     if (Universal.Plugin is IListManagement)
-                        _ = new AddContact();
+                    {
+                        _addContactWindow?.Close();
+                        _addContactWindow = new AddContact();
+                    }
                     else
                     {
                         SoundManager.Play("call-error");

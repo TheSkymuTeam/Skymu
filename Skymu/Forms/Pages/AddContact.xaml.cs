@@ -47,6 +47,8 @@ namespace Skymu.Forms.Pages
             ShowWindow();
         }
 
+        public void Close() => window.Close();
+
         public void ShowWindow()
         {
             lmg = Universal.Plugin as IListManagement;
