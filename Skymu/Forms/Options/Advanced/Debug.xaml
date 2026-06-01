@@ -23,16 +23,6 @@
     <Page.Resources>
         <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <!--  Show underline only on hover  -->
-        <Style TargetType="Hyperlink">
-            <Setter Property="Foreground" Value="{StaticResource Text.Hyperlink}" />
-            <Setter Property="TextDecorations" Value="{x:Null}" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="TextDecorations" Value="Underline" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Page.Resources>
 
     <Grid Margin="15,20,15,35">

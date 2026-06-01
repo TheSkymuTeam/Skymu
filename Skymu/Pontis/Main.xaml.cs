@@ -410,38 +410,6 @@ namespace Skymu.Pontis
             }
         }
 
-        const string torepl_start = "<a href=\"skype:?show_add_phone\">";
-        void RefreshAddContactHint(object o, EventArgs e)
-        {
-            // TODO: Investigate why this refuses to work
-            string input = AddContactHint.Text;
-            AddContactHint.Text = "";
-
-            int i = 0;
-            while (i < input.Length)
-            {
-                int start = input.IndexOf(torepl_start, i);
-                if (start == -1)
-                {
-                    AddContactHint.Inlines.Add(new Run(input.Substring(i)));
-                    break;
-                }
-
-                if (start > i)
-                    AddContactHint.Inlines.Add(new Run(input.Substring(i, start - i)));
-
-                int end = input.IndexOf("</a>", start);
-                if (end == -1)
-                    break;
-
-                AddContactHint.Inlines.Add(new Hyperlink(new Run(
-                    input.Substring(start + torepl_start.Length, end - (start + torepl_start.Length))
-                )));
-
-                i = end + 4;
-            }
-        }
-
         #endregion
 
         #region Resizing stuff
@@ -1391,9 +1359,6 @@ namespace Skymu.Pontis
                 ServersColumn.Width = new GridLength(0);
                 SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
             }
-
-            RefreshAddContactHint(null, null);
-            Universal.Lang.PropertyChanged += RefreshAddContactHint;
 
             vmodel.SubscribeTypingIndicator();
 

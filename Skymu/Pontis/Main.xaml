@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:uc="clr-namespace:Skymu.UserControls"
     xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
     Title="Skymu"
     Width="1448"
@@ -1277,16 +1278,15 @@
                                                         Width="80"
                                                         Height="80"
                                                         Source="Assets/Universal/Sidebar/add-contact-bg.png" />
-                                                    <TextBlock
+                                                    <uc:QuickLTB
                                                         x:Name="AddContactHint"
-                                                        Margin="35,15,35,0"
+                                                        Margin="25,15,25,0"
                                                         FontFamily="Tahoma"
                                                         FontSize="11"
                                                         Foreground="#333333"
-                                                        Text="{Binding Path='[sADD_CONTACT_PANEL_MESSAGE]', Source={StaticResource Lang}}"
-                                                        TextAlignment="Center"
-                                                        TextWrapping="Wrap" />
-                                                    <TextBlock Text="WARNING: NOT IMPLEMENTED" />
+                                                        Key="sADD_CONTACT_PANEL_MESSAGE"
+                                                        TextBlock.TextAlignment="Center" />
+                                                    <TextBlock Text="WARNING: NOT IMPLEMENTED" HorizontalAlignment="Center" />
                                                 </StackPanel>
                                             </Grid>
 

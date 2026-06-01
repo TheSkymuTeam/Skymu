@@ -30,19 +30,17 @@ namespace Skymu.Forms.Pages
 
         CancellationTokenSource cts;
         Task findTask;
-        public Metadata FoundData = new User("Sensei Wu", "thesenseiwu", "3926", "fopping around");
+        public Metadata FoundData { get; private set; } = new User("Sensei Wu", "thesenseiwu", "3926", "fopping around");
+        public User FoundUser { get; private set; } = new User("Sensei Wu", "thesenseiwu", "3926", "fopping around");
         IListManagement lmg;
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        public ObservableCollection<Metadata> FoundList { get; set; } =
+        event PropertyChangedEventHandler PropertyChanged;
+        public ObservableCollection<Metadata> FoundList { get; private set; } =
             new ObservableCollection<Metadata>() { new User("Sean Kevin", "jsuisseankevin", "3621", "J'suis Sean Kevin") };
         WindowBase window;
 
         public AddContact()
         {
             InitializeComponent();
-            UserListView.DataContext = this;
             UserListView.ItemsSource = FoundList;
             ShowWindow();
         }
@@ -76,13 +74,6 @@ namespace Skymu.Forms.Pages
             window.ButtonLeft.IsEnabled = false;
             UserDetailsInput.Text = "";
 
-            RefreshText(null, null);
-            Universal.Lang.PropertyChanged += RefreshText;
-            Universal.Lang.PropertyChanged += (o, e) => MoreThingsYouCanDoText.Text = MoreThingsYouCanDoText.Text.Replace("<b>", "").Replace("</b>", "");
-            SelectContactHint.Text = SelectContactHint.Text.Replace("<b>", "").Replace("</b>", "");
-            Universal.Lang.PropertyChanged += (o, e) => {
-                SelectContactHint.Text = SelectContactHint.Text.Replace("<b>", "").Replace("</b>", "");
-            };
             UserDetailsInput.TextChanged += OnTextInput;
 
             window.Show();
@@ -122,6 +113,7 @@ namespace Skymu.Forms.Pages
 
         async Task IFindFriend(string query)
         {
+            SelectContactHint.Visibility = Visibility.Collapsed;
             Metadata[] result = Array.Empty<Metadata>();
             findTask = Task.Run(async () => result = await lmg.FindNewContact(query), cts.Token);
             try
@@ -158,20 +150,18 @@ namespace Skymu.Forms.Pages
         void NextStep()
         {
             FoundData = UserListView.SelectedItem as Metadata;
-            NextStepGrid.Visibility = Visibility.Visible;
-            FirstStepGrid.Visibility = Visibility.Collapsed;
+            if (FoundData is User fu)
+                FoundUser = fu;
+            MainTabControl.SelectedIndex = 1;
             window.ButtonLeftText = Universal.Lang["sZAPBUTTON_SEND"];
             window.ButtonEdgeLeftEnabled = true;
             window.ButtonEdgeLeftAction = () =>
             {
-                NextStepGrid.Visibility = Visibility.Collapsed;
-                FirstStepGrid.Visibility = Visibility.Visible;
+                MainTabControl.SelectedIndex = 0;
                 window.ButtonEdgeLeftEnabled = false;
                 window.ButtonLeftAction = NextStep;
             };
             window.ButtonLeftAction = AddFriend;
-            TopCaptionNS.Text = Universal.Lang["sAC_ADD_CONFIRM_CAPTION"].Replace("%s", FoundData.DisplayName);
-            ParseBold(TopCaptionNS);
         }
 
         void AddFriend()
@@ -199,44 +189,9 @@ namespace Skymu.Forms.Pages
                 // TODO: Failed to add handling. Refernce please...
                 return;
             }
-            NextStepGrid.Visibility = Visibility.Collapsed;
-            LastStepGrid.Visibility = Visibility.Visible;
+            MainTabControl.SelectedIndex = 2;
             window.ButtonEdgeLeftEnabled = false;
             window.ButtonLeft.Visibility = Visibility.Collapsed; // seanFinx Crazy Hack V2
-        }
-
-        void ParseBold(TextBlock block)
-        {
-            string input = block.Text;
-            block.Text = "";
-
-            int i = 0;
-            while (i < input.Length)
-            {
-                int start = input.IndexOf("<b>", i);
-                if (start == -1)
-                {
-                    block.Inlines.Add(new Run(input.Substring(i)));
-                    break;
-                }
-
-                if (start > i)
-                    block.Inlines.Add(new Run(input.Substring(i, start - i)));
-
-                int end = input.IndexOf("</b>", start);
-                if (end == -1)
-                    break;
-
-                string boldText = input.Substring(start + 3, end - (start + 3));
-                block.Inlines.Add(new Bold(new Run(boldText)));
-
-                i = end + 4;
-            }
-        }
-
-        void RefreshText(object o, PropertyChangedEventArgs e)
-        {
-            ParseBold(FindContactDetails);
         }
 
         private void OnTextInput(object o, TextChangedEventArgs e)

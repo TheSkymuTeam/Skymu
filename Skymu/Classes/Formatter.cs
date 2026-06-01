@@ -21,6 +21,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Syntax;
@@ -749,5 +750,180 @@ namespace Skymu.Formatting
             if (!string.IsNullOrEmpty(currentRun.Text))
                 inlines.Add(currentRun);
         }
+
+        private static void ProcessLangNode(string rtext, InlineCollection inlines, object[] args, ref int argi)
+        {
+            var doc = XDocument.Parse("<root>" + rtext + "</root>");
+
+            foreach (XNode node in doc.Root.Nodes())
+            {
+                switch (node)
+                {
+                    /*
+                     * # how skaip works
+                     * 1. simple formatting exists. %s, %d, %% (= literal %), %i (i is number?)
+                     * * %s can appear multiple times (%s (%s: %s)) (Answer incoming call from %s and put %s on hold?)
+                     * 2. html tags.
+                     * * <b>, <center>shit</center>, <br />, <ks>C</ks>
+                     * * <a href="skymu:?smth">, <a name="smth">, <a href="https?://smth">, <a href="%s">, <a href="{SHIT}">, <a href="#">
+                     * * <font type="ShittyFont3000">, <font color="#fabfab">, <font size="11px" color="#6e6e73" name="Tahoma">
+                     * * <img id="4146"/> (the id will be handled with a separate mapping. we do sane asset paths, not an id.)
+                     * * <span class="RegularDisabled">%s</span>
+                    */
+                    case XText xtext:
+                        var text = xtext.Value;
+                        for (int i = 0; i < text.Length; i++)
+                        {
+                            if (text[i] != '%')
+                                continue;
+
+                            if (i + 1 >= text.Length)
+                                break;
+
+                            switch (text[i + 1])
+                            {
+                                case '%':
+                                    break;
+                                case 's':
+                                case 'd':
+                                    text = text.Remove(i, 2);
+                                    string argValue = "null";
+                                    if (args.Length >= argi + 1)
+                                        argValue = args[argi]?.ToString() ?? "null";
+                                    text = text.Insert(i, argValue);
+                                    argi++;
+                                    i += argValue.Length - 1;
+                                    break;
+                                default:
+                                    if (int.TryParse(text[i + 1].ToString(), out int argIndex))
+                                    {
+                                        text = text.Remove(i, 2);
+                                        string argV = "null";
+                                        if (args.Length >= argi + 1)
+                                            argV = args[argi]?.ToString() ?? "null";
+                                        text = text.Insert(i, argV);
+                                        i += argV.Length - 1;
+                                    }
+                                    continue;
+                            }
+
+                            i++;
+                        }
+                        inlines.Add(new Run(text));
+                        break;
+                    case XElement elem:
+                        Span span;
+                        switch (elem.Name.LocalName)
+                        {
+                            case "b":
+                            case "center": // This is bad - but since a center is only used with `<center>text</center>`, nothing surrounding it, it works. Devs, please remember to center it.
+                                span = new Span { FontWeight = FontWeights.Bold };
+                                ProcessLangNode(elem.Value, span.Inlines, args, ref argi);
+                                inlines.Add(span);
+                                break;
+                            case "br":
+                                inlines.Add(new LineBreak());
+                                break;
+                            case "ks": // Is this even right? I have no idea what this tag is used for, but it appears in the langtexts, so here we are. It's barely used anyways.
+                                span = new Span { FontFamily = new FontFamily("Segoe UI Symbol") };
+                                ProcessLangNode(elem.Value, span.Inlines, args, ref argi);
+                                inlines.Add(span);
+                                break;
+                            case "a":
+                                var hyperlink = new Hyperlink(new Run(elem.Value));
+                                var href = elem.Attribute("href")?.Value;
+                                if (href != null)
+                                {
+                                    if (href.StartsWith("%"))
+                                    {
+                                        string argStr = href.Substring(1);
+                                        if (int.TryParse(argStr, out int argIndex))
+                                        {
+                                            string argV = "null";
+                                            if (args.Length >= argi + 1)
+                                                argV = args[argi]?.ToString() ?? "null";
+                                            href = argV;
+                                        }
+                                    }
+                                    else if (href == "#")
+                                    {
+                                        // Since only use case is for Flash, we redirect to... nowhere! This is Skymu, we don't use Flash
+                                    }
+                                    else if (href.StartsWith("{%") && href.EndsWith("%}"))
+                                    {
+                                        string key = href.Substring(2, href.Length - 4);
+                                        if (args.Length >= 1 && args[0] is Dictionary<string, object> dic)
+                                            href = dic[key]?.ToString() ?? "null";
+                                    }
+                                    if (href.StartsWith("skymu:"))
+                                        // handle internal skymu links here if needed
+                                        hyperlink.Click += (s, e) => Universal.URIHandler(href.Substring(6));
+                                    else if (Uri.TryCreate(href, UriKind.Absolute, out Uri uri))
+                                    {
+                                        hyperlink.NavigateUri = uri;
+                                        hyperlink.RequestNavigate += (s, e) =>
+                                            Universal.OpenUrl(e.Uri.AbsoluteUri);
+                                    }
+                                }
+                                else
+                                {
+                                    var name = elem.Attribute("name")?.Value;
+                                    if (name != null)
+                                        hyperlink.Click += (s, e) => Universal.URIHandler($"skymu:#{name}");
+                                }
+                                inlines.Add(hyperlink);
+                                break;
+                            case "img":
+                                var id = elem.Attribute("id")?.Value;
+                                if (id != null)
+                                {
+                                    // handle image mapping here if needed
+                                    // for now, we just add the id as text since the langtexts that use this tag seem to point to a bitmap, which sounds ancient
+                                    inlines.Add(new Run("IMAGE: " + id));
+                                }
+                                break;
+                            case "font":
+                                span = new Span();
+                                var color = elem.Attribute("color")?.Value;
+                                if (color != null)
+                                {
+                                    try
+                                    {
+                                        span.Foreground = new SolidColorBrush(
+                                            (Color)ColorConverter.ConvertFromString(color)
+                                        );
+                                    }
+                                    catch { }
+                                }
+                                var size = elem.Attribute("size")?.Value;
+                                if (size != null)
+                                {
+                                    if (size.EndsWith("px") && double.TryParse(size.Substring(0, size.Length - 2), out double px))
+                                        span.FontSize = px;
+                                    else if (double.TryParse(size, out double sz))
+                                        span.FontSize = sz;
+                                }
+                                var fontName = elem.Attribute("name")?.Value;
+                                if (fontName != null)
+                                    span.FontFamily = new FontFamily(fontName);
+                                ProcessLangNode(elem.Value, span.Inlines, args, ref argi);
+                                inlines.Add(span);
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+
+        public static TextBlock ProcessLangText(string langtext, object[] args, bool wrap = true)
+        {
+            var tb = new TextBlock { TextWrapping = wrap ? TextWrapping.Wrap : TextWrapping.NoWrap };
+
+            int argi = 0;
+            ProcessLangNode(langtext, tb.Inlines, args, ref argi);
+
+            return tb;
+        }
+
     }
 }
