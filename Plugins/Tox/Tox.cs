@@ -554,7 +554,7 @@ namespace Tox
 
         public async Task<bool> SetConnectionStatus(PresenceStatus status)
         {
-            if (currentUser.ConnectionStatus == PresenceStatus.Offline)
+            if (tox.connectionStatus == Tox_Connection.NONE)
             {
                 ERR("You need to wait until you're no longer offline to do that.");
                 return false;
