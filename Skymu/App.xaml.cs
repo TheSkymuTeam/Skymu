@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Yggdrasil;
@@ -264,33 +265,50 @@ namespace Skymu
                     {
                         msg = msg.Substring(msg.IndexOf(":") + 1);
                         Debug.WriteLine($"[Universal] Got skymu URI: {msg}");
-                        var questionmark = msg.IndexOf("?");
-                        var skypename = msg.Substring(0, questionmark == -1 ? msg.Length : questionmark);
-                        if (ActiveViewModel != null)
-                        {
-                            Conversation found = null;
-                            foreach (var c in Universal.Plugin.RecentsList)
-                                if ((c is DirectMessage u) && u.Partner.Username == skypename)
-                                {
-                                    found = c; break;
-                                }
-                            if (found == null)
-                                foreach (DirectMessage u in Universal.Plugin.ContactsList)
-                                    if (u.Partner.Username == skypename)
-                                    {
-                                        found = u; break;
-                                    }
-                            if (found != null)
-                                Dispatcher.Invoke(() =>
-                                    ActiveViewModel.SelectConversation(found)
-                                );
-                        }
+                        URIHandler(msg);
                     }
 
                     reader.Dispose();
                     pipe.Dispose();
                 }
             });
+        }
+
+        public static void URIHandler(string uri)
+        {
+            if (uri.StartsWith("?"))
+            {
+                var cmd = uri.Substring(1);
+                // TODO: Handle URI commands
+            }
+            else if (uri.StartsWith("#"))
+            {
+                // TODO: Handle "add" with AddContact thing
+            }
+            else
+            {
+                var questionmark = uri.IndexOf("?");
+                var skypename = uri.Substring(0, questionmark == -1 ? uri.Length : questionmark);
+                if (ActiveViewModel != null)
+                {
+                    Conversation found = null;
+                    foreach (var c in Universal.Plugin.RecentsList)
+                        if ((c is DirectMessage u) && u.Partner.Username == skypename)
+                        {
+                            found = c; break;
+                        }
+                    if (found == null)
+                        foreach (DirectMessage u in Universal.Plugin.ContactsList)
+                            if (u.Partner.Username == skypename)
+                            {
+                                found = u; break;
+                            }
+                    if (found != null)
+                        Current.Dispatcher.Invoke(() =>
+                            ActiveViewModel.SelectConversation(found)
+                        );
+                }
+            }
         }
 
         public static void Restart()
