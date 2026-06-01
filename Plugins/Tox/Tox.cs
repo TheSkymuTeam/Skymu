@@ -611,19 +611,23 @@ namespace Tox
             if (metadata is User user)
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
-                var f = friends[fid];
+                var f = new User(user.DisplayName, user.DisplayName, user.DisplayName);
+                friends[fid] = f;
                 var dm = new DirectMessage(f, 0, f.Identifier);
                 ContactsList.Add(dm);
                 RecentsList.Add(dm);
             }
             else
             {
+                throw new InvalidOperationException("NGCs/groups are not supported at moment.");
+#pragma warning disable CS0162 // Unreachable code detected
                 var group = metadata as Group;
                 var idt = FromHex(group.Identifier, (int)ToxOO.Size.groupId*2);
 
                 tox_group_join(tox.ptr, idt, currentUser.DisplayName, (UIntPtr)currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
                 RecentsList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
+#pragma warning restore CS0162 // Unreachable code detected
             }
             SAVE();
             return true;

@@ -258,6 +258,7 @@ namespace Tox
                     var bpkey = BATS(pkey);
                     var f = new User(bpkey, bpkey, bpkey);
                     var dm = new DirectMessage(f, 0, BATS(pkey));
+                    core.friends[fid] = f;
                     core.ContactsList.Add(dm);
                     core.RecentsList.Add(dm);
                     return null;
