@@ -35,7 +35,7 @@
                 <Separator
                     Margin="0,10,0,8"/>
                 <global:SliceControl
-                    Source="Assets/AddContact/plus.png"
+                    Source="/Sapphire/Assets/Universal/Icon/plus.png"
                     Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -43,7 +43,7 @@
                     TextSize="11"/>
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="Assets/AddContact/add.png"
+                    Source="/Sapphire/Assets/Universal/Icon/add.png"
                     Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -51,7 +51,7 @@
                     TextSize="11"/>
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="Assets/AddContact/megaphone.png"
+                    Source="/Sapphire/Assets/Universal/Icon/megaphone.png"
                     Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
