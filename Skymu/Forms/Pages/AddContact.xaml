@@ -415,6 +415,13 @@
             HorizontalAlignment="Left"
             Visibility="Collapsed">
             <StackPanel Orientation="Vertical">
+		<!--  joke explaination  -->
+		<!--  Masuo is a YouTuber with a channel "MasuoTV"  -->
+		<!--  On the very first video, they said "Do masuo TV exist? Masuo TV exists!!  -->
+		<!--  hikakin_mania is a YTP community that makes YTP of HikakinTV, SeikinTV, and sometimes MasuoTV -->
+		<!--  And... one of these YTP put an out of context "It absolutely does not exist/not true after the first vid  -->
+		<!--  Therefore, MasuoTV does not exist  -->
+		<!--  Rest is perfection DOESNT EXIST!!!!!!!!!'s lyrics taken  -->
                 <TextBlock
                     Text="I don't understand why I expеct MasuoTV"/>
                 <TextBlock
