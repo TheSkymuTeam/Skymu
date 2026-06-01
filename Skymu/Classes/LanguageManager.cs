@@ -33,7 +33,7 @@ namespace Skymu
                 if (!ldict.TryGetValue(key, out var value))
                     return key;
 
-                return value.Replace("Skype", Settings.BrandingName);
+                return value.Replace("Skype", Settings.BrandingName).Replace("skype:", "skymu:");
             }
         }
 
