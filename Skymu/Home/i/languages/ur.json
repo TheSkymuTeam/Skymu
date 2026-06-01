@@ -1,0 +1,11 @@
+{
+	"SH.DefaultLanguage": {
+		"myselfPanel":{
+			"header": "خبریں اور الرٹس",
+			"addVideo": "ویڈیو شامل کریں",
+			"changePicture": "اپنی تصویر تبدیل کرنے کے لیے کلک کریں",
+			"showTopContacts": "اعلی روابط دکھائیں",
+			"share": "اپ ڈیٹ کریں",
+			"updateMoodMessage": "اپنا موڈ پیغام اپ ڈیٹ کریں",
+			"setPictureAndUpdate": "اپنی تصویر سیٹ کریں اور پھر اپنا موڈ پیغام اپ ڈیٹ کریں"
+		},
