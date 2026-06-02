@@ -615,6 +615,45 @@ namespace Discord
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
                 return false;
 
+            // edit message typeshit
+            if (!string.IsNullOrWhiteSpace(text) && text.StartsWith("s/"))
+            {
+                var sedMatch = System.Text.RegularExpressions.Regex.Match(text, @"^s/([^/]+)/([^/]*)/?$");
+                if (sedMatch.Success)
+                {
+                    string oldText = sedMatch.Groups[1].Value;
+                    string newText = sedMatch.Groups[2].Value;
+
+                    try
+                    {
+                        // fetch so it finds ur last msg
+                        string parameters = $"/channels/{channelId}/messages?limit=20";
+                        string encJson = await Client.Send(parameters, HttpMethod.Get, DiscordToken, null, null, null, null).ConfigureAwait(false);
+                        var parsed = JsonNode.Parse(encJson);
+
+                        if (parsed is JsonArray messages)
+                        {
+                            foreach (var node in messages)
+                            {
+                                var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+
+                                // last msg by the logged in user
+                                if (item is Message msg && msg.Sender?.Identifier == MyInformation?.Identifier)
+                                {
+                                    // replace n call
+                                    string modifiedText = msg.Text.Replace(oldText, newText);
+                                    return await EditMessage(identifier, msg.Identifier, modifiedText).ConfigureAwait(false);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Failed to edit message with SED: {ex.Message}");
+                    }
+                }
+            }
+
             if (action)
                 text = $"_{text}_"; // just like how official Discord client does it
 
@@ -651,6 +690,68 @@ namespace Discord
             catch (Exception ex)
             {
                 OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> EditMessage(string conversationId, string messageId, string newText)
+        {
+            if (string.IsNullOrWhiteSpace(conversationId) || string.IsNullOrWhiteSpace(messageId) || string.IsNullOrWhiteSpace(newText))
+                return false;
+
+            if (!HelperMethods.TryToGetChannelId(conversationId, out var channelId))
+                return false;
+
+            try
+            {
+                var payloadJson = new { content = newText };
+
+                // Send a request to discord with PATCH to Edit the msg
+                string msgResponse = await Client.Send(
+                    $"/channels/{channelId}/messages/{messageId}",
+                    new HttpMethod("PATCH"),
+                    DiscordToken,
+                    payloadJson,
+                    null,
+                    null,
+                    null
+                ).ConfigureAwait(false);
+
+                return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to edit message: {ex.Message}"));
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteMessage(string conversationId, string messageId)
+        {
+            if (string.IsNullOrWhiteSpace(conversationId) || string.IsNullOrWhiteSpace(messageId))
+                return false;
+
+            if (!HelperMethods.TryToGetChannelId(conversationId, out var channelId))
+                return false;
+
+            try
+            {
+                // Send a request to discord with DELETE to Del the msg
+                string msgResponse = await Client.Send(
+                    $"/channels/{channelId}/messages/{messageId}",
+                    HttpMethod.Delete,
+                    DiscordToken,
+                    null,
+                    null,
+                    null,
+                    null
+                ).ConfigureAwait(false);
+
+                return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to delete message: {ex.Message}"));
                 return false;
             }
         }

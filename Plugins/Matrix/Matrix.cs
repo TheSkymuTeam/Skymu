@@ -671,6 +671,25 @@ namespace Matrix
             }
         }
 
+        public Task<bool> EditMessage(
+            string conversationId,
+            string messageId,
+            string newText
+        )
+        {
+            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message editing is not implemented."));
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> DeleteMessage(
+            string conversationId,
+            string messageId
+        )
+        {
+            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message deletion is not implemented."));
+            return Task.FromResult(false);
+        }
+
         public async Task<bool> SendTypingIndicator(string identifier, bool isTyping)
         {
             if (string.IsNullOrEmpty(identifier))
