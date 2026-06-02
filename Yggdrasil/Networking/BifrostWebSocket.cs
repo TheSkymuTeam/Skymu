@@ -140,6 +140,14 @@ namespace Yggdrasil.Networking
             Debug.WriteLine($"[BIFROST-WS] Sent {buffer.Count} byte {messageType} frame.");
         }
 
+        private static string SanitizeHeader(string value)
+        {
+            if (value == null) return string.Empty;
+            if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0)
+                throw new ArgumentException($"Header contains illegal CR or LF characters.");
+            return value;
+        }
+
         public async Task<WebSocketReceiveResult> ReceiveAsync(
             ArraySegment<byte> buffer, CancellationToken ct)
         {
@@ -281,7 +289,7 @@ namespace Yggdrasil.Networking
                 sb.Append($"Sec-WebSocket-Protocol: {RequestedSubProtocol}\r\n");
 
             foreach (var kvp in RequestHeaders)
-                sb.Append($"{kvp.Key}: {kvp.Value}\r\n");
+                sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(kvp.Value)}\r\n");
 
             sb.Append("\r\n");
 
