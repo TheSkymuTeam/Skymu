@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v5
@@ -34,7 +34,7 @@ jobs:
       run: makensis NSIS/SkymuBetaSetup.nsi
 
     - name: 5. Export Release Folder to Artifacts
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v7
       with:
         name: beta-build
         path: 'NSIS/Skymu Installer (BETA).exe'
