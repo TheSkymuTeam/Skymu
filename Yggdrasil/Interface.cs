@@ -50,6 +50,15 @@ namespace Yggdrasil
             string parent_message_identifier = null,
             bool action = false // /me, Tox calls them action messages
         ); // Sends a message. Returns true on success.
+        Task<bool> EditMessage(
+            string conversation_id,
+            string message_id,
+            string new_text
+        ); // Edits a message. Returns true on success.
+        Task<bool> DeleteMessage(
+            string conversation_id,
+            string message_id
+        ); // Deletes an existing message. Returns true on success.
         User MyInformation { get; } // field for current user's data, ideally bound to a WebSocket or similar for real-time updates.
         Task<bool> PopulateUserInformation(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         ObservableCollection<DirectMessage> ContactsList { get; } // field for contact list, ideally bound to a WebSocket or similar for real-time updates.
