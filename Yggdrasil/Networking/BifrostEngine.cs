@@ -47,6 +47,14 @@ namespace Yggdrasil.Networking
             _maxPoolSize = maxPoolSize;
         }
 
+        private static string SanitizeHeader(string value)
+        {
+            if (value == null) return string.Empty;
+            if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0)
+                throw new ArgumentException($"Header contains illegal CR or LF characters.");
+            return value;
+        }
+
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -91,13 +99,13 @@ namespace Yggdrasil.Networking
 
             foreach (var kvp in request.Headers)
                 foreach (var val in kvp.Value)
-                    sb.Append($"{kvp.Key}: {val}\r\n");
+                    sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(val)}\r\n");
 
             if (request.Content != null)
             {
                 foreach (var kvp in request.Content.Headers)
                     foreach (var val in kvp.Value)
-                        sb.Append($"{kvp.Key}: {val}\r\n");
+                        sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(val)}\r\n");
 
                 if (bodyBytes != null && bodyBytes.Length > 0
                     && !request.Content.Headers.Contains("Content-Length"))
