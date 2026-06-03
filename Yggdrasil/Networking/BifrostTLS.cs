@@ -16,6 +16,7 @@
 
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1;
