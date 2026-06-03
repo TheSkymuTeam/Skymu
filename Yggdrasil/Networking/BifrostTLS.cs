@@ -17,7 +17,6 @@
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
-using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1;
 using System;
@@ -28,6 +27,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -52,19 +52,20 @@ namespace Yggdrasil.Networking
 
     internal static class BifrostTLS
     {
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)>
-            _certCache = new System.Collections.Concurrent.ConcurrentDictionary<string, (string, DateTime)>(StringComparer.OrdinalIgnoreCase);
-
         public static async Task<Stream> OpenAsync(
             string host, int port, bool isHttps, CancellationToken ct)
         {
             BifrostLog.Write($"[BIFROST-TLS] Opening connection to {host}:{port}");
 
-            var socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)
-            {
-                NoDelay = true
-            };
-            socket.DualMode = true;
+            bool useDualMode = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                && Environment.OSVersion.Version.Build >= 6000;
+
+            var socket = useDualMode
+                ? new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true }
+                : new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+
+            if (useDualMode)
+                socket.DualMode = true;
 
             var connectTcs = new TaskCompletionSource<bool>();
             using (ct.Register(() => connectTcs.TrySetCanceled()))
@@ -94,7 +95,7 @@ namespace Yggdrasil.Networking
             await Task.Run(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                protocol.Connect(new BifrostTLSClient(host, _certCache));
+                protocol.Connect(new BifrostTLSClient(host));
                 BifrostLog.Write($"[BIFROST-TLS] TLS handshake complete with {host}");
             }, ct).ConfigureAwait(false);
 
@@ -105,15 +106,11 @@ namespace Yggdrasil.Networking
     internal sealed class BifrostTLSClient : DefaultTlsClient
     {
         private readonly string _host;
-        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> _certCache;
 
-        public BifrostTLSClient(
-            string host,
-            System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> certCache)
+        public BifrostTLSClient(string host)
             : base(new BcTlsCrypto(new SecureRandom()))
         {
             _host = host;
-            _certCache = certCache;
         }
 
         public override ProtocolVersion[] GetProtocolVersions()
@@ -152,19 +149,15 @@ namespace Yggdrasil.Networking
         }
 
         public override TlsAuthentication GetAuthentication()
-            => new BouncyCertAuth(_host, _certCache);
+            => new BouncyCertAuth(_host);
 
         private sealed class BouncyCertAuth : TlsAuthentication
         {
             private readonly string _host;
-            private readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> _certCache;
 
-            public BouncyCertAuth(
-                string host,
-                System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> certCache)
+            public BouncyCertAuth(string host)
             {
                 _host = host;
-                _certCache = certCache;
             }
 
             public TlsCredentials GetClientCredentials(CertificateRequest req) => null;
@@ -180,19 +173,6 @@ namespace Yggdrasil.Networking
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
                 var leaf = dotnetCerts[0];
-
-                if (_certCache.TryGetValue(_host, out var cached))
-                {
-                    if (cached.Thumbprint == leaf.Thumbprint && DateTime.UtcNow < cached.Expiry)
-                    {
-                        BifrostLog.Write($"[BIFROST-TLS] Cache hit for {_host}, skipping full validation");
-                        return;
-                    }
-                    else if (cached.Thumbprint != leaf.Thumbprint)
-                    {
-                        BifrostLog.Write($"[BIFROST-TLS] WARNING: Certificate thumbprint changed for {_host}, re-validating");
-                    }
-                }
 
                 // Default configurations if shared.xml doesn't exist
                 bool isSysCert = false;
@@ -228,12 +208,6 @@ namespace Yggdrasil.Networking
                     BifrostLog.Write($"[BIFROST-TLS] Failed to parse Ratatoskr config: {ex.Message}");
                 }
 
-                // prefer custom certs over sys
-                if (useCustom)
-                {
-                    isSysCert = false;
-                }
-
                 var now = DateTime.UtcNow;
                 if (now < leaf.NotBefore || now > leaf.NotAfter)
                     throw new TlsFatalAlert(AlertDescription.certificate_expired,
@@ -241,7 +215,40 @@ namespace Yggdrasil.Networking
 
                 bool chainValid = false;
 
-                if (isSysCert)
+                if (useCustom)
+                {
+                    var trustedThumbprints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var pemCerts = new X509Certificate2Collection();
+
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(customPath) && File.Exists(customPath))
+                        {
+                            BifrostLog.Write($"[BIFROST-TLS] Using custom cacert.pem");
+                            using (var fs = File.OpenRead(customPath))
+                                LoadPemCerts(fs, trustedThumbprints, pemCerts);
+                        }
+                        else
+                        {
+                            throw new TlsFatalAlert(AlertDescription.internal_error,
+                                new Exception("Invalid Custom Certificate chain: CertStore is Custom but CertPath is missing or the file does not exist."));
+                        }
+                    }
+                    catch (TlsFatalAlert)
+                    {
+                        throw;
+                    }
+                    catch
+                    {
+                        throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: Could not load the provided cacert.pem file."));
+                    }
+
+                    if (trustedThumbprints.Count == 0)
+                        throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: cacert.pem is empty or invalid."));
+
+                    chainValid = WalkChain(bcCerts, trustedThumbprints, pemCerts);
+                }
+                else if (isSysCert)
                 {
                     BifrostLog.Write($"[BIFROST-TLS] Using system certificate chain");
                     using (var chain = new X509Chain())
@@ -265,29 +272,15 @@ namespace Yggdrasil.Networking
 
                     try
                     {
-                        if (useCustom && !string.IsNullOrWhiteSpace(customPath) && File.Exists(customPath))
-                        {
-                            BifrostLog.Write($"[BIFROST-TLS] Using custom cacert.pem");
-                            using (var fs = File.OpenRead(customPath))
-                                LoadPemCerts(fs, trustedThumbprints, pemCerts);
-                        }
-                        else if (useCustom)
-                        {
-                            throw new TlsFatalAlert(AlertDescription.internal_error,
-                                new Exception("Invalid Custom Certificate chain: CertStore is Custom but CertPath is missing or the file does not exist."));
-                        }
-                        else
-                        {
-                            BifrostLog.Write($"[BIFROST-TLS] Using built-in cacert.pem");
-                            var assembly = Assembly.GetExecutingAssembly();
-                            string resourceName = assembly.GetManifestResourceNames()
-                                .FirstOrDefault(n => n.EndsWith("cacert.pem", StringComparison.OrdinalIgnoreCase));
+                        BifrostLog.Write($"[BIFROST-TLS] Using built-in cacert.pem");
+                        var assembly = Assembly.GetExecutingAssembly();
+                        string resourceName = assembly.GetManifestResourceNames()
+                            .FirstOrDefault(n => n.EndsWith("cacert.pem", StringComparison.OrdinalIgnoreCase));
 
-                            if (resourceName != null)
-                            {
-                                using (var stream = assembly.GetManifestResourceStream(resourceName))
-                                    LoadPemCerts(stream, trustedThumbprints, pemCerts);
-                            }
+                        if (resourceName != null)
+                        {
+                            using (var stream = assembly.GetManifestResourceStream(resourceName))
+                                LoadPemCerts(stream, trustedThumbprints, pemCerts);
                         }
                     }
                     catch (TlsFatalAlert)
@@ -296,16 +289,28 @@ namespace Yggdrasil.Networking
                     }
                     catch
                     {
-                        if (useCustom)
-                            throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: Could not load the provided cacert.pem file."));
-                        else
-                            throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("BifrostTLS error: Could not load embedded or localized cacert.pem resources."));
+                        throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("BifrostTLS error: Could not load embedded or localized cacert.pem resources."));
                     }
 
-                    if (trustedThumbprints.Count == 0 && useCustom)
-                        throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: cacert.pem is empty or invalid."));
-
                     chainValid = WalkChain(bcCerts, trustedThumbprints, pemCerts);
+
+                    if (!chainValid)
+                    {
+                        BifrostLog.Write($"[BIFROST-TLS] Embedded bundle failed for {_host}, falling back to system store");
+                        using (var chain = new X509Chain())
+                        {
+                            chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
+
+                            for (int i = 1; i < dotnetCerts.Count; i++)
+                                chain.ChainPolicy.ExtraStore.Add(dotnetCerts[i]);
+
+                            chainValid = chain.Build(leaf);
+
+                            if (!chainValid)
+                                foreach (var status in chain.ChainStatus)
+                                    BifrostLog.Write($"[BIFROST-TLS] System chain error: {status.StatusInformation}");
+                        }
+                    }
                 }
 
                 byte[] leafEncodedBytes = bcCerts[0].GetEncoded();
@@ -350,8 +355,6 @@ namespace Yggdrasil.Networking
                     );
                 }
 
-                _certCache[_host] = (leaf.Thumbprint, leaf.NotAfter);
-                BifrostLog.Write($"[BIFROST-TLS] Cached validation result for {_host} until {leaf.NotAfter:u}");
             }
 
             private static bool WalkChain(
