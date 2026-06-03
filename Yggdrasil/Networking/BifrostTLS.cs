@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -17,6 +17,7 @@
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1;
 using System;
@@ -40,17 +41,30 @@ namespace Yggdrasil.Networking
         Custom
     }
 
+    internal static class BifrostLog
+    {
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Write(string message)
+        {
+            Debug.WriteLine(message);
+        }
+    }
+
     internal static class BifrostTLS
     {
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)>
+            _certCache = new System.Collections.Concurrent.ConcurrentDictionary<string, (string, DateTime)>(StringComparer.OrdinalIgnoreCase);
+
         public static async Task<Stream> OpenAsync(
             string host, int port, bool isHttps, CancellationToken ct)
         {
-            Debug.WriteLine($"[BIFROST-TLS] Opening connection to {host}:{port}");
+            BifrostLog.Write($"[BIFROST-TLS] Opening connection to {host}:{port}");
 
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            var socket = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp)
             {
                 NoDelay = true
             };
+            socket.DualMode = true;
 
             var connectTcs = new TaskCompletionSource<bool>();
             using (ct.Register(() => connectTcs.TrySetCanceled()))
@@ -68,7 +82,7 @@ namespace Yggdrasil.Networking
                 await connectTask.ConfigureAwait(false);
             }
 
-            Debug.WriteLine($"[BIFROST-TLS] TCP connected to {host}:{port}");
+            BifrostLog.Write($"[BIFROST-TLS] TCP connected to {host}:{port}");
 
             Stream stream = new NetworkStream(socket, ownsSocket: true);
 
@@ -80,8 +94,8 @@ namespace Yggdrasil.Networking
             await Task.Run(() =>
             {
                 ct.ThrowIfCancellationRequested();
-                protocol.Connect(new BifrostTLSClient(host));
-                Debug.WriteLine($"[BIFROST-TLS] TLS handshake complete with {host}");
+                protocol.Connect(new BifrostTLSClient(host, _certCache));
+                BifrostLog.Write($"[BIFROST-TLS] TLS handshake complete with {host}");
             }, ct).ConfigureAwait(false);
 
             return protocol.Stream;
@@ -91,17 +105,21 @@ namespace Yggdrasil.Networking
     internal sealed class BifrostTLSClient : DefaultTlsClient
     {
         private readonly string _host;
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> _certCache;
 
-        public BifrostTLSClient(string host)
+        public BifrostTLSClient(
+            string host,
+            System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> certCache)
             : base(new BcTlsCrypto(new SecureRandom()))
         {
             _host = host;
+            _certCache = certCache;
         }
 
         public override ProtocolVersion[] GetProtocolVersions()
         {
             var versions = base.GetProtocolVersions();
-            Debug.WriteLine($"[BIFROST-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}"); // debug to check if tls 1.3 is working for you (it should be)
+            BifrostLog.Write($"[BIFROST-TLS] Advertising TLS versions: {string.Join(", ", versions.Select(v => v.ToString()))}"); // debug to check if tls 1.3 is working for you (it should be)
             return versions;
         }
 
@@ -118,29 +136,36 @@ namespace Yggdrasil.Networking
         public override void NotifySelectedCipherSuite(int selectedCipherSuite)
         {
             base.NotifySelectedCipherSuite(selectedCipherSuite);
-            Debug.WriteLine($"[BIFROST-TLS] Cipher suite: 0x{selectedCipherSuite:X4}");
+            BifrostLog.Write($"[BIFROST-TLS] Cipher suite: 0x{selectedCipherSuite:X4}");
         }
 
         public override void NotifyServerVersion(ProtocolVersion serverVersion)
         {
             base.NotifyServerVersion(serverVersion);
-            Debug.WriteLine($"[BIFROST-TLS] Negotiated TLS version: {serverVersion}");
+            BifrostLog.Write($"[BIFROST-TLS] Negotiated TLS version: {serverVersion}");
         }
 
         public override void NotifyAlertReceived(short alertLevel, short alertDescription)
         {
-            Debug.WriteLine($"[BIFROST-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
+            BifrostLog.Write($"[BIFROST-TLS] Alert received, level {alertLevel}, description {alertDescription}: {AlertDescription.GetText(alertDescription)}");
             base.NotifyAlertReceived(alertLevel, alertDescription);
         }
 
         public override TlsAuthentication GetAuthentication()
-            => new BouncyCertAuth(_host);
+            => new BouncyCertAuth(_host, _certCache);
 
         private sealed class BouncyCertAuth : TlsAuthentication
         {
             private readonly string _host;
+            private readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> _certCache;
 
-            public BouncyCertAuth(string host) => _host = host;
+            public BouncyCertAuth(
+                string host,
+                System.Collections.Concurrent.ConcurrentDictionary<string, (string Thumbprint, DateTime Expiry)> certCache)
+            {
+                _host = host;
+                _certCache = certCache;
+            }
 
             public TlsCredentials GetClientCredentials(CertificateRequest req) => null;
 
@@ -150,16 +175,30 @@ namespace Yggdrasil.Networking
                 if (bcCerts == null || bcCerts.Length == 0)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate, new Exception("BifrostTLS error: The server did not provide any certificates [42]"));
 
-                var dotnetCerts = new X509Certificate2Collection(); 
+                var dotnetCerts = new X509Certificate2Collection();
                 foreach (var bcCert in bcCerts)
                     dotnetCerts.Add(new X509Certificate2(bcCert.GetEncoded()));
 
                 var leaf = dotnetCerts[0];
 
+                if (_certCache.TryGetValue(_host, out var cached))
+                {
+                    if (cached.Thumbprint == leaf.Thumbprint && DateTime.UtcNow < cached.Expiry)
+                    {
+                        BifrostLog.Write($"[BIFROST-TLS] Cache hit for {_host}, skipping full validation");
+                        return;
+                    }
+                    else if (cached.Thumbprint != leaf.Thumbprint)
+                    {
+                        BifrostLog.Write($"[BIFROST-TLS] WARNING: Certificate thumbprint changed for {_host}, re-validating");
+                    }
+                }
+
                 // Default configurations if shared.xml doesn't exist
                 bool isSysCert = false;
                 bool useCustom = false;
                 string customPath = string.Empty;
+                bool enableCnFallback = false;
 
                 try
                 {
@@ -179,11 +218,14 @@ namespace Yggdrasil.Networking
                             useCustom = certStore == CertStore.Custom;
                         }
                         if (certPathEl != null) customPath = certPathEl.Value;
+                        var cnFallbackEl = doc.Root.Element("EnableCNFallback");
+                        if (cnFallbackEl != null && bool.TryParse(cnFallbackEl.Value, out var cnFallback))
+                            enableCnFallback = cnFallback;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"[BIFROST-TLS] Failed to parse Ratatoskr config: {ex.Message}");
+                    BifrostLog.Write($"[BIFROST-TLS] Failed to parse Ratatoskr config: {ex.Message}");
                 }
 
                 // prefer custom certs over sys
@@ -192,11 +234,16 @@ namespace Yggdrasil.Networking
                     isSysCert = false;
                 }
 
+                var now = DateTime.UtcNow;
+                if (now < leaf.NotBefore || now > leaf.NotAfter)
+                    throw new TlsFatalAlert(AlertDescription.certificate_expired,
+                        new Exception($"BifrostTLS error: Server certificate for '{_host}' has expired or is not yet valid [45]"));
+
                 bool chainValid = false;
 
                 if (isSysCert)
                 {
-                    Debug.WriteLine($"[BIFROST-TLS] Using system certificate chain");
+                    BifrostLog.Write($"[BIFROST-TLS] Using system certificate chain");
                     using (var chain = new X509Chain())
                     {
                         chain.ChainPolicy.RevocationMode = X509RevocationMode.Online;
@@ -208,7 +255,7 @@ namespace Yggdrasil.Networking
 
                         if (!chainValid)
                             foreach (var status in chain.ChainStatus)
-                                Debug.WriteLine($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
+                                BifrostLog.Write($"[BIFROST-TLS] Chain error: {status.StatusInformation}");
                     }
                 }
                 else
@@ -218,23 +265,20 @@ namespace Yggdrasil.Networking
 
                     try
                     {
-                        string appDirRootPem = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cacert.pem");
-
                         if (useCustom && !string.IsNullOrWhiteSpace(customPath) && File.Exists(customPath))
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Using custom cacert.pem");
+                            BifrostLog.Write($"[BIFROST-TLS] Using custom cacert.pem");
                             using (var fs = File.OpenRead(customPath))
                                 LoadPemCerts(fs, trustedThumbprints, pemCerts);
                         }
-                        else if (File.Exists(appDirRootPem))
+                        else if (useCustom)
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Using custom cacert.pem");
-                            using (var fs = File.OpenRead(appDirRootPem))
-                                LoadPemCerts(fs, trustedThumbprints, pemCerts);
+                            throw new TlsFatalAlert(AlertDescription.internal_error,
+                                new Exception("Invalid Custom Certificate chain: CertStore is Custom but CertPath is missing or the file does not exist."));
                         }
                         else
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Using built-in cacert.pem");
+                            BifrostLog.Write($"[BIFROST-TLS] Using built-in cacert.pem");
                             var assembly = Assembly.GetExecutingAssembly();
                             string resourceName = assembly.GetManifestResourceNames()
                                 .FirstOrDefault(n => n.EndsWith("cacert.pem", StringComparison.OrdinalIgnoreCase));
@@ -245,6 +289,10 @@ namespace Yggdrasil.Networking
                                     LoadPemCerts(stream, trustedThumbprints, pemCerts);
                             }
                         }
+                    }
+                    catch (TlsFatalAlert)
+                    {
+                        throw;
                     }
                     catch
                     {
@@ -257,69 +305,22 @@ namespace Yggdrasil.Networking
                     if (trustedThumbprints.Count == 0 && useCustom)
                         throw new TlsFatalAlert(AlertDescription.internal_error, new Exception("Invalid Custom Certificate chain: cacert.pem is empty or invalid."));
 
-                    bool foundTrustedAnchor = false;
-                    bool hasFatalErrors = false;
-
-                    try
-                    {
-                        var bcParser = new Org.BouncyCastle.X509.X509CertificateParser();
-
-                        foreach (var tlsCert in bcCerts)
-                        {
-                            var serverBcCert = bcParser.ReadCertificate(tlsCert.GetEncoded());
-                            var dotNetCert = new X509Certificate2(tlsCert.GetEncoded());
-
-                            if (trustedThumbprints.Contains(dotNetCert.Thumbprint))
-                            {
-                                foundTrustedAnchor = true;
-                                break;
-                            }
-
-                            foreach (var pemCert in pemCerts)
-                            {
-                                if (dotNetCert.Issuer == pemCert.Subject)
-                                {
-                                    try
-                                    {
-                                        var pemBcCert = bcParser.ReadCertificate(pemCert.RawData);
-                                        serverBcCert.Verify(pemBcCert.GetPublicKey());
-                                        foundTrustedAnchor = true;
-                                        break;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Debug.WriteLine($"[BIFROST-TLS] Fatal chain error: {ex.Message}");
-                                        hasFatalErrors = true;
-                                    }
-                                }
-                            }
-
-                            if (foundTrustedAnchor)
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        hasFatalErrors = true;
-                        Debug.WriteLine($"[BIFROST-TLS] Chain error: {ex.Message}");
-                    }
-
-                    chainValid = foundTrustedAnchor && !hasFatalErrors;
+                    chainValid = WalkChain(bcCerts, trustedThumbprints, pemCerts);
                 }
 
                 byte[] leafEncodedBytes = bcCerts[0].GetEncoded();
                 Org.BouncyCastle.X509.X509Certificate leafX509 =
                     new Org.BouncyCastle.X509.X509CertificateParser().ReadCertificate(leafEncodedBytes);
 
-                (bool, List<string>) certHostInfo = GetCertificateHostInformation(leaf, _host);
+                (bool hostMatch, List<string> domains) = GetCertificateHostInformation(leaf, _host, enableCnFallback);
 
-                Debug.WriteLine(
-                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={certHostInfo.Item1} host={_host}"
+                BifrostLog.Write(
+                    $"[BIFROST-TLS] Chain={chainValid} HostMatch={hostMatch} host={_host}"
                 );
 
                 string customText = useCustom ? "Using custom certificate: " : string.Empty;
 
-                if (!chainValid && !certHostInfo.Item1)
+                if (!chainValid && !hostMatch)
                 {
                     throw new TlsFatalAlert(
                         AlertDescription.bad_certificate,
@@ -338,19 +339,95 @@ namespace Yggdrasil.Networking
                     );
                 }
 
-                else if (!certHostInfo.Item1)
+                else if (!hostMatch)
                 {
                     throw new TlsFatalAlert(
                         AlertDescription.bad_certificate,
                         new Exception(
                             $"BifrostTLS error: Host is invalid, '{_host}' does "
-                                + $"not match certificate [42].\n\nThe certificate is valid for the following domains:\n{string.Join(Environment.NewLine, certHostInfo.Item2.ToArray())}"
+                                + $"not match certificate [42].\n\nThe certificate is valid for the following domains:\n{string.Join(Environment.NewLine, domains.ToArray())}"
                         )
                     );
                 }
+
+                _certCache[_host] = (leaf.Thumbprint, leaf.NotAfter);
+                BifrostLog.Write($"[BIFROST-TLS] Cached validation result for {_host} until {leaf.NotAfter:u}");
             }
 
-            private static (bool, List<string>) GetCertificateHostInformation(X509Certificate2 cert, string host)
+            private static bool WalkChain(
+                TlsCertificate[] bcCerts,
+                HashSet<string> trustedThumbprints,
+                X509Certificate2Collection pemCerts,
+                int maxDepth = 10)
+            {
+                var bcParser = new Org.BouncyCastle.X509.X509CertificateParser();
+                var now = DateTime.UtcNow;
+
+                var serverChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                foreach (var tlsCert in bcCerts)
+                    serverChain.Add(bcParser.ReadCertificate(tlsCert.GetEncoded()));
+
+                var storeChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                foreach (X509Certificate2 pemCert in pemCerts)
+                    storeChain.Add(bcParser.ReadCertificate(pemCert.RawData));
+
+                return WalkChainRecursive(serverChain[0], serverChain, storeChain, trustedThumbprints, now, 0, maxDepth);
+            }
+
+            private static bool WalkChainRecursive(
+                Org.BouncyCastle.X509.X509Certificate cert,
+                List<Org.BouncyCastle.X509.X509Certificate> serverChain,
+                List<Org.BouncyCastle.X509.X509Certificate> storeChain,
+                HashSet<string> trustedThumbprints,
+                DateTime now,
+                int depth,
+                int maxDepth)
+            {
+                if (depth > maxDepth)
+                {
+                    BifrostLog.Write($"[BIFROST-TLS] Chain walk exceeded max depth ({maxDepth})");
+                    return false;
+                }
+
+                if (now < cert.NotBefore.ToUniversalTime() || now > cert.NotAfter.ToUniversalTime())
+                {
+                    BifrostLog.Write($"[BIFROST-TLS] Cert expired or not yet valid: {cert.SubjectDN}");
+                    return false;
+                }
+
+                var dotNetCert = new X509Certificate2(cert.GetEncoded());
+                if (trustedThumbprints.Contains(dotNetCert.Thumbprint))
+                {
+                    BifrostLog.Write($"[BIFROST-TLS] Found trusted anchor: {cert.SubjectDN}");
+                    return true;
+                }
+
+                var candidates = serverChain
+                    .Where(c => !ReferenceEquals(c, cert))
+                    .Concat(storeChain)
+                    .Where(c => c.SubjectDN.Equivalent(cert.IssuerDN));
+
+                foreach (var issuer in candidates)
+                {
+                    try
+                    {
+                        cert.Verify(issuer.GetPublicKey());
+                    }
+                    catch
+                    {
+                        BifrostLog.Write($"[BIFROST-TLS] Signature verification failed: {cert.SubjectDN} signed by {issuer.SubjectDN}");
+                        continue;
+                    }
+
+                    if (WalkChainRecursive(issuer, serverChain, storeChain, trustedThumbprints, now, depth + 1, maxDepth))
+                        return true;
+                }
+
+                BifrostLog.Write($"[BIFROST-TLS] No valid issuer found for: {cert.SubjectDN}");
+                return false;
+            }
+
+            private static (bool, List<string>) GetCertificateHostInformation(X509Certificate2 cert, string host, bool enableCnFallback)
             {
                 var domains = new List<string>();
 
@@ -370,21 +447,27 @@ namespace Yggdrasil.Networking
 
                         if (NameMatches(dnsName, host))
                         {
-                            Debug.WriteLine($"[BIFROST-TLS] Host matched SAN: {dnsName}");
+                            BifrostLog.Write($"[BIFROST-TLS] Host matched SAN: {dnsName}");
                             return (true, domains);
                         }
                     }
 
-                    Debug.WriteLine($"[BIFROST-TLS] SANs present but no match for {host}");
+                    BifrostLog.Write($"[BIFROST-TLS] SANs present but no match for {host}");
                     return (false, domains);
                 }
 
                 // fall back to CN if no SAN extension (for older stuff?)
-                string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
-                domains.Add(cn);
-                bool cnMatch = NameMatches(cn, host);
-                Debug.WriteLine($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
-                return (cnMatch, domains);
+                if (enableCnFallback)
+                {
+                    string cn = cert.GetNameInfo(X509NameType.SimpleName, false);
+                    domains.Add(cn);
+                    bool cnMatch = NameMatches(cn, host);
+                    BifrostLog.Write($"[BIFROST-TLS] CN fallback: CN={cn} match={cnMatch}");
+                    return (cnMatch, domains);
+                }
+
+                BifrostLog.Write($"[BIFROST-TLS] No SAN extension found for {host}, rejecting");
+                return (false, domains);
             }
 
             private void LoadPemCerts(Stream stream, HashSet<string> thumbprints, X509Certificate2Collection extraStore)
@@ -414,6 +497,10 @@ namespace Yggdrasil.Networking
                     return false;
 
                 string suffix = pattern.Substring(1);
+
+                int dotCount = suffix.Count(c => c == '.');
+                if (dotCount < 2)
+                    return false;
 
                 if (!host.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
                     return false;
