@@ -654,6 +654,40 @@ namespace Discord
                 }
             }
 
+            // delete message typeshit
+            if (!string.IsNullOrWhiteSpace(text) && text.Trim() == "d/")
+            {
+                try
+                {
+                    // fetch so it finds ur last msg
+                    string parameters = $"/channels/{channelId}/messages?limit=20";
+                    string encJson = await Client.Send(parameters, HttpMethod.Get, DiscordToken, null, null, null, null).ConfigureAwait(false);
+                    var parsed = JsonNode.Parse(encJson);
+
+                    if (parsed is JsonArray messages)
+                    {
+                        foreach (var node in messages)
+                        {
+                            var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+
+                            // last msg by the logged in user
+                            if (item is Message msg && msg.Sender?.Identifier == MyInformation?.Identifier)
+                            {
+                                // call delete backend directly
+                                await DeleteMessage(identifier, msg.Identifier).ConfigureAwait(false);
+
+                                // better to show error than infinity stuck
+                                return false;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to delete message [TEST]: {ex.Message}");
+                }
+            }
+
             if (action)
                 text = $"_{text}_"; // just like how official Discord client does it
 
@@ -747,7 +781,9 @@ namespace Discord
                     null
                 ).ConfigureAwait(false);
 
-                return !string.IsNullOrEmpty(msgResponse) && !msgResponse.Contains("error");
+                // Discord returns an empty string on success (204 No Content)
+                // So msgResponse == string.Empty means this shii works
+                return msgResponse != null && (msgResponse == string.Empty || !msgResponse.Contains("error"));
             }
             catch (Exception ex)
             {
