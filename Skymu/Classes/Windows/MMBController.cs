@@ -44,7 +44,7 @@ namespace Skymu.Windows
                 SEP(),
                 MI(L("sMAINMENU_SKYPE_CHANGEPASSWORD")),
                 MI(L("sMAINMENU_SKYPE_SIGN_OUT"), (s, e2) => OnSignOut(null, null)),
-                MI(L("sMAINMENU_SKYPE_SWITCH_USER")),
+                MI(L("sMAINMENU_SKYPE_SWITCH_USER"), (s, e2) => OnSwitchUser(null, null)),
                 MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
             );
 
@@ -176,10 +176,19 @@ namespace Skymu.Windows
 
         #endregion
 
-        public void DisableExtras() =>
-            _extrasMenu.RefreshItems(
-                MI(L("sMENU_EXTRAS_GET_APPS_CAPTION"))
-            );
+        public void DisableExtras()
+        {
+            try
+            { 
+                _extrasMenu.RefreshItems(
+                    MI(L("sMENU_EXTRAS_GET_APPS_CAPTION"))
+                );
+            }
+            catch (Exception ex)
+            {
+                Universal.ExceptionHandler(ex);
+            }
+        }
 
         public void RedoExtras((string, EventHandler)[] items) =>
             _extrasMenu.RefreshItems(
