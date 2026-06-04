@@ -728,12 +728,13 @@ namespace Skymu.Pontis
             Keyboard.ClearFocus();
         }
 
-        private bool _hasContent;
+        private DateTime _lastTypingActivity = DateTime.MinValue;
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSendButtonState();
-            _hasContent = HasAnyContent(MessageTextBox);
+            if (HasAnyContent(MessageTextBox))
+                _lastTypingActivity = DateTime.UtcNow;
         }
 
         private async Task TypingLoop()
@@ -741,7 +742,7 @@ namespace Skymu.Pontis
             while (true)
             {
                 await Task.Delay(500);
-                if (_hasContent)
+                if ((DateTime.UtcNow - _lastTypingActivity).TotalMilliseconds < 500)
                     vmodel?.StartTyping();
             }
         }
