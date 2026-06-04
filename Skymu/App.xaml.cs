@@ -49,7 +49,7 @@ namespace Skymu
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4.3";
-        public const string BuildName = "Emerald Duke";
+        public const string BuildName = "Eloquent Dauphin";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
