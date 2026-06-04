@@ -1307,7 +1307,7 @@ namespace Skymu.Databases
                 }
             }
 
-            public bool Write(List<DirectMessage> contacts) // JUMP contacts write
+            public bool Write(IEnumerable<DirectMessage> contacts) // JUMP contacts write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1628,7 +1628,7 @@ namespace Skymu.Databases
                 );
             }
 
-            public bool Write(List<Conversation> conversations) // JUMP conversation write
+            public bool Write(IEnumerable<Conversation> conversations) // JUMP conversation write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1738,7 +1738,7 @@ namespace Skymu.Databases
                 _db = db;
             }
 
-            public bool Write(List<Conversation> conversations) // JUMP participants write
+            public bool Write(IEnumerable<Conversation> conversations) // JUMP participants write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1828,7 +1828,7 @@ namespace Skymu.Databases
             }
 
             private void WriteImageAttachments(
-                List<ConversationItem> items,
+                IEnumerable<ConversationItem> items,
                 Conversation conversation,
                 long conversationIncrementalId,
                 SqliteConnection connection,
@@ -2196,7 +2196,7 @@ namespace Skymu.Databases
             }
 
             public bool Write( // JUMP messages write
-                List<ConversationItem> items,
+                IEnumerable<ConversationItem> items,
                 Conversation conversation,
                 SqliteConnection existingConnection = null
             )
@@ -2295,7 +2295,7 @@ namespace Skymu.Databases
 
                                     if (message.ParentMessage != null)
                                         Write(
-                                            new ConversationItem[] { message.ParentMessage }.ToList(),
+                                            new ConversationItem[] { message.ParentMessage },
                                             conversation,
                                             connection
                                         );
@@ -2405,7 +2405,7 @@ namespace Skymu.Databases
                             connection,
                             transaction
                         );
-                        if (ownsTransaction && items.Count > 0)
+                        if (ownsTransaction && items.Count() > 0)
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
                             {
@@ -2452,7 +2452,7 @@ namespace Skymu.Databases
 
             public bool WriteRow(ConversationItem item, Conversation conversation)
             {
-                return Write(new ConversationItem[1] { item }.ToList(), conversation);
+                return Write(new ConversationItem[1] { item }, conversation);
             }
         }
 
