@@ -1082,12 +1082,22 @@ namespace Skymu.Sapphire
             Keyboard.ClearFocus();
         }
 
-        private async void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private bool _hasContent;
+
+        private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateSendButtonState();
-            await Task.Delay(500);
-            if (HasAnyContent(MessageTextBox))
-                vmodel?.StartTyping();
+            _hasContent = HasAnyContent(MessageTextBox);
+        }
+
+        private async Task TypingLoop()
+        {
+            while (true)
+            {
+                await Task.Delay(500);
+                if (_hasContent)
+                    vmodel?.StartTyping();
+            }
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
@@ -1709,6 +1719,7 @@ namespace Skymu.Sapphire
             }
 
             vmodel.SubscribeTypingIndicator();
+            _ = TypingLoop();
 
             CTR_ORIGINAL_MAXHEIGHT = ChatTopBarRow.MaxHeight;
             TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
