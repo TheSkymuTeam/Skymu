@@ -145,7 +145,7 @@ namespace Skymu.SeanKype
                             break;
                         }
                 }
-                _ = SetConversation();
+                await SetConversation();
             };
 
             vmodel.SpeedTestIconUpdated += uri =>

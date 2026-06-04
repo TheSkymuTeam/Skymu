@@ -83,7 +83,7 @@ namespace Stub
             _out = null;
         }
 
-        public async Task<LoginResult> Authenticate(
+        public Task<LoginResult> Authenticate(
             AuthenticationMethod authType,
             string username,
             string password = null
@@ -98,18 +98,18 @@ namespace Stub
                     false
                 )
             );
-            return LoginResult.Success;
+            return Task.FromResult(LoginResult.Success);
         }
 
-        public async Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
+        public Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             Me = autoLoginCredentials.User;
-            return LoginResult.Success;
+            return Task.FromResult(LoginResult.Success);
         }
 
-        public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.Success;
+        public Task<LoginResult> AuthenticateTwoFA(string code) { return Task.FromResult(LoginResult.Success); }
 
-        public async Task<SavedCredential> StoreCredential()
+        public Task<SavedCredential> StoreCredential()
         {
             // TODO: Fix logout return new SavedCredential(MyInformation, string.Empty, AuthenticationMethod.Token, InternalName);
             return null;
@@ -552,22 +552,22 @@ namespace Stub
             );
         }
 
-        public async Task<bool> EndCall(ActiveCall call)
+        public Task<bool> EndCall(ActiveCall call)
         {
             _waiter?.TrySetResult(false);
             _out?.Stop();
             _out?.Dispose();
             _out = null;
-            return true;
+            return Task.FromResult(true);
         }
 
         public async Task<ActiveCall> AnswerCall(string convo_id) => await StartCall(convo_id, false, true);
 
-        public async Task<bool> DeclineCall(string convo_id) => false;
+        public Task<bool> DeclineCall(string convo_id) => Task.FromResult(false);
 
-        public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
+        public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
 
-        public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
+        public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
@@ -600,13 +600,13 @@ namespace Stub
             };
         }
 
-        public async Task<bool> AddContact(Metadata contact, string message)
+        public Task<bool> AddContact(Metadata contact, string message)
         {
             if (contact is User user)
                 ContactList.Add(new DirectMessage(user, 0, user.Identifier));
             else if (contact is Group group)
                 ConversationList.Add(group);
-            return false;
+            return Task.FromResult(false);
         }
 
         #endregion

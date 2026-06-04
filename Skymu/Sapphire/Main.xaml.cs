@@ -1019,7 +1019,7 @@ namespace Skymu.Sapphire
                     i++;
                     continue;
                 }
-                _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
+                await Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
                 return;
             }
             Universal.MessageBox(
