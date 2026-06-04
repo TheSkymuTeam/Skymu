@@ -164,7 +164,7 @@ namespace Skymu.Pontis
                     MessageWindowRow.Height = new GridLength(0);
 
                     ChatTopBarSplitter.Visibility = Visibility.Collapsed;
-                    topbarWindowRowHeight = TopbarWindowRow.Height.Value;
+                    TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
                     TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
@@ -181,8 +181,8 @@ namespace Skymu.Pontis
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 
                     ChatTopBarSplitter.Visibility = Visibility.Visible;
-                    TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
-                    TopbarWindowRow.MaxHeight = screen == null ? topbarWindowRowOrigMaxHeight : ChatArea.ActualHeight * 0.7;
+                    TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
+                    TopbarWindowRow.MaxHeight = screen == null ? TWR_ORIGINAL_MAXHEIGHT : ChatArea.ActualHeight * 0.7;
                     if (location != null)
                         SetCallPageLocation(location);
                     break;
@@ -390,8 +390,18 @@ namespace Skymu.Pontis
 
         #region Resizing stuff
 
-        private double topbarWindowRowOrigMaxHeight;
-        private double topbarWindowRowOrigHeight;
+        private double CTR_ORIGINAL_MAXHEIGHT;
+        private double CBR_ORIGINAL_HEIGHT;
+
+        private double TWR_ORIGINAL_HEIGHT;
+        private double TWR_ORIGINAL_MINHEIGHT;
+        private double TWR_ORIGINAL_MAXHEIGHT;
+        private double TWR_HEIGHT_CALLS_CHAT;
+        private double TWR_ORIGINAL_MAXHEIGHT_CALLS;
+
+        private double SIDEBAR_ORIGINAL_WIDTH; // dynamic
+        private double SIDEBAR_ORIGINAL_MINWIDTH;
+        private GridLength SIDEBAR_SPLITTER_ORIGINAL_WIDTH;
 
         private bool SkypeSplitterIsDragging = false;
         private bool ChatTopBarSplitterIsDragging = false;
@@ -455,7 +465,7 @@ namespace Skymu.Pontis
                 row.Height = new GridLength(newHeight);
                 dragStart = current;
 
-                topbarWindowRowHeight = newHeight;
+                TWR_ORIGINAL_HEIGHT = newHeight;
             }
         }
 
@@ -757,14 +767,6 @@ namespace Skymu.Pontis
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private double sidebarOrigWidth; // dynamic
-        private double sidebarOrigMinWidth;
-        private GridLength skypeSplitterColumnOrigWidth;
-        private double topbarWindowRowHeight;
-        private double topbarWindowRowOrigMinHeight;
-        private double topbarWindowRowOrigMaxHeight4C; // 4C = 4 call
-        private double chatButtonRowOrigHeight;
-
         private async void StartCall(User partner = null)
         {
             bool answer_call = true;
@@ -781,19 +783,19 @@ namespace Skymu.Pontis
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-            if (topbarWindowRowOrigHeight == default)
-                topbarWindowRowOrigHeight = TopbarWindowRow.Height.Value;
-            if (skypeSplitterColumnOrigWidth == default)
-                skypeSplitterColumnOrigWidth = SkypeSplitterColumn.Width;
-            if (sidebarOrigMinWidth == default)
-                sidebarOrigMinWidth = SidebarColumn.MinWidth;
-            if (topbarWindowRowOrigMinHeight == default)
-                topbarWindowRowOrigMinHeight = TopbarWindowRow.MinHeight;
-            if (topbarWindowRowOrigMaxHeight4C == default)
-                topbarWindowRowOrigMaxHeight4C = TopbarWindowRow.MaxHeight;
-            if (chatButtonRowOrigHeight == default)
-                chatButtonRowOrigHeight = ChatButtonRow.Height.Value;
-            sidebarOrigWidth = SidebarColumn.Width.Value;
+            if (TWR_ORIGINAL_HEIGHT == default)
+                TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
+            if (SIDEBAR_SPLITTER_ORIGINAL_WIDTH == default)
+                SIDEBAR_SPLITTER_ORIGINAL_WIDTH = SkypeSplitterColumn.Width;
+            if (SIDEBAR_ORIGINAL_MINWIDTH == default)
+                SIDEBAR_ORIGINAL_MINWIDTH = SidebarColumn.MinWidth;
+            if (TWR_ORIGINAL_MINHEIGHT == default)
+                TWR_ORIGINAL_MINHEIGHT = TopbarWindowRow.MinHeight;
+            if (TWR_ORIGINAL_MAXHEIGHT_CALLS == default)
+                TWR_ORIGINAL_MAXHEIGHT_CALLS = TopbarWindowRow.MaxHeight;
+            if (CBR_ORIGINAL_HEIGHT == default)
+                CBR_ORIGINAL_HEIGHT = ChatButtonRow.Height.Value;
+            SIDEBAR_ORIGINAL_WIDTH = SidebarColumn.Width.Value;
             TopbarWindowRow.MinHeight = 250;
             TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
@@ -840,10 +842,10 @@ namespace Skymu.Pontis
                     FillMessagePanelHost.Content = null;
                 ChatProfileArea.Visibility = Visibility.Visible;
                 FillMessagePanelHost.Visibility = Visibility.Collapsed;
-                TopbarWindowRow.MinHeight = topbarWindowRowOrigMinHeight;
-                TopbarWindowRow.MaxHeight = topbarWindowRowOrigMaxHeight4C;
-                TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
-                ChatButtonRow.Height = new GridLength(chatButtonRowOrigHeight);
+                TopbarWindowRow.MinHeight = TWR_ORIGINAL_MINHEIGHT;
+                TopbarWindowRow.MaxHeight = TWR_ORIGINAL_MAXHEIGHT_CALLS;
+                TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
+                ChatButtonRow.Height = new GridLength(CBR_ORIGINAL_HEIGHT);
                 if (screen != null)
                 {
                     screen.HangUpRequested -= OnHangUp;
@@ -871,7 +873,6 @@ namespace Skymu.Pontis
                 if (storeChatStatus)
                     initial_location.ChatToggle = location.ChatToggle;
 
-
                 if (FillWindowHost.Content == frame)
                     FillWindowHost.Content = null;
                 if (FillMessagePanelHost.Content == frame)
@@ -880,16 +881,16 @@ namespace Skymu.Pontis
                 // Show sidebar
                 if (location.SidebarToggle)
                 {
-                    SidebarColumn.Width = new GridLength(sidebarOrigWidth);
-                    SidebarColumn.MinWidth = sidebarOrigMinWidth;
-                    SkypeSplitterColumn.Width = skypeSplitterColumnOrigWidth;
+                    SidebarColumn.Width = new GridLength(SIDEBAR_ORIGINAL_WIDTH);
+                    SidebarColumn.MinWidth = SIDEBAR_ORIGINAL_MINWIDTH;
+                    SkypeSplitterColumn.Width = SIDEBAR_SPLITTER_ORIGINAL_WIDTH;
                 }
                 // Show chat
                 if (location.ChatToggle)
                 {
-                    if (topbarWindowRowHeight == default)
-                        topbarWindowRowHeight = ChatArea.ActualHeight * 0.7;
-                    TopbarWindowRow.Height = new GridLength(topbarWindowRowHeight);
+                    if (TWR_HEIGHT_CALLS_CHAT == default)
+                        TWR_HEIGHT_CALLS_CHAT = ChatArea.ActualHeight * 0.7;
+                    TopbarWindowRow.Height = new GridLength(TWR_HEIGHT_CALLS_CHAT);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
                     ChatTopBarSplitter.Visibility = Visibility.Visible;
@@ -898,7 +899,7 @@ namespace Skymu.Pontis
                 // Show everything
                 if (location.SidebarToggle && location.ChatToggle)
                 {
-                    TopbarWindowRow.Height = new GridLength(topbarWindowRowOrigHeight);
+                    TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     FillMessagePanelHost.Visibility = Visibility.Visible;
                     FillMessagePanelHost.Content = frame;
@@ -914,7 +915,7 @@ namespace Skymu.Pontis
                 // Hide sidebar
                 if (!location.SidebarToggle)
                 {
-                    sidebarOrigWidth = SidebarColumn.Width.Value;
+                    SIDEBAR_ORIGINAL_WIDTH = SidebarColumn.Width.Value;
                     SidebarColumn.Width = new GridLength(0);
                     SidebarColumn.MinWidth = 0;
                     SkypeSplitterColumn.Width = new GridLength(0);
@@ -922,7 +923,7 @@ namespace Skymu.Pontis
                 // Hide chat
                 else if (!location.ChatToggle)
                 {
-                    topbarWindowRowHeight = TopbarWindowRow.ActualHeight;
+                    TWR_HEIGHT_CALLS_CHAT = TopbarWindowRow.ActualHeight;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
                     TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
@@ -1338,7 +1339,7 @@ namespace Skymu.Pontis
 
             vmodel.SubscribeTypingIndicator();
 
-            topbarWindowRowOrigMaxHeight = TopbarWindowRow.MaxHeight;
+            TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
             // seanFinx Crazy Hack
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
