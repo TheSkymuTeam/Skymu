@@ -273,7 +273,7 @@ namespace Skymu.ViewModels
                         $"It is recommended that you download the latest .NET Desktop Runtime for performance improvements, reduction in memory usage, " +
                         $"and critical security fixes.",
                         "Update your .NET runtime?",
-                        "Skymu",
+                        null,
                         new Action(() =>
                         {
                             Settings.SuppressOldRuntimeWarnings = (bool)dlg.CheckBox.IsChecked;

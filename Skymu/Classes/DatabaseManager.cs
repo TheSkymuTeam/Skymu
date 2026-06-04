@@ -62,7 +62,7 @@ namespace Skymu.Databases
         {
             string folderPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Skymu",
+                Universal.Name,
                 Universal.Plugin.InternalName,
                 SanitizeFolderName(user.Identifier)
             );

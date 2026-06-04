@@ -604,7 +604,10 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type yggdrasil:Message}">
-            <Grid HorizontalAlignment="Stretch">
+            <Grid
+                HorizontalAlignment="Stretch"
+                ContextMenu="{DynamicResource MessageContextMenu}"
+                Tag="{DynamicResource Lang}">
                 <Grid
                     x:Name="ConversationGrid"
                     MaxWidth="626"

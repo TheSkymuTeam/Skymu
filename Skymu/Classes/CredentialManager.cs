@@ -25,7 +25,7 @@ namespace Skymu.Credentials
     {
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Skymu",
+            Universal.Name,
 #if DEBUG
             Settings.SeparateCredentialsForDebug ? "credentialsDebug.xml" : "credentials.xml"
 #else

@@ -354,7 +354,7 @@ namespace Skymu.Preferences
 
         private static readonly string FilePath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "Skymu",
+            Universal.Name,
             "shared.xml"
         );
 

@@ -1,0 +1,16 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters">
+    <converters:IsCurrentUserToVisibilityConverter x:Key="IsCurrentUserToVisibilityConverter" />
+    <ContextMenu x:Key="MessageContextMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sF_CHAT_FORM_IMGRID_PMENUITEM_COPY], RelativeSource={RelativeSource AncestorType=ContextMenu}}" IsEnabled="False" />
+        <MenuItem Command="{Binding CopyMessageCommand}" Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_COPY_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], RelativeSource={RelativeSource AncestorType=ContextMenu}}" IsEnabled="False" />
+        <Separator />
+        <MenuItem Command="{Binding ReplyCommand}" Header="Reply" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Sender.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Sender.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_MOVE_BOOKMARK], RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+    </ContextMenu>
+</ResourceDictionary>
