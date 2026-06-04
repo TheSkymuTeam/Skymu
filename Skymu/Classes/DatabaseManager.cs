@@ -1628,7 +1628,7 @@ namespace Skymu.Databases
                 );
             }
 
-            public bool Write(Conversation[] conversations) // JUMP conversation write
+            public bool Write(List<Conversation> conversations) // JUMP conversation write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1738,7 +1738,7 @@ namespace Skymu.Databases
                 _db = db;
             }
 
-            public bool Write(Conversation[] conversations) // JUMP participants write
+            public bool Write(List<Conversation> conversations) // JUMP participants write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {

@@ -589,7 +589,7 @@ namespace Skymu.Sapphire
                     break;
                 case "btnContacts":
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = await vmodel.GetContactList();
+                    ConversationList.ItemsSource = vmodel.ContactList;
                     SplashHeader.Text = Universal.Lang["sZAPBUTTON_CONTACTS"];
                     SplashDescription.Text = "Choose a contact and start talking.";
                     break;

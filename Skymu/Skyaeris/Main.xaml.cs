@@ -633,7 +633,7 @@ namespace Skymu.Skyaeris
                     break;
                 case "btnContacts":
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = await vmodel.GetContactList();
+                    ConversationList.ItemsSource = vmodel.ContactList;
                     break;
                 case "btnRecents":
                     ConfigureCompactRecentsList();

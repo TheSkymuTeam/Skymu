@@ -533,10 +533,10 @@ namespace Skymu.SeanKype
             HomeUnavailable.Visibility = Visibility.Collapsed;
         }
 
-        private async void TabContacts_Click(object sender, MouseButtonEventArgs e)
+        private void TabContacts_Click(object sender, MouseButtonEventArgs e)
         {
             SetActiveTab(0);
-            ConversationList.ItemsSource = await vmodel.GetContactList();
+            ConversationList.ItemsSource = vmodel.ContactList;
         }
 
         private void TabRecent_Click(object sender, MouseButtonEventArgs e)

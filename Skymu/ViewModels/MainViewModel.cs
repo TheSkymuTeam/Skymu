@@ -57,9 +57,8 @@ namespace Skymu.ViewModels
         public ObservableCollection<Server> ServerList;
         public ObservableCollection<Conversation> ConversationList;
 
-        // since contacts and servers are lazy-loaded, we need a TCS to handle the clicks on "Contacts" or "Servers" 
-        // tabs before the lists have actually been populated
-        private readonly TaskCompletionSource<bool> _contactsLoadedSource = new TaskCompletionSource<bool>();
+        // since the servers list is lazy-loaded, we need a TCS to handle the clicks on the "Servers" 
+        // tab before the list has actually been populated
         private readonly TaskCompletionSource<bool> _serversLoadedSource = new TaskCompletionSource<bool>();
 
         // for the database, TODO change list loading so it attempts to load from DB first
@@ -245,7 +244,12 @@ namespace Skymu.ViewModels
 
             ActiveConversation = new ObservableCollection<ConversationItem>();
 
-            _pendingPreviewMessages = new Dictionary<string, Message>();
+            // just in case something tries to use these lists before they've been populated, don't crash the app with NullReferenceException
+            ContactList = new ObservableCollection<DirectMessage>();
+            ServerList = new ObservableCollection<Server>();
+            ConversationList = new ObservableCollection<Conversation>();
+
+        _pendingPreviewMessages = new Dictionary<string, Message>();
             _typingActive = false;
             _typingTimer = new Timer(
                 _ =>
@@ -292,9 +296,11 @@ namespace Skymu.ViewModels
             _database.Accounts.Write(Universal.CurrentUser);
 
             ConversationList = new ObservableCollection<Conversation>(await Universal.Plugin.FetchConversations());
-            _database.Conversations.Write(ConversationList.ToArray());
+            _database.Conversations.Write(ConversationList.ToList());
 
-            _ = LoadAndCacheContacts(); // lazy loading
+            ContactList = new ObservableCollection<DirectMessage>(await Universal.Plugin.FetchContacts());
+            _database?.Contacts.Write(ContactList.ToList());
+
             _ = LoadAndCacheServers();
 
             UserCountText = Universal.Lang["sCALLPHONES_RATES_LOADING"];
@@ -312,14 +318,6 @@ namespace Skymu.ViewModels
             };
 
             Ready?.Invoke(this, EventArgs.Empty);
-        }
-
-        private async Task LoadAndCacheContacts()
-        {
-            List<DirectMessage> contacts = await Universal.Plugin.FetchContacts();
-            _database?.Contacts.Write(contacts);
-            ContactList = new ObservableCollection<DirectMessage>(contacts);
-            _contactsLoadedSource.TrySetResult(true);
         }
 
         private async Task LoadAndCacheServers()
@@ -719,11 +717,6 @@ namespace Skymu.ViewModels
         #region Sidebar tab data helpers
 
         // TODO: Do this via data binding! These helpers are temporary.
-        public async Task<ObservableCollection<DirectMessage>> GetContactList() 
-        {
-            await _contactsLoadedSource.Task;
-            return ContactList;
-        }
 
         public IList<object> GetConversationList() // this is not async because the conversation list is never lazy-loaded
         {
