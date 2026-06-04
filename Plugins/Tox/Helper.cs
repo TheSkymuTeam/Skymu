@@ -194,17 +194,17 @@ namespace Tox
 
         static void ListsAdd(Core core, Dictionary<UInt32, User> users, Dictionary<UInt32, Group> conferences)
         {
-            core.ContactsList.Clear();
-            core.RecentsList.Clear();
+            core.ContactList.Clear();
+            core.ConversationList.Clear();
             foreach (var kvp in users)
             {
                 var dm = new DirectMessage(kvp.Value, 0, kvp.Value.Identifier);
-                core.ContactsList.Add(dm);
-                core.RecentsList.Add(dm);
+                core.ContactList.Add(dm);
+                core.ConversationList.Add(dm);
             }
             foreach (var kvp in conferences)
             {
-                core.RecentsList.Add(kvp.Value);
+                core.ConversationList.Add(kvp.Value);
             }
         }
 
@@ -224,7 +224,7 @@ namespace Tox
                 ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(pkey)));
             }
             var cid = BATS(conference.cid);
-            foreach (var conv in core.RecentsList)
+            foreach (var conv in core.ConversationList)
                 if (conv is Group c)
                     if (c.Identifier == cid)
                     {

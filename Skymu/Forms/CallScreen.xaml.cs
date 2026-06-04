@@ -15,6 +15,7 @@ using Skymu.Preferences;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Yggdrasil.EventArgs;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

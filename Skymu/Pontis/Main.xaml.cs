@@ -275,7 +275,7 @@ namespace Skymu.Pontis
 
         private void ConfigureCompactRecentsList()
         {
-            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList);
+            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.ConversationList);
             var selector = new CompactRecentsTemplateSelector
             {
                 DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
@@ -376,19 +376,19 @@ namespace Skymu.Pontis
                     break;
                 case "btnContacts":
                     if (
-                        Universal.Plugin.ContactsList == null
-                        || Universal.Plugin.ContactsList.Count < 1
+                        Universal.Plugin.ContactList == null
+                        || Universal.Plugin.ContactList.Count < 1
                     )
                         await Universal.Plugin.PopulateContactsList();
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = Universal.Plugin.ContactsList;
+                    ConversationList.ItemsSource = Universal.Plugin.ContactList;
                     break;
                 case "btnRecents":
                     if (
-                        Universal.Plugin.RecentsList == null
-                        || Universal.Plugin.RecentsList.Count < 1
+                        Universal.Plugin.ConversationList == null
+                        || Universal.Plugin.ConversationList.Count < 1
                     )
-                        await Universal.Plugin.PopulateRecentsList();
+                        await Universal.Plugin.PopulateConversationsList();
                     ConfigureCompactRecentsList();
                     break;
             }
@@ -1265,7 +1265,7 @@ namespace Skymu.Pontis
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
                 ConfigureCompactRecentsList();
                 if (Settings.EnableSkypeHome)
-                    SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactsList.ToArray());
+                    SkypeHome.Generate(browser, Universal.CurrentUser, Universal.Plugin.ContactList.ToArray());
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
@@ -1309,7 +1309,7 @@ namespace Skymu.Pontis
                     { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
-                    if (ConversationList.ItemsSource == Universal.Plugin.ContactsList)
+                    if (ConversationList.ItemsSource == Universal.Plugin.ContactList)
                         await SelectTab(btnRecents);
                     else
                         await SelectTab(btnContacts);

@@ -22,6 +22,7 @@ using ToxOO;
 using Yggdrasil;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
+using Yggdrasil.EventArgs;
 using Yggdrasil.Tools.Windows;
 using static Tox.Helper;
 using static ToxCore;
@@ -32,9 +33,7 @@ namespace Tox
     {
         #region Variables
 
-        public event EventHandler<PluginMessageEventArgs> OnError;
-        public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
+        public event EventHandler<DialogEventArgs> OnDialog;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public event EventHandler<CallEventArgs> OnIncomingCall;
         public event EventHandler<CallEventArgs> OnCallStateChanged;
@@ -52,16 +51,14 @@ namespace Tox
             new ExtraConfiguration("Get self Tox ID", () =>
             {
                 var stid = tox.address;
-                OnWarning?.Invoke(this, new PluginMessageEventArgs($"Your Tox ID is: {stid}", stid));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, $"Your Tox ID is: {stid}", stid));
             })
         };
         public int TypingTimeout => 5000;
         public int TypingRepeat => 5000;
-
-        public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; }
+        public ObservableCollection<DirectMessage> ContactList { get; private set; }
             = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; }
+        public ObservableCollection<Conversation> ConversationList { get; private set; }
             = new ObservableCollection<Conversation>();
         public ObservableCollection<Server> ServerList { get; private set; }
             = new ObservableCollection<Server>();
@@ -79,7 +76,7 @@ namespace Tox
         Thread avThread;
         Timer avTimer;
         readonly Callbacks cbs = new Callbacks();
-        internal User currentUser;
+        internal User _currentUser;
         internal Dictionary<UInt32, User> friends
             = new Dictionary<uint, User>();
         internal Dictionary<UInt32, Message> messages
@@ -148,7 +145,7 @@ namespace Tox
             avACall = new CallStruct();
             avFinished = new TaskCompletionSource<bool>();
             avWaiter = new TaskCompletionSource<bool>();
-            currentUser = null;
+            _currentUser = null;
             friends = new Dictionary<UInt32, User>();
             messages = new Dictionary<UInt32, Message>();
             pendingSendConference = new Dictionary<UInt32, List<(Tox_Message_Type type, string text)>>();
@@ -171,7 +168,7 @@ namespace Tox
         // UiContextPost
         internal void UCP(SendOrPostCallback d) => uiContext?.Post(d, null);
         // ERRor
-        internal void ERR(string err) { Debug.WriteLine("Tox: ERROR: " + err); OnError?.Invoke(this, new PluginMessageEventArgs(err, err)); }
+        internal void ERR(string err) { Debug.WriteLine("[TOX] ERROR: " + err); OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, err, err)); }
         // onCALLincoming
         internal void CALL(CallEventArgs cea) => OnIncomingCall?.Invoke(this, cea);
         // CallStateChanged
@@ -179,7 +176,7 @@ namespace Tox
         // SAVE. Any other questions?
         internal void SAVE() => Save(tox, profile, this);
         // ShowYesNo
-        internal void SYN(PluginYesNoEventArgs e) => ShowYesNo?.Invoke(this, e);
+        internal void SYN(DialogEventArgs e) => OnDialog?.Invoke(this, e);
 
         // https://stackoverflow.com/a/3202085
         static bool IsFileLocked(IOException exception)
@@ -199,7 +196,7 @@ namespace Tox
                 if (!File.Exists(Path.Combine(toxDir, profile + ".tox")))
                 {
                     TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-                    ShowYesNo?.Invoke(this, new PluginYesNoEventArgs(
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Question,
                         "Are you sure that you want to create an encrypted profile? Since the password is not stored, avoid this option unless you want the security.",
                         (yes) => tcs.TrySetResult(yes)));
                     bool choice = await tcs.Task;
@@ -227,7 +224,7 @@ namespace Tox
         {
             // savepass is filled = encrypted save = saving the pass goes against the point of encrypting it
             if (string.IsNullOrEmpty(savepass))
-                return new SavedCredential(currentUser, profile, AuthenticationMethod.Token, InternalName);
+                return new SavedCredential(_currentUser, profile, AuthenticationMethod.Token, InternalName);
             return null;
         }
 
@@ -253,7 +250,7 @@ namespace Tox
 
             Debug.WriteLine($"Tox: Running on {ToxOO.Version.str}");
             if (!ToxOO.Version.Compatible(0, 2, 22))
-                OnWarning?.Invoke(this, new PluginMessageEventArgs("Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
             var opt = new Options
             {
                 logCallback = cbs.OnLogPtr
@@ -363,7 +360,7 @@ namespace Tox
 
                 if (!opt.setSavedata(data))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Something went wrong setting the savedata."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Something went wrong setting the savedata."));
                     profilelock.Dispose();
                     File.Delete(lockpath);
                     return LoginResult.Failure;
@@ -434,14 +431,14 @@ namespace Tox
             var status = tox.statusMessage;
 
             var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
-            currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Offline, File.Exists(avatarPath) ? File.ReadAllBytes(avatarPath) : null);
+            _currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Offline, File.Exists(avatarPath) ? File.ReadAllBytes(avatarPath) : null);
 
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
-                OnWarning?.Invoke(this, new PluginMessageEventArgs("No existing profile found, starting with a new one. Your Tox ID: " + tid));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
-            currentUser.PublicUsername = tid;
+            _currentUser.PublicUsername = tid;
 
             user_data = GCHandle.ToIntPtr(GCHandle.Alloc(this));
             cbs.Init(tox, user_data, av);
@@ -473,16 +470,15 @@ namespace Tox
 
         #region Populate
 
-        public async Task<bool> PopulateUserInformation()
+        public Task<User> GetUserInfo()
         {
             uiContext = SynchronizationContext.Current;
-            MyInformation = currentUser;
-            return true;
+            return Task.FromResult(_currentUser);
         }
 
         public async Task<bool> PopulateContactsList() => FriendListRefresh(this, false);
 
-        public async Task<bool> PopulateRecentsList() => FriendListRefresh(this, false);
+        public async Task<bool> PopulateConversationsList() => FriendListRefresh(this, false);
 
         #endregion
 
@@ -526,9 +522,9 @@ namespace Tox
                 }
                 Message message;
                 if (type == Tox_Message_Type.ACTION)
-                    message = new ActionMessage(mid + "_" + GUID(), currentUser, new DateTime(), text);
+                    message = new ActionMessage(mid + "_" + GUID(), _currentUser, new DateTime(), text);
                 else
-                    message = new Message(mid + "_" + GUID(), currentUser, new DateTime(), text);
+                    message = new Message(mid + "_" + GUID(), _currentUser, new DateTime(), text);
                 messages.Add((UInt32)mid, message);
                 return true;
             }
@@ -545,7 +541,7 @@ namespace Tox
             string newText
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message editing is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -554,7 +550,7 @@ namespace Tox
             string messageId
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message deletion is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -595,11 +591,11 @@ namespace Tox
             };
 
             tox.status = tstatus;
-            currentUser.ConnectionStatus = status;
+            _currentUser.ConnectionStatus = status;
             return true;
         }
 
-        public async Task<bool> SetTextStatus(string status)
+        public async Task<bool> SetMood(string status)
         {
             tox.statusMessage = status;
             return true;
@@ -633,8 +629,8 @@ namespace Tox
                 var f = new User(user.DisplayName, user.DisplayName, user.DisplayName);
                 friends[fid] = f;
                 var dm = new DirectMessage(f, 0, f.Identifier);
-                ContactsList.Add(dm);
-                RecentsList.Add(dm);
+                ContactList.Add(dm);
+                ConversationList.Add(dm);
             }
             else
             {
@@ -643,9 +639,9 @@ namespace Tox
                 var group = metadata as Group;
                 var idt = FromHex(group.Identifier, (int)ToxOO.Size.groupId*2);
 
-                tox_group_join(tox.ptr, idt, currentUser.DisplayName, (UIntPtr)currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
+                tox_group_join(tox.ptr, idt, _currentUser.DisplayName, (UIntPtr)_currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
-                RecentsList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
+                ConversationList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
 #pragma warning restore CS0162 // Unreachable code detected
             }
             SAVE();

@@ -1105,7 +1105,10 @@
                     </MenuItem>
                     <MenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
                         <MenuItem x:Name="ExtrasMenu" Header="{Binding [sMAINMENU_TOOLS_EXTRAS], Source={StaticResource Lang}}">
-                            <MenuItem x:Name="GetExtrasMenuItem" Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}" IsEnabled="False" />
+                            <MenuItem
+                                x:Name="GetExtrasMenuItem"
+                                Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}"
+                                IsEnabled="False" />
                         </MenuItem>
                         <Separator />
                         <MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE], Source={StaticResource Lang}}" IsEnabled="False" />

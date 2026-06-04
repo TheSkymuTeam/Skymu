@@ -26,6 +26,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
+using Yggdrasil.EventArgs;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 
@@ -41,9 +42,7 @@ namespace Discord
 
         // Plugin details
         public bool SupportsVideoCalls => false; // not yet
-        public event EventHandler<PluginMessageEventArgs> OnError;
-        public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
+        public event EventHandler<DialogEventArgs> OnDialog;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "discord"; } }
@@ -85,8 +84,8 @@ namespace Discord
         private const string USERS_ME = "users/@me";
 
         // Observable collections used in the Skymu UI
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } = new ObservableCollection<Conversation>();
+        public ObservableCollection<DirectMessage> ContactList { get; private set; } = new ObservableCollection<DirectMessage>();
+        public ObservableCollection<Conversation> ConversationList { get; private set; } = new ObservableCollection<Conversation>();
         public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
 
@@ -106,8 +105,6 @@ namespace Discord
                 };
             }
         }
-
-        public User MyInformation { get; private set; }
 
         private enum ListType
         {
@@ -177,7 +174,7 @@ namespace Discord
             string qr = await tcs.Task;
             if (qr == "discord-close")
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs("Discord cancelled this QR login session. This can happen because:\n\n- You might be taking too long to scan the code" +
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Discord cancelled this QR login session. This can happen because:\n\n- You might be taking too long to scan the code" +
                     "\n- Discord updated something on their side and the plugin doesn't work anymore\n- You tried to scan the code using an old version of the Discord app or something like Aliucord"));
                 return null;
             }
@@ -209,25 +206,25 @@ namespace Discord
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
                 }
                 else if (userCheckTkn.Contains("[API/ParseError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("The provided token has an invalid format. Please ensure that you are entering it correctly."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "The provided token has an invalid format. Please ensure that you are entering it correctly."));
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", string.Empty)));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", string.Empty)));
                 }
                 else
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
                 }
                 return LoginResult.Failure;
             }
         }
 
-        public async Task<bool> PopulateUserInformation()
+        public async Task<User> GetUserInfo()
         {
             try
             {
@@ -245,7 +242,7 @@ namespace Discord
 
                 proto = new ProtoSettings(DiscordToken);
             }
-            catch (Exception ex) { OnError?.Invoke(this, new PluginMessageEventArgs("Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
+            catch (Exception ex) { OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
             JsonObject parsedDetails = null;
             try
             {
@@ -262,30 +259,31 @@ namespace Discord
 
                 if (await Task.WhenAny(readyTask, delayTask) == delayTask)
                 {
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs(
+                    OnDialog?.Invoke(this, new DialogEventArgs(
+                        DialogType.Warning,
                         "The WebSocket is taking an unusually long time to initialize. " +
                         "This could be due to slow internet speeds or Discord throttling the connection."));
                 }
 
                 if (!await readyTask)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs(
+                    OnDialog?.Invoke(this, new DialogEventArgs(
+                        DialogType.Error,
                         "The WebSocket failed to initialize. This could be due to network errors, an outdated network stack, or Discord forcibly closing the connection."));
-                    return false;
+                    return null;
                 }
 
                 _currentUser.ConnectionStatus = UserStore.Get("0")?.ConnectionStatus ?? PresenceStatus.Offline;
                 _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
 
-                MyInformation = _currentUser;
-
-                return true;
+                return _currentUser;
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs(
+                OnDialog?.Invoke(this, new DialogEventArgs(
+                    DialogType.Error,
                     $"Parse error: {ex.Message}\nResponse from server:\n{parsedDetails?.ToJsonString() ?? "null"}"));
-                return false;
+                return null;
             }
         }
 
@@ -294,7 +292,7 @@ namespace Discord
         #region List population (contacts, servers, recents)
 
         public Task<bool> PopulateContactsList() => PopulateListsBackend(ListType.Contacts);
-        public Task<bool> PopulateRecentsList() => PopulateListsBackend(ListType.Recents);
+        public Task<bool> PopulateConversationsList() => PopulateListsBackend(ListType.Recents);
         public Task<bool> PopulateServerList() => PopulateListsBackend(ListType.Servers);
 
         private async Task<bool> PopulateListsBackend(ListType list_type)
@@ -338,9 +336,9 @@ namespace Discord
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
                         if (list_type == ListType.Recents)
-                            RecentsList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
+                            ConversationList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
                         else
-                            ContactsList.Add(new DirectMessage(profileData, 0, channelId));
+                            ContactList.Add(new DirectMessage(profileData, 0, channelId));
                     }
                     else if (type == GROUP_CHANNEL_TYPE)
                     {
@@ -391,7 +389,7 @@ namespace Discord
                                             ? string.Join(", ", recipientNames)
                                             : "N/A";
                             }
-                            catch { OnError?.Invoke(this, new PluginMessageEventArgs("Error constructing group name.")); }
+                            catch { OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Error constructing group name.")); }
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
@@ -400,13 +398,13 @@ namespace Discord
                         var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
 
                         if (list_type == ListType.Recents)
-                            RecentsList.Add(profileData);
+                            ConversationList.Add(profileData);
                     }
                 }
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Error while populating lists: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Error while populating lists: {ex.Message}"));
                 return false;
             }
 
@@ -514,7 +512,7 @@ namespace Discord
                 }
                 catch (Exception ex)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to populate servers: {ex.Message}"));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to populate servers: {ex.Message}"));
                     return false;
                 }
             }
@@ -571,11 +569,11 @@ namespace Discord
                                 text = $"Discord says: {msg["message"].GetValue<string>()}\n\nError code {msg["code"].GetValue<string>()}";
                                 break;
                         }
-                        OnWarning?.Invoke(this, new PluginMessageEventArgs(text));
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, text));
                     }
                     else
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Unexpected response format: {encJson}"));
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Unexpected response format: {encJson}"));
                     }
                     return new ConversationItem[0];
                 }
@@ -601,7 +599,7 @@ namespace Discord
             {
                 string message = $"Failed to load conversation: {ex.Message}";
                 if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
-                OnError?.Invoke(this, new PluginMessageEventArgs(message));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, message));
                 _activeChannelId = null;
                 return new ConversationItem[0];
             }
@@ -638,7 +636,7 @@ namespace Discord
                                 var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
 
                                 // last msg by the logged in user
-                                if (item is Message msg && msg.Sender?.Identifier == MyInformation?.Identifier)
+                                if (item is Message msg && msg.Sender?.Identifier == _currentUser?.Identifier)
                                 {
                                     // replace n call
                                     string modifiedText = msg.Text.Replace(oldText, newText);
@@ -671,7 +669,7 @@ namespace Discord
                             var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
 
                             // last msg by the logged in user
-                            if (item is Message msg && msg.Sender?.Identifier == MyInformation?.Identifier)
+                            if (item is Message msg && msg.Sender?.Identifier == _currentUser?.Identifier)
                             {
                                 // call delete backend directly
                                 await DeleteMessage(identifier, msg.Identifier).ConfigureAwait(false);
@@ -723,7 +721,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send message: {ex.Message}"));
                 return false;
             }
         }
@@ -755,7 +753,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to edit message: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to edit message: {ex.Message}"));
                 return false;
             }
         }
@@ -787,7 +785,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to delete message: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to delete message: {ex.Message}"));
                 return false;
             }
         }
@@ -813,7 +811,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set typing status: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to set typing status: {ex.Message}"));
                 return false;
             }
         }
@@ -852,7 +850,7 @@ namespace Discord
             else return false;
         }
 
-        public async Task<bool> SetTextStatus(string custStatus)
+        public async Task<bool> SetMood(string custStatus)
         {
             if (String.IsNullOrEmpty(custStatus)) return false;
 

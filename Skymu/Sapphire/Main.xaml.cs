@@ -531,7 +531,7 @@ namespace Skymu.Sapphire
 
         private void ConfigureCompactRecentsList()
         {
-            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.RecentsList);
+            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.ConversationList);
             var selector = new CompactRecentsTemplateSelector
             {
                 DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
@@ -602,21 +602,21 @@ namespace Skymu.Sapphire
                     break;
                 case "btnContacts":
                     if (
-                        Universal.Plugin.ContactsList == null
-                        || Universal.Plugin.ContactsList.Count < 1
+                        Universal.Plugin.ContactList == null
+                        || Universal.Plugin.ContactList.Count < 1
                     )
                         await Universal.Plugin.PopulateContactsList();
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = Universal.Plugin.ContactsList;
+                    ConversationList.ItemsSource = Universal.Plugin.ContactList;
                     SplashHeader.Text = Universal.Lang["sZAPBUTTON_CONTACTS"];
                     SplashDescription.Text = "Choose a contact and start talking.";
                     break;
                 case "btnRecents":
                     if (
-                        Universal.Plugin.RecentsList == null
-                        || Universal.Plugin.RecentsList.Count < 1
+                        Universal.Plugin.ConversationList == null
+                        || Universal.Plugin.ConversationList.Count < 1
                     )
-                        await Universal.Plugin.PopulateRecentsList();
+                        await Universal.Plugin.PopulateConversationsList();
                     ConfigureCompactRecentsList();
                     SplashHeader.Text = "Conversations";
                     SplashDescription.Text = "Choose a conversation to pick up again.";
@@ -1674,7 +1674,7 @@ namespace Skymu.Sapphire
                     { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
-                    if (ConversationList.ItemsSource == Universal.Plugin.ContactsList)
+                    if (ConversationList.ItemsSource == Universal.Plugin.ContactList)
                         await SelectTab(btnRecents);
                     else
                         await SelectTab(btnContacts);

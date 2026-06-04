@@ -1279,14 +1279,14 @@
                                                         Height="80"
                                                         Source="Assets/Universal/Sidebar/add-contact-bg.png" />
                                                     <uc:QuickLTB
+                                                        Key="sADD_CONTACT_PANEL_MESSAGE"
                                                         x:Name="AddContactHint"
                                                         Margin="25,15,25,0"
                                                         FontFamily="Tahoma"
                                                         FontSize="11"
                                                         Foreground="#333333"
-                                                        Key="sADD_CONTACT_PANEL_MESSAGE"
                                                         TextBlock.TextAlignment="Center" />
-                                                    <TextBlock Text="WARNING: NOT IMPLEMENTED" HorizontalAlignment="Center" />
+                                                    <TextBlock HorizontalAlignment="Center" Text="WARNING: NOT IMPLEMENTED" />
                                                 </StackPanel>
                                             </Grid>
 

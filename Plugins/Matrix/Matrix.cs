@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using Yggdrasil.EventArgs;
 using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Classes;
@@ -27,9 +28,7 @@ namespace Matrix
 {
     public class Core : ICore
     {
-        public event EventHandler<PluginMessageEventArgs> OnError;
-        public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
+        public event EventHandler<DialogEventArgs> OnDialog;
         public event EventHandler<MessageEventArgs> MessageEvent;
 
         public string Name => "Matrix";
@@ -82,7 +81,7 @@ namespace Matrix
             {
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Username and password are required."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Username and password are required."));
                     return LoginResult.Failure;
                 }
 
@@ -116,7 +115,7 @@ namespace Matrix
                         loginBody = await loginResponse.Content.ReadAsStringAsync();
                         if (!loginResponse.IsSuccessStatusCode)
                         {
-                            OnError?.Invoke(this, new PluginMessageEventArgs($"Login failed: {loginBody}"));
+                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Login failed: {loginBody}"));
                             return LoginResult.Failure;
                         }
                     }
@@ -139,7 +138,7 @@ namespace Matrix
                         }
                         else
                         {
-                            OnWarning?.Invoke(this, new PluginMessageEventArgs("Could not fetch profile; using user ID as display name."));
+                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Could not fetch profile; using user ID as display name."));
                         }
                     }
 
@@ -149,7 +148,7 @@ namespace Matrix
                 }
                 catch (Exception ex)
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Login error: {ex.Message}"));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Login error: {ex.Message}"));
                     return LoginResult.Failure;
                 }
             }
@@ -157,7 +156,7 @@ namespace Matrix
             {
                 if (string.IsNullOrEmpty(username))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Email address is required."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Email address is required."));
                     return LoginResult.Failure;
                 }
 
@@ -175,7 +174,7 @@ namespace Matrix
                             Debug.WriteLine($"[Beeper] Request 1 -> {(int)res1.StatusCode}: {res1Body}");
                             if (!res1.IsSuccessStatusCode)
                             {
-                                OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login failed: {res1Body}"));
+                                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login failed: {res1Body}"));
                                 return LoginResult.Failure;
                             }
                         }
@@ -196,7 +195,7 @@ namespace Matrix
                             Debug.WriteLine($"[Beeper] Request 2 -> {(int)res2.StatusCode}: {res2Body}");
                             if (!res2.IsSuccessStatusCode)
                             {
-                                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send login email: {res2Body}"));
+                                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send login email: {res2Body}"));
                                 return LoginResult.Failure;
                             }
                         }
@@ -209,7 +208,7 @@ namespace Matrix
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[Beeper] Exception: {ex.Message}\n{ex.StackTrace}");
-                    OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login error: {ex.Message}"));
                     return LoginResult.Failure;
                 }
             }
@@ -235,7 +234,7 @@ namespace Matrix
                         Debug.WriteLine($"[Beeper] Request 3 -> {(int)res3.StatusCode}: {res3Body}");
                         if (!res3.IsSuccessStatusCode)
                         {
-                            OnError?.Invoke(this, new PluginMessageEventArgs($"Invalid code: {res3Body}"));
+                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Invalid code: {res3Body}"));
                             return LoginResult.Failure;
                         }
                     }
@@ -274,7 +273,7 @@ namespace Matrix
                     Debug.WriteLine($"[Beeper] Request 4 -> {(int)res4.StatusCode}: {res4Body}");
                     if (!res4.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs($"Matrix login failed: {res4Body}"));
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Matrix login failed: {res4Body}"));
                         return LoginResult.Failure;
                     }
                 }
@@ -306,7 +305,7 @@ namespace Matrix
             catch (Exception ex)
             {
                 Debug.WriteLine($"[Beeper] Exception: {ex.Message}\n{ex.StackTrace}");
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Beeper login error: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login error: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
@@ -328,7 +327,7 @@ namespace Matrix
 
                 if (string.IsNullOrWhiteSpace(_accessToken))
                 {
-                    OnError?.Invoke(this, new PluginMessageEventArgs("Saved credentials are invalid. Please log in again."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Saved credentials are invalid. Please log in again."));
                     return LoginResult.Failure;
                 }
 
@@ -336,7 +335,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Auto-login failed: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Auto-login failed: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
@@ -350,7 +349,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs("Authentication failed. Please log in again."));
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Authentication failed. Please log in again."));
                         return LoginResult.Failure;
                     }
                 }
@@ -359,27 +358,25 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to start client: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to start client: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
 
-        public User MyInformation { get; private set; }
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+        public ObservableCollection<DirectMessage> ContactList { get; private set; } =
             new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+        public ObservableCollection<Conversation> ConversationList { get; private set; } =
             new ObservableCollection<Conversation>();
         public ObservableCollection<Server> ServerList { get; private set; }
 
-        public Task<bool> PopulateUserInformation()
+        public Task<User> GetUserInfo()
         {
             _uiContext = SynchronizationContext.Current;
-            MyInformation = _user;
-            return Task.FromResult(true);
+            return Task.FromResult(_user);
         }
         public async Task<bool> PopulateContactsList() => await PopulateFromInitialSync();
 
-        public Task<bool> PopulateRecentsList() => Task.FromResult(true);
+        public Task<bool> PopulateConversationsList() => Task.FromResult(true);
 
         public Task<bool> PopulateServerList() => Task.FromResult(false);
 
@@ -413,7 +410,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs(
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, 
                             $"Initial sync failed: {await response.Content.ReadAsStringAsync()}"));
                         return false;
                     }
@@ -496,9 +493,9 @@ namespace Matrix
 
                     _uiContext?.Post(_ =>
                     {
-                        RecentsList.Add(conversation);
+                        ConversationList.Add(conversation);
                         if (isDirect && conversation is DirectMessage dm)
-                            ContactsList.Add(dm);
+                            ContactList.Add(dm);
                     }, null);
 
                     // download avatar in background; doesn't block list population
@@ -516,7 +513,7 @@ namespace Matrix
                     }
                 }
 
-                Debug.WriteLine($"[Matrix] Populated {RecentsList.Count} recents, {ContactsList.Count} contacts.");
+                Debug.WriteLine($"[Matrix] Populated {ConversationList.Count} recents, {ContactList.Count} contacts.");
 
                 _initialSyncDone = true;
                 StartSyncLoop();
@@ -524,7 +521,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Initial sync failed: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Initial sync failed: {ex.Message}"));
                 return false;
             }
         }
@@ -551,7 +548,7 @@ namespace Matrix
                     }
                     else
                     {
-                        OnWarning?.Invoke(this, new PluginMessageEventArgs(
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, 
                             $"Attachment type '{attachment.Type}' is not yet fully supported; sending filename only."));
                         text = string.IsNullOrEmpty(text)
                             ? $"==Generic file:== {attachment.Name}"
@@ -570,7 +567,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send message: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send message: {ex.Message}"));
                 return false;
             }
         }
@@ -605,7 +602,7 @@ namespace Matrix
                 {
                     if (!uploadResponse.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs("Failed to upload image."));
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Failed to upload image."));
                         return false;
                     }
                     string uploadBody = await uploadResponse.Content.ReadAsStringAsync();
@@ -631,7 +628,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send image: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send image: {ex.Message}"));
                 return false;
             }
         }
@@ -666,7 +663,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to send reply: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send reply: {ex.Message}"));
                 return false;
             }
         }
@@ -677,7 +674,7 @@ namespace Matrix
             string newText
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message editing is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -686,7 +683,7 @@ namespace Matrix
             string messageId
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message deletion is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -750,12 +747,12 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set presence: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to set presence: {ex.Message}"));
                 return false;
             }
         }
 
-        public async Task<bool> SetTextStatus(string status)
+        public async Task<bool> SetMood(string status)
         {
             try
             {
@@ -769,7 +766,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to set text status: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to set text status: {ex.Message}"));
                 return false;
             }
         }
@@ -806,7 +803,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnError?.Invoke(this, new PluginMessageEventArgs(
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, 
                             $"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"));
                         return new ConversationItem[0];
                     }
@@ -894,7 +891,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnError?.Invoke(this, new PluginMessageEventArgs($"Failed to load conversation: {ex.Message}"));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to load conversation: {ex.Message}"));
                 _activeRoomId = null;
                 return new ConversationItem[0];
             }
@@ -908,8 +905,8 @@ namespace Matrix
             _syncCancellationTokenSource?.Dispose();
             _syncCancellationTokenSource = null;
 
-            ContactsList?.Clear();
-            RecentsList?.Clear();
+            ContactList?.Clear();
+            ConversationList?.Clear();
             TypingUsersList?.Clear();
             _displayNameCache?.Clear();
             _recentRoomMap?.Clear();

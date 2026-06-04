@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Classes;
+using Yggdrasil.EventArgs;
 using Yggdrasil.Enumerations;
 
 namespace Stub
@@ -30,9 +31,7 @@ namespace Stub
     {
         #region Variables
 
-        public event EventHandler<PluginMessageEventArgs> OnError;
-        public event EventHandler<PluginMessageEventArgs> OnWarning;
-        public event EventHandler<PluginYesNoEventArgs> ShowYesNo;
+        public event EventHandler<DialogEventArgs> OnDialog;
         public event EventHandler<MessageEventArgs> MessageEvent;
         public string Name
         {
@@ -58,12 +57,10 @@ namespace Stub
             }
         }
 
-        public User MyInformation { get; private set; }
-
-        public ObservableCollection<DirectMessage> ContactsList { get; private set; } =
+        public ObservableCollection<DirectMessage> ContactList { get; private set; } =
             new ObservableCollection<DirectMessage>();
 
-        public ObservableCollection<Conversation> RecentsList { get; private set; } =
+        public ObservableCollection<Conversation> ConversationList { get; private set; } =
             new ObservableCollection<Conversation>();
 
         public ObservableCollection<Server> ServerList { get; private set; } =
@@ -147,20 +144,20 @@ namespace Stub
             if (text != null)
             {
                 if (attachment != null)
-                    OnWarning?.Invoke(
+                    OnDialog?.Invoke(
                         this,
-                        new PluginMessageEventArgs((action ? "Action message" : "Message") + " with text and attachment sent.")
+                        new DialogEventArgs(DialogType.Warning, (action ? "Action message" : "Message") + " with text and attachment sent.")
                     );
                 else
-                    OnWarning?.Invoke(this, new PluginMessageEventArgs("Text-only " + (action ? "action" : "") + " message sent."));
+                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Text-only " + (action ? "action" : "") + " message sent."));
             }
             else
-                OnWarning?.Invoke(
+                OnDialog?.Invoke(
                     this,
-                    new PluginMessageEventArgs("Attachment-only message sent.")
+                    new DialogEventArgs(DialogType.Warning, "Attachment-only message sent.")
                 );
             if (parent_message_identifier != null)
-                OnWarning?.Invoke(this, new PluginMessageEventArgs("Message references a parent."));
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message references a parent."));
             TypingUsersList.Clear();
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
@@ -174,8 +171,8 @@ namespace Stub
                 // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
                 MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
                     action
-                    ? new ActionMessage(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
-                    : new Message(identifier, MyInformation, DateTimeOffset.UtcNow.DateTime, text)
+                    ? new ActionMessage(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
+                    : new Message(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
                     , false)
                 );
             });
@@ -189,7 +186,7 @@ namespace Stub
             string newText
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message editing is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -198,7 +195,7 @@ namespace Stub
             string messageId
         )
         {
-            OnWarning?.Invoke(this, new PluginMessageEventArgs("Message deletion is not implemented."));
+            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -367,19 +364,18 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public Task<bool> PopulateUserInformation()
+        public Task<User> GetUserInfo()
         {
             _uiContext = SynchronizationContext.Current;
             Me.Status = "Need an Attorney? Better Call Saul! (505) 503-4455";
             Me.ConnectionStatus = PresenceStatus.Online;
-            MyInformation = Me;
-            return Task.FromResult(true);
+            return Task.FromResult(Me);
         }
 
         public Task<bool> PopulateContactsList()
         {
-            ContactsList.Clear();
-            ContactsList.Add(
+            ContactList.Clear();
+            ContactList.Add(
                 new DirectMessage(
                     new User(
                         "Skymu user 1",
@@ -392,7 +388,7 @@ namespace Stub
                     "u1"
                 )
             );
-            ContactsList.Add(
+            ContactList.Add(
                 new DirectMessage(
                     new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
@@ -402,9 +398,9 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public Task<bool> PopulateRecentsList()
+        public Task<bool> PopulateConversationsList()
         {
-            RecentsList.Clear();
+            ConversationList.Clear();
 
             int dayOffset = 0;
             foreach (var user in users)
@@ -424,7 +420,7 @@ namespace Stub
                         .Now.AddDays(-(dayOffset - 2))
                         .AddHours(-rand.Next(0, 12));
                 }
-                RecentsList.Add(
+                ConversationList.Add(
                     new DirectMessage(
                         user,
                         rand.Next(0, 5),
@@ -435,7 +431,7 @@ namespace Stub
                 dayOffset++;
             }
 
-            RecentsList.Add(
+            ConversationList.Add(
                 new Group(
                     "Giga based coalition",
                     "067",
@@ -466,7 +462,7 @@ namespace Stub
             }
         }
 
-        public Task<bool> SetTextStatus(string status)
+        public Task<bool> SetMood(string status)
         {
             return Task.FromResult(true);
         }
@@ -607,9 +603,9 @@ namespace Stub
         public async Task<bool> AddContact(Metadata contact, string message)
         {
             if (contact is User user)
-                ContactsList.Add(new DirectMessage(user, 0, user.Identifier));
+                ContactList.Add(new DirectMessage(user, 0, user.Identifier));
             else if (contact is Group group)
-                RecentsList.Add(group);
+                ConversationList.Add(group);
             return false;
         }
 
@@ -697,7 +693,7 @@ namespace Stub
         {
             new ExtraConfiguration(
                 "Hello world",
-                () => OnWarning?.Invoke(this, new PluginMessageEventArgs("Hello world!")),
+                () => OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Hello world!")),
                 "Show Hello World!")
         };
 

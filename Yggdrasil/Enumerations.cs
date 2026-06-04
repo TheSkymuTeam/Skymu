@@ -20,6 +20,14 @@ namespace Yggdrasil.Enumerations
         Token,
     }
 
+    public enum DialogType
+    {
+        Error,
+        Warning,
+        Information,
+        Question
+    }
+
     public enum LoginResult
     {
         Success,
@@ -51,12 +59,6 @@ namespace Yggdrasil.Enumerations
         Restricted,
         NoAccess,
         Forum,
-    }
-
-    public enum DialogType
-    {
-        Error,
-        Warning,
     }
 
     public enum Fetch

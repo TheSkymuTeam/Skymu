@@ -20,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ToxOO;
 using Yggdrasil;
+using Yggdrasil.EventArgs;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 using static System.Net.Mime.MediaTypeNames;
@@ -122,9 +123,9 @@ namespace Tox
             var core = GC(user_data);
             Debug.WriteLine($"Tox: Got connection status {status}");
             if (status == Tox_Connection.NONE)
-                core.currentUser.ConnectionStatus = PresenceStatus.Offline;
+                core._currentUser.ConnectionStatus = PresenceStatus.Offline;
             else
-                core.currentUser.ConnectionStatus = MapStatus(core.tox.status);
+                core._currentUser.ConnectionStatus = MapStatus(core.tox.status);
         }
 
         #endregion
@@ -162,7 +163,7 @@ namespace Tox
             if (connection_status != Tox_Connection.NONE)
             {
                 Debug.WriteLine($"Tox: Sending my PFP to {fid} as a {connection_status} connection was established");
-                byte[] pfp = core.currentUser.ProfilePicture;
+                byte[] pfp = core._currentUser.ProfilePicture;
                 byte[] hash = new byte[tox_hash_length()];
                 tox_hash(hash, pfp, (UIntPtr)pfp.Length);
                 UInt32 trid = tox_file_send(tox, fid, Tox_File_Kind.AVATAR, (UInt64)pfp.Length, 0, Encoding.ASCII.GetString(hash), (UIntPtr)tox_hash_length(), out var _);
@@ -171,7 +172,7 @@ namespace Tox
                     core.transfers.Remove(trid);
                     core.transfer_info.Remove(trid);
                 }
-                core.transfers.Add(trid, core.currentUser.ProfilePicture);
+                core.transfers.Add(trid, core._currentUser.ProfilePicture);
                 core.transfer_info.Add(trid, (Tox_File_Kind.AVATAR, ""));
                 if (core.pendingSendFriend.TryGetValue(fid, out var ls))
                 {
@@ -187,9 +188,9 @@ namespace Tox
                             else
                             {
                                 if (msg.type == Tox_Message_Type.ACTION)
-                                    core.messages.Add((UInt32)mid, new ActionMessage(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
+                                    core.messages.Add((UInt32)mid, new ActionMessage(mid + "_" + GUID(), core._currentUser, TIME(), msg.text));
                                 else
-                                    core.messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), core.currentUser, TIME(), msg.text));
+                                    core.messages.Add((UInt32)mid, new Message(mid + "_" + GUID(), core._currentUser, TIME(), msg.text));
                                 sucs.Add(msg);
                             }
                         }
@@ -248,7 +249,8 @@ namespace Tox
                 core.SAVE();
                 return;
             }
-            core.SYN(new PluginYesNoEventArgs(
+            core.SYN(new DialogEventArgs(
+                DialogType.Question,
                 $"Do you want to accept the friend request from {BATS(pkey)} with the message: {message}",
                 accept =>
                 {
@@ -259,8 +261,8 @@ namespace Tox
                     var f = new User(bpkey, bpkey, bpkey);
                     var dm = new DirectMessage(f, 0, BATS(pkey));
                     core.friends[fid] = f;
-                    core.ContactsList.Add(dm);
-                    core.RecentsList.Add(dm);
+                    core.ContactList.Add(dm);
+                    core.ConversationList.Add(dm);
                     return null;
                 }
             ));
@@ -396,10 +398,10 @@ namespace Tox
                     File.WriteAllBytes(Path.Combine(avatar_cache_dir, pkey + ".png"), bdata);
                     core.UCP(_ =>
                     {
-                        foreach (var f in core.ContactsList)
+                        foreach (var f in core.ContactList)
                             if (f.Identifier == pkey)
                                 f.ProfilePicture = bdata;
-                        foreach (var conv in core.RecentsList)
+                        foreach (var conv in core.ConversationList)
                             if (conv is DirectMessage dm)
                                 if (dm.Partner.Identifier == pkey)
                                     dm.Partner.ProfilePicture = bdata;
@@ -451,9 +453,9 @@ namespace Tox
                         {
                             Message message;
                             if (msg.type == Tox_Message_Type.ACTION)
-                                message = new ActionMessage(GUID(), core.currentUser, TIME(), msg.text);
+                                message = new ActionMessage(GUID(), core._currentUser, TIME(), msg.text);
                             else
-                                message = new Message(GUID(), core.currentUser, TIME(), msg.text);
+                                message = new Message(GUID(), core._currentUser, TIME(), msg.text);
                             core.UCP(_ =>
                                 core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), message, false))
                             );
@@ -477,8 +479,8 @@ namespace Tox
             var pkey = BATS(p.publicKey);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
             User sender = new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey));
-            if (BATS(c.peers[pid].publicKey) == core.currentUser.Identifier)
-                sender = core.currentUser;
+            if (BATS(c.peers[pid].publicKey) == core._currentUser.Identifier)
+                sender = core._currentUser;
             Message message;
             if (type == Tox_Message_Type.ACTION)
                 message = new ActionMessage($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg);
@@ -497,7 +499,7 @@ namespace Tox
             core.UCP(_ =>
             {
                 var pkey = BATS(new Conference(tox, cid).cid);
-                foreach (var conv in core.RecentsList)
+                foreach (var conv in core.ConversationList)
                     if (conv is Group c)
                         if (c.Identifier == pkey)
                         {
@@ -514,7 +516,7 @@ namespace Tox
             core.UCP(_ =>
             {
                 var pkey = BATS(new Conference(tox, cid).cid);
-                foreach (var conv in core.RecentsList)
+                foreach (var conv in core.ConversationList)
                     if (conv is Group c)
                         if (c.Identifier == pkey)
                         {

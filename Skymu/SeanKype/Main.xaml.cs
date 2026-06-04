@@ -71,7 +71,7 @@ namespace Skymu.SeanKype
                 LabelUsername.Text = Universal.CurrentUser?.DisplayName;
                 LabelStatus.Text = Universal.CurrentUser?.Status;
                 this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
-                ConversationList.ItemsSource = Universal.Plugin.RecentsList;
+                ConversationList.ItemsSource = Universal.Plugin.ConversationList;
                 GlobalUserCount.Text = string.Empty;
                 if (Universal.CurrentUser?.ProfilePicture?.Length > 0)
                     UserPicture.Source = ImageHelper.GenerateFromArray(
@@ -94,7 +94,7 @@ namespace Skymu.SeanKype
                     SkypeHome.Generate(
                         browser,
                         Universal.CurrentUser,
-                        Universal.Plugin.ContactsList.ToArray()
+                        Universal.Plugin.ContactList.ToArray()
                     );
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -134,7 +134,7 @@ namespace Skymu.SeanKype
                     }
                 if (!found)
                 {
-                    if (ConversationList.ItemsSource == Universal.Plugin.ContactsList)
+                    if (ConversationList.ItemsSource == Universal.Plugin.ContactList)
                         SetActiveTab(1);
                     else
                         SetActiveTab(0);
@@ -536,15 +536,15 @@ namespace Skymu.SeanKype
         private async void TabContacts_Click(object sender, MouseButtonEventArgs e)
         {
             SetActiveTab(0);
-            if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1)
+            if (Universal.Plugin.ContactList == null || Universal.Plugin.ContactList.Count < 1)
                 await Universal.Plugin.PopulateContactsList();
-            ConversationList.ItemsSource = Universal.Plugin.ContactsList;
+            ConversationList.ItemsSource = Universal.Plugin.ContactList;
         }
 
         private void TabRecent_Click(object sender, MouseButtonEventArgs e)
         {
             SetActiveTab(1);
-            ConversationList.ItemsSource = Universal.Plugin.RecentsList;
+            ConversationList.ItemsSource = Universal.Plugin.ConversationList;
         }
 
         private async void TabServers_Click(object sender, MouseButtonEventArgs e)

@@ -20,6 +20,7 @@ using Skymu.Windows;
 using Skymu.Helpers;
 using Skymu.Sounds;
 using Skymu.Preferences;
+using Yggdrasil.EventArgs;
 using Skymu.Forms;
 using Skymu.UserDirectory;
 using Microsoft.Win32;
@@ -259,18 +260,8 @@ namespace Skymu.ViewModels
 
         public async Task InitSidebar()
         {
-            try
-            {
-                await Universal.Plugin.PopulateUserInformation();
-                await Universal.Plugin.PopulateRecentsList();
-            }
-            catch (Exception ex)
-            {
-                Universal.PluginErrorHandler(Universal.Plugin, new PluginMessageEventArgs("Error when populating informations: " + ex.Message));
-                return;
-            }
-            Universal.CurrentUser = Universal.Plugin.MyInformation;
-
+            Universal.CurrentUser = await Universal.Plugin.GetUserInfo();
+            await Universal.Plugin.PopulateConversationsList();
             if (string.IsNullOrEmpty(Universal.CurrentUser?.Identifier))
             {
                 Universal.ExceptionHandler(
@@ -281,7 +272,7 @@ namespace Skymu.ViewModels
                 return;
             }
             _database = new DatabaseManager(Universal.CurrentUser);
-            _database.Conversations.Write(Universal.Plugin.RecentsList.ToArray());
+            _database.Conversations.Write(Universal.Plugin.ConversationList.ToArray());
             _ = LoadAndCacheContacts();
             _database.Accounts.Write(Universal.CurrentUser);
 
@@ -305,7 +296,7 @@ namespace Skymu.ViewModels
         private async Task LoadAndCacheContacts()
         {
             await Universal.Plugin.PopulateContactsList();
-            _database?.Contacts.Write(Universal.Plugin.ContactsList.ToArray());
+            _database?.Contacts.Write(Universal.Plugin.ContactList.ToArray());
         }
 
         #endregion
@@ -519,7 +510,7 @@ namespace Skymu.ViewModels
         {
             if (e is MessageRecievedEventArgs eR)
             {
-                var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c =>
+                var conversation = Universal.Plugin.ConversationList.FirstOrDefault(c =>
                     c.Identifier == eR.ConversationId
                 );
                 if (conversation != null)
@@ -631,7 +622,7 @@ namespace Skymu.ViewModels
             DateTime messageTimestamp
         )
         {
-            var conversation = Universal.Plugin.RecentsList.FirstOrDefault(c =>
+            var conversation = Universal.Plugin.ConversationList.FirstOrDefault(c =>
                 c.Identifier == conversationId
             );
             if (conversation == null)
@@ -655,7 +646,7 @@ namespace Skymu.ViewModels
             string tempId = SKYMU_SENDING + "/" + Guid.NewGuid().ToString();
             var preview = new Message(
                 tempId,
-                Universal.Plugin.MyInformation,
+                Universal.CurrentUser,
                 DateTime.Now,
                 text,
                 null,
@@ -698,17 +689,17 @@ namespace Skymu.ViewModels
 
         public async Task<IList<object>> GetContactsItems()
         {
-            if (Universal.Plugin.ContactsList == null || Universal.Plugin.ContactsList.Count < 1)
+            if (Universal.Plugin.ContactList == null || Universal.Plugin.ContactList.Count < 1)
                 await Universal.Plugin.PopulateContactsList();
-            return Universal.Plugin.ContactsList.Cast<object>().ToList();
+            return Universal.Plugin.ContactList.Cast<object>().ToList();
         }
 
         public async Task<IList<object>> GetRecentsItems()
         {
-            if (Universal.Plugin.RecentsList == null || Universal.Plugin.RecentsList.Count < 1)
-                await Universal.Plugin.PopulateRecentsList();
+            if (Universal.Plugin.ConversationList == null || Universal.Plugin.ConversationList.Count < 1)
+                await Universal.Plugin.PopulateConversationsList();
             return CompactRecentsHelper
-                .GroupByDate(Universal.Plugin.RecentsList)
+                .GroupByDate(Universal.Plugin.ConversationList)
                 .Cast<object>()
                 .ToList();
         }
@@ -731,7 +722,7 @@ namespace Skymu.ViewModels
         public IList<object> GetGroupedRecents()
         {
             return CompactRecentsHelper
-                .GroupByDate(Universal.Plugin.RecentsList)
+                .GroupByDate(Universal.Plugin.ConversationList)
                 .Cast<object>()
                 .ToList();
         }

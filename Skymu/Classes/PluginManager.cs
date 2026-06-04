@@ -52,9 +52,7 @@ namespace Skymu.Plugins
                         if (typeof(ICore).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                         {
                             ICore instance = (ICore)Activator.CreateInstance(t);
-                            instance.OnError += Universal.PluginErrorHandler;
-                            instance.OnWarning += Universal.PluginWarningHandler;
-                            instance.ShowYesNo += Universal.PluginYesNoHandler;
+                            instance.OnDialog += Universal.PluginDialogHandler;
                             instance.MessageEvent += Universal.PluginNotificationHandler;
                             PluginList.Add(instance);
                             pluginCount++;
@@ -94,9 +92,7 @@ namespace Skymu.Plugins
             {
                 try
                 {
-                    plugin.OnError -= Universal.PluginErrorHandler;
-                    plugin.OnWarning -= Universal.PluginWarningHandler;
-                    plugin.ShowYesNo -= Universal.PluginYesNoHandler;
+                    plugin.OnDialog -= Universal.PluginDialogHandler;
                     plugin.MessageEvent -= Universal.PluginNotificationHandler;
 
                     if (plugin is IDisposable disposable)

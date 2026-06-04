@@ -20,6 +20,7 @@ using Skymu.Sounds;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Yggdrasil.EventArgs;
 using System.Windows.Media;
 using Skymu.Windows;
 using System.Windows.Media.Animation;
@@ -145,8 +146,8 @@ namespace Skymu.Forms
         private void AddMessage(Message message, MessageRecievedEventArgs e)
         {
             Conversation conversation =
-                Universal.Plugin.RecentsList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
-                ?? Universal.Plugin.ContactsList?.FirstOrDefault(c =>
+                Universal.Plugin.ConversationList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
+                ?? Universal.Plugin.ContactList?.FirstOrDefault(c =>
                     c.Identifier == e.ConversationId
                 );
 

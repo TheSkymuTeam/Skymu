@@ -9,14 +9,6 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Forms;
-using Skymu.Migration;
-using Skymu.Plugins;
-using Skymu.Preferences;
-using Skymu.Sounds;
-using Skymu.Theming;
-using Skymu.UserDirectory;
-using Skymu.Windows;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -32,8 +24,18 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Skymu.Forms;
+using Skymu.Migration;
+using Skymu.Plugins;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using Skymu.Theming;
+using Skymu.UserDirectory;
+using Skymu.Windows;
 using Yggdrasil;
 using Yggdrasil.Classes;
+using Yggdrasil.Enumerations;
+using Yggdrasil.EventArgs;
 using Yggdrasil.Networking;
 
 namespace Skymu
@@ -90,7 +92,12 @@ namespace Skymu
                 );
         }
 
-        private static void PluginPopup(object sender, PluginMessageEventArgs e, string prefix, WindowBase.IconType itype)
+        private static void PluginPopup(
+            object sender,
+            DialogEventArgs e,
+            string prefix,
+            WindowBase.IconType itype
+        )
         {
             Current.Dispatcher.BeginInvoke(
                 new Action(
@@ -114,28 +121,48 @@ namespace Skymu
             );
         }
 
-        public static void PluginErrorHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Error in plugin ", WindowBase.IconType.Error);
-        public static void PluginWarningHandler(object sender, PluginMessageEventArgs e) => PluginPopup(sender, e, "Warning from plugin ", WindowBase.IconType.Information);
-        public static void PluginYesNoHandler(object sender, PluginYesNoEventArgs e)
+        public static void PluginDialogHandler(object sender, DialogEventArgs e)
         {
-            Current.Dispatcher.BeginInvoke(
-                new Action(
-                    delegate
-                    {
-                        Dialog dialog = new Dialog(
-                            type: WindowBase.IconType.Information,
-                            content: e.Message,
-                            header: ((ICore)sender).Name + " requests your choice",
-                            brText: Lang["sF_CONFIRM_YES"],
-                            blEnabled: true,
-                            blText: Lang["sF_CONFIRM_NO_BTN"]
-                        );
-                        dialog.BRAction = () => { e.Action(true); dialog.Close(); };
-                        dialog.BLAction = () => { e.Action(false); dialog.Close(); };
-                        dialog.ShowDialog();
-                    }
-                )
-            );
+            switch (e.Type)
+            {
+                case DialogType.Warning:
+                    PluginPopup(sender, e, "Warning from plugin ", WindowBase.IconType.Information);
+                    break;
+                case DialogType.Error:
+                    PluginPopup(sender, e, "Error in plugin ", WindowBase.IconType.Error);
+                    break;
+                case DialogType.Information:
+                    PluginPopup(sender, e, "Message from plugin ", WindowBase.IconType.Information);
+                    break;
+                case DialogType.Question:
+                    Current.Dispatcher.BeginInvoke(
+                        new Action(
+                            delegate
+                            {
+                                Dialog dialog = new Dialog(
+                                    type: WindowBase.IconType.Information,
+                                    content: e.Message,
+                                    header: ((ICore)sender).Name + " requests your choice",
+                                    brText: Lang["sF_CONFIRM_YES"],
+                                    blEnabled: true,
+                                    blText: Lang["sF_CONFIRM_NO_BTN"]
+                                );
+                                dialog.BRAction = () =>
+                                {
+                                    e.Action(true);
+                                    dialog.Close();
+                                };
+                                dialog.BLAction = () =>
+                                {
+                                    e.Action(false);
+                                    dialog.Close();
+                                };
+                                dialog.ShowDialog();
+                            }
+                        )
+                    );
+                    break;
+            }
         }
 
         public static void PluginNotificationHandler(object sender, MessageEventArgs e)
@@ -156,10 +183,13 @@ namespace Skymu
             {
                 try
                 {
-                    mutex = new Mutex(true,
+                    mutex = new Mutex(
+                        true,
                         "Local\\Skymu_SingleInstance_"
-                        + Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>() ?? "INVALIDGUID",
-                        out var created);
+                            + Assembly.GetExecutingAssembly().GetCustomAttribute<GuidAttribute>()
+                            ?? "INVALIDGUID",
+                        out var created
+                    );
 
                     Debug.WriteLine($"[Universal] Mutex creation: {created}");
 
@@ -174,7 +204,9 @@ namespace Skymu
                             }
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
-                        System.Windows.MessageBox.Show("Skymu is already running.\n\nYou can configure Skymu to allow running multiple instances at the same time in the Options menu.");
+                        System.Windows.MessageBox.Show(
+                            "Skymu is already running.\n\nYou can configure Skymu to allow running multiple instances at the same time in the Options menu."
+                        );
                         Terminate();
                         return;
                     }
@@ -208,12 +240,15 @@ namespace Skymu
         {
             try
             {
-                return CultureInfo.GetCultures(CultureTypes.AllCultures)
-                    .FirstOrDefault(c =>
-                        c.NativeName.StartsWith(displayName) ||
-                        c.DisplayName.StartsWith(displayName) ||
-                        c.EnglishName.StartsWith(displayName)
-                    )?.Name ?? "en-US";
+                return CultureInfo
+                        .GetCultures(CultureTypes.AllCultures)
+                        .FirstOrDefault(c =>
+                            c.NativeName.StartsWith(displayName)
+                            || c.DisplayName.StartsWith(displayName)
+                            || c.EnglishName.StartsWith(displayName)
+                        )
+                        ?.Name
+                    ?? "en-US";
             }
             catch { }
             return "en-US";
@@ -222,7 +257,10 @@ namespace Skymu
         private void App_Startup(object sender, StartupEventArgs e)
         {
             if (!Settings.UseSystemCulture)
-                CultureInfo.CurrentCulture = new CultureInfo(GetCultureCode(Settings.Language), false);
+                CultureInfo.CurrentCulture = new CultureInfo(
+                    GetCultureCode(Settings.Language),
+                    false
+                );
             // TODO: Dynamically switch language without restart
             switch (Interface)
             {
@@ -292,21 +330,21 @@ namespace Skymu
                 if (ActiveViewModel != null)
                 {
                     Conversation found = null;
-                    foreach (var c in Universal.Plugin.RecentsList)
+                    foreach (var c in Universal.Plugin.ConversationList)
                         if ((c is DirectMessage u) && u.Partner.Username == skypename)
                         {
-                            found = c; break;
+                            found = c;
+                            break;
                         }
                     if (found == null)
-                        foreach (DirectMessage u in Universal.Plugin.ContactsList)
+                        foreach (DirectMessage u in Universal.Plugin.ContactList)
                             if (u.Partner.Username == skypename)
                             {
-                                found = u; break;
+                                found = u;
+                                break;
                             }
                     if (found != null)
-                        Current.Dispatcher.Invoke(() =>
-                            ActiveViewModel.SelectConversation(found)
-                        );
+                        Current.Dispatcher.Invoke(() => ActiveViewModel.SelectConversation(found));
                 }
             }
         }
@@ -437,7 +475,11 @@ namespace Skymu
             frame.ShowDialog();
         }
 
-        public static void MessageBox(string content, string title = "Information", WindowBase.IconType icon = WindowBase.IconType.Information)
+        public static void MessageBox(
+            string content,
+            string title = "Information",
+            WindowBase.IconType icon = WindowBase.IconType.Information
+        )
         {
             new Dialog(
                 icon,
@@ -477,14 +519,13 @@ namespace Skymu
                 writer.Dispose();
                 pipe.Dispose();
             }
-            catch
-            { }
+            catch { }
         }
 
         protected override void OnStartup(StartupEventArgs ev)
         {
 #if DEBUG
-DebugBuild = true;
+            DebugBuild = true;
 #endif
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -492,9 +533,7 @@ DebugBuild = true;
             AutoLaunch.Initialize();
             if (!ThemeManager.Scan())
                 Universal.ExceptionHandler(
-                    new Exception(
-                        "Could not find any compatible theme files in directory /Themes."
-                    )
+                    new Exception("Could not find any compatible theme files in directory /Themes.")
                 );
             ThemeManager.LoadFromSettings();
             Migrator.Run();
@@ -564,9 +603,7 @@ DebugBuild = true;
             }
             catch (Exception ex)
             {
-                Universal.MessageBox(
-                    $"Failed to apply presentation framework: {ex.Message}"
-                );
+                Universal.MessageBox($"Failed to apply presentation framework: {ex.Message}");
             }
         }
 

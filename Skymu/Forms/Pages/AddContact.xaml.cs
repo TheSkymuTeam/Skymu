@@ -125,9 +125,8 @@ namespace Skymu.Forms.Pages
             {
                 StopSearch();
                 ErrorField.Visibility = Visibility.Visible;
-                Universal.PluginErrorHandler(Universal.Plugin, new PluginMessageEventArgs(ex.Message));
                 findTask.Dispose();
-                return;
+                throw ex;
             }
             Debug.WriteLine(result.Length);
             findTask.Dispose();
@@ -180,7 +179,7 @@ namespace Skymu.Forms.Pages
             catch (Exception ex) // TODO change
             {
                 exed = true;
-                Universal.PluginErrorHandler(Universal.Plugin, new PluginMessageEventArgs(ex.Message));
+                throw ex;
             }
             if (!suc)
             {

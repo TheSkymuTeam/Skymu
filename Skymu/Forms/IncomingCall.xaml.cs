@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Yggdrasil.Classes;
+using Yggdrasil.EventArgs;
 using Skymu.Sounds;
 
 namespace Skymu.Forms
