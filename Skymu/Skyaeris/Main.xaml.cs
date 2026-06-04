@@ -566,7 +566,7 @@ namespace Skymu.Skyaeris
 
         private void ConfigureCompactRecentsList()
         {
-            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.ConversationList);
+            var grouped = CompactRecentsHelper.GroupByDate(vmodel.ConversationList);
             var selector = new CompactRecentsTemplateSelector
             {
                 DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
@@ -629,37 +629,13 @@ namespace Skymu.Skyaeris
             switch (tab_to_select.Name)
             {
                 case "btnServers":
-                    if (
-                        Universal.Plugin.ServerList == null
-                        || Universal.Plugin.ServerList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateServerList();
-
-                    foreach (var server in Universal.Plugin.ServerList)
-                    {
-                        server.GroupedChannels = ServerChannelHelper.GroupByCategory(
-                            server.Channels,
-                            server.CategoryMap
-                        );
-                    }
-
-                    ServersList.ItemsSource = Universal.Plugin.ServerList;
+                    ServersList.ItemsSource = await vmodel.GetServerList();
                     break;
                 case "btnContacts":
-                    if (
-                        Universal.Plugin.ContactList == null
-                        || Universal.Plugin.ContactList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateContactsList();
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = Universal.Plugin.ContactList;
+                    ConversationList.ItemsSource = await vmodel.GetContactList();
                     break;
                 case "btnRecents":
-                    if (
-                        Universal.Plugin.ConversationList == null
-                        || Universal.Plugin.ConversationList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateConversationsList();
                     ConfigureCompactRecentsList();
                     break;
             }
@@ -1673,7 +1649,7 @@ namespace Skymu.Skyaeris
                     SkypeHome.Generate(
                         browser,
                         Universal.CurrentUser,
-                        Universal.Plugin.ContactList.ToArray()
+                        vmodel.ContactList.ToList()
                     );
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
@@ -1723,7 +1699,7 @@ namespace Skymu.Skyaeris
                         { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
-                    if (ConversationList.ItemsSource == Universal.Plugin.ContactList)
+                    if (ConversationList.ItemsSource == vmodel.ContactList)
                         await SelectTab(btnRecents);
                     else
                         await SelectTab(btnContacts);

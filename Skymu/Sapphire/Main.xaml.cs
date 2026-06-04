@@ -531,7 +531,7 @@ namespace Skymu.Sapphire
 
         private void ConfigureCompactRecentsList()
         {
-            var grouped = CompactRecentsHelper.GroupByDate(Universal.Plugin.ConversationList);
+            var grouped = CompactRecentsHelper.GroupByDate(vmodel.ConversationList);
             var selector = new CompactRecentsTemplateSelector
             {
                 DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
@@ -583,40 +583,17 @@ namespace Skymu.Sapphire
             switch (tab_to_select.Name)
             {
                 case "btnServers":
-                    if (
-                        Universal.Plugin.ServerList == null
-                        || Universal.Plugin.ServerList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateServerList();
-
-                    foreach (var server in Universal.Plugin.ServerList)
-                    {
-                        server.GroupedChannels = ServerChannelHelper.GroupByCategory(
-                            server.Channels,
-                            server.CategoryMap
-                        );
-                    }
+                    ServersList.ItemsSource = await vmodel.GetServerList();
                     SplashHeader.Text = "Servers";
                     SplashDescription.Text = "Find a community and connect with the world.";
-                    ServersList.ItemsSource = Universal.Plugin.ServerList;
                     break;
                 case "btnContacts":
-                    if (
-                        Universal.Plugin.ContactList == null
-                        || Universal.Plugin.ContactList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateContactsList();
                     ConversationList.ItemTemplateSelector = null;
-                    ConversationList.ItemsSource = Universal.Plugin.ContactList;
+                    ConversationList.ItemsSource = await vmodel.GetContactList();
                     SplashHeader.Text = Universal.Lang["sZAPBUTTON_CONTACTS"];
                     SplashDescription.Text = "Choose a contact and start talking.";
                     break;
                 case "btnRecents":
-                    if (
-                        Universal.Plugin.ConversationList == null
-                        || Universal.Plugin.ConversationList.Count < 1
-                    )
-                        await Universal.Plugin.PopulateConversationsList();
                     ConfigureCompactRecentsList();
                     SplashHeader.Text = "Conversations";
                     SplashDescription.Text = "Choose a conversation to pick up again.";
@@ -1674,7 +1651,7 @@ namespace Skymu.Sapphire
                     { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
-                    if (ConversationList.ItemsSource == Universal.Plugin.ContactList)
+                    if (ConversationList.ItemsSource == vmodel.ContactList)
                         await SelectTab(btnRecents);
                     else
                         await SelectTab(btnContacts);

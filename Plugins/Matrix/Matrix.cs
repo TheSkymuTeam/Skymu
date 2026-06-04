@@ -363,27 +363,37 @@ namespace Matrix
             }
         }
 
-        public ObservableCollection<DirectMessage> ContactList { get; private set; } =
-            new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> ConversationList { get; private set; } =
-            new ObservableCollection<Conversation>();
-        public ObservableCollection<Server> ServerList { get; private set; }
-
         public Task<User> GetUserInfo()
         {
             _uiContext = SynchronizationContext.Current;
             return Task.FromResult(_user);
         }
-        public async Task<bool> PopulateContactsList() => await PopulateFromInitialSync();
 
-        public Task<bool> PopulateConversationsList() => Task.FromResult(true);
+        #region List population
 
-        public Task<bool> PopulateServerList() => Task.FromResult(false);
-
-        private async Task<bool> PopulateFromInitialSync()
+        public async Task<List<DirectMessage>> FetchContacts()
         {
-            if (_initialSyncDone)
-                return true;
+            var (contacts, _) = await FetchFromInitialSync();
+            return contacts;
+        }
+
+        public async Task<List<Conversation>> FetchConversations()
+        {
+            var (_, conversations) = await FetchFromInitialSync();
+            return conversations;
+        }
+
+        public Task<List<Server>> FetchServers() => Task.FromResult(new List<Server>());
+
+        private (List<DirectMessage>, List<Conversation>) _cachedSyncResult;
+
+        private async Task<(List<DirectMessage>, List<Conversation>)> FetchFromInitialSync()
+        {
+            if (_initialSyncDone && _cachedSyncResult != default)
+                return _cachedSyncResult;
+
+            var contactList = new List<DirectMessage>();
+            var conversationList = new List<Conversation>();
 
             try
             {
@@ -410,9 +420,9 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, 
+                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error,
                             $"Initial sync failed: {await response.Content.ReadAsStringAsync()}"));
-                        return false;
+                        return (new List<DirectMessage>(), new List<Conversation>());
                     }
                     responseBody = await response.Content.ReadAsStringAsync();
                 }
@@ -421,110 +431,108 @@ namespace Matrix
                 _nextBatch = syncData.GetProperty("next_batch").GetString();
                 Debug.WriteLine($"[Matrix] Initial sync complete. next_batch={_nextBatch}");
 
-                if (!syncData.TryGetProperty("rooms", out var rooms) ||
-                    !rooms.TryGetProperty("join", out var joinedRooms))
+                if (syncData.TryGetProperty("rooms", out var rooms) &&
+                    rooms.TryGetProperty("join", out var joinedRooms))
                 {
-                    StartSyncLoop();
-                    _initialSyncDone = true;
-                    return true;
-                }
-
-                foreach (var room in joinedRooms.EnumerateObject())
-                {
-                    string roomId = room.Name;
-                    string roomName = roomId;
-                    byte[] roomAvatar = null;
-                    string pendingAvatarUrl = null;
-                    var memberUsers = new List<User>();
-
-                    if (room.Value.TryGetProperty("state", out var state) &&
-                        state.TryGetProperty("events", out var stateEvents))
+                    foreach (var room in joinedRooms.EnumerateObject())
                     {
-                        foreach (var evt in stateEvents.EnumerateArray())
+                        string roomId = room.Name;
+                        string roomName = roomId;
+                        string pendingAvatarUrl = null;
+                        var memberUsers = new List<User>();
+
+                        if (room.Value.TryGetProperty("state", out var state) &&
+                            state.TryGetProperty("events", out var stateEvents))
                         {
-                            if (!evt.TryGetProperty("type", out var typeProp)) continue;
-                            string type = typeProp.GetString();
-
-                            if (type == "m.room.name" &&
-                                evt.TryGetProperty("content", out var nameContent) &&
-                                nameContent.TryGetProperty("name", out var nameProp) &&
-                                !string.IsNullOrEmpty(nameProp.GetString()))
+                            foreach (var evt in stateEvents.EnumerateArray())
                             {
-                                roomName = nameProp.GetString();
-                            }
-                            else if (type == "m.room.avatar" &&
-                                     evt.TryGetProperty("content", out var avatarContent) &&
-                                     avatarContent.TryGetProperty("url", out var avatarUrlProp) &&
-                                     !string.IsNullOrEmpty(avatarUrlProp.GetString()))
-                            {
-                                pendingAvatarUrl = avatarUrlProp.GetString();
-                            }
-                            else if (type == "m.room.member" &&
-                                     evt.TryGetProperty("content", out var memberContent) &&
-                                     memberContent.TryGetProperty("membership", out var membership) &&
-                                     membership.GetString() == "join" &&
-                                     evt.TryGetProperty("state_key", out var stateKey))
-                            {
-                                string userId = stateKey.GetString();
-                                if (string.IsNullOrEmpty(userId)) continue;
+                                if (!evt.TryGetProperty("type", out var typeProp)) continue;
+                                string type = typeProp.GetString();
 
-                                string dn = userId;
-                                if (memberContent.TryGetProperty("displayname", out var dnProp) &&
-                                    !string.IsNullOrEmpty(dnProp.GetString()))
-                                    dn = dnProp.GetString();
+                                if (type == "m.room.name" &&
+                                    evt.TryGetProperty("content", out var nameContent) &&
+                                    nameContent.TryGetProperty("name", out var nameProp) &&
+                                    !string.IsNullOrEmpty(nameProp.GetString()))
+                                {
+                                    roomName = nameProp.GetString();
+                                }
+                                else if (type == "m.room.avatar" &&
+                                         evt.TryGetProperty("content", out var avatarContent) &&
+                                         avatarContent.TryGetProperty("url", out var avatarUrlProp) &&
+                                         !string.IsNullOrEmpty(avatarUrlProp.GetString()))
+                                {
+                                    pendingAvatarUrl = avatarUrlProp.GetString();
+                                }
+                                else if (type == "m.room.member" &&
+                                         evt.TryGetProperty("content", out var memberContent) &&
+                                         memberContent.TryGetProperty("membership", out var membership) &&
+                                         membership.GetString() == "join" &&
+                                         evt.TryGetProperty("state_key", out var stateKey))
+                                {
+                                    string userId = stateKey.GetString();
+                                    if (string.IsNullOrEmpty(userId)) continue;
 
-                                _displayNameCache[userId] = dn;
-                                memberUsers.Add(new User(dn, userId, userId));
+                                    string dn = userId;
+                                    if (memberContent.TryGetProperty("displayname", out var dnProp) &&
+                                        !string.IsNullOrEmpty(dnProp.GetString()))
+                                        dn = dnProp.GetString();
+
+                                    _displayNameCache[userId] = dn;
+                                    memberUsers.Add(new User(dn, userId, userId));
+                                }
                             }
                         }
-                    }
 
-                    bool isDirect = memberUsers.Count <= 2;
-                    _recentRoomMap[roomId] = roomId;
+                        bool isDirect = memberUsers.Count <= 2;
+                        _recentRoomMap[roomId] = roomId;
 
-                    Conversation conversation;
-                    if (isDirect)
-                        conversation = new DirectMessage(
-                            new User(roomName, roomId, roomId, string.Empty, PresenceStatus.Online, null),
-                            0, roomId, DateTime.Now);
-                    else
-                        conversation = new Group(
-                            roomName, roomId, 0, memberUsers.ToArray(), null, DateTime.Now);
-
-                    _uiContext?.Post(_ =>
-                    {
-                        ConversationList.Add(conversation);
-                        if (isDirect && conversation is DirectMessage dm)
-                            ContactList.Add(dm);
-                    }, null);
-
-                    // download avatar in background; doesn't block list population
-                    if (pendingAvatarUrl != null)
-                    {
-                        string capturedUrl = pendingAvatarUrl;
-                        Conversation capturedConv = conversation;
-                        _ = Task.Run(async () =>
+                        Conversation conversation;
+                        if (isDirect)
                         {
-                            byte[] bytes = await MatrixOOTBStuff.DownloadMatrixContent(
-                                capturedUrl, _homeserver, _httpClient);
-                            if (bytes == null) return;
-                            // TODO add setter
-                        });
+                            var dm = new DirectMessage(
+                                new User(roomName, roomId, roomId, string.Empty, PresenceStatus.Online, null),
+                                0, roomId, DateTime.Now);
+                            conversation = dm;
+                            contactList.Add(dm);
+                        }
+                        else
+                        {
+                            conversation = new Group(roomName, roomId, 0, memberUsers.ToArray(), null, DateTime.Now);
+                        }
+
+                        conversationList.Add(conversation);
+
+                        if (pendingAvatarUrl != null)
+                        {
+                            string capturedUrl = pendingAvatarUrl;
+                            Conversation capturedConv = conversation;
+                            _ = Task.Run(async () =>
+                            {
+                                byte[] bytes = await MatrixOOTBStuff.DownloadMatrixContent(
+                                    capturedUrl, _homeserver, _httpClient);
+                                if (bytes == null) return;
+                                // TODO add setter
+                            });
+                        }
                     }
                 }
 
-                Debug.WriteLine($"[Matrix] Populated {ConversationList.Count} recents, {ContactList.Count} contacts.");
+                Debug.WriteLine($"[Matrix] Populated {conversationList.Count} recents, {contactList.Count} contacts.");
 
                 _initialSyncDone = true;
                 StartSyncLoop();
-                return true;
+
+                _cachedSyncResult = (contactList, conversationList);
+                return _cachedSyncResult;
             }
             catch (Exception ex)
             {
                 OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Initial sync failed: {ex.Message}"));
-                return false;
+                return (new List<DirectMessage>(), new List<Conversation>());
             }
         }
+
+        #endregion
 
         public async Task<bool> SendMessage(
             string identifier,
@@ -771,7 +779,7 @@ namespace Matrix
             }
         }
 
-        public async Task<ConversationItem[]> FetchMessages(
+        public async Task<List<ConversationItem>> FetchMessages(
             Conversation conversation,
             Fetch fetch_type,
             int message_count,
@@ -783,7 +791,7 @@ namespace Matrix
             if (string.IsNullOrEmpty(conversation.Identifier))
             {
                 _activeRoomId = null;
-                return new ConversationItem[0];
+                return new List<ConversationItem>();
             }
 
             _activeRoomId = conversation.Identifier;
@@ -805,7 +813,7 @@ namespace Matrix
                     {
                         OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, 
                             $"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"));
-                        return new ConversationItem[0];
+                        return new List<ConversationItem>();
                     }
                     responseBody = await response.Content.ReadAsStringAsync();
                 }
@@ -887,13 +895,13 @@ namespace Matrix
                     messageList.Add(messageItem);
                 }
 
-                return messageList.ToArray();
+                return messageList;
             }
             catch (Exception ex)
             {
                 OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to load conversation: {ex.Message}"));
                 _activeRoomId = null;
-                return new ConversationItem[0];
+                return new List<ConversationItem>();
             }
         }
 
@@ -905,8 +913,6 @@ namespace Matrix
             _syncCancellationTokenSource?.Dispose();
             _syncCancellationTokenSource = null;
 
-            ContactList?.Clear();
-            ConversationList?.Clear();
             TypingUsersList?.Clear();
             _displayNameCache?.Clear();
             _recentRoomMap?.Clear();

@@ -56,12 +56,6 @@ namespace Tox
         };
         public int TypingTimeout => 5000;
         public int TypingRepeat => 5000;
-        public ObservableCollection<DirectMessage> ContactList { get; private set; }
-            = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> ConversationList { get; private set; }
-            = new ObservableCollection<Conversation>();
-        public ObservableCollection<Server> ServerList { get; private set; }
-            = new ObservableCollection<Server>();
         public ObservableCollection<User> TypingUsersList { get; private set; }
             = new ObservableCollection<User>();
 
@@ -476,9 +470,22 @@ namespace Tox
             return Task.FromResult(_currentUser);
         }
 
-        public async Task<bool> PopulateContactsList() => FriendListRefresh(this, false);
+        public Task<List<DirectMessage>> FetchContacts()
+        {
+            uiContext = SynchronizationContext.Current;
+            var (contacts, _) = FriendListRefresh(this);
+            return Task.FromResult(contacts);
+        }
 
-        public async Task<bool> PopulateConversationsList() => FriendListRefresh(this, false);
+        public Task<List<Conversation>> FetchConversations()
+        {
+            uiContext = SynchronizationContext.Current;
+            var (_, conversations) = FriendListRefresh(this);
+            return Task.FromResult(conversations);
+        }
+
+        public Task<List<Server>> FetchServers() => Task.FromResult(new List<Server>());
+
 
         #endregion
 
@@ -554,7 +561,7 @@ namespace Tox
             return Task.FromResult(false);
         }
 
-        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public async Task<List<ConversationItem>> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             activecid = conversation.Identifier;
             TypingUsersList.Clear();
@@ -564,7 +571,7 @@ namespace Tox
                 if (f != null && f.typing)
                     TypingUsersList.Add(friends[f.id]);
             } catch (ArgumentException) { }
-            return new ConversationItem[0];
+            return new List<ConversationItem>();
         }
 
         public async Task<bool> SetConnectionStatus(PresenceStatus status)
@@ -623,7 +630,9 @@ namespace Tox
 
         public async Task<bool> AddContact(Metadata metadata, string message)
         {
-            if (metadata is User user)
+            // from omega -> nilFinx: TODO fix this after I changed how lists work!
+
+            /*if (metadata is User user)
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
                 var f = new User(user.DisplayName, user.DisplayName, user.DisplayName);
@@ -643,7 +652,7 @@ namespace Tox
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
                 ConversationList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
 #pragma warning restore CS0162 // Unreachable code detected
-            }
+            }*/
             SAVE();
             return true;
         }
@@ -736,24 +745,23 @@ namespace Tox
             return await IStartCall(convo_id, false, false, true);
         }
 
-        public async Task<bool> DeclineCall(string convo_id)
+        public Task<bool> DeclineCall(string convo_id)
         {
             bool suc = toxav_call_control(av, UInt32.Parse(convo_id), Toxav_Call_Control.CANCEL, out var err);
             if (!suc)
                 ERR("An error occured when declining the call: " + err);
-            return suc;
+            return Task.FromResult(suc);
         }
 
-        public async Task<bool> SetMuted(ActiveCall call, bool muted) => false;
-        public async Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => false;
+        public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
+        public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
         #endregion
-        
+
         #region Unimplemented stuff
 
-        public async Task<LoginResult> AuthenticateTwoFA(string code) => LoginResult.UnsupportedAuthType;
-        public async Task<string> GetQRCode() => string.Empty;
-        public async Task<bool> PopulateServerList() => false;
+        public Task<LoginResult> AuthenticateTwoFA(string code) => Task.FromResult(LoginResult.UnsupportedAuthType);
+        public Task<string> GetQRCode() => Task.FromResult(string.Empty);
         public ClickableConfiguration[] ClickableConfigurations
         {
             get { return new ClickableConfiguration[0]; }

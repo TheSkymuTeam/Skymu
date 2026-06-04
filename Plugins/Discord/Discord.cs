@@ -84,9 +84,6 @@ namespace Discord
         private const string USERS_ME = "users/@me";
 
         // Observable collections used in the Skymu UI
-        public ObservableCollection<DirectMessage> ContactList { get; private set; } = new ObservableCollection<DirectMessage>();
-        public ObservableCollection<Conversation> ConversationList { get; private set; } = new ObservableCollection<Conversation>();
-        public ObservableCollection<Server> ServerList { get; private set; } = new ObservableCollection<Server>();
         public ObservableCollection<User> TypingUsersList { get; private set; } = new ObservableCollection<User>();
 
         public readonly Dictionary<string, HashSet<string>> _typingUsersPerChannel = new Dictionary<string, HashSet<string>>();
@@ -291,16 +288,124 @@ namespace Discord
 
         #region List population (contacts, servers, recents)
 
-        public Task<bool> PopulateContactsList() => PopulateListsBackend(ListType.Contacts);
-        public Task<bool> PopulateConversationsList() => PopulateListsBackend(ListType.Recents);
-        public Task<bool> PopulateServerList() => PopulateListsBackend(ListType.Servers);
+        public Task<List<DirectMessage>> FetchContacts() => FetchContactsOrConversations(ListType.Contacts)
+    .ContinueWith(t => t.Result.OfType<DirectMessage>().ToList());
 
-        private async Task<bool> PopulateListsBackend(ListType list_type)
+        public Task<List<Conversation>> FetchConversations() => FetchContactsOrConversations(ListType.Recents);
+
+        public async Task<List<Server>> FetchServers()
         {
+            var results = new List<Server>();
             try
             {
-                var dscChannels = HelperMethods.GetUserChannels(
-                    list_type == ListType.Recents);
+                var guilds = WebSocketManager.GetGuilds();
+                foreach (var guildNode in guilds.OfType<JsonObject>())
+                {
+                    int memberCount = 0;
+                    string guildId = guildNode["id"]?.GetValue<string>();
+                    string guildName = guildNode["name"]?.GetValue<string>();
+                    string iconHash = guildNode["icon"]?.GetValue<string>();
+                    int.TryParse(guildNode["member_count"]?.ToString(), out memberCount);
+
+                    if (string.IsNullOrWhiteSpace(guildId)) continue;
+
+                    byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, HelperMethods.DiscordChannelType.Server);
+
+                    var channelList = new List<ServerChannel>();
+                    var categoryMap = new Dictionary<string, string>();
+
+                    if (guildNode["channels"] is JsonArray channels)
+                    {
+                        foreach (var ch in channels.OfType<JsonObject>())
+                        {
+                            int typeValue = -1;
+                            if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
+                                typeValue = -1;
+
+                            if (typeValue == 4)
+                            {
+                                string categoryId = ch["id"]?.GetValue<string>();
+                                string categoryName = ch["name"]?.GetValue<string>();
+                                if (!string.IsNullOrWhiteSpace(categoryId) && !string.IsNullOrWhiteSpace(categoryName))
+                                    categoryMap[categoryId] = categoryName;
+                            }
+                        }
+
+                        foreach (var ch in channels.OfType<JsonObject>())
+                        {
+                            string channelId = ch["id"]?.GetValue<string>();
+                            string channelName = ch["name"]?.GetValue<string>();
+                            if (string.IsNullOrWhiteSpace(channelId)) continue;
+
+                            int position = 0;
+                            int.TryParse(ch["position"]?.ToString(), out position);
+                            string parentId = ch["parent_id"]?.GetValue<string>();
+
+                            int typeValue = -1;
+                            if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
+                                typeValue = -1;
+
+                            ChannelType channelType;
+                            switch (typeValue)
+                            {
+                                case 0:
+                                    channelType = ChannelType.Standard;
+
+                                    bool everyoneDeniesSend = false;
+                                    if (ch["permission_overwrites"] is JsonArray perms)
+                                    {
+                                        foreach (var perm in perms.OfType<JsonObject>())
+                                        {
+                                            string permId = perm["id"]?.GetValue<string>() ?? string.Empty;
+                                            if (permId != guildId) continue;
+
+                                            int deny = 0;
+                                            int.TryParse(perm["deny"]?.ToString(), out deny);
+
+                                            const int sendMessages = 0x400;
+                                            if ((deny & sendMessages) != 0)
+                                                everyoneDeniesSend = true;
+                                        }
+                                    }
+
+                                    if (everyoneDeniesSend)
+                                        channelType = ChannelType.ReadOnly;
+                                    break;
+                                case 2:
+                                    channelType = ChannelType.Voice;
+                                    break;
+                                case 4:
+                                    continue;
+                                case 5:
+                                    channelType = ChannelType.Announcement;
+                                    break;
+                                case 15:
+                                    channelType = ChannelType.Forum;
+                                    break;
+                                default:
+                                    channelType = ChannelType.NoAccess;
+                                    break;
+                            }
+                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
+                        }
+                    }
+                    results.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar, categoryMap, memberCount));
+                }
+            }
+            catch (Exception ex)
+            {
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to populate servers: {ex.Message}"));
+                return new List<Server>();
+            }
+            return results;
+        }
+
+        private async Task<List<Conversation>> FetchContactsOrConversations(ListType listType)
+        {
+            var results = new List<Conversation>();
+            try
+            {
+                var dscChannels = HelperMethods.GetUserChannels(listType == ListType.Recents);
 
                 foreach (var channel in dscChannels)
                 {
@@ -318,35 +423,29 @@ namespace Discord
                         string channelId = channel["id"]?.GetValue<string>();
 
                         if (!UserIdToChannelId.ContainsKey(userId))
-                        {
                             UserIdToChannelId.Add(userId, channelId);
-                        }
 
                         string displayName = recipient["global_name"]?.GetValue<string>();
                         string dscUserName = recipient["username"]?.GetValue<string>();
                         string avatarHash = recipient["avatar"]?.GetValue<string>();
 
-                        if (list_type == ListType.Recents)
-                        {
+                        if (listType == ListType.Recents)
                             _recentChannelMap[channelId] = userId;
-                        }
 
                         var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
-                        if (list_type == ListType.Recents)
-                            ConversationList.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
+                        if (listType == ListType.Recents)
+                            results.Add(new DirectMessage(profileData, 0, channelId, lastMessageTime));
                         else
-                            ContactList.Add(new DirectMessage(profileData, 0, channelId));
+                            results.Add(new DirectMessage(profileData, 0, channelId));
                     }
-                    else if (type == GROUP_CHANNEL_TYPE)
+                    else if (type == GROUP_CHANNEL_TYPE && listType == ListType.Recents)
                     {
                         var recipients = channel["recipients"] as JsonArray;
-                        int recipientCount = recipients?.Count ?? 0;
 
                         User[] members = null;
-
                         if (recipients != null && recipients.Count > 0)
                         {
                             User[] temp = await Task.WhenAll(
@@ -357,10 +456,9 @@ namespace Discord
                                         r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
                                         r["username"]?.GetValue<string>() ?? "Unknown"
                                     ))
-                             );
+                            );
 
                             members = new User[temp.Length + 1];
-
                             members[0] = _currentUser;
                             Array.Copy(temp, 0, members, 1, temp.Length);
                         }
@@ -369,10 +467,7 @@ namespace Discord
                         string groupName = channel["name"]?.GetValue<string>();
                         string avatarHash = channel["icon"]?.GetValue<string>();
 
-                        if (list_type == ListType.Recents)
-                        {
-                            _recentChannelMap[channelId] = null;
-                        }
+                        _recentChannelMap[channelId] = null;
 
                         if (string.IsNullOrWhiteSpace(groupName))
                         {
@@ -380,144 +475,27 @@ namespace Discord
                             {
                                 var recipientNames = recipients?
                                     .OfType<JsonObject>()
-                                    .Select(r =>
-                                        r["global_name"]?.GetValue<string>() ??
-                                        r["username"]?.GetValue<string>())
+                                    .Select(r => r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>())
                                     .Where(n => !string.IsNullOrWhiteSpace(n));
 
-                                groupName = recipientNames != null
-                                            ? string.Join(", ", recipientNames)
-                                            : "N/A";
+                                groupName = recipientNames != null ? string.Join(", ", recipientNames) : "N/A";
                             }
                             catch { OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Error constructing group name.")); }
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
-
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
-                        var profileData = new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime);
 
-                        if (list_type == ListType.Recents)
-                            ConversationList.Add(profileData);
+                        results.Add(new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime));
                     }
                 }
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Error while populating lists: {ex.Message}"));
-                return false;
+                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Error while fetching list: {ex.Message}"));
+                return new List<Conversation>();
             }
-
-            // Populate all of the servers in the servers list
-            if (list_type == ListType.Servers)
-            {
-                try
-                {
-                    var guilds = WebSocketManager.GetGuilds();
-                    foreach (var guildNode in guilds.OfType<JsonObject>())
-                    {
-                        int memberCount = 0;
-                        string guildId = guildNode["id"]?.GetValue<string>();
-                        string guildName = guildNode["name"]?.GetValue<string>();
-                        string iconHash = guildNode["icon"]?.GetValue<string>();
-                        int.TryParse(guildNode["member_count"]?.ToString(), out memberCount);
-
-                        if (string.IsNullOrWhiteSpace(guildId)) continue;
-
-                        byte[] guildAvatar = await HelperMethods.GetCachedAvatarAsync(guildId, iconHash, HelperMethods.DiscordChannelType.Server);
-
-                        var channelList = new List<ServerChannel>();
-                        var categoryMap = new Dictionary<string, string>();
-
-                        if (guildNode["channels"] is JsonArray channels)
-                        {
-                            foreach (var ch in channels.OfType<JsonObject>())
-                            {
-                                int typeValue = -1;
-                                if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
-                                    typeValue = -1;
-
-                                if (typeValue == 4)
-                                {
-                                    string categoryId = ch["id"]?.GetValue<string>();
-                                    string categoryName = ch["name"]?.GetValue<string>();
-                                    if (!string.IsNullOrWhiteSpace(categoryId) && !string.IsNullOrWhiteSpace(categoryName))
-                                    {
-                                        categoryMap[categoryId] = categoryName;
-                                    }
-                                }
-                            }
-
-                            foreach (var ch in channels.OfType<JsonObject>())
-                            {
-                                string channelId = ch["id"]?.GetValue<string>();
-                                string channelName = ch["name"]?.GetValue<string>();
-                                if (string.IsNullOrWhiteSpace(channelId)) continue;
-
-                                int position = 0;
-                                int.TryParse(ch["position"]?.ToString(), out position);
-                                string parentId = ch["parent_id"]?.GetValue<string>();
-
-                                int typeValue = -1;
-                                if (!int.TryParse(ch["type"]?.ToString(), out typeValue))
-                                    typeValue = -1;
-
-                                ChannelType channelType;
-
-                                switch (typeValue)
-                                {
-                                    case 0:
-                                        channelType = ChannelType.Standard;
-
-                                        bool everyoneDeniesSend = false;
-                                        if (ch["permission_overwrites"] is JsonArray perms)
-                                        {
-                                            foreach (var perm in perms.OfType<JsonObject>())
-                                            {
-                                                string permId = perm["id"]?.GetValue<string>() ?? string.Empty;
-                                                if (permId != guildId) continue;
-
-                                                int deny = 0;
-                                                int.TryParse(perm["deny"]?.ToString(), out deny);
-
-                                                const int sendMessages = 0x400;
-                                                if ((deny & sendMessages) != 0)
-                                                    everyoneDeniesSend = true;
-                                            }
-                                        }
-
-                                        if (everyoneDeniesSend)
-                                            channelType = ChannelType.ReadOnly;
-                                        break;
-                                    case 2:
-                                        channelType = ChannelType.Voice;
-                                        break;
-                                    case 4:
-                                        continue;
-                                    case 5:
-                                        channelType = ChannelType.Announcement;
-                                        break;
-                                    case 15:
-                                        channelType = ChannelType.Forum;
-                                        break;
-                                    default:
-                                        channelType = ChannelType.NoAccess;
-                                        break;
-                                }
-                                channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
-                            }
-                        }
-                        ServerList.Add(new Server(guildName, guildId, null, channelList.ToArray(), guildAvatar, categoryMap, memberCount));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to populate servers: {ex.Message}"));
-                    return false;
-                }
-            }
-
-            return true;
+            return results;
         }
 
         #endregion
@@ -526,7 +504,7 @@ namespace Discord
 
         private CancellationTokenSource _fetchCts; // omega: fix message overlap bug
 
-        public async Task<ConversationItem[]> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public async Task<List<ConversationItem>> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             if (_fetchCts != null)
             {
@@ -541,7 +519,7 @@ namespace Discord
             List<ConversationItem> messageList = new List<ConversationItem>();
 
             if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId) || fetch_type == Fetch.Oldest)
-                return new ConversationItem[0];
+                return messageList;
 
             _activeChannelId = channelId;
             string parameters = $"/channels/{channelId}/messages?limit={message_count}";
@@ -575,7 +553,7 @@ namespace Discord
                     {
                         OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Unexpected response format: {encJson}"));
                     }
-                    return new ConversationItem[0];
+                    return new List<ConversationItem>();
                 }
 
                 foreach (var node in messages.Reverse())
@@ -587,13 +565,13 @@ namespace Discord
                 }
 
                 if (fetch_type == Fetch.NewestAfterIdentifier && identifier != null)
-                    return messageList.Where(m => ulong.Parse(m.Identifier) > ulong.Parse(identifier)).ToArray();
+                    return messageList.Where(m => ulong.Parse(m.Identifier) > ulong.Parse(identifier)).ToList();
 
-                return messageList.ToArray();
+                return messageList;
             }
             catch (OperationCanceledException)
             {
-                return new ConversationItem[0]; // expected case
+                return new List<ConversationItem>(); // expected case
             }
             catch (Exception ex)
             {
@@ -601,7 +579,7 @@ namespace Discord
                 if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
                 OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, message));
                 _activeChannelId = null;
-                return new ConversationItem[0];
+                return new List<ConversationItem>();
             }
         }
 

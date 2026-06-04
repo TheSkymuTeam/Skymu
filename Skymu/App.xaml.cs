@@ -330,14 +330,14 @@ namespace Skymu
                 if (ActiveViewModel != null)
                 {
                     Conversation found = null;
-                    foreach (var c in Universal.Plugin.ConversationList)
+                    foreach (var c in ActiveViewModel.ConversationList)
                         if ((c is DirectMessage u) && u.Partner.Username == skypename)
                         {
                             found = c;
                             break;
                         }
                     if (found == null)
-                        foreach (DirectMessage u in Universal.Plugin.ContactList)
+                        foreach (DirectMessage u in ActiveViewModel.ContactList)
                             if (u.Partner.Username == skypename)
                             {
                                 found = u;

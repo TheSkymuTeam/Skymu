@@ -30,9 +30,9 @@ namespace Skymu
     {
         private static WebBrowser _browser;
         private static User _user;
-        private static DirectMessage[] _contacts;
+        private static List<DirectMessage> _contacts;
 
-        public static void Generate(WebBrowser browser, User user, DirectMessage[] contacts)
+        public static void Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
         {
             _browser = browser;
             _user = user;
@@ -203,10 +203,10 @@ namespace Skymu
     public class SkypeExternalObject
     {
         private readonly User _user;
-        private readonly DirectMessage[] _contacts;
+        private readonly List<DirectMessage> _contacts;
         private SkypeAPI _api;
 
-        public SkypeExternalObject(User user, DirectMessage[] contacts)
+        public SkypeExternalObject(User user, List<DirectMessage> contacts)
         {
             _user = user;
             _contacts = contacts;
@@ -229,7 +229,7 @@ namespace Skymu
         private readonly AccountObject _account;
         private readonly ClientObject _client = new ClientObject();
         private readonly Dictionary<string, string> _storage = new Dictionary<string, string>();
-        private readonly DirectMessage[] _contacts;
+        private readonly List<DirectMessage> _contacts;
 
         private dynamic _avatarListener;
         private dynamic _showingListener;
@@ -238,7 +238,7 @@ namespace Skymu
         private dynamic _moodListener;
         private dynamic _alertListener;
 
-        public SkypeAPI(User user, DirectMessage[] contacts)
+        public SkypeAPI(User user, List<DirectMessage> contacts)
         {
             _contacts = contacts;
             LocalUser = new LocalUserObject
@@ -246,7 +246,7 @@ namespace Skymu
                 handle = user.Username,
                 MoodText = user.Status ?? string.Empty,
             };
-            _account = new AccountObject { ContactsCount = contacts?.Length ?? 0 };
+            _account = new AccountObject { ContactsCount = contacts?.Count ?? 0 };
         }
 
         public object getAccount() => _account;
@@ -464,9 +464,9 @@ namespace Skymu
     public class SkypeUserObject
     {
         private readonly string _skypename;
-        private readonly DirectMessage[] _contacts;
+        private readonly List<DirectMessage> _contacts;
 
-        public SkypeUserObject(string skypename, DirectMessage[] contacts)
+        public SkypeUserObject(string skypename, List<DirectMessage> contacts)
         {
             _skypename = skypename;
             _contacts = contacts;

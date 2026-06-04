@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Yggdrasil.Classes;
 using Yggdrasil.Enumerations;
 using Yggdrasil.EventArgs;
+using System.Collections.Generic;
 
 namespace Yggdrasil
 {
@@ -97,33 +98,21 @@ namespace Yggdrasil
         /// </summary>
         Task<User> GetUserInfo(); // Fetches and assigns the sidebar information to the SidebarInformation variable. Returns true on success.
         /// <summary>
-        ///  Observable collection with a list of the user's contacts.
+        ///  Fetches a list of the user's contacts.
         /// </summary>
-        ObservableCollection<DirectMessage> ContactList { get; } 
+        Task<List<DirectMessage>> FetchContacts();
         /// <summary>
-        ///  Observable collection with a list of the user's recent conversations.
+        ///  Fetches a list of the user's conversations.
         /// </summary>
-        ObservableCollection<Conversation> ConversationList { get; } 
+        Task<List<Conversation>> FetchConversations();
         /// <summary>
-        ///  Observable collection with a list of servers the user is in.
+        ///  Fetches a list of servers the user is in.
         /// </summary>
-        ObservableCollection<Server> ServerList { get; } // 
-        /// <summary>
-        ///  Fetches and assigns a list of contacts to the ContactList observable collection. Returns true on success.
-        /// </summary>
-        Task<bool> PopulateContactsList();
-        /// <summary>
-        ///  Fetches and assigns a list of conversations to the ConversationList observable collection. Returns true on success.
-        /// </summary>
-        Task<bool> PopulateConversationsList(); 
-        /// <summary>
-        ///  Fetches and assigns a list of servers to the ServerList observable collection. Returns true on success.
-        /// </summary>
-        Task<bool> PopulateServerList(); 
+        Task<List<Server>> FetchServers(); 
         /// <summary>
         ///  Fetch an amount of messages from a particular conversation. Multiple fetch types supported.
         /// </summary>
-        Task<ConversationItem[]> FetchMessages(
+        Task<List<ConversationItem>> FetchMessages(
             Conversation conversation,
             Fetch fetch_type = Fetch.Newest,
             int message_count = 50,

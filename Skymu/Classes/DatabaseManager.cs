@@ -1307,7 +1307,7 @@ namespace Skymu.Databases
                 }
             }
 
-            public bool Write(Conversation[] conversations) // JUMP contacts write
+            public bool Write(List<DirectMessage> contacts) // JUMP contacts write
             {
                 using (SqliteConnection connection = _db.CreateConnection())
                 {
@@ -1369,7 +1369,7 @@ namespace Skymu.Databases
                             cmd.Parameters.Add("@isblocked", SqliteType.Integer);
                             cmd.Parameters.Add("@buddystatus", SqliteType.Integer);
 
-                            foreach (Conversation conversation in conversations)
+                            foreach (Conversation conversation in contacts)
                             {
                                 if (!(conversation is DirectMessage dm))
                                     continue;
@@ -1828,7 +1828,7 @@ namespace Skymu.Databases
             }
 
             private void WriteImageAttachments(
-                ConversationItem[] items,
+                List<ConversationItem> items,
                 Conversation conversation,
                 long conversationIncrementalId,
                 SqliteConnection connection,
@@ -1992,12 +1992,12 @@ namespace Skymu.Databases
                 return result.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
             }
 
-            public ConversationItem[] Read(Conversation conversation, int limit = 0)
+            public List<ConversationItem> Read(Conversation conversation, int limit = 0)
             {
                 return Read(conversation, limit, beforeTimestampMs: null);
             }
 
-            public ConversationItem[] Read( // JUMP messages read
+            public List<ConversationItem> Read( // JUMP messages read
                 Conversation conversation,
                 int limit,
                 long? beforeTimestampMs
@@ -2017,7 +2017,7 @@ namespace Skymu.Databases
                             (object)ConvertIdentifier(conversation.Identifier) ?? DBNull.Value;
                         object result = idCmd.ExecuteScalar();
                         if (result == null || result == DBNull.Value)
-                            return items.ToArray();
+                            return items;
                         convoId = Convert.ToInt64(result);
                     }
 
@@ -2134,7 +2134,7 @@ namespace Skymu.Databases
                     }
                 }
 
-                return items.ToArray();
+                return items;
             }
 
             private ConversationItem ReadRow( // JUMP messages read row
@@ -2196,7 +2196,7 @@ namespace Skymu.Databases
             }
 
             public bool Write( // JUMP messages write
-                ConversationItem[] items,
+                List<ConversationItem> items,
                 Conversation conversation,
                 SqliteConnection existingConnection = null
             )
@@ -2295,7 +2295,7 @@ namespace Skymu.Databases
 
                                     if (message.ParentMessage != null)
                                         Write(
-                                            new ConversationItem[] { message.ParentMessage },
+                                            new ConversationItem[] { message.ParentMessage }.ToList(),
                                             conversation,
                                             connection
                                         );
@@ -2405,7 +2405,7 @@ namespace Skymu.Databases
                             connection,
                             transaction
                         );
-                        if (ownsTransaction && items.Length > 0)
+                        if (ownsTransaction && items.Count > 0)
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
                             {
@@ -2452,7 +2452,7 @@ namespace Skymu.Databases
 
             public bool WriteRow(ConversationItem item, Conversation conversation)
             {
-                return Write(new ConversationItem[1] { item }, conversation);
+                return Write(new ConversationItem[1] { item }.ToList(), conversation);
             }
         }
 

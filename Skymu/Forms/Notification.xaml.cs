@@ -146,8 +146,8 @@ namespace Skymu.Forms
         private void AddMessage(Message message, MessageRecievedEventArgs e)
         {
             Conversation conversation =
-                Universal.Plugin.ConversationList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
-                ?? Universal.Plugin.ContactList?.FirstOrDefault(c =>
+                Universal.ActiveViewModel.ConversationList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
+                ?? Universal.ActiveViewModel.ContactList?.FirstOrDefault(c =>
                     c.Identifier == e.ConversationId
                 );
 

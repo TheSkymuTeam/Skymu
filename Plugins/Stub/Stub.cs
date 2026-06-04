@@ -57,15 +57,6 @@ namespace Stub
             }
         }
 
-        public ObservableCollection<DirectMessage> ContactList { get; private set; } =
-            new ObservableCollection<DirectMessage>();
-
-        public ObservableCollection<Conversation> ConversationList { get; private set; } =
-            new ObservableCollection<Conversation>();
-
-        public ObservableCollection<Server> ServerList { get; private set; } =
-            new ObservableCollection<Server>();
-
         public ObservableCollection<User> TypingUsersList { get; private set; } =
             new ObservableCollection<User>();
 
@@ -199,7 +190,7 @@ namespace Stub
             return Task.FromResult(false);
         }
 
-        public Task<ConversationItem[]> FetchMessages(
+        public Task<List<ConversationItem>> FetchMessages(
             Conversation conversation,
             Fetch fetch_type,
             int message_count,
@@ -343,13 +334,14 @@ namespace Stub
 
             #endregion
 
-            return Task.FromResult(messageList.ToArray());
+            return Task.FromResult(messageList);
         }
 
-        public Task<bool> PopulateServerList()
+        public Task<List<Server>> FetchServers()
         {
+            List<Server> servers = new List<Server>();
             string id = "2132";
-            ServerList.Add(
+            servers.Add(
                 new Server(
                     "Epic gamer soyciety",
                     id,
@@ -361,7 +353,7 @@ namespace Stub
                     }
                 )
             );
-            return Task.FromResult(true);
+            return Task.FromResult(servers);
         }
 
         public Task<User> GetUserInfo()
@@ -372,10 +364,10 @@ namespace Stub
             return Task.FromResult(Me);
         }
 
-        public Task<bool> PopulateContactsList()
+        public Task<List<DirectMessage>> FetchContacts()
         {
-            ContactList.Clear();
-            ContactList.Add(
+            List<DirectMessage> contacts = new List<DirectMessage>();
+            contacts.Add(
                 new DirectMessage(
                     new User(
                         "Skymu user 1",
@@ -388,19 +380,19 @@ namespace Stub
                     "u1"
                 )
             );
-            ContactList.Add(
+            contacts.Add(
                 new DirectMessage(
                     new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
                     "u2"
                 )
             );
-            return Task.FromResult(true);
+            return Task.FromResult(contacts);
         }
 
-        public Task<bool> PopulateConversationsList()
+        public Task<List<Conversation>> FetchConversations()
         {
-            ConversationList.Clear();
+            List<Conversation> conversations = new List<Conversation>();
 
             int dayOffset = 0;
             foreach (var user in users)
@@ -420,7 +412,7 @@ namespace Stub
                         .Now.AddDays(-(dayOffset - 2))
                         .AddHours(-rand.Next(0, 12));
                 }
-                ConversationList.Add(
+                conversations.Add(
                     new DirectMessage(
                         user,
                         rand.Next(0, 5),
@@ -431,7 +423,7 @@ namespace Stub
                 dayOffset++;
             }
 
-            ConversationList.Add(
+            conversations.Add(
                 new Group(
                     "Giga based coalition",
                     "067",
@@ -445,7 +437,7 @@ namespace Stub
             if (presenceTimer == null)
                 presenceTimer = new Timer(UpdatePresence, null, 0, 500);
 
-            return Task.FromResult(true);
+            return Task.FromResult(conversations);
         }
 
         public ClickableConfiguration[] ClickableConfigurations
@@ -590,7 +582,7 @@ namespace Stub
                     members[i] = users[i % users.Length];
                 }
                 return new Metadata[2] {
-                    new Group("Mega Based Caolition", "mbc", 0, members),
+                    new Group("Mega Based Coalition", "mbc", 0, members),
                     new User(query, query, query)
                 };
             }
@@ -602,11 +594,15 @@ namespace Stub
 
         public Task<bool> AddContact(Metadata contact, string message)
         {
-            if (contact is User user)
+            return Task.FromResult(false);
+
+            // TODO fix
+            /* if (contact is User user)
                 ContactList.Add(new DirectMessage(user, 0, user.Identifier));
             else if (contact is Group group)
                 ConversationList.Add(group);
-            return Task.FromResult(false);
+            return Task.FromResult(false);*/
+
         }
 
         #endregion

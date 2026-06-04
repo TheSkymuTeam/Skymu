@@ -18,6 +18,7 @@ using Skymu.Emoticons;
 using Skymu.Enumerations;
 using Skymu.Windows;
 using Skymu.Helpers;
+using System.Linq;
 using Skymu.Sounds;
 using Skymu.Preferences;
 using Yggdrasil.EventArgs;
@@ -47,13 +48,28 @@ namespace Skymu.ViewModels
     {
         #region Shared state
 
+        // this is an OC for now because only one conversation is loaded at any given time, must rework once "Split Window Mode"
+        // is added and obviously we'll have multiple conversations loaded at the same time then
         public ObservableCollection<ConversationItem> ActiveConversation { get; }
 
+        // OC's for the three types of lists shown in the UI that can be bound to in WPF
+        public ObservableCollection<DirectMessage> ContactList;
+        public ObservableCollection<Server> ServerList;
+        public ObservableCollection<Conversation> ConversationList;
+
+        // since contacts and servers are lazy-loaded, we need a TCS to handle the clicks on "Contacts" or "Servers" 
+        // tabs before the lists have actually been populated
+        private readonly TaskCompletionSource<bool> _contactsLoadedSource = new TaskCompletionSource<bool>();
+        private readonly TaskCompletionSource<bool> _serversLoadedSource = new TaskCompletionSource<bool>();
+
+        // for the database, TODO change list loading so it attempts to load from DB first
         internal DatabaseManager Database
         {
             get => _database;
         }
 
+        // this is different from ActiveConversation because in Yggdrasil "Conversation" is not a container of "ConversationItem"
+        // even though the naming may imply that
         private Conversation _selectedConversation;
         public Conversation SelectedConversation
         {
@@ -226,7 +242,9 @@ namespace Skymu.ViewModels
         public MainViewModel()
         {
             Universal.ActiveViewModel = this;
+
             ActiveConversation = new ObservableCollection<ConversationItem>();
+
             _pendingPreviewMessages = new Dictionary<string, Message>();
             _typingActive = false;
             _typingTimer = new Timer(
@@ -261,7 +279,6 @@ namespace Skymu.ViewModels
         public async Task InitSidebar()
         {
             Universal.CurrentUser = await Universal.Plugin.GetUserInfo();
-            await Universal.Plugin.PopulateConversationsList();
             if (string.IsNullOrEmpty(Universal.CurrentUser?.Identifier))
             {
                 Universal.ExceptionHandler(
@@ -272,9 +289,13 @@ namespace Skymu.ViewModels
                 return;
             }
             _database = new DatabaseManager(Universal.CurrentUser);
-            _database.Conversations.Write(Universal.Plugin.ConversationList.ToArray());
-            _ = LoadAndCacheContacts();
             _database.Accounts.Write(Universal.CurrentUser);
+
+            ConversationList = new ObservableCollection<Conversation>(await Universal.Plugin.FetchConversations());
+            _database.Conversations.Write(ConversationList.ToArray());
+
+            _ = LoadAndCacheContacts(); // lazy loading
+            _ = LoadAndCacheServers();
 
             UserCountText = Universal.Lang["sCALLPHONES_RATES_LOADING"];
             UserCountUpdated?.Invoke(UserCountText);
@@ -295,8 +316,18 @@ namespace Skymu.ViewModels
 
         private async Task LoadAndCacheContacts()
         {
-            await Universal.Plugin.PopulateContactsList();
-            _database?.Contacts.Write(Universal.Plugin.ContactList.ToArray());
+            List<DirectMessage> contacts = await Universal.Plugin.FetchContacts();
+            _database?.Contacts.Write(contacts);
+            ContactList = new ObservableCollection<DirectMessage>(contacts);
+            _contactsLoadedSource.TrySetResult(true);
+        }
+
+        private async Task LoadAndCacheServers()
+        {
+            List<Server> servers = await Universal.Plugin.FetchServers();
+            //_database?.Servers.Write(servers); // TODO add servers to database
+            ServerList = new ObservableCollection<Server>(servers);
+            _serversLoadedSource.TrySetResult(true);
         }
 
         #endregion
@@ -335,19 +366,19 @@ namespace Skymu.ViewModels
             ConversationOpened?.Invoke(this, EventArgs.Empty);
             IsLoadingConversation = true;
 
-            ConversationItem[] cached = _database?.Messages.Read(
+            List<ConversationItem> cached = _database?.Messages.Read(
                 SelectedConversation,
                 Settings.MsgLoadCount
             );
-            ConversationItem[] items;
+            List<ConversationItem> items;
 
-            if (cached != null && cached.Length > 0)
+            if (cached != null && cached.Count > 0)
             {
                 items = cached;
                 IsLoadingConversation = false;
                 _ = SyncMessagesInBackground(
                     SelectedConversation,
-                    cached[cached.Length - 1].Identifier
+                    cached[cached.Count - 1].Identifier
                 );
             }
             else
@@ -364,7 +395,7 @@ namespace Skymu.ViewModels
             if (SelectedConversation == null)
                 return;
 
-            if (items != null && items.Length > 0)
+            if (items != null && items.Count > 0)
             {
                 foreach (ConversationItem item in items)
                     ActiveConversation.Add(item);
@@ -477,14 +508,14 @@ namespace Skymu.ViewModels
 
         private async Task SyncMessagesInBackground(Conversation conversation, string afterId)
         {
-            ConversationItem[] items = await Universal.Plugin.FetchMessages(
+            List<ConversationItem> items = await Universal.Plugin.FetchMessages(
                 conversation,
                 Fetch.NewestAfterIdentifier,
                 Settings.MsgLoadCount,
                 afterId
             );
 
-            if (items == null || items.Length == 0)
+            if (items == null || items.Count == 0)
                 return;
             _database?.Messages.Write(items, conversation);
 
@@ -510,7 +541,7 @@ namespace Skymu.ViewModels
         {
             if (e is MessageRecievedEventArgs eR)
             {
-                var conversation = Universal.Plugin.ConversationList.FirstOrDefault(c =>
+                var conversation = ConversationList.FirstOrDefault(c =>
                     c.Identifier == eR.ConversationId
                 );
                 if (conversation != null)
@@ -617,12 +648,12 @@ namespace Skymu.ViewModels
             }
         }
 
-        private static void UpdateRecentsListOnNewMessage(
+        private void UpdateRecentsListOnNewMessage(
             string conversationId,
             DateTime messageTimestamp
         )
         {
-            var conversation = Universal.Plugin.ConversationList.FirstOrDefault(c =>
+            var conversation = ConversationList.FirstOrDefault(c =>
                 c.Identifier == conversationId
             );
             if (conversation == null)
@@ -685,46 +716,35 @@ namespace Skymu.ViewModels
 
         #endregion
 
-        #region Sidebar tab data
+        #region Sidebar tab data helpers
 
-        public async Task<IList<object>> GetContactsItems()
+        // TODO: Do this via data binding! These helpers are temporary.
+        public async Task<ObservableCollection<DirectMessage>> GetContactList() 
         {
-            if (Universal.Plugin.ContactList == null || Universal.Plugin.ContactList.Count < 1)
-                await Universal.Plugin.PopulateContactsList();
-            return Universal.Plugin.ContactList.Cast<object>().ToList();
+            await _contactsLoadedSource.Task;
+            return ContactList;
         }
 
-        public async Task<IList<object>> GetRecentsItems()
+        public IList<object> GetConversationList() // this is not async because the conversation list is never lazy-loaded
         {
-            if (Universal.Plugin.ConversationList == null || Universal.Plugin.ConversationList.Count < 1)
-                await Universal.Plugin.PopulateConversationsList();
             return CompactRecentsHelper
-                .GroupByDate(Universal.Plugin.ConversationList)
+                .GroupByDate(ConversationList)
                 .Cast<object>()
                 .ToList();
         }
 
-        public async Task<IList<object>> GetServerItems()
+        public async Task<List<Server>> GetServerList()
         {
-            if (Universal.Plugin.ServerList == null || Universal.Plugin.ServerList.Count < 1)
-                await Universal.Plugin.PopulateServerList();
+            await _serversLoadedSource.Task;
 
-            foreach (var server in Universal.Plugin.ServerList)
+            foreach (var server in ServerList)
             {
                 server.GroupedChannels = ServerChannelHelper.GroupByCategory(
                     server.Channels,
                     server.CategoryMap
                 );
             }
-            return Universal.Plugin.ServerList.Cast<object>().ToList();
-        }
-
-        public IList<object> GetGroupedRecents()
-        {
-            return CompactRecentsHelper
-                .GroupByDate(Universal.Plugin.ConversationList)
-                .Cast<object>()
-                .ToList();
+            return ServerList.ToList();
         }
 
         #endregion
