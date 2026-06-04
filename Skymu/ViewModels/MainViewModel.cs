@@ -296,10 +296,10 @@ namespace Skymu.ViewModels
             _database.Accounts.Write(Universal.CurrentUser);
 
             ConversationList = new ObservableCollection<Conversation>(await Universal.Plugin.FetchConversations());
-            _database.Conversations.Write(ConversationList.ToList());
+            _database.Conversations.Write(ConversationList);
 
             ContactList = new ObservableCollection<DirectMessage>(await Universal.Plugin.FetchContacts());
-            _database?.Contacts.Write(ContactList.ToList());
+            _database?.Contacts.Write(ContactList);
 
             _ = LoadAndCacheServers();
 
