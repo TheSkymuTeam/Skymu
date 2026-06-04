@@ -188,11 +188,17 @@ namespace Skymu
 
             IsVisibleChanged += (s, e) =>
             {
-                if (!(bool)e.NewValue)
+                if ((bool)e.NewValue)
+                {
+                    UpdateAnimation();
+                }
+                else
                 {
                     _animatingControls.Remove(this);
                     if (_animatingControls.Count == 0)
+                    {
                         _sharedAnimationTimer?.Stop();
+                    }
                 }
             };
 
@@ -403,8 +409,29 @@ namespace Skymu
             "Source",
             typeof(ImageSource),
             typeof(SliceControl),
-            new PropertyMetadata(null, OnAnyPropertyChanged)
+            new PropertyMetadata(null, OnSourceChanged)
         );
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is SliceControl control)
+            {
+                if (e.NewValue is BitmapSource bitmap)
+                {
+                    if (bitmap.IsDownloading)
+                    {
+                        bitmap.DownloadCompleted += (s, args) =>
+                        {
+                            control.UpdateHitTestState();
+                            control.UpdateAnimation();
+                        };
+                        return;
+                    }
+                }
+
+                control.UpdateAnimation();
+            }
+        }
 
         public int ElementCount
         {
