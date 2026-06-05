@@ -5,7 +5,8 @@ Skymu is a modern multiprotocol IM client that looks like classic versions of Sk
 
 # Build Guide
 
-Use any version of Visual Studio from 2019 Community (recommended) onwards. Build Yggdrasil (formerly MiddleMan) first and the solution afterwards.
+Use any version of Visual Studio from 2019 Community (recommended) onwards. Build Yggdrasil first and the solution afterwards. Skymu is configured to be built only as AnyCPU and it is highly recommended that you 
+do so instead of trying to force platform-specific builds. Both .NET and .NET Framework builds of Skymu are built at the same time and can be found in /Skymu/bin/Skymu.Core and /Skymu/bin/Skymu.Framework respectively.
 
 ![Client, chatting](Images/skymu-v0.4-chat.png) 
 
