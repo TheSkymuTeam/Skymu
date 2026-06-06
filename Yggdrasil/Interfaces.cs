@@ -8,11 +8,6 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// Yggdrasil was previously known as 'MiddleMan' but renamed
-// because it stopped solely being a plugin API. It is 
-// recommended that you make the necessary changes to your
-// code to accomodate this.
-/*==========================================================*/
 
 using System;
 using System.Collections.ObjectModel;
@@ -144,6 +139,9 @@ namespace Yggdrasil
         Task<bool> SetTyping(string idenfitier, bool typing); 
     }
 
+    /// <summary>
+    ///  This interface is dedicated to voice and video calling. Implement it if your plugin supports calls.
+    /// </summary>
     public interface ICall
     {
         /// <summary>
@@ -184,6 +182,9 @@ namespace Yggdrasil
         Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);
     }
 
+    /// <summary>
+    ///  Methods related to contacts, conversations and servers
+    /// </summary>
     public interface IListManagement
     {
         /// <summary>
