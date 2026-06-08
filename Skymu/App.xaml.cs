@@ -47,7 +47,7 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Theme = Settings.Theme;
 
-        public const string Name = "Skymu";
+        public const string Name = "Skymu"; // If you are forking Skymu, change this to update the name everywhere, even internally. Do not use special characters or spaces.
         public const string BuildVersion = "0.4.3";
         public const string BuildName = "Eloquent Dauphin";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
@@ -209,7 +209,7 @@ namespace Skymu
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
                         System.Windows.MessageBox.Show(
-                            "Skymu is already running.\n\nYou can configure Skymu to allow running multiple instances at the same time in the Options menu."
+                            $"{Name} is already running.\n\nYou can configure {Name} to allow running multiple instances at the same time in the Options menu."
                         );
                         Terminate();
                         return;
@@ -287,7 +287,7 @@ namespace Skymu
             {
                 while (true)
                 {
-                    var pipe = new NamedPipeServerStream("SkymuPipe", PipeDirection.In);
+                    var pipe = new NamedPipeServerStream($"{Name}Pipe", PipeDirection.In);
 
                     pipe.WaitForConnection();
 
@@ -388,7 +388,7 @@ namespace Skymu
             {
                 ExceptionHandler(
                     new Exception(
-                        "Skymu Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n"
+                        $"{Name} Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n"
                             + ev.ToString()
                     )
                 );
@@ -511,7 +511,7 @@ namespace Skymu
         {
             try
             {
-                var pipe = new NamedPipeClientStream(".", "SkymuPipe", PipeDirection.Out);
+                var pipe = new NamedPipeClientStream(".", $"{Name}Pipe", PipeDirection.Out);
 
                 pipe.Connect(1000);
 
@@ -538,7 +538,7 @@ namespace Skymu
                 );
             Colorizer.LoadFromSettings();
             Migrator.Run();
-            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuClient-" + BuildVersion);
+            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{Name}Client-" + BuildVersion);
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {

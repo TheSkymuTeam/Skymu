@@ -181,7 +181,7 @@ namespace Skymu.Databases
         {
             new System.Xml.Linq.XDocument(
                 new System.Xml.Linq.XElement(
-                    "SkymuDatabase",
+                    $"{Universal.Name}Database",
                     new System.Xml.Linq.XElement("DatabaseVersion", Version)
                 )
             ).Save(configPath);

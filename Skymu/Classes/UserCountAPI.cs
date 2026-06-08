@@ -66,7 +66,7 @@ namespace Skymu.UserDirectory
             string id = null
         )
         {
-            string anon_random = "skymu-user-" + GenerateRandomNumberString(10);
+            string anon_random = $"{Universal.Name.ToLowerInvariant()}-user-" + GenerateRandomNumberString(10);
             var payload = new
             {
                 display_name = Settings.Anonymize ? "Anonymous" : dn,
