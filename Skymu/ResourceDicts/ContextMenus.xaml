@@ -9,8 +9,8 @@
         <MenuItem Header="{Binding Path=PlacementTarget.Tag[sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], RelativeSource={RelativeSource AncestorType=ContextMenu}}" IsEnabled="False" />
         <Separator />
         <MenuItem Command="{Binding ReplyCommand}" Header="Reply" />
-        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Sender.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
-        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Sender.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
         <MenuItem Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_MOVE_BOOKMARK], RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
     </ContextMenu>
 </ResourceDictionary>

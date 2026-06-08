@@ -437,7 +437,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
-                    Visibility="{Binding Sender.Identifier, Converter={StaticResource SenderToReceivedVis}}">
+                    Visibility="{Binding Author.Identifier, Converter={StaticResource SenderToReceivedVis}}">
                     <Ellipse
                         Width="36"
                         Height="36"
@@ -468,7 +468,7 @@
                             FontFamily="Segoe UI Historic"
                             FontSize="11"
                             Foreground="{DynamicResource SkSteelBlue}"
-                            Text="{Binding Sender.DisplayName}"
+                            Text="{Binding Author.DisplayName}"
                             Visibility="{Binding ShowSenderName, Converter={StaticResource BoolToVis}}" />
                         <StackPanel Orientation="Horizontal">
                             <Image
@@ -529,7 +529,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
-                    Visibility="{Binding Sender.Identifier, Converter={StaticResource SenderToSentVis}}">
+                    Visibility="{Binding Author.Identifier, Converter={StaticResource SenderToSentVis}}">
                     <!--  Image attachment (sent)  -->
                     <Border
                         ClipToBounds="True"
