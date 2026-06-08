@@ -21,10 +21,10 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Skymu.Windows;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Pontis
+namespace Skymu.Skype6
 {
     public partial class Login : Window
     {

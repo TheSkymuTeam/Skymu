@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Yggdrasil is copyrighted by The Skymu Team.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -15,7 +15,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Yggdrasil.Enumerations;
 
-namespace Yggdrasil.Classes
+namespace Yggdrasil.Models
 {
     public abstract class Metadata : INotifyPropertyChanged
     {
@@ -339,21 +339,23 @@ namespace Yggdrasil.Classes
     {
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
         public string Identifier { get; set; } // Unique identifier for the item
+        public string ConversationId { get; set; } // Unique identifier for the item
     }
 
     public class Message : ConversationItem
     {
-        public string PreviousMessageIdentifier { get; set; } // TODO: TO BE REMOVED!!
-        public bool PreviousMessageIsAction { get; set; } // TODO: REMOVE THIS TOO!!!
-        public User Sender { get; set; } // Who sent the message
+        public User Author { get; set; } // Who sent the message
         public string Text { get; set; } // Message body
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
         public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message)
         public bool IsForwarded { get; set; }
 
+        public string PreviousMessageIdentifier { get; set; } // TODO: TO BE REMOVED!!
+        public bool PreviousMessageIsAction { get; set; } // TODO: REMOVE THIS TOO!!!
+
         public Message(
             string identifier,
-            User sender,
+            User author,
             DateTime time,
             string text = null,
             Attachment[] attachments = null,
@@ -362,7 +364,7 @@ namespace Yggdrasil.Classes
         )
         {
             Identifier = identifier;
-            Sender = sender;
+            Author = author;
             Text = text;
             Time = time;
             Attachments = attachments;

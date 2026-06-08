@@ -19,38 +19,38 @@ using System.Xml;
 
 namespace Skymu.Theming
 {
-    public static class ThemeManager
+    public static class Colorizer
     {
-        private static ResourceDictionary _currentTheme;
-        private const string FallbackTheme = "Default";
+        private static ResourceDictionary _currentColorway;
+        private const string FallbackColorway = "Default";
         private static bool _loading = false;
-        private static readonly Dictionary<string, string> _themeList =
+        private static readonly Dictionary<string, string> _colorwayList =
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        public static List<KeyValuePair<string, string>> ColorThemes =>
-            new List<KeyValuePair<string, string>>(_themeList);
+        public static List<KeyValuePair<string, string>> Colorways =>
+            new List<KeyValuePair<string, string>>(_colorwayList);
 
         public static bool Scan()
         {
-            string dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Themes");
+            string dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Colorways");
             if (!Directory.Exists(dir))
                 return false;
 
-            _themeList.Clear();
+            _colorwayList.Clear();
 
             foreach (string file in Directory.GetFiles(dir, "*.xaml"))
             {
-                string name = ReadThemeName(file);
+                string name = ReadColorwayName(file);
                 if (!string.IsNullOrWhiteSpace(name))
-                    _themeList[name] = file;
+                    _colorwayList[name] = file;
             }
 
             Settings.Default.PropertyChanged += (s, e) => // OmegaAOL: add live updating
             {
-                if (e.PropertyName == nameof(Settings.ColorTheme))
+                if (e.PropertyName == nameof(Settings.Colorway))
                     LoadFromSettings();
             };
 
-            return _themeList.Count > 0;
+            return _colorwayList.Count > 0;
         }
 
         public static void LoadFromSettings()
@@ -59,31 +59,31 @@ namespace Skymu.Theming
             _loading = true;
             try
             {
-                string themeName = Settings.ColorTheme;
+                string colorwayName = Settings.Colorway;
 
-                if (!string.IsNullOrEmpty(themeName) && _themeList.TryGetValue(themeName, out string path))
+                if (!string.IsNullOrEmpty(colorwayName) && _colorwayList.TryGetValue(colorwayName, out string path))
                 {
                     LoadPath(path);
                     return;
                 }
 
-                if (_themeList.TryGetValue(FallbackTheme, out string fallbackPath))
+                if (_colorwayList.TryGetValue(FallbackColorway, out string fallbackPath))
                 {
-                    Debug.WriteLine($"[ThemeManager] Falling back to '{FallbackTheme}'");
+                    Debug.WriteLine($"[COLORWAY-MANAGER] Falling back to '{FallbackColorway}'");
                     LoadPath(fallbackPath);
-                    Settings.ColorTheme = FallbackTheme;
+                    Settings.Colorway = FallbackColorway;
                     return;
                 }
 
-                foreach (var kv in _themeList)
+                foreach (var kv in _colorwayList)
                 {
-                    Debug.WriteLine($"[ThemeManager] '{FallbackTheme}' not found, loading first available: '{kv.Key}'");
+                    Debug.WriteLine($"[COLORWAY-MANAGER] '{FallbackColorway}' not found, loading first available: '{kv.Key}'");
                     LoadPath(kv.Value);
-                    Settings.ColorTheme = kv.Key;
+                    Settings.Colorway = kv.Key;
                     return;
                 }
 
-                Universal.ExceptionHandler(new InvalidOperationException("No themes available to load."));
+                Universal.ExceptionHandler(new InvalidOperationException("No colorways available to load."));
             }
             finally
             {
@@ -91,35 +91,35 @@ namespace Skymu.Theming
             }
         }
 
-        public static void Load(string themeName)
+        public static void Load(string colorway_name)
         {
-            if (_themeList.TryGetValue(themeName, out string path))
+            if (_colorwayList.TryGetValue(colorway_name, out string path))
                 LoadPath(path);
             else
-                Universal.ExceptionHandler(new FileNotFoundException($"Theme '{themeName}' not found. Did you call Scan() first?"));
+                Universal.ExceptionHandler(new FileNotFoundException($"Colorway '{colorway_name}' not found. Did you call Scan() first?"));
         }
 
         private static void LoadPath(string absolutePath)
         {
-            var newTheme = new ResourceDictionary
+            var new_colorway = new ResourceDictionary
             {
                 Source = new Uri(absolutePath, UriKind.Absolute)
             };
 
             var appResources = Application.Current.Resources;
-            if (_currentTheme != null)
-                appResources.MergedDictionaries.Remove(_currentTheme);
+            if (_currentColorway != null)
+                appResources.MergedDictionaries.Remove(_currentColorway);
 
-            appResources.MergedDictionaries.Add(newTheme);
-            _currentTheme = newTheme;
+            appResources.MergedDictionaries.Add(new_colorway);
+            _currentColorway = new_colorway;
 
-            Debug.WriteLine($"[ThemeManager] Loaded: {absolutePath}");
-            Debug.WriteLine($"[ThemeManager] MergedDictionaries count: {Application.Current.Resources.MergedDictionaries.Count}");
+            Debug.WriteLine($"[COLORWAY-MANAGER] Loaded: {absolutePath}");
+            Debug.WriteLine($"[COLORWAY-MANAGER] MergedDictionaries count: {Application.Current.Resources.MergedDictionaries.Count}");
             foreach (var dict in Application.Current.Resources.MergedDictionaries)
-                Debug.WriteLine("[ThemeManager] MergedDictionary: " + dict.Source);
+                Debug.WriteLine("[COLORWAY-MANAGER] MergedDictionary: " + dict.Source);
         }
 
-        private static string ReadThemeName(string xamlPath)
+        private static string ReadColorwayName(string xamlPath)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace Skymu.Theming
                         if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "String")
                         {
                             string key = reader.GetAttribute("Key", "http://schemas.microsoft.com/winfx/2006/xaml");
-                            if (key == "Theme.Name")
+                            if (key == "Colorway.Name")
                                 return reader.ReadElementContentAsString();
                         }
                     }
@@ -138,7 +138,7 @@ namespace Skymu.Theming
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"[ThemeManager] Failed to read {xamlPath}: {ex.Message}");
+                Debug.WriteLine($"[COLORWAY-MANAGER] Failed to read {xamlPath}: {ex.Message}");
             }
             return null;
         }

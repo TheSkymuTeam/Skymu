@@ -35,6 +35,6 @@
             Grid.Row="1"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Source="../../../Skyaeris/Assets/Universal/Home/footer.png" />
+            Source="../../../Skype5/Assets/Universal/Home/footer.png" />
     </Grid>
 </Page>

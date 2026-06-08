@@ -21,7 +21,7 @@ using Skymu.Helpers;
 using System.Linq;
 using Skymu.Sounds;
 using Skymu.Preferences;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using Skymu.Forms;
 using Skymu.UserDirectory;
 using Microsoft.Win32;
@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using System.Windows.Controls;
 
@@ -407,7 +407,7 @@ namespace Skymu.ViewModels
                         {
                             if (ActiveConversation[j] is Message prev)
                             {
-                                msg.PreviousMessageIdentifier = prev.Sender.Identifier;
+                                msg.PreviousMessageIdentifier = prev.Author.Identifier;
                                 break;
                             }
                         }
@@ -441,7 +441,7 @@ namespace Skymu.ViewModels
                         continue;
 
                     if (
-                        message.Sender.Identifier == Universal.CurrentUser?.Identifier
+                        message.Author.Identifier == Universal.CurrentUser?.Identifier
                         && message.Identifier != null
                         && !message.Identifier.StartsWith(SKYMU_SENDING)
                     )
@@ -471,13 +471,13 @@ namespace Skymu.ViewModels
                             && !prev.Identifier.StartsWith(SKYMU_SENDING)
                         )
                         {
-                            message.PreviousMessageIdentifier = prev.Sender.Identifier;
+                            message.PreviousMessageIdentifier = prev.Author.Identifier;
                             break;
                         }
                     }
 
                     if (
-                        message.Sender.Identifier != Universal.CurrentUser?.Identifier
+                        message.Author.Identifier != Universal.CurrentUser?.Identifier
                         && IsWindowActive
                         && !_synchronizing
                     )
@@ -535,9 +535,9 @@ namespace Skymu.ViewModels
 
         #region Incoming item handler
 
-        public void HandleIncoming(MessageEventArgs e)
+        public void HandleIncoming(MessageBottle e)
         {
-            if (e is MessageRecievedEventArgs eR)
+            if (e is MessageRecievedBottle eR)
             {
                 var conversation = ConversationList.FirstOrDefault(c =>
                     c.Identifier == eR.ConversationId
@@ -551,7 +551,7 @@ namespace Skymu.ViewModels
                 if (eR.Item is Message message)
                 {
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
-                    if (message.Sender?.Identifier == Universal.CurrentUser?.Identifier) return;
+                    if (message.Author?.Identifier == Universal.CurrentUser?.Identifier) return;
                     if ((Settings.NotificationTrigger & NotificationTriggerType.ALL) != 0)
                     {
                         new Notification(eR);
@@ -564,7 +564,7 @@ namespace Skymu.ViewModels
                         // 2. pinged
 
                         if (
-                            message.ParentMessage?.Sender?.Identifier
+                            message.ParentMessage?.Author?.Identifier
                             == Universal.CurrentUser?.Identifier
                         )
                         { /* case 1 is true, continue */
@@ -598,7 +598,7 @@ namespace Skymu.ViewModels
                 }
             }
             else if (
-                e is MessageDeletedEventArgs eD
+                e is MessageDeletedBottle eD
                 && SelectedConversation?.Identifier == e.ConversationId
             )
             {
@@ -615,7 +615,7 @@ namespace Skymu.ViewModels
                 }
             }
             else if (
-                e is MessageEditedEventArgs eE
+                e is MessageEditedBottle eE
                 && SelectedConversation?.Identifier == e.ConversationId
             )
             {
@@ -658,7 +658,7 @@ namespace Skymu.ViewModels
                 return;
 
             conversation.LastMessageTime = messageTimestamp;
-            Skyaeris.Main.RefreshCompactRecentsView();
+            Skype5.Main.RefreshCompactRecentsView();
         }
 
         #endregion

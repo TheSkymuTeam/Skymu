@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Discord.Helpers
 {

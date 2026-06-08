@@ -13,10 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.SeanKype
+namespace Skymu.Skype7
 {
     public class MessageGrouper
     {
@@ -53,7 +53,7 @@ namespace Skymu.SeanKype
                 {
                     if (item is Message msg)
                         Append(msg, isGroupOrServer);
-                    // non-Message items (CallStartedNotice etc) don't appear in SeanKype
+                    // non-Message items (CallStartedNotice etc) don't appear in Skype7
                 }
             };
             _source.CollectionChanged += _handler;
@@ -74,7 +74,7 @@ namespace Skymu.SeanKype
             if (!(_source[i] is Message firstMsg))
                 return i + 1;
 
-            bool isSelf = firstMsg.Sender?.Identifier == Universal.CurrentUser?.Identifier;
+            bool isSelf = firstMsg.Author?.Identifier == Universal.CurrentUser?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(firstMsg);
 
@@ -90,7 +90,7 @@ namespace Skymu.SeanKype
             {
                 if (!(_source[j] is Message next))
                     break;
-                if (next.Sender?.Identifier != firstMsg.Sender?.Identifier)
+                if (next.Author?.Identifier != firstMsg.Author?.Identifier)
                     break;
                 if ((next.Time - batch[batch.Count - 1].Time).TotalSeconds >= 60)
                     break;
@@ -105,14 +105,14 @@ namespace Skymu.SeanKype
 
         private void Append(Message message, bool isGroupOrServer)
         {
-            bool isSelf = message.Sender?.Identifier == Universal.CurrentUser?.Identifier;
+            bool isSelf = message.Author?.Identifier == Universal.CurrentUser?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(message);
 
             if (!isImage && Grouped.Count > 0)
             {
                 var last = Grouped[Grouped.Count - 1];
-                if (!last.IsImageGroup && last.Sender?.Identifier == message.Sender?.Identifier)
+                if (!last.IsImageGroup && last.Sender?.Identifier == message.Author?.Identifier)
                 {
                     var lastMsg = last.Messages[last.Messages.Count - 1];
                     if ((message.Time - lastMsg.Time).TotalSeconds < 60)
@@ -140,7 +140,7 @@ namespace Skymu.SeanKype
     {
         public ObservableCollection<Message> Messages { get; }
         public bool ShowSenderName { get; }
-        public User Sender => Messages.Count > 0 ? Messages[0].Sender : null;
+        public User Sender => Messages.Count > 0 ? Messages[0].Author : null;
         public DateTime Time =>
             Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
 

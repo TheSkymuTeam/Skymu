@@ -15,8 +15,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Yggdrasil.Classes;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Models;
+using Yggdrasil.Bottles;
 using Skymu.Sounds;
 
 namespace Skymu.Forms
@@ -24,9 +24,9 @@ namespace Skymu.Forms
     public partial class IncomingCall : Window
     {
         public EventHandler Answered;
-        private readonly CallEventArgs _call;
+        private readonly CallBottle _call;
 
-        public IncomingCall(CallEventArgs e)
+        public IncomingCall(CallBottle e)
         {
             InitializeComponent();
             _call = e;

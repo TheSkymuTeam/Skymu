@@ -32,9 +32,9 @@ using Skymu.Theming;
 using Skymu.UserDirectory;
 using Skymu.Windows;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using Yggdrasil.Networking;
 
 namespace Skymu
@@ -98,7 +98,7 @@ namespace Skymu
 
         private static void PluginPopup(
             object sender,
-            DialogEventArgs e,
+            DialogBottle e,
             string prefix,
             WindowBase.IconType itype
         )
@@ -125,7 +125,7 @@ namespace Skymu
             );
         }
 
-        public static void PluginDialogHandler(object sender, DialogEventArgs e)
+        public static void PluginDialogHandler(object sender, DialogBottle e)
         {
             switch (e.Type)
             {
@@ -169,7 +169,7 @@ namespace Skymu
             }
         }
 
-        public static void PluginNotificationHandler(object sender, MessageEventArgs e)
+        public static void PluginNotificationHandler(object sender, MessageBottle e)
         {
             Current.Dispatcher.BeginInvoke(
                 new Action(
@@ -268,18 +268,18 @@ namespace Skymu
             // TODO: Dynamically switch language without restart
             switch (Interface)
             {
-                case "SeanKype":
-                    new SeanKype.Login().Show();
+                case "Skype7":
+                    new Skype7.Login().Show();
                     break;
-                case "Pontis":
-                    new Pontis.Login().Show();
+                case "Skype6":
+                    new Skype6.Login().Show();
                     break;
-                case "Sapphire":
-                    new Sapphire.Login().Show();
+                case "Skype4":
+                    new Skype4.Login().Show();
                     break;
-                case "Skyaeris":
+                case "Skype5":
                 default:
-                    new Skyaeris.Login().Show();
+                    new Skype5.Login().Show();
                     break;
             }
 
@@ -532,11 +532,11 @@ namespace Skymu
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyPresentationFramework(Settings.PresentationFramework);
             AutoLaunch.Initialize();
-            if (!ThemeManager.Scan())
+            if (!Colorizer.Scan())
                 Universal.ExceptionHandler(
                     new Exception("Could not find any compatible theme files in directory /Themes.")
                 );
-            ThemeManager.LoadFromSettings();
+            Colorizer.LoadFromSettings();
             Migrator.Run();
             SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("SkymuClient-" + BuildVersion);
             base.OnStartup(ev);

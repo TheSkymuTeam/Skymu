@@ -20,7 +20,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
 {

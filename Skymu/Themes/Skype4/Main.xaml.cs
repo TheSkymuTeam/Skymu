@@ -9,13 +9,15 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+
 using Skymu.Converters;
-using Skymu.Enumerations;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
+using Skymu.Windows;
+using Skymu.Sounds;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System;
@@ -34,14 +36,12 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Skymu.Windows;
-using Skymu.Sounds;
 using System.Windows.Threading;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Skyaeris
+namespace Skymu.Skype4
 {
     public partial class Main : Window, IMainWindowHolder
     {
@@ -59,7 +59,7 @@ namespace Skymu.Skyaeris
 
         // Other file-level variables
         private AddContact _addContactWindow;
-        private readonly WindowFrame _currentFrame = Settings.WindowFrame;
+        private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin = new Thickness(0);
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
@@ -84,6 +84,14 @@ namespace Skymu.Skyaeris
             Chat,
         }
 
+        private enum WindowFrame
+        {
+            SkypeAero,
+            SkypeBasic,
+            Native,
+            SkypeAeroCustom,
+        };
+
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
             "WindowTitle",
             typeof(string),
@@ -104,27 +112,10 @@ namespace Skymu.Skyaeris
         }
 
         private BitmapImage sendBtnSmall = ImageHelper.Generate(
-            "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button.png"
+            "pack://application:,,,/Skype5/Assets/Universal/Chat/msg-send-button.png"
         );
         private BitmapImage sendBtnFull = ImageHelper.Generate(
-            "pack://application:,,,/Skyaeris/Assets/Universal/Chat/msg-send-button-full.png"
-        );
-
-        private BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator(
-            "Sidebar/contacts.png",
-            false
-        );
-        private BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator(
-            "Sidebar/recents.png",
-            false
-        );
-        private BitmapImage contactsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
-            "Sidebar/contacts-empty.png",
-            false
-        );
-        private BitmapImage recentsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
-            "Sidebar/recents-empty.png",
-            false
+            "pack://application:,,,/Skype5/Assets/Universal/Chat/msg-send-button-full.png"
         );
 
         private Metadata SelectedContact;
@@ -138,14 +129,14 @@ namespace Skymu.Skyaeris
             if (_currentFrame == WindowFrame.SkypeBasic) framedir = "Basic";
 
             return ImageHelper.Generate(
-                $"pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/{framedir}/{name}/combined.png"
+                $"pack://application:,,,/Skype5/Assets/Universal/Window Frame/{framedir}/{name}/combined.png"
             );
         }
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath =
-                ConversionHelpers.GetAssetBasePrefix("Skyaeris")
+                ConversionHelpers.GetAssetBasePrefix("Skype5")
                 + "Profile Pictures/"
                 + avatar
                 + ".png";
@@ -162,24 +153,19 @@ namespace Skymu.Skyaeris
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.IsEnabled = false;
-                CallDropdown.IsEnabled = false;
                 CallButton.Visibility = Visibility.Visible;
-                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
             else if (vmodel.SelectedConversation is ServerChannel)
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
                 CallButton.Visibility = Visibility.Collapsed;
-                CallDropdown.Visibility = Visibility.Collapsed;
             }
             else
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
-                CallDropdown.Visibility = Visibility.Visible;
                 CallButton.IsEnabled = true;
-                CallDropdown.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -191,19 +177,12 @@ namespace Skymu.Skyaeris
             {
                 case WindowType.Home:
                     ClearConversation();
-                    ToggleStatusBoxSelection(true);
 
-                    HomeTopbar.Visibility = Visibility.Visible;
-                    ChatTopbar.Visibility = Visibility.Collapsed;
-                    ChatProfileArea.Visibility = Visibility.Collapsed;
-                    MessageWindow.Visibility = Visibility.Collapsed;
+                    Home.Visibility = Visibility.Visible;
+                    ChatArea.Visibility = Visibility.Collapsed;
 
+                    TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    if (Settings.EnableSkypeHome)
-                        browser.Visibility = Visibility.Visible;
-                    else
-                        HomeUnavailable.Visibility = Visibility.Visible;
-                    MainPageButton.SetState(ButtonVisualState.Pressed);
                     ConversationList.SelectedItem = null;
                     SelectedContact = null;
                     ClearTreeSelection(ServersList);
@@ -219,14 +198,9 @@ namespace Skymu.Skyaeris
                     break;
 
                 case WindowType.Chat:
-                    ToggleStatusBoxSelection(false);
-                    StatusBox.SetState(ButtonVisualState.Default);
-                    HomeTopbar.Visibility = Visibility.Collapsed;
-                    ChatTopbar.Visibility = Visibility.Visible;
-                    ChatProfileArea.Visibility = Visibility.Visible;
-                    MessageWindow.Visibility = Visibility.Visible;
-                    browser.Visibility = Visibility.Collapsed;
-                    HomeUnavailable.Visibility = Visibility.Collapsed;
+                    StatusHeader.SetState(ButtonVisualState.Default);
+                    Home.Visibility = Visibility.Collapsed;
+                    ChatArea.Visibility = Visibility.Visible;
 
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 
@@ -248,15 +222,6 @@ namespace Skymu.Skyaeris
             TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
             if (container != null)
                 container.IsSelected = false;
-        }
-
-        private void ToggleStatusBoxSelection(bool selected)
-        {
-            StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-            StatusBox.TextColor = selected
-                ? Brushes.White
-                : (SolidColorBrush)Application.Current.Resources["Text.HighContrast"];
-            SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
         }
 
         private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
@@ -315,7 +280,7 @@ namespace Skymu.Skyaeris
                     else if (_currentFrame == WindowFrame.SkypeAeroCustom) // TODO: finish this
                     {
                         var img = ImageHelper.Generate(
-                            "pack://application:,,,/Skyaeris/Assets/Universal/Window Frame/Aero/aero-background.png"
+                            "pack://application:,,,/Skype5/Assets/Universal/Window Frame/Aero/aero-background.png"
                         );
                         this.Background = new ImageBrush
                         {
@@ -328,7 +293,7 @@ namespace Skymu.Skyaeris
                     }
 
                     // Titlebar font styling
-                    TitleMain.FontFamily = new FontFamily("Segoe UI");
+                    TitleMain.FontFamily = new FontFamily("Arial");
                     TitleMain.FontWeight = FontWeights.Normal;
                     TitleMain.FontSize = 12;
                     TitleMain.Foreground = Brushes.Black;
@@ -501,6 +466,7 @@ namespace Skymu.Skyaeris
             MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
 
+
             if (_currentFrame == WindowFrame.SkypeBasic)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Inactive.Titlebar"];
@@ -605,37 +571,34 @@ namespace Skymu.Skyaeris
                 ConversationList.ItemsSource = null;
             }
 
-            GridLength dynamic = new GridLength(1, GridUnitType.Star);
-            GridLength small = new GridLength(32);
-
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.Plugin.SupportsServers)
-                buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.Plugin.SupportsServers)
-                    buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
-                        ? small
-                        : dynamic;
             }
 
-            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
-
+            ConversationsHint.Visibility = Visibility.Collapsed;
             switch (tab_to_select.Name)
             {
                 case "btnServers":
                     ServersList.ItemsSource = await vmodel.GetServerList();
+                    SplashHeader.Text = "Servers";
+                    SplashDescription.Text = "Find a community and connect with the world.";
                     break;
                 case "btnContacts":
                     ConversationList.ItemTemplateSelector = null;
                     ConversationList.ItemsSource = vmodel.ContactList;
+                    SplashHeader.Text = Universal.Lang["sZAPBUTTON_CONTACTS"];
+                    SplashDescription.Text = "Choose a contact and start talking.";
                     break;
                 case "btnRecents":
                     ConfigureCompactRecentsList();
+                    SplashHeader.Text = "Conversations";
+                    SplashDescription.Text = "Choose a conversation to pick up again.";
+                    if (Settings.InboxNoticeShown != true)
+                        ConversationsHint.Visibility = Visibility.Visible;
                     break;
             }
             if (
@@ -698,8 +661,6 @@ namespace Skymu.Skyaeris
 
                 sidebarCol.Width = new GridLength(newWidth);
                 dragStart = current;
-
-                Sidebar_SizeChanged_Refresh();
             }
         }
 
@@ -772,47 +733,6 @@ namespace Skymu.Skyaeris
             }
         }
 
-        private void Sidebar_SizeChanged_Refresh()
-        {
-            if (btnServers.Visibility == Visibility.Collapsed)
-            {
-                if (SidebarColumn.Width.Value <= 185)
-                {
-                    btnContacts.Source = contactsBtnImageEmpty;
-                    btnRecents.Source = recentsBtnImageEmpty;
-                    btnContacts.TextLeftMargin = 5;
-                    btnRecents.TextLeftMargin = 5;
-                    SidebarTabs.ColumnDefinitions[0].Width = GridLength.Auto;
-                    btnContacts.HorizontalAlignment = HorizontalAlignment.Left;
-                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Center;
-                }
-                else
-                {
-                    btnContacts.Source = contactsBtnImage;
-                    btnRecents.Source = recentsBtnImage;
-                    btnContacts.TextLeftMargin = 30;
-                    btnRecents.TextLeftMargin = 30;
-                    SidebarTabs.ColumnDefinitions[0].Width = new GridLength(1, GridUnitType.Star);
-                    btnContacts.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    btnContacts.TextHorizontalAlignment = HorizontalAlignment.Left;
-                }
-            }
-            if (SidebarColumn.Width.Value < 195)
-            {
-                MakeGroupButton.OverlayText.Visibility = Visibility.Collapsed;
-                MakeGroupButton.TextLeftMargin = 0;
-            }
-            else
-            {
-                MakeGroupButton.OverlayText.Visibility = Visibility.Visible;
-                MakeGroupButton.TextLeftMargin = 41;
-            }
-            if (SidebarColumn.Width.Value < 245)
-                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_SHORT"];
-            else
-                MakeGroupButton.Text = Universal.Lang["sCREATE_GROUP_LONG"];
-        }
-
         #endregion
 
         #region User count API
@@ -839,10 +759,10 @@ namespace Skymu.Skyaeris
             SidebarColumn.MaxWidth = this.ActualWidth / 2;
             if (screen != null && location.ChatToggle)
                 TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
-            UpdateMessageSendButtonState();
+            RefreshChatSendButton();
         }
 
-        private void UpdateMessageSendButtonState()
+        private void RefreshChatSendButton()
         {
             // TODO: Don't rely on this. Rely on chat width. Also use Width, not ActualWidth. Maybe this is why the thing is laggy?
             MessageWindow.UpdateLayout();
@@ -890,9 +810,55 @@ namespace Skymu.Skyaeris
             OpenStatusMenu();
         }
 
+        private void SBNewBtn_Click(object sender, MouseButtonEventArgs e)
+        {
+            var menu = (ContextMenu)SBNewBtn.Resources["Menu"];
+            menu.PlacementTarget = SBNewBtn;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            menu.IsOpen = true;
+        }
+
+        private void NewMenuItemClick(object sender, RoutedEventArgs e)
+        {
+            string name = ((MenuItem)sender).Name.Substring(3);
+            switch(name)
+            {
+                case "contact":
+                    if (Universal.Plugin is IListManagement)
+                    {
+                        _addContactWindow?.Close();
+                        _addContactWindow = new AddContact();
+                    }
+                    else
+                    {
+                        SoundManager.Play("call-error");
+                        Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+                    }
+                    break;
+                case "group":
+                    Universal.NotImplemented("Creating group conversations");
+                    break;
+                case "import":
+                    Universal.NotImplemented("Importing contacts");
+                    break;
+            }
+        }
+
         private async void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
         {
             await SelectTab(sender as SliceControl);
+        }
+
+        private async void OnContactsLink(object sender, MouseButtonEventArgs e)
+        {
+            await SelectTab(btnContacts);
+        }
+
+        private void CloseConversationHint(object sender, MouseButtonEventArgs e)
+        {
+            ConversationsHint.Visibility = Visibility.Collapsed;
+            Settings.InboxNoticeShown = true;
+            Settings.Save();
         }
 
         private void TitleButton_Click(object sender, MouseButtonEventArgs e)
@@ -933,7 +899,7 @@ namespace Skymu.Skyaeris
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
                     await SoundManager.PlayAsync("busy");
-                    //if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
+                    if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
                         url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
@@ -1039,7 +1005,7 @@ namespace Skymu.Skyaeris
                     i++;
                     continue;
                 }
-                _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
+                await Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
                 return;
             }
             Universal.MessageBox(
@@ -1054,10 +1020,7 @@ namespace Skymu.Skyaeris
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
             if (Universal.Plugin is IListManagement)
-            {
-                _addContactWindow?.Close();
-                _addContactWindow = new AddContact();
-            }
+                new AddContact();
             else
             {
                 SoundManager.Play("call-error");
@@ -1143,6 +1106,8 @@ namespace Skymu.Skyaeris
             SoundManager.Play("call-error");
             Universal.MessageBox(VONAGE, VONAGE_CAPTION);
         }
+
+        private void Directory_Click(object sender, MouseButtonEventArgs e) => Universal.NotImplemented("Directory");
 
         private async void AddButtonClick(object sender, MouseButtonEventArgs e)
         {
@@ -1289,8 +1254,6 @@ namespace Skymu.Skyaeris
                 partner = dm.Partner;
                 answer_call = false;
             }
-            CallScreen.LocationChangeEventArgs initial_location =
-                new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
             if (TWR_ORIGINAL_HEIGHT == default)
                 TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
@@ -1475,7 +1438,7 @@ namespace Skymu.Skyaeris
             ConversationItemsList.ItemsSource = vmodel.ActiveConversation;
             throbber.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
-            UpdateMessageSendButtonState();
+            RefreshChatSendButton();
         }
 
         private void HandleConversationItems()
@@ -1650,17 +1613,12 @@ namespace Skymu.Skyaeris
 
             vmodel.Ready += (s, e) =>
             {
-                StatusBox.Text = Universal.CurrentUser.DisplayName;
+                StatusHeader.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
                     Universal.CurrentUser.ConnectionStatus
                 );
+                ProfileGrid.DataContext = Universal.CurrentUser;
                 ConfigureCompactRecentsList();
-                if (Settings.EnableSkypeHome)
-                    SkypeHome.Generate(
-                        browser,
-                        Universal.CurrentUser,
-                        vmodel.ContactList.ToList()
-                    );
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
@@ -1677,11 +1635,6 @@ namespace Skymu.Skyaeris
                 }
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
-            };
-
-            vmodel.UserCountUpdated += text =>
-            {
-                Dispatcher.Invoke(() => GlobalUserCount.Text = text);
             };
 
             vmodel.SignOutRequested += (s, e) =>
@@ -1706,7 +1659,7 @@ namespace Skymu.Skyaeris
                 bool found = false;
                 foreach (var item in ConversationList.Items)
                     if (item is Conversation c && c.Identifier == sc.Identifier)
-                        { ConversationList.SelectedItem = item as Conversation; found = true; break; }
+                    { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
                     if (ConversationList.ItemsSource == vmodel.ContactList)
@@ -1715,7 +1668,7 @@ namespace Skymu.Skyaeris
                         await SelectTab(btnContacts);
                     foreach (var item in ConversationList.Items)
                         if (item is Conversation c && c.Identifier == sc.Identifier)
-                            { ConversationList.SelectedItem = item as Conversation; break; }
+                        { ConversationList.SelectedItem = item as Conversation; break; }
                 }
                 _ = SetConversation();
             };
@@ -1772,17 +1725,12 @@ namespace Skymu.Skyaeris
             CTR_ORIGINAL_MAXHEIGHT = ChatTopBarRow.MaxHeight;
             TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
-            UpdateMessageSendButtonState();
-            // seanFinx Crazy Hack
-            AddContactButton.OverlayText.TextTrimming = TextTrimming.None;
-            MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
+            RefreshChatSendButton();
 
             Settings.Default.PropertyChanged += RefreshCreds;
             Universal.Lang.PropertyChanged += RefreshCreds;
             RefreshCreds();
 
-            
-            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {
@@ -1795,12 +1743,11 @@ namespace Skymu.Skyaeris
                     this.WindowState = Settings.Maximized ? WindowState.Maximized : this.WindowState;
                     SidebarColumn.Width = new GridLength(Settings.ConvListWidth);
                 }
-                Sidebar_SizeChanged_Refresh();
             };
 
             if (Universal.CallPlugin != null)
             {
-                Universal.CallPlugin.OnIncomingCall += (sender, e) =>
+                Universal.CallPlugin.IncomingCallPipe += (sender, e) =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {

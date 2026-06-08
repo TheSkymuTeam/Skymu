@@ -82,19 +82,19 @@
                     <ComboBoxItem
                         Padding="6,0"
                         Content="Skype 4"
-                        Tag="Sapphire" />
+                        Tag="Skype4" />
                     <ComboBoxItem
                         Padding="6,0"
                         Content="Skype 5"
-                        Tag="Skyaeris" />
+                        Tag="Skype5" />
                     <ComboBoxItem
                         Padding="6,0"
                         Content="Skype 6"
-                        Tag="Pontis" />
+                        Tag="Skype6" />
                     <ComboBoxItem
                         Padding="6,0"
                         Content="Skype 7"
-                        Tag="SeanKype" />
+                        Tag="Skype7" />
                 </ComboBox>
                 <TextBlock
                     Margin="8,0,0,0"
@@ -143,8 +143,8 @@
                 <ComboBox
                     Width="250"
                     DisplayMemberPath="Key"
-                    ItemsSource="{x:Static theming:ThemeManager.ColorThemes}"
-                    SelectedValue="{Binding Path=[ColorTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    ItemsSource="{x:Static theming:Colorizer.Colorways}"
+                    SelectedValue="{Binding Path=[Colorway], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Key" />
                 <TextBlock
                     Margin="8,0,0,0"

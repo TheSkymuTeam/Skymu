@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="Skymu.Sapphire.Login"
+    x:Class="Skymu.Skype5.Login"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
@@ -33,7 +33,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='backgrounds/login.png'}" Stretch="Fill" />
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype5, Source='backgrounds/login.png'}" Stretch="Fill" />
     </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
@@ -182,7 +182,7 @@
                         LeftWidth="15"
                         PressedIndex="4"
                         RightWidth="15"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Login/pill.png'}"
+                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype5, Source='Login/pill.png'}"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"
                         TextColor="#FF393A48"

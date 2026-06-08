@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Skymu.Converters
 {

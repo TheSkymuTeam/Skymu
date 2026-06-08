@@ -12,7 +12,7 @@
 using Discord.Helpers;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Discord.Users
 {

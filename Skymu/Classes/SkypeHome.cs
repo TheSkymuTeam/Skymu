@@ -22,7 +22,7 @@ using System.Security;
 using System.Text.Json;
 using System.Web;
 using System.Windows.Controls;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Skymu
 {

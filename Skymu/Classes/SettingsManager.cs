@@ -153,10 +153,10 @@ namespace Skymu.Preferences
             set => WRITE("BrandingName", value, nameof(BrandingName), "UI/General");
         }
 
-        public static string ColorTheme
+        public static string Colorway
         {
-            get => SELECT("ColorTheme", "Default", "UI/General");
-            set => WRITE("ColorTheme", value, nameof(ColorTheme), "UI/General");
+            get => SELECT("Colorway", "Default", "UI/General");
+            set => WRITE("Colorway", value, nameof(Colorway), "UI/General");
         }
         public static string CredsText
         {
@@ -185,7 +185,7 @@ namespace Skymu.Preferences
         }
         public static string Interface
         {
-            get => SELECT("Interface", "Skyaeris", "UI/General");
+            get => SELECT("Interface", "Skype5", "UI/General");
             set => WRITE("Interface", value, nameof(Interface), "UI/General");
         }
         public static bool RoomCallUI

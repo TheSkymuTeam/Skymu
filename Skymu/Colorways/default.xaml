@@ -5,10 +5,10 @@
 
     <!--  ================= THEME INFORMATION =================  -->
 
-    <sys:String x:Key="Theme.Name">Default</sys:String>
-    <sys:String x:Key="Theme.Author">OmegaAOL</sys:String>
-    <sys:String x:Key="Theme.Description">The standard colors used in Skype.</sys:String>
-    <sys:Int32 x:Key="Theme.Version">1</sys:Int32>
+    <sys:String x:Key="Colorway.Name">Default</sys:String>
+    <sys:String x:Key="Colorway.Author">OmegaAOL</sys:String>
+    <sys:String x:Key="Colorway.Description">The standard colors used in Skype.</sys:String>
+    <sys:Int32 x:Key="Colorway.Version">1</sys:Int32>
 
     <!--  ================= ACTIVE WINDOW (Skype 4-5) =================  -->
 
@@ -63,10 +63,10 @@
 
     <SolidColorBrush x:Key="Message.Bubble.Me" Color="#E5F7FD" />
     <SolidColorBrush x:Key="Message.Bubble.Other" Color="#C7EDFC" />
-    <SolidColorBrush x:Key="Message.Sender.Me" Color="#999999" />
-    <SolidColorBrush x:Key="Message.Sender.Other" Color="#3399FF" />
-    <SolidColorBrush x:Key="Message.Sender.Unread" Color="#FFCC11" />
-    <SolidColorBrush x:Key="Message.Sender.Forward" Color="#00cc88" />
+    <SolidColorBrush x:Key="Message.Author.Me" Color="#999999" />
+    <SolidColorBrush x:Key="Message.Author.Other" Color="#3399FF" />
+    <SolidColorBrush x:Key="Message.Author.Unread" Color="#FFCC11" />
+    <SolidColorBrush x:Key="Message.Author.Forward" Color="#00cc88" />
     <SolidColorBrush x:Key="Message.Border" Color="#E4E8ED" />
 
     <SolidColorBrush x:Key="Chatbar.Divider" Color="#D9E1E8" />

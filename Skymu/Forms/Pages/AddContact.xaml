@@ -1,20 +1,20 @@
-﻿<!-- TODO: Change assets path to Skype 4 -->
+﻿<!--  TODO: Change assets path to Skype 4  -->
 <Page
     x:Class="Skymu.Forms.Pages.AddContact"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:local="clr-namespace:Skymu.Forms.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:Skymu.UserControls"
-    mc:Ignorable="d"
     Title="Add a contact"
+    d:Background="#FFFFFF"
     FontFamily="Tahoma"
     Style="{StaticResource Page}"
-    d:Background="#FFFFFF" >
+    mc:Ignorable="d">
     <Page.Resources>
         <Style TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -25,38 +25,35 @@
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <DataTemplate x:Key="MoreShitYouCanDo">
-            <StackPanel
-                Margin="0,0,0,30"
-                Orientation="Vertical" >
+            <StackPanel Margin="0,0,0,30" Orientation="Vertical">
                 <uc:QuickLTB
+                    Key="sAC_MORE_CAPTION"
                     FontFamily="Tahoma"
-                    FontSize="11"
-                    Key="sAC_MORE_CAPTION" />
-                <Separator
-                    Margin="0,10,0,8"/>
+                    FontSize="11" />
+                <Separator Margin="0,10,0,8" />
                 <global:SliceControl
-                    Source="/Sapphire/Assets/Universal/Icon/plus.png"
+                    Source="/Skype4/Assets/Universal/Icon/plus.png"
                     Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
                     TextLeftMargin="22"
-                    TextSize="11"/>
+                    TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="/Sapphire/Assets/Universal/Icon/add.png"
+                    Source="/Skype4/Assets/Universal/Icon/add.png"
                     Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
                     TextLeftMargin="22"
-                    TextSize="11"/>
+                    TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="/Sapphire/Assets/Universal/Icon/megaphone.png"
+                    Source="/Skype4/Assets/Universal/Icon/megaphone.png"
                     Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
                     TextLeftMargin="22"
-                    TextSize="11"/>
+                    TextSize="11" />
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
@@ -66,11 +63,12 @@
         MinHeight="515"
         HorizontalAlignment="Left"
         VerticalAlignment="Stretch"
-        Background="Transparent" 
+        d:TabStripPlacement="Right"
+        Background="Transparent"
         BorderThickness="0"
-        SelectedIndex="0" 
-        d:TabStripPlacement="Right" > <!--  Right is the least distracting  -->
-        <TabItem Visibility="Collapsed" d:Visibility="Visible">
+        SelectedIndex="0"> 
+        <!--  Right is the least distracting  -->
+        <TabItem d:Visibility="Visible" Visibility="Collapsed">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -81,12 +79,12 @@
                     Width="Auto"
                     Height="Auto"
                     Margin="0,10,0,0"
-                    Visibility="Visible"
-                    HorizontalAlignment="Left">
+                    HorizontalAlignment="Left"
+                    Visibility="Visible">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="346*"/>
-                        <ColumnDefinition Width="131*"/>
-                        <ColumnDefinition Width="131*"/>
+                        <ColumnDefinition Width="346*" />
+                        <ColumnDefinition Width="131*" />
+                        <ColumnDefinition Width="131*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -98,24 +96,24 @@
                     <TextBlock
                         x:Name="TopCaption"
                         Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Margin="0,0,0,10"
                         FontFamily="Tahoma"
                         FontSize="11"
                         FontWeight="Bold"
-                        Margin="0,0,0,10"
-                        Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}"
-                        Grid.ColumnSpan="2"/>
+                        Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}" />
                     <uc:QuickLTB
+                        Key="sF_ADDFRIEND_FIND_LABEL"
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
                         Margin="0,0,0,18"
                         FontFamily="Tahoma"
-                        FontSize="11"
-                        Key="sF_ADDFRIEND_FIND_LABEL" />
+                        FontSize="11" />
                     <Grid
                         Grid.Row="1"
+                        Grid.RowSpan="2"
                         Grid.ColumnSpan="2"
-                        Margin="0,31,0,13"
-                        Grid.RowSpan="2">
+                        Margin="0,31,0,13">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="255" />
                             <ColumnDefinition Width="122" />
@@ -123,31 +121,31 @@
                         <TextBox
                             x:Name="UserDetailsInput"
                             Grid.Column="0"
+                            Height="20"
                             FontFamily="Tahoma"
                             FontSize="11"
-                            Height="20"
-                            Text="Sensei Wu"/>
+                            Text="Sensei Wu" />
                         <Button
                             x:Name="UserFindBtn"
                             Grid.Column="1"
+                            Height="23"
+                            Margin="8,0,0,0"
                             Click="FindFriend"
                             Content="{Binding Path='[sF_ADDFRIEND_FIND_BTN]', Source={StaticResource Lang}}"
                             FontFamily="Tahoma"
                             FontSize="11"
-                            Height="23"
                             IsDefault="True"
-                            IsEnabled="False"
-                            Margin="8,0,0,0"/>
+                            IsEnabled="False" />
                     </Grid>
                     <TextBlock
                         Grid.Row="2"
-                        Grid.ColumnSpan="2"
                         Grid.RowSpan="2"
+                        Grid.ColumnSpan="2"
+                        Margin="0,15,0,26"
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Margin="0,15,0,26"
                         Text="{Binding Path='[sF_SEARCH_MANDALAY_LB_INTRO]', Source={StaticResource Lang}}"
-                        TextWrapping="Wrap"/>
+                        TextWrapping="Wrap" />
                     <!--  TODO: Progressbar accuracy  -->
                     <ProgressBar
                         x:Name="FindPBar"
@@ -155,23 +153,23 @@
                         Width="Auto"
                         Height="10"
                         HorizontalAlignment="Stretch"
-                        Visibility="Collapsed"/>
+                        Visibility="Collapsed" />
                     <uc:QuickLTB
+                        Key="sAC_FOUND"
                         x:Name="SelectContactHint"
                         Grid.Row="3"
                         Margin="0,15,0,26"
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Key="sAC_FOUND"
                         Visibility="Collapsed" />
 
                     <StackPanel
                         x:Name="ErrorField"
                         Grid.Row="4"
                         Grid.ColumnSpan="2"
-                        Margin="0,35,0,0"
                         Width="Auto"
                         Height="Auto"
+                        Margin="0,35,0,0"
                         Orientation="Vertical"
                         Visibility="Collapsed">
                         <global:SliceControl
@@ -182,23 +180,29 @@
                             TextFont="Tahoma"
                             TextLeftMargin="22"
                             TextSize="11"
-                            TextWeight="Bold"/>
+                            TextWeight="Bold" />
                         <DockPanel Margin="20,0,0,0">
                             <BulletDecorator VerticalAlignment="Center">
                                 <BulletDecorator.Bullet>
-                                    <Ellipse Width="4" Height="4" Fill="Gray"/>
+                                    <Ellipse
+                                        Width="4"
+                                        Height="4"
+                                        Fill="Gray" />
                                 </BulletDecorator.Bullet>
                             </BulletDecorator>
                             <TextBlock
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Bottom"
                                 Text="{Binding Path='[sF_ADDFRIEND_LABEL4_1]', Source={StaticResource Lang}}"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                         </DockPanel>
                         <DockPanel Margin="20,0,0,0">
                             <BulletDecorator VerticalAlignment="Center">
                                 <BulletDecorator.Bullet>
-                                    <Ellipse Width="4" Height="4" Fill="Gray"/>
+                                    <Ellipse
+                                        Width="4"
+                                        Height="4"
+                                        Fill="Gray" />
                                 </BulletDecorator.Bullet>
                             </BulletDecorator>
                             <TextBlock
@@ -207,8 +211,8 @@
                                 TextWrapping="Wrap">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0} {1}">
-                                        <Binding Path="[sF_ADDFRIEND_LABEL4_2]" Source="{StaticResource Lang}"/>
-                                        <Binding Path="[sF_ADDFRIEND_LABEL4_3]" Source="{StaticResource Lang}"/>
+                                        <Binding Path="[sF_ADDFRIEND_LABEL4_2]" Source="{StaticResource Lang}" />
+                                        <Binding Path="[sF_ADDFRIEND_LABEL4_3]" Source="{StaticResource Lang}" />
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
@@ -216,14 +220,17 @@
                         <DockPanel Margin="20,0,0,0">
                             <BulletDecorator VerticalAlignment="Center">
                                 <BulletDecorator.Bullet>
-                                    <Ellipse Width="4" Height="4" Fill="Gray"/>
+                                    <Ellipse
+                                        Width="4"
+                                        Height="4"
+                                        Fill="Gray" />
                                 </BulletDecorator.Bullet>
                             </BulletDecorator>
                             <TextBlock
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Bottom"
-                                TextWrapping="Wrap"
-                                Text="{Binding Path='[sF_ADDFRIEND_LABEL4_4]', Source={StaticResource Lang}}"/>
+                                Text="{Binding Path='[sF_ADDFRIEND_LABEL4_4]', Source={StaticResource Lang}}"
+                                TextWrapping="Wrap" />
                         </DockPanel>
                         <global:SliceControl
                             Margin="0,25,0,0"
@@ -231,26 +238,26 @@
                             Text="{Binding Path='[sAC_INVITE_UNFOUND]', Source={StaticResource Lang}}"
                             TextColor="{StaticResource Text.Hyperlink}"
                             TextLeftMargin="22"
-                            TextSize="11"/>
+                            TextSize="11" />
                     </StackPanel>
                     <!--  TOOD: Accuracy  -->
                     <ListView
                         x:Name="UserListView"
                         Grid.Row="5"
                         Grid.ColumnSpan="2"
-                        Visibility="Collapsed"
                         SelectionChanged="UserListView_Selected"
-                        SelectionMode="Single">
+                        SelectionMode="Single"
+                        Visibility="Collapsed">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn
-                                    Header="{Binding Path='[sF_SEARCH_FIELD_FULLNAME]', Source={StaticResource Lang}}"
+                                    Width="150"
                                     DisplayMemberBinding="{Binding DisplayName}"
-                                    Width="150" />
+                                    Header="{Binding Path='[sF_SEARCH_FIELD_FULLNAME]', Source={StaticResource Lang}}" />
                                 <GridViewColumn
-                                    Header="{Binding Path='[sF_SEARCH_FIELD_USERNAME]', Source={StaticResource Lang}}"
+                                    Width="100"
                                     DisplayMemberBinding="{Binding Username}"
-                                    Width="100" />
+                                    Header="{Binding Path='[sF_SEARCH_FIELD_USERNAME]', Source={StaticResource Lang}}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -261,23 +268,23 @@
                     ContentTemplate="{StaticResource MoreShitYouCanDo}" />
             </Grid>
         </TabItem>
-        <TabItem Visibility="Collapsed" d:Visibility="Visible">
+        <TabItem d:Visibility="Visible" Visibility="Collapsed">
             <Grid
-                Margin="0,10,0,0"
                 Width="650"
+                Margin="0,10,0,0"
                 HorizontalAlignment="Left"
-                DataContext="{Binding FoundUser, RelativeSource={RelativeSource AncestorType=local:AddContact}}" >
+                DataContext="{Binding FoundUser, RelativeSource={RelativeSource AncestorType=local:AddContact}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <uc:QuickLTB
+                    Key="sAC_ADD_CONFIRM_CAPTION"
                     Grid.Row="0"
                     Margin="0,0,0,10"
                     FontFamily="Tahoma"
-                    FontSize="11"
-                    Key="sAC_ADD_CONFIRM_CAPTION" >
+                    FontSize="11">
                     <Binding Path="DisplayName" />
                 </uc:QuickLTB>
 
@@ -298,9 +305,7 @@
                     BorderThickness="1,0,1,1"
                     CornerRadius="0,0,4,4">
                     <Grid>
-                        <Grid
-                            Grid.Row="1"
-                            Height="120">
+                        <Grid Grid.Row="1" Height="120">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -333,7 +338,7 @@
                                 Grid.Column="1"
                                 Margin="12,12"
                                 Orientation="Vertical">
-                                <!-- Display name -->
+                                <!--  Display name  -->
                                 <TextBlock
                                     Margin="9,0,0,0"
                                     FontFamily="Tahoma"
@@ -349,7 +354,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="/Skyaeris/Assets/Universal/Chat/mood.png" />
+                                        Source="/Skype5/Assets/Universal/Chat/mood.png" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"
@@ -367,7 +372,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="/Skyaeris/Assets/Universal/Chat/clock.png" />
+                                        Source="/Skype5/Assets/Universal/Chat/clock.png" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"
@@ -387,7 +392,7 @@
                                         ElementCount="22"
                                         Interactive="False"
                                         SliceMode="0"
-                                        Source="/Skyaeris/Assets/Universal/Icon/skype-status-small.png"
+                                        Source="/Skype5/Assets/Universal/Icon/skype-status-small.png"
                                         StackDirection="Horizontal" />
                                     <TextBlock
                                         Margin="11,0,0,0"
@@ -402,7 +407,7 @@
                 </Border>
             </Grid>
         </TabItem>
-        <TabItem Visibility="Collapsed" d:Visibility="Visible">
+        <TabItem d:Visibility="Visible" Visibility="Collapsed">
             <Grid
                 Grid.Row="0"
                 Width="650"
@@ -416,7 +421,7 @@
                     <!--  joke explaination  -->
                     <!--  Masuo is a YouTuber with a channel "MasuoTV"  -->
                     <!--  On the very first video, they said "Do MasuoTV exist? MasuoTV exists!!  -->
-                    <!--  hikakin_mania is a YTP community that makes YTP of HikakinTV SeikinTV, and sometimes MasuoTV -->
+                    <!--  hikakin_mania is a YTP community that makes YTP of HikakinTV SeikinTV, and sometimes MasuoTV  -->
                     <!--  And... one of these YTP put an out of context "It absolutely does not exist/not true clip" after the MasuoTV intro vid  -->
                     <!--  Therefore, MasuoTV does not exist  -->
                     <!--  Rest is perfection DOESNT EXIST!!!!!!!!!'s lyrics taken  -->
@@ -425,9 +430,7 @@
                     <!--  hopefully because the Tox plugin is quite messy, sry!  -->
                     <TextBlock Text="(hopefully the contact has been added" />
                 </StackPanel>
-                <ContentPresenter
-                    Grid.Row="1"
-                    ContentTemplate="{StaticResource MoreShitYouCanDo}" />
+                <ContentPresenter Grid.Row="1" ContentTemplate="{StaticResource MoreShitYouCanDo}" />
             </Grid>
         </TabItem>
     </TabControl>

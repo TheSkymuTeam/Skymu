@@ -13,7 +13,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using System;
 using System.Windows.Media.Imaging;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Converters

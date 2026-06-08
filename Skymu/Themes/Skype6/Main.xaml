@@ -1,17 +1,17 @@
 ﻿<Window
-    x:Class="Skymu.Pontis.Main"
+    x:Class="Skymu.Skype6.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:global="clr-namespace:Skymu"
-    xmlns:local="clr-namespace:Skymu.Pontis"
+    xmlns:local="clr-namespace:Skymu.Skype6"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:Skymu.UserControls"
-    xmlns:yggdrasil="clr-namespace:Yggdrasil.Classes;assembly=Yggdrasil"
+    xmlns:yggdrasil="clr-namespace:Yggdrasil.Models;assembly=Yggdrasil"
     Title="Skymu"
     Width="1448"
     Height="856"
@@ -534,7 +534,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skyaeris, Source='Chat/reply-arrow.png'}" />
+                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype5, Source='Chat/reply-arrow.png'}" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -545,7 +545,7 @@
                             TextWrapping="NoWrap">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-                                    <Binding Path="ParentMessage.Sender.DisplayName" />
+                                    <Binding Path="ParentMessage.Author.DisplayName" />
                                     <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
                                 </MultiBinding>
                             </TextBlock.Text>
@@ -670,7 +670,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/reply-arrow.png'}" />
+                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/reply-arrow.png'}" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -681,7 +681,7 @@
                             TextWrapping="NoWrap">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-                                    <Binding Path="ParentMessage.Sender.DisplayName" />
+                                    <Binding Path="ParentMessage.Author.DisplayName" />
                                     <Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
                                 </MultiBinding>
                             </TextBlock.Text>
@@ -852,7 +852,7 @@
                                             HoverIndex="1"
                                             IsRadioButton="False"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/header.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/header.png'}"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -989,7 +989,7 @@
                                                 Height="16"
                                                 Margin="0,0,0,0"
                                                 HorizontalAlignment="Left"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/dropdown.png'}" />
+                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/dropdown.png'}" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -1020,7 +1020,7 @@
                                         MouseLeftButtonUp="HomeButton_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/home.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/home.png'}"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         Grid.Column="2"
@@ -1031,7 +1031,7 @@
                                         MouseLeftButtonUp="CallPhones_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/calls.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/calls.png'}"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         Grid.Column="4"
@@ -1041,7 +1041,7 @@
                                         HoverIndex="1"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/group.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/group.png'}"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         x:Name="AddContactButton"
@@ -1054,7 +1054,7 @@
                                         MouseLeftButtonUp="AddContact_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/add.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/add.png'}"
                                         StackDirection="Vertical" />
                                 </Grid>
 
@@ -1068,7 +1068,7 @@
                                         ElementCount="2"
                                         Interactive="False"
                                         PressedIndex="1"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/search-box.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/search-box.png'}"
                                         StackDirection="Vertical" />
                                     <TextBox
                                         x:Name="SearchBox"
@@ -1103,7 +1103,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/contacts.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/contacts.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1123,7 +1123,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/servers.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/servers.png'}"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1144,7 +1144,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/recents.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/recents.png'}"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1199,7 +1199,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1250,7 +1250,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1323,7 +1323,7 @@
                                                                         <Trigger Property="IsSelected" Value="True">
                                                                             <Setter TargetName="ItemBorder" Property="Background">
                                                                                 <Setter.Value>
-                                                                                    <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                    <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
                                                                                 </Setter.Value>
                                                                             </Setter>
                                                                         </Trigger>
@@ -1417,7 +1417,7 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Sidebar/header.png'}"
+                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/header.png'}"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1803,7 +1803,7 @@
                                             MouseLeftButtonUp="AddButtonClick"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/add.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/add.png'}"
                                             StackDirection="Vertical" />
                                         <global:SliceControl
                                             x:Name="WifiButton"
@@ -1815,7 +1815,7 @@
                                             HoverIndex="1"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/network-none.png'}"
+                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/network-none.png'}"
                                             StackDirection="Vertical" />
                                     </StackPanel>
                                     <Rectangle
@@ -1947,7 +1947,7 @@
                                                         MouseLeftButtonUp="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Pontis, Source='Chat/emoji.png'}"
+                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/emoji.png'}"
                                                         StackDirection="Vertical" />
                                                     <Popup
                                                         x:Name="EmojiFlyout"

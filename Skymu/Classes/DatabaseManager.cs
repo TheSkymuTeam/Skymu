@@ -34,7 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Databases
@@ -2304,12 +2304,12 @@ namespace Skymu.Databases
                                     cmd.Parameters["@chatname"].Value = DBNull.Value;
                                     cmd.Parameters["@timestamp"].Value = tsSeconds;
                                     cmd.Parameters["@author"].Value =
-                                        (object)ConvertIdentifier(message.Sender?.Identifier)
+                                        (object)ConvertIdentifier(message.Author?.Identifier)
                                         ?? DBNull.Value;
                                     cmd.Parameters["@from_username"].Value =
-                                        (object)message.Sender?.Username ?? DBNull.Value;
+                                        (object)message.Author?.Username ?? DBNull.Value;
                                     cmd.Parameters["@from_dispname"].Value =
-                                        (object)message.Sender?.DisplayName ?? DBNull.Value;
+                                        (object)message.Author?.DisplayName ?? DBNull.Value;
                                     cmd.Parameters["@chatmsg_type"].Value = hasFile ? 7 : 3;
                                     cmd.Parameters["@body_xml"].Value =
                                         (object)message.Text ?? DBNull.Value;

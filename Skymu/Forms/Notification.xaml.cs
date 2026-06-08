@@ -20,13 +20,13 @@ using Skymu.Sounds;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using System.Windows.Media;
 using Skymu.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Forms
@@ -39,7 +39,7 @@ namespace Skymu.Forms
         private const string SHARED_PHOTO = "shared a photo";
         private BitmapImage blue_background = null;
 
-        public Notification(MessageRecievedEventArgs e, int durationSeconds = 5)
+        public Notification(MessageRecievedBottle e, int durationSeconds = 5)
         {
             if (!Settings.EnableNotifications || Universal.CurrentUser is null)
                 return;
@@ -143,7 +143,7 @@ namespace Skymu.Forms
 
         private Notification() { }
 
-        private void AddMessage(Message message, MessageRecievedEventArgs e)
+        private void AddMessage(Message message, MessageRecievedBottle e)
         {
             Conversation conversation =
                 Universal.ActiveViewModel.ConversationList?.FirstOrDefault(c => c.Identifier == e.ConversationId)
@@ -187,7 +187,7 @@ namespace Skymu.Forms
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat
                     ? 21
-                    : MainViewModel.GetIntFromStatus(message.Sender.ConnectionStatus),
+                    : MainViewModel.GetIntFromStatus(message.Author.ConnectionStatus),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Margin = new Thickness(0, 0, 4, 0),
                 HoverIndex = -1,
@@ -212,7 +212,7 @@ namespace Skymu.Forms
             }
             else
             {
-                titleText.Text = message.Sender.DisplayName;
+                titleText.Text = message.Author.DisplayName;
             }
 
             Grid.SetRow(titleText, 0);
@@ -227,7 +227,7 @@ namespace Skymu.Forms
             else body = isGroupChat ? null : "(no message)";
 
             string raw = isGroupChat
-                ? (body != null ? $"{message.Sender.DisplayName} {body}" : message.Sender.DisplayName)
+                ? (body != null ? $"{message.Author.DisplayName} {body}" : message.Author.DisplayName)
                 : body ?? "(no message)";
 
             messageText = Formatter.Parse(raw);

@@ -21,8 +21,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
-using Yggdrasil.Classes;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Models;
+using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 
 namespace Stub
@@ -31,8 +31,9 @@ namespace Stub
     {
         #region Variables
 
-        public event EventHandler<DialogEventArgs> OnDialog;
-        public event EventHandler<MessageEventArgs> MessageEvent;
+        public event EventHandler<DialogBottle> DialogPipe;
+        public event EventHandler<MessageBottle> MessagePipe;
+        public event EventHandler<ListBottle> ListPipe;
         public string Name
         {
             get { return "Stub plugin"; }
@@ -81,9 +82,9 @@ namespace Stub
         )
         {
             Me = new User(username, username, username);
-            MessageEvent.Invoke(
+            MessagePipe.Invoke(
                 this,
-                new MessageRecievedEventArgs(
+                new MessageRecievedBottle(
                     "13414",
                     new Message("20202", users[0], new DateTime(2025, 4, 30, 8, 14, 0), "Hello"),
                     false
@@ -129,26 +130,26 @@ namespace Stub
                     user = group.Members[0];
                 else
                     return Task.FromResult(false);
-                OnIncomingCall?.Invoke(this, new CallEventArgs("TotallyRandomIncomingCall", CallState.Ringing, user));
+                IncomingCallPipe?.Invoke(this, new CallBottle("TotallyRandomIncomingCall", CallState.Ringing, user));
                 return Task.FromResult(true);
             }
             if (text != null)
             {
                 if (attachment != null)
-                    OnDialog?.Invoke(
+                    DialogPipe?.Invoke(
                         this,
-                        new DialogEventArgs(DialogType.Warning, (action ? "Action message" : "Message") + " with text and attachment sent.")
+                        new DialogBottle(DialogType.Warning, (action ? "Action message" : "Message") + " with text and attachment sent.")
                     );
                 else
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Text-only " + (action ? "action" : "") + " message sent."));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Text-only " + (action ? "action" : "") + " message sent."));
             }
             else
-                OnDialog?.Invoke(
+                DialogPipe?.Invoke(
                     this,
-                    new DialogEventArgs(DialogType.Warning, "Attachment-only message sent.")
+                    new DialogBottle(DialogType.Warning, "Attachment-only message sent.")
                 );
             if (parent_message_identifier != null)
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message references a parent."));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message references a parent."));
             TypingUsersList.Clear();
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
@@ -160,7 +161,7 @@ namespace Stub
             {
                 await Task.Delay(3000);
                 // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
-                MessageEvent?.Invoke(this, new MessageRecievedEventArgs(identifier,
+                MessagePipe?.Invoke(this, new MessageRecievedBottle(identifier,
                     action
                     ? new ActionMessage(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
                     : new Message(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
@@ -177,7 +178,7 @@ namespace Stub
             string newText
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -186,7 +187,7 @@ namespace Stub
             string messageId
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -561,8 +562,8 @@ namespace Stub
 
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
-        public event EventHandler<CallEventArgs> OnIncomingCall;
-        public event EventHandler<CallEventArgs> OnCallStateChanged;
+        public event EventHandler<CallBottle> IncomingCallPipe;
+        public event EventHandler<CallBottle> CallStateChangedPipe;
 
         public bool SupportsVideoCalls => false;
 
@@ -689,7 +690,7 @@ namespace Stub
         {
             new ExtraConfiguration(
                 "Hello world",
-                () => OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Hello world!")),
+                () => DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Hello world!")),
                 "Show Hello World!")
         };
 

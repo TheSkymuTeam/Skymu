@@ -9,28 +9,27 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-using Skymu.Preferences;
-using Skymu.ViewModels;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using Skymu.ViewModels;
+using Skymu.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using Skymu.Windows;
-using Skymu.Sounds;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Threading;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Sapphire
+namespace Skymu.Skype5
 {
     public partial class Login : Window
     {
-        public BitmapImage throbberImage = new BitmapImage(new Uri("pack://application:,,,/Skyaeris/Assets/Universal/Animations/spinner-accurate.png"));
+        public BitmapImage throbberImage = new BitmapImage(new Uri("pack://application:,,,/Skype5/Assets/Universal/Animations/spinner-accurate.png"));
 
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;

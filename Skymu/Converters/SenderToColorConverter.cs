@@ -29,11 +29,11 @@ namespace Skymu.Converters
         )
         {
             if (values[0] is string identifier && identifier == Universal.CurrentUser?.Identifier)
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Me"];
+                return (SolidColorBrush)Application.Current.Resources["Message.Author.Me"];
             else if (values[1] is bool isForwarded && isForwarded)
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Forward"];
+                return (SolidColorBrush)Application.Current.Resources["Message.Author.Forward"];
             else
-                return (SolidColorBrush)Application.Current.Resources["Message.Sender.Other"];
+                return (SolidColorBrush)Application.Current.Resources["Message.Author.Other"];
         }
 
         public object[] ConvertBack(

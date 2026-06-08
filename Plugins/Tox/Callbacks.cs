@@ -20,8 +20,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ToxOO;
 using Yggdrasil;
-using Yggdrasil.EventArgs;
-using Yggdrasil.Classes;
+using Yggdrasil.Bottles;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using static System.Net.Mime.MediaTypeNames;
 using static Tox.Helper;
@@ -232,7 +232,7 @@ namespace Tox
             {
                 core.messages.Remove(mid);
                 message.Time = TIME();
-                core.UCP(_ => core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(new Friend(tox, fid).publicKey), message, false)));
+                core.UCP(_ => core.RaiseMessageEvent(new MessageRecievedBottle(BATS(new Friend(tox, fid).publicKey), message, false)));
             }
         }
 
@@ -278,7 +278,7 @@ namespace Tox
             else
                 message = new Message($"{fid}_{GUID()}", core.friends[fid], TIME(), msg);
             core.UCP(_ =>
-                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(new Friend(tox, fid).publicKey), message, false))
+                core.RaiseMessageEvent(new MessageRecievedBottle(BATS(new Friend(tox, fid).publicKey), message, false))
             );
         }
 
@@ -367,7 +367,7 @@ namespace Tox
                     core.friends[f.id],
                     TIME(),
                     $"I have tried to send you a file {filename}, but the Tox plugin currently does not support that.");
-                core.RaiseMessageEvent(new MessageRecievedEventArgs(fid.ToString(), message, false));
+                core.RaiseMessageEvent(new MessageRecievedBottle(fid.ToString(), message, false));
                 tox_file_control(tox, fid, file_number, Tox_File_Control.CANCEL, out _);
                 f.SendMessage(Tox_Message_Type.NORMAL, FILE_NOT_SUPPORTED);
             }
@@ -457,7 +457,7 @@ namespace Tox
                             else
                                 message = new Message(GUID(), core._currentUser, TIME(), msg.text);
                             core.UCP(_ =>
-                                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), message, false))
+                                core.RaiseMessageEvent(new MessageRecievedBottle(BATS(c.cid), message, false))
                             );
                             sucs.Add(msg);
                         }
@@ -487,7 +487,7 @@ namespace Tox
             else
                 message = new Message($"{c.cid}/{pid}_{GUID()}", sender, TIME(), msg);
             core.UCP(_ =>
-                core.RaiseMessageEvent(new MessageRecievedEventArgs(BATS(c.cid), message, false))
+                core.RaiseMessageEvent(new MessageRecievedBottle(BATS(c.cid), message, false))
             );
         }
 
@@ -599,7 +599,7 @@ namespace Tox
         {
             var core = GC(user_data);
             Debug.WriteLine($"Tox: Incoming call from {fid} with audio {audio_enabled}, video {video_enabled}");
-            core.CALL(new CallEventArgs(fid.ToString(), CallState.Ringing, core.friends[fid]));
+            core.CALL(new CallBottle(fid.ToString(), CallState.Ringing, core.friends[fid]));
         }
 
         // TODO: call_state
@@ -617,7 +617,7 @@ namespace Tox
             if ((state & Toxav_Friend_Call_State.FINISHED) != 0)
             {
                 Debug.WriteLine($"Tox: Call with {fid} ended/declined");
-                core.CSC(new CallEventArgs(fid.ToString(), CallState.Ended));
+                core.CSC(new CallBottle(fid.ToString(), CallState.Ended));
                 core.avWaiter?.TrySetResult(false);
                 return;
             }

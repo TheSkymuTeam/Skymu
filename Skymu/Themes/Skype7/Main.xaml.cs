@@ -11,7 +11,7 @@
 // This code is EXPIREMENTAL and has not been reviewed by
 // persfidious, patricktbp, or HUBAXE.
 // It is a port of logic that previously lived in the old
-// "SeanKype" project.
+// "Skype7" project.
 /*==========================================================*/
 
 using Skymu.Converters;
@@ -33,10 +33,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.SeanKype
+namespace Skymu.Skype7
 {
     public partial class Main : Window, IMainWindowHolder
     {
@@ -190,7 +190,7 @@ namespace Skymu.SeanKype
                             TabRecent_Click(null, null);
                             break;
                         case MMBController.Action.Call:
-                            break; // TODO add calling to SeanKype
+                            break; // TODO add calling to Skype7
                         case MMBController.Action.AddContact:
                             AddContact_Click(null, null);
                             break;
@@ -370,7 +370,7 @@ namespace Skymu.SeanKype
         private BitmapImage GenerateAvatarImage(string avatar)
         {
             string AvatarPath =
-                ConversionHelpers.GetAssetBasePrefix("SeanKype")
+                ConversionHelpers.GetAssetBasePrefix("Skype7")
                 + "Profile Pictures/"
                 + avatar
                 + ".png";
@@ -564,7 +564,7 @@ namespace Skymu.SeanKype
         #endregion
     }
 
-    public class SeanKypeSidebarTemplateSelector : DataTemplateSelector
+    public class Skype7SidebarTemplateSelector : DataTemplateSelector
     {
         public DataTemplate DirectMessageTemplate { get; set; }
         public DataTemplate GroupTemplate { get; set; }

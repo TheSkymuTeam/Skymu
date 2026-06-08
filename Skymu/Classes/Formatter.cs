@@ -29,7 +29,7 @@ using Markdig.Syntax.Inlines;
 using Skymu.Emoticons;
 using Skymu.Helpers;
 using Skymu.Preferences;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using MarkdigBlock = Markdig.Syntax.Block;
 using MarkdigInline = Markdig.Syntax.Inlines.Inline;
 using MdTable = Markdig.Extensions.Tables.Table;

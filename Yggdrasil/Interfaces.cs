@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Yggdrasil is copyrighted by The Skymu Team.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -12,9 +12,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using System.Collections.Generic;
 
 namespace Yggdrasil
@@ -27,11 +27,15 @@ namespace Yggdrasil
         /// <summary>
         ///  Invoked when the plugin wants to show a dialog to the user.
         /// </summary>
-        event EventHandler<DialogEventArgs> OnDialog;
+        event EventHandler<DialogBottle> DialogPipe;
         /// <summary>
         ///  Invoked when an instant message is recieved, edited, or deleted.
         /// </summary>
-        event EventHandler<MessageEventArgs> MessageEvent;
+        event EventHandler<MessageBottle> MessagePipe;
+        /// <summary>
+        ///  Invoked when an entry is added, modified, or removed from a list.
+        /// </summary>
+        event EventHandler<ListBottle> ListPipe;
         /// <summary>
         ///  Display name of the protocol or service. This will be shown directly to the user, so make it something concise, readable and recognisable (e.g. Floop)
         /// </summary>
@@ -151,11 +155,11 @@ namespace Yggdrasil
         /// <summary>
         ///  Invoke when there is an incoming call.
         /// </summary>
-        event EventHandler<CallEventArgs> OnIncomingCall;
+        event EventHandler<CallBottle> IncomingCallPipe;
         /// <summary>
         ///  Invoke when the call state changes (i.e. remote user declined, accepted, or hung up)
         /// </summary>
-        event EventHandler<CallEventArgs> OnCallStateChanged;
+        event EventHandler<CallBottle> CallStateChangedPipe;
         /// <summary>
         ///  Start a new voice call in the specified conversation.
         /// </summary>

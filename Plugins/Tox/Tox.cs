@@ -20,9 +20,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using ToxOO;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using Yggdrasil.Tools.Windows;
 using static Tox.Helper;
 using static ToxCore;
@@ -33,10 +33,12 @@ namespace Tox
     {
         #region Variables
 
-        public event EventHandler<DialogEventArgs> OnDialog;
-        public event EventHandler<MessageEventArgs> MessageEvent;
-        public event EventHandler<CallEventArgs> OnIncomingCall;
-        public event EventHandler<CallEventArgs> OnCallStateChanged;
+        public event EventHandler<DialogBottle> DialogPipe;
+        public event EventHandler<MessageBottle> MessagePipe;
+        public event EventHandler<ListBottle> ListPipe;
+
+        public event EventHandler<CallBottle> IncomingCallPipe;
+        public event EventHandler<CallBottle> CallStateChangedPipe;
         public string Name => "Tox";
         public string InternalName => "tox";
         public bool SupportsServers => false;
@@ -51,7 +53,7 @@ namespace Tox
             new ExtraConfiguration("Get self Tox ID", () =>
             {
                 var stid = tox.address;
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, $"Your Tox ID is: {stid}", stid));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, $"Your Tox ID is: {stid}", stid));
             })
         };
         public int TypingTimeout => 5000;
@@ -158,19 +160,19 @@ namespace Tox
 
         #region Helper
 
-        internal void RaiseMessageEvent(MessageEventArgs args) => MessageEvent?.Invoke(this, args);
+        internal void RaiseMessageEvent(MessageBottle args) => MessagePipe?.Invoke(this, args);
         // UiContextPost
         internal void UCP(SendOrPostCallback d) => uiContext?.Post(d, null);
         // ERRor
-        internal void ERR(string err) { Debug.WriteLine("[TOX] ERROR: " + err); OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, err, err)); }
+        internal void ERR(string err) { Debug.WriteLine("[TOX] ERROR: " + err); DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, err, err)); }
         // onCALLincoming
-        internal void CALL(CallEventArgs cea) => OnIncomingCall?.Invoke(this, cea);
+        internal void CALL(CallBottle cea) => IncomingCallPipe?.Invoke(this, cea);
         // CallStateChanged
-        internal void CSC(CallEventArgs cea) => OnCallStateChanged?.Invoke(this, cea);
+        internal void CSC(CallBottle cea) => CallStateChangedPipe?.Invoke(this, cea);
         // SAVE. Any other questions?
         internal void SAVE() => Save(tox, profile, this);
         // ShowYesNo
-        internal void SYN(DialogEventArgs e) => OnDialog?.Invoke(this, e);
+        internal void SYN(DialogBottle e) => DialogPipe?.Invoke(this, e);
 
         // https://stackoverflow.com/a/3202085
         static bool IsFileLocked(IOException exception)
@@ -190,7 +192,7 @@ namespace Tox
                 if (!File.Exists(Path.Combine(toxDir, profile + ".tox")))
                 {
                     TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Question,
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Question,
                         "Are you sure that you want to create an encrypted profile? Since the password is not stored, avoid this option unless you want the security.",
                         (yes) => tcs.TrySetResult(yes)));
                     bool choice = await tcs.Task;
@@ -244,7 +246,7 @@ namespace Tox
 
             Debug.WriteLine($"Tox: Running on {ToxOO.Version.str}");
             if (!ToxOO.Version.Compatible(0, 2, 22))
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Your c-toxcore version is NOT compatible with Skymu. An unexpected crash may happen. We do not offer assistance with this."));
             var opt = new Options
             {
                 logCallback = cbs.OnLogPtr
@@ -354,7 +356,7 @@ namespace Tox
 
                 if (!opt.setSavedata(data))
                 {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Something went wrong setting the savedata."));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Something went wrong setting the savedata."));
                     profilelock.Dispose();
                     File.Delete(lockpath);
                     return LoginResult.Failure;
@@ -430,7 +432,7 @@ namespace Tox
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
             if (newprofile)
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "No existing profile found, starting with a new one. Your Tox ID: " + tid));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
             _currentUser.PublicUsername = tid;
 
@@ -548,7 +550,7 @@ namespace Tox
             string newText
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -557,7 +559,7 @@ namespace Tox
             string messageId
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 

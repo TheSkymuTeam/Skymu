@@ -1,4 +1,4 @@
-/*==========================================================*/
+﻿/*==========================================================*/
 // Skymu is copyrighted by The Skymu Team.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -9,33 +9,31 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-/*==========================================================*/
-// This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE. Port is by Xaero.
-// This also applies to the associated XAML file.
-/*==========================================================*/
-
 using Skymu.Preferences;
 using Skymu.ViewModels;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using Skymu.Sounds;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Navigation;
-using Yggdrasil.Enumerations;
 using Skymu.Windows;
-using System.Windows.Input;
-using Yggdrasil.Classes;
+using Skymu.Sounds;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Threading;
+using Yggdrasil.Models;
+using Yggdrasil.Enumerations;
 
-namespace Skymu.SeanKype
+namespace Skymu.Skype4
 {
     public partial class Login : Window
     {
+        public BitmapImage throbberImage = new BitmapImage(new Uri("pack://application:,,,/Skype5/Assets/Universal/Animations/spinner-accurate.png"));
+
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
-        private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         private bool switchuser = false;
 
         public Login(bool switchuser = false)
@@ -44,6 +42,8 @@ namespace Skymu.SeanKype
             InitializeComponent();
             usernameBox.KeyUp += BoxKeyUp;
             passwordTokenBox.KeyUp += BoxKeyUp;
+            LoginButton.MouseLeftButtonUp += buttonLaunch;
+            this.ContentRendered += Login_ContentRendered;
 
             _viewModel = new LoginViewModel(() => new Main());
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
@@ -55,10 +55,9 @@ namespace Skymu.SeanKype
             Tray.SetStatus(PresenceStatus.Offline);
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        private async void buttonLaunch(object state, RoutedEventArgs e)
         {
-            if (comboProtocolBox.SelectedIndex == -1)
-                return;
+            if (comboProtocolBox.SelectedIndex == -1) return;
             await _viewModel.Login(
                 usernameBox.Text,
                 passwordTokenBox.Password
@@ -67,21 +66,20 @@ namespace Skymu.SeanKype
 
         private void OnPluginSelectionUpdated(LoginViewModel.PluginListing listing)
         {
-            Password.Foreground = new SolidColorBrush(Colors.White);
+            Password.Foreground = new SolidColorBrush(Colors.Black);
             passwordTokenBox.IsEnabled = true;
             Password.FontStyle = FontStyles.Normal;
             Password.Text = Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
-            string buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
-
-            SkypeName.Foreground = new SolidColorBrush(Colors.White);
+            SkypeName.Foreground = new SolidColorBrush(Colors.Black);
             usernameBox.IsEnabled = true;
             SkypeName.FontStyle = FontStyles.Normal;
             SkypeName.Text = listing.TextUsername ?? SkypeName.Text;
 
             if (listing.AuthenticationType != AuthenticationMethod.Password)
             {
-                Password.Foreground = new SolidColorBrush(Colors.LightGray);
+                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
                 passwordTokenBox.IsEnabled = false;
                 Password.Text = "field not required";
                 Password.FontStyle = FontStyles.Italic;
@@ -89,25 +87,24 @@ namespace Skymu.SeanKype
                 switch (listing.AuthenticationType)
                 {
                     case AuthenticationMethod.QRCode:
-                        buttonText = "Scan QR code";
-                        SkypeName.Foreground = new SolidColorBrush(Colors.LightGray);
+                        LoginButton.Text = "Scan QR code";
+                        SkypeName.Foreground = new SolidColorBrush(Colors.DarkGray);
                         usernameBox.IsEnabled = false;
                         SkypeName.FontStyle = FontStyles.Italic;
                         SkypeName.Text = "field not required";
                         break;
                     case AuthenticationMethod.Passwordless:
-                        buttonText = "Send code";
+                        LoginButton.Text = "Send code";
                         break;
                     case AuthenticationMethod.External:
-                        buttonText = "External login";
+                        LoginButton.Text = "External login";
                         break;
                     default:
-                        buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
+                        LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
                         break;
                 }
             }
 
-            LoginButton.Content = buttonText;
             CheckEnableLoginButton();
         }
 
@@ -126,29 +123,61 @@ namespace Skymu.SeanKype
         private void CheckEnableLoginButton()
         {
             if (
-                (
-                    usernameBox.Text.Trim() != string.Empty
-                    && (
-                        passwordTokenBox.Password.Trim() != string.Empty
-                        || !passwordTokenBox.IsEnabled
-                    )
-                ) || (!passwordTokenBox.IsEnabled && !usernameBox.IsEnabled)
+                (usernameBox.Text.Trim() != string.Empty
+                    && (passwordTokenBox.Password.Trim() != string.Empty || !passwordTokenBox.IsEnabled))
+                || !passwordTokenBox.IsEnabled && !usernameBox.IsEnabled
             )
             {
                 LoginButton.IsEnabled = true;
-                LoginButton.Opacity = 1;
             }
             else
             {
                 LoginButton.IsEnabled = false;
-                LoginButton.Opacity = 0.4;
             }
         }
 
-        private void Login_Loaded(object sender, RoutedEventArgs e)
+        private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
+        private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
+        private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
+        private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
+        private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
+        private void OnPrivacy(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY); }
+        private void OnAbout(object sender, EventArgs e) { new About().Show(); }
+        private void OnClose(object sender, EventArgs e) { Universal.Close(false); }
+
+        private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
+        private static (string, EventHandler) SEP() { return ("$", null); }
+
+        private void Login_Loaded(object sender, EventArgs e)
         {
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
+
+            string L(string key) => Universal.Lang[key];
+
+            MenuBarRow.Height = new GridLength(0);
+            var menuBar = new NativeMenuBar(this);
+            menuBar.Create(
+                "&" + L("sMAINMENU_SKYPE"),
+                MI(L("sMAINMENU_SKYPE_CLOSE"), OnClose)
+            );
+            menuBar.Create(
+                "&" + L("sMAINMENU_TOOLS"),
+                MI(L("sLOGIN_CHANGE_LANGUAGE"), OnChangeLanguage),
+                SEP(),
+                MI(L("sLOGIN_CONNECTION_OPTIONS"), OnConnectionOptions),
+                SEP(),
+                MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"), OnAccessibility)
+            );
+            menuBar.Create(
+                "&" + L("sMAINMENU_HELP"),
+                MI(L("sMAINMENU_HELP_HELP"), OnHelp),
+                SEP(),
+                MI(L("sMAINMENU_HELP_UPDATES"), OnCheckUpdates),
+                SEP(),
+                MI(L("sMAINMENU_HELP_PRIVACY"), OnPrivacy),
+                MI(L("sMAINMENU_HELP_ABOUT"), OnAbout)
+            );
 
             comboProtocolBox.DisplayMemberPath = "DisplayName";
             comboProtocolBox.SelectedValuePath = "DisplayName";
@@ -215,13 +244,13 @@ namespace Skymu.SeanKype
         {
             if (anim)
             {
-                N4.Visibility = Visibility.Collapsed;
+                LoginControls.Visibility = Visibility.Collapsed;
                 throbber.Visibility = Visibility.Visible;
                 header.Text = Universal.Lang["sSTATUSTEXT_PROFILE_LOGGING_IN"];
             }
             else
             {
-                N4.Visibility = Visibility.Visible;
+                LoginControls.Visibility = Visibility.Visible;
                 throbber.Visibility = Visibility.Collapsed;
                 header.Text = Universal.Lang["sF_LOGIN_WELCOME"];
             }
@@ -229,26 +258,19 @@ namespace Skymu.SeanKype
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Universal.OpenUrl(e.Uri.AbsoluteUri);
+            Universal.OpenUrl(Universal.DISCORD_SERVER_INVITE);
             e.Handled = true;
-        }
-
-        private void FooterLink_Click(object sender, MouseButtonEventArgs e)
-        {
-            Universal.OpenUrl(DISCORD_SERVER_INVITE);
-        }
-
-        private void Login_Closing(object sender, CancelEventArgs e)
-        {
-            if (!noCloseEvent)
-                Application.Current.Shutdown();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+        }
+
+        private void Login_Closing(object sender, CancelEventArgs ev)
+        {
             if (!noCloseEvent)
-                Application.Current.Shutdown();
+                Universal.Hide(ev);
         }
     }
 }

@@ -16,7 +16,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Xml.Linq;
 using Skymu.Preferences;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Credentials

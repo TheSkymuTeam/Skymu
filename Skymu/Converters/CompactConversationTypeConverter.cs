@@ -13,7 +13,7 @@ using Skymu.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Skymu.Converters
 {

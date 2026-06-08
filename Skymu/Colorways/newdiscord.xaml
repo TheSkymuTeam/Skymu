@@ -3,10 +3,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:String x:Key="Theme.Name">New Discord</sys:String>
-    <sys:String x:Key="Theme.Author">OmegaAOL</sys:String>
-    <sys:String x:Key="Theme.Description">Dark theme using Discord's current blurple colors.</sys:String>
-    <sys:Int32 x:Key="Theme.Version">1</sys:Int32>
+    <sys:String x:Key="Colorway.Name">New Discord</sys:String>
+    <sys:String x:Key="Colorway.Author">OmegaAOL</sys:String>
+    <sys:String x:Key="Colorway.Description">Dark colorway using Discord's current blurple colors.</sys:String>
+    <sys:Int32 x:Key="Colorway.Version">1</sys:Int32>
 
     <LinearGradientBrush x:Key="Active.Titlebar" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#FF404ABE" />
@@ -56,10 +56,10 @@
 
     <SolidColorBrush x:Key="Message.Bubble.Me" Color="#FF35373C" />
     <SolidColorBrush x:Key="Message.Bubble.Other" Color="#FF383A40" />
-    <SolidColorBrush x:Key="Message.Sender.Me" Color="#FFB5BAC1" />
-    <SolidColorBrush x:Key="Message.Sender.Other" Color="#FF5865F2" />
-    <SolidColorBrush x:Key="Message.Sender.Unread" Color="#FFFAA61A" />
-    <SolidColorBrush x:Key="Message.Sender.Forward" Color="#FF23A559" />
+    <SolidColorBrush x:Key="Message.Author.Me" Color="#FFB5BAC1" />
+    <SolidColorBrush x:Key="Message.Author.Other" Color="#FF5865F2" />
+    <SolidColorBrush x:Key="Message.Author.Unread" Color="#FFFAA61A" />
+    <SolidColorBrush x:Key="Message.Author.Forward" Color="#FF23A559" />
     <SolidColorBrush x:Key="Message.Border" Color="#FF1E1F22" />
 
     <SolidColorBrush x:Key="Chatbar.Divider" Color="#FF1E1F22" />

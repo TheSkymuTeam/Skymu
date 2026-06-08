@@ -17,7 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 
 namespace Skymu.Converters
 {
@@ -42,8 +42,8 @@ namespace Skymu.Converters
             });
             tb.Inlines.InsertBefore(tb.Inlines.FirstInline, new Run()
             {
-                Text = msg.Sender.DisplayName,
-                Foreground = (SolidColorBrush)new SenderToColorConverter().Convert(new object[] { msg.Sender.Identifier, msg.IsForwarded }, null, null, null)
+                Text = msg.Author.DisplayName,
+                Foreground = (SolidColorBrush)new SenderToColorConverter().Convert(new object[] { msg.Author.Identifier, msg.IsForwarded }, null, null, null)
             });
 
             return tb;

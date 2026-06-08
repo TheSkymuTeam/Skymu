@@ -15,7 +15,7 @@ using Skymu.Preferences;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -23,7 +23,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Forms
@@ -116,7 +116,7 @@ namespace Skymu.Forms
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
-            Universal.CallPlugin.OnCallStateChanged += OnCallStateChanged;
+            Universal.CallPlugin.CallStateChangedPipe += OnCallStateChanged;
             _call = new ActiveCall(
                 "INIT",
                 conversation.Identifier,
@@ -199,7 +199,7 @@ namespace Skymu.Forms
             }
         }
 
-        private void OnCallStateChanged(object sender, CallEventArgs e)
+        private void OnCallStateChanged(object sender, CallBottle e)
         {
             if (e.State == CallState.Ended)
             {
@@ -338,7 +338,7 @@ namespace Skymu.Forms
             _ringCts?.Cancel();
             SoundManager.StopPlayback("call-out");
             SoundManager.StopPlayback("call-init");
-            Universal.CallPlugin.OnCallStateChanged -= OnCallStateChanged;
+            Universal.CallPlugin.CallStateChangedPipe -= OnCallStateChanged;
             _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;

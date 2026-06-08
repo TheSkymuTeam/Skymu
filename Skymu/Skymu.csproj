@@ -98,17 +98,17 @@
 
 	<!-- Resource Handling -->
 	<ItemGroup>
-		<!-- SeanKype -->
-		<Resource Include="SeanKype\Assets\**\*" />
+		<!-- Skype7 -->
+		<Resource Include="Themes\Skype7\Assets\**\*" />
 
-		<!-- Skyaeris -->
-		<Resource Include="Skyaeris\Assets\**\*" />
+		<!-- Skype5 -->
+		<Resource Include="Themes\Skype5\Assets\**\*" />
 
-		<!-- Pontis -->
-		<Resource Include="Pontis\Assets\**\*" />
+		<!-- Skype6 -->
+		<Resource Include="Themes\Skype6\Assets\**\*" />
 
-		<!-- Sapphire -->
-		<Resource Include="Sapphire\Assets\**\*" />
+		<!-- Skype4 -->
+		<Resource Include="Themes\Skype4\Assets\**\*" />
 
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
@@ -155,14 +155,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Remove="Properties\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Page Remove="Themes\default.xaml" />
-		<Page Remove="Themes\discord.xaml" />
-		<Page Remove="Themes\newdiscord.xaml" />
-		<Page Remove="Themes\pink.xaml" />
-		<Page Remove="Themes\red.xaml" />
 	</ItemGroup>
 
 	<!-- Packages -->
@@ -221,25 +213,25 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Themes\newdiscord.xaml">
+		<None Include="Colorways\newdiscord.xaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</None>
-		<None Include="Themes\discord.xaml">
+		<None Include="Colorways\discord.xaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<SubType>Designer</SubType>
 			<Generator>MSBuild:Compile</Generator>
 		</None>
-		<None Include="Themes\red.xaml">
+		<None Include="Colorways\red.xaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Generator>MSBuild:Compile</Generator>
 		</None>
-		<None Include="Themes\pink.xaml">
+		<None Include="Colorways\pink.xaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Generator>MSBuild:Compile</Generator>
 		</None>
-		<None Include="Themes\default.xaml">
+		<None Include="Colorways\default.xaml">
 			<Generator>MSBuild:Compile</Generator>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
@@ -249,10 +241,10 @@
 		<Page Update="Forms\CallScreen.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
-		<Page Update="SeanKype\Login.xaml">
+		<Page Update="Skypes\Skype7Skype7\Login.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
-		<Page Update="SeanKype\Main.xaml">
+		<Page Update="Skypes\Skype7Skype7\Main.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
 		<Page Update="Forms\IncomingCall.xaml">

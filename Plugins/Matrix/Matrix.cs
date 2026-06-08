@@ -17,10 +17,10 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
-using Yggdrasil.EventArgs;
+using Yggdrasil.Bottles;
 using System.Threading.Tasks;
 using Yggdrasil;
-using Yggdrasil.Classes;
+using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Networking;
 
@@ -28,8 +28,9 @@ namespace Matrix
 {
     public class Core : ICore
     {
-        public event EventHandler<DialogEventArgs> OnDialog;
-        public event EventHandler<MessageEventArgs> MessageEvent;
+        public event EventHandler<DialogBottle> DialogPipe;
+        public event EventHandler<MessageBottle> MessagePipe;
+        public event EventHandler<ListBottle> ListPipe;
 
         public string Name => "Matrix";
         public string InternalName => "matrix";
@@ -81,7 +82,7 @@ namespace Matrix
             {
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Username and password are required."));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Username and password are required."));
                     return LoginResult.Failure;
                 }
 
@@ -115,7 +116,7 @@ namespace Matrix
                         loginBody = await loginResponse.Content.ReadAsStringAsync();
                         if (!loginResponse.IsSuccessStatusCode)
                         {
-                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Login failed: {loginBody}"));
+                            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Login failed: {loginBody}"));
                             return LoginResult.Failure;
                         }
                     }
@@ -138,7 +139,7 @@ namespace Matrix
                         }
                         else
                         {
-                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Could not fetch profile; using user ID as display name."));
+                            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Could not fetch profile; using user ID as display name."));
                         }
                     }
 
@@ -148,7 +149,7 @@ namespace Matrix
                 }
                 catch (Exception ex)
                 {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Login error: {ex.Message}"));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Login error: {ex.Message}"));
                     return LoginResult.Failure;
                 }
             }
@@ -156,7 +157,7 @@ namespace Matrix
             {
                 if (string.IsNullOrEmpty(username))
                 {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Email address is required."));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Email address is required."));
                     return LoginResult.Failure;
                 }
 
@@ -174,7 +175,7 @@ namespace Matrix
                             Debug.WriteLine($"[Beeper] Request 1 -> {(int)res1.StatusCode}: {res1Body}");
                             if (!res1.IsSuccessStatusCode)
                             {
-                                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login failed: {res1Body}"));
+                                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Beeper login failed: {res1Body}"));
                                 return LoginResult.Failure;
                             }
                         }
@@ -195,7 +196,7 @@ namespace Matrix
                             Debug.WriteLine($"[Beeper] Request 2 -> {(int)res2.StatusCode}: {res2Body}");
                             if (!res2.IsSuccessStatusCode)
                             {
-                                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send login email: {res2Body}"));
+                                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send login email: {res2Body}"));
                                 return LoginResult.Failure;
                             }
                         }
@@ -208,7 +209,7 @@ namespace Matrix
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"[Beeper] Exception: {ex.Message}\n{ex.StackTrace}");
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login error: {ex.Message}"));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Beeper login error: {ex.Message}"));
                     return LoginResult.Failure;
                 }
             }
@@ -234,7 +235,7 @@ namespace Matrix
                         Debug.WriteLine($"[Beeper] Request 3 -> {(int)res3.StatusCode}: {res3Body}");
                         if (!res3.IsSuccessStatusCode)
                         {
-                            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Invalid code: {res3Body}"));
+                            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Invalid code: {res3Body}"));
                             return LoginResult.Failure;
                         }
                     }
@@ -273,7 +274,7 @@ namespace Matrix
                     Debug.WriteLine($"[Beeper] Request 4 -> {(int)res4.StatusCode}: {res4Body}");
                     if (!res4.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Matrix login failed: {res4Body}"));
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Matrix login failed: {res4Body}"));
                         return LoginResult.Failure;
                     }
                 }
@@ -305,7 +306,7 @@ namespace Matrix
             catch (Exception ex)
             {
                 Debug.WriteLine($"[Beeper] Exception: {ex.Message}\n{ex.StackTrace}");
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Beeper login error: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Beeper login error: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
@@ -327,7 +328,7 @@ namespace Matrix
 
                 if (string.IsNullOrWhiteSpace(_accessToken))
                 {
-                    OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Saved credentials are invalid. Please log in again."));
+                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Saved credentials are invalid. Please log in again."));
                     return LoginResult.Failure;
                 }
 
@@ -335,7 +336,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Auto-login failed: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Auto-login failed: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
@@ -349,7 +350,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Authentication failed. Please log in again."));
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Authentication failed. Please log in again."));
                         return LoginResult.Failure;
                     }
                 }
@@ -358,7 +359,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to start client: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to start client: {ex.Message}"));
                 return LoginResult.Failure;
             }
         }
@@ -420,7 +421,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error,
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error,
                             $"Initial sync failed: {await response.Content.ReadAsStringAsync()}"));
                         return (new List<DirectMessage>(), new List<Conversation>());
                     }
@@ -527,7 +528,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Initial sync failed: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Initial sync failed: {ex.Message}"));
                 return (new List<DirectMessage>(), new List<Conversation>());
             }
         }
@@ -556,7 +557,7 @@ namespace Matrix
                     }
                     else
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, 
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, 
                             $"Attachment type '{attachment.Type}' is not yet fully supported; sending filename only."));
                         text = string.IsNullOrEmpty(text)
                             ? $"==Generic file:== {attachment.Name}"
@@ -575,7 +576,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send message: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send message: {ex.Message}"));
                 return false;
             }
         }
@@ -610,7 +611,7 @@ namespace Matrix
                 {
                     if (!uploadResponse.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, "Failed to upload image."));
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Failed to upload image."));
                         return false;
                     }
                     string uploadBody = await uploadResponse.Content.ReadAsStringAsync();
@@ -636,7 +637,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send image: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send image: {ex.Message}"));
                 return false;
             }
         }
@@ -671,7 +672,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to send reply: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send reply: {ex.Message}"));
                 return false;
             }
         }
@@ -682,7 +683,7 @@ namespace Matrix
             string newText
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message editing is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -691,7 +692,7 @@ namespace Matrix
             string messageId
         )
         {
-            OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Warning, "Message deletion is not implemented."));
+            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -755,7 +756,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to set presence: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to set presence: {ex.Message}"));
                 return false;
             }
         }
@@ -774,7 +775,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to set text status: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to set text status: {ex.Message}"));
                 return false;
             }
         }
@@ -811,7 +812,7 @@ namespace Matrix
                 {
                     if (!response.IsSuccessStatusCode)
                     {
-                        OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, 
+                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, 
                             $"Failed to load conversation: {await response.Content.ReadAsStringAsync()}"));
                         return new List<ConversationItem>();
                     }
@@ -899,7 +900,7 @@ namespace Matrix
             }
             catch (Exception ex)
             {
-                OnDialog?.Invoke(this, new DialogEventArgs(DialogType.Error, $"Failed to load conversation: {ex.Message}"));
+                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to load conversation: {ex.Message}"));
                 _activeRoomId = null;
                 return new List<ConversationItem>();
             }
@@ -1014,7 +1015,7 @@ namespace Matrix
                         timestamp, "[encrypted message]", null, null);
 
                     _uiContext?.Post(_ =>
-                        MessageEvent?.Invoke(this, new MessageRecievedEventArgs(roomId, encItem, false)), null);
+                        MessagePipe?.Invoke(this, new MessageRecievedBottle(roomId, encItem, false)), null);
                     return;
                 }
 
@@ -1056,7 +1057,7 @@ namespace Matrix
                 var messageItem = new Message(eventIdMsg, senderData, timestampMsg, body, attachments, null);
 
                 _uiContext?.Post(_ =>
-                    MessageEvent?.Invoke(this, new MessageRecievedEventArgs(roomId, messageItem, false)), null);
+                    MessagePipe?.Invoke(this, new MessageRecievedBottle(roomId, messageItem, false)), null);
             }
             catch (Exception ex)
             {
