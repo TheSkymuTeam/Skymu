@@ -934,7 +934,7 @@ namespace Skymu.ViewModels
                 var sw = Stopwatch.StartNew();
                 var data = await Universal.SkymuHttpClient.GetByteArrayAsync(TEST_URL);
                 sw.Stop();
-                double mbps = (data.Length * 8.0) / 1_000_000 / sw.Elapsed.TotalSeconds;
+                double mbps = data.Length * 8.0 / 1_000_000 / sw.Elapsed.TotalSeconds;
                 if (mbps >= 50)
                     final += "5";
                 else if (mbps >= 20)
