@@ -77,7 +77,7 @@
                     Text="User interface" />
                 <ComboBox
                     Width="250"
-                    SelectedValue="{Binding Path=[Interface], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValue="{Binding Path=[Theme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Tag">
                     <ComboBoxItem
                         Padding="6,0"

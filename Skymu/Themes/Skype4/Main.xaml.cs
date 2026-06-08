@@ -111,11 +111,11 @@ namespace Skymu.Skype4
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private BitmapImage sendBtnSmall = ImageHelper.Generate(
-            "pack://application:,,,/Skype5/Assets/Universal/Chat/msg-send-button.png"
+        private BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
+            "Universal/Chat/msg-send-button.png"
         );
-        private BitmapImage sendBtnFull = ImageHelper.Generate(
-            "pack://application:,,,/Skype5/Assets/Universal/Chat/msg-send-button-full.png"
+        private BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
+            "Universal/Chat/msg-send-button-full.png"
         );
 
         private Metadata SelectedContact;
@@ -128,19 +128,14 @@ namespace Skymu.Skype4
             string framedir = "Aero";
             if (_currentFrame == WindowFrame.SkypeBasic) framedir = "Basic";
 
-            return ImageHelper.Generate(
-                $"pack://application:,,,/Skype5/Assets/Universal/Window Frame/{framedir}/{name}/combined.png"
+            return ImageHelper.FreezeLoad(
+                $"Universal/Window Frame/{framedir}/{name}/combined.png"
             );
         }
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath =
-                ConversionHelpers.GetAssetBasePrefix("Skype5")
-                + "Profile Pictures/"
-                + avatar
-                + ".png";
-            return ImageHelper.Generate(AvatarPath);
+            return ImageHelper.FreezeLoad(Settings.ThemeRoot + "/Profile Pictures/" + avatar + ".png");
         }
 
         #endregion
@@ -279,8 +274,8 @@ namespace Skymu.Skype4
                     }
                     else if (_currentFrame == WindowFrame.SkypeAeroCustom) // TODO: finish this
                     {
-                        var img = ImageHelper.Generate(
-                            "pack://application:,,,/Skype5/Assets/Universal/Window Frame/Aero/aero-background.png"
+                        var img = ImageHelper.FreezeLoad(
+                            "Universal/Window Frame/Aero/aero-background.png"
                         );
                         this.Background = new ImageBrush
                         {
@@ -1675,7 +1670,7 @@ namespace Skymu.Skype4
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>

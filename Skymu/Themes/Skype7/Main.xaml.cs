@@ -150,7 +150,7 @@ namespace Skymu.Skype7
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
@@ -369,12 +369,7 @@ namespace Skymu.Skype7
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath =
-                ConversionHelpers.GetAssetBasePrefix("Skype7")
-                + "Profile Pictures/"
-                + avatar
-                + ".png";
-            return ImageHelper.Generate(AvatarPath);
+            return ImageHelper.FreezeLoad(Settings.ThemeRoot + "/Profile Pictures/" + avatar + ".png");
         }
 
         #endregion

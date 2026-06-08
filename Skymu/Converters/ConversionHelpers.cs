@@ -40,42 +40,13 @@ namespace Skymu.Converters
             return bytes;
         }
 
-        internal static string GetAssetBasePrefix(string era = null, bool universal = false)
-        {
-            string theme_root = "Light";
-            if (universal)
-                theme_root = "Universal";
-
-            if (!String.IsNullOrEmpty(theme_root))
-            {
-                string baseFolder = Universal.Interface;
-                if (!String.IsNullOrEmpty(era))
-                    baseFolder = era;
-                return $"pack://application:,,,/Skymu;component/{baseFolder}/Assets/{theme_root}/";
-            }
-
-            return $"pack://application:,,,/Skymu;component/Skype5/Assets/{theme_root}/";
-        }
-
         internal static BitmapImage AssetPathGenerator(
             string image_path,
-            bool is_shared,
-            string era = null
+            bool is_shared
         )
         {
-            string packUri;
-            if (era == null)
-                era = Universal.Interface;
-            if (is_shared)
-            {
-                packUri =
-                    $"pack://application:,,,/Skymu;component/{era}/Assets/Universal/{image_path}";
-            }
-            else
-            {
-                packUri = GetAssetBasePrefix(era) + image_path;
-            }
-            return ImageHelper.Generate(packUri);
+            if (!image_path.StartsWith("/")) image_path = "/" + image_path; // just in case
+            return ImageHelper.FreezeLoad((is_shared ? "Universal" : Settings.ThemeRoot) + image_path);
         }
     }
 }

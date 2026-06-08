@@ -915,8 +915,8 @@ namespace Skymu.ViewModels
                     while (!token.IsCancellationRequested)
                     {
                         string uri =
-                            ConversionHelpers.GetAssetBasePrefix()
-                            + "Chat/"
+                            Settings.ThemeRoot
+                            + "/Chat/"
                             + PREFIX
                             + (idx + 1)
                             + ".png";
@@ -957,7 +957,7 @@ namespace Skymu.ViewModels
             }
 
             SpeedTestIconUpdated?.Invoke(
-                ConversionHelpers.GetAssetBasePrefix() + "Chat/" + final + ".png"
+                Settings.ThemeRoot + "/Chat/" + final + ".png"
             );
         }
 

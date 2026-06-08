@@ -183,10 +183,10 @@ namespace Skymu.Preferences
             get => SELECT("UseSystemCulture", true, "UI/General");
             set => WRITE("UseSystemCulture", value, nameof(UseSystemCulture), "UI/General");
         }
-        public static string Interface
+        public static string Theme
         {
-            get => SELECT("Interface", "Skype5", "UI/General");
-            set => WRITE("Interface", value, nameof(Interface), "UI/General");
+            get => SELECT("Theme", "Skype5", "UI/General");
+            set => WRITE("Theme", value, nameof(Theme), "UI/General");
         }
         public static bool RoomCallUI
         {

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Skymu.Preferences;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -22,7 +23,12 @@ namespace Skymu.Helpers
     {
         private static readonly Dictionary<string, BitmapImage> _cache = new Dictionary<string, BitmapImage>();
 
-        public static BitmapImage Generate(string uri)
+        public static BitmapImage FreezeLoad(string path)
+        {
+            return FreezeLoadFromPackUri($"pack://application:,,,/Themes/{Settings.Theme}/Assets/{path}");
+        }
+
+        public static BitmapImage FreezeLoadFromPackUri(string uri)
         {
             if (_cache.TryGetValue(uri, out var cached))
                 return cached;

@@ -30,8 +30,6 @@ namespace Skymu.Skype4
 {
     public partial class Login : Window
     {
-        public BitmapImage throbberImage = new BitmapImage(new Uri("pack://application:,,,/Skype5/Assets/Universal/Animations/spinner-accurate.png"));
-
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
         private bool switchuser = false;

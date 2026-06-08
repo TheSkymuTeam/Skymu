@@ -45,7 +45,7 @@ namespace Skymu
         public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
-        public static readonly string Interface = Settings.Interface;
+        public static readonly string Theme = Settings.Theme;
 
         public const string Name = "Skymu";
         public const string BuildVersion = "0.4.3";
@@ -266,7 +266,7 @@ namespace Skymu
                     false
                 );
             // TODO: Dynamically switch language without restart
-            switch (Interface)
+            switch (Theme)
             {
                 case "Skype7":
                     new Skype7.Login().Show();
@@ -534,7 +534,7 @@ namespace Skymu
             AutoLaunch.Initialize();
             if (!Colorizer.Scan())
                 Universal.ExceptionHandler(
-                    new Exception("Could not find any compatible theme files in directory /Themes.")
+                    new Exception("Could not find any compatible colorways in directory /Colorways.")
                 );
             Colorizer.LoadFromSettings();
             Migrator.Run();

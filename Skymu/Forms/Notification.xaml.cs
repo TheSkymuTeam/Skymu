@@ -182,7 +182,7 @@ namespace Skymu.Forms
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = Helpers.ImageHelper.Generate(ConversionHelpers.GetAssetBasePrefix(null, true) + "Icon/skype-status.png"),
+                Source = Helpers.ImageHelper.FreezeLoad("Universal/Icon/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat

@@ -79,7 +79,7 @@ namespace Skymu.Windows
         {
             string path = !string.IsNullOrEmpty(custom_path)
                 ? custom_path
-                : $"pack://application:,,,/{Preferences.Settings.Interface}/Assets/Universal/Icon/skype-status.png";
+                : $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png";
 
             var sri = System.Windows.Application.GetResourceStream(new Uri(path, UriKind.Absolute));
             if (sri == null)

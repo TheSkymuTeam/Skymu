@@ -34,7 +34,7 @@ namespace Skymu.Forms
             InitializeComponent();
 
             string background_color;
-            if (Universal.Interface == "Skype7" || Universal.Interface == "Skype6") background_color = "Metro.Background";
+            if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6") background_color = "Metro.Background";
             else background_color = "Background";
             Background = (SolidColorBrush)Application.Current.Resources[background_color];
 

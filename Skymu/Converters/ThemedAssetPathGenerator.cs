@@ -26,8 +26,6 @@ namespace Skymu.Converters
             var image_path = value as string;
             if (image_path == null)
                 return null;
-            else if (parameter is string era && !String.IsNullOrEmpty(era))
-                return ConversionHelpers.AssetPathGenerator(image_path, false, era);
             else
                 return ConversionHelpers.AssetPathGenerator(image_path, false);
         }

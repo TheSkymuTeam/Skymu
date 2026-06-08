@@ -79,21 +79,21 @@ namespace Skymu.Forms
             PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
-            string prefix = $"pack://application:,,,/Skymu;component/{Universal.Interface}/Assets/Universal/"; // TODO make less repetitive
-            rectangle = ImageHelper.Generate(prefix + "Call Screen/rectangle.png");
-            pill = ImageHelper.Generate(prefix + "Call Screen/pill.png");
-            logo_small = ImageHelper.Generate(prefix + "Branding/logo-call-small.png");
-            logo_big = ImageHelper.Generate(prefix + "Branding/logo-call-big.png");
-            unmuted = ImageHelper.Generate(prefix + "Call Screen/btn_mic.png");
-            muted = ImageHelper.Generate(prefix + "Call Screen/btn_mic_off.png");
-            chat_active = ImageHelper.Generate(prefix + "Call Screen/btn_chat_active.png");
-            chat_inactive = ImageHelper.Generate(prefix + "Call Screen/btn_chat_inactive.png");
-            sidebar_expand = ImageHelper.Generate(prefix + "Call Screen/btn_sidebar_expand.png");
-            sidebar_collapse = ImageHelper.Generate(
+            string prefix = "Universal/"; // TODO make less repetitive
+            rectangle = ImageHelper.FreezeLoad(prefix + "Call Screen/rectangle.png");
+            pill = ImageHelper.FreezeLoad(prefix + "Call Screen/pill.png");
+            logo_small = ImageHelper.FreezeLoad(prefix + "Branding/logo-call-small.png");
+            logo_big = ImageHelper.FreezeLoad(prefix + "Branding/logo-call-big.png");
+            unmuted = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_mic.png");
+            muted = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_mic_off.png");
+            chat_active = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_chat_active.png");
+            chat_inactive = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_chat_inactive.png");
+            sidebar_expand = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_sidebar_expand.png");
+            sidebar_collapse = ImageHelper.FreezeLoad(
                 prefix + "Call Screen/btn_sidebar_collapse.png"
             );
-            screen_contract = ImageHelper.Generate(prefix + "Call Screen/btn_screen_contract.png");
-            screen_expand = ImageHelper.Generate(prefix + "Call Screen/btn_screen_expand.png");
+            screen_contract = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_screen_contract.png");
+            screen_expand = ImageHelper.FreezeLoad(prefix + "Call Screen/btn_screen_expand.png");
 
 
             isPillMode = !(this.ActualWidth >= 1025.0);

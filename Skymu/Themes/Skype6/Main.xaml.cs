@@ -103,8 +103,7 @@ namespace Skymu.Skype6
 
         private static BitmapImage GenerateAvatarImage(string avatar)
         {
-            string AvatarPath = ConversionHelpers.GetAssetBasePrefix("Skype6") + "Profile Pictures/" + avatar + ".png";
-            return ImageHelper.Generate(AvatarPath);
+            return ImageHelper.FreezeLoad(Settings.ThemeRoot + "/Profile Pictures/" + avatar + ".png");
         }
 
         #endregion
@@ -1310,7 +1309,7 @@ namespace Skymu.Skype6
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Generate(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
