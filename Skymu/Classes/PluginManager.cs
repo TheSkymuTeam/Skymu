@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Skymu is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -52,8 +52,8 @@ namespace Skymu.Plugins
                         if (typeof(ICore).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                         {
                             ICore instance = (ICore)Activator.CreateInstance(t);
-                            instance.DialogPipe += Universal.PluginDialogHandler;
-                            instance.MessagePipe += Universal.PluginNotificationHandler;
+                            instance.DialogTube += Universal.PluginDialogHandler;
+                            instance.MessageTube += Universal.PluginNotificationHandler;
                             PluginList.Add(instance);
                             pluginCount++;
                         }
@@ -92,8 +92,8 @@ namespace Skymu.Plugins
             {
                 try
                 {
-                    plugin.DialogPipe -= Universal.PluginDialogHandler;
-                    plugin.MessagePipe -= Universal.PluginNotificationHandler;
+                    plugin.DialogTube -= Universal.PluginDialogHandler;
+                    plugin.MessageTube -= Universal.PluginNotificationHandler;
 
                     if (plugin is IDisposable disposable)
                     {

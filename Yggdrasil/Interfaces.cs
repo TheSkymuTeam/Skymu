@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Yggdrasil is copyrighted by The Skymu Team.
+// Yggdrasil is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -27,15 +27,15 @@ namespace Yggdrasil
         /// <summary>
         ///  Invoked when the plugin wants to show a dialog to the user.
         /// </summary>
-        event EventHandler<DialogBottle> DialogPipe;
+        event EventHandler<DialogBottle> DialogTube;
         /// <summary>
         ///  Invoked when an instant message is recieved, edited, or deleted.
         /// </summary>
-        event EventHandler<MessageBottle> MessagePipe;
+        event EventHandler<MessageBottle> MessageTube;
         /// <summary>
         ///  Invoked when an entry is added, modified, or removed from a list.
         /// </summary>
-        event EventHandler<ListBottle> ListPipe;
+        event EventHandler<ListBottle> ListTube;
         /// <summary>
         ///  Display name of the protocol or service. This will be shown directly to the user, so make it something concise, readable and recognisable (e.g. Floop)
         /// </summary>
@@ -155,11 +155,11 @@ namespace Yggdrasil
         /// <summary>
         ///  Invoke when there is an incoming call.
         /// </summary>
-        event EventHandler<CallBottle> IncomingCallPipe;
+        event EventHandler<CallBottle> IncomingCallTube;
         /// <summary>
         ///  Invoke when the call state changes (i.e. remote user declined, accepted, or hung up)
         /// </summary>
-        event EventHandler<CallBottle> CallStateChangedPipe;
+        event EventHandler<CallBottle> CallStateChangedTube;
         /// <summary>
         ///  Start a new voice call in the specified conversation.
         /// </summary>

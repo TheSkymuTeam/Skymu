@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Skymu is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -24,13 +24,13 @@ namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
-        private static readonly string DOMAIN_NAME = "skymu.kier.ovh";
-        public static readonly string WS_URL = $"wss://{DOMAIN_NAME}/ws";
+        private static readonly string DOMAIN = "skymu.kier.ovh";
+        private static readonly string WEBSOCKET_URL = $"wss://{DOMAIN}/ws";
 
         // REST API variables
         private static readonly HttpClient client = new HttpClient(new BifrostEngine())
         {
-            BaseAddress = new Uri("https://" + DOMAIN_NAME),
+            BaseAddress = new Uri("https://" + DOMAIN),
         };
         public static string ApiTkn = null;
 
@@ -113,7 +113,7 @@ namespace Skymu.UserDirectory
         public static async Task ConnectWS()
         {
             ws = new BifrostWebSocket();
-            await ws.ConnectAsync(new Uri(WS_URL), cts.Token);
+            await ws.ConnectAsync(new Uri(WEBSOCKET_URL), cts.Token);
 
             var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
             var initBytes = Encoding.UTF8.GetBytes(initMsg);

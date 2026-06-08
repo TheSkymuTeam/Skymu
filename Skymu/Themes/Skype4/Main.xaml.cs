@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Skymu is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -1747,7 +1747,7 @@ namespace Skymu.Skype4
 
             if (Universal.CallPlugin != null)
             {
-                Universal.CallPlugin.IncomingCallPipe += (sender, e) =>
+                Universal.CallPlugin.IncomingCallTube += (sender, e) =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {

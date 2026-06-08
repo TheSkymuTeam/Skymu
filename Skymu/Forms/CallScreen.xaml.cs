@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Skymu is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -116,7 +116,7 @@ namespace Skymu.Forms
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
-            Universal.CallPlugin.CallStateChangedPipe += OnCallStateChanged;
+            Universal.CallPlugin.CallStateChangedTube += OnCallStateChanged;
             _call = new ActiveCall(
                 "INIT",
                 conversation.Identifier,
@@ -338,7 +338,7 @@ namespace Skymu.Forms
             _ringCts?.Cancel();
             SoundManager.StopPlayback("call-out");
             SoundManager.StopPlayback("call-init");
-            Universal.CallPlugin.CallStateChangedPipe -= OnCallStateChanged;
+            Universal.CallPlugin.CallStateChangedTube -= OnCallStateChanged;
             _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;

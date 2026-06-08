@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// This file is licensed in MIT.
+// This file is licensed under MIT.
 /*==========================================================*/
 // Copyright 2026 The Skymu Team
 //

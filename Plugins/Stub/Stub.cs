@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// This plugin is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -31,9 +31,9 @@ namespace Stub
     {
         #region Variables
 
-        public event EventHandler<DialogBottle> DialogPipe;
-        public event EventHandler<MessageBottle> MessagePipe;
-        public event EventHandler<ListBottle> ListPipe;
+        public event EventHandler<DialogBottle> DialogTube;
+        public event EventHandler<MessageBottle> MessageTube;
+        public event EventHandler<ListBottle> ListTube;
         public string Name
         {
             get { return "Stub plugin"; }
@@ -82,7 +82,7 @@ namespace Stub
         )
         {
             Me = new User(username, username, username);
-            MessagePipe.Invoke(
+            MessageTube.Invoke(
                 this,
                 new MessageRecievedBottle(
                     "13414",
@@ -130,26 +130,26 @@ namespace Stub
                     user = group.Members[0];
                 else
                     return Task.FromResult(false);
-                IncomingCallPipe?.Invoke(this, new CallBottle("TotallyRandomIncomingCall", CallState.Ringing, user));
+                IncomingCallTube?.Invoke(this, new CallBottle("TotallyRandomIncomingCall", CallState.Ringing, user));
                 return Task.FromResult(true);
             }
             if (text != null)
             {
                 if (attachment != null)
-                    DialogPipe?.Invoke(
+                    DialogTube?.Invoke(
                         this,
                         new DialogBottle(DialogType.Warning, (action ? "Action message" : "Message") + " with text and attachment sent.")
                     );
                 else
-                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Text-only " + (action ? "action" : "") + " message sent."));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Text-only " + (action ? "action" : "") + " message sent."));
             }
             else
-                DialogPipe?.Invoke(
+                DialogTube?.Invoke(
                     this,
                     new DialogBottle(DialogType.Warning, "Attachment-only message sent.")
                 );
             if (parent_message_identifier != null)
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message references a parent."));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message references a parent."));
             TypingUsersList.Clear();
             TypingUsersList.Add(new User("Nova", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
@@ -161,7 +161,7 @@ namespace Stub
             {
                 await Task.Delay(3000);
                 // Make the UI recognize that the message was sent, adding the timestamp and removing the throbber (loading wheel)
-                MessagePipe?.Invoke(this, new MessageRecievedBottle(identifier,
+                MessageTube?.Invoke(this, new MessageRecievedBottle(identifier,
                     action
                     ? new ActionMessage(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
                     : new Message(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
@@ -178,7 +178,7 @@ namespace Stub
             string newText
         )
         {
-            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not implemented."));
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -187,7 +187,7 @@ namespace Stub
             string messageId
         )
         {
-            DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deletion is not implemented."));
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deletion is not implemented."));
             return Task.FromResult(false);
         }
 
@@ -562,8 +562,8 @@ namespace Stub
 
         public Task<bool> SetVideoEnabled(ActiveCall call, bool enabled) => Task.FromResult(false);
 
-        public event EventHandler<CallBottle> IncomingCallPipe;
-        public event EventHandler<CallBottle> CallStateChangedPipe;
+        public event EventHandler<CallBottle> IncomingCallTube;
+        public event EventHandler<CallBottle> CallStateChangedTube;
 
         public bool SupportsVideoCalls => false;
 
@@ -690,7 +690,7 @@ namespace Stub
         {
             new ExtraConfiguration(
                 "Hello world",
-                () => DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, "Hello world!")),
+                () => DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Hello world!")),
                 "Show Hello World!")
         };
 

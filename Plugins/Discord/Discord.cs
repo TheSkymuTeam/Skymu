@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Skymu is copyrighted by The Skymu Team.
+// Skymu is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -36,15 +36,15 @@ namespace Discord
     {
         #region Variables and plugin metadata
 
-        public event EventHandler<CallBottle> IncomingCallPipe;
-        public event EventHandler<CallBottle> CallStateChangedPipe;
+        public event EventHandler<CallBottle> IncomingCallTube;
+        public event EventHandler<CallBottle> CallStateChangedTube;
         private CallSocket _callSocket = null;
 
         // Plugin details
         public bool SupportsVideoCalls => false; // not yet
-        public event EventHandler<DialogBottle> DialogPipe;
-        public event EventHandler<MessageBottle> MessagePipe;
-        public event EventHandler<ListBottle> ListPipe;
+        public event EventHandler<DialogBottle> DialogTube;
+        public event EventHandler<MessageBottle> MessageTube;
+        public event EventHandler<ListBottle> ListTube;
         public string Name { get { return "Discord"; } }
         public string InternalName { get { return "discord"; } }
         public bool SupportsServers { get { return true; } }
@@ -172,7 +172,7 @@ namespace Discord
             string qr = await tcs.Task;
             if (qr == "discord-close")
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Discord cancelled this QR login session. This can happen because:\n\n- You might be taking too long to scan the code" +
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Discord cancelled this QR login session. This can happen because:\n\n- You might be taking too long to scan the code" +
                     "\n- Discord updated something on their side and the plugin doesn't work anymore\n- You tried to scan the code using an old version of the Discord app or something like Aliucord"));
                 return null;
             }
@@ -204,19 +204,19 @@ namespace Discord
             {
                 if (userCheckTkn.Contains("401: Unauthorized"))
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Your token has been rejected, possibly due to a display name, username, or password change, or simply because it is invalid.\n\nPlease retrieve a new token."));
                 }
                 else if (userCheckTkn.Contains("[API/ParseError]"))
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "The provided token has an invalid format. Please ensure that you are entering it correctly."));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "The provided token has an invalid format. Please ensure that you are entering it correctly."));
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", string.Empty)));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n" + userCheckTkn.Replace("[API/RequestError]", string.Empty)));
                 }
                 else
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "An unknown error occurred during the login process. Please try again.\n\n" + userCheckTkn));
                 }
                 return LoginResult.Failure;
             }
@@ -233,14 +233,14 @@ namespace Discord
                     if (string.IsNullOrEmpty(channelId)) return; // no channel ID - private, or some server side error? just in case, return
                     if (((JsonArray)data["ringing"])?.Any(id => id?.GetValue<string>() == _currentUser?.Identifier) != true) return; // the current user is not being rung, return
                     string callerId = data["ongoing_rings"]?[_currentUser?.Identifier]?.GetValue<string>(); // who's ringing the current user?
-                    IncomingCallPipe?.Invoke(this, new CallBottle(channelId, CallState.Ringing, UserStore.Get(callerId)));
+                    IncomingCallTube?.Invoke(this, new CallBottle(channelId, CallState.Ringing, UserStore.Get(callerId)));
                 });
                 _uiContext = SynchronizationContext.Current;
 
 
                 proto = new ProtoSettings(DiscordToken);
             }
-            catch (Exception ex) { DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
+            catch (Exception ex) { DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Unexpected error while attempting to initialize WebSocket.\n\n" + ex.ToString())); }
             JsonObject parsedDetails = null;
             try
             {
@@ -257,7 +257,7 @@ namespace Discord
 
                 if (await Task.WhenAny(readyTask, delayTask) == delayTask)
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(
+                    DialogTube?.Invoke(this, new DialogBottle(
                         DialogType.Warning,
                         "The WebSocket is taking an unusually long time to initialize. " +
                         "This could be due to slow internet speeds or Discord throttling the connection."));
@@ -265,7 +265,7 @@ namespace Discord
 
                 if (!await readyTask)
                 {
-                    DialogPipe?.Invoke(this, new DialogBottle(
+                    DialogTube?.Invoke(this, new DialogBottle(
                         DialogType.Error,
                         "The WebSocket failed to initialize. This could be due to network errors, an outdated network stack, or Discord forcibly closing the connection."));
                     return null;
@@ -278,7 +278,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(
+                DialogTube?.Invoke(this, new DialogBottle(
                     DialogType.Error,
                     $"Parse error: {ex.Message}\nResponse from server:\n{parsedDetails?.ToJsonString() ?? "null"}"));
                 return null;
@@ -395,7 +395,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to populate servers: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to populate servers: {ex.Message}"));
                 return new List<Server>();
             }
             return results;
@@ -481,7 +481,7 @@ namespace Discord
 
                                 groupName = recipientNames != null ? string.Join(", ", recipientNames) : "N/A";
                             }
-                            catch { DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, "Error constructing group name.")); }
+                            catch { DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Error constructing group name.")); }
                         }
 
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
@@ -493,7 +493,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Error while fetching list: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Error while fetching list: {ex.Message}"));
                 return new List<Conversation>();
             }
             return results;
@@ -548,11 +548,11 @@ namespace Discord
                                 text = $"Discord says: {msg["message"].GetValue<string>()}\n\nError code {msg["code"].GetValue<string>()}";
                                 break;
                         }
-                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Warning, text));
+                        DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, text));
                     }
                     else
                     {
-                        DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Unexpected response format: {encJson}"));
+                        DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Unexpected response format: {encJson}"));
                     }
                     return new List<ConversationItem>();
                 }
@@ -578,7 +578,7 @@ namespace Discord
             {
                 string message = $"Failed to load conversation: {ex.Message}";
                 if (message.Contains("is an invalid start of a value")) message = "You are not connected to the internet, or Discord's servers are down.";
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, message));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, message));
                 _activeChannelId = null;
                 return new List<ConversationItem>();
             }
@@ -700,7 +700,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send message: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to send message: {ex.Message}"));
                 return false;
             }
         }
@@ -732,7 +732,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to edit message: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to edit message: {ex.Message}"));
                 return false;
             }
         }
@@ -764,7 +764,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to delete message: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to delete message: {ex.Message}"));
                 return false;
             }
         }
@@ -790,7 +790,7 @@ namespace Discord
             }
             catch (Exception ex)
             {
-                DialogPipe?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to set typing status: {ex.Message}"));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Failed to set typing status: {ex.Message}"));
                 return false;
             }
         }
@@ -875,24 +875,24 @@ namespace Discord
                                 users.Remove(e.Sender.Identifier);
 
                             var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
-                            MessagePipe?.Invoke(this, new MessageRecievedBottle(e.ChannelId, message, CheckIfGuildChannel(e)));
+                            MessageTube?.Invoke(this, new MessageRecievedBottle(e.ChannelId, message, CheckIfGuildChannel(e)));
                             break;
                         }
                     case MessageEventType.Update:
                         {
                             var message = new Message(e.Identifier, e.Sender, e.Timestamp, e.Text, e.Attachments, e.ParentMessage);
-                            MessagePipe?.Invoke(this, new MessageEditedBottle(e.ChannelId, e.Identifier, message));
+                            MessageTube?.Invoke(this, new MessageEditedBottle(e.ChannelId, e.Identifier, message));
                             break;
                         }
                     case MessageEventType.Delete:
                         {
-                            MessagePipe?.Invoke(this, new MessageDeletedBottle(e.ChannelId, e.Identifier));
+                            MessageTube?.Invoke(this, new MessageDeletedBottle(e.ChannelId, e.Identifier));
                             break;
                         }
                     case MessageEventType.BulkDelete:
                         {
                             foreach (var id in e.BulkIdentifiers ?? Enumerable.Empty<string>())
-                                MessagePipe?.Invoke(this, new MessageDeletedBottle(e.ChannelId, id));
+                                MessageTube?.Invoke(this, new MessageDeletedBottle(e.ChannelId, id));
                             break;
                         }
                 }
@@ -937,11 +937,11 @@ namespace Discord
                 };
                 socket.OnHangUp += () =>
                 {
-                    CallStateChangedPipe?.Invoke(this, new CallBottle(convo_id, CallState.Ended));
+                    CallStateChangedTube?.Invoke(this, new CallBottle(convo_id, CallState.Ended));
                 };
                 socket.OnCallFailed += reason =>
                 {
-                    CallStateChangedPipe?.Invoke(this, new CallBottle(convo_id, CallState.Failed, reason));
+                    CallStateChangedTube?.Invoke(this, new CallBottle(convo_id, CallState.Failed, reason));
                 };
                 _callSocket = socket;
                 await socket.ConnectAsync();

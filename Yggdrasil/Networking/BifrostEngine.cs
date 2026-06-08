@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Yggdrasil is copyrighted by The Skymu Team.
+// Yggdrasil is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent

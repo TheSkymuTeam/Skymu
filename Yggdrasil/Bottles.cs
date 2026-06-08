@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Yggdrasil is copyrighted by The Skymu Team.
+// Yggdrasil is copyrighted by The Skymu Team, 2026.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is contingent
@@ -8,15 +8,15 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// Events are called "pipes". Event arguments are called
+// Events are called "tubes". Event arguments are called
 // "bottles". Invoking an event is referred to as "loading"
-//  a pipe with the bottle.
+//  the tube with a bottle.
 /*==========================================================*/
-// They want to deliver vast amounts of information over the
-// Internet. And again, the Internet is not something that you
+// They want to deliver vast amounts of information using
+// Yggdrasil. And again, Yggdrasil is not something that you
 // just dump something on. It's not a big truck. It's a series
 // of tubes. And if you don't understand, those tubes can be
-// filled and if they are filled, when you put your message in,
+// filled and if they are filled, when you put your bottle in,
 // it gets in line and it's going to be delayed by anyone that
 // puts into that tube enormous amounts of material, enormous
 // amounts of material.
