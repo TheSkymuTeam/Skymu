@@ -174,7 +174,7 @@
                         Visibility="Collapsed">
                         <global:SliceControl
                             x:Name="ErrorText"
-                            Source="Assets/AddContact/warning.png"
+                            Source="/Sapphire/Assets/Universal/Icon/warning.png"
                             Text="{Binding Path='[sF_ADDFRIEND_LABEL4]', Source={StaticResource Lang}}"
                             TextColor="Red"
                             TextFont="Tahoma"
@@ -234,7 +234,7 @@
                         </DockPanel>
                         <global:SliceControl
                             Margin="0,25,0,0"
-                            Source="Assets/AddContact/megaphone.png"
+                            Source="/Sapphire/Assets/Universal/Icon/megaphone.png"
                             Text="{Binding Path='[sAC_INVITE_UNFOUND]', Source={StaticResource Lang}}"
                             TextColor="{StaticResource Text.Hyperlink}"
                             TextLeftMargin="22"
