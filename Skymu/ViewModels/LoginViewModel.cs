@@ -156,7 +156,7 @@ namespace Skymu.ViewModels
                             }
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername);
-                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && DebugConfig.DisableAutoLogin)) // TODO check against authentication type too?
+                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && (DebugConfig.DisableAutoLogin || DebugConfig.TestMode))) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
