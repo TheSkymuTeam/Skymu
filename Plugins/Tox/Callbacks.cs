@@ -13,17 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using ToxOO;
 using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using static System.Net.Mime.MediaTypeNames;
 using static Tox.Helper;
 using static ToxCore;
 
@@ -139,6 +135,7 @@ namespace Tox
         {
             Core core = GC(user_data);
             core.friends[fid].DisplayName = name;
+            core.SAVE();
         }
 
         tox_friend_status_message_cb _OnFriendStatusMessage;
@@ -146,6 +143,7 @@ namespace Tox
         {
             Core core = GC(user_data);
             core.friends[fid].Status = message;
+            core.SAVE();
         }
 
 
@@ -154,6 +152,7 @@ namespace Tox
         {
             Core core = GC(user_data);
             core.friends[fid].ConnectionStatus = MapStatus(status);
+            core.SAVE();
         }
 
         tox_friend_connection_status_cb _OnFriendConnectionStatus;
@@ -162,6 +161,8 @@ namespace Tox
             Core core = GC(user_data);
             if (connection_status != Tox_Connection.NONE)
             {
+                if (core.pfpSent.Contains(fid)) return;
+                core.pfpSent.Add(fid);
                 Debug.WriteLine($"Tox: Sending my PFP to {fid} as a {connection_status} connection was established");
                 byte[] pfp = core._currentUser.ProfilePicture;
                 byte[] hash = new byte[tox_hash_length()];
@@ -206,6 +207,7 @@ namespace Tox
                 Debug.WriteLine($"Tox: Connection with {fid} got terminated");
                 core.friends[fid].ConnectionStatus = PresenceStatus.Offline;
             }
+            core.SAVE();
         }
 
         #endregion
@@ -234,6 +236,9 @@ namespace Tox
                 message.Time = TIME();
                 core.UCP(_ => core.RaiseMessageEvent(new MessageRecievedBottle(BATS(new Friend(tox, fid).publicKey), message, false)));
             }
+            else
+                Debug.WriteLine($"Tox: Got read receipt by {fid}, {mid} but message does not exist");
+            core.SAVE();
         }
 
         tox_friend_request_cb _OnFriendRequest;
@@ -249,7 +254,7 @@ namespace Tox
                 core.SAVE();
                 return;
             }
-            core.SYN(new DialogEventArgs(
+            core.SYN(new DialogBottle(
                 DialogType.Question,
                 $"Do you want to accept the friend request from {BATS(pkey)} with the message: {message}",
                 accept =>
@@ -261,8 +266,8 @@ namespace Tox
                     var f = new User(bpkey, bpkey, bpkey);
                     var dm = new DirectMessage(f, 0, BATS(pkey));
                     core.friends[fid] = f;
-                    core.ContactList.Add(dm);
-                    core.ConversationList.Add(dm);
+                    core.LIST(new ListItemUpdatedBottle(ListType.Contacts, dm));
+                    core.LIST(new ListItemUpdatedBottle(ListType.Conversations, dm));
                     return null;
                 }
             ));
@@ -280,6 +285,7 @@ namespace Tox
             core.UCP(_ =>
                 core.RaiseMessageEvent(new MessageRecievedBottle(BATS(new Friend(tox, fid).publicKey), message, false))
             );
+            core.SAVE();
         }
 
         // TODO: lossy_packet
@@ -398,13 +404,9 @@ namespace Tox
                     File.WriteAllBytes(Path.Combine(avatar_cache_dir, pkey + ".png"), bdata);
                     core.UCP(_ =>
                     {
-                        foreach (var f in core.ContactList)
-                            if (f.Identifier == pkey)
-                                f.ProfilePicture = bdata;
-                        foreach (var conv in core.ConversationList)
-                            if (conv is DirectMessage dm)
-                                if (dm.Partner.Identifier == pkey)
-                                    dm.Partner.ProfilePicture = bdata;
+                        foreach (var f in core.friends)
+                            if (f.Key == fid)
+                                f.Value.ProfilePicture = bdata;
                     });
                 }
                 core.transfers.Remove(file_number);
@@ -499,14 +501,14 @@ namespace Tox
             core.UCP(_ =>
             {
                 var pkey = BATS(new Conference(tox, cid).cid);
-                foreach (var conv in core.ConversationList)
-                    if (conv is Group c)
-                        if (c.Identifier == pkey)
-                        {
-                            c.DisplayName = title;
-                            break;
-                        }
+                foreach (var conv in core.conferences)
+                    if (conv.Key == cid)
+                    {
+                        conv.Value.DisplayName = title;
+                        break;
+                    }
             });
+            core.SAVE();
         }
 
         tox_conference_peer_name_cb _OnConferencePeerName;
@@ -516,29 +518,31 @@ namespace Tox
             core.UCP(_ =>
             {
                 var pkey = BATS(new Conference(tox, cid).cid);
-                foreach (var conv in core.ConversationList)
-                    if (conv is Group c)
-                        if (c.Identifier == pkey)
-                        {
-                            foreach(var p in c.Members)
-                                if (p.Identifier == BATS(new Conference(tox, cid).peers[pid].publicKey))
-                                {
-                                    p.DisplayName = name;
-                                    break;
-                                }
-                            break;
-                        }
+                foreach (var conv in core.conferences)
+                    if (conv.Key == cid)
+                    {
+                        foreach (var p in conv.Value.Members)
+                            if (p.Identifier == BATS(new Conference(tox, cid).peers[pid].publicKey))
+                            {
+                                p.DisplayName = name;
+                                break;
+                            }
+                        break;
+                    }
             });
+            core.SAVE();
         }
 
         tox_conference_peer_list_changed_cb _OnConferencePeerListChanged;
         void OnConferencePeerListChanged(IntPtr tox, UInt32 cid, IntPtr user_data)
         {
+            var core = GC(user_data);
             Debug.WriteLine($"Tox: Peer list for conference {cid} changed");
-            GC(user_data).UCP(_ =>
+            core.UCP(_ =>
             {
                 ConferencePeerListRefresh(GC(user_data), new Conference(tox, cid));
             });
+            core.SAVE();
         }
 
         #endregion

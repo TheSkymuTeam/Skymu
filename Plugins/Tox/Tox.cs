@@ -72,6 +72,8 @@ namespace Tox
         Thread avThread;
         Timer avTimer;
         readonly Callbacks cbs = new Callbacks();
+        internal Dictionary<UInt32, Group> conferences
+            = new Dictionary<uint, Group>();
         internal User _currentUser;
         internal Dictionary<UInt32, User> friends
             = new Dictionary<uint, User>();
@@ -81,6 +83,8 @@ namespace Tox
             = new Dictionary<uint, List<(Tox_Message_Type type, string text)>>();
         internal Dictionary<UInt32, List<(Tox_Message_Type type, string text)>> pendingSendFriend
             = new Dictionary<uint, List<(Tox_Message_Type type, string text)>>();
+        internal List<UInt32> pfpSent
+            = new List<UInt32>();
         internal string profile;
         internal FileStream profilelock;
         internal string savepass;
@@ -142,10 +146,12 @@ namespace Tox
             avFinished = new TaskCompletionSource<bool>();
             avWaiter = new TaskCompletionSource<bool>();
             _currentUser = null;
+            conferences = new Dictionary<UInt32, Group>();
             friends = new Dictionary<UInt32, User>();
             messages = new Dictionary<UInt32, Message>();
             pendingSendConference = new Dictionary<UInt32, List<(Tox_Message_Type type, string text)>>();
             pendingSendFriend = new Dictionary<UInt32, List<(Tox_Message_Type type, string text)>>();
+            pfpSent = new List<UInt32>();
             profile = null;
             savepass = null;
             transfers = new Dictionary<UInt32, byte[]>();
@@ -169,6 +175,7 @@ namespace Tox
         internal void CALL(CallBottle cea) => IncomingCallTube?.Invoke(this, cea);
         // CallStateChanged
         internal void CSC(CallBottle cea) => CallStateChangedTube?.Invoke(this, cea);
+        internal void LIST(ListBottle cea) => ListTube?.Invoke(this, cea);
         // SAVE. Any other questions?
         internal void SAVE() => Save(tox, profile, this);
         // ShowYesNo
@@ -443,12 +450,9 @@ namespace Tox
 
             // Surely this does something, right? The doc I think tells you to use a dedotaded thread
             avThread = new Thread(_ =>
-            {
-                avTimer = new Timer(AVUpdate, null, 0, 1);
-            });
+                avTimer = new Timer(AVUpdate, null, 0, 1)
+            );
             avThread.Start();
-
-            FriendListRefresh(this);
 
             return LoginResult.Success;
         }
@@ -475,15 +479,90 @@ namespace Tox
         public Task<List<DirectMessage>> FetchContacts()
         {
             uiContext = SynchronizationContext.Current;
-            var (contacts, _) = FriendListRefresh(this);
-            return Task.FromResult(contacts);
+            var users = new Dictionary<UInt32, User>();
+
+            foreach (var f in tox.friendArray)
+            {
+                if (!friends.ContainsKey(f.id))
+                    friends.Add(f.id, new User(
+                        f.name,
+                        BATS(f.publicKey),
+                        BATS(f.publicKey),
+                        f.statusMessage,
+                        PresenceStatus.Offline,
+                        GrabAvatar(BATS(f.publicKey))
+                        ));
+                users.Add(f.id, friends[f.id]);
+            }
+
+            var conts = new List<DirectMessage>();
+            foreach (var user in users)
+                conts.Add(new DirectMessage(user.Value, 0, user.Value.Identifier));
+
+            return Task.FromResult(conts);
         }
 
         public Task<List<Conversation>> FetchConversations()
         {
             uiContext = SynchronizationContext.Current;
-            var (_, conversations) = FriendListRefresh(this);
-            return Task.FromResult(conversations);
+
+            foreach (var f in tox.friendArray)
+                friends.Add(f.id, new User(
+                    f.name,
+                    BATS(f.publicKey),
+                    BATS(f.publicKey),
+                    f.statusMessage,
+                    PresenceStatus.Offline,
+                    GrabAvatar(BATS(f.publicKey))
+                    ));
+            var conferences = new Dictionary<UInt32, Group>();
+            foreach (var c in tox.conferenceArray)
+            {
+                var peers = new User[c.peerCount + c.offlinePeerCount];
+                int i = 0;
+                foreach (var p in c.peers)
+                {
+                    var pkey = BATS(p.publicKey);
+                    foreach (var u in friends.Values)
+                    {
+                        if (u.PublicUsername == pkey)
+                        {
+                            peers[i++] = u;
+                            goto next;
+                        }
+                    }
+                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Online);
+                next:;
+                }
+                foreach (var p in c.offlinePeers)
+                {
+                    var pkey = BATS(p.publicKey);
+                    foreach (var u in friends.Values)
+                    {
+                        if (u.PublicUsername == pkey)
+                        {
+                            peers[i++] = u;
+                            goto next2;
+                        }
+                    }
+                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Offline);
+                next2:;
+                }
+                conferences.Add(c.id, new Group(
+                    c.title,
+                    BATS(c.cid),
+                    0,
+                    peers
+                ));
+            }
+
+            var convs = new List<Conversation>();
+            foreach (var friend in friends)
+                convs.Add(new DirectMessage(friend.Value, 0, friend.Value.Identifier));
+            foreach (var conference in conferences)
+                convs.Add(conference.Value);
+
+            return Task.FromResult(convs);
         }
 
         public Task<List<Server>> FetchServers() => Task.FromResult(new List<Server>());
@@ -514,6 +593,7 @@ namespace Tox
                             else
                                 pendingSendConference[c.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
                         }
+                        SAVE();
                         return true;
                     }
                 } catch { }
@@ -535,6 +615,7 @@ namespace Tox
                 else
                     message = new Message(mid + "_" + GUID(), _currentUser, new DateTime(), text);
                 messages.Add((UInt32)mid, message);
+                SAVE();
                 return true;
             }
             catch (Exception ex)
@@ -580,6 +661,7 @@ namespace Tox
         {
             if (tox.connectionStatus == Tox_Connection.NONE)
             {
+                // TODO: FInd a better way to handle this.
                 ERR("You need to wait until you're no longer offline to do that.");
                 return false;
             }
@@ -601,12 +683,14 @@ namespace Tox
 
             tox.status = tstatus;
             _currentUser.ConnectionStatus = status;
+            SAVE();
             return true;
         }
 
         public async Task<bool> SetMood(string status)
         {
             tox.statusMessage = status;
+            SAVE();
             return true;
         }
 
@@ -632,16 +716,15 @@ namespace Tox
 
         public async Task<bool> AddContact(Metadata metadata, string message)
         {
-            // from omega -> nilFinx: TODO fix this after I changed how lists work!
-
-            /*if (metadata is User user)
+            if (metadata is User user)
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
-                var f = new User(user.DisplayName, user.DisplayName, user.DisplayName);
+                var pk = user.DisplayName.Substring(0, (int)Size.publicKey * 2);
+                var f = new User(pk, pk, pk, null, PresenceStatus.Offline, GrabAvatar(pk));
                 friends[fid] = f;
                 var dm = new DirectMessage(f, 0, f.Identifier);
-                ContactList.Add(dm);
-                ConversationList.Add(dm);
+                ListTube?.Invoke(this, new ListItemUpdatedBottle(ListType.Contacts, dm));
+                ListTube?.Invoke(this, new ListItemUpdatedBottle(ListType.Conversations, dm));
             }
             else
             {
@@ -652,9 +735,12 @@ namespace Tox
 
                 tox_group_join(tox.ptr, idt, _currentUser.DisplayName, (UIntPtr)_currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
-                ConversationList.Add(new Group(group.Identifier, group.Identifier, 0, new User[0]));
+                var g = new Group(group.Identifier, group.Identifier, 0, new User[0]);
+                // yes, this will die without error handling
+                conferences.Add(tox_group_by_id(tox.ptr, idt, out _), g);
+                //ContactEvent?.Invoke(this, new ContactEventArgs(ContactEventType.Added, ContactListType.Conversations, g));
 #pragma warning restore CS0162 // Unreachable code detected
-            }*/
+            }
             SAVE();
             return true;
         }

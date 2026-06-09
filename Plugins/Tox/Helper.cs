@@ -41,9 +41,9 @@ namespace Tox
         public static byte[] FromHex(string hex) => FromHex(hex, 64);
         public static byte[] FromHex(string hex, int len)
         {
-            if (hex.Length != len)
+            if (hex.Length < len)
             {
-                throw new ArgumentException($"Hex string must be {len} characters long, got {hex.Length}");
+                throw new ArgumentException($"Hex string must be {len} characters or longer, got {hex.Length}");
             }
             var result = new byte[hex.Length / 2];
 
@@ -129,85 +129,6 @@ namespace Tox
             return File.ReadAllBytes(path);
         }
 
-        public static bool FriendListRefresh(Core core, bool ucp = true)
-        {
-            var users = new Dictionary<UInt32, User>();
-            foreach (var f in core.tox.friendArray)
-            {
-                if (!core.friends.ContainsKey(f.id))
-                    core.friends.Add(f.id, new User(
-                        f.name,
-                        BATS(f.publicKey),
-                        BATS(f.publicKey),
-                        f.statusMessage,
-                        PresenceStatus.Offline,
-                        GrabAvatar(BATS(f.publicKey))
-                        ));
-                users.Add(f.id, core.friends[f.id]);
-            }
-            var conferences = new Dictionary<UInt32, Group>();
-            foreach (var c in core.tox.conferenceArray)
-            {
-                var peers = new User[c.peerCount + c.offlinePeerCount];
-                int i = 0;
-                foreach (var p in c.peers)
-                {
-                    var pkey = BATS(p.publicKey);
-                    foreach (var u in users.Values)
-                    {
-                        if (u.PublicUsername == pkey)
-                        {
-                            peers[i++] = u;
-                            goto next;
-                        }
-                    }
-                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Online);
-                    next:;
-                }
-                foreach (var p in c.offlinePeers)
-                {
-                    var pkey = BATS(p.publicKey);
-                    foreach (var u in users.Values)
-                    {
-                        if (u.PublicUsername == pkey)
-                        {
-                            peers[i++] = u;
-                            goto next2;
-                        }
-                    }
-                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Offline);
-                    next2:;
-                }
-                conferences.Add(c.id, new Group(
-                    c.title,
-                    BATS(c.cid),
-                    0,
-                    peers
-                ));
-            }
-            if (ucp)
-                core.UCP(_ => ListsAdd(core, users, conferences));
-            else
-                ListsAdd(core, users, conferences);
-            return true;
-        }
-
-        static void ListsAdd(Core core, Dictionary<UInt32, User> users, Dictionary<UInt32, Group> conferences)
-        {
-            core.ContactList.Clear();
-            core.ConversationList.Clear();
-            foreach (var kvp in users)
-            {
-                var dm = new DirectMessage(kvp.Value, 0, kvp.Value.Identifier);
-                core.ContactList.Add(dm);
-                core.ConversationList.Add(dm);
-            }
-            foreach (var kvp in conferences)
-            {
-                core.ConversationList.Add(kvp.Value);
-            }
-        }
-
         public static void ConferencePeerListRefresh(Core core, Conference conference)
         {
             var users = new Dictionary<UInt32, User>();
@@ -224,8 +145,8 @@ namespace Tox
                 ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(pkey)));
             }
             var cid = BATS(conference.cid);
-            foreach (var conv in core.ConversationList)
-                if (conv is Group c)
+            foreach (var conv in core.conferences)
+                if (conv.Value is Group c)
                     if (c.Identifier == cid)
                     {
                         c.Members = ua.ToArray();

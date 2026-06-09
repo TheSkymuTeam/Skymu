@@ -595,14 +595,13 @@ namespace Stub
 
         public Task<bool> AddContact(Metadata contact, string message)
         {
-            return Task.FromResult(false);
-
-            // TODO fix
-            /* if (contact is User user)
-                ContactList.Add(new DirectMessage(user, 0, user.Identifier));
+            if (contact is User user)
+                ListTube?.Invoke(this, new ListItemUpdatedBottle(ListType.Contacts, new DirectMessage(user, 0, user.Identifier)));
             else if (contact is Group group)
-                ConversationList.Add(group);
-            return Task.FromResult(false);*/
+                ListTube?.Invoke(this, new ListItemUpdatedBottle(ListType.Conversations, group));
+            else
+                return Task.FromResult(false);
+            return Task.FromResult(true);
 
         }
 
