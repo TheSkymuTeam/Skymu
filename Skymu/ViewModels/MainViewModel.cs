@@ -31,7 +31,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -316,6 +315,43 @@ namespace Skymu.ViewModels
                         Tray.SetStatus(Universal.CurrentUser.ConnectionStatus)
                     , null);
             };
+            Universal.Plugin.ListTube += (o, e) =>
+            {
+                if (e is ListItemUpdatedBottle ubot)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        switch (ubot.List)
+                        {
+                            case ListType.Contacts:
+                                ContactList.Add(ubot.Item as DirectMessage);
+                                break;
+                            case ListType.Conversations:
+                                ConversationList.Add(ubot.Item as Conversation);
+                                break;
+                        }
+                    }));
+                }
+                else if (e is ListItemRemovedBottle rbot)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        switch (rbot.List)
+                        {
+                            case ListType.Contacts:
+                                var toRemove = ContactList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
+                                if (toRemove != null)
+                                    ContactList.Remove(toRemove);
+                                break;
+                            case ListType.Conversations:
+                                var toRemoveConv = ConversationList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
+                                if (toRemoveConv != null)
+                                    ConversationList.Remove(toRemoveConv);
+                                break;
+                        }
+                    }));
+                }
+            };
 
             Ready?.Invoke(this, EventArgs.Empty);
         }
@@ -408,6 +444,7 @@ namespace Skymu.ViewModels
                             if (ActiveConversation[j] is Message prev)
                             {
                                 msg.PreviousMessageIdentifier = prev.Author.Identifier;
+                                msg.PreviousMessageIsAction = prev is ActionMessage;
                                 break;
                             }
                         }
@@ -472,6 +509,7 @@ namespace Skymu.ViewModels
                         )
                         {
                             message.PreviousMessageIdentifier = prev.Author.Identifier;
+                            message.PreviousMessageIsAction = prev is ActionMessage;
                             break;
                         }
                     }
@@ -673,14 +711,30 @@ namespace Skymu.ViewModels
             StopTyping();
 
             string tempId = SKYMU_SENDING + "/" + Guid.NewGuid().ToString();
-            var preview = new Message(
-                tempId,
-                Universal.CurrentUser,
-                DateTime.Now,
-                text,
-                null,
-                null
-            );
+
+            bool action = text.StartsWith("/me ");
+            if (action)
+                text = text.Substring(4);
+
+            Message preview;
+            if (action)
+                preview = new ActionMessage(
+                    tempId,
+                    Universal.CurrentUser,
+                    DateTime.Now,
+                    text,
+                    null,
+                    null
+                );
+            else
+                preview = new Message(
+                    tempId,
+                    Universal.CurrentUser,
+                    DateTime.Now,
+                    text,
+                    null,
+                    null
+                );
 
             _pendingPreviewMessages[tempId] = preview;
             ActiveConversation.Add(preview);
@@ -688,7 +742,7 @@ namespace Skymu.ViewModels
             bool sent = false;
             try
             {
-                sent = await Universal.Plugin.SendMessage(SelectedConversation.Identifier, text);
+                sent = await Universal.Plugin.SendMessage(SelectedConversation.Identifier, text, null, null, action);
             }
             catch { }
 
