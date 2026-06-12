@@ -660,20 +660,20 @@
                         TextTrimming="CharacterEllipsis">
                         <TextBlock.Foreground>
                             <MultiBinding Converter="{StaticResource SenderToColorConverter}">
-                                <Binding Path="Sender.Identifier" />
+                                <Binding Path="Author.Identifier" />
                                 <Binding Path="IsForwarded" />
                             </MultiBinding>
                         </TextBlock.Foreground>
                         <TextBlock.Text>
                             <MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
-                                <Binding Path="Sender.DisplayName" />
+                                <Binding Path="Author.DisplayName" />
                                 <Binding Path="IsForwarded" />
                             </MultiBinding>
                         </TextBlock.Text>
                         <TextBlock.Visibility>
                             <MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
                                 <Binding Path="PreviousMessageIdentifier" />
-                                <Binding Path="Sender.Identifier" />
+                                <Binding Path="Author.Identifier" />
                                 <Binding Path="PreviousMessageIsAction" />
                             </MultiBinding>
                         </TextBlock.Visibility>
