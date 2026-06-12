@@ -32,7 +32,7 @@
                     FontSize="11" />
                 <Separator Margin="0,10,0,8" />
                 <global:SliceControl
-                    Source="/Skype4/Assets/Universal/Icon/plus.png"
+                    Source="Assets/Universal/Icon/plus.png"
                     Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -40,7 +40,7 @@
                     TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="/Skype4/Assets/Universal/Icon/add.png"
+                    Source="Assets/Universal/Icon/add.png"
                     Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -48,7 +48,7 @@
                     TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="/Skype4/Assets/Universal/Icon/megaphone.png"
+                    Source="Assets/Universal/Icon/megaphone.png"
                     Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -66,7 +66,7 @@
         d:TabStripPlacement="Right"
         Background="Transparent"
         BorderThickness="0"
-        SelectedIndex="0"> 
+        SelectedIndex="0">
         <!--  Right is the least distracting  -->
         <TabItem d:Visibility="Visible" Visibility="Collapsed">
             <Grid>
@@ -174,7 +174,7 @@
                         Visibility="Collapsed">
                         <global:SliceControl
                             x:Name="ErrorText"
-                            Source="/Sapphire/Assets/Universal/Icon/warning.png"
+                            Source="Assets/Universal/Icon/warning.png"
                             Text="{Binding Path='[sF_ADDFRIEND_LABEL4]', Source={StaticResource Lang}}"
                             TextColor="Red"
                             TextFont="Tahoma"
@@ -234,7 +234,7 @@
                         </DockPanel>
                         <global:SliceControl
                             Margin="0,25,0,0"
-                            Source="/Sapphire/Assets/Universal/Icon/megaphone.png"
+                            Source="Assets/Universal/Icon/megaphone.png"
                             Text="{Binding Path='[sAC_INVITE_UNFOUND]', Source={StaticResource Lang}}"
                             TextColor="{StaticResource Text.Hyperlink}"
                             TextLeftMargin="22"

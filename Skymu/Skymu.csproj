@@ -156,6 +156,23 @@
 	<ItemGroup>
 		<Resource Remove="Properties\**" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Themes\Skype5\Assets\Universal\Icon\add.png" />
+	  <None Remove="Themes\Skype5\Assets\Universal\Icon\contact.png" />
+	  <None Remove="Themes\Skype5\Assets\Universal\Icon\megaphone.png" />
+	  <None Remove="Themes\Skype5\Assets\Universal\Icon\plus.png" />
+	  <None Remove="Themes\Skype5\Assets\Universal\Icon\warning.png" />
+	  <None Remove="Themes\Skype6\Assets\Universal\Icon\add.png" />
+	  <None Remove="Themes\Skype6\Assets\Universal\Icon\contact.png" />
+	  <None Remove="Themes\Skype6\Assets\Universal\Icon\megaphone.png" />
+	  <None Remove="Themes\Skype6\Assets\Universal\Icon\plus.png" />
+	  <None Remove="Themes\Skype6\Assets\Universal\Icon\warning.png" />
+	  <None Remove="Themes\Skype7\Assets\Universal\Icon\add.png" />
+	  <None Remove="Themes\Skype7\Assets\Universal\Icon\contact.png" />
+	  <None Remove="Themes\Skype7\Assets\Universal\Icon\megaphone.png" />
+	  <None Remove="Themes\Skype7\Assets\Universal\Icon\plus.png" />
+	  <None Remove="Themes\Skype7\Assets\Universal\Icon\warning.png" />
+	</ItemGroup>
 
 	<!-- Packages -->
 	<ItemGroup>
