@@ -55,7 +55,7 @@
     },
     {
       "title": "Plugin Loader & Lifecycle",
-      "purpose": "How Skymu discovers, loads, and disposes plugins at runtime via reflection (PluginManager.cs), how the Universal class wires plugin events (OnError, OnWarning, MessageEvent) to the UI, and the plugin folder convention (smp.*.dll inside *.smp directories).",
+      "purpose": "How Skymu discovers, loads, and disposes plugins at runtime via reflection (PluginManager.cs), how the Universal class wires plugin events (DialogTube, MessageTube, and ListTube) to the UI, and the plugin folder convention (smp.*.dll inside *.smp directories).",
       "parent": "Core Architecture",
       "page_notes": [
         {
