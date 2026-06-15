@@ -6,7 +6,7 @@ local default = [[
 <config>
   <UI>
     <General>
-      <Interface>Skyaeris</Interface>
+      <Theme>Skype5</Theme>
     </General>
   </UI>
 </config>
@@ -16,7 +16,7 @@ if not arg[1] then
 	print "You need to specify an interface"
 	os.exit(1)
 end
-local newint = "<Interface>"..arg[1].."</Interface>"
+local newint = "<Theme>"..arg[1].."</Theme>"
 
 local path = os.getenv "APPDATA".."\\Skymu\\shared.xml"
 
@@ -29,7 +29,7 @@ else
 	f:close()
 end
 f = io.open(path, "w")
-local newdata = data:gsub("<Interface>[^<]+</Interface>", newint)
+local newdata = data:gsub("<Theme>[^<]+</Theme>", newint)
 if not newdata then
 	print "WARN: No newdata detected after <Interface> override"
 	newdata = data:gsub("<General>","<General>\r\n      "..newint)
