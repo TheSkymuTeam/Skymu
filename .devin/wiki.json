@@ -1,0 +1,302 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "Skymu Overview",
+      "purpose": "High-level introduction to Skymu: what it is, its architecture, key components, and how to build it. Links to all major child sections.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started & Build Guide",
+      "purpose": "Step-by-step instructions for setting up the development environment, building the solution (Yggdrasil first, then plugins, then Skymu), target framework selection (net461 vs net5.0-windows), CI/CD pipeline via GitHub Actions, developer tools (InterfaceSwitcher.lua, synchronize-repo.bat and more), and creating the installer.",
+      "parent": "Skymu Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Licensing & Legal",
+      "purpose": "Explains the dual-layer AGPL-3.0 license, the Statement of Exception mechanism, the segregation of Skymu-specific code from Skype/Microsoft assets used under fair use, and the authoritative exception list.",
+      "parent": "Skymu Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core Architecture",
+      "purpose": "Overview of how Skymu is structured: the Universal application class, the plugin system, the MiddleMan/Yggdrasil abstraction layer, and the MVVM pattern. Links to child pages for each subsystem.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "MiddleMan Plugin Interface",
+      "purpose": "Deep dive into the Yggdrasil (formerly MiddleMan) .NET Standard library: the ICore interface, domain model (User, Conversation, Server, ConversationItem), authentication flow, event propagation, and the ICore/IBoard(in future) extension interfaces.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Plugin Loader & Lifecycle",
+      "purpose": "How Skymu discovers, loads, and disposes plugins at runtime via reflection (PluginManager.cs), how the Universal class wires plugin events (OnError, OnWarning, MessageEvent) to the UI, and the plugin folder convention (smp.*.dll inside *.smp directories).",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "MVVM & ViewModels",
+      "purpose": "Explains the MVVM architecture using CommunityToolkit.Mvvm: MainViewModel (conversation state, commands, events), LoginViewModel (authentication flow), IMainWindowHolder interface, and how the view layer binds to observable properties.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "User Interface",
+      "purpose": "Overview of the four UI themes (4-7), the WPF window hierarchy, and how the SkypeEra/Interface setting selects which UI to launch. Links to child pages for each UI subsystem.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "UI Themes: Skype 4, 5, 6 & 7",
+      "purpose": "Describes the four visual themes/eras of the Skymu UI. Explains the Interface setting and how themes are loaded at startup.",
+      "parent": "User Interface",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Main Window & Sidebar",
+      "purpose": "Details the Main window (shared between Skyaeris and Pontis), sidebar tab switching (Contacts, Recents, Servers), conversation selection, resizable sidebar splitter, the Home/Chat window toggle, and the native menu bar.",
+      "parent": "User Interface",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Message Rendering & Emoji",
+      "purpose": "Explains MessageTools: Markdown parsing via Markdig, inline emoji rendering (EmojiDictionary mapping Unicode code points to Skype emoji names), clickable mentions/channels, attachment display, and the emoji picker flyout.",
+      "parent": "User Interface",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Custom Controls & UI Utilities",
+      "purpose": "Documents SliceControl (a magic control with animation, button stuff (text offset, icon, etc), resizable background, and more), FrozenImage (cached frozen BitmapImage helper), WPF value converters (Converters.cs), and FrameworkExtensions (Unicode rune enumeration for .NET Framework compatibility).",
+      "parent": "User Interface",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Views & Dialogs",
+      "purpose": "Covers the secondary windows and pages: Options dialog (window frame settings), About window, Dialog (generic message box), Notification window, WindowBase base class, ErrorWindow, Updater page (GitHub release check), AddContact page, and the CallScreen page (in-call UI with mute/video controls, pill/rectangle layout modes, and call timer).",
+      "parent": "User Interface",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Plugin System",
+      "purpose": "Overview of the four bundled plugins (Discord, Matrix, Stub, Tox) and how they implement ICore. Links to child pages for each plugin.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Discord Plugin",
+      "purpose": "In-depth coverage of the Discord plugin: REST API wrapper (API.cs, ConfigManager.cs), WebSocket gateway connection (WebSocket.cs, WebSocketManager.cs), QR-code-based login via AuthSocket.cs, message parsing (MessageParser.cs), user/status management (StatusManager.cs, UserStore.cs), Protobuf settings (PreloadedUserSettings, ProtoSettings), voice call support (CallSocket.cs, CallUDP.cs - migrating the NAudio backend to Skymu itself later), and the DAVE end-to-end encryption subsystem (DaveInterop.cs, DaveSession.cs, libdave.dll, libcrypto-3-x64.dll).",
+      "parent": "Plugin System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Matrix Plugin",
+      "purpose": "Covers the Matrix plugin: homeserver authentication (password and Beeper/passwordless), sync loop, room/DM mapping, typing indicators, and the MatrixClasses data model.",
+      "parent": "Plugin System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Stub Plugin",
+      "purpose": "Describes the Stub plugin: a minimal ICore implementation used for development and testing, providing hardcoded fake users, messages, and conversations without any real network connection.",
+      "parent": "Plugin System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Tox Plugin",
+      "purpose": "Documents the Tox plugin: a P2P decentralized messaging and VoIP plugin built on libtoxcore. Covers the Core class implementing both ICore and ICall, ToxCore.cs (P/Invoke bindings to libtoxcore.dll), ToxCall.cs (NAudio-based audio I/O - migrating the NAudio backend to Skymu itself later), Callbacks.cs (native callback registration), Helper.cs (utility methods), authentication via encrypted/unencrypted profile saves, and the bundled native library (libtoxcore with all the dependencies statically linked) for both x64 and x86 architectures.",
+      "parent": "Plugin System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Application Services",
+      "purpose": "Overview of cross-cutting services used throughout the Skymu application: database, credentials, language, sounds, Windows integration, and the user-count API. Links to child pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Database Manager",
+      "purpose": "Explains the SQLite-based DatabaseManager: schema versioning, the five tables (Accounts, Contacts, Conversations, Participants, Messages), Skype-compatible schema design, per-user per-plugin database files stored in %APPDATA%\\Skymu.",
+      "parent": "Application Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Credentials & Authentication Storage",
+      "purpose": "Documents the Credentials class: encrypted XML storage of SavedCredential objects using DPAPI (ProtectedData), per-plugin credential lookup, and how credentials are used to bypass manual login on startup.",
+      "parent": "Application Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Language & Localization",
+      "purpose": "Covers LanguageManager: .lang file format, runtime language switching via Settings.Language, the BrandingName substitution (replacing 'Skype' with the configured brand), and the 35+ bundled language files (including Urdu, which was never in Skype).",
+      "parent": "Application Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Windows Integration",
+      "purpose": "Details the Windows-specific subsystems: Tray icon management (Tray.cs) with status-mapped icons, system sounds (Sounds.cs with WAV files across four sound packs: Skymu/, Skype2/, Skype7/, and Skype8/ with Mapping.txt), OS/platform detection (OS.cs, Runtime.cs including Wine detection), DWM composition helpers, taskbar flashing (SystemControls.cs), and startup registry management.",
+      "parent": "Application Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "User Count API & SkypeHome",
+      "purpose": "Explains the UserCountAPI (WebSocket-based live user counter at skymu.kier.ovh), SkypeHome (WebBrowser-based home tab that loads the local page and bridges JavaScript to C# via SkypeExternalObject COM scripting and potentially the httpfe protocol in future), and the UserServer Python backend (skymu-server.py: aiohttp REST+WebSocket server managing user sessions, online counts, and ping-based timeout cleanup).",
+      "parent": "Application Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Installer & Distribution",
+      "purpose": "Overview of how Skymu is packaged and distributed for Windows end-users using NSIS. Links to child pages for the script and visual assets.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "NSIS Installer Script",
+      "purpose": "Deep dive into SkymuSetup.nsi and SkymuBetaSetup.nsi: the Modern vs Legacy version selection page, conditional deployment from SkymuCore (net5) or SkymuFramework (net461) (both of them in AnyCPU) output directories, registry configuration (App Paths, Uninstall, IE FeatureControl), shell integration (desktop.ini, custom folder icons), and the uninstaller lifecycle.",
+      "parent": "Installer & Distribution",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Installer Visual Assets",
+      "purpose": "Documents the NSIS branding assets: column.bmp/column.psd (MUI welcome/finish page sidebar graphic), header.bmp/header.psd (wizard header image), beta variants (column-beta.bmp, header-beta.bmp, beta.ico, installer-beta.ico), and how they are embedded and rendered by the NSIS MUI2 framework.",
+      "parent": "Installer & Distribution",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Static Assets & Resources",
+      "purpose": "Overview of the non-code assets bundled with Skymu: emoji image packs, sound files, icons, and branding images. Links to child pages.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Emoji Asset Pack",
+      "purpose": "Explains the Skype emoji image pack structure under Skymu/Emoji/: each emoji has a named directory containing default_20 (static PNG) and default_20_anim (animated PNG) variants, how EmojiDictionary maps Unicode code points to emoji names, and how MessageTools renders them inline in WPF.",
+      "parent": "Static Assets & Resources",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Sound Files & Icons",
+      "purpose": "Documents the four WAV sound packs: Skymu/ (full HQ/remastered sound set with 31 files, the default), Skype2/ (WIP classic Skype 1/2 era set), Skype7/ (original sounds), and Skype8/ (13-file Skype 8 era set with Mapping.txt mapping Skype source names to WAV targets as reference for developers). Covers the Settings.SoundPack setting and fallback logic in Sounds.cs. Also covers the Icons/ directory (status ICO files, SKYPE5.res), and the Images/ assets used in the README.md.",
+      "parent": "Static Assets & Resources",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
