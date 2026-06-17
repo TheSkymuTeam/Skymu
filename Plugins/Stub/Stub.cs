@@ -200,11 +200,11 @@ namespace Stub
         { // THIS IS STUB CODE. THIS IS NOT A REPLICATION OF HOW THE INTERFACE IS SUPPOSED TO WORK.
             _currentConversation = conversation;
             TypingUsersList.Clear();
-            List<ConversationItem> messageList = new List<ConversationItem>();
+            List<ConversationItem> messages = new List<ConversationItem>();
 
             #region Dummy messages (Imported)
 
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Nova", "Nova", "Nova"),
@@ -212,7 +212,7 @@ namespace Stub
                     "Hey, I’ve been playing Genshin Impact on the Steam Deck, it works fine."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20203",
                     new User("omega", "omega", "omega"),
@@ -220,7 +220,7 @@ namespace Stub
                     "Oh nice, I’ve heard good things about it."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20204",
                     new User("Nova", "Nova", "Nova"),
@@ -228,7 +228,7 @@ namespace Stub
                     "Yeah, it’s a really fun game."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20205",
                     new User("omega", "omega", "omega"),
@@ -236,7 +236,7 @@ namespace Stub
                     "Cool, I might try it out sometime."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20206",
                     new User("Nova", "Nova", "Nova"),
@@ -244,7 +244,7 @@ namespace Stub
                     "It’s pretty enjoyable even without spending money."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20207",
                     new User("omega", "omega", "omega"),
@@ -252,7 +252,7 @@ namespace Stub
                     "That’s good to know."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Nova", "Nova", "Nova"),
@@ -260,7 +260,7 @@ namespace Stub
                     "I just wanted to share it’s a solid game."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("omega", "omega", "omega"),
@@ -268,7 +268,7 @@ namespace Stub
                     "Thanks for the info!"
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Nova", "Nova", "Nova"),
@@ -276,7 +276,7 @@ namespace Stub
                     "Gameplay-wise it’s really engaging and well-designed."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("patricktbp", "patricktbp", "patricktbp"),
@@ -284,7 +284,7 @@ namespace Stub
                     "Sounds interesting, I’ll check it out."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("patricktbp", "patricktbp", "patricktbp"),
@@ -292,7 +292,7 @@ namespace Stub
                     "@Amongus do you want to discuss this more in DMs?"
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Nova", "Nova", "Nova"),
@@ -300,7 +300,7 @@ namespace Stub
                     "Just sharing my experience, I think most people would enjoy it."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Nova", "Nova", "Nova"),
@@ -308,7 +308,7 @@ namespace Stub
                     "I think it could be fun to collaborate on the project with this in mind."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("omega", "omega", "omega"),
@@ -316,7 +316,7 @@ namespace Stub
                     "Yeah, that makes sense. Thanks for sharing."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("patricktbp", "patricktbp", "patricktbp"),
@@ -324,7 +324,7 @@ namespace Stub
                     "Great, let’s move forward."
                 )
             );
-            messageList.Add(
+            messages.Add(
                 new Message(
                     "20202",
                     new User("Amongus", "Amongus", "Amongus"),
@@ -335,7 +335,7 @@ namespace Stub
 
             #endregion
 
-            return Task.FromResult(messageList);
+            return Task.FromResult(messages);
         }
 
         public Task<List<Server>> FetchServers()
