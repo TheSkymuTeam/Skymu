@@ -31,8 +31,9 @@ namespace Yggdrasil.Networking
 {
     public sealed class BifrostEngine : HttpMessageHandler // i still am surprised HttpClient has an overload to accept a custom HttpMH, given that at this time there were literally none
     {
+        private const int MaxRedirects = 10;
         private readonly Dictionary<string, Queue<Stream>> _pool
-            = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);  
+            = new Dictionary<string, Queue<Stream>>(StringComparer.OrdinalIgnoreCase);
         private readonly object _poolLock = new object();
         private readonly int _maxPoolSize;
         private bool _disposed;
@@ -55,10 +56,19 @@ namespace Yggdrasil.Networking
             return value;
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(
+        protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            return SendInternalAsync(request, cancellationToken, 0);
+        }
+
+        private async Task<HttpResponseMessage> SendInternalAsync(
+            HttpRequestMessage request, CancellationToken ct, int redirectDepth)
+        {
             if (request == null) throw new ArgumentNullException(nameof(request));
+
+            if (redirectDepth > MaxRedirects)
+                throw new HttpRequestException($"Too many redirects (>{MaxRedirects})");
 
             var uri = request.RequestUri
                 ?? throw new InvalidOperationException("Request URI must not be null.");
@@ -69,12 +79,11 @@ namespace Yggdrasil.Networking
             string poolKey = $"{host}:{port}";
 
             Stream stream = TryRentFromPool(poolKey)
-                ?? await BifrostTLS.OpenAsync(host, port, isHttps, cancellationToken)
-                       .ConfigureAwait(false);
+                ?? await BifrostTLS.OpenAsync(host, port, isHttps, ct).ConfigureAwait(false);
 
             try
             {
-                return await ExecuteAsync(stream, request, uri, host, poolKey, cancellationToken)
+                return await ExecuteAsync(stream, request, uri, host, poolKey, ct, redirectDepth)
                     .ConfigureAwait(false);
             }
             catch
@@ -86,7 +95,7 @@ namespace Yggdrasil.Networking
 
         private async Task<HttpResponseMessage> ExecuteAsync(
             Stream stream, HttpRequestMessage request, Uri uri,
-            string host, string poolKey, CancellationToken ct)
+            string host, string poolKey, CancellationToken ct, int redirectDepth)
         {
             byte[] bodyBytes = request.Content != null
                 ? await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false)
@@ -162,48 +171,78 @@ namespace Yggdrasil.Networking
 
             LogResponse(statusCode, uri, responseHeaders);
 
+            if (statusCode >= 300 && statusCode < 400)
+            {
+                string location = null;
+                foreach (var h in responseHeaders)
+                {
+                    if (h.Key.Equals("Location", StringComparison.OrdinalIgnoreCase))
+                    {
+                        location = h.Value;
+                        break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(location))
+                {
+                    stream.Dispose();
+
+                    var redirectUri = location.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                        ? new Uri(location)
+                        : new Uri(uri, location);
+
+                    var redirectRequest = new HttpRequestMessage(
+                        statusCode == 307 || statusCode == 308 ? request.Method : HttpMethod.Get,
+                        redirectUri
+                    );
+
+                    foreach (var h in request.Headers)
+                        redirectRequest.Headers.TryAddWithoutValidation(h.Key, h.Value);
+
+                    if (statusCode == 307 || statusCode == 308)
+                        redirectRequest.Content = request.Content;
+
+                    return await SendInternalAsync(redirectRequest, ct, redirectDepth + 1).ConfigureAwait(false);
+                }
+            }
+
             bool hasNoBody = statusCode == 204
                           || statusCode == 304
                           || (statusCode >= 100 && statusCode < 200);
 
-            byte[] responseBody;
+            Stream responseBody;
 
-            if (hasNoBody)
+            if (hasNoBody || contentLength == 0)
             {
-                Debug.WriteLine($"[BIFROST-HTTP] Status {statusCode} has no body, skipping read.");
-                responseBody = Array.Empty<byte>();
-            }
-            else if (chunked)
-            {
-                Debug.WriteLine("[BIFROST-HTTP] Reading chunked body.");
-                responseBody = await reader.ReadChunkedAsync(ct).ConfigureAwait(false);
-            }
-            else if (contentLength == 0)
-            {
-                Debug.WriteLine("[BIFROST-HTTP] Content-Length: 0, empty body.");
-                responseBody = Array.Empty<byte>();
+                Debug.WriteLine($"[BIFROST-HTTP] Status {statusCode} has no body.");
+                if (connectionClose)
+                    stream.Dispose();
+                else
+                    ReturnToPool(poolKey, stream);
+                responseBody = Stream.Null;
             }
             else if (contentLength > 0)
             {
-                Debug.WriteLine($"[BIFROST-HTTP] Reading {contentLength} byte body.");
-                responseBody = await reader.ReadExactAsync(contentLength, ct).ConfigureAwait(false);
-            }
-            else if (connectionClose)
-            {
-                Debug.WriteLine("[BIFROST-HTTP] Connection: close, reading to end of stream.");
-                responseBody = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
+                Debug.WriteLine($"[BIFROST-HTTP] Streaming {contentLength} byte body via PooledStream.");
+                responseBody = new PooledStream(reader, stream, poolKey, this, contentLength, connectionClose);
             }
             else
             {
-                Debug.WriteLine("[BIFROST-HTTP] Warning: keep-alive with no Content-Length or chunked. Treating as empty body.");
-                responseBody = Array.Empty<byte>();
+                Debug.WriteLine("[BIFROST-HTTP] Buffering body (chunked or connection-close).");
+                byte[] bytes = chunked
+                    ? await reader.ReadChunkedAsync(ct).ConfigureAwait(false)
+                    : await reader.ReadToEndAsync(ct).ConfigureAwait(false);
+                bytes = await DecompressAsync(bytes, responseHeaders, ct).ConfigureAwait(false);
+
+                if (connectionClose)
+                    stream.Dispose();
+                else
+                    ReturnToPool(poolKey, stream);
+
+                responseBody = new MemoryStream(bytes);
             }
 
-            Debug.WriteLine($"[BIFROST-HTTP] Body before decompression: {responseBody.Length} bytes.");
-            responseBody = await DecompressAsync(responseBody, responseHeaders, ct).ConfigureAwait(false);
-            Debug.WriteLine($"[BIFROST-HTTP] Body after decompression: {responseBody.Length} bytes.");
-
-            var content = new ByteArrayContent(responseBody);
+            var content = new StreamContent(responseBody);
             var response = new HttpResponseMessage((HttpStatusCode)statusCode)
             {
                 Content = content,
@@ -220,16 +259,8 @@ namespace Yggdrasil.Networking
                     response.Content.Headers.TryAddWithoutValidation(h.Key, h.Value);
             }
 
-            if (connectionClose)
-            {
-                Debug.WriteLine("[BIFROST-HTTP] Server closed connection, not returning to pool.");
-                stream.Dispose();
-            }
-            else
-            {
-                ReturnToPool(poolKey, stream);
-                Debug.WriteLine($"[BIFROST-HTTP] Connection returned to pool for {poolKey}.");
-            }
+            if (contentLength > 0)
+                content.Headers.ContentLength = contentLength;
 
             return response;
         }
@@ -340,7 +371,7 @@ namespace Yggdrasil.Networking
             return null;
         }
 
-        private void ReturnToPool(string key, Stream stream)
+        internal void ReturnToPool(string key, Stream stream)
         {
             lock (_poolLock)
             {
@@ -348,9 +379,14 @@ namespace Yggdrasil.Networking
                     _pool[key] = queue = new Queue<Stream>();
 
                 if (queue.Count < _maxPoolSize)
+                {
                     queue.Enqueue(stream);
+                    Debug.WriteLine($"[BIFROST-HTTP] Connection returned to pool for {key}.");
+                }
                 else
+                {
                     stream.Dispose();
+                }
             }
         }
 
@@ -368,6 +404,85 @@ namespace Yggdrasil.Networking
                 }
             }
             base.Dispose(disposing);
+        }
+
+        private sealed class PooledStream : Stream
+        {
+            private readonly HttpReader _reader;
+            private readonly Stream _rawStream;
+            private readonly string _poolKey;
+            private readonly BifrostEngine _engine;
+            private readonly long _length;
+            private readonly bool _connectionClose;
+            private long _remaining;
+            private bool _disposed;
+            private bool _returnedToPool;
+
+            public PooledStream(HttpReader reader, Stream rawStream, string poolKey,
+                BifrostEngine engine, long length, bool connectionClose)
+            {
+                _reader = reader;
+                _rawStream = rawStream;
+                _poolKey = poolKey;
+                _engine = engine;
+                _length = length;
+                _connectionClose = connectionClose;
+                _remaining = length;
+            }
+
+            public override bool CanRead => true;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => _length;
+            public override long Position
+            {
+                get => _length - _remaining;
+                set => throw new NotSupportedException();
+            }
+
+            public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken ct)
+            {
+                if (_remaining <= 0) return 0;
+
+                int toRead = (int)Math.Min(count, _remaining);
+                byte[] chunk = await _reader.ReadExactAsync(toRead, ct).ConfigureAwait(false);
+                Buffer.BlockCopy(chunk, 0, buffer, offset, chunk.Length);
+                _remaining -= chunk.Length;
+
+                if (_remaining <= 0 && !_returnedToPool)
+                {
+                    _returnedToPool = true;
+                    if (_connectionClose)
+                        _rawStream.Dispose();
+                    else
+                        _engine.ReturnToPool(_poolKey, _rawStream);
+                }
+
+                return chunk.Length;
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+                => ReadAsync(buffer, offset, count, CancellationToken.None).GetAwaiter().GetResult();
+
+            protected override void Dispose(bool disposing)
+            {
+                if (!_disposed && disposing)
+                {
+                    _disposed = true;
+                    if (!_returnedToPool)
+                    {
+                        _returnedToPool = true;
+                        Debug.WriteLine($"[BIFROST-HTTP] PooledStream disposed with {_remaining} bytes remaining, dropping connection.");
+                        _rawStream.Dispose();
+                    }
+                }
+                base.Dispose(disposing);
+            }
+
+            public override void Flush() { }
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         }
 
         private sealed class HttpReader

@@ -32,7 +32,7 @@
             DefaultIndex="0"
             ElementCount="36"
             HoverIndex="-1"
-            IsHitTestVisible="False"
+            Interactive="False"
             PressedIndex="-1"
             SliceMode="0"
             Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Dialog/icons.png'}"

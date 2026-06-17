@@ -93,12 +93,27 @@ namespace Yggdrasil.Networking
 
             var protocol = new TlsClientProtocol(stream);
 
-            await Task.Run(() =>
+            var handshakeTask = Task.Run(() =>
             {
-                ct.ThrowIfCancellationRequested();
                 protocol.Connect(new BifrostTLSClient(host));
                 BifrostLog.Write($"[BIFROST-TLS] TLS handshake complete with {host}");
-            }, ct).ConfigureAwait(false);
+            });
+
+            using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(ct))
+            {
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(15));
+                var delay = Task.Delay(Timeout.Infinite, timeoutCts.Token)
+                    .ContinueWith(_ => { }, TaskContinuationOptions.OnlyOnCanceled);
+
+                if (await Task.WhenAny(handshakeTask, delay).ConfigureAwait(false) != handshakeTask)
+                {
+                    stream.Dispose(); // kills socket & unblocks protocol.Connect inside task run
+                    ct.ThrowIfCancellationRequested(); 
+                    throw new TimeoutException($"TLS handshake with {host} timed out");
+                }
+            }
+
+            await handshakeTask.ConfigureAwait(false); // propagate exception
 
             return protocol.Stream;
         }

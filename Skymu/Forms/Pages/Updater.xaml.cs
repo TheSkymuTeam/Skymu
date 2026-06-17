@@ -34,7 +34,7 @@ namespace Skymu.Forms.Pages
 
         internal struct updateInfo
         {
-            public string status;
+            public bool status;
             public string[] urls;
             public string tag;
             public string name;
@@ -65,7 +65,7 @@ namespace Skymu.Forms.Pages
                 window.Title = brand + "™ - Update";
                 window.ButtonRightAction = () => window.Close();
 
-                if (update_info?.status == "UPDATE_CHECK_ERROR") // error when checking for update
+                if (update_info?.status == false) // error when checking for update
                 {
                     if (!manual)
                     {
@@ -87,7 +87,7 @@ namespace Skymu.Forms.Pages
                         Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info?.name;
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonLeftAction = () => InitiateUpdate();
-                    window.ButtonMiddleText = "Skip this version";
+                    window.ButtonMiddleText = "Skip this version"; // TODO i18n
                     window.ButtonMiddleEnabled = true;
                     window.ButtonMiddleAction = () => { SkipUpdate(update_info?.tag); window.Close(); };
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
@@ -333,7 +333,7 @@ namespace Skymu.Forms.Pages
 
                         return new updateInfo
                         {
-                            status = "UPDATE_AVAILABLE",
+                            status = true,
                             urls = urls.ToArray(),
                             tag = latestTag,
                             name = buildName,
@@ -346,7 +346,7 @@ namespace Skymu.Forms.Pages
             {
                 return new updateInfo
                 {
-                    status = "UPDATE_CHECK_ERROR",
+                    status = false,
                     log = ex.Message,
                 };
             }
