@@ -751,6 +751,8 @@ namespace Skymu.Formatting
                 inlines.Add(currentRun);
         }
 
+        // Note from omega - can we get a unit test for this and the emoji code? I have the feeling that some of this stuff 
+        // might be a real bottleneck for processing speed. Maybe rapid timed tests of all formatting paths?
         private static void ProcessLangNode(string rtext, InlineCollection inlines, object[] args, ref int argi)
         {
             var doc = XDocument.Parse("<root>" + rtext + "</root>");

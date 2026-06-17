@@ -2,7 +2,6 @@
     x:Class="Skymu.Forms.Options"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
@@ -82,7 +81,7 @@
                                 Margin="4,-1,4,2"
                                 Background="#ffffff"
                                 BackgroundPressed="{StaticResource Settings.ActiveTab}"
-                                IsHitTestVisible="False"
+                                Interactive="False"
                                 IsRadioButton="True"
                                 PressedOffsetY="0"
                                 Text="{TemplateBinding Text}"
