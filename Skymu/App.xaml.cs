@@ -445,10 +445,12 @@ namespace Skymu
         {
             string brand = Settings.BrandingName;
             Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
-            WindowBase frame = new WindowBase(page);
-            frame.HeaderIcon = WindowBase.IconType.Crash;
-            frame.HeaderText = "That wasn't supposed to happen...";
-            frame.Title = brand + " Error";
+            WindowBase frame = new WindowBase(page)
+            {
+                HeaderIcon = WindowBase.IconType.Crash,
+                HeaderText = "That wasn't supposed to happen...",
+                Title = brand + " Error"
+            };
             frame.ButtonRightAction = () => frame.Close();
             frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
             frame.ButtonLeftAction = () => page.CopyToClipboard();

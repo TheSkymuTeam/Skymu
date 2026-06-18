@@ -256,7 +256,7 @@ SanitizeFolderName(user.Identifier)
         #endregion
 
         #region Database table creation
-        private void EnsureTablesInternal(SqliteConnection connection)
+        private static void EnsureTablesInternal(SqliteConnection connection)
         {
             using (SqliteCommand cmd = connection.CreateCommand())
             {
@@ -1261,9 +1261,8 @@ SanitizeFolderName(user.Identifier)
                         }
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1414,9 +1413,8 @@ SanitizeFolderName(user.Identifier)
                         }
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1721,9 +1719,8 @@ SanitizeFolderName(user.Identifier)
                         }
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1805,9 +1802,8 @@ SanitizeFolderName(user.Identifier)
                         }
                         transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1940,7 +1936,7 @@ SanitizeFolderName(user.Identifier)
                 }
             }
 
-            private Dictionary<string, Attachment[]> ReadImageAttachments(
+            private static Dictionary<string, Attachment[]> ReadImageAttachments(
                 long convoId,
                 SqliteConnection connection
             )
@@ -2414,7 +2410,7 @@ SanitizeFolderName(user.Identifier)
                             connection,
                             transaction
                         );
-                        if (ownsTransaction && items.Count() > 0)
+                        if (ownsTransaction && items.Any())
                         {
                             using (SqliteCommand updateCmd = connection.CreateCommand())
                             {
@@ -2442,9 +2438,8 @@ SanitizeFolderName(user.Identifier)
                         if (ownsTransaction)
                             transaction.Commit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        Universal.ShowMessage(ex.Message);
                         if (ownsTransaction)
                             transaction?.Rollback();
                         throw;

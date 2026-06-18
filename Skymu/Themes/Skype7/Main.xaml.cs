@@ -456,7 +456,7 @@ namespace Skymu.Skype7
                 return;
 
             string name = item.Name.Substring(3); // strip "sm_" prefix → "online", "away", "dnd", "invisible", "offline"
-            var current = vmodel.GetStatusFromInt(_currentStatusIndex);
+            var current = MainViewModel.GetStatusFromInt(_currentStatusIndex);
 
             if (name == "dnd")
                 vmodel.InformDND();

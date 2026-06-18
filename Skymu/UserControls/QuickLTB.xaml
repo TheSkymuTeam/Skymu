@@ -10,7 +10,6 @@
     <UserControl.Resources>
         <converters:SkyLangParseConverter x:Key="SkyLangParseConverter" />
     </UserControl.Resources>
-
     <ContentControl
         x:Name="ContentCtrl"
         HorizontalAlignment="Stretch"

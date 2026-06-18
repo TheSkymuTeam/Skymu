@@ -139,6 +139,7 @@ namespace Skymu.Theming
             catch (Exception ex)
             {
                 Debug.WriteLine($"[COLORWAY-MANAGER] Failed to read {xamlPath}: {ex.Message}");
+                throw;
             }
             return null;
         }

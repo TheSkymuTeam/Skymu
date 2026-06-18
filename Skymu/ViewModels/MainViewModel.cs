@@ -21,9 +21,11 @@ using Skymu.Helpers;
 using System.Linq;
 using Skymu.Sounds;
 using Skymu.Preferences;
+
 using Yggdrasil.Bottles;
 using Skymu.Forms;
 using Skymu.UserDirectory;
+using System.Windows.Documents;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -230,7 +232,7 @@ namespace Skymu.ViewModels
         public static int GetIntFromChannelType(ChannelType channel) =>
             ChannelTypeMap.TryGetValue(channel, out int v) ? v : 0;
 
-        public PresenceStatus GetStatusFromInt(int value) =>
+        public static PresenceStatus GetStatusFromInt(int value) =>
             StatusMap.FirstOrDefault(x => x.Value == value).Key;
 
         #endregion
@@ -854,6 +856,133 @@ namespace Skymu.ViewModels
                 await Task.Delay(45000);
                 await UserCountAPI.PingServer();
             }
+        }
+
+        #endregion
+
+        #region Text box placeholders
+
+        private const string TAG_PLACEHOLDER = "PLACEHOLDER";
+        public void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
+        {
+            if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
+                return;
+
+            var flowDoc = rtb.Document;
+            flowDoc.Blocks.Clear();
+
+            var para = new Paragraph(new Run(text))
+            {
+                Margin = new Thickness(0),
+                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"],
+            };
+
+            flowDoc.Blocks.Add(para);
+            rtb.Tag = TAG_PLACEHOLDER;
+        }
+
+        public void RemovePlaceholder(RichTextBox rtb)
+        {
+            if (rtb.Tag as string == TAG_PLACEHOLDER)
+            {
+                var flowDoc = rtb.Document;
+                flowDoc.Blocks.Clear();
+                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
+                rtb.Tag = null;
+            }
+        }
+
+        public void ApplyPlaceholderTb(TextBox tb, string text, bool force = false)
+        {
+            if (!force && tb.Tag as string == TAG_PLACEHOLDER)
+                return;
+
+            if (!force && !string.IsNullOrEmpty(tb.Text))
+                return;
+
+            tb.Text = text;
+            tb.Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"];
+            tb.Tag = TAG_PLACEHOLDER;
+        }
+
+        public void RemovePlaceholderTb(TextBox tb)
+        {
+            if (tb.Tag as string == TAG_PLACEHOLDER)
+            {
+                tb.Text = string.Empty;
+                tb.Foreground = Brushes.Black;
+                tb.Tag = null;
+            }
+        }
+
+        public bool HasAnyContent(RichTextBox rtb)
+        {
+            if (rtb?.Document == null)
+                return false;
+            if (rtb.Tag as string == TAG_PLACEHOLDER)
+                return false;
+
+            var start = rtb.Document.ContentStart;
+            var end = rtb.Document.ContentEnd;
+
+            return start.GetOffsetToPosition(end) > 2;
+        }
+
+        public bool GetSendButtonState(RichTextBox mtb)
+        {
+            if (mtb.Tag as string == TAG_PLACEHOLDER)
+            {
+                return false;
+            } 
+            return HasAnyContent(mtb);
+        }
+
+        public string ExtractMessageFromRichTextBox(RichTextBox mtb)
+        {
+            var sb = new StringBuilder();
+            var flow_document = mtb.Document;
+
+            bool first_paragraph = true;
+
+            foreach (var block in flow_document.Blocks)
+            {
+                if (block is Paragraph paragraph)
+                {
+                    if (!first_paragraph)
+                        sb.Append(Environment.NewLine);
+
+                    first_paragraph = false;
+
+                    foreach (var inline in paragraph.Inlines)
+                    {
+                        if (inline is Run run)
+                        {
+                            sb.Append(run.Text);
+                        }
+                        else if (inline is LineBreak)
+                        {
+                            sb.Append(Environment.NewLine);
+                        }
+                        else if (inline is InlineUIContainer container)
+                        {
+                            if (container.Tag is string emojiFilename)
+                            {
+                                var emojiKey = EmojiDictionary
+                                    .Map.FirstOrDefault(kvp => kvp.Value == emojiFilename)
+                                    .Key;
+
+                                if (!string.IsNullOrEmpty(emojiKey))
+                                {
+                                    string unicode_emoji = ConvertHexKeyToUnicode(emojiKey);
+                                    sb.Append(unicode_emoji);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         #endregion

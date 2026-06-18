@@ -367,8 +367,8 @@ namespace Stub
 
         public Task<List<DirectMessage>> FetchContacts()
         {
-            List<DirectMessage> contacts = new List<DirectMessage>();
-            contacts.Add(
+            List<DirectMessage> contacts = new List<DirectMessage>
+            {
                 new DirectMessage(
                     new User(
                         "Skymu user 1",
@@ -379,15 +379,13 @@ namespace Stub
                     ),
                     10,
                     "u1"
-                )
-            );
-            contacts.Add(
+                ),
                 new DirectMessage(
                     new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
                     "u2"
                 )
-            );
+            };
             return Task.FromResult(contacts);
         }
 

@@ -30,12 +30,12 @@ namespace Skymu.Forms.Pages
 
         CancellationTokenSource cts;
         Task findTask;
-        public Metadata FoundData { get; private set; } = new User("Sensei Wu", "thesenseiwu", "3926", "fopping around");
-        public User FoundUser { get; private set; } = new User("Sensei Wu", "thesenseiwu", "3926", "fopping around");
+        public Metadata FoundData { get; private set; } = new User("Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
+        public User FoundUser { get; private set; } = new User("Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
         IListManagement lmg;
-        event PropertyChangedEventHandler PropertyChanged;
+        // event PropertyChangedEventHandler PropertyChanged; // seems to be unused?
         public ObservableCollection<Metadata> FoundList { get; private set; } =
-            new ObservableCollection<Metadata>() { new User("Sean Kevin", "jsuisseankevin", "3621", "J'suis Sean Kevin") };
+            new ObservableCollection<Metadata>() { new User("Walter White", "w.white", "3621", "Cooking") };
         WindowBase window;
 
         public AddContact()
@@ -121,12 +121,12 @@ namespace Skymu.Forms.Pages
                 await findTask;
             }
             catch (TaskCanceledException) { }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StopSearch();
                 ErrorField.Visibility = Visibility.Visible;
                 findTask.Dispose();
-                throw ex;
+                throw;
             }
             Debug.WriteLine(result.Length);
             findTask.Dispose();
@@ -176,10 +176,10 @@ namespace Skymu.Forms.Pages
             {
                 suc = await lmg.AddContact(FoundData, ContactMessage.Text);
             }
-            catch (Exception ex) // TODO change
+            catch (Exception) // TODO change
             {
                 exed = true;
-                throw ex;
+                throw;
             }
             if (!suc)
             {

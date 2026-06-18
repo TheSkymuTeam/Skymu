@@ -143,8 +143,7 @@ namespace Discord
         {
             var tcs = new TaskCompletionSource<LoginResult>();
 
-            EventHandler<string> completedHandler = null;
-            completedHandler = async (sender, message) =>
+            async void completedHandler(object sender, string message)
             {
                 // Unsubscribe both handlers
                 authSocket.TokenRecieved -= completedHandler;
@@ -152,7 +151,8 @@ namespace Discord
                 DiscordToken = message;
                 var loginResult = await StartClient();
                 tcs.SetResult(loginResult);
-            };
+            }
+
             authSocket.TokenRecieved += completedHandler;
 
             return tcs.Task;
@@ -161,12 +161,12 @@ namespace Discord
         public async Task<string> GetQRCode()
         {
             var tcs = new TaskCompletionSource<string>();
-            EventHandler<string> handler = null;
-            handler = (sender, message) =>
+            void handler(object sender, string message)
             {
                 authSocket.QRCodeGenerated -= handler;
                 tcs.SetResult(message);
-            };
+            }
+
             authSocket.QRCodeGenerated += handler;
             await authSocket.StartSocket();
             string qr = await tcs.Task;
@@ -365,7 +365,9 @@ namespace Discord
 
                                             const int sendMessages = 0x400;
                                             if ((deny & sendMessages) != 0)
+                                            {
                                                 everyoneDeniesSend = true;
+                                            }
                                         }
                                     }
 

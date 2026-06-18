@@ -51,8 +51,6 @@ namespace Skymu.Skype5
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
         private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
-        private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
-        private const string TAG_PLACEHOLDER = "PLACEHOLDER";
 
         // ViewModel
         private MainViewModel vmodel;
@@ -103,26 +101,26 @@ namespace Skymu.Skype5
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
+        private readonly BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
             "Universal/Chat/msg-send-button.png"
         );
-        private BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
+        private readonly BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
             "Universal/Chat/msg-send-button-full.png"
         );
 
-        private BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator(
             "Sidebar/contacts.png",
             false
         );
-        private BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator(
             "Sidebar/recents.png",
             false
         );
-        private BitmapImage contactsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage contactsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
             "Sidebar/contacts-empty.png",
             false
         );
-        private BitmapImage recentsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage recentsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
             "Sidebar/recents-empty.png",
             false
         );
@@ -1017,7 +1015,7 @@ namespace Skymu.Skype5
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
-        private PresenceStatus[] _indexToStatus = new PresenceStatus[]
+        private readonly PresenceStatus[] _indexToStatus = new PresenceStatus[]
         {
             PresenceStatus.Online,
             PresenceStatus.Away,
@@ -1080,19 +1078,19 @@ namespace Skymu.Skype5
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
-            RemovePlaceholderTb(SearchBox);
+            vmodel.RemovePlaceholderTb(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            vmodel.ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            RemovePlaceholder(MessageTextBox);
-            UpdateSendButtonState();
+            vmodel.RemovePlaceholder(MessageTextBox);
+            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1120,8 +1118,8 @@ namespace Skymu.Skype5
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateSendButtonState();
-            if (HasAnyContent(MessageTextBox))
+            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+            if (vmodel.HasAnyContent(MessageTextBox))
                 _lastTypingActivity = DateTime.UtcNow;
         }
 
@@ -1165,7 +1163,7 @@ namespace Skymu.Skype5
             if (!SendMsgButton.IsEnabled && message == null)
                 return;
 
-            string message_body = message ?? ExtractMessageFromRichTextBox();
+            string message_body = message ?? vmodel.ExtractMessageFromRichTextBox(MessageTextBox);
 
             MessageTextBox.Document.Blocks.Clear();
             MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
@@ -1174,92 +1172,16 @@ namespace Skymu.Skype5
             await vmodel.SendMessage(message_body);
         }
 
-        private void UpdateSendButtonState()
-        {
-            if (SendMsgButton == null)
-                return;
-
-            if (MessageTextBox.Tag as string == TAG_PLACEHOLDER)
-            {
-                SendMsgButton.IsEnabled = false;
-                return;
-            }
-
-            bool hasContent = HasAnyContent(MessageTextBox);
-            SendMsgButton.IsEnabled = hasContent;
-        }
-
         private void CheckIfMTBUnfocused(bool force = false)
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                if (!HasAnyContent(MessageTextBox))
+                if (!vmodel.HasAnyContent(MessageTextBox))
                 {
-                    ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                    vmodel.ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                UpdateSendButtonState();
+                SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
             }
-        }
-
-        private bool HasAnyContent(RichTextBox rtb)
-        {
-            if (rtb?.Document == null)
-                return false;
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-                return false;
-
-            var start = rtb.Document.ContentStart;
-            var end = rtb.Document.ContentEnd;
-
-            return start.GetOffsetToPosition(end) > 2;
-        }
-
-        private string ExtractMessageFromRichTextBox()
-        {
-            var sb = new StringBuilder();
-            var flow_document = MessageTextBox.Document;
-
-            bool first_paragraph = true;
-
-            foreach (var block in flow_document.Blocks)
-            {
-                if (block is Paragraph paragraph)
-                {
-                    if (!first_paragraph)
-                        sb.Append(Environment.NewLine);
-
-                    first_paragraph = false;
-
-                    foreach (var inline in paragraph.Inlines)
-                    {
-                        if (inline is Run run)
-                        {
-                            sb.Append(run.Text);
-                        }
-                        else if (inline is LineBreak)
-                        {
-                            sb.Append(Environment.NewLine);
-                        }
-                        else if (inline is InlineUIContainer container)
-                        {
-                            if (container.Tag is string emojiFilename)
-                            {
-                                var emojiKey = EmojiDictionary
-                                    .Map.FirstOrDefault(kvp => kvp.Value == emojiFilename)
-                                    .Key;
-
-                                if (!string.IsNullOrEmpty(emojiKey))
-                                {
-                                    string unicode_emoji = vmodel.ConvertHexKeyToUnicode(emojiKey);
-                                    sb.Append(unicode_emoji);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return sb.ToString();
         }
 
         #endregion
@@ -1339,7 +1261,7 @@ namespace Skymu.Skype5
 
             if (location == null)
             {
-                Settings.HideLeftHandSide = this.location.SidebarToggle ? false : true;
+                Settings.HideLeftHandSide = !this.location.SidebarToggle;
                 Settings.Save();
                 SetCallPageLocation(new CallScreen.LocationChangeEventArgs(true, true), false); // quickly reset stuff
                 if (FillWindowHost.Content == frame)
@@ -1460,8 +1382,8 @@ namespace Skymu.Skype5
                 "sCHAT_TYPE_HERE_DIALOG",
                 vmodel.SelectedConversation?.DisplayName
             );
-            ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            UpdateSendButtonState();
+            vmodel.ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1493,62 +1415,6 @@ namespace Skymu.Skype5
                 _userScrolledUp =
                     _conversationScrollViewer.VerticalOffset
                     < _conversationScrollViewer.ScrollableHeight - 10;
-        }
-
-        #endregion
-
-        #region Text box placeholders
-
-        private void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
-        {
-            if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
-                return;
-
-            var flowDoc = rtb.Document;
-            flowDoc.Blocks.Clear();
-
-            var para = new Paragraph(new Run(text))
-            {
-                Margin = new Thickness(0),
-                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"],
-            };
-
-            flowDoc.Blocks.Add(para);
-            rtb.Tag = TAG_PLACEHOLDER;
-        }
-
-        private void RemovePlaceholder(RichTextBox rtb)
-        {
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-            {
-                var flowDoc = rtb.Document;
-                flowDoc.Blocks.Clear();
-                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
-                rtb.Tag = null;
-            }
-        }
-
-        private void ApplyPlaceholderTb(TextBox tb, string text)
-        {
-            if (tb.Tag as string == TAG_PLACEHOLDER)
-                return;
-
-            if (!string.IsNullOrEmpty(tb.Text))
-                return;
-
-            tb.Text = text;
-            tb.Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"];
-            tb.Tag = TAG_PLACEHOLDER;
-        }
-
-        private void RemovePlaceholderTb(TextBox tb)
-        {
-            if (tb.Tag as string == TAG_PLACEHOLDER)
-            {
-                tb.Text = string.Empty;
-                tb.Foreground = Brushes.Black;
-                tb.Tag = null;
-            }
         }
 
         #endregion
@@ -1607,7 +1473,7 @@ namespace Skymu.Skype5
                 return;
 
             EmojiFlyout.IsOpen = false;
-            RemovePlaceholder(MessageTextBox);
+            vmodel.RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
             var sliceControl = Formatter.MakeEmoji(emojiFilename);
@@ -1628,7 +1494,7 @@ namespace Skymu.Skype5
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            UpdateSendButtonState();
+            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
         }
 
         #endregion
@@ -1754,7 +1620,7 @@ namespace Skymu.Skype5
                 { btnRecents, RecentsColumn },
             };
             _ = SelectTab(btnRecents);
-            ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            vmodel.ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             if (!Universal.Plugin.SupportsServers)
@@ -1834,7 +1700,7 @@ namespace Skymu.Skype5
         private async void HandleStatusItemClick(MenuItem item)
         {
             string name = item.Name.Substring(3);
-            var currentStatus = vmodel.GetStatusFromInt(StatusIcon.DefaultIndex);
+            var currentStatus = MainViewModel.GetStatusFromInt(StatusIcon.DefaultIndex);
 
             if (name == "dnd")
                 vmodel.InformDND();

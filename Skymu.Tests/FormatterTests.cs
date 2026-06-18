@@ -377,7 +377,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.ProcessLangText("<b>bold</b>", new object[0]);
+                var tb = Formatter.ProcessLangText("<b>bold</b>", Array.Empty<object>());
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontWeight == FontWeights.Bold),
                     "Expected a bold Span from <b> tag.");
@@ -390,7 +390,7 @@ namespace Skymu.Tests
             RunSta(() =>
             {
                 var tb = Formatter.ProcessLangText(
-                    "<a href=\"https://skymu.app\">click</a>", new object[0]);
+                    "<a href=\"https://skymu.app\">click</a>", Array.Empty<object>());
                 Assert.True(tb.Inlines.OfType<Hyperlink>().Any(),
                     "Expected a Hyperlink from <a> tag.");
             });
@@ -401,7 +401,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.ProcessLangText("line1<br/>line2", new object[0]);
+                var tb = Formatter.ProcessLangText("line1<br/>line2", Array.Empty<object>());
                 Assert.True(tb.Inlines.OfType<LineBreak>().Any(),
                     "Expected a LineBreak from <br/> tag.");
             });
@@ -413,7 +413,7 @@ namespace Skymu.Tests
             RunSta(() =>
             {
                 var tb = Formatter.ProcessLangText(
-                    "<font color=\"#FF0000\">red</font>", new object[0]);
+                    "<font color=\"#FF0000\">red</font>", Array.Empty<object>());
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.Foreground != null),
                     "Expected a Span with a non-null Foreground from <font color>.");
@@ -425,7 +425,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.ProcessLangText("plain text no args", new object[0]);
+                var tb = Formatter.ProcessLangText("plain text no args", Array.Empty<object>());
                 Assert.NotNull(tb);
             });
         }
@@ -435,7 +435,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.ProcessLangText("100%%", new object[0]);
+                TextBlock tb = Formatter.ProcessLangText("100%%", Array.Empty<object>());
                 string text = FlattenInlines(tb.Inlines);
                 Assert.True(text.Contains("%"),
                     "'%%' should produce a literal '%' character.");
