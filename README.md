@@ -17,8 +17,8 @@ Skymu is a modern multiprotocol IM client that looks like classic versions of Sk
 # Build Guide
 For this guide, you will need Git for Windows, Visual Studio 2019 (or newer) and NSIS 3 (or newer). Support will not be provided if older build tools are used. 
 
-* [Download Git for Windows](https://git-scm.com/install/windows)
-* [Download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe) or [Download Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe)
+* [Download Git for Windows](https://git-scm.com/install/windows) and install. For the default editor, we recommend you select Notepad (or Notepad++, etc. if you have it) instead of Vim. Use default options otherwise.
+* [Download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe) or [Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe). Select ".NET desktop development" in the installer.
 * [Download NSIS](https://sourceforge.net/projects/nsis/files/latest/download)
 
 ## Application
