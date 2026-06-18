@@ -27,7 +27,7 @@ namespace Skymu.Forms.Pages
     {
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
-        private const string Repo = "Skymu";
+        private const string Repo = Universal.Name;
         private string brand = Settings.BrandingName;
         private updateInfo? update_info;
         private WindowBase window;
