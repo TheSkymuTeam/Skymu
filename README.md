@@ -8,7 +8,7 @@
 ![GitHub repo stars](https://img.shields.io/github/stars/TheSkymuTeam/Skymu)
 
 # What is Skymu?
-Skymu is a modern multiprotocol IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 4, 5, 6, and 7. Officially supported messaging services include Matrix, Tox, MSNP11, and some other protocols.
+Skymu is a modern multi-platform IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 4, 5, 6, and 7. Officially supported messaging services include Matrix, Tox, MSNP11, and some other platforms.
 
 ![Client, chatting](Images/skymu-v0.4-chat.png) 
 
@@ -34,7 +34,7 @@ For this guide, you will need Git for Windows, Visual Studio 2019 (or newer) and
 * If you want to change the internal name (recommended to avoid conflicts with your existing Skymu installation!) or version, go to Skymu -> App.xaml.cs in the Solution Explorer pane, click to open the file, and then edit these values. Note that changing this will make the updater stop working.
 <img width="555" height="335" alt="image" src="https://github.com/user-attachments/assets/af6029f8-20c7-40c3-bada-0b2bf98ee1e7" />
 
-* Press `Ctrl + Shift + B` to build the solution for the first time, or click "Build Solution" in the menu bar under "Build". *Notice for advanced users:* Both .NET Core and .NET Framework builds of Skymu are built at the same time and can be found in /Skymu/bin/Skymu.Core and /Skymu/bin/Skymu.Legacy respectively.
+* Press `Ctrl + Shift + B` to build the solution for the first time, or click "Build Solution" in the menu bar under "Build". *Notice for advanced users:* Both .NET Core and .NET Framework builds of Skymu are built at the same time and can be found in `/Skymu/bin/Skymu.Core` and `/Skymu/bin/Skymu.Legacy` respectively.
  <img width="403" height="183" alt="image" src="https://github.com/user-attachments/assets/19b70367-21a5-4388-81a5-a521818d4fba" />
  
 * Click the play button on the action bar to run your copy of Skymu. 
