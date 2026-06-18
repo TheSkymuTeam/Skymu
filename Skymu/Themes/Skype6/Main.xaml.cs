@@ -191,7 +191,7 @@ namespace Skymu.Skype6
             if (tree.SelectedItem == null)
                 return;
 
-            TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
+            TreeViewItem container = MainViewModel.GetContainerFromItem(tree, tree.SelectedItem);
             if (container != null)
                 container.IsSelected = false;
         }
@@ -199,27 +199,6 @@ namespace Skymu.Skype6
         private void ToggleStatusBoxSelection(bool selected)
         {
             HomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
-        }
-
-        private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
-        {
-            if (parent == null)
-                return null;
-
-            if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
-                return container;
-
-            foreach (object child in parent.Items)
-            {
-                TreeViewItem parentContainer =
-                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
-
-                TreeViewItem result = GetContainerFromItem(parentContainer, item);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
         }
 
         #endregion

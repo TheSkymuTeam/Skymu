@@ -1086,6 +1086,30 @@ namespace Skymu.ViewModels
             );
         }
 
+        public static TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
+        {
+            if (parent == null)
+                return null;
+
+            TreeViewItem container =
+                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+
+            if (container != null)
+                return container;
+
+            foreach (object child in parent.Items)
+            {
+                TreeViewItem parentContainer =
+                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+
+                TreeViewItem result = GetContainerFromItem(parentContainer, item);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
+
         public void InformDND()
         {
             if (Settings.InformDND != true)

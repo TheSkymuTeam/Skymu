@@ -203,33 +203,9 @@ namespace Skymu.Skype4
             if (tree.SelectedItem == null)
                 return;
 
-            TreeViewItem container = GetContainerFromItem(tree, tree.SelectedItem);
+            TreeViewItem container = MainViewModel.GetContainerFromItem(tree, tree.SelectedItem);
             if (container != null)
                 container.IsSelected = false;
-        }
-
-        private TreeViewItem GetContainerFromItem(ItemsControl parent, object item)
-        {
-            if (parent == null)
-                return null;
-
-            TreeViewItem container =
-                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-
-            if (container != null)
-                return container;
-
-            foreach (object child in parent.Items)
-            {
-                TreeViewItem parentContainer =
-                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
-
-                TreeViewItem result = GetContainerFromItem(parentContainer, item);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
         }
 
         #endregion
