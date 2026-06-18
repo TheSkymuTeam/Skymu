@@ -51,7 +51,6 @@ namespace Skymu.Skype4
         private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
         private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
         private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
-        private const string NOTIMPL_ADD_CONTACTS_CHATS = "Adding contacts to conversations";
 
         // ViewModel
         private MainViewModel vmodel;
@@ -59,7 +58,7 @@ namespace Skymu.Skype4
         // Other file-level variables
         private AddContact _addContactWindow;
         private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
-        private Thickness OriginalWindowAreaMargin = new Thickness(0);
+        private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private bool _userScrolledUp = false;
@@ -1029,19 +1028,19 @@ namespace Skymu.Skype4
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
-            vmodel.RemovePlaceholder(SearchBox);
+            MainViewModel.RemovePlaceholder(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            vmodel.RemovePlaceholder(MessageTextBox);
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            MainViewModel.RemovePlaceholder(MessageTextBox);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1067,8 +1066,8 @@ namespace Skymu.Skype4
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
-            if (vmodel.HasAnyContent(MessageTextBox))
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (MainViewModel.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
         }
 
@@ -1104,7 +1103,7 @@ namespace Skymu.Skype4
             if (!SendMsgButton.IsEnabled && message == null)
                 return;
 
-            string message_body = message ?? vmodel.ExtractMessageFromRichTextBox(MessageTextBox);
+            string message_body = message ?? MainViewModel.ExtractText(MessageTextBox);
 
             MessageTextBox.Document.Blocks.Clear();
             MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
@@ -1117,11 +1116,11 @@ namespace Skymu.Skype4
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                if (!vmodel.HasAnyContent(MessageTextBox))
+                if (!MainViewModel.HasAnyContent(MessageTextBox))
                 {
-                    vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                    MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+                SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             }
         }
 
@@ -1321,8 +1320,8 @@ namespace Skymu.Skype4
                 "sCHAT_TYPE_HERE_DIALOG",
                 vmodel.SelectedConversation?.DisplayName
             );
-            vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1371,7 +1370,7 @@ namespace Skymu.Skype4
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = vmodel.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = MainViewModel.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -1412,7 +1411,7 @@ namespace Skymu.Skype4
                 return;
 
             EmojiFlyout.IsOpen = false;
-            vmodel.RemovePlaceholder(MessageTextBox);
+            MainViewModel.RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
             var sliceControl = Formatter.MakeEmoji(emojiFilename);
@@ -1433,7 +1432,7 @@ namespace Skymu.Skype4
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         #endregion
@@ -1560,7 +1559,7 @@ namespace Skymu.Skype4
                 { btnRecents, RecentsColumn },
             };
             _ = SelectTab(btnRecents);
-            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             if (!Universal.Plugin.SupportsServers)
