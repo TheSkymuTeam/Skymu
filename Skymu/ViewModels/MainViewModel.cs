@@ -1080,19 +1080,18 @@ namespace Skymu.ViewModels
                 );
                 return;
             }
-            User[] profiles = Universal.Plugin.TypingUsersList.Take(3).ToArray();
             string text;
             switch (count)
             {
                 case 1:
-                    text = $"{profiles[0].DisplayName} is typing...";
+                    text = $"{Universal.Plugin.TypingUsersList[0].DisplayName} is typing...";
                     break;
                 case 2:
-                    text = $"{profiles[0].DisplayName} and {profiles[1].DisplayName} are typing...";
+                    text = $"{Universal.Plugin.TypingUsersList[0].DisplayName} and {Universal.Plugin.TypingUsersList[1].DisplayName} are typing...";
                     break;
                 case 3:
                     text =
-                        $"{profiles[0].DisplayName}, {profiles[1].DisplayName}, and {profiles[2].DisplayName} are typing...";
+                        $"{Universal.Plugin.TypingUsersList[0].DisplayName}, {Universal.Plugin.TypingUsersList[1].DisplayName}, and {Universal.Plugin.TypingUsersList[2].DisplayName} are typing...";
                     break;
                 default:
                     text = "Multiple people are typing...";
