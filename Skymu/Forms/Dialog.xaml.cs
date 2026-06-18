@@ -98,7 +98,7 @@ namespace Skymu.Forms
                     string caption = null;
                     switch (type)
                     {
-                        default:
+                        default: // All dialogs without a specified or preset title will be "Skype - Information"
                         case WindowBase.IconType.Information:
                             caption = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
                             break;
@@ -133,6 +133,7 @@ namespace Skymu.Forms
                     ButtonMiddle.Content = bmText;
                 if (brText != null)
                     ButtonRight.Content = brText;
+                else ButtonRight.Content = Universal.Lang["sF_CONFIRM_OK_BTN"];
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
