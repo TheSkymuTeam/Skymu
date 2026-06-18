@@ -18,7 +18,7 @@ Skymu is a modern multi-platform IM client that looks like classic versions of S
 For this guide, you will need Git for Windows, Visual Studio 2019 (or newer) and NSIS 3 (or newer). Support will not be provided if older build tools are used. 
 
 * [Download Git for Windows](https://git-scm.com/install/windows) and install. For the default editor, we recommend you select Notepad (or Notepad++, etc. if you have it) instead of Vim, unless of course you feel like dedicating a few days to learning how to use Vim. Stick with the default options for the other things the installer asks you.
-* [Download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe) (recommended) or [download Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe). Select ".NET desktop development" in the installer.
+* [Download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe) (recommended) or [download Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe). Select the ".NET desktop development" workload in the installer.
 * [Download NSIS](https://sourceforge.net/projects/nsis/files/latest/download)
 
 ## Application
@@ -35,7 +35,7 @@ Select the "Debug" configuration in the action bar.
 
 <img width="323" height="142" alt="image" src="https://github.com/user-attachments/assets/13bf677b-70be-46e7-bdc6-4138d19c6272" />
 
-If you want to change the internal name (recommended to avoid conflicts with your existing Skymu installation!) or version, go to Skymu -> App.xaml.cs in the Solution Explorer pane, click to open the file, and then edit these values. Note that changing this will make the updater stop working.
+If you want to change the internal name (recommended to avoid conflicts with your existing Skymu installation!) or version, go to `Skymu/Skymu/App.xaml.cs` in the Solution Explorer pane, click to open the file, and then edit these values. Note that changing this will make the updater stop working.
 
 <img width="555" height="335" alt="image" src="https://github.com/user-attachments/assets/af6029f8-20c7-40c3-bada-0b2bf98ee1e7" />
 
@@ -56,7 +56,7 @@ Select the "Release" configuration in the action bar and build Skymu in Visual S
 
 <img width="207" height="137" alt="image" src="https://github.com/user-attachments/assets/c42e4a0c-9341-4e9c-900c-1c07a18df647" />
 
-Navigate to the `NSIS` folder, right-click on the type of installer you want to build, and then click "Compile NSIS Script". SkymuSetup.nsi is for the standard installer, SkymuBetaSetup.nsi is for the beta installer, both are functionally the same and differ only in appearance.
+Navigate to the `NSIS` folder, right-click on the type of installer you want to build, and then click "Compile NSIS Script". `SkymuSetup.nsi` is for the standard installer, `SkymuBetaSetup.nsi` is for the beta installer, both are functionally the same and differ only in appearance.
 
 <img width="362" height="135" alt="image" src="https://github.com/user-attachments/assets/82f484dc-3a03-4b9b-abc0-1c56d9b1bfca" />
 
