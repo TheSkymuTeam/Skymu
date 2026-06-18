@@ -12,6 +12,7 @@
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
+using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -47,6 +48,15 @@ namespace Skymu.Forms
             try
             {
                 InitializeComponent();
+
+                if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6")
+                {
+                    Background = (SolidColorBrush)Application.Current.Resources["Metro.Strip.Background"];
+                }
+                else
+                {
+                    Background = (SolidColorBrush)Application.Current.Resources["Strip.Background"];
+                }
 
                 if (img != null)
                 {
@@ -106,7 +116,7 @@ namespace Skymu.Forms
                             caption = Universal.Lang["sLANGUAGE_ERROR_CAP"];
                             break;
                         case WindowBase.IconType.Question:
-                            caption = Universal.Lang["sF_CONFIRM_DEFAULT_CAPTION"]; 
+                            caption = Universal.Lang["sF_CONFIRM_DEFAULT_CAPTION"];
                             break;
                         case WindowBase.IconType.Facebook:
                             caption = Universal.Lang["sFLAMINGO_CAPTION"];

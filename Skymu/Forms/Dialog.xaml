@@ -56,15 +56,9 @@
             Panel.ZIndex="0">
             <Border
                 Name="GradientTop"
-                BorderBrush="#DADADA"
-                BorderThickness="0,0,0,1">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="#F2F2F2" />
-                        <GradientStop Offset="1" Color="#E6E6E6" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                Background="{StaticResource Strip.Background}"
+                BorderBrush="{StaticResource Card.Border}"
+                BorderThickness="0,0,0,1" />
             <TextBlock
                 x:Name="Header"
                 Height="23"
@@ -102,15 +96,9 @@
         <Grid Grid.Row="2" Height="44">
             <Border
                 Name="GradientBottom"
-                BorderBrush="#DADADA"
-                BorderThickness="0,1,0,0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="#F2F2F2" />
-                        <GradientStop Offset="1" Color="#E6E6E6" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                Background="{StaticResource Strip.Background}"
+                BorderBrush="{StaticResource Card.Border}"
+                BorderThickness="0,1,0,0" />
             <Grid x:Name="BottomControlsGrid" Width="Auto">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
