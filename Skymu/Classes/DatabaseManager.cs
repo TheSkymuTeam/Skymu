@@ -39,7 +39,7 @@ using Yggdrasil.Enumerations;
 
 namespace Skymu.Databases
 {
-    internal class DatabaseManager
+    public class DatabaseManager
     {
         #region Definitions
 
@@ -58,14 +58,23 @@ namespace Skymu.Databases
 
         internal Dictionary<string, User> _contactMap;
 
-        public DatabaseManager(User user)
+        public DatabaseManager(User user, string custom_db_folder = null)
         {
-            string folderPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                Universal.Name,
-                Universal.Plugin.InternalName,
-                SanitizeFolderName(user.Identifier)
-            );
+            string folderPath;
+
+            if (String.IsNullOrEmpty(custom_db_folder))
+            {
+                folderPath = Path.Combine(
+Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+Universal.Name,
+Universal.Plugin.InternalName,
+SanitizeFolderName(user.Identifier)
+);
+            }
+            else
+            {
+                folderPath = custom_db_folder;
+            }
 
             DbPath = Path.Combine(folderPath, "main.db");
             string configPath = Path.Combine(folderPath, "config.xml");
