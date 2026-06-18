@@ -169,7 +169,7 @@ namespace Skymu.Skype7
 
             InitializeEmojiPicker();
 
-            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
+            //HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {

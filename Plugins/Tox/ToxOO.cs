@@ -1,7 +1,8 @@
 ﻿/*==========================================================*/
-// This file is licensed under MIT.
+// This file is licensed under MIT, separately from the
+// rest of the project.
 /*==========================================================*/
-// Copyright 2026 The Skymu Team
+// Copyright 2026 nilFinx
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated

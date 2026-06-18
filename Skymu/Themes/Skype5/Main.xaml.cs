@@ -1597,7 +1597,7 @@ namespace Skymu.Skype5
             RefreshCreds();
 
 
-            HomeUnavailable.Navigate(new Forms.HomeUnavailable());
+            //HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {

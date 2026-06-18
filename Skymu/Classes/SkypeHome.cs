@@ -161,7 +161,7 @@ namespace Skymu
 
         public static JsonElement? GetLanguage()
         {
-            string json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", "home.json"));
+            string json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", "home-unavailable.json"));
 
             string cultureName = "en-US";
             try
