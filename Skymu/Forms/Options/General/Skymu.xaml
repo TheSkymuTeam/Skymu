@@ -1,4 +1,16 @@
-﻿<Page
+﻿<!--
+    ============================================================
+    Skymu is copyrighted by The Skymu Team, 2026.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is contingent
+    on your agreement to be bound by the terms of our License.
+    If you do not wish to abide by those terms, you may not
+    use, modify, or distribute any code from the Skymu project.
+    License: https://skymu.app/legal/license
+    ============================================================
+-->
+<Page
     x:Class="Skymu.Forms.OptionPages.General.Skymu"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
