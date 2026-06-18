@@ -44,7 +44,7 @@ namespace Stub
         }
         public bool SupportsServers
         {
-            get { return false; }
+            get { return true; }
         }
 
         public AuthTypeInfo[] AuthenticationTypes
