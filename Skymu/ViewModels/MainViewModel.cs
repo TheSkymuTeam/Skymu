@@ -863,10 +863,10 @@ namespace Skymu.ViewModels
 
         #endregion
 
-        #region Text box placeholders
+        #region Text box helpers
 
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
-        public void SetPlaceholder(RichTextBox rtb, string text, bool force = false)
+        public static void SetPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
             if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
                 return;
@@ -884,7 +884,7 @@ namespace Skymu.ViewModels
             rtb.Tag = TAG_PLACEHOLDER;
         }
 
-        public void SetPlaceholder(TextBox tb, string text, bool force = false)
+        public static void SetPlaceholder(TextBox tb, string text, bool force = false)
         {
             if (!force && tb.Tag as string == TAG_PLACEHOLDER)
                 return;
@@ -897,7 +897,7 @@ namespace Skymu.ViewModels
             tb.Tag = TAG_PLACEHOLDER;
         }
 
-        public void RemovePlaceholder(RichTextBox rtb)
+        public static void RemovePlaceholder(RichTextBox rtb)
         {
             if (rtb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -908,7 +908,7 @@ namespace Skymu.ViewModels
             }
         }
 
-        public void RemovePlaceholder(TextBox tb)
+        public static void RemovePlaceholder(TextBox tb)
         {
             if (tb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -918,7 +918,7 @@ namespace Skymu.ViewModels
             }
         }
 
-        public bool HasAnyContent(RichTextBox rtb)
+        public static bool HasAnyContent(RichTextBox rtb)
         {
             if (rtb?.Document == null)
                 return false;
@@ -931,7 +931,7 @@ namespace Skymu.ViewModels
             return start.GetOffsetToPosition(end) > 2;
         }
 
-        public bool CheckIfMessageSendable(RichTextBox mtb)
+        public static bool CheckIfMessageSendable(RichTextBox mtb)
         {
             if (mtb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -940,7 +940,7 @@ namespace Skymu.ViewModels
             return HasAnyContent(mtb);
         }
 
-        public string ExtractMessageFromRichTextBox(RichTextBox mtb)
+        public static string ExtractText(RichTextBox mtb)
         {
             var sb = new StringBuilder();
             var flow_document = mtb.Document;
@@ -1235,7 +1235,7 @@ namespace Skymu.ViewModels
             Universal.NotImplemented("Video calling");
         }
 
-        public string ConvertHexKeyToUnicode(string hexKey)
+        public static string ConvertHexKeyToUnicode(string hexKey)
         {
             try
             {

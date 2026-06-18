@@ -289,9 +289,9 @@ namespace Skymu.Skype6
         private void SelectSidebarTopRowButton(SliceControl to_select)
         {
             if (to_select == AddContactButton)
-                vmodel.SetPlaceholder(SearchBox, Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"], true);
+                MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"], true);
             else
-                vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
+                MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
             foreach (var tab in new[] { HomeButton, AddContactButton })
             {
                 if (tab == to_select)
@@ -303,7 +303,7 @@ namespace Skymu.Skype6
 
         private async Task SelectTab(SliceControl tab_to_select)
         {
-            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
+            MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
             _currentTab = tab_to_select;
             AddContactGrid.Visibility = Visibility.Collapsed;
             SidebarTabs.Visibility = Visibility.Visible;
@@ -672,13 +672,13 @@ namespace Skymu.Skype6
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
-            vmodel.RemovePlaceholder(SearchBox);
+            MainViewModel.RemovePlaceholder(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            vmodel.SetPlaceholder(SearchBox,
+            MainViewModel.SetPlaceholder(SearchBox,
                 AddContactGrid.Visibility == Visibility.Visible ?
                 Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"] :
                 Universal.Lang["sCONTACT_QF_HINT"],
@@ -688,8 +688,8 @@ namespace Skymu.Skype6
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            vmodel.RemovePlaceholder(MessageTextBox);
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            MainViewModel.RemovePlaceholder(MessageTextBox);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -715,8 +715,8 @@ namespace Skymu.Skype6
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
-            if (vmodel.HasAnyContent(MessageTextBox))
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (MainViewModel.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
         }
 
@@ -927,7 +927,7 @@ namespace Skymu.Skype6
             if (!SendMsgButton.IsEnabled && message == null)
                 return;
 
-            string message_body = message ?? vmodel.ExtractMessageFromRichTextBox(MessageTextBox);
+            string message_body = message ?? MainViewModel.ExtractText(MessageTextBox);
 
             MessageTextBox.Document.Blocks.Clear();
             MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
@@ -940,11 +940,11 @@ namespace Skymu.Skype6
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                if (!vmodel.HasAnyContent(MessageTextBox))
+                if (!MainViewModel.HasAnyContent(MessageTextBox))
                 {
-                    vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                    MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+                SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             }
         }
 
@@ -969,8 +969,8 @@ namespace Skymu.Skype6
                 "sCHAT_TYPE_HERE_DIALOG",
                 vmodel.SelectedConversation?.DisplayName
             );
-            vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1016,7 +1016,7 @@ namespace Skymu.Skype6
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = vmodel.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = MainViewModel.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -1052,7 +1052,7 @@ namespace Skymu.Skype6
             if (!(border?.Child is SliceControl sliceControlInside)) return;
 
             EmojiFlyout.IsOpen = false;
-            vmodel.RemovePlaceholder(MessageTextBox);
+            MainViewModel.RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
             var sliceControl = Formatter.MakeEmoji(emojiFilename);
@@ -1073,7 +1073,7 @@ namespace Skymu.Skype6
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
+            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         #endregion
@@ -1192,7 +1192,7 @@ namespace Skymu.Skype6
                 { btnRecents, RecentsColumn },
             };
             _ = SelectTab(btnRecents);
-            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            MainViewModel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             if (!Universal.Plugin.SupportsServers)

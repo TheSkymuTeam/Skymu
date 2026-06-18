@@ -387,7 +387,7 @@ namespace Skymu.Skype7
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = vmodel.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = MainViewModel.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -422,7 +422,7 @@ namespace Skymu.Skype7
             if (string.IsNullOrEmpty(key))
                 return;
 
-            string unicode = vmodel.ConvertHexKeyToUnicode(key);
+            string unicode = MainViewModel.ConvertHexKeyToUnicode(key);
             int caret = TextBoxMessage.CaretIndex;
             TextBoxMessage.Text = TextBoxMessage.Text.Insert(caret, unicode);
             TextBoxMessage.CaretIndex = caret + unicode.Length;
