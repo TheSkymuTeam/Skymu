@@ -935,7 +935,10 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Vertical">
+            <StackPanel
+                x:Name="MenuBarArea"
+                Grid.Row="0"
+                Orientation="Vertical">
                 <Menu
                     x:Name="MainMenuBar"
                     Height="20"

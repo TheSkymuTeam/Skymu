@@ -399,8 +399,9 @@ namespace Skymu.Skype4
         {
             ContentBgTop.Fill = (Brush)Application.Current.Resources["Background"];
             ContentBgBottom.Fill = (Brush)Application.Current.Resources["Background"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Card.Background"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Background"];
+            MainMenuBar.Background = (Brush)Application.Current.Resources["Background"];
+            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Card.Border"];
+            MenuBarArea.Background = (Brush)Application.Current.Resources["Background"];
             if (_currentFrame == WindowFrame.SkypeBasic)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Background"];
@@ -1540,8 +1541,6 @@ namespace Skymu.Skype4
             };
 
             InitializeWindowFrame();
-            if (Settings.FallbackFillColors)
-                this.Background = (Brush)Application.Current.Resources["Background"];
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
