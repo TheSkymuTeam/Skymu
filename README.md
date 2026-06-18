@@ -1,9 +1,8 @@
 ![Skymu Logo](Images/logo.png) 
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
-
 # What is Skymu?
 Skymu is a modern multiprotocol IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 4, 5, 6, and 7. Currently supported messaging services include Matrix, Tox, MSNP11, and some other protocols.
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
 
 # Build Guide
 
@@ -44,5 +43,3 @@ do so instead of trying to force platform-specific builds. Both .NET and .NET Fr
 | System.Runtime.CompilerServices.Unsafe | Microsoft | [MIT](https://choosealicense.com/licenses/mit/) | Skymu | [Repo](https://github.com/dotnet/runtime) |
 | System.Text.Json | Microsoft | [MIT](https://choosealicense.com/licenses/mit/) | Skymu, Matrix, Discord | [Repo](https://github.com/dotnet/dotnet) |
 | System.Threading.Channels | Microsoft | [MIT](https://choosealicense.com/licenses/mit/) | Skymu, Stub, Tox, Discord | [Repo](https://github.com/dotnet/dotnet) |
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
