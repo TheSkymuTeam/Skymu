@@ -64,6 +64,7 @@ namespace Skymu
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
 
         public static User CurrentUser;
+        public static bool IsDarkTheme = false;
         public static BitmapImage AnonymousAvatar;
         public static BitmapImage GroupAvatar;
         public static BitmapImage UnknownAvatar;

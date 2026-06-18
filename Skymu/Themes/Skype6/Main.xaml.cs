@@ -90,9 +90,9 @@ namespace Skymu.Skype6
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private readonly BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator("Sidebar/contacts.png", false);
-        private readonly BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator("Sidebar/recents.png", false);
-        private readonly BitmapImage sidebarBtnEmpty = ConversionHelpers.AssetPathGenerator("Sidebar/empty.png", false);
+        private readonly BitmapImage contactsBtnImage = ConversionHelpers.LoadAsset("Sidebar/contacts.png", false);
+        private readonly BitmapImage recentsBtnImage = ConversionHelpers.LoadAsset("Sidebar/recents.png", false);
+        private readonly BitmapImage sidebarBtnEmpty = ConversionHelpers.LoadAsset("Sidebar/empty.png", false);
 
         private Metadata SelectedContact;
 

@@ -39,9 +39,9 @@ namespace Skymu.Theming
 
             foreach (string file in Directory.GetFiles(dir, "*.xaml"))
             {
-                string name = ReadColorwayName(file);
-                if (!string.IsNullOrWhiteSpace(name))
-                    _colorwayList[name] = file;
+                (string, bool) information = ReadColorwayInfo(file);
+                if (!string.IsNullOrWhiteSpace(information.Item1))
+                    _colorwayList[information.Item1] = file;
             }
 
             Settings.Default.PropertyChanged += (s, e) => // OmegaAOL: add live updating
@@ -63,14 +63,14 @@ namespace Skymu.Theming
 
                 if (!string.IsNullOrEmpty(colorwayName) && _colorwayList.TryGetValue(colorwayName, out string path))
                 {
-                    LoadPath(path);
+                    LoadFromPath(path);
                     return;
                 }
 
                 if (_colorwayList.TryGetValue(FallbackColorway, out string fallbackPath))
                 {
                     Debug.WriteLine($"[COLORWAY-MANAGER] Falling back to '{FallbackColorway}'");
-                    LoadPath(fallbackPath);
+                    LoadFromPath(fallbackPath);
                     Settings.Colorway = FallbackColorway;
                     return;
                 }
@@ -78,7 +78,7 @@ namespace Skymu.Theming
                 foreach (var kv in _colorwayList)
                 {
                     Debug.WriteLine($"[COLORWAY-MANAGER] '{FallbackColorway}' not found, loading first available: '{kv.Key}'");
-                    LoadPath(kv.Value);
+                    LoadFromPath(kv.Value);
                     Settings.Colorway = kv.Key;
                     return;
                 }
@@ -94,12 +94,12 @@ namespace Skymu.Theming
         public static void Load(string colorway_name)
         {
             if (_colorwayList.TryGetValue(colorway_name, out string path))
-                LoadPath(path);
+                LoadFromPath(path);
             else
                 Universal.ExceptionHandler(new FileNotFoundException($"Colorway '{colorway_name}' not found. Did you call Scan() first?"));
         }
 
-        private static void LoadPath(string absolutePath)
+        private static void LoadFromPath(string absolutePath)
         {
             var new_colorway = new ResourceDictionary
             {
@@ -110,17 +110,24 @@ namespace Skymu.Theming
             if (_currentColorway != null)
                 appResources.MergedDictionaries.Remove(_currentColorway);
 
+            (string, bool) information = ReadColorwayInfo(absolutePath);
+            Universal.IsDarkTheme = information.Item2;
+
             appResources.MergedDictionaries.Add(new_colorway);
             _currentColorway = new_colorway;
 
             Debug.WriteLine($"[COLORWAY-MANAGER] Loaded: {absolutePath}");
+            Debug.WriteLine($"[COLORWAY-MANAGER] Colorway theme: {(information.Item2 ? "Dark" : "Light")}");
             Debug.WriteLine($"[COLORWAY-MANAGER] MergedDictionaries count: {Application.Current.Resources.MergedDictionaries.Count}");
             foreach (var dict in Application.Current.Resources.MergedDictionaries)
                 Debug.WriteLine("[COLORWAY-MANAGER] MergedDictionary: " + dict.Source);
         }
 
-        private static string ReadColorwayName(string xamlPath)
+        private static (string name, bool isDarkTheme) ReadColorwayInfo(string xamlPath)
         {
+            string name = null;
+            bool isDarkTheme = false;
+
             try
             {
                 using (var reader = XmlReader.Create(xamlPath))
@@ -131,7 +138,13 @@ namespace Skymu.Theming
                         {
                             string key = reader.GetAttribute("Key", "http://schemas.microsoft.com/winfx/2006/xaml");
                             if (key == "Colorway.Name")
-                                return reader.ReadElementContentAsString();
+                                name = reader.ReadElementContentAsString();
+                        }
+                        else if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Boolean")
+                        {
+                            string key = reader.GetAttribute("Key", "http://schemas.microsoft.com/winfx/2006/xaml");
+                            if (key == "Colorway.IsDarkTheme")
+                                isDarkTheme = bool.Parse(reader.ReadElementContentAsString());
                         }
                     }
                 }
@@ -141,7 +154,7 @@ namespace Skymu.Theming
                 Debug.WriteLine($"[COLORWAY-MANAGER] Failed to read {xamlPath}: {ex.Message}");
                 throw;
             }
-            return null;
+            return (name, isDarkTheme);
         }
     }
 }

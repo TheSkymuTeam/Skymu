@@ -9,17 +9,16 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-
 using System;
 using System.Globalization;
 using System.Windows.Data;
 
-
-
 namespace Skymu.Converters
 {
-    // returns path to asset under /Themeable
-    public class ThemeableAPG : IValueConverter
+    // loads assets under /Universal
+    // this is used only in shared XAML files (such as the ones in /Forms)
+    // for theme-specific assets, directly reference the path instead
+    public class UniversalAssetLoader : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -27,7 +26,7 @@ namespace Skymu.Converters
             if (image_path == null)
                 return null;
 
-            return ConversionHelpers.AssetPathGenerator(image_path, false);
+            return ConversionHelpers.LoadAsset(image_path, true, parameter as string);
         }
 
         public object ConvertBack(

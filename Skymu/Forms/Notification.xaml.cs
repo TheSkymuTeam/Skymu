@@ -66,7 +66,7 @@ namespace Skymu.Forms
                 {
                     if (blue_background == null)
                     {
-                        blue_background = ConversionHelpers.AssetPathGenerator(
+                        blue_background = ConversionHelpers.LoadAsset(
                             "Notifications/bubble-blue.png",
                             false
                         );

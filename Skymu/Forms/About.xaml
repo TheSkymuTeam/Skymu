@@ -29,17 +29,17 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <converters:ThemeableAPG x:Key="ThemeableAPG" />
-        <converters:UniversalAPG x:Key="UniversalAPG" />
+        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
+        <converters:UniversalAssetLoader x:Key="UniversalAssetLoader" />
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAPG}, Source='backgrounds/about.png'}" Stretch="Uniform" />
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAssetLoader}, Source='backgrounds/about.png'}" Stretch="Uniform" />
     </Window.Background>
     <StackPanel>
         <Image
             Height="108"
             Margin="0,115,0,3"
-            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Branding/logo-about.png'}" />
+            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source='Branding/logo-about.png'}" />
         <TextBlock
             Margin="0,1,9,0"
             HorizontalAlignment="Center"

@@ -100,19 +100,19 @@ namespace Skymu.Skype5
             "Universal/Chat/msg-send-button-full.png"
         );
 
-        private readonly BitmapImage contactsBtnImage = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage contactsBtnImage = ConversionHelpers.LoadAsset(
             "Sidebar/contacts.png",
             false
         );
-        private readonly BitmapImage recentsBtnImage = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage recentsBtnImage = ConversionHelpers.LoadAsset(
             "Sidebar/recents.png",
             false
         );
-        private readonly BitmapImage contactsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage contactsBtnImageEmpty = ConversionHelpers.LoadAsset(
             "Sidebar/contacts-empty.png",
             false
         );
-        private readonly BitmapImage recentsBtnImageEmpty = ConversionHelpers.AssetPathGenerator(
+        private readonly BitmapImage recentsBtnImageEmpty = ConversionHelpers.LoadAsset(
             "Sidebar/recents-empty.png",
             false
         );
