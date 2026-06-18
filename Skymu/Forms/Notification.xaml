@@ -33,8 +33,8 @@
     Topmost="True"
     WindowStyle="None">
     <Window.Resources>
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+        <converters:ThemeableAPG x:Key="ThemeableAPG" />
+        <converters:UniversalAPG x:Key="UniversalAPG" />
     </Window.Resources>
     <Grid>
         <global:SliceControl
@@ -43,7 +43,7 @@
             DefaultIndex="0"
             ElementCount="1"
             SliceMode="2"
-            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Notifications/bubble-orange.png'}" />
+            Source="{Binding Converter={StaticResource ThemeableAPG}, Source='Notifications/bubble-orange.png'}" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="26" />
@@ -56,7 +56,7 @@
                 Margin="5,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-notification.png'}"
+                Source="{Binding Converter={StaticResource UniversalAPG}, Source='Branding/logo-notification.png'}"
                 Stretch="Fill" />
             <global:SliceControl
                 x:Name="close"
@@ -69,7 +69,7 @@
                 MouseLeftButtonDown="CloseButton_Click"
                 PressedIndex="0"
                 SliceMode="0"
-                Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Notifications/close.png'}"
+                Source="{Binding Converter={StaticResource UniversalAPG}, Source='Notifications/close.png'}"
                 StackDirection="Vertical"
                 Visibility="Hidden" />
             <Border Grid.Row="1" Padding="8,7">

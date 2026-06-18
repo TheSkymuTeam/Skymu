@@ -124,7 +124,7 @@ namespace Skymu.Skype4
 
         private BitmapImage GenerateAvatarImage(string avatar)
         {
-            return ImageHelper.FreezeLoad(Settings.ThemeRoot + "/Profile Pictures/" + avatar + ".png");
+            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
         }
 
         #endregion

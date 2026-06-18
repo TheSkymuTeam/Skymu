@@ -22,10 +22,12 @@ namespace Skymu.Helpers
 
     {
         private static readonly Dictionary<string, BitmapImage> _cache = new Dictionary<string, BitmapImage>();
+        private static string _cachedDesignTimeTheme = null;
+        private static string _cachedXamlFile = null;
 
         public static BitmapImage FreezeLoad(string path)
         {
-            return FreezeLoadFromPackUri($"pack://application:,,,/Themes/{Settings.Theme}/Assets/{path}");
+            return FreezeLoadFromPackUri($"pack://application:,,,/Themes/{Universal.Theme}/Assets/{path}");
         }
 
         public static BitmapImage FreezeLoadFromPackUri(string uri)

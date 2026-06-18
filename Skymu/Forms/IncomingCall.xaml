@@ -33,8 +33,8 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
     <Window.Resources>
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+        <converters:ThemeableAPG x:Key="ThemeableAPG" />
+        <converters:UniversalAPG x:Key="UniversalAPG" />
     </Window.Resources>
     <Grid>
         <global:SliceControl
@@ -45,7 +45,7 @@
             LeftWidth="15"
             RightWidth="15"
             SliceMode="2"
-            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/background.png'}"
+            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Incoming Call/background.png'}"
             TopHeight="12" />
         <Grid Margin="11,8,11,14">
             <Grid.RowDefinitions>
@@ -63,7 +63,7 @@
                     Margin="8,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-incoming-call.png'}"
+                    Source="{Binding Converter={StaticResource UniversalAPG}, Source='Branding/logo-incoming-call.png'}"
                     Stretch="Fill" />
                 <Grid
                     Grid.Row="0"
@@ -76,14 +76,14 @@
                         MouseLeftButtonDown="OnClose"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/round-button.png'}"
+                        Source="{Binding Converter={StaticResource UniversalAPG}, Source='Incoming Call/round-button.png'}"
                         StackDirection="Vertical"
                         Tag="NoDrag"
                         Visibility="Visible" />
                     <Image
                         Width="12"
                         Height="16"
-                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/close.png'}"
+                        Source="{Binding Converter={StaticResource UniversalAPG}, Source='Incoming Call/close.png'}"
                         Tag="NoDrag" />
                 </Grid>
 
@@ -102,7 +102,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='Profile Pictures/man.png'}" />
+                    Source="{Binding Converter={StaticResource ThemeableAPG}, Source='Profile Pictures/man.png'}" />
                 <Grid Grid.Column="1" Margin="10,0,0,0">
                     <TextBlock
                         x:Name="CallerName"
@@ -124,7 +124,7 @@
                             PressedIndex="2"
                             RightWidth="14"
                             SliceMode="1"
-                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/answer.png'}"
+                            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Incoming Call/answer.png'}"
                             StackDirection="Vertical"
                             Tag="NoDrag"
                             Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_ANSWER]}"
@@ -144,7 +144,7 @@
                             PressedIndex="2"
                             RightWidth="14"
                             SliceMode="1"
-                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Incoming Call/decline.png'}"
+                            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Incoming Call/decline.png'}"
                             StackDirection="Vertical"
                             Tag="NoDrag"
                             Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_DECLINE]}"

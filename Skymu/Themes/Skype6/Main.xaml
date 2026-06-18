@@ -1,4 +1,16 @@
-﻿<Window
+﻿<!-- 
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is contingent
+    on your agreement to be bound by the terms of our license.
+    If you do not wish to abide by those terms, you may not
+    use, modify, or distribute any code from the Skymu project.
+    License: https://skymu.app/legal/license
+    ============================================================
+-->
+<Window
     x:Class="Skymu.Skype6.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -46,7 +58,6 @@
         <converters:NullDependentMarginConverter x:Key="NullDependentMarginConverter" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
         <converters:ForwardedMessageStatusConverter x:Key="ForwardedMessageStatusConverter" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
@@ -534,7 +545,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype5, Source='Chat/reply-arrow.png'}" />
+                            Source="Assets/Themeable/Chat/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -670,7 +681,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/reply-arrow.png'}" />
+                            Source="Assets/Themeable/Chat/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -852,7 +863,7 @@
                                             HoverIndex="1"
                                             IsRadioButton="False"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/header.png'}"
+                                            Source="Assets/Themeable/Sidebar/header.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -989,7 +1000,7 @@
                                                 Height="16"
                                                 Margin="0,0,0,0"
                                                 HorizontalAlignment="Left"
-                                                Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/dropdown.png'}" />
+                                                Source="Assets/Themeable/Sidebar/dropdown.png" />
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -1020,7 +1031,7 @@
                                         MouseLeftButtonUp="HomeButton_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/home.png'}"
+                                        Source="Assets/Themeable/Sidebar/home.png"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         Grid.Column="2"
@@ -1031,7 +1042,7 @@
                                         MouseLeftButtonUp="CallPhones_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/calls.png'}"
+                                        Source="Assets/Themeable/Sidebar/calls.png"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         Grid.Column="4"
@@ -1041,7 +1052,7 @@
                                         HoverIndex="1"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/group.png'}"
+                                        Source="Assets/Themeable/Sidebar/group.png"
                                         StackDirection="Vertical" />
                                     <global:SliceControl
                                         x:Name="AddContactButton"
@@ -1054,7 +1065,7 @@
                                         MouseLeftButtonUp="AddContact_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/add.png'}"
+                                        Source="Assets/Themeable/Sidebar/add.png"
                                         StackDirection="Vertical" />
                                 </Grid>
 
@@ -1068,7 +1079,7 @@
                                         ElementCount="2"
                                         Interactive="False"
                                         PressedIndex="1"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/search-box.png'}"
+                                        Source="Assets/Themeable/Sidebar/search-box.png"
                                         StackDirection="Vertical" />
                                     <TextBox
                                         x:Name="SearchBox"
@@ -1103,7 +1114,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/contacts.png'}"
+                                            Source="Assets/Themeable/Sidebar/contacts.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1123,7 +1134,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/servers.png'}"
+                                            Source="Assets/Themeable/Sidebar/servers.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1144,7 +1155,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/recents.png'}"
+                                            Source="Assets/Themeable/Sidebar/recents.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1199,7 +1210,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1250,7 +1261,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1323,7 +1334,7 @@
                                                                         <Trigger Property="IsSelected" Value="True">
                                                                             <Setter TargetName="ItemBorder" Property="Background">
                                                                                 <Setter.Value>
-                                                                                    <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                    <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
                                                                                 </Setter.Value>
                                                                             </Setter>
                                                                         </Trigger>
@@ -1417,7 +1428,7 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Sidebar/header.png'}"
+                                        Source="Assets/Themeable/Sidebar/header.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1803,7 +1814,7 @@
                                             MouseLeftButtonUp="AddButtonClick"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/add.png'}"
+                                            Source="Assets/Themeable/Chat/add.png"
                                             StackDirection="Vertical" />
                                         <global:SliceControl
                                             x:Name="WifiButton"
@@ -1815,7 +1826,7 @@
                                             HoverIndex="1"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/network-none.png'}"
+                                            Source="Assets/Themeable/Chat/network-none.png"
                                             StackDirection="Vertical" />
                                     </StackPanel>
                                     <Rectangle
@@ -1947,7 +1958,7 @@
                                                         MouseLeftButtonUp="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
-                                                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/emoji.png'}"
+                                                        Source="Assets/Themeable/Chat/emoji.png"
                                                         StackDirection="Vertical" />
                                                     <Popup
                                                         x:Name="EmojiFlyout"
@@ -2064,3 +2075,5 @@
         </Grid>
     </Grid>
 </Window>
+
+

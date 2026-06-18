@@ -15,6 +15,9 @@ using System;
 using System.Windows.Media.Imaging;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using System.Windows;
+using System.Windows.Media;
+using System.ComponentModel;
 
 namespace Skymu.Converters
 {
@@ -42,11 +45,23 @@ namespace Skymu.Converters
 
         internal static BitmapImage AssetPathGenerator(
             string image_path,
-            bool is_shared
+            bool is_universal
         )
         {
+            string theme;
+            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                // designer: hard-code theme
+                theme = "Skype5";
+            }
+            else
+            {
+                // runtime: use the configured theme
+                theme = Universal.Theme;
+            }
             if (!image_path.StartsWith("/")) image_path = "/" + image_path; // just in case
-            return ImageHelper.FreezeLoad((is_shared ? "Universal" : Settings.ThemeRoot) + image_path);
+            return ImageHelper.FreezeLoadFromPackUri($"pack://application:,,,/Themes/{theme}/Assets/{(is_universal ? "Universal" : "Themeable") + image_path}");
         }
     }
+
 }

@@ -197,22 +197,6 @@
                         Tag="{x:Static enums:Soundpack.Skype8}" />
                 </ComboBox>
             </StackPanel>
-
-
-            <!-- <StackPanel Margin="0,5" Orientation="Horizontal">
-                <TextBlock
-                    Padding="0,0,10,0"
-                    VerticalAlignment="Center"
-                    Text="Application theme" />
-                <ComboBox
-                    Width="250"
-                    SelectedValue="{Binding Path=[ThemeRoot], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-                    SelectedValuePath="Tag">
-                    <ComboBoxItem Padding="6,0" Content="Light" Tag="Light" />
-                    <ComboBoxItem Padding="6,0" Content="Dark" Tag="Dark" />
-                </ComboBox>
-            </StackPanel>-->
-
             <StackPanel Margin="0,5" Orientation="Horizontal">
                 <TextBlock
                     Padding="0,0,10,0"

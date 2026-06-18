@@ -70,9 +70,44 @@ namespace Skymu
 
         public SliceControl()
         {
+
             InitializeComponent();
             _background = Background;
             _overlayRects = new[] { OverlayLeft, OverlayMiddle, OverlayRight };
+
+            // Animation timer
+            if (_sharedAnimationTimer == null)
+            {
+                _sharedAnimationTimer = new DispatcherTimer(DispatcherPriority.Render);
+                _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // 60 FPS base tick rate
+                _sharedAnimationTimer.Tick += (s, e) =>
+                {
+                    double deltaTime = 16.67 / 1000.0;
+
+                    foreach (var control in _animatingControls)
+                    {
+                        if (control.AnimationFps <= 0)
+                            continue;
+
+                        control._frameAccumulator += deltaTime * control.AnimationFps;
+
+                        if (control._frameAccumulator >= 1.0)
+                        {
+                            int framesToAdvance = (int)control._frameAccumulator;
+                            control._frameAccumulator -= framesToAdvance;
+
+                            control._currentAnimationFrame += framesToAdvance;
+                            if (control._currentAnimationFrame >= control.ElementCount)
+                                control._currentAnimationFrame %= control.ElementCount;
+
+                            if (control.SliceMode == 0)
+                                control._middleBrush.Viewbox = control.GetStateViewbox();
+                            else
+                                control.UpdateSlices();
+                        }
+                    }
+                };
+            }
 
             // Mouse events
             MouseEnter += (s, e) =>
@@ -147,40 +182,6 @@ namespace Skymu
                 }
             };
 
-            // Animation timer
-            if (_sharedAnimationTimer == null)
-            {
-                _sharedAnimationTimer = new DispatcherTimer(DispatcherPriority.Render);
-                _sharedAnimationTimer.Interval = TimeSpan.FromMilliseconds(16.67); // 60 FPS base tick rate
-                _sharedAnimationTimer.Tick += (s, e) =>
-                {
-                    double deltaTime = 16.67 / 1000.0;
-
-                    foreach (var control in _animatingControls)
-                    {
-                        if (control.AnimationFps <= 0)
-                            continue;
-
-                        control._frameAccumulator += deltaTime * control.AnimationFps;
-
-                        if (control._frameAccumulator >= 1.0)
-                        {
-                            int framesToAdvance = (int)control._frameAccumulator;
-                            control._frameAccumulator -= framesToAdvance;
-
-                            control._currentAnimationFrame += framesToAdvance;
-                            if (control._currentAnimationFrame >= control.ElementCount)
-                                control._currentAnimationFrame %= control.ElementCount;
-
-                            if (control.SliceMode == 0)
-                                control._middleBrush.Viewbox = control.GetStateViewbox();
-                            else
-                                control.UpdateSlices();
-                        }
-                    }
-                };
-            }
-
             Loaded += (s, e) =>
             {
                 UpdateHitTestState();
@@ -213,6 +214,7 @@ namespace Skymu
                 if (_animatingControls.Count == 0)
                     _sharedAnimationTimer?.Stop();
             };
+
         }
         #endregion
 
@@ -231,7 +233,7 @@ namespace Skymu
                new PropertyMetadata(null, OnAnyPropertyChanged)
            );
 
-        public Brush BackgroundPressed 
+        public Brush BackgroundPressed
         {
             get { return (Brush)GetValue(BackgroundPressedProperty); }
             set { SetValue(BackgroundPressedProperty, value); }
@@ -1062,7 +1064,7 @@ namespace Skymu
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (SliceControl)d; 
+            var control = (SliceControl)d;
             control.UpdateIconOffset();
         }
 

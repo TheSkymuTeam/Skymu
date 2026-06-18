@@ -32,8 +32,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
+        <converters:UniversalAPG x:Key="UniversalAPG" />
+        <converters:ThemeableAPG x:Key="ThemeableAPG" />
     </Page.Resources>
 
     <Grid Margin="15,20,15,35">
@@ -56,7 +56,7 @@
             <Separator Margin="0,10,0,10" Foreground="{StaticResource Separator}" />
             <!--  Do NOT use SliceControl here. Accurately, the image is unclickable.  -->
             <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source=Options/connection.png}" />
+                <Image Source="{Binding Converter={StaticResource UniversalAPG}, Source=Options/connection.png}" />
                 <TextBlock Margin="15,0,0,0" VerticalAlignment="Center">
                     <Hyperlink NavigateUri="https://github.com/TheSkymuTeam/Skymu/pulls" RequestNavigate="OURL">Contribute to Skymu</Hyperlink>
                 </TextBlock>

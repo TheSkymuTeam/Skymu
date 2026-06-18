@@ -163,11 +163,7 @@ namespace Skymu.Preferences
             get => SELECT("CredsText", "$ 0.00", "UI/General");
             set => WRITE("CredsText", value, nameof(CredsText), "UI/General");
         }
-        public static string ThemeRoot
-        {
-            get => SELECT("ThemeRoot", "Light", "UI/General");
-            set => WRITE("ThemeRoot", value, nameof(ThemeRoot), "UI/General");
-        }
+
         public static string PresentationFramework
         {
             get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");

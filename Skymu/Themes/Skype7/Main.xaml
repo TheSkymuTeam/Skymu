@@ -1,4 +1,16 @@
-﻿<Window
+﻿<!-- 
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is contingent
+    on your agreement to be bound by the terms of our license.
+    If you do not wish to abide by those terms, you may not
+    use, modify, or distribute any code from the Skymu project.
+    License: https://skymu.app/legal/license
+    ============================================================
+-->
+<Window
     x:Class="Skymu.Skype7.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -58,7 +70,6 @@
         <converters:NullDependentMarginConverter x:Key="NullDependentMarginConverter" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
         <converters:ForwardedMessageStatusConverter x:Key="ForwardedChecker" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
@@ -1066,7 +1077,7 @@
                         HoverIndex="1"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype6, Source='Chat/network-none.png'}"
+                        Source="Assets/Themeable/Chat/network-none.png"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->
                     <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->
@@ -1264,4 +1275,6 @@
         </Grid>
     </Grid>
 </Window>
+
+
 

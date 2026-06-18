@@ -29,17 +29,17 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <converters:ThemedAssetPathGenerator x:Key="ThemedAssetPathGenerator" />
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+        <converters:ThemeableAPG x:Key="ThemeableAPG" />
+        <converters:UniversalAPG x:Key="UniversalAPG" />
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemedAssetPathGenerator}, Source='backgrounds/about.png'}" Stretch="Uniform" />
+        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAPG}, Source='backgrounds/about.png'}" Stretch="Uniform" />
     </Window.Background>
     <StackPanel>
         <Image
             Height="108"
             Margin="0,115,0,3"
-            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Branding/logo-about.png'}" />
+            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Branding/logo-about.png'}" />
         <TextBlock
             Margin="0,1,9,0"
             HorizontalAlignment="Center"

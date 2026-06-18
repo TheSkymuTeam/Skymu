@@ -25,7 +25,7 @@
     Style="{StaticResource Window}"
     WindowStyle="SingleBorderWindow">
     <Window.Resources>
-        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
+        <converters:UniversalAPG x:Key="UniversalAPG" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -47,7 +47,7 @@
             Interactive="False"
             PressedIndex="-1"
             SliceMode="0"
-            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Dialog/icons.png'}"
+            Source="{Binding Converter={StaticResource UniversalAPG}, Source='Dialog/icons.png'}"
             StackDirection="Horizontal" />
         <!--  Top Header Section  -->
         <Grid

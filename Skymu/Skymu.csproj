@@ -254,19 +254,4 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Page Update="Forms\CallScreen.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Skypes\Skype7Skype7\Login.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Skypes\Skype7Skype7\Main.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Forms\IncomingCall.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-	</ItemGroup>
-
 </Project>

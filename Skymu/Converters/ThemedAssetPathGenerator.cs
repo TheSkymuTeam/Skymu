@@ -18,16 +18,16 @@ using System.Windows.Data;
 
 namespace Skymu.Converters
 {
-    // returns path to themed (dark/light mode) asset
-    public class ThemedAssetPathGenerator : IValueConverter
+    // returns path to asset under /Themeable
+    public class ThemeableAPG : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var image_path = value as string;
             if (image_path == null)
                 return null;
-            else
-                return ConversionHelpers.AssetPathGenerator(image_path, false);
+
+            return ConversionHelpers.AssetPathGenerator(image_path, false);
         }
 
         public object ConvertBack(
