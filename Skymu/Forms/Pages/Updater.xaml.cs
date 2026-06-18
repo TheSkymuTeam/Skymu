@@ -62,7 +62,7 @@ namespace Skymu.Forms.Pages
                 window.Width = 518;
                 window.Height = 394;
                 window.SizeToContent = SizeToContent.Manual;
-                window.Title = brand + "™ - Update";
+                window.Title = brand + "™ - " + Universal.Lang["sF_UPGRADE_FRM_CAPTION"];
                 window.ButtonRightAction = () => window.Close();
 
                 if (update_info?.status == false) // error when checking for update
@@ -109,7 +109,7 @@ namespace Skymu.Forms.Pages
                         WindowBase.IconType.PackageCheckmark,
                         Universal.Lang["sF_UPGRADE_UPTODATE"],
                         Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"],
-                        Settings.BrandingName += "™ - " + Universal.Lang["sF_UPGRADE_FRM_CAPTION"]
+                        Title
                     ).ShowDialog();
             }
         }
@@ -130,7 +130,7 @@ namespace Skymu.Forms.Pages
             if (window.Visibility == Visibility.Hidden)
                 window.Show();
             window.HeaderText = "Download complete";
-            window.ButtonLeftText = "Open file";
+            window.ButtonLeftText = Universal.Lang["sZAPBUTTON_OPENFILE"];
             window.ButtonRightText = Universal.Lang["sSKYACCESS_DLG_BTN_CLOSE"];
             window.ButtonLeftAction = () =>
             {
@@ -144,7 +144,7 @@ namespace Skymu.Forms.Pages
                         WindowBase.IconType.PackageWarning,
                         ex.Message,
                         "Cannot open file",
-                        Settings.BrandingName += "™ - " + Universal.Lang["sF_UPGRADE_FRM_CAPTION"]
+                        Title
                     ).ShowDialog();
                 }
                 window.Close();
@@ -156,7 +156,7 @@ namespace Skymu.Forms.Pages
                 new TimeSpan(0).ToString(@"hh\:mm\:ss"),
                 0
             );
-            Description.Text = "The release package has been saved to the Downloads folder.";
+            Description.Text = "The installer has been saved to your Downloads folder.";
             ProgBar.Value = 100;
         }
 
