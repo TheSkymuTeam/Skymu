@@ -1478,9 +1478,9 @@
                                             x:Name="ConversationList"
                                             Grid.Row="2"
                                             BorderThickness="0"
+                                            PreviewMouseLeftButtonUp="ConversationList_ItemClicked"
                                             ScrollViewer.CanContentScroll="True"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                            SelectionChanged="ContactList_SelectionChanged"
                                             Style="{StaticResource NoInsetListBox}">
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -1525,13 +1525,13 @@
                                             BorderThickness="0"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                             ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                            SelectedItemChanged="ServersList_SelectedItemChanged"
                                             Visibility="Collapsed">
                                             <TreeView.ItemContainerStyle>
                                                 <Style TargetType="TreeViewItem">
                                                     <Setter Property="IsExpanded" Value="False" />
                                                     <Setter Property="Padding" Value="0" />
                                                     <Setter Property="BorderThickness" Value="0" />
+                                                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ServerListItem_Clicked" />
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="TreeViewItem">

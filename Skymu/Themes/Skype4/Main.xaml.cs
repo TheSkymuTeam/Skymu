@@ -511,13 +511,14 @@ namespace Skymu.Skype4
             await SetConversation();
         }
 
-        private async void HandleServerItemSelection(RoutedPropertyChangedEventArgs<object> e)
+        private async Task HandleServerItemSelection(object value)
         {
-            if (e.NewValue is CategoryHeaderItem)
+            if (value is CategoryHeaderItem)
                 return;
 
-            ChatArea.DataContext = e.NewValue;
-            if (e.NewValue is ServerChannel channel)
+            ChatArea.DataContext = value;
+
+            if (value is ServerChannel channel)
             {
                 vmodel.SelectedConversation = channel;
                 await SetConversation();
@@ -773,16 +774,17 @@ namespace Skymu.Skype4
             }
         }
 
-        private void ServersList_SelectedItemChanged(
-            object sender,
-            RoutedPropertyChangedEventArgs<object> e
-        )
+        private async void ServerListItem_Clicked(object sender, MouseButtonEventArgs e)
         {
+            var item = (TreeViewItem)sender;
+            var data = item.DataContext;
+
             SelectedContact = null;
-            HandleServerItemSelection(e);
+
+            await HandleServerItemSelection(data);
         }
 
-        private void ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ConversationList_ItemClicked(object sender, MouseButtonEventArgs e)
         {
             var selected = ((ListBox)sender).SelectedItem;
             if (selected != null && selected is Metadata)
