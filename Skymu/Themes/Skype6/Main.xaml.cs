@@ -390,7 +390,6 @@ namespace Skymu.Skype6
 
         #region Resizing stuff
 
-        private double CTR_ORIGINAL_MAXHEIGHT;
         private double CBR_ORIGINAL_HEIGHT;
 
         private double TWR_ORIGINAL_HEIGHT;
