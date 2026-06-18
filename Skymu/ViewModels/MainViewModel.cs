@@ -1043,7 +1043,7 @@ namespace Skymu.ViewModels
         {
             var dlg = new OpenFileDialog
             {
-                Title = "Select a file to send",
+                Title = Universal.Lang.Format("sF_MULTICHAT_SENDFILE_MULTI_CAPTION", SelectedConversation.DisplayName),
                 CheckFileExists = true
             };
             if (dlg.ShowDialog() == true)
