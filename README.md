@@ -14,7 +14,7 @@ Skymu is a modern multiprotocol IM client that looks like classic versions of Sk
 
 # Build Guide
 For this guide, you will need Visual Studio 2019 (or newer) and NSIS 3 (or newer). Support will not be provided if older build tools are used.
-## Building the application
+## Application
 * Either `git clone` the repo (recommended) or download the repository as a .zip archive.
 <img width="559" height="190" alt="image" src="https://github.com/user-attachments/assets/6544bcbe-45e5-4348-ba60-dab1d31abab8" />
 
@@ -36,7 +36,7 @@ For this guide, you will need Visual Studio 2019 (or newer) and NSIS 3 (or newer
 * If you are encountering conflicts after making your changes, click "Rebuild Solution" to clean cache and build from scratch.
 <img width="351" height="96" alt="image" src="https://github.com/user-attachments/assets/a3dc5ce0-c6aa-4454-ac6d-b04f790d3335" />
 
-## Making the installer
+## Installer
 * Select the "Release" configuration in the action bar and build Skymu in Visual Studio.
 <img width="207" height="137" alt="image" src="https://github.com/user-attachments/assets/c42e4a0c-9341-4e9c-900c-1c07a18df647" />
 
