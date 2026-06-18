@@ -73,9 +73,6 @@ namespace Skymu.Skype5
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
 
-        private CancellationTokenSource _TitleBarIconHoldTokenSource;
-        private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
-
         private enum WindowType
         {
             Home,
@@ -908,38 +905,9 @@ namespace Skymu.Skype5
             HandleWindowDeactivated();
         }
 
-        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+        private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) 
         {
-            using (_TitleBarIconHoldTokenSource = new CancellationTokenSource())
-            {
-                try
-                {
-                    // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    await SoundManager.PlayAsync("BUSY");
-                    //if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
-                    string url;
-                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
-                    else
-                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
-
-                    Universal.OpenUrl(url);
-                }
-                catch (TaskCanceledException)
-                {
-                    // ass
-                }
-            }
-            _TitleBarIconHoldTokenSource = null;
-        }
-
-        private void TitleBarIcon_CancelHold(object sender, MouseEventArgs e)
-        {
-            // If a timer is currently running, cancel it
-            if (_TitleBarIconHoldTokenSource?.IsCancellationRequested == false)
-            {
-                _TitleBarIconHoldTokenSource.Cancel();
-            }
+            await vmodel.EasterEgg(MainViewModel.Egg.SkypeMemeVideo);
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
@@ -1556,7 +1524,7 @@ namespace Skymu.Skype5
                 bool found = false;
                 foreach (var item in ConversationList.Items)
                     if (item is Conversation c && c.Identifier == sc.Identifier)
-                        { ConversationList.SelectedItem = item as Conversation; found = true; break; }
+                    { ConversationList.SelectedItem = item as Conversation; found = true; break; }
                 if (!found)
                 {
                     if (ConversationList.ItemsSource == vmodel.ContactList)
@@ -1565,7 +1533,7 @@ namespace Skymu.Skype5
                         await SelectTab(btnContacts);
                     foreach (var item in ConversationList.Items)
                         if (item is Conversation c && c.Identifier == sc.Identifier)
-                            { ConversationList.SelectedItem = item as Conversation; break; }
+                        { ConversationList.SelectedItem = item as Conversation; break; }
                 }
                 _ = SetConversation();
             };
@@ -1628,7 +1596,7 @@ namespace Skymu.Skype5
             Universal.Lang.PropertyChanged += RefreshCreds;
             RefreshCreds();
 
-            
+
             HomeUnavailable.Navigate(new Forms.HomeUnavailable());
 
             SourceInitialized += (s, e) =>
