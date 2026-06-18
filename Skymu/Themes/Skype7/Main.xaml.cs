@@ -17,7 +17,7 @@
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
-using Skymu.UI.SharedInfrastructure;
+using Skymu.Infrastructure.Main;
 using Skymu.Forms;
 using Skymu.Helpers;
 using Skymu.Preferences;
@@ -388,7 +388,7 @@ namespace Skymu.Skype7
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = Services.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = SharedServices.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -423,7 +423,7 @@ namespace Skymu.Skype7
             if (string.IsNullOrEmpty(key))
                 return;
 
-            string unicode = Services.ConvertHexKeyToUnicode(key);
+            string unicode = SharedServices.ConvertHexKeyToUnicode(key);
             int caret = TextBoxMessage.CaretIndex;
             TextBoxMessage.Text = TextBoxMessage.Text.Insert(caret, unicode);
             TextBoxMessage.CaretIndex = caret + unicode.Length;

@@ -27,10 +27,9 @@ using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 
-namespace Skymu.UI.SharedInfrastructure
+namespace Skymu.Infrastructure.Main
 {
-    public static class Services
-
+    public static class SharedServices
     {
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
         public static void SetPlaceholder(RichTextBox rtb, string text, bool force = false)

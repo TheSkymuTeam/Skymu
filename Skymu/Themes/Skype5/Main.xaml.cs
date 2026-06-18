@@ -17,7 +17,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Forms;
-using Skymu.UI.SharedInfrastructure;
+using Skymu.Infrastructure.Main;
 using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
@@ -230,7 +230,7 @@ namespace Skymu.Skype5
             if (tree.SelectedItem == null)
                 return;
 
-            TreeViewItem container = Services.GetContainerFromItem(tree, tree.SelectedItem);
+            TreeViewItem container = SharedServices.GetContainerFromItem(tree, tree.SelectedItem);
             if (container != null)
                 container.IsSelected = false;
         }
@@ -878,7 +878,7 @@ namespace Skymu.Skype5
 
         private async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e) 
         {
-            await Services.EasterEgg(Services.Egg.SkypeMemeVideo);
+            await SharedServices.EasterEgg(SharedServices.Egg.SkypeMemeVideo);
         }
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
@@ -894,7 +894,7 @@ namespace Skymu.Skype5
 
         protected override void OnClosed(EventArgs e)
         {
-            Services.SavePositioning(this, SidebarColumn);
+            SharedServices.SavePositioning(this, SidebarColumn);
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -944,7 +944,7 @@ namespace Skymu.Skype5
 
         private async void OnStatus(object sender, RoutedEventArgs e)
         {
-            await Services.SetStatusFromMenuItems(sender, MenubarStatusHolder.Items);
+            await SharedServices.SetStatusFromMenuItems(sender, MenubarStatusHolder.Items);
         }
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
@@ -972,19 +972,19 @@ namespace Skymu.Skype5
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
-            Services.RemovePlaceholder(SearchBox);
+            SharedServices.RemovePlaceholder(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            Services.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
-            Services.RemovePlaceholder(MessageTextBox);
-            if (SendMsgButton != null) SendMsgButton.IsEnabled = Services.CheckIfMessageSendable(MessageTextBox);
+            SharedServices.RemovePlaceholder(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1010,8 +1010,8 @@ namespace Skymu.Skype5
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (SendMsgButton != null) SendMsgButton.IsEnabled = Services.CheckIfMessageSendable(MessageTextBox);
-            if (Services.HasAnyContent(MessageTextBox))
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
+            if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
         }
 
@@ -1044,7 +1044,7 @@ namespace Skymu.Skype5
             if (!SendMsgButton.IsEnabled && message == null)
                 return;
 
-            string message_body = message ?? Services.ExtractText(MessageTextBox);
+            string message_body = message ?? SharedServices.ExtractText(MessageTextBox);
 
             MessageTextBox.Document.Blocks.Clear();
             MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
@@ -1057,11 +1057,11 @@ namespace Skymu.Skype5
         {
             if (!MessageTextBox.IsKeyboardFocused || force)
             {
-                if (!Services.HasAnyContent(MessageTextBox))
+                if (!SharedServices.HasAnyContent(MessageTextBox))
                 {
-                    Services.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                    SharedServices.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                if (SendMsgButton != null) SendMsgButton.IsEnabled = Services.CheckIfMessageSendable(MessageTextBox);
+                if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             }
         }
 
@@ -1263,8 +1263,8 @@ namespace Skymu.Skype5
                 "sCHAT_TYPE_HERE_DIALOG",
                 vmodel.SelectedConversation?.DisplayName
             );
-            Services.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            if (SendMsgButton != null) SendMsgButton.IsEnabled = Services.CheckIfMessageSendable(MessageTextBox);
+            SharedServices.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1313,7 +1313,7 @@ namespace Skymu.Skype5
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = Services.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = SharedServices.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -1354,7 +1354,7 @@ namespace Skymu.Skype5
                 return;
 
             EmojiFlyout.IsOpen = false;
-            Services.RemovePlaceholder(MessageTextBox);
+            SharedServices.RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
             var sliceControl = Formatter.MakeEmoji(emojiFilename);
@@ -1375,7 +1375,7 @@ namespace Skymu.Skype5
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            if (SendMsgButton != null) SendMsgButton.IsEnabled = Services.CheckIfMessageSendable(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
         }
 
         #endregion
@@ -1510,7 +1510,7 @@ namespace Skymu.Skype5
                 { btnRecents, RecentsColumn },
             };
             _ = SelectTab(btnRecents);
-            Services.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             if (!Universal.Plugin.SupportsServers)
@@ -1617,12 +1617,12 @@ namespace Skymu.Skype5
         private void RefreshExtras()
         {
             ExtrasMenu.Items.Clear();
-            ExtrasMenu.ItemsSource = Services.GetExtras(GetExtrasMenuItem);
+            ExtrasMenu.ItemsSource = SharedServices.GetExtras(GetExtrasMenuItem);
         }
 
         private void RefreshCreds(object sender = null, PropertyChangedEventArgs e = null)
         {
-            SkypeCreditBox.Text = Services.GetCreditText();
+            SkypeCreditBox.Text = SharedServices.GetCreditText();
         }
     }
 }
