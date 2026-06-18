@@ -168,7 +168,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Click="bRClick"
-                        Content="OK"
+                        Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
                         FontFamily="Tahoma"
                         FontSize="11"
                         IsDefault="True" />

@@ -13,6 +13,7 @@ using Skymu.Preferences;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Skymu.Forms
 {
@@ -60,12 +61,17 @@ namespace Skymu.Forms
             NikoSad,
             KentuckyFriedBadge,
             KentuckyFriedSkymu,
-            kentuckyFriedCrosstalk
+            KentuckyFriedCrosstalk
         }
 
         public WindowBase(Page page)
         {
             InitializeComponent();
+            if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6")
+            {
+                GradientTop.Background = (SolidColorBrush)Application.Current.Resources["Metro.Strip.Background"];
+                GradientBottom.Background = (SolidColorBrush)Application.Current.Resources["Metro.Strip.Background"];
+            }
             PageHost.Navigate(page);
         }
 

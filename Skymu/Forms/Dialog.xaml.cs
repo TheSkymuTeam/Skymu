@@ -140,7 +140,6 @@ namespace Skymu.Forms
                     ButtonMiddle.Content = bmText;
                 if (brText != null)
                     ButtonRight.Content = brText;
-                else ButtonRight.Content = Universal.Lang["sF_CONFIRM_OK_BTN"];
 
                 this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }

@@ -56,15 +56,9 @@
             Panel.ZIndex="0">
             <Border
                 Name="GradientTop"
-                BorderBrush="#DADADA"
-                BorderThickness="0,0,0,1">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="#F2F2F2" />
-                        <GradientStop Offset="1" Color="#E6E6E6" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                Background="{StaticResource Strip.Background}"
+                BorderBrush="{StaticResource Card.Border}"
+                BorderThickness="0,0,0,1" />
             <TextBlock
                 x:Name="Header"
                 Height="23"
@@ -85,15 +79,9 @@
         <Grid Grid.Row="2" Height="44">
             <Border
                 Name="GradientBottom"
-                BorderBrush="#DADADA"
-                BorderThickness="0,1,0,0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="#F2F2F2" />
-                        <GradientStop Offset="1" Color="#E6E6E6" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
+                Background="{StaticResource Strip.Background}"
+                BorderBrush="{StaticResource Card.Border}"
+                BorderThickness="0,1,0,0" />
             <Button
                 x:Name="ButtonEdgeLeft"
                 Height="23"
@@ -121,7 +109,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Click="bLClick"
-                    Content="OK"
+                    Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
                     FontSize="11"
                     IsDefault="True"
@@ -135,7 +123,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Click="bMClick"
-                    Content="Something"
+                    Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
                     FontSize="11"
                     IsDefault="False"
@@ -149,7 +137,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Click="bRClick"
-                    Content="Cancel"
+                    Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
                     FontSize="11" />
             </StackPanel>
