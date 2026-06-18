@@ -1818,7 +1818,7 @@
                                         PressedIndex="2"
                                         Source="{Binding Converter={StaticResource ThemedAssetPathGenerator}, ConverterParameter=Skype5, Source='Chat/tab-middle.png'}"
                                         StackDirection="Vertical"
-                                        Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_FEEDBACK]}"
+                                        Text="Report a bug"
                                         TextColor="{StaticResource Text.HighContrast}"
                                         TextFont="Arial"
                                         TextLeftMargin="31"

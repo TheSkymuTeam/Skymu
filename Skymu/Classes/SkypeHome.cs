@@ -18,10 +18,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Security;
 using System.Text.Json;
 using System.Web;
 using System.Windows.Controls;
+using System.Windows;
 using Yggdrasil.Models;
 
 namespace Skymu
@@ -72,7 +74,7 @@ namespace Skymu
             }
         }
 
-        private static void InvokeEval(string script)
+        internal static void InvokeEval(string script)
         {
             try
             {
@@ -329,16 +331,29 @@ namespace Skymu
 
         public void FireLiveChanged(bool isLive) => _liveListener?.call(null, isLive);
 
-        public string FetchAdList()
+        public void FetchAdListAsync()
         {
-            try
+            Task.Run(async () =>
             {
-                return Universal.SkymuHttpClient.GetStringAsync("https://www.skymu.app/ads/list.json").Result;
-            }
-            catch
-            {
-                return "[]";
-            }
+                string ads;
+
+                try
+                {
+                    ads = await Universal.SkymuHttpClient
+                        .GetStringAsync("https://www.skymu.app/ads/list.json");
+                }
+                catch
+                {
+                    ads = "[]";
+                }
+
+                Application.Current.Dispatcher.BeginInvoke(
+                    new Action(() =>
+                    {
+                        SkypeHome.InvokeEval(
+                            $"window.OnAdsLoaded({JsonSerializer.Serialize(ads)});");
+                    }));
+            });
         }
     }
 

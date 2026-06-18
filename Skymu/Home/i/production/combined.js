@@ -4916,60 +4916,73 @@ imgWrapper.border = "0";
             shuffledDims[j] = temp;
         }
 
-        var jsonStr = null;
-        try { jsonStr = window.external.getapi(0).FetchAdList(); } catch (e) { }
+        window.OnAdsLoaded = function (jsonStr) {
 
-        if (!jsonStr) { adShown = false; return; }
+            if (!jsonStr) { adShown = false; return; }
 
-        var data;
-        try { data = $.parseJSON(jsonStr); } catch (e) { adShown = false; return; }
+            var data;
+            try { data = $.parseJSON(jsonStr); } catch (e) { adShown = false; return; }
 
-        if (requestedAdSlug) {
-            for (var a = 0; a < data.length; a++) {
-                if (data[a].Enabled === false) { continue; }
-                var slug = data[a].Name.toLowerCase().replace(/\s+/g, "-");
-                if (slug === requestedAdSlug) {
-                    var adDims = data[a].Dimensions;
-                    for (var d = 0; d < shuffledDims.length; d++) {
-                        for (var k = 0; k < adDims.length; k++) {
-                            if (adDims[k] === shuffledDims[d]) {
-                                showAd(data[a], adDims[k]);
-                                return;
+            if (requestedAdSlug) {
+                for (var a = 0; a < data.length; a++) {
+                    if (data[a].Enabled === false) { continue; }
+                    var slug = data[a].Name.toLowerCase().replace(/\s+/g, "-");
+                    if (slug === requestedAdSlug) {
+                        var adDims = data[a].Dimensions;
+                        for (var d = 0; d < shuffledDims.length; d++) {
+                            for (var k = 0; k < adDims.length; k++) {
+                                if (adDims[k] === shuffledDims[d]) {
+                                    showAd(data[a], adDims[k]);
+                                    return;
+                                }
                             }
                         }
+                        break;
                     }
+                }
+            }
+
+            var chosenDimension = null;
+            var eligibleAds = null;
+
+            for (var d = 0; d < shuffledDims.length; d++) {
+                var dim = shuffledDims[d];
+                var matching = [];
+
+                for (var a = 0; a < data.length; a++) {
+                    if (data[a].Enabled === false) { continue; }
+                    var adDims = data[a].Dimensions;
+
+                    for (var k = 0; k < adDims.length; k++) {
+                        if (adDims[k] == dim) {
+                            matching.push(data[a]);
+                            break;
+                        }
+                    }
+                }
+
+                if (matching.length > 0) {
+                    chosenDimension = dim;
+                    eligibleAds = matching;
                     break;
                 }
             }
-        }
 
-        var chosenDimension = null;
-        var eligibleAds = null;
-
-        for (var d = 0; d < shuffledDims.length; d++) {
-            var dim = shuffledDims[d];
-            var matching = [];
-            for (var a = 0; a < data.length; a++) {
-                if (data[a].Enabled === false) { continue; }
-                var adDims = data[a].Dimensions;
-                for (var k = 0; k < adDims.length; k++) {
-                    if (adDims[k] == dim) { matching.push(data[a]); break; }
-                }
+            if (!chosenDimension || !eligibleAds || eligibleAds.length == 0) {
+                adShown = false;
+                return;
             }
-            if (matching.length > 0) {
-                chosenDimension = dim;
-                eligibleAds = matching;
-                break;
-            }
-        }
 
-        if (!chosenDimension || !eligibleAds || eligibleAds.length == 0) {
+            var chosenAd = eligibleAds[Math.floor(Math.random() * eligibleAds.length)];
+            showAd(chosenAd, chosenDimension);
+        };
+
+        try {
+            window.external.getapi(0).FetchAdListAsync();
+        }
+        catch (e) {
             adShown = false;
-            return;
         }
-
-        var chosenAd = eligibleAds[Math.floor(Math.random() * eligibleAds.length)];
-        showAd(chosenAd, chosenDimension);
     };
 
     return {
