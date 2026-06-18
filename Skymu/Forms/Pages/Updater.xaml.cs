@@ -87,7 +87,7 @@ namespace Skymu.Forms.Pages
                         Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info?.name;
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonLeftAction = () => InitiateUpdate();
-                    window.ButtonMiddleText = "Skip this version"; // TODO i18n
+                    window.ButtonMiddleText = Universal.Lang["sZAPBUTTON_SKIPVERSION"]; 
                     window.ButtonMiddleEnabled = true;
                     window.ButtonMiddleAction = () => { SkipUpdate(update_info?.tag); window.Close(); };
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
