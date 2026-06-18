@@ -42,7 +42,6 @@ namespace Skymu.Forms.Pages
         {
             InitializeComponent();
             UserListView.ItemsSource = FoundList;
-            ShowWindow();
         }
 
         public void Close() => window.Close();

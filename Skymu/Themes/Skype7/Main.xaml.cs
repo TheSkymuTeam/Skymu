@@ -553,7 +553,8 @@ namespace Skymu.Skype7
 
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
-            Universal.NotImplemented("Adding contacts on Skype 7");
+            // TODO add Skype 7's integrated add contact flow instead of using this
+            vmodel.ShowAddContactWindow();
         }
 
         #endregion

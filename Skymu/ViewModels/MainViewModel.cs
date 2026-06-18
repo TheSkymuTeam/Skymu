@@ -18,6 +18,8 @@ using Skymu.Emoticons;
 using Skymu.Enumerations;
 using Skymu.Forms;
 using Skymu.Helpers;
+using Yggdrasil;
+using Skymu.Forms.Pages;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.UserDirectory;
@@ -61,6 +63,11 @@ namespace Skymu.ViewModels
         // since the servers list is lazy-loaded, we need a TCS to handle the clicks on the "Servers" 
         // tab before the list has actually been populated
         private readonly TaskCompletionSource<bool> _serversLoadedSource = new TaskCompletionSource<bool>();
+
+        // Constants
+        private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
+        private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
+        private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
 
         // for the database, TODO change list loading so it attempts to load from DB first
         internal DatabaseManager Database
@@ -1013,6 +1020,25 @@ namespace Skymu.ViewModels
                     Universal.OpenUrl(url);
                     break;
             }
+        }
+
+        public void ShowAddContactWindow()
+        {
+            if (Universal.Plugin is IListManagement)
+            {
+                new AddContact().ShowWindow();
+            }
+            else
+            {
+                SoundManager.Play("CALL_ERROR1");
+                Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
+            }
+        }
+
+        public void ShowCallPhones()
+        {
+            SoundManager.Play("CALL_ERROR1");
+            Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 
 

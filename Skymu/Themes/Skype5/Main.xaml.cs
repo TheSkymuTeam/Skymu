@@ -47,16 +47,10 @@ namespace Skymu.Skype5
     {
         #region Variables
 
-        // Constants
-        private const string VONAGE = "Hahahahaha... nice try. Get a damn Vonage.";
-        private const string VONAGE_CONTACT = "This plugin does not support adding contacts.";
-        private const string VONAGE_CAPTION = "Can't you just use your smartphone?";
-
         // ViewModel
         private MainViewModel vmodel;
 
         // Other file-level variables
-        private AddContact _addContactWindow;
         private readonly WindowFrame _currentFrame = Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
@@ -1004,16 +998,7 @@ namespace Skymu.Skype5
 
         private void AddContact_Click(object sender, MouseButtonEventArgs e)
         {
-            if (Universal.Plugin is IListManagement)
-            {
-                _addContactWindow?.Close();
-                _addContactWindow = new AddContact();
-            }
-            else
-            {
-                SoundManager.Play("CALL_ERROR1");
-                Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
-            }
+            vmodel.ShowAddContactWindow();
         }
 
         private async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
@@ -1079,8 +1064,7 @@ namespace Skymu.Skype5
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            SoundManager.Play("CALL_ERROR1");
-            Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
+            vmodel.ShowCallPhones();
         }
 
         private async void AddButtonClick(object sender, MouseButtonEventArgs e)

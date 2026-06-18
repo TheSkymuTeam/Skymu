@@ -10,7 +10,6 @@
     License: https://skymu.app/legal/license
     ============================================================
 -->
-<!--  TODO: Change assets path to Skype 4  -->
 <Page
     x:Class="Skymu.Forms.Pages.AddContact"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -36,6 +35,7 @@
         <converters:SkyLangParseConverter x:Key="SkyLangParseConverter" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
+        <converters:SharedAssetPathGenerator x:Key="SharedAssetPathGenerator" />
         <DataTemplate x:Key="MoreShitYouCanDo">
             <StackPanel Margin="0,0,0,30" Orientation="Vertical">
                 <uc:QuickLTB
@@ -44,7 +44,7 @@
                     FontSize="11" />
                 <Separator Margin="0,10,0,8" />
                 <global:SliceControl
-                    Source="Assets/Universal/Icon/plus.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/plus.png'}"
                     Text="{Binding Path='[sAC_MORE_ADDPSTN]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -52,7 +52,7 @@
                     TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="Assets/Universal/Icon/add.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/add.png'}"
                     Text="{Binding Path='[sAC_MORE_IMPORT]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -60,7 +60,7 @@
                     TextSize="11" />
                 <global:SliceControl
                     Margin="0,2,0,0"
-                    Source="Assets/Universal/Icon/megaphone.png"
+                    Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/megaphone.png'}"
                     Text="{Binding Path='[sAC_MORE_SHARE]', Source={StaticResource Lang}}"
                     TextColor="{StaticResource Text.Hyperlink}"
                     TextFont="Tahoma"
@@ -186,7 +186,7 @@
                         Visibility="Collapsed">
                         <global:SliceControl
                             x:Name="ErrorText"
-                            Source="Assets/Universal/Icon/warning.png"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/warning.png'}"
                             Text="{Binding Path='[sF_ADDFRIEND_LABEL4]', Source={StaticResource Lang}}"
                             TextColor="Red"
                             TextFont="Tahoma"
@@ -246,7 +246,7 @@
                         </DockPanel>
                         <global:SliceControl
                             Margin="0,25,0,0"
-                            Source="Assets/Universal/Icon/megaphone.png"
+                            Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/megaphone.png'}"
                             Text="{Binding Path='[sAC_INVITE_UNFOUND]', Source={StaticResource Lang}}"
                             TextColor="{StaticResource Text.Hyperlink}"
                             TextLeftMargin="22"
@@ -366,7 +366,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="/Skype5/Assets/Universal/Chat/mood.png" />
+                                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Chat/mood.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"
@@ -384,7 +384,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="/Skype5/Assets/Universal/Chat/clock.png" />
+                                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Chat/clock.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"
@@ -404,7 +404,7 @@
                                         ElementCount="22"
                                         Interactive="False"
                                         SliceMode="0"
-                                        Source="/Skype5/Assets/Universal/Icon/skype-status-small.png"
+                                        Source="{Binding Converter={StaticResource SharedAssetPathGenerator}, Source='Icon/skype-status-small.png'}"
                                         StackDirection="Horizontal" />
                                     <TextBlock
                                         Margin="11,0,0,0"
