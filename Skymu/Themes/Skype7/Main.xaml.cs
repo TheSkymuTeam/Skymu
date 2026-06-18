@@ -11,12 +11,13 @@
 // This code is EXPIREMENTAL and has not been reviewed by
 // persfidious, patricktbp, or HUBAXE.
 // It is a port of logic that previously lived in the old
-// "Skype7" project.
+// "SeanKype" project.
 /*==========================================================*/
 
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
+using Skymu.UI.SharedInfrastructure;
 using Skymu.Forms;
 using Skymu.Helpers;
 using Skymu.Preferences;
@@ -387,7 +388,7 @@ namespace Skymu.Skype7
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
                     Cursor = Cursors.Hand,
-                    ToolTip = MainViewModel.ConvertHexKeyToUnicode(emojiKey),
+                    ToolTip = Services.ConvertHexKeyToUnicode(emojiKey),
                 };
                 try
                 {
@@ -422,7 +423,7 @@ namespace Skymu.Skype7
             if (string.IsNullOrEmpty(key))
                 return;
 
-            string unicode = MainViewModel.ConvertHexKeyToUnicode(key);
+            string unicode = Services.ConvertHexKeyToUnicode(key);
             int caret = TextBoxMessage.CaretIndex;
             TextBoxMessage.Text = TextBoxMessage.Text.Insert(caret, unicode);
             TextBoxMessage.CaretIndex = caret + unicode.Length;
