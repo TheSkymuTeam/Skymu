@@ -1041,6 +1041,50 @@ namespace Skymu.ViewModels
             Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 
+        public string GetCreditText()
+        {
+            string subtext = Universal.Lang["sACCOUNT_PANEL_NR_OF_SUBSCRIPTIONS"];
+            switch (Settings.CredsSubCount)
+            {
+                case 0:
+                    subtext = Universal.Lang["sACCOUNT_PANEL_NO_SUBSCRIPTION"];
+                    break;
+                case 1:
+                    subtext = Universal.Lang["sACCOUNT_PANEL_ONE_SUBSCRIPTION"];
+                    break;
+            }
+            return Settings.CredsText + " - " + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+        }
+
+        private readonly PresenceStatus[] _indexToStatus = new PresenceStatus[]
+{
+            PresenceStatus.Online,
+            PresenceStatus.Away,
+            PresenceStatus.DoNotDisturb,
+            PresenceStatus.Invisible
+};
+
+        public async Task SetStatusFromMenuItems(object sender, ItemCollection items)
+        {
+            int i = 0;
+            foreach (var item in items)
+            {
+                if (!(item is MenuItem mitem) || ((MenuItem)sender).Header != mitem.Header)
+                {
+                    if (item is MenuItem mitemm)
+                        Debug.WriteLine(mitemm?.Header);
+                    i++;
+                    continue;
+                }
+                _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
+                return;
+            }
+            Universal.ShowMessage(
+                "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
+                "Failed to set connection status",
+                WindowBase.IconType.Error
+            );
+        }
 
         public void InformDND()
         {

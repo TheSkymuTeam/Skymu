@@ -965,33 +965,9 @@ namespace Skymu.Skype5
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
-        private readonly PresenceStatus[] _indexToStatus = new PresenceStatus[]
+        private async void OnStatus(object sender, RoutedEventArgs e)
         {
-            PresenceStatus.Online,
-            PresenceStatus.Away,
-            PresenceStatus.DoNotDisturb,
-            PresenceStatus.Invisible
-        };
-        private void OnStatus(object sender, RoutedEventArgs e)
-        {
-            int i = 0;
-            foreach (var item in MenubarStatusHolder.Items)
-            {
-                if (!(item is MenuItem mitem) || ((MenuItem)sender).Header != mitem.Header)
-                {
-                    if (item is MenuItem mitemm)
-                        Debug.WriteLine(mitemm?.Header);
-                    i++;
-                    continue;
-                }
-                _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
-                return;
-            }
-            Universal.ShowMessage(
-                "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
-                "Failed to set connection status",
-                WindowBase.IconType.Error
-            );
+            await vmodel.SetStatusFromMenuItems(sender, MenubarStatusHolder.Items);
         }
 
         private void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
@@ -1687,20 +1663,7 @@ namespace Skymu.Skype5
 
         private void RefreshCreds(object sender = null, PropertyChangedEventArgs e = null)
         {
-            string subtext = Universal.Lang["sACCOUNT_PANEL_NR_OF_SUBSCRIPTIONS"];
-            switch (Settings.CredsSubCount)
-            {
-                case 0:
-                    subtext = Universal.Lang["sACCOUNT_PANEL_NO_SUBSCRIPTION"];
-                    break;
-                case 1:
-                    subtext = Universal.Lang["sACCOUNT_PANEL_ONE_SUBSCRIPTION"];
-                    break;
-            }
-            SkypeCreditBox.Text =
-                Settings.CredsText
-                + " - "
-                + subtext.Replace("%d", Settings.CredsSubCount.ToString());
+            SkypeCreditBox.Text = vmodel.GetCreditText();
         }
     }
 }
