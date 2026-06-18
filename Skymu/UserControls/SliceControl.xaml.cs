@@ -66,6 +66,7 @@ namespace Skymu
         private ImageBrush _overlayRightBrush;
 
         private const double PressedDefaultOffsetY = 1.0;
+        private bool holding_down = false;
 
         public SliceControl()
         {
@@ -85,8 +86,6 @@ namespace Skymu
             {
                 if (!IsEnabled)
                     return;
-                if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
-                    return;
                 SetStateInternal(ButtonVisualState.Default);
             };
 
@@ -94,8 +93,12 @@ namespace Skymu
             {
                 if (!IsEnabled)
                     return;
+
                 if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
                     return;
+
+                holding_down = true;
+
                 SetStateInternal(ButtonVisualState.Pressed);
             };
 
@@ -103,6 +106,8 @@ namespace Skymu
             {
                 if (!IsEnabled)
                     return;
+
+                holding_down = false;
 
                 var newState =
                     (IsMouseOver && HoverIndex != -1)
@@ -764,6 +769,7 @@ namespace Skymu
                 && _visualState == ButtonVisualState.Pressed
                 && state != ButtonVisualState.Pressed
                 && state != ButtonVisualState.Disabled
+                && !holding_down
             )
                 return;
 
