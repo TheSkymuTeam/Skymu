@@ -138,7 +138,7 @@ namespace Skymu.Forms
                 _activeNotification._closeTimer.Start();
             }
 
-            SoundManager.Play("message-recieved");
+            SoundManager.Play("IM");
         }
 
         private Notification() { }

@@ -40,7 +40,7 @@ namespace Skymu.Forms
                 EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
             };
             BeginAnimation(OpacityProperty, animation);
-            SoundManager.PlayLoop("call-in");
+            SoundManager.PlayLoop("CALL_IN");
             if (_call.Caller.ProfilePicture != null)
                 CallerAvatar.Source = ImageHelper.GenerateFromArray(_call.Caller.ProfilePicture);
             else
@@ -50,14 +50,14 @@ namespace Skymu.Forms
 
         private void OnClose(object sender, MouseButtonEventArgs e)
         {
-            SoundManager.StopPlayback("call-in");
+            SoundManager.StopPlayback("CALL_IN");
             Close();
         }
 
         private void OnAnswer(object sender, MouseButtonEventArgs e)
         {
             Answered?.Invoke(this, new EventArgs());
-            SoundManager.StopPlayback("call-in");
+            SoundManager.StopPlayback("CALL_IN");
             Close();
         }
 
@@ -75,9 +75,9 @@ namespace Skymu.Forms
 
         private void OnDecline(object sender, MouseButtonEventArgs e)
         {
-            SoundManager.StopPlayback("call-in");
+            SoundManager.StopPlayback("CALL_IN");
             _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
-            SoundManager.Play("call-end");
+            SoundManager.Play("HANGUP");
             Close();
         }
     }

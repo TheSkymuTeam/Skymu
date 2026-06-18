@@ -639,7 +639,7 @@ namespace Skymu.Skype6
             if (!(Universal.Plugin is IListManagement))
             {
                 AddContactButton.SetState(ButtonVisualState.Default);
-                SoundManager.Play("call-error");
+                SoundManager.Play("CALL_ERROR1");
                 Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
                 return;
             }
@@ -722,7 +722,7 @@ namespace Skymu.Skype6
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            SoundManager.Play("call-error");
+            SoundManager.Play("CALL_ERROR1");
             Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 

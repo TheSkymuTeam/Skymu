@@ -59,20 +59,20 @@ namespace Skymu.Sounds
         static void LoadSounds()
         {
             cached_sounds = new Dictionary<string, CachedSound>();
-            Load("message-sent", "IM_SENT.WAV");
-            Load("message-recieved", "IM.WAV");
-            Load("call-error", "CALL_ERROR1.WAV");
-            Load("call-init", "CALL_INIT.WAV");
-            Load("call-out", "CALL_OUT.WAV");
-            Load("call-reconnect", "CALL_RECONNECT_FRONT.WAV");
-            Load("call-in", "CALL_IN.WAV");
-            Load("call-end", "HANGUP.WAV");
-            Load("login", "LOGIN.WAV");
-            Load("logout", "LOGOUT.WAV");
-            Load("busy", "BUSY.WAV");
+            Load("IM_SENT.WAV");
+            Load("IM.WAV");
+            Load("CALL_ERROR1.WAV");
+            Load("CALL_INIT.WAV");
+            Load("CALL_OUT.WAV");
+            Load("CALL_RECONNECT_FRONT.WAV");
+            Load("CALL_IN.WAV");
+            Load("HANGUP.WAV");
+            Load("LOGIN.WAV");
+            Load("LOGOUT.WAV");
+            Load("BUSY.WAV");
         }
 
-        static void Load(string key, string filename, string path = "", string fallback = Universal.Name)
+        static void Load(string filename, string path = "", string fallback = Universal.Name)
         {
             if (path == "")
                 path = Settings.SoundPack.ToString();
@@ -91,7 +91,7 @@ namespace Skymu.Sounds
                     using (var ms = new MemoryStream())
                     {
                         sri.Stream.CopyTo(ms);
-                        cached_sounds[key] = new CachedSound(ms.ToArray());
+                        cached_sounds[Path.GetFileNameWithoutExtension(filename)] = new CachedSound(ms.ToArray());
                     }
 
                     return;
@@ -102,7 +102,7 @@ namespace Skymu.Sounds
             }
 
             if (fallback != string.Empty && path != fallback)
-                Load(key, filename, fallback, Universal.Name);
+                Load(filename, fallback, Universal.Name);
         }
 
         public static void Play(string key)

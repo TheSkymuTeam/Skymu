@@ -129,12 +129,12 @@ namespace Skymu.Forms
 
             _ = Task.Run(async () =>
             {
-                await SoundManager.PlayAsync("call-init", token);
+                await SoundManager.PlayAsync("CALL_INIT", token);
                 if (_is_answer)
                     return;
                 while (!token.IsCancellationRequested)
                 {
-                    await SoundManager.PlayAsync(Settings.CallOutToReconnectSound ? "call-reconnect" : "call-out", token);
+                    await SoundManager.PlayAsync(Settings.CallOutToReconnectSound ? "CALL_RECONNECT_FRONT" : "CALL_OUT", token);
                 }
             });
 
@@ -148,12 +148,12 @@ namespace Skymu.Forms
                 return; // in case user has already hung up before the call is established
 
             _ringCts.Cancel();
-            SoundManager.StopPlayback("call-out");
-            SoundManager.StopPlayback("call-init");
+            SoundManager.StopPlayback("CALL_OUT");
+            SoundManager.StopPlayback("CALL_INIT");
 
             if (call == null)
             {
-                SoundManager.Play("call-error");
+                SoundManager.Play("CALL_ERROR1");
                 HangUpRequested(this, EventArgs.Empty);
             }
             else
@@ -336,13 +336,13 @@ namespace Skymu.Forms
         {
             _hangUpRequested = true;
             _ringCts?.Cancel();
-            SoundManager.StopPlayback("call-out");
-            SoundManager.StopPlayback("call-init");
+            SoundManager.StopPlayback("CALL_OUT");
+            SoundManager.StopPlayback("CALL_INIT");
             Universal.CallPlugin.CallStateChangedTube -= OnCallStateChanged;
             _ = Universal.CallPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;
-            SoundManager.Play("call-end");
+            SoundManager.Play("HANGUP");
 
             if (isFullscreen)
             {

@@ -602,7 +602,7 @@ namespace Skymu
             if (HasLoggedIn)
             {
                 PluginManager.DisposeAll();
-                SoundManager.PlaySynchronous("logout");
+                SoundManager.PlaySynchronous("LOGOUT");
             }
             base.OnExit(ev);
         }

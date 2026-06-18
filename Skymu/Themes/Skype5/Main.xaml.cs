@@ -915,7 +915,7 @@ namespace Skymu.Skype5
                 try
                 {
                     // Dude why does it have to wait for 2s? Nobodys gonna find the easter egg then
-                    await SoundManager.PlayAsync("busy");
+                    await SoundManager.PlayAsync("BUSY");
                     //if (_TitleBarIconHoldTokenSource?.IsCancellationRequested != false) return;
                     string url;
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
@@ -1043,7 +1043,7 @@ namespace Skymu.Skype5
             }
             else
             {
-                SoundManager.Play("call-error");
+                SoundManager.Play("CALL_ERROR1");
                 Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
             }
         }
@@ -1111,7 +1111,7 @@ namespace Skymu.Skype5
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
-            SoundManager.Play("call-error");
+            SoundManager.Play("CALL_ERROR1");
             Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 

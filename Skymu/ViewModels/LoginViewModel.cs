@@ -189,7 +189,7 @@ namespace Skymu.ViewModels
             Tray.SetStatus(Universal.CurrentUser.ConnectionStatus);
             Universal.HasLoggedIn = true;
             mainWindow.Show();
-            SoundManager.Play("login");
+            SoundManager.Play("LOGIN");
             new Updater();
 
             string brand = Settings.BrandingName;

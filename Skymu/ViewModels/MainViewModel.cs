@@ -11,37 +11,35 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Skymu.Converters;
+using Microsoft.Win32;
 using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
-using Skymu.Windows;
-using Skymu.Helpers;
-using System.Linq;
-using Skymu.Sounds;
-using Skymu.Preferences;
-
-using Yggdrasil.Bottles;
 using Skymu.Forms;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.Sounds;
 using Skymu.UserDirectory;
-using System.Windows.Documents;
-using Microsoft.Win32;
+using Skymu.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using Yggdrasil.Models;
+using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
-using System.Windows.Controls;
+using Yggdrasil.Models;
 
 namespace Skymu.ViewModels
 {
@@ -524,7 +522,7 @@ namespace Skymu.ViewModels
                         && !_synchronizing
                     )
                     {
-                        SoundManager.Play("message-recieved");
+                        SoundManager.Play("IM");
                     }
                 }
 
@@ -753,7 +751,7 @@ namespace Skymu.ViewModels
 
             if (sent)
             {
-                SoundManager.Play("message-sent");
+                SoundManager.Play("IM_SENT");
             }
             else
             {
@@ -817,7 +815,7 @@ namespace Skymu.ViewModels
         {
             if (!switchuser)
                 CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
-            SoundManager.Play("logout");
+            SoundManager.Play("LOGOUT");
             Universal.HasLoggedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
             _ = UserCountAPI.CloseWS();
@@ -1191,16 +1189,16 @@ namespace Skymu.ViewModels
             if (IsCallActive)
             {
                 IsCallActive = false;
-                SoundManager.StopPlayback("call-ring");
-                SoundManager.Play("call-end");
+                SoundManager.StopPlayback("CALL_IN");
+                SoundManager.Play("CALL_END");
                 CallActiveChanged?.Invoke(false);
             }
             else
             {
                 IsCallActive = true;
                 CallActiveChanged?.Invoke(true);
-                await Task.Run(() => SoundManager.PlaySynchronous("call-init"));
-                SoundManager.PlayLoop("call-ring");
+                await Task.Run(() => SoundManager.PlaySynchronous("CALL_INIT"));
+                SoundManager.PlayLoop("CALL_IN");
             }
         }
 
