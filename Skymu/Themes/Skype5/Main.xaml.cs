@@ -1649,6 +1649,11 @@ namespace Skymu.Skype5
             menu.IsOpen = true;
         }
 
+        private void OnFeedbackClick(object sender, MouseButtonEventArgs e)
+        {
+            Universal.OpenUrl(Universal.DISCORD_SERVER_INVITE);
+        }
+
         private async void HandleStatusItemClick(MenuItem item)
         {
             string name = item.Name.Substring(3);
