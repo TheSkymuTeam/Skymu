@@ -56,6 +56,8 @@ namespace Skymu.ViewModels
         public ObservableCollection<Server> ServerList;
         public ObservableCollection<Conversation> ConversationList;
 
+        private readonly Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
+
         // since the servers list is lazy-loaded, we need a TCS to handle the clicks on the "Servers" 
         // tab before the list has actually been populated
         private readonly TaskCompletionSource<bool> _serversLoadedSource = new TaskCompletionSource<bool>();
@@ -937,7 +939,7 @@ namespace Skymu.ViewModels
             if (mtb is null || mtb.Tag as string == TAG_PLACEHOLDER)
             {
                 return false;
-            } 
+            }
             return HasAnyContent(mtb);
         }
 
@@ -991,6 +993,29 @@ namespace Skymu.ViewModels
 
         #endregion
 
+        public enum Egg
+        {
+            SkypeMemeVideo
+        }
+
+        public async Task EasterEgg(Egg egg)
+        {
+            switch (egg)
+            {
+                case Egg.SkypeMemeVideo:
+                    // changed this because just clicking AND it being hand cursor... no bro .... so now u hold 2 seconds - TODO: make it show the actual menu, I fuckin knewww it was like that bro
+                    await SoundManager.PlayAsync("BUSY");
+                    string url;
+                    if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
+                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                    else
+                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+                    Universal.OpenUrl(url);
+                    break;
+            }
+        }
+
+
         public void InformDND()
         {
             if (Settings.InformDND != true)
@@ -1015,7 +1040,7 @@ namespace Skymu.ViewModels
         }
 
         public async Task SendFile()
-        {         
+        {
             var dlg = new OpenFileDialog
             {
                 Title = "Select a file to send",
