@@ -1024,7 +1024,7 @@ namespace Skymu.Skype5
             PresenceStatus.DoNotDisturb,
             PresenceStatus.Invisible
         };
-        private async void OnStatus(object sender, RoutedEventArgs e)
+        private void OnStatus(object sender, RoutedEventArgs e)
         {
             int i = 0;
             foreach (var item in MenubarStatusHolder.Items)
@@ -1039,7 +1039,7 @@ namespace Skymu.Skype5
                 _ = Universal.Plugin.SetConnectionStatus(_indexToStatus[i]);
                 return;
             }
-            Universal.MessageBox(
+            Universal.ShowMessage(
                 "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
                 "Failed to set connection status",
                 WindowBase.IconType.Error
@@ -1058,7 +1058,7 @@ namespace Skymu.Skype5
             else
             {
                 SoundManager.Play("call-error");
-                Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+                Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
             }
         }
 
@@ -1138,7 +1138,7 @@ namespace Skymu.Skype5
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
             SoundManager.Play("call-error");
-            Universal.MessageBox(VONAGE, VONAGE_CAPTION);
+            Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 
         private async void AddButtonClick(object sender, MouseButtonEventArgs e)

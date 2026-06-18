@@ -249,7 +249,7 @@ namespace Skymu.ViewModels
                     message = brand + " has not yet been tested on your version of Windows. You may encounter bugs.";
 
                 if (message != null)
-                    Universal.MessageBox(message, "Compatibility warning");
+                    Universal.ShowMessage(message, "Compatibility warning");
             }
 
             if (!Settings.SuppressOldRuntimeWarnings)

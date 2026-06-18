@@ -276,7 +276,7 @@ namespace Skymu.ViewModels
             SendMessageCommand = new AsyncRelayCommand<string>(SendMessage);
             RunSpeedTestCommand = new AsyncRelayCommand(RunSpeedTest);
             VideoCallCommand = new RelayCommand(HandleVideoCall);
-            CallCommand = new AsyncRelayCommand(HandleCall);
+            /* CallCommand = new AsyncRelayCommand(HandleCall); */
         }
 
         public async Task InitSidebar()
@@ -369,7 +369,7 @@ namespace Skymu.ViewModels
         #region Conversation handling
 
         /// <summary> For external usages </summary>
-        public async void SelectConversation(Conversation conversation)
+        public void SelectConversation(Conversation conversation)
         {
             SelectedConversation = conversation;
             ConversationChanged?.Invoke(conversation, EventArgs.Empty);
@@ -762,7 +762,7 @@ namespace Skymu.ViewModels
                         })
                     );
                 }
-                Universal.MessageBox("Error sending message.");
+                Universal.ShowMessage("Error sending message.");
             }
         }
 
@@ -1056,10 +1056,10 @@ namespace Skymu.ViewModels
             }
         }
 
+        /*
         private async Task HandleCall()
         {
-            Universal.NotImplemented("Voice calling");
-            /*if (IsCallActive)
+            if (IsCallActive)
             {
                 await HandleCallToggle();
                 CallDropdown.Visibility = Visibility.Visible;
@@ -1081,8 +1081,9 @@ namespace Skymu.ViewModels
                 CallDropdown.Visibility = Visibility.Collapsed;
                 CallButton.TextLeftMargin = 30;
                 CallButton.RightWidth = 23;
-            }*/
-        }
+            }
+        } 
+        */
 
         public void HandleVideoCall()
         {

@@ -656,7 +656,7 @@ namespace Skymu.Skype6
             {
                 AddContactButton.SetState(ButtonVisualState.Default);
                 SoundManager.Play("call-error");
-                Universal.MessageBox(VONAGE_CONTACT, VONAGE_CAPTION);
+                Universal.ShowMessage(VONAGE_CONTACT, VONAGE_CAPTION);
                 return;
             }
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
@@ -751,7 +751,7 @@ namespace Skymu.Skype6
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
         {
             SoundManager.Play("call-error");
-            Universal.MessageBox(VONAGE, VONAGE_CAPTION);
+            Universal.ShowMessage(VONAGE, VONAGE_CAPTION);
         }
 
         private async void AddButtonClick(object sender, MouseButtonEventArgs e)

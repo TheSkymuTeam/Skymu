@@ -1263,7 +1263,7 @@ SanitizeFolderName(user.Identifier)
                     }
                     catch (Exception ex)
                     {
-                        Universal.MessageBox(ex.Message);
+                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1416,7 +1416,7 @@ SanitizeFolderName(user.Identifier)
                     }
                     catch (Exception ex)
                     {
-                        Universal.MessageBox(ex.Message);
+                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1723,7 +1723,7 @@ SanitizeFolderName(user.Identifier)
                     }
                     catch (Exception ex)
                     {
-                        Universal.MessageBox(ex.Message);
+                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -1807,7 +1807,7 @@ SanitizeFolderName(user.Identifier)
                     }
                     catch (Exception ex)
                     {
-                        Universal.MessageBox(ex.Message);
+                        Universal.ShowMessage(ex.Message);
                         transaction.Rollback();
                         throw;
                     }
@@ -2444,7 +2444,7 @@ SanitizeFolderName(user.Identifier)
                     }
                     catch (Exception ex)
                     {
-                        Universal.MessageBox(ex.Message);
+                        Universal.ShowMessage(ex.Message);
                         if (ownsTransaction)
                             transaction?.Rollback();
                         throw;

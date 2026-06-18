@@ -459,7 +459,7 @@ namespace Skymu.Skype7
             var current = vmodel.GetStatusFromInt(_currentStatusIndex);
 
             if (name == "dnd")
-                Universal.InformDND();
+                vmodel.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
             if (status == PresenceStatus.Unknown)

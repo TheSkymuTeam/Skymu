@@ -214,20 +214,20 @@ namespace Tox
 
             return StartClient();
         }
-        public async Task<LoginResult> Authenticate(SavedCredential creds)
+        public Task<LoginResult> Authenticate(SavedCredential creds)
         {
             if (creds.AuthenticationType == AuthenticationMethod.Token) { }
             else
-                return LoginResult.UnsupportedAuthType;
+                return Task.FromResult(LoginResult.UnsupportedAuthType);
             profile = creds.PasswordOrToken;
 
-            return StartClient();
+            return Task.FromResult(StartClient());
         }
-        public async Task<SavedCredential> StoreCredential()
+        public Task<SavedCredential> StoreCredential()
         {
             // savepass is filled = encrypted save = saving the pass goes against the point of encrypting it
             if (string.IsNullOrEmpty(savepass))
-                return new SavedCredential(_currentUser, profile, AuthenticationMethod.Token, InternalName);
+                return Task.FromResult(new SavedCredential(_currentUser, profile, AuthenticationMethod.Token, InternalName));
             return null;
         }
 
@@ -572,7 +572,7 @@ namespace Tox
 
         #region Actions
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
+        public Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
             // Shitty /me impl that JUST WORKS!!!
             var type = action ? Tox_Message_Type.ACTION : Tox_Message_Type.NORMAL;
@@ -594,11 +594,11 @@ namespace Tox
                                 pendingSendConference[c.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
                         }
                         SAVE();
-                        return true;
+                        return Task.FromResult(true);
                     }
                 } catch { }
                 var f = tox.FriendByPublicKey(FromHex(identifier, (int)Size.publicKey * 2));
-                if (f == null) return false;
+                if (f == null) return Task.FromResult(false);
                 var mid = f.SendMessage(type, text);
                 if (mid == null)
                 {
@@ -607,7 +607,7 @@ namespace Tox
                             ls.Add((type, text));
                     else
                         pendingSendFriend[f.id] = new List<(Tox_Message_Type type, string text)>() { (type, text) };
-                    return true;
+                    return Task.FromResult(true);
                 }
                 Message message;
                 if (type == Tox_Message_Type.ACTION)
@@ -616,12 +616,12 @@ namespace Tox
                     message = new Message(mid + "_" + GUID(), _currentUser, new DateTime(), text);
                 messages.Add((UInt32)mid, message);
                 SAVE();
-                return true;
+                return Task.FromResult(true);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Tox: Exception sending a message: {ex.Message}");
-                return false;
+                return Task.FromResult(false);
             }
         }
 
@@ -644,7 +644,7 @@ namespace Tox
             return Task.FromResult(false);
         }
 
-        public async Task<List<ConversationItem>> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
+        public Task<List<ConversationItem>> FetchMessages(Conversation conversation, Fetch fetch_type, int message_count, string identifier)
         {
             activecid = conversation.Identifier;
             TypingUsersList.Clear();
@@ -654,16 +654,16 @@ namespace Tox
                 if (f != null && f.typing)
                     TypingUsersList.Add(friends[f.id]);
             } catch (ArgumentException) { }
-            return new List<ConversationItem>();
+            return Task.FromResult(new List<ConversationItem>());
         }
 
-        public async Task<bool> SetConnectionStatus(PresenceStatus status)
+        public Task<bool> SetConnectionStatus(PresenceStatus status)
         {
             if (tox.connectionStatus == Tox_Connection.NONE)
             {
                 // TODO: FInd a better way to handle this.
                 ERR("You need to wait until you're no longer offline to do that.");
-                return false;
+                return Task.FromResult(false);
             }
             Tox_User_Status tstatus = Tox_User_Status.NONE;
             switch (status)
@@ -678,43 +678,43 @@ namespace Tox
                     break;
                 default:
                     ERR("Only Online, Away, Do Not Disturb is supported");
-                    return false;
+                    return Task.FromResult(false);
             };
 
             tox.status = tstatus;
             _currentUser.ConnectionStatus = status;
             SAVE();
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> SetMood(string status)
+        public Task<bool> SetMood(string status)
         {
             tox.statusMessage = status;
             SAVE();
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<bool> SetTyping(string identifier, bool typing)
+        public Task<bool> SetTyping(string identifier, bool typing)
         {
             Debug.WriteLine($"Tox: Typing in {identifier}, {typing}");
             if (UInt32.TryParse(identifier, out UInt32 fid))
                 tox.GetFriend(fid).typing = typing;
-            return true;
+            return Task.FromResult(true);
         }
 
-        public async Task<Metadata[]> FindNewContact(string query)
+        public Task<Metadata[]> FindNewContact(string query)
         {
             bool user = query.Length == Size.address * 2;
             bool group = query.Length == Size.groupId * 2;
             if (user)
-                return new Metadata[1] { new User(query, "ToxUser", query) };
+                return Task.FromResult(new Metadata[1] { new User(query, "ToxUser", query) });
             else if (group)
-                return new Metadata[1] { new Group(query, query, 0, new User[0]) };
+                return Task.FromResult(new Metadata[1] { new Group(query, query, 0, new User[0]) });
             else
-                return new Metadata[0];
+                return Task.FromResult(new Metadata[0]);
         }
 
-        public async Task<bool> AddContact(Metadata metadata, string message)
+        public Task<bool> AddContact(Metadata metadata, string message)
         {
             if (metadata is User user)
             {
@@ -742,7 +742,7 @@ namespace Tox
 #pragma warning restore CS0162 // Unreachable code detected
             }
             SAVE();
-            return true;
+            return Task.FromResult(true);
         }
 
         #endregion
@@ -815,7 +815,7 @@ namespace Tox
             return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0]);
         }
 
-        public async Task<bool> EndCall(ActiveCall call)
+        public Task<bool> EndCall(ActiveCall call)
         {
             var cid = avACall.Identifier;
             avACall.caller?.Stop();
@@ -823,9 +823,9 @@ namespace Tox
             if (!toxav_call_control(av, cid, Toxav_Call_Control.CANCEL, out var err))
             {
                 ERR($"Could not finish call: {err}");
-                return false;
+                return Task.FromResult(false);
             }
-            return true;
+            return Task.FromResult(true);
         }
 
         public async Task<ActiveCall> AnswerCall(string convo_id)

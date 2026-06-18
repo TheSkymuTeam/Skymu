@@ -94,7 +94,7 @@ namespace Skymu
                             blAction: () =>
                             {
                                 Clipboard.SetText(e.CopyToClipboardText);
-                                MessageBox("Copied to clipboard.");
+                                ShowMessage("Copied to clipboard.");
                             }
                         ).ShowDialog();
                     }
@@ -456,7 +456,7 @@ namespace Skymu
             frame.ShowDialog();
         }
 
-        public static void MessageBox(
+        public static void ShowMessage(
             string content,
             string title = "Information",
             WindowBase.IconType icon = WindowBase.IconType.Information
@@ -581,7 +581,7 @@ namespace Skymu
             }
             catch (Exception ex)
             {
-                Universal.MessageBox($"Failed to apply presentation framework: {ex.Message}");
+                Universal.ShowMessage($"Failed to apply presentation framework: {ex.Message}");
             }
         }
 

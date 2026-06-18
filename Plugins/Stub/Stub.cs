@@ -573,7 +573,7 @@ namespace Stub
         // remove this entire region and remove IListManagement to disable
         // Enter number for the search query for group with that amount of members
 
-        public async Task<Metadata[]> FindNewContact(string query)
+        public Task<Metadata[]> FindNewContact(string query)
         {
             if (int.TryParse(query, out var memc))
             {
@@ -582,15 +582,15 @@ namespace Stub
                 {
                     members[i] = users[i % users.Length];
                 }
-                return new Metadata[2] {
+                return Task.FromResult(new Metadata[2] {
                     new Group("Mega Based Coalition", "mbc", 0, members),
                     new User(query, query, query)
-                };
+                });
             }
-            return new Metadata[1]
+            return Task.FromResult(new Metadata[1]
             {
                 new User(query, query, query)
-            };
+            });
         }
 
         public Task<bool> AddContact(Metadata contact, string message)
