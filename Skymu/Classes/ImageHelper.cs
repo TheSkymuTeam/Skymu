@@ -9,11 +9,12 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Skymu.Preferences;
 using System.IO;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace Skymu.Helpers
@@ -22,9 +23,6 @@ namespace Skymu.Helpers
 
     {
         private static readonly Dictionary<string, BitmapImage> _cache = new Dictionary<string, BitmapImage>();
-        private static string _cachedDesignTimeTheme = null;
-        private static string _cachedXamlFile = null;
-
         public static BitmapImage FreezeLoad(string path)
         {
             return FreezeLoadFromPackUri($"pack://application:,,,/Themes/{Universal.Theme}/Assets/{path}");
@@ -58,6 +56,32 @@ namespace Skymu.Helpers
             }
             img.Freeze();
             return img;
+        }
+
+        public static BitmapSource Darken(BitmapSource source)
+        {
+            if (source == null)
+                return null;
+
+            var wb = new WriteableBitmap(source);
+
+            int stride = wb.PixelWidth * (wb.Format.BitsPerPixel / 8);
+            byte[] pixels = new byte[wb.PixelHeight * stride];
+
+            wb.CopyPixels(pixels, stride, 0);
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                pixels[i] = (byte)(255 - pixels[i]);
+            }
+
+            wb.WritePixels(
+                new Int32Rect(0, 0, wb.PixelWidth, wb.PixelHeight),
+                pixels,
+                stride,
+                0);
+
+            return wb;
         }
 
         public static string ResolveExtension(byte[] bytes, string existingName)

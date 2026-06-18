@@ -76,6 +76,7 @@
         <converters:StringToUpperConverter x:Key="ToUpperConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <converters:ChannelTypeConverter x:Key="ChannelTypeConverter" />
+        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
         <converters:TextStatusConverter x:Key="TextStatusConverter" />
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
@@ -1077,7 +1078,7 @@
                         HoverIndex="1"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="Assets/Themeable/Chat/network-none.png"
+                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype7, Source='Chat/network-none.png'}"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->
                     <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->
@@ -1095,7 +1096,7 @@
                                     <Grid Background="{StaticResource Accent}">
                                         <Image
                                             RenderOptions.BitmapScalingMode="LowQuality"
-                                            Source="/Skype7/Assets/VideoCall.png"
+                                            Source="Assets/VideoCall.png"
                                             Stretch="Uniform" />
                                     </Grid>
                                 </VisualBrush.Visual>
@@ -1118,7 +1119,7 @@
                                     <Grid Background="{StaticResource Accent}">
                                         <Image
                                             RenderOptions.BitmapScalingMode="LowQuality"
-                                            Source="/Skype7/Assets/VoiceCall.png"
+                                            Source="Assets/VoiceCall.png"
                                             Stretch="Uniform" />
                                     </Grid>
                                 </VisualBrush.Visual>
@@ -1208,7 +1209,7 @@
                     Cursor="Hand"
                     MouseLeftButtonUp="EmojiButton_Click"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="/Skype5/Assets/Light/Chat/emoji.png"
+                    Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype7, Source='Chat/emoji.png'}"
                     ToolTip="Emoji" />
                 <Popup
                     x:Name="EmojiFlyout"
@@ -1252,7 +1253,7 @@
                                 <Grid Background="{StaticResource Accent}">
                                     <Image
                                         RenderOptions.BitmapScalingMode="LowQuality"
-                                        Source="/Skype7/Assets/Send.png"
+                                        Source="Assets/Send.png"
                                         Stretch="Uniform" />
                                 </Grid>
                             </VisualBrush.Visual>

@@ -43,7 +43,7 @@ namespace Skymu.Converters
             return bytes;
         }
 
-        internal static BitmapImage AssetPathGenerator(
+        internal static BitmapImage LoadAsset(
             string image_path,
             bool is_universal
         )
@@ -51,8 +51,10 @@ namespace Skymu.Converters
             string theme;
             if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
-                // designer: hard-code theme
-                theme = "Skype5";
+                
+                    // designer: hard-code theme if not specified
+                    theme = "Skype5";
+                
             }
             else
             {
