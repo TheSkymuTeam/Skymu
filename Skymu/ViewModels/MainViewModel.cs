@@ -128,6 +128,8 @@ namespace Skymu.ViewModels
 
         public event EventHandler ConversationChanged;
 
+        public event EventHandler CompactRecentsRefreshRequested;
+
         public event EventHandler<SignOutRequestedEventArgs> SignOutRequested;
 
         public event Action<string> UserCountUpdated;
@@ -686,6 +688,7 @@ namespace Skymu.ViewModels
             }
         }
 
+
         private void UpdateRecentsListOnNewMessage(
             string conversationId,
             DateTime messageTimestamp
@@ -698,7 +701,7 @@ namespace Skymu.ViewModels
                 return;
 
             conversation.LastMessageTime = messageTimestamp;
-            Skype5.Main.RefreshCompactRecentsView();
+            CompactRecentsRefreshRequested?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion
@@ -863,7 +866,7 @@ namespace Skymu.ViewModels
         #region Text box placeholders
 
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
-        public void ApplyPlaceholder(RichTextBox rtb, string text, bool force = false)
+        public void SetPlaceholder(RichTextBox rtb, string text, bool force = false)
         {
             if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
                 return;
@@ -881,18 +884,7 @@ namespace Skymu.ViewModels
             rtb.Tag = TAG_PLACEHOLDER;
         }
 
-        public void RemovePlaceholder(RichTextBox rtb)
-        {
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-            {
-                var flowDoc = rtb.Document;
-                flowDoc.Blocks.Clear();
-                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
-                rtb.Tag = null;
-            }
-        }
-
-        public void ApplyPlaceholderTb(TextBox tb, string text, bool force = false)
+        public void SetPlaceholder(TextBox tb, string text, bool force = false)
         {
             if (!force && tb.Tag as string == TAG_PLACEHOLDER)
                 return;
@@ -905,7 +897,18 @@ namespace Skymu.ViewModels
             tb.Tag = TAG_PLACEHOLDER;
         }
 
-        public void RemovePlaceholderTb(TextBox tb)
+        public void RemovePlaceholder(RichTextBox rtb)
+        {
+            if (rtb.Tag as string == TAG_PLACEHOLDER)
+            {
+                var flowDoc = rtb.Document;
+                flowDoc.Blocks.Clear();
+                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
+                rtb.Tag = null;
+            }
+        }
+
+        public void RemovePlaceholder(TextBox tb)
         {
             if (tb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -928,7 +931,7 @@ namespace Skymu.ViewModels
             return start.GetOffsetToPosition(end) > 2;
         }
 
-        public bool GetSendButtonState(RichTextBox mtb)
+        public bool CheckIfMessageSendable(RichTextBox mtb)
         {
             if (mtb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -1040,6 +1043,7 @@ namespace Skymu.ViewModels
             Settings.Maximized = window.WindowState == WindowState.Maximized;
         }
 
+        public DateTime lastTypingActivity = DateTime.MinValue;
 
         public void SubscribeTypingIndicator()
         {
@@ -1047,6 +1051,18 @@ namespace Skymu.ViewModels
                 return;
             _typingIndicatorSubscribed = true;
             Universal.Plugin.TypingUsersList.CollectionChanged += (s, e) => RefreshTypingState();
+
+            _ = TypingLoop();
+        }
+
+        private async Task TypingLoop()
+        {
+            while (true)
+            {
+                await Task.Delay(500);
+                if ((DateTime.UtcNow - lastTypingActivity).TotalMilliseconds < 500)
+                    StartTyping();
+            }
         }
 
         private void RefreshTypingState()
@@ -1321,4 +1337,21 @@ namespace Skymu.ViewModels
         }
     }
 
+    public class CompactRecentsTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate DateHeaderTemplate { get; set; }
+        public DataTemplate CompactDirectMessageTemplate { get; set; }
+        public DataTemplate CompactGroupTemplate { get; set; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is DateHeaderItem)
+                return DateHeaderTemplate;
+            else if (item is DirectMessage)
+                return CompactDirectMessageTemplate;
+            else if (item is Group)
+                return CompactGroupTemplate;
+            return base.SelectTemplate(item, container);
+        }
+    }
 }

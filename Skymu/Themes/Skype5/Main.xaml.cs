@@ -572,19 +572,6 @@ namespace Skymu.Skype5
             ConversationList.ItemsSource = grouped;
         }
 
-        public static void RefreshCompactRecentsView()
-        {
-            var mainWindow = Application.Current.MainWindow as Main;
-            if (
-                mainWindow?.ConversationList.Visibility == Visibility.Visible
-                && mainWindow.ConversationList.ItemTemplateSelector
-                    is CompactRecentsTemplateSelector
-            )
-            {
-                mainWindow.Dispatcher.Invoke(mainWindow.ConfigureCompactRecentsList);
-            }
-        }
-
         private async Task SelectTab(SliceControl tab_to_select)
         {
             if (tab_to_select.Name == "btnServers")
@@ -1078,19 +1065,19 @@ namespace Skymu.Skype5
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
-            vmodel.RemovePlaceholderTb(SearchBox);
+            vmodel.RemovePlaceholder(SearchBox);
         }
 
         private void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
-            vmodel.ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             vmodel.RemovePlaceholder(MessageTextBox);
-            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1114,23 +1101,11 @@ namespace Skymu.Skype5
             Keyboard.ClearFocus();
         }
 
-        private DateTime _lastTypingActivity = DateTime.MinValue;
-
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
             if (vmodel.HasAnyContent(MessageTextBox))
-                _lastTypingActivity = DateTime.UtcNow;
-        }
-
-        private async Task TypingLoop()
-        {
-            while (true)
-            {
-                await Task.Delay(500);
-                if ((DateTime.UtcNow - _lastTypingActivity).TotalMilliseconds < 500)
-                    vmodel?.StartTyping();
-            }
+                vmodel.lastTypingActivity = DateTime.UtcNow;
         }
 
         private void CallPhones_Click(object sender, MouseButtonEventArgs e)
@@ -1178,9 +1153,9 @@ namespace Skymu.Skype5
             {
                 if (!vmodel.HasAnyContent(MessageTextBox))
                 {
-                    vmodel.ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB);
+                    vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+                SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
             }
         }
 
@@ -1382,8 +1357,8 @@ namespace Skymu.Skype5
                 "sCHAT_TYPE_HERE_DIALOG",
                 vmodel.SelectedConversation?.DisplayName
             );
-            vmodel.ApplyPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+            vmodel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
+            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1494,7 +1469,7 @@ namespace Skymu.Skype5
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            SendMsgButton.IsEnabled = vmodel.GetSendButtonState(MessageTextBox);
+            SendMsgButton.IsEnabled = vmodel.CheckIfMessageSendable(MessageTextBox);
         }
 
         #endregion
@@ -1560,6 +1535,17 @@ namespace Skymu.Skype5
                     _conversationScrollViewer?.ScrollToEnd();
             };
 
+            vmodel.CompactRecentsRefreshRequested += (s, e) =>
+            {
+                if (ConversationList.Visibility == Visibility.Visible
+                && ConversationList.ItemTemplateSelector
+                    is CompactRecentsTemplateSelector
+            )
+                {
+                    ConfigureCompactRecentsList();
+                }
+            };
+
             vmodel.ConversationChanged += async (s, e) =>
             {
                 if (!(s is Conversation sc)) return;
@@ -1620,7 +1606,7 @@ namespace Skymu.Skype5
                 { btnRecents, RecentsColumn },
             };
             _ = SelectTab(btnRecents);
-            vmodel.ApplyPlaceholderTb(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
+            vmodel.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
             if (!Universal.Plugin.SupportsServers)
@@ -1630,7 +1616,6 @@ namespace Skymu.Skype5
             }
 
             vmodel.SubscribeTypingIndicator();
-            _ = TypingLoop();
 
             CTR_ORIGINAL_MAXHEIGHT = ChatTopBarRow.MaxHeight;
             TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
@@ -1760,39 +1745,6 @@ namespace Skymu.Skype5
                 Settings.CredsText
                 + " - "
                 + subtext.Replace("%d", Settings.CredsSubCount.ToString());
-        }
-    }
-
-    public class CompactRecentsTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate DateHeaderTemplate { get; set; }
-        public DataTemplate CompactDirectMessageTemplate { get; set; }
-        public DataTemplate CompactGroupTemplate { get; set; }
-
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
-        {
-            if (item is DateHeaderItem)
-                return DateHeaderTemplate;
-            else if (item is DirectMessage)
-                return CompactDirectMessageTemplate;
-            else if (item is Group)
-                return CompactGroupTemplate;
-            return base.SelectTemplate(item, container);
-        }
-    }
-
-    public class ServerChannelTemplateSelector : DataTemplateSelector
-    {
-        public DataTemplate CategoryHeaderTemplate { get; set; }
-        public DataTemplate ChannelTemplate { get; set; }
-
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
-        {
-            if (item is CategoryHeaderItem)
-                return CategoryHeaderTemplate;
-            else if (item is ServerChannel)
-                return ChannelTemplate;
-            return base.SelectTemplate(item, container);
         }
     }
 }
