@@ -2,7 +2,8 @@
 
 # What is Skymu?
 Skymu is a modern multiprotocol IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 4, 5, 6, and 7. Currently supported messaging services include Matrix, Tox, MSNP11, and some other protocols.
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu)
+
+You can also [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/TheSkymuTeam/Skymu) for further reference of the source tree.
 
 # Build Guide
 
