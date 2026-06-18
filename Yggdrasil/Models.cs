@@ -339,7 +339,7 @@ namespace Yggdrasil.Models
     {
         public DateTime Time { get; set; } // Time when the item was sent. If your server API returns send_started and send_completed (for example) use send_completed.
         public string Identifier { get; set; } // Unique identifier for the item
-        public string ConversationId { get; set; } // Unique identifier for the item
+        public string ConversationId { get; set; } // Identifier of the conversation that the item is in
     }
 
     public class Message : ConversationItem

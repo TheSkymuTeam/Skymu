@@ -39,7 +39,7 @@ using WpfInline = System.Windows.Documents.Inline;
 
 namespace Skymu.Formatting
 {
-    internal class Formatter
+    public class Formatter
     {
         public static class BrushesStatic
         {
