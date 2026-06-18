@@ -56,7 +56,7 @@
         <converters:NullDependentMarginConverter x:Key="NullDependentMarginConverter" />
         <converters:NullDependentBoolean x:Key="NullDependentBoolean" />
         <converters:StatusToTextConverter x:Key="StatIntToText" />
-        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
+        
         <converters:ForwardedMessageStatusConverter x:Key="ForwardedMessageStatusConverter" />
         <converters:HalfValueConverter x:Key="HalfValueConverter" />
         <converters:ReplyBodyConverter x:Key="ReplyBodyConverter" />
@@ -571,7 +571,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Chat/reply-arrow.png'}" />
+                            Source="Assets/Themeable/Chat/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -707,7 +707,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Chat/reply-arrow.png'}" />
+                            Source="Assets/Themeable/Chat/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -1200,7 +1200,7 @@
                                             ElementCount="4"
                                             HoverIndex="1"
                                             PressedIndex="2"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/header.png'}"
+                                            Source="Assets/Themeable/Sidebar/header.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1336,7 +1336,7 @@
                                                 Width="12"
                                                 Height="16"
                                                 HorizontalAlignment="Left"
-                                                Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/dropdown.png'}" />
+                                                Source="Assets/Themeable/Sidebar/dropdown.png" />
                                         </StackPanel>
                                         <!--  TODO: Make this collapsable  -->
                                         <Border
@@ -1395,7 +1395,7 @@
                                                     DefaultIndex="4"
                                                     ElementCount="8"
                                                     SliceMode="0"
-                                                    Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/bubble-sprite.png'}"
+                                                    Source="Assets/Themeable/Sidebar/bubble-sprite.png"
                                                     StackDirection="Vertical" />
                                                 <!--  TODO: lang  -->
                                                 <Grid Grid.Column="2">
@@ -1412,7 +1412,7 @@
                                                         PressedIndex="1"
                                                         RightWidth="6"
                                                         SliceMode="2"
-                                                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/status-box.png'}"
+                                                        Source="Assets/Themeable/Sidebar/status-box.png"
                                                         StackDirection="Vertical"
                                                         TopHeight="6" />
                                                     <TextBox
@@ -1448,7 +1448,7 @@
                                                         PressedIndex="2"
                                                         RightWidth="10"
                                                         SliceMode="1"
-                                                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/profile.png'}"
+                                                        Source="Assets/Themeable/Sidebar/profile.png"
                                                         Text="Personalize"
                                                         TextColor="{StaticResource Text.HighContrast}"
                                                         TextFont="Tahoma"
@@ -1465,7 +1465,7 @@
                                                     Margin="0,2,2,0"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Stretch"
-                                                    Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/dropdown.png'}" />
+                                                    Source="Assets/Themeable/Sidebar/dropdown.png" />
                                             </Grid>
                                         </Border>
                                         <Border
@@ -1520,7 +1520,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="13"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/new.png'}"
+                                                Source="Assets/Themeable/Sidebar/new.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_NEW], Source={StaticResource Lang}}"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -1546,7 +1546,7 @@
                                                 PressedIndex="0"
                                                 RightWidth="5"
                                                 SliceMode="2"
-                                                Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/search-box.png'}"
+                                                Source="Assets/Themeable/Sidebar/search-box.png"
                                                 StackDirection="Vertical"
                                                 TopHeight="5" />
                                             <TextBox
@@ -1581,7 +1581,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/tab-left.png'}"
+                                            Source="Assets/Themeable/Sidebar/tab-left.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1602,7 +1602,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/tab-middle.png'}"
+                                            Source="Assets/Themeable/Sidebar/tab-middle.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1624,7 +1624,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/tab-right.png'}"
+                                            Source="Assets/Themeable/Sidebar/tab-right.png"
                                             StackDirection="Vertical"
                                             Text="Conversations"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1668,7 +1668,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1718,7 +1718,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/selection-background.png'}" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1783,7 +1783,7 @@
                                                             MouseLeftButtonUp="CloseConversationHint"
                                                             PressedIndex="2"
                                                             RightWidth="10"
-                                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/profile.png'}"
+                                                            Source="Assets/Themeable/Sidebar/profile.png"
                                                             StackDirection="Vertical"
                                                             Text="{Binding Path='[sZAPBUTTON_CLOSE]', Source={StaticResource Lang}}"
                                                             TextColor="{StaticResource Text.MediumContrast}"
@@ -1832,7 +1832,7 @@
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/bottom-buttons.png'}"
+                                            Source="Assets/Themeable/Sidebar/bottom-buttons.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1857,7 +1857,7 @@
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/bottom-buttons.png'}"
+                                            Source="Assets/Themeable/Sidebar/bottom-buttons.png"
                                             StackDirection="Vertical"
                                             Text="Directory"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1964,7 +1964,7 @@
                                         ElementCount="4"
                                         HoverIndex="1"
                                         PressedIndex="2"
-                                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Sidebar/header.png'}"
+                                        Source="Assets/Themeable/Sidebar/header.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -2376,7 +2376,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="35"
                                                 SliceMode="1"
-                                                Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Chat/network-none.png'}"
+                                                Source="Assets/Themeable/Chat/network-none.png"
                                                 StackDirection="Vertical"
                                                 Text="Check settings"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -2472,7 +2472,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Chat/message-box-header25.png'}"
+                                                Source="Assets/Themeable/Chat/message-box-header25.png"
                                                 StackDirection="Vertical"
                                                 TopHeight="25" />
                                             <StackPanel
@@ -2498,7 +2498,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype4, Source='Chat/emoji.png'}"
+                                                            Source="Assets/Themeable/Chat/emoji.png"
                                                             StackDirection="Vertical" />
                                                     </StackPanel>
                                                     <Popup

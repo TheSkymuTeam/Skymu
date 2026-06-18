@@ -43,27 +43,6 @@ namespace Skymu.Converters
             return bytes;
         }
 
-        internal static BitmapImage LoadAsset(
-            string image_path,
-            bool is_universal
-        )
-        {
-            string theme;
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
-            {
-                
-                    // designer: hard-code theme if not specified
-                    theme = "Skype5";
-                
-            }
-            else
-            {
-                // runtime: use the configured theme
-                theme = Universal.Theme;
-            }
-            if (!image_path.StartsWith("/")) image_path = "/" + image_path; // just in case
-            return ImageHelper.FreezeLoadFromPackUri($"pack://application:,,,/Themes/{theme}/Assets/{(is_universal ? "Universal" : "Themeable") + image_path}");
-        }
     }
 
 }

@@ -76,7 +76,6 @@
         <converters:StringToUpperConverter x:Key="ToUpperConverter" />
         <converters:ConnectionStatusConverter x:Key="ConnectionStatusConverter" />
         <converters:ChannelTypeConverter x:Key="ChannelTypeConverter" />
-        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
         <converters:TextStatusConverter x:Key="TextStatusConverter" />
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
@@ -1078,7 +1077,7 @@
                         HoverIndex="1"
                         PressedIndex="2"
                         SliceMode="0"
-                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype7, Source='Chat/network-none.png'}"
+                        Source="Assets/Themeable/Chat/network-none.png"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->
                     <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->
@@ -1209,7 +1208,7 @@
                     Cursor="Hand"
                     MouseLeftButtonUp="EmojiButton_Click"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype7, Source='Chat/emoji.png'}"
+                    Source="Assets/Themeable/Chat/emoji.png"
                     ToolTip="Emoji" />
                 <Popup
                     x:Name="EmojiFlyout"
@@ -1253,7 +1252,7 @@
                                 <Grid Background="{StaticResource Accent}">
                                     <Image
                                         RenderOptions.BitmapScalingMode="LowQuality"
-                                        Source="Assets/Send.png"
+                                        Source="/Skype7/Assets/Send.png"
                                         Stretch="Uniform" />
                                 </Grid>
                             </VisualBrush.Visual>

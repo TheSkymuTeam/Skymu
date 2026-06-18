@@ -100,21 +100,17 @@ namespace Skymu.Skype5
             "Universal/Chat/msg-send-button-full.png"
         );
 
-        private readonly BitmapImage contactsBtnImage = ConversionHelpers.LoadAsset(
-            "Sidebar/contacts.png",
-            false
+        private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad(
+            "Themeable/Sidebar/contacts.png"
         );
-        private readonly BitmapImage recentsBtnImage = ConversionHelpers.LoadAsset(
-            "Sidebar/recents.png",
-            false
+        private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad(
+            "Themeable/Sidebar/recents.png"
         );
-        private readonly BitmapImage contactsBtnImageEmpty = ConversionHelpers.LoadAsset(
-            "Sidebar/contacts-empty.png",
-            false
+        private readonly BitmapImage contactsBtnImageEmpty = ImageHelper.FreezeLoad(
+            "Themeable/Sidebar/contacts-empty.png"
         );
-        private readonly BitmapImage recentsBtnImageEmpty = ConversionHelpers.LoadAsset(
-            "Sidebar/recents-empty.png",
-            false
+        private readonly BitmapImage recentsBtnImageEmpty = ImageHelper.FreezeLoad(
+            "Themeable/Sidebar/recents-empty.png"
         );
 
         private Metadata SelectedContact;

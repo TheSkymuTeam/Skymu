@@ -43,7 +43,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
     </Window.Resources>
     <Grid>
 
@@ -201,7 +200,7 @@
                         LeftWidth="15"
                         PressedIndex="4"
                         RightWidth="15"
-                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype6, Source='Login/pill.png'}"
+                        Source="Assets/Themeable/Login/pill.png"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"
                         TextColor="{StaticResource Text.HighContrast}"

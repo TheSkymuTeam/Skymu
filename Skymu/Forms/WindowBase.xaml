@@ -25,7 +25,7 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow">
     <Window.Resources>
-        <converters:UniversalAssetLoader x:Key="UniversalAssetLoader" />
+        <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -47,7 +47,7 @@
             Interactive="False"
             PressedIndex="-1"
             SliceMode="0"
-            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source='Dialog/icons.png'}"
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Dialog/icons.png'}"
             StackDirection="Horizontal" />
         <!--  Top Header Section  -->
         <Grid

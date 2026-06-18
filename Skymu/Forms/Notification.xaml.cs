@@ -28,6 +28,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Skymu.Helpers;
 
 namespace Skymu.Forms
 {
@@ -66,9 +67,8 @@ namespace Skymu.Forms
                 {
                     if (blue_background == null)
                     {
-                        blue_background = ConversionHelpers.LoadAsset(
-                            "Notifications/bubble-blue.png",
-                            false
+                        blue_background = ImageHelper.FreezeLoad(
+                            "Themeable/Notifications/bubble-blue.png"
                         );
                     }
                     _activeNotification.bubble.Source = blue_background;

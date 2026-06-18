@@ -9,19 +9,17 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
-
+using Skymu.Helpers;
 using System;
-using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
-using Skymu.Helpers;
-
 
 namespace Skymu.Converters
 {
-    // loads asset under /Themeable
-    // this is used in all XAML files, and is the default way to load themeable assets
-    public class ThemeableAssetLoader : IValueConverter
+    // loads assets, given an asset path
+    // this is used only in shared XAML files (such as the ones in /Forms)
+    // for theme-specific assets, directly reference the path instead
+    public class AssetLoader : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -29,12 +27,19 @@ namespace Skymu.Converters
             if (image_path == null)
                 return null;
 
-            var bitmap = ConversionHelpers.LoadAsset(image_path, false, parameter as string);
-
-            if (Universal.IsDarkTheme)
-                return ImageHelper.Darken(bitmap);
-
-            return bitmap;
+            string theme;
+            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            {
+                // designer: hard-code theme if not specified
+                theme = "Skype5";
+            }
+            else
+            {
+                // runtime: use the configured theme
+                theme = Universal.Theme;
+            }
+            if (image_path.StartsWith("/")) image_path = image_path.Substring(1); // just in case
+            return ImageHelper.FreezeLoadFromPackUri($"pack://application:,,,/Themes/{theme}/{image_path}");
         }
 
         public object ConvertBack(

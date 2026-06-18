@@ -41,15 +41,15 @@
     </Window.Title>
 
     <Window.Resources>
-        <converters:UniversalAssetLoader x:Key="UniversalAssetLoader" />
-        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
+        <converters:AssetLoader x:Key="AssetLoader" />
+        
         <Style x:Key="SidebarHeaderStyle" TargetType="global:SliceControl">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="ElementCount" Value="5" />
             <Setter Property="DefaultIndex" Value="0" />
             <Setter Property="HoverIndex" Value="1" />
             <Setter Property="PressedIndex" Value="2" />
-            <Setter Property="Source" Value="{Binding Converter={StaticResource ThemeableAssetLoader}, Source=Options/header_background.png}" />
+            <Setter Property="Source" Value="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}" />
             <Setter Property="IconLeftMargin" Value="10" />
             <Setter Property="IconWidth" Value="24" />
             <Setter Property="IconHeight" Value="24" />
@@ -74,7 +74,7 @@
                             Interactive="False"
                             PressedIndex="-1"
                             SliceMode="2"
-                            Source="{Binding Converter={StaticResource ThemeableAssetLoader}, Source=Options/header_background.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                             StackDirection="Vertical"
                             TopHeight="2" />
                     </ControlTemplate>
@@ -129,7 +129,7 @@
                     DefaultIndex="3"
                     HoverIndex="-1"
                     IconHeight="24"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/general.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/general.png}"
                     MouseLeftButtonUp="CatSelect"
                     PressedIndex="-1"
                     Style="{StaticResource SidebarHeaderStyle}"
@@ -144,38 +144,38 @@
                             x:Name="General_Main"
                             ButtonStateOnInit="Pressed"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/skype.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/skype.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
                         <global:SliceControl
                             x:Name="General_Devices"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/audio.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/audio.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_DEVICES]}" />
                         <global:SliceControl
                             x:Name="General_Sounds"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/sounds.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/sounds.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                         <global:SliceControl
                             x:Name="General_Video"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/video.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/video.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                         <global:SliceControl
                             x:Name="General_Access"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/access.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/access.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}" />
                         <!--  Skymu original  -->
                         <global:SliceControl
                             x:Name="General_Skymu"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/skymu.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/skymu.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="Skymu" />
                     </StackPanel>
@@ -183,7 +183,7 @@
                 <global:SliceControl
                     x:Name="HPrivacy"
                     IconHeight="24"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/privacy.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/privacy.png}"
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
@@ -193,13 +193,13 @@
                         <global:SliceControl
                             x:Name="Privacy_Main"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/privacy_settings.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/privacy_settings.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PRIVACY_SETTINGS]}" />
                         <global:SliceControl
                             x:Name="Privacy_Blocked"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/blocked.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/blocked.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_BLOCKED_USERS]}" />
                     </StackPanel>
@@ -207,7 +207,7 @@
                 <global:SliceControl
                     x:Name="HNotifications"
                     IconHeight="24"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/notifications.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/notifications.png}"
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
@@ -217,26 +217,26 @@
                         <global:SliceControl
                             x:Name="Notifications_Main"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/notifications.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/notifications.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_LBC_NOTIFICATIONS]}" />
                         <global:SliceControl
                             x:Name="Notifications_Alerts"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/alerts.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/alerts.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_LBC_MESSAGES]}" />
                         <global:SliceControl
                             x:Name="Notifications_Sounds"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/sounds.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/sounds.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HCalls"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/calls.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/calls.png}"
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_CALLS]}" />
@@ -246,32 +246,32 @@
                         <global:SliceControl
                             x:Name="Calls_Main"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/calls.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/calls.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_LB_CALL]}" />
                         <global:SliceControl
                             x:Name="Calls_Forwarding"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/forwarding.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/forwarding.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL]}" />
                         <global:SliceControl
                             x:Name="Calls_Voicemail"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/voicemail.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/voicemail.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_LBC_VOICEMAIL]}" />
                         <global:SliceControl
                             x:Name="Calls_Video"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/video.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/video.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HChatsSMS"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/im_and_sms.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/im_and_sms.png}"
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
@@ -281,26 +281,26 @@
                         <global:SliceControl
                             x:Name="Chats_Main"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/im.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/im.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_LB_CHAT_SETTINGS]}" />
                         <global:SliceControl
                             x:Name="Chats_Appearance"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/appearance.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/appearance.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_CHAT_APPEARANCE]}" />
                         <global:SliceControl
                             x:Name="Chats_SMS"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/sms.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/sms.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_SMS]}" />
                     </StackPanel>
                 </Grid>
                 <global:SliceControl
                     x:Name="HAdvanced"
-                    IconSource="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/advanced.png}"
+                    IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Options/advanced.png}"
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
@@ -310,33 +310,33 @@
                         <global:SliceControl
                             x:Name="Advanced_Main"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/advanced.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}" />
                         <!--  holy fuck why Skype  -->
                         <global:SliceControl
                             x:Name="Advanced_Updates"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/updates.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/updates.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}" />
                         <global:SliceControl
                             x:Name="Advanced_Connection"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/connection.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/connection.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_CONNECTION]}" />
                         <global:SliceControl
                             x:Name="Advanced_Hotkeys"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/hotkeys.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/hotkeys.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}" />
                         <!--  Skymu original  -->
                         <global:SliceControl
                             x:Name="Advanced_Debug"
                             MouseLeftButtonDown="TabSelect"
-                            Source="{Binding Converter={StaticResource UniversalAssetLoader}, Source=Options/advanced.png}"
+                            Source="{Binding Converter={StaticResource AssetLoader}, Source=Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="Debug"
                             Visibility="Collapsed" />
@@ -360,7 +360,7 @@
                         ElementSpan="2"
                         Interactive="False"
                         SliceMode="2"
-                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, Source=Options/header_background.png}"
+                        Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                         StackDirection="Vertical"
                         TopHeight="37" />
                     <StackPanel

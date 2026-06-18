@@ -33,7 +33,6 @@
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <Window.Resources>
-        <converters:ThemeableAssetLoader x:Key="ThemeableAssetLoader" />
         <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
             <Setter Property="Foreground" Value="{StaticResource Text.Hyperlink}" />
             <Setter Property="TextDecorations" Value="{x:Null}" />
@@ -45,7 +44,7 @@
         </Style>
     </Window.Resources>
     <Window.Background>
-        <ImageBrush ImageSource="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype5, Source='backgrounds/login.png'}" Stretch="Fill" />
+        <ImageBrush ImageSource="Assets/Themeable/backgrounds/login.png" Stretch="Fill" />
     </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
@@ -194,7 +193,7 @@
                         LeftWidth="15"
                         PressedIndex="4"
                         RightWidth="15"
-                        Source="{Binding Converter={StaticResource ThemeableAssetLoader}, ConverterParameter=Skype5, Source='Login/pill.png'}"
+                        Source="Assets/Themeable/Login/pill.png"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"
                         TextColor="#FF393A48"
