@@ -91,34 +91,31 @@ namespace Skymu.Forms
                         TextBoxText = DialogTextBox.Text;
                         DialogResult = true;
                     };
-                    brText = brText ?? "Save";
+                    brText = brText ?? Universal.Lang["sF_OPTIONS_BUTTON_SAVE"];
                 }
                 if (title == null)
                 {
-                    title = Settings.BrandingName;
+                    string caption = null;
                     switch (type)
                     {
+                        default:
                         case WindowBase.IconType.Information:
-                            title += " - Information";
+                            caption = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
                             break;
                         case WindowBase.IconType.Error:
-                            title += " - Error";
+                            caption = Universal.Lang["sLANGUAGE_ERROR_CAP"];
                             break;
                         case WindowBase.IconType.Question:
-                            title += " - Confirm action";
+                            caption = Universal.Lang["sF_CONFIRM_DEFAULT_CAPTION"]; 
                             break;
-                        case WindowBase.IconType.Picture:
-                            title += " - Media";
+                        case WindowBase.IconType.Facebook:
+                            caption = Universal.Lang["sFLAMINGO_CAPTION"];
                             break;
-                        case WindowBase.IconType.PackageCheckmark:
-                        case WindowBase.IconType.PackageStar:
-                        case WindowBase.IconType.PackageWarning:
-                            title += "™ - Update";
-                            break;
-                        default:
-                        case WindowBase.IconType.Skype:
+                        case WindowBase.IconType.GroupVideoCall:
+                            caption = Universal.Lang["sPREM_VIDEO_WEB_WINDOW_CAPTION"];
                             break;
                     }
+                    title = Settings.BrandingName + " - " + Universal.Lang[caption];
                 }
 
                 Title = title;

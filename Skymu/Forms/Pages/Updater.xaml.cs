@@ -108,7 +108,8 @@ namespace Skymu.Forms.Pages
                     new Dialog(
                         WindowBase.IconType.PackageCheckmark,
                         Universal.Lang["sF_UPGRADE_UPTODATE"],
-                        Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"]
+                        Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"],
+                        Settings.BrandingName += "™ - " + Universal.Lang["sF_UPGRADE_FRM_CAPTION"]
                     ).ShowDialog();
             }
         }
@@ -142,7 +143,8 @@ namespace Skymu.Forms.Pages
                     new Dialog(
                         WindowBase.IconType.PackageWarning,
                         ex.Message,
-                        "Cannot open file"
+                        "Cannot open file",
+                        Settings.BrandingName += "™ - " + Universal.Lang["sF_UPGRADE_FRM_CAPTION"]
                     ).ShowDialog();
                 }
                 window.Close();
