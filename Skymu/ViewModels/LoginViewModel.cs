@@ -204,7 +204,7 @@ namespace Skymu.ViewModels
                         + "count at the bottom of the sidebar, and also to form a searchable list of online users.\n\nYour data is not retained, stored, cached, sold, or otherwise used by Skymu in any way. "
                         + "Your username and display name are only used to populate the list.\n\nTo improve the accuracy of the public list, it is recommended that you click 'Yes'.",
                     "Publicly display user statistics?",
-                    $"{Universal.Name.ToLowerInvariant()} User Statistics",
+                    $"{Universal.Name} User Statistics",
                     new Action(() =>
                     {
                         Settings.Anonymize = true;

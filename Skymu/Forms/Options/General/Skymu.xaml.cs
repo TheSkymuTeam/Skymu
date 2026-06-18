@@ -23,7 +23,9 @@ namespace Skymu.Forms.OptionPages.General
         {
             InitializeComponent();
             LoadVisualSettings();
-            if (Universal.DebugBuild) CredDebugSepCB.Visibility = Visibility.Visible;
+#if DEBUG
+CredDebugSepCB.Visibility = Visibility.Visible;
+#endif
         }
 
         private void LoadVisualSettings()
@@ -40,7 +42,7 @@ namespace Skymu.Forms.OptionPages.General
             DynamicSidebarTabsRadio.IsChecked = Settings.DynamicSidebarTabs;
         }
 
-        #region Radio button stuff
+#region Radio button stuff
 
         private void UseEmbeddedCert_Checked(object sender, RoutedEventArgs e) =>
             Settings.CertificateStore = CertStore.Embedded;
@@ -71,7 +73,7 @@ namespace Skymu.Forms.OptionPages.General
             Settings.FallbackFillColors = true;
         }
 
-        #endregion
+#endregion
 
         private void CertBrowseButtonClick(object sender, RoutedEventArgs e)
         {

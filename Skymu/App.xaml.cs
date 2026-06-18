@@ -47,7 +47,7 @@ namespace Skymu
         public static bool HasLoggedIn = false;
         public static readonly string Theme = Settings.Theme;
 
-        public const string Name = "Skymu"; // If you are forking Skymu, change this to update the name everywhere, even internally. Do not use special characters or spaces.
+        public const string Name = "Skymu"; // Change this to update the name everywhere, even internally. Do not use special characters or spaces.
         public const string BuildVersion = "0.4.5";
         public const string BuildName = "Empyreal Frostlord";
         public static string Platform = Runtime.DetectOS().ToDisplayString();
@@ -72,29 +72,6 @@ namespace Skymu
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
         private static Mutex mutex;
-
-        public static void InformDND()
-        {
-            if (Settings.InformDND != true)
-                Current.Dispatcher.Invoke(() =>
-                    new Dialog(
-                        WindowBase.IconType.Information,
-                        Lang["sINFORM_DND"],
-                        Lang["sINFORM_DND_CAP"],
-                        Lang["sINFORM_DND_TITLE"],
-                        brText: "OK",
-                        cbEnabled: true,
-                        onClosing: (s, e) =>
-                        {
-                            if (((Dialog)s).CheckBox.IsChecked == true)
-                            {
-                                Settings.InformDND = true;
-                                Settings.Save();
-                            }
-                        }
-                    ).ShowDialog()
-                );
-        }
 
         private static void PluginPopup(
             object sender,

@@ -149,7 +149,7 @@ namespace Skymu.ViewModels
                 _isDownloading = true;
 
                 string url = attachments[0].Url;
-                string tempPath = Path.Combine(Path.GetTempPath(), $"skymu_attachment_temp");
+                string tempPath = Path.Combine(Path.GetTempPath(), $"{Universal.Name.ToLowerInvariant()}_attachment_temp");
                 using (var response = await Universal.SkymuHttpClient.GetStreamAsync(url))
                 using (var fileStream = File.Create(tempPath))
                 {
@@ -857,6 +857,29 @@ namespace Skymu.ViewModels
         }
 
         #endregion
+
+        public void InformDND()
+        {
+            if (Settings.InformDND != true)
+                Application.Current.Dispatcher.Invoke(() =>
+                    new Dialog(
+                        WindowBase.IconType.Information,
+                        Universal.Lang["sINFORM_DND"],
+                        Universal.Lang["sINFORM_DND_CAP"],
+                        Universal.Lang["sINFORM_DND_TITLE"],
+                        brText: "OK",
+                        cbEnabled: true,
+                        onClosing: (s, e) =>
+                        {
+                            if (((Dialog)s).CheckBox.IsChecked == true)
+                            {
+                                Settings.InformDND = true;
+                                Settings.Save();
+                            }
+                        }
+                    ).ShowDialog()
+                );
+        }
 
         public async Task SendFile()
         {         

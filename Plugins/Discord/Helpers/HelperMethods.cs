@@ -129,7 +129,7 @@ namespace Discord.Helpers
 
         public static PresenceStatus MapStatus(string statusStr)
         {
-            switch (statusStr.ToLower())
+            switch (statusStr.ToLowerInvariant())
             {
                 case "online": return PresenceStatus.Online;
                 case "idle": return PresenceStatus.Away;

@@ -170,7 +170,7 @@ namespace Skymu.Windows
         private static void SS(PresenceStatus status)
         {
             if (status == PresenceStatus.DoNotDisturb)
-                Universal.InformDND();
+                Universal.ActiveViewModel.InformDND();
 
             _ = Universal.Plugin.SetConnectionStatus(status);
         }

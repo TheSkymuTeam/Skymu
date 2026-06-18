@@ -283,7 +283,7 @@ namespace Tox
                                     try
                                     {
                                         Process proc = Process.GetProcessById(pid);
-                                        if (proc.ProcessName.ToLower().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName() && locklines[3] != sessionid)
+                                        if (proc.ProcessName.ToLowerInvariant().StartsWith(locklines[1]) && locklines[2] == Dns.GetHostName() && locklines[3] != sessionid)
                                         {
                                             ERR(FileLockedErrS + " by " + locklines[1] + FileLockedErrE);
                                             return LoginResult.Failure;

@@ -98,7 +98,9 @@ namespace Skymu.Forms
                 TabSelect(General_Skymu, null);
             };
 
-            if (Universal.DebugBuild) Advanced_Debug.Visibility = Visibility.Visible;
+#if DEBUG
+            Advanced_Debug.Visibility = Visibility.Visible;
+#endif
         }
 
         private void CatSelect(object sender, MouseButtonEventArgs e)

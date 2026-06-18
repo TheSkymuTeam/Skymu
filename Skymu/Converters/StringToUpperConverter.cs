@@ -15,8 +15,7 @@ namespace Skymu.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // We don't need to convert back from UpperCase to original text 
-            // for read-only UI labels, so this remains unimplemented.
+            // This is not possible unless you store the original values in a dictionary somewhere.
             throw new NotImplementedException();
         }
     }

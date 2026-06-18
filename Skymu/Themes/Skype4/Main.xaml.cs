@@ -1784,7 +1784,7 @@ namespace Skymu.Skype4
             var currentStatus = vmodel.GetStatusFromInt(StatusIcon.DefaultIndex);
 
             if (name == "dnd")
-                Universal.InformDND();
+                vmodel.InformDND();
 
             PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
             if (status == PresenceStatus.Unknown) return;
