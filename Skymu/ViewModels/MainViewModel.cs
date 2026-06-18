@@ -1110,6 +1110,31 @@ namespace Skymu.ViewModels
             return null;
         }
 
+        public static List<object> GetExtras(MenuItem GetExtrasMenuItem)
+        {
+            List<object> items = new List<object>();
+            var ep = Universal.Plugin as IExtras;
+            if (ep.ExtraConfigurations.Count == 0)
+            {
+                items.Add(GetExtrasMenuItem);
+                return items;
+            }
+            foreach (var extra in ep.ExtraConfigurations)
+            {
+                var item = new MenuItem()
+                {
+                    Header = extra.title,
+                    ToolTip = extra.description
+                };
+                item.Click += (_, __) => extra.onRun();
+                items.Add(item);
+            }
+            items.Add(new Separator());
+            items.Add(GetExtrasMenuItem);
+            return items;
+
+        }
+
         public void InformDND()
         {
             if (Settings.InformDND != true)

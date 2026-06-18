@@ -1615,26 +1615,8 @@ namespace Skymu.Skype5
 
         private void RefreshExtras()
         {
-            var ep = Universal.Plugin as IExtras;
             ExtrasMenu.Items.Clear();
-            if (ep.ExtraConfigurations.Count == 0)
-            {
-                ExtrasMenu.Items.Add(GetExtrasMenuItem);
-                return;
-            }
-            ExtrasMenu.IsEnabled = true;
-            foreach (var extra in ep.ExtraConfigurations)
-            {
-                var item = new MenuItem()
-                {
-                    Header = extra.title,
-                    ToolTip = extra.description
-                };
-                item.Click += (_, __) => extra.onRun();
-                ExtrasMenu.Items.Add(item);
-            }
-            ExtrasMenu.Items.Add(new Separator());
-            ExtrasMenu.Items.Add(GetExtrasMenuItem);
+            ExtrasMenu.ItemsSource = MainViewModel.GetExtras(GetExtrasMenuItem);
         }
 
         private void RefreshCreds(object sender = null, PropertyChangedEventArgs e = null)
