@@ -252,7 +252,7 @@ namespace Skymu.ViewModels
             ServerList = new ObservableCollection<Server>();
             ConversationList = new ObservableCollection<Conversation>();
 
-        _pendingPreviewMessages = new Dictionary<string, Message>();
+            _pendingPreviewMessages = new Dictionary<string, Message>();
             _typingActive = false;
             _typingTimer = new Timer(
                 _ =>
@@ -922,18 +922,21 @@ namespace Skymu.ViewModels
         {
             if (rtb?.Document == null)
                 return false;
+
             if (rtb.Tag as string == TAG_PLACEHOLDER)
                 return false;
 
-            var start = rtb.Document.ContentStart;
-            var end = rtb.Document.ContentEnd;
+            string text = new TextRange(
+                rtb.Document.ContentStart,
+                rtb.Document.ContentEnd
+            ).Text;
 
-            return start.GetOffsetToPosition(end) > 2;
+            return !string.IsNullOrWhiteSpace(text);
         }
 
         public static bool CheckIfMessageSendable(RichTextBox mtb)
         {
-            if (mtb.Tag as string == TAG_PLACEHOLDER)
+            if (mtb is null || mtb.Tag as string == TAG_PLACEHOLDER)
             {
                 return false;
             } 

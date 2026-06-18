@@ -1040,7 +1040,7 @@ namespace Skymu.Skype4
         private void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             MainViewModel.RemovePlaceholder(MessageTextBox);
-            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         private void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1066,7 +1066,7 @@ namespace Skymu.Skype4
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             if (MainViewModel.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
         }
@@ -1120,7 +1120,7 @@ namespace Skymu.Skype4
                 {
                     MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB);
                 }
-                SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+                if (SendMsgButton != null) SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             }
         }
 
@@ -1321,7 +1321,7 @@ namespace Skymu.Skype4
                 vmodel.SelectedConversation?.DisplayName
             );
             MainViewModel.SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
-            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
             throbber.Visibility = Visibility.Visible;
 
             await vmodel.SetConversation();
@@ -1432,7 +1432,7 @@ namespace Skymu.Skype4
             container.SiblingInlines.InsertAfter(container, spaceRun);
             MessageTextBox.CaretPosition = spaceRun.ElementEnd;
             MessageTextBox.Focus();
-            SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
+            if (SendMsgButton != null) SendMsgButton.IsEnabled = MainViewModel.CheckIfMessageSendable(MessageTextBox);
         }
 
         #endregion
