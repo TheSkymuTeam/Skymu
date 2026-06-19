@@ -14,7 +14,7 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (Universal.IsDarkTheme)
-                return new DarkenEffect();
+                return new DarkenShader();
 
             return null;
         }

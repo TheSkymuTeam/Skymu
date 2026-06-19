@@ -19,6 +19,7 @@
     Title="Skype™ - Window"
     Width="518"
     Height="394"
+    Background="{StaticResource Card.Background}"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     Style="{StaticResource Window}"

@@ -24,6 +24,7 @@
     Title="Add a contact"
     d:Background="#FFFFFF"
     FontFamily="Tahoma"
+    Foreground="{StaticResource Text.VeryHighContrast}"
     Style="{StaticResource Page}"
     mc:Ignorable="d">
     <Page.Resources>
@@ -113,6 +114,7 @@
                         FontFamily="Tahoma"
                         FontSize="11"
                         FontWeight="Bold"
+                        Foreground="{StaticResource Text.VeryHighContrast}"
                         Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}" />
                     <uc:QuickLTB
                         Key="sF_ADDFRIEND_FIND_LABEL"
@@ -120,7 +122,8 @@
                         Grid.ColumnSpan="2"
                         Margin="0,0,0,18"
                         FontFamily="Tahoma"
-                        FontSize="11" />
+                        FontSize="11"
+                        Foreground="{StaticResource Text.VeryHighContrast}" />
                     <Grid
                         Grid.Row="1"
                         Grid.RowSpan="2"
@@ -156,6 +159,7 @@
                         Margin="0,15,0,26"
                         FontFamily="Tahoma"
                         FontSize="11"
+                        Foreground="{StaticResource Text.VeryHighContrast}"
                         Text="{Binding Path='[sF_SEARCH_MANDALAY_LB_INTRO]', Source={StaticResource Lang}}"
                         TextWrapping="Wrap" />
                     <!--  TODO: Progressbar accuracy  -->
@@ -173,6 +177,7 @@
                         Margin="0,15,0,26"
                         FontFamily="Tahoma"
                         FontSize="11"
+                        Foreground="{StaticResource Text.VeryHighContrast}"
                         Visibility="Collapsed" />
 
                     <StackPanel
@@ -205,6 +210,7 @@
                             <TextBlock
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Bottom"
+                                Foreground="{StaticResource Text.VeryHighContrast}"
                                 Text="{Binding Path='[sF_ADDFRIEND_LABEL4_1]', Source={StaticResource Lang}}"
                                 TextWrapping="Wrap" />
                         </DockPanel>
@@ -220,6 +226,7 @@
                             <TextBlock
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Bottom"
+                                Foreground="{StaticResource Text.VeryHighContrast}"
                                 TextWrapping="Wrap">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="{}{0} {1}">
@@ -241,6 +248,7 @@
                             <TextBlock
                                 Margin="5,0,0,0"
                                 VerticalAlignment="Bottom"
+                                Foreground="{StaticResource Text.VeryHighContrast}"
                                 Text="{Binding Path='[sF_ADDFRIEND_LABEL4_4]', Source={StaticResource Lang}}"
                                 TextWrapping="Wrap" />
                         </DockPanel>
@@ -296,7 +304,8 @@
                     Grid.Row="0"
                     Margin="0,0,0,10"
                     FontFamily="Tahoma"
-                    FontSize="11">
+                    FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}">
                     <Binding Path="DisplayName" />
                 </uc:QuickLTB>
 
@@ -306,6 +315,7 @@
                     Grid.Row="1"
                     Width="250"
                     FontFamily="Tahoma"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="Hello, Skymu user here!" />
                 <!--  Details of found contact  -->
                 <!--  TODO: Fix this up  -->
