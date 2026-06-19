@@ -1,4 +1,4 @@
-﻿<!-- 
+﻿<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -48,6 +48,7 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource Text.VeryHighContrast}" />
             <Setter Property="Focusable" Value="True" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
@@ -96,6 +97,7 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="Foreground" Value="{StaticResource Text.VeryHighContrast}" />
         </Style>
         <Style x:Key="ContactStatusStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
@@ -306,7 +308,7 @@
                                         Grid.Column="1"
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Foreground="Black"
+                                        Foreground="{StaticResource Text.VeryHighContrast}"
                                         Style="{StaticResource ContactStatusStyle}"
                                         Text="{Binding DisplayName}" />
                                 </Grid>
@@ -464,6 +466,7 @@
                     VerticalAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
             </Grid>
@@ -499,6 +502,7 @@
                     VerticalAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
             </Grid>
@@ -863,7 +867,6 @@
                                             HoverIndex="1"
                                             IsRadioButton="False"
                                             PressedIndex="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/header.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
@@ -871,7 +874,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="43"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <StackPanel
                                             x:Name="StatusArea"
                                             Grid.Row="0"
@@ -1031,47 +1035,47 @@
                                         IsRadioButton="True"
                                         MouseLeftButtonUp="HomeButton_Click"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Sidebar/home.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                     <global:SliceControl
                                         Grid.Column="2"
                                         HorizontalAlignment="Center"
                                         DefaultIndex="0"
                                         ElementCount="5"
-                                        Themeable="True"
                                         HoverIndex="1"
                                         MouseLeftButtonUp="CallPhones_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Sidebar/calls.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                     <global:SliceControl
                                         Grid.Column="4"
                                         HorizontalAlignment="Center"
                                         DefaultIndex="0"
                                         ElementCount="5"
                                         HoverIndex="1"
-                                        Themeable="True"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Sidebar/group.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                     <global:SliceControl
                                         x:Name="AddContactButton"
                                         Grid.Column="6"
                                         HorizontalAlignment="Right"
                                         DefaultIndex="0"
                                         ElementCount="5"
-                                        Themeable="True"
                                         HoverIndex="1"
                                         IsRadioButton="True"
                                         MouseLeftButtonUp="AddContact_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Sidebar/add.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                 </Grid>
 
                                 <!--  Search box  -->
@@ -1082,11 +1086,11 @@
                                         Cursor="IBeam"
                                         DefaultIndex="0"
                                         ElementCount="2"
-                                        Themeable="True"
                                         Interactive="False"
                                         PressedIndex="1"
                                         Source="Assets/Themeable/Sidebar/search-box.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                     <TextBox
                                         x:Name="SearchBox"
                                         Padding="29,0,0,0"
@@ -1120,7 +1124,6 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/contacts.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
@@ -1128,7 +1131,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="31"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="btnServers"
                                             Grid.Column="1"
@@ -1136,7 +1140,6 @@
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="-1"
-                                            Themeable="True"
                                             IsRadioButton="True"
                                             LeftWidth="25"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
@@ -1149,7 +1152,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="29"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="btnRecents"
                                             Grid.Column="2"
@@ -1158,7 +1162,6 @@
                                             DefaultIndex="1"
                                             ElementCount="5"
                                             HoverIndex="-1"
-                                            Themeable="True"
                                             IsRadioButton="True"
                                             LeftWidth="25"
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
@@ -1171,7 +1174,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="30"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -1437,7 +1441,6 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Sidebar/header.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
@@ -1445,7 +1448,8 @@
                                         TextFont="Arial"
                                         TextLeftMargin="13"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                 </Grid>
                             </Border>
 
@@ -1824,9 +1828,9 @@
                                             MouseLeftButtonUp="AddButtonClick"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Chat/add.png"
-                                            StackDirection="Vertical" />
+                                            StackDirection="Vertical"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="WifiButton"
                                             Width="44"
@@ -1835,11 +1839,11 @@
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="1"
-                                            Themeable="True"
                                             PressedIndex="2"
                                             SliceMode="0"
                                             Source="Assets/Themeable/Chat/network-none.png"
-                                            StackDirection="Vertical" />
+                                            StackDirection="Vertical"
+                                            Themeable="True" />
                                     </StackPanel>
                                     <Rectangle
                                         Grid.Row="1"
@@ -1970,9 +1974,9 @@
                                                         MouseLeftButtonUp="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
-                                                        Themeable="True"
                                                         Source="Assets/Themeable/Chat/emoji.png"
-                                                        StackDirection="Vertical" />
+                                                        StackDirection="Vertical"
+                                                        Themeable="True" />
                                                     <Popup
                                                         x:Name="EmojiFlyout"
                                                         AllowsTransparency="True"

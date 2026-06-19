@@ -1328,7 +1328,7 @@ namespace Skymu
             if (!ReferenceEquals(rect.Fill, brush))
                 rect.Fill = brush;
 
-            if (Universal.IsDarkTheme && Themeable) rect.Effect = new DarkenEffect();
+            if (Universal.IsDarkTheme && Themeable) rect.Effect = new DarkenShader();
             else rect.Effect = null;
         }
 

@@ -46,6 +46,7 @@
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
             <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{StaticResource Text.VeryHighContrast}" />
             <Setter Property="Focusable" Value="True" />
             <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
@@ -123,6 +124,7 @@
         <Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontFamily" Value="Tahoma" />
+            <Setter Property="Foreground" Value="{StaticResource Text.VeryHighContrast}" />
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
         <Style x:Key="ContactStatusStyle" TargetType="TextBlock">
@@ -332,7 +334,7 @@
                                         Grid.Column="1"
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Foreground="Black"
+                                        Foreground="{StaticResource Text.VeryHighContrast}"
                                         Style="{StaticResource ContactStatusStyle}"
                                         Text="{Binding DisplayName}" />
                                 </Grid>
@@ -489,6 +491,7 @@
                     VerticalAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
             </Grid>
@@ -524,6 +527,7 @@
                     VerticalAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
             </Grid>
@@ -1200,7 +1204,6 @@
                                             IsRadioButton="True"
                                             MouseLeftButtonUp="Chat_Close"
                                             PressedIndex="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/status-top.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
@@ -1209,7 +1212,8 @@
                                             TextLeftMargin="43"
                                             TextRightMargin="30"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <StackPanel
                                             x:Name="StatusArea"
                                             Grid.Row="0"
@@ -1354,9 +1358,9 @@
                                             Interactive="False"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/home.png"
-                                            StackDirection="Horizontal" />
+                                            StackDirection="Horizontal"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="SkypeCreditBox"
                                             Grid.Row="1"
@@ -1366,14 +1370,14 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="-1"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/status-bottom.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
                                             TextColor="{StaticResource Text.HighContrast}"
                                             TextFont="Tahoma"
                                             TextLeftMargin="34"
-                                            TextSize="11" />
+                                            TextSize="11"
+                                            Themeable="True" />
                                         <Image
                                             Grid.Row="1"
                                             Width="16"
@@ -1400,7 +1404,6 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/contacts.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
@@ -1408,7 +1411,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="30"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="btnServers"
                                             Grid.Column="1"
@@ -1421,7 +1425,6 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/servers.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
@@ -1429,7 +1432,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="28"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="btnRecents"
                                             Grid.Column="2"
@@ -1443,7 +1447,6 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/recents.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
@@ -1451,7 +1454,8 @@
                                             TextFont="Arial"
                                             TextLeftMargin="30"
                                             TextSize="13"
-                                            TextWeight="Bold" />
+                                            TextWeight="Bold"
+                                            Themeable="True" />
                                     </Grid>
                                 </StackPanel>
                                 <Border
@@ -1474,9 +1478,9 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="0"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/search-box.png"
-                                            StackDirection="Vertical" />
+                                            StackDirection="Vertical"
+                                            Themeable="True" />
                                         <TextBox
                                             x:Name="SearchBox"
                                             Grid.Row="0"
@@ -1541,7 +1545,7 @@
                                         <TreeView
                                             x:Name="ServersList"
                                             Grid.Row="2"
-                                            Background="White"
+                                            Background="{StaticResource Card.Background}"
                                             BorderThickness="0"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                             ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -1606,14 +1610,14 @@
                                             HoverTransition="False"
                                             MouseLeftButtonUp="AddContact_Click"
                                             PressedIndex="2"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/add-contact.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
                                             Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
                                             TextFont="Tahoma"
                                             TextLeftMargin="41"
-                                            TextSize="11" />
+                                            TextSize="11"
+                                            Themeable="True" />
                                         <global:SliceControl
                                             x:Name="MakeGroupButton"
                                             Grid.Column="1"
@@ -1625,14 +1629,14 @@
                                             MouseLeftButtonUp="MakeGroup_Click"
                                             PressedIndex="2"
                                             RightWidth="1"
-                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/create-group.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
                                             Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
                                             TextFont="Tahoma"
                                             TextLeftMargin="41"
-                                            TextSize="11" />
+                                            TextSize="11"
+                                            Themeable="True" />
                                     </Grid>
 
                                     <Border BorderBrush="{StaticResource Card.Border}" BorderThickness="1,0,1,0">
@@ -1645,7 +1649,6 @@
                                                 HoverIndex="1"
                                                 MouseLeftButtonUp="CallPhones_Click"
                                                 PressedIndex="2"
-                                                Themeable="True"
                                                 Source="Assets/Themeable/Sidebar/call-phones.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
@@ -1653,7 +1656,8 @@
                                                 TextFont="Arial"
                                                 TextLeftMargin="32"
                                                 TextSize="13"
-                                                TextWeight="Bold" />
+                                                TextWeight="Bold"
+                                                Themeable="True" />
                                             <Rectangle Height="1" Fill="{StaticResource Sidebar.Divider.Translucent}" />
                                         </StackPanel>
                                     </Border>
@@ -1663,14 +1667,14 @@
                                         DefaultIndex="0"
                                         ElementCount="1"
                                         Interactive="False"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Sidebar/user-count-background.png"
                                         StackDirection="Vertical"
                                         Text="Sky Multiprotocol. All rights reserved."
                                         TextColor="{StaticResource Text.LowContrast}"
                                         TextFont="Tahoma"
                                         TextLeftMargin="7"
-                                        TextSize="11" />
+                                        TextSize="11"
+                                        Themeable="True" />
                                 </StackPanel>
 
                             </Grid>
@@ -1716,7 +1720,6 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
@@ -1724,7 +1727,8 @@
                                         TextFont="Arial"
                                         TextLeftMargin="13"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                     <global:SliceControl
                                         x:Name="ChatCloseButton"
                                         Grid.Column="1"
@@ -1735,7 +1739,6 @@
                                         HoverIndex="1"
                                         MouseLeftButtonUp="Chat_Close"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-right.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
@@ -1744,7 +1747,8 @@
                                         TextLeftMargin="27"
                                         TextRightMargin="16"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                     <Image
                                         Grid.Column="1"
                                         Width="16"
@@ -1774,7 +1778,6 @@
                                         HoverIndex="-1"
                                         IsRadioButton="True"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"
@@ -1783,7 +1786,8 @@
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                     <Image
                                         Grid.Column="0"
                                         Width="16"
@@ -1801,7 +1805,6 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"
@@ -1810,7 +1813,8 @@
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                     <Image
                                         Grid.Column="1"
                                         Width="16"
@@ -1829,7 +1833,6 @@
                                         IsRadioButton="False"
                                         MouseLeftButtonUp="OnFeedbackClick"
                                         PressedIndex="2"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="Report a bug"
@@ -1838,7 +1841,8 @@
                                         TextLeftMargin="31"
                                         TextRightMargin="16"
                                         TextSize="13"
-                                        TextWeight="Bold" />
+                                        TextWeight="Bold"
+                                        Themeable="True" />
                                     <Image
                                         Grid.Column="2"
                                         Width="16"
@@ -1854,9 +1858,9 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
-                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-right.png"
-                                        StackDirection="Vertical" />
+                                        StackDirection="Vertical"
+                                        Themeable="True" />
                                 </Grid>
                                 <Border
                                     Grid.Row="1"
@@ -2243,9 +2247,9 @@
                                                 MouseLeftButtonUp="AddButtonClick"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/add.png"
-                                                StackDirection="Vertical" />
+                                                StackDirection="Vertical"
+                                                Themeable="True" />
                                             <global:SliceControl
                                                 x:Name="WifiButton"
                                                 Width="44"
@@ -2256,9 +2260,9 @@
                                                 HoverIndex="1"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/network-none.png"
-                                                StackDirection="Vertical" />
+                                                StackDirection="Vertical"
+                                                Themeable="True" />
                                         </StackPanel>
                                         <Rectangle
                                             Grid.Row="1"
@@ -2346,9 +2350,9 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/message-box-header25.png"
                                                 StackDirection="Vertical"
+                                                Themeable="True"
                                                 TopHeight="25" />
                                             <StackPanel
                                                 x:Name="MessageBoxPanel"
@@ -2373,9 +2377,9 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Themeable="True"
                                                             Source="Assets/Themeable/Chat/emoji.png"
-                                                            StackDirection="Vertical" />
+                                                            StackDirection="Vertical"
+                                                            Themeable="True" />
                                                     </StackPanel>
                                                     <Popup
                                                         x:Name="EmojiFlyout"

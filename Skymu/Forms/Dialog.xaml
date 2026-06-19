@@ -20,6 +20,7 @@
     Width="383"
     MinHeight="235"
     MaxHeight="800"
+    Background="{StaticResource Card.Background}"
     ResizeMode="NoResize"
     SizeToContent="Height"
     Style="{StaticResource Window}"
@@ -87,6 +88,7 @@
                     Name="Description"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     LineHeight="16"
                     Text="Message goes here"
                     TextWrapping="Wrap" />
@@ -128,6 +130,7 @@
                     Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
                     FontSize="11"
+                    Foreground="{StaticResource Text.VeryHighContrast}"
                     Visibility="Collapsed" />
                 <StackPanel
                     Grid.Column="1"

@@ -28,12 +28,13 @@
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
+    Foreground="{StaticResource Text.VeryHighContrast}"
     Style="{StaticResource Page}"
     mc:Ignorable="d">
 
     <Page.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
-        
+
     </Page.Resources>
 
     <Grid Margin="15,20,15,35">

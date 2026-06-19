@@ -158,6 +158,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Shaders\Darken.ps" />
+	  <None Remove="Shaders\DarkenLighten.ps" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\add.png" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\contact.png" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\megaphone.png" />
@@ -257,6 +258,7 @@
 
 	<ItemGroup>
 	  <Resource Include="Shaders\Darken.ps" />
+	  <Resource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
 </Project>
