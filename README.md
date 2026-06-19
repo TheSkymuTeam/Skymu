@@ -21,6 +21,8 @@ For this guide, you will need Git for Windows, Visual Studio 2019 (or newer) and
 * [Download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe) (recommended) or [download Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe). Select the ".NET desktop development" workload in the installer.
 * [Download NSIS](https://sourceforge.net/projects/nsis/files/latest/download)
 
+A plugin development guide is available on the website: https://www.skymu.app/wiki/yggdrasil
+
 ## Application
 
 Open Command Prompt, navigate to the folder you want Skymu in, and run `git clone https://github.com/TheSkymuTeam/Skymu.git` to download the repository.
