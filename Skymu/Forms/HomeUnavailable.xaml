@@ -48,7 +48,7 @@
                 Height="48"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Source="{Binding Converter={StaticResource AssetLoader}, Source='Home/warning.png'}" />
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Home/warning.png'}" />
             <StackPanel Margin="16,0,0,0" Orientation="Vertical">
                 <TextBlock
                     x:Name="NoHomeHead"
@@ -110,6 +110,6 @@
             Height="190"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
-            Source="{Binding Converter={StaticResource AssetLoader}, Source='Home/footer.png'}" />
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Home/footer.png'}" />
     </Grid>
 </Page>

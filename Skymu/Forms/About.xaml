@@ -39,7 +39,7 @@
         <Image
             Height="108"
             Margin="0,115,0,3"
-            Source="{Binding Converter={StaticResource AssetLoader}, Source='Branding/logo-about.png'}" />
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Branding/logo-about.png'}" />
         <TextBlock
             Margin="0,1,9,0"
             HorizontalAlignment="Center"

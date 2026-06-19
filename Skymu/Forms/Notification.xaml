@@ -56,7 +56,7 @@
                 Margin="5,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Source="{Binding Converter={StaticResource AssetLoader}, Source='Branding/logo-notification.png'}"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Branding/logo-notification.png'}"
                 Stretch="Fill" />
             <global:SliceControl
                 x:Name="close"
@@ -69,7 +69,7 @@
                 MouseLeftButtonDown="CloseButton_Click"
                 PressedIndex="0"
                 SliceMode="0"
-                Source="{Binding Converter={StaticResource AssetLoader}, Source='Notifications/close.png'}"
+                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Notifications/close.png'}"
                 StackDirection="Vertical"
                 Visibility="Hidden" />
             <Border Grid.Row="1" Padding="8,7">

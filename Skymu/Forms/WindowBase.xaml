@@ -47,7 +47,7 @@
             Interactive="False"
             PressedIndex="-1"
             SliceMode="0"
-            Source="{Binding Converter={StaticResource AssetLoader}, Source='Dialog/icons.png'}"
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Dialog/icons.png'}"
             StackDirection="Horizontal" />
         <!--  Top Header Section  -->
         <Grid
