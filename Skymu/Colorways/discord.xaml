@@ -89,10 +89,10 @@
     <SolidColorBrush x:Key="Settings.ActiveTab" Color="#85c0fc" />
 
     <LinearGradientBrush x:Key="Strip.Background" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F2F2F2" />
-        <GradientStop Offset="1" Color="#E6E6E6" />
+        <GradientStop Offset="0" Color="#3A3A3A" />
+        <GradientStop Offset="1" Color="#2E2E2E" />
     </LinearGradientBrush>
-    <SolidColorBrush x:Key="Metro.Strip.Background" Color="#E5E9EE" />
+    <SolidColorBrush x:Key="Metro.Strip.Background" Color="#2F343A" />
 
     <Color x:Key="Avatar.Shadow">#80000000</Color>
     <Color x:Key="WindowFrame.Button.Close.Glow">#ED4245</Color>

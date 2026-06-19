@@ -157,6 +157,7 @@
 		<Resource Remove="Properties\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Remove="Shaders\Darken.ps" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\add.png" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\contact.png" />
 	  <None Remove="Themes\Skype5\Assets\Universal\Icon\megaphone.png" />
@@ -252,6 +253,10 @@
 			<Generator>MSBuild:Compile</Generator>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Shaders\Darken.ps" />
 	</ItemGroup>
 
 </Project>

@@ -1077,6 +1077,7 @@
                         HoverIndex="1"
                         PressedIndex="2"
                         SliceMode="0"
+                        Themeable="True"
                         Source="Assets/Themeable/Chat/network-none.png"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->

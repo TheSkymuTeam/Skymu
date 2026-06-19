@@ -1200,6 +1200,7 @@
                                             IsRadioButton="True"
                                             MouseLeftButtonUp="Chat_Close"
                                             PressedIndex="2"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/status-top.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
@@ -1353,6 +1354,7 @@
                                             Interactive="False"
                                             PressedIndex="2"
                                             SliceMode="0"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/home.png"
                                             StackDirection="Horizontal" />
                                         <global:SliceControl
@@ -1364,6 +1366,7 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="-1"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/status-bottom.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
@@ -1397,6 +1400,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/contacts.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
@@ -1417,6 +1421,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/servers.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
@@ -1438,6 +1443,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/recents.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
@@ -1468,6 +1474,7 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="0"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/search-box.png"
                                             StackDirection="Vertical" />
                                         <TextBox
@@ -1599,6 +1606,7 @@
                                             HoverTransition="False"
                                             MouseLeftButtonUp="AddContact_Click"
                                             PressedIndex="2"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/add-contact.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
@@ -1617,6 +1625,7 @@
                                             MouseLeftButtonUp="MakeGroup_Click"
                                             PressedIndex="2"
                                             RightWidth="1"
+                                            Themeable="True"
                                             Source="Assets/Themeable/Sidebar/create-group.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
@@ -1636,6 +1645,7 @@
                                                 HoverIndex="1"
                                                 MouseLeftButtonUp="CallPhones_Click"
                                                 PressedIndex="2"
+                                                Themeable="True"
                                                 Source="Assets/Themeable/Sidebar/call-phones.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
@@ -1653,6 +1663,7 @@
                                         DefaultIndex="0"
                                         ElementCount="1"
                                         Interactive="False"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Sidebar/user-count-background.png"
                                         StackDirection="Vertical"
                                         Text="Sky Multiprotocol. All rights reserved."
@@ -1705,6 +1716,7 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
@@ -1723,6 +1735,7 @@
                                         HoverIndex="1"
                                         MouseLeftButtonUp="Chat_Close"
                                         PressedIndex="2"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-right.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
@@ -1761,6 +1774,7 @@
                                         HoverIndex="-1"
                                         IsRadioButton="True"
                                         PressedIndex="2"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"
@@ -1787,6 +1801,7 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"
@@ -1814,6 +1829,7 @@
                                         IsRadioButton="False"
                                         MouseLeftButtonUp="OnFeedbackClick"
                                         PressedIndex="2"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="Report a bug"
@@ -1838,6 +1854,7 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
+                                        Themeable="True"
                                         Source="Assets/Themeable/Chat/tab-right.png"
                                         StackDirection="Vertical" />
                                 </Grid>
@@ -2226,6 +2243,7 @@
                                                 MouseLeftButtonUp="AddButtonClick"
                                                 PressedIndex="2"
                                                 SliceMode="0"
+                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/add.png"
                                                 StackDirection="Vertical" />
                                             <global:SliceControl
@@ -2238,6 +2256,7 @@
                                                 HoverIndex="1"
                                                 PressedIndex="2"
                                                 SliceMode="0"
+                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/network-none.png"
                                                 StackDirection="Vertical" />
                                         </StackPanel>
@@ -2327,6 +2346,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
+                                                Themeable="True"
                                                 Source="Assets/Themeable/Chat/message-box-header25.png"
                                                 StackDirection="Vertical"
                                                 TopHeight="25" />
@@ -2353,6 +2373,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
+                                                            Themeable="True"
                                                             Source="Assets/Themeable/Chat/emoji.png"
                                                             StackDirection="Vertical" />
                                                     </StackPanel>

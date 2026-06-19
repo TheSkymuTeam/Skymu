@@ -194,6 +194,7 @@
                         LeftWidth="15"
                         PressedIndex="4"
                         RightWidth="15"
+                        Themeable="True"
                         Source="Assets/Themeable/Login/pill.png"
                         StackDirection="Vertical"
                         Text="{Binding [sZAPBUTTON_SIGNIN]}"

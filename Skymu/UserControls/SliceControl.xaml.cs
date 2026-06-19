@@ -9,6 +9,7 @@
 // License: https://skymu.app/legal/license
 /*==========================================================*/
 
+using Skymu.Shaders;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -16,6 +17,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -405,6 +407,19 @@ namespace Skymu
                 typeof(int),
                 typeof(SliceControl),
                 new PropertyMetadata(0, OnTextChanged)
+            );
+
+        public bool Themeable
+        {
+            get { return (bool)GetValue(ThemeableProperty); }
+            set { SetValue(ThemeableProperty, value); }
+        }
+        public static readonly DependencyProperty ThemeableProperty =
+            DependencyProperty.Register(
+                nameof(Themeable),
+                typeof(bool),
+                typeof(SliceControl),
+                new PropertyMetadata(false, OnTextChanged)
             );
 
         public ImageSource Source
@@ -1312,6 +1327,9 @@ namespace Skymu
 
             if (!ReferenceEquals(rect.Fill, brush))
                 rect.Fill = brush;
+
+            if (Universal.IsDarkTheme && Themeable) rect.Effect = new DarkenEffect();
+            else rect.Effect = null;
         }
 
         private void SetNineSliceVisibility(bool visible)

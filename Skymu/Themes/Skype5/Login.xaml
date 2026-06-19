@@ -192,6 +192,7 @@
                         IsEnabled="False"
                         LeftWidth="15"
                         PressedIndex="4"
+                        Themeable="True"
                         RightWidth="15"
                         Source="Assets/Themeable/Login/pill.png"
                         StackDirection="Vertical"

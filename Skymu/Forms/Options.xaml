@@ -50,6 +50,7 @@
             <Setter Property="HoverIndex" Value="1" />
             <Setter Property="PressedIndex" Value="2" />
             <Setter Property="Source" Value="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}" />
+            <Setter Property="Themeable" Value="True" />
             <Setter Property="IconLeftMargin" Value="10" />
             <Setter Property="IconWidth" Value="24" />
             <Setter Property="IconHeight" Value="24" />
@@ -74,6 +75,7 @@
                             Interactive="False"
                             PressedIndex="-1"
                             SliceMode="2"
+                            Themeable="True"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                             StackDirection="Vertical"
                             TopHeight="2" />
@@ -360,6 +362,7 @@
                         ElementSpan="2"
                         Interactive="False"
                         SliceMode="2"
+                        Themeable="True"
                         Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                         StackDirection="Vertical"
                         TopHeight="37" />

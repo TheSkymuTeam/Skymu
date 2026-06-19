@@ -43,6 +43,7 @@
             DefaultIndex="0"
             ElementCount="1"
             SliceMode="2"
+            Themeable="True"
             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Notifications/bubble-orange.png'}" />
         <Grid>
             <Grid.RowDefinitions>
