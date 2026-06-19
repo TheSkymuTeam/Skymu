@@ -528,7 +528,7 @@ namespace Skymu.ViewModels
                         && !_synchronizing
                     )
                     {
-                        SoundManager.Play("IM");
+                        
                     }
                 }
 
@@ -596,6 +596,7 @@ namespace Skymu.ViewModels
                     ActiveConversation.Add(eR.Item);
                 if (eR.Item is Message message)
                 {
+                    SoundManager.Play("IM");
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (message.Author?.Identifier == Universal.CurrentUser?.Identifier) return;
                     if ((Settings.NotificationTrigger & NotificationTriggerType.ALL) != 0)

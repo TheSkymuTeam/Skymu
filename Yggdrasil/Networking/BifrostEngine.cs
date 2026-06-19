@@ -226,12 +226,15 @@ namespace Yggdrasil.Networking
                 Debug.WriteLine($"[BIFROST-HTTP] Streaming {contentLength} byte body via PooledStream.");
                 responseBody = new PooledStream(reader, stream, poolKey, this, contentLength, connectionClose);
             }
+            else if (chunked)
+            {
+                Debug.WriteLine($"[BIFROST-HTTP] Streaming chunked body via ChunkedStream.");
+                responseBody = new ChunkedStream(reader, stream, poolKey, this, connectionClose, responseHeaders);
+            }
             else
             {
-                Debug.WriteLine("[BIFROST-HTTP] Buffering body (chunked or connection-close).");
-                byte[] bytes = chunked
-                    ? await reader.ReadChunkedAsync(ct).ConfigureAwait(false)
-                    : await reader.ReadToEndAsync(ct).ConfigureAwait(false);
+                Debug.WriteLine("[BIFROST-HTTP] Buffering body (connection-close, no length).");
+                byte[] bytes = await reader.ReadToEndAsync(ct).ConfigureAwait(false);
                 bytes = await DecompressAsync(bytes, responseHeaders, ct).ConfigureAwait(false);
 
                 if (connectionClose)
@@ -483,6 +486,169 @@ namespace Yggdrasil.Networking
             public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
             public override void SetLength(long value) => throw new NotSupportedException();
             public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        }
+
+        private sealed class ChunkedStream : Stream
+        {
+            private readonly HttpReader _reader;
+            private readonly Stream _rawStream;
+            private readonly string _poolKey;
+            private readonly BifrostEngine _engine;
+            private readonly bool _connectionClose;
+            private readonly string _contentEncoding;
+
+            private byte[] _currentChunk;
+            private int _currentPos;
+            private bool _finished;
+            private bool _disposed;
+            private bool _returnedToPool;
+
+            private Stream _decompressor;
+            private RawChunkSource _rawSource;
+
+            public ChunkedStream(HttpReader reader, Stream rawStream, string poolKey,
+                BifrostEngine engine, bool connectionClose,
+                List<KeyValuePair<string, string>> responseHeaders)
+            {
+                _reader = reader;
+                _rawStream = rawStream;
+                _poolKey = poolKey;
+                _engine = engine;
+                _connectionClose = connectionClose;
+
+                foreach (var h in responseHeaders)
+                {
+                    if (h.Key.Equals("Content-Encoding", StringComparison.OrdinalIgnoreCase))
+                    {
+                        _contentEncoding = h.Value.Trim().ToLowerInvariant();
+                        break;
+                    }
+                }
+
+                if (_contentEncoding == "gzip" || _contentEncoding == "deflate")
+                {
+                    _rawSource = new RawChunkSource(this);
+                    _decompressor = _contentEncoding == "gzip"
+                        ? (Stream)new GZipStream(_rawSource, CompressionMode.Decompress)
+                        : new DeflateStream(_rawSource, CompressionMode.Decompress);
+                }
+            }
+
+            public override bool CanRead => true;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotSupportedException();
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+
+            public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken ct)
+            {
+                if (_decompressor != null)
+                    return await _decompressor.ReadAsync(buffer, offset, count, ct).ConfigureAwait(false);
+
+                return await ReadRawAsync(buffer, offset, count, ct).ConfigureAwait(false);
+            }
+
+            private async Task<int> ReadRawAsync(byte[] buffer, int offset, int count, CancellationToken ct)
+            {
+                if (_finished) return 0;
+
+                if (_currentChunk == null || _currentPos >= _currentChunk.Length)
+                {
+                    int chunkSize = await ReadChunkSizeAsync(ct).ConfigureAwait(false);
+
+                    if (chunkSize == 0)
+                    {
+                        await ConsumeTrailersAsync(ct).ConfigureAwait(false);
+                        _finished = true;
+                        ReleaseConnection();
+                        return 0;
+                    }
+
+                    _currentChunk = await _reader.ReadExactAsync(chunkSize, ct).ConfigureAwait(false);
+                    await _reader.ReadExactAsync(2, ct).ConfigureAwait(false); // trailing CRLF
+                    _currentPos = 0;
+                }
+
+                int toCopy = Math.Min(count, _currentChunk.Length - _currentPos);
+                Buffer.BlockCopy(_currentChunk, _currentPos, buffer, offset, toCopy);
+                _currentPos += toCopy;
+                return toCopy;
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+                => ReadAsync(buffer, offset, count, CancellationToken.None).GetAwaiter().GetResult();
+
+            private async Task<int> ReadChunkSizeAsync(CancellationToken ct)
+            {
+                string sizeLine = await _reader.ReadLineAsync(ct).ConfigureAwait(false);
+                int semi = sizeLine.IndexOf(';');
+                if (semi >= 0) sizeLine = sizeLine.Substring(0, semi);
+                return int.Parse(sizeLine.Trim(), NumberStyles.HexNumber);
+            }
+
+            private async Task ConsumeTrailersAsync(CancellationToken ct)
+            {
+                string line;
+                while (!string.IsNullOrEmpty(line = await _reader.ReadLineAsync(ct).ConfigureAwait(false))) { }
+            }
+
+            private void ReleaseConnection()
+            {
+                if (_returnedToPool) return;
+                _returnedToPool = true;
+                if (_connectionClose)
+                    _rawStream.Dispose();
+                else
+                    _engine.ReturnToPool(_poolKey, _rawStream);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (!_disposed && disposing)
+                {
+                    _disposed = true;
+                    _decompressor?.Dispose();
+                    if (!_returnedToPool)
+                    {
+                        _returnedToPool = true;
+                        Debug.WriteLine("[BIFROST-HTTP] ChunkedStream disposed before completion, dropping connection.");
+                        _rawStream.Dispose();
+                    }
+                }
+                base.Dispose(disposing);
+            }
+
+            public override void Flush() { }
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+            private sealed class RawChunkSource : Stream
+            {
+                private readonly ChunkedStream _owner;
+                public RawChunkSource(ChunkedStream owner) => _owner = owner;
+
+                public override bool CanRead => true;
+                public override bool CanSeek => false;
+                public override bool CanWrite => false;
+                public override long Length => throw new NotSupportedException();
+                public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+                public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken ct)
+                    => _owner.ReadRawAsync(buffer, offset, count, ct);
+
+                public override int Read(byte[] buffer, int offset, int count)
+                    => ReadAsync(buffer, offset, count, CancellationToken.None).GetAwaiter().GetResult();
+
+                public override void Flush() { }
+                public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+                public override void SetLength(long value) => throw new NotSupportedException();
+                public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+            }
         }
 
         private sealed class HttpReader
