@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our license.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: https://skymu.app/legal/license
+/*==========================================================*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -8,71 +19,77 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VoidAI
+namespace Chaco
 {
-    // Thrown when VoidAI returns a structured API error
-    // (ref for future: https://docs.voidai.app/guides/errors and /authentication).
-    internal sealed class VoidAIException : Exception
+    internal sealed class ChacoException : Exception
     {
         public string ErrorCode { get; }
 
-        public VoidAIException(string message, string errorCode) : base(message)
+        public ChacoException(string message, string errorCode) : base(message)
         {
             ErrorCode = errorCode;
         }
     }
 
-    // Smoll wrapper around VoidAI's OpenAI-compatible chat completions
-    // endpoint. Handles auth, request shaping, and manual SSE parsing for
-    // streaming responses (HttpClient has no built-in SSE reader) .
-    internal sealed class VoidAIClient : IDisposable
+    internal sealed class ChacoClient : IDisposable
     {
-        private const string BaseUrl = "https://api.voidai.app/v1";
-
+        private readonly string _baseUrl;
         private readonly HttpClient _http;
 
-        public VoidAIClient(string apiKey)
+        public ChacoClient(string baseUrl, string apiKey)
         {
+            if (string.IsNullOrWhiteSpace(baseUrl))
+                throw new ArgumentException("Base URL must not be empty.", nameof(baseUrl));
+
+            _baseUrl = baseUrl.TrimEnd('/');
+
             _http = new HttpClient(new Yggdrasil.Networking.BifrostEngine())
             {
-                Timeout = Timeout.InfiniteTimeSpan // streaming responses can run long; we cancel via token instead
+                Timeout = Timeout.InfiniteTimeSpan
             };
-            _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+            if (!string.IsNullOrWhiteSpace(apiKey))
+            {
+                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            }
+
             _http.DefaultRequestHeaders.UserAgent.ParseAdd(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"); // Chrome 124 on Windows x64
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
             _http.DefaultRequestHeaders.Accept.ParseAdd("application/json");
             _http.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
         }
 
-        // Quick credential check. VoidAI has no dedicated "verify this key"
-        /// endpoint, GET /v1/models is unauthenticated, so it can't tell us
-        // whether the key is valid. A minimal chat completion is the only
-        // way to confirm auth, so this sends the cheapest possible request
-        // (max_tokens: 1 against the lowest-multiplier free model) purely to
-        // read the auth outcome off the response/error.
-
-        // TODO: maybe there is a better way to do ts ?
-        public async Task<bool> ValidateKeyAsync(CancellationToken cancellationToken = default)
+        public async Task<List<string>> ListModelsAsync(CancellationToken cancellationToken = default)
         {
-            try
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/models"))
+            using (var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false))
             {
-                var probeModel = FreeModels.All.Count > 0 ? FreeModels.All[0].ModelId : "gpt-4o-mini";
-                var messages = new List<ChatTurn> { new ChatTurn("user", "hi") };
-                await SendNonStreamingAsync(probeModel, messages, cancellationToken, maxTokens: 1).ConfigureAwait(false);
-                return true;
+                if (!response.IsSuccessStatusCode)
+                {
+                    await ThrowForErrorResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                    throw new ChacoException("Request failed.", "UNKNOWN");
+                }
+
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var ids = new List<string>();
+
+                using (var doc = JsonDocument.Parse(json))
+                {
+                    if (doc.RootElement.TryGetProperty("data", out var dataEl) && dataEl.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var item in dataEl.EnumerateArray())
+                        {
+                            if (item.TryGetProperty("id", out var idEl) && idEl.ValueKind == JsonValueKind.String)
+                            {
+                                var id = idEl.GetString();
+                                if (!string.IsNullOrEmpty(id)) ids.Add(id);
+                            }
+                        }
+                    }
+                }
+
+                return ids;
             }
-            catch (VoidAIException ex) when (
-                ex.ErrorCode == "INVALID_KEY" ||
-                ex.ErrorCode == "MISSING_HEADER" ||
-                ex.ErrorCode == "INVALID_FORMAT" ||
-                ex.ErrorCode == "ACCOUNT_DISABLED" ||
-                ex.ErrorCode == "IP_ACCESS_DENIED")
-            {
-                return false;
-            }
-            // Any other exception (network, model unavailable, etc.) is not
-            // treated as a bad key, let it bubble up so the caller can
-            // distinguish "wrong key" from "something else went wrong."
         }
 
         // Sends a chat Completion request with stream:true and invokes
@@ -86,7 +103,7 @@ namespace VoidAI
         {
             var requestBody = BuildRequestBody(model, history, stream: true);
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/chat/completions"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/chat/completions"))
             {
                 request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
 
@@ -96,7 +113,7 @@ namespace VoidAI
                     if (!response.IsSuccessStatusCode)
                     {
                         await ThrowForErrorResponseAsync(response, cancellationToken).ConfigureAwait(false);
-                        throw new VoidAIException("VoidAI request failed.", "UNKNOWN"); // unreachable; satisfies flow analysis
+                        throw new ChacoException("Chaco request failed.", "UNKNOWN"); // unreachable; satisfies flow analysis
                     }
 
                     var fullText = new StringBuilder();
@@ -140,7 +157,7 @@ namespace VoidAI
         {
             var requestBody = BuildRequestBody(model, history, stream: false, maxTokens: maxTokens);
 
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/chat/completions"))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/chat/completions"))
             {
                 request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
 
@@ -149,7 +166,7 @@ namespace VoidAI
                     if (!response.IsSuccessStatusCode)
                     {
                         await ThrowForErrorResponseAsync(response, cancellationToken).ConfigureAwait(false);
-                        throw new VoidAIException("VoidAI request failed.", "UNKNOWN"); // unreachable; satisfies flow analysis
+                        throw new ChacoException("Chaco request failed.", "UNKNOWN"); // unreachable; satisfies flow analysis
                     }
 
                     var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -197,11 +214,7 @@ namespace VoidAI
             }
         }
 
-        // Pulls choices[0].delta.content out of a single SSE data payload,
-        // per the chunk shape documented at
-        // https://docs.voidai.app/api-reference/chat/completions.
-        // Returns null if the chunk has no content delta (e.g. the initial
-        // role-only chunk, or a finish_reason-only chunk).
+        // pull choices[0].delta.content out of a SSE data payload
         private static string TryExtractDeltaContent(string jsonPayload)
         {
             try
@@ -223,8 +236,7 @@ namespace VoidAI
             }
             catch (JsonException)
             {
-                // Malformed or unexpected chunk shape!!111!! skip it rather than
-                // tearing down the whole stream over one bad line.
+                // Malformed or unexpected chunk shape!!111!! skip 
                 return null;
             }
         }
@@ -232,7 +244,7 @@ namespace VoidAI
         private static async Task ThrowForErrorResponseAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string message = $"VoidAI request failed with status {(int)response.StatusCode}. Body: {body}";
+            string message = $"Chaco request failed with status {(int)response.StatusCode}. Body: {body}";
             string code = (int)response.StatusCode == 429 ? "RATE_LIMITED" : "UNKNOWN";
             try
             {
@@ -252,7 +264,7 @@ namespace VoidAI
                 // body wasn't the expected {"error": } JSON shappe,, message
                 // above already contains the raw body for diagnosis
             }
-            throw new VoidAIException(message, code);
+            throw new ChacoException(message, code);
         }
 
         public void Dispose()

@@ -15,6 +15,7 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Linq;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
@@ -107,7 +108,8 @@ namespace Skymu.ViewModels
                         pluginIndex,
                         plugin.InternalName,
                         plugin.AuthenticationTypes[0].AuthType,
-                        plugin.AuthenticationTypes[0].CustomTextUsername
+                        plugin.AuthenticationTypes[0].CustomTextUsername,
+                        plugin.AuthenticationTypes[0].CustomTextPassword
                     );
 
                     if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && (DebugConfig.DisableAutoLogin || DebugConfig.TestMode)))
@@ -155,7 +157,7 @@ namespace Skymu.ViewModels
                                     continue;
                             }
                         }
-                        var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername);
+                        var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername, ati.CustomTextPassword);
                         if (match != null && PendingAutoLogin == null && Settings.AutoLogin && !(Universal.DebugBuild && (DebugConfig.DisableAutoLogin || DebugConfig.TestMode))) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
@@ -298,6 +300,28 @@ namespace Skymu.ViewModels
                     dlg.ShowDialog();
                 }
             }
+        }
+
+        public PluginListing GetPreferredDefaultListing()
+        {
+            if (PluginItems == null || PluginItems.Count == 0)
+                return null;
+
+            // to not confuse users, the vast majority of who are looking for discord
+            var discordListings = PluginItems
+                .Where(p => string.Equals(p.InternalName, "discord", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (discordListings.Count > 0)
+            {
+                var discordQr = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.QRCode);
+                if (discordQr != null)
+                    return discordQr;
+
+                return discordListings[0];
+            }
+
+            return PluginItems[0];
         }
 
 
@@ -443,13 +467,14 @@ namespace Skymu.ViewModels
 
         public class PluginListing
         {
-            public PluginListing(string name, int index, string internalName, AuthenticationMethod authType, string textUsername)
+            public PluginListing(string name, int index, string internalName, AuthenticationMethod authType, string textUsername, string textPassword)
             {
                 DisplayName = name;
                 PluginIndex = index;
                 InternalName = internalName;
                 AuthenticationType = authType;
                 TextUsername = textUsername;
+                TextPassword = textPassword;
             }
 
             public string DisplayName { get; private set; }
@@ -457,6 +482,7 @@ namespace Skymu.ViewModels
             public string InternalName { get; private set; }
             public AuthenticationMethod AuthenticationType { get; private set; }
             public string TextUsername { get; private set; }
+            public string TextPassword { get; private set; }
         }
     }
 }

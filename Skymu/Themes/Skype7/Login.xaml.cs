@@ -70,7 +70,7 @@ namespace Skymu.Skype7
             Password.Foreground = new SolidColorBrush(Colors.White);
             passwordTokenBox.IsEnabled = true;
             Password.FontStyle = FontStyles.Normal;
-            Password.Text = Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            Password.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
 
             string buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
@@ -160,7 +160,7 @@ namespace Skymu.Skype7
             if (_viewModel.PendingAutoLogin != null && !switchuser)
                 LoginToggleAnimation(true);
             else
-                comboProtocolBox.SelectedIndex = 0;
+                SelectDefaultProtocol();
 
             if (switchuser && _viewModel.PendingAutoLogin != null)
             {
@@ -171,6 +171,15 @@ namespace Skymu.Skype7
                 ProtocolSelectionChanged(null, null);
                 SetProtocolSelection(pal, pa);
             }
+        }
+
+        private void SelectDefaultProtocol()
+        {
+            var preferred = _viewModel.GetPreferredDefaultListing();
+            if (preferred != null)
+                comboProtocolBox.SelectedItem = preferred;
+            else
+                comboProtocolBox.SelectedIndex = 0;
         }
 
         private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
@@ -208,7 +217,7 @@ namespace Skymu.Skype7
             if (!switchuser)
                 await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && comboProtocolBox.SelectedIndex == -1)
-                comboProtocolBox.SelectedIndex = 0;
+                SelectDefaultProtocol();
         }
 
         private void LoginToggleAnimation(bool anim)

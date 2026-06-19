@@ -1,13 +1,23 @@
-﻿using System.Collections.Concurrent;
+﻿/*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is contingent
+// on your agreement to be bound by the terms of our license.
+// If you do not wish to abide by those terms, you may not
+// use, modify, or distribute any code from the Skymu project.
+// License: https://skymu.app/legal/license
+/*==========================================================*/
+
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace VoidAI
+namespace Chaco
 {
-    // A single turn in a conversation, shaped to map directly onto the
-    // "messages" array VoidAI's chat completions endpoint expects.
+    // one turn in conversation
     internal sealed class ChatTurn
     {
-        public string Role { get; }   // "user" or "assistant"
+        public string Role { get; }   
         public string Content { get; }
 
         public ChatTurn(string role, string content)
@@ -17,12 +27,9 @@ namespace VoidAI
         }
     }
 
-    // Keeps a real back-and-forth history per model or conversation, so each
+    // Keeps a real back-and-forth history per conversation, so each
     // new request resends the full transcript as context (a good proper chat
     // behaviour instead of the single-turn/stateless requests).
-    // Keyed by Skymu conversation identifier which in this plugin is
-    // always the VoidAI model ID since each "contact" is a 1:1 stand-in
-    // for a model.
     internal sealed class ConversationHistory
     {
         private readonly ConcurrentDictionary<string, List<ChatTurn>> _byConversation =
@@ -38,9 +45,7 @@ namespace VoidAI
             GetList(conversationId).Add(new ChatTurn("assistant", text));
         }
 
-        // Removes the most recently added assistant turn. Used to roll back
-        // history if a streamed response fails partway through, so a retry
-        // doesn't end up with a broken/duplicate assistant turn in context.
+        // removes the most recently added turn
         public void RemoveLastAssistantMessage(string conversationId)
         {
             var list = GetList(conversationId);

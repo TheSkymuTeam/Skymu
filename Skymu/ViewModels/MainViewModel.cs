@@ -593,10 +593,12 @@ namespace Skymu.ViewModels
 
                 // TODO: have editing and deletion persist in database
                 if (SelectedConversation?.Identifier == eR.ConversationId)
+                {
                     ActiveConversation.Add(eR.Item);
+                    if (eR.Item is Message m && m.Author?.Identifier == Universal.CurrentUser?.Identifier) SoundManager.Play("IM");
+                }
                 if (eR.Item is Message message)
                 {
-                    SoundManager.Play("IM");
                     UpdateRecentsListOnNewMessage(e.ConversationId, message.Time);
                     if (message.Author?.Identifier == Universal.CurrentUser?.Identifier) return;
                     if ((Settings.NotificationTrigger & NotificationTriggerType.ALL) != 0)
@@ -752,15 +754,12 @@ namespace Skymu.ViewModels
             bool sent = false;
             try
             {
+                SoundManager.Play("IM_SENT");
                 sent = await Universal.Plugin.SendMessage(SelectedConversation.Identifier, text, null, null, action);
             }
             catch { }
 
-            if (sent)
-            {
-                SoundManager.Play("IM_SENT");
-            }
-            else
+            if (!sent)
             {
                 if (_pendingPreviewMessages.TryGetValue(tempId, out var pending))
                 {
@@ -839,7 +838,7 @@ namespace Skymu.ViewModels
             await UserCountAPI.SetUserStatus(
                 true,
                 Universal.CurrentUser?.DisplayName,
-                Universal.CurrentUser?.PublicUsername,
+                Universal.CurrentUser?.Username,
                 Universal.CurrentUser?.Identifier
             );
             await UserCountAPI.ConnectWS();

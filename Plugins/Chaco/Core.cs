@@ -8,15 +8,11 @@
 // use, modify, or distribute any code from the Skymu project.
 // License: https://skymu.app/legal/license
 /*==========================================================*/
-// Skymu plugin for VoidAI (https://voidai.app), a unified
-// OpenAI-compatible gateway. Each "contact"/"conversation" in
-// Skymu's UI represents one of VoidAI's (free-tier) chat models
-// (We r cheap); sending a message to it is a chat completion
-// request against that model, with real conversation history
-// maintained per model and responses streamed in as they arrive.
-// Wowie zowie... TODO: in the future maybe I can add an endpoint
-// field that lets you enter your own Chat Completions
-// compatible API !
+// Skymu plugin for Chat Completions, which is a protocol 
+// that supports turn-by-turn chatting streamed over HTTP.
+// Note that this is not an AI plugin, even though it can
+// be used with a myriad of AI services that happen to
+// support the Chat Completions protocol.
 /*==========================================================*/
 
 using System;
@@ -30,7 +26,7 @@ using Yggdrasil.Models;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 
-namespace VoidAI
+namespace Chaco
 {
     public class Core : ICore
     {
@@ -44,20 +40,19 @@ namespace VoidAI
 
         #region Identity
 
-        public string Name => "VoidAI";
-        public string InternalName => "skymu-voidai-plugin";
+        public string Name => "Chat Completions";
+        public string InternalName => "chat-completions";
         public bool SupportsServers => false;
-
-        // Models can take a while to respond, especially the larger free-tier
-        // ones, so keep the typing indicator alive for a generous window and
-        // refresh it reasonably often while we wait on a streaming response.
         public int TypingTimeout => 8000;
         public int TypingRepeat => 5000;
 
         public AuthTypeInfo[] AuthenticationTypes => new[]
-        {
-            new AuthTypeInfo(AuthenticationMethod.Token, "API key")
-        };
+{
+    new AuthTypeInfo(
+        AuthenticationMethod.Password,
+        custom_text_username_field: "Base URL, e.g. https://api.skymu.app/v1",
+        custom_text_password_field: "API key")
+};
 
         public ClickableConfiguration[] ClickableConfigurations => Array.Empty<ClickableConfiguration>();
 
@@ -67,76 +62,81 @@ namespace VoidAI
 
         #region State
 
-        private VoidAIClient _client;
+        private ChacoClient _client;
         private readonly ConversationHistory _history = new ConversationHistory();
         private User _me;
+        private string _baseUrl;
         private string _apiKey;
-
-        // Each free model gets a stable synthetic User acting as the "other
-        // participant" in its DirectMessage, keyed by VoidAI model ID.
         private readonly Dictionary<string, User> _modelUsers = new Dictionary<string, User>();
+        private List<string> _modelIds = new List<string>();
 
         #endregion
-
-        public Core()
-        {
-            foreach (var model in FreeModels.All)
-            {
-                _modelUsers[model.ModelId] = new User(
-                    display_name: model.DisplayName,
-                    username: model.ModelId,
-                    identifier: model.ModelId,
-                    status: "VoidAI free tier",
-                    presence_status: PresenceStatus.Online);
-            }
-        }
 
         #region Authentication
 
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password)
         {
-            var apiKey = username;
+            var baseUrl = username;
+            var apiKey = password;
 
-            if (string.IsNullOrWhiteSpace(apiKey))
+            if (string.IsNullOrWhiteSpace(baseUrl))
             {
-                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Please enter a VoidAI API key."));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Please enter a base URL."));
                 return LoginResult.Failure;
             }
 
-            var client = new VoidAIClient(apiKey);
+            if (!Uri.TryCreate(baseUrl.Trim(), UriKind.Absolute, out var parsed)
+                || (parsed.Scheme != Uri.UriSchemeHttp && parsed.Scheme != Uri.UriSchemeHttps))
+            {
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "That doesn't look like a valid http(s) URL."));
+                return LoginResult.Failure;
+            }
 
-            bool valid;
+            var client = new ChacoClient(baseUrl.Trim(), apiKey);
+
+            List<string> modelIds;
             try
             {
-                valid = await client.ValidateKeyAsync().ConfigureAwait(false);
+                modelIds = await client.ListModelsAsync().ConfigureAwait(false);
+            }
+            catch (ChacoException ex)
+            {
+                client.Dispose();
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, $"Endpoint error: {ex.Message}", ex.ToString()));
+                return LoginResult.Failure;
             }
             catch (Exception ex)
             {
                 client.Dispose();
-                DialogTube?.Invoke(this, new DialogBottle(
-                    DialogType.Error,
-                    "Could not reach VoidAI to verify the key. Check your connection and try again.",
-                    ex.ToString()));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Could not reach that endpoint.", ex.ToString()));
                 return LoginResult.Failure;
             }
 
-            if (!valid)
+            if (modelIds == null || modelIds.Count == 0)
             {
                 client.Dispose();
-                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "That VoidAI API key was rejected."));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Endpoint reported no models."));
                 return LoginResult.Failure;
             }
 
+            _baseUrl = baseUrl.Trim();
             _apiKey = apiKey;
             _client = client;
-            _me = new User("You", "you", "voidai-local-user", presence_status: PresenceStatus.Online);
+            _modelIds = modelIds;
 
+            _modelUsers.Clear();
+            foreach (var modelId in _modelIds)
+            {
+                _modelUsers[modelId] = new User(modelId, modelId, modelId, _baseUrl, PresenceStatus.Online);
+            }
+
+            _me = new User("You", _baseUrl, _baseUrl, presence_status: PresenceStatus.Online);
             return LoginResult.Success;
         }
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
-            return await Authenticate(AuthenticationMethod.Token, credential.PasswordOrToken, null).ConfigureAwait(false);
+            return await Authenticate(AuthenticationMethod.Password, credential.User.Username, credential.PasswordOrToken).ConfigureAwait(false);
         }
 
         public Task<LoginResult> AuthenticateTwoFA(string code)
@@ -147,7 +147,7 @@ namespace VoidAI
 
         public Task<SavedCredential> StoreCredential()
         {
-            return Task.FromResult(new SavedCredential(_me, _apiKey, AuthenticationMethod.Token, InternalName));
+            return Task.FromResult(new SavedCredential(_me, _apiKey, AuthenticationMethod.Password, InternalName));
         }
 
         public Task<string> GetQRCode() => Task.FromResult(string.Empty);
@@ -178,18 +178,14 @@ namespace VoidAI
 
         public Task<List<Server>> FetchServers()
         {
-            // SupportsServers is false, so Skymu will not call this. Returned
-            // as an empty list as a safe stub per the guide's recommendation.
+            // TODO maybe make simulated CC servers
             return Task.FromResult(new List<Server>());
         }
 
         private List<DirectMessage> BuildModelDirectMessages()
         {
-            return FreeModels.All
-                .Select(model => new DirectMessage(
-                    partner: _modelUsers[model.ModelId],
-                    unread_count: 0,
-                    identifier: model.ModelId))
+            return _modelIds
+                .Select(modelId => new DirectMessage(_modelUsers[modelId], 0, modelId))
                 .ToList();
         }
 
@@ -236,7 +232,7 @@ namespace VoidAI
         {
             if (string.IsNullOrEmpty(text))
             {
-                DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "VoidAI models only support text messages."));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Chaco only supports text messages."));
                 return false;
             }
 
@@ -246,9 +242,6 @@ namespace VoidAI
                 return false;
             }
 
-            // Echo the user's own message into the UI immediately, the same
-            // way a normal chat client would, rather than waiting on the
-            // network round-trip.
             var userMessageId = Guid.NewGuid().ToString("N");
             MessageTube?.Invoke(this, new MessageRecievedBottle(
                 conversationId,
@@ -272,7 +265,7 @@ namespace VoidAI
 
                         if (firstChunk)
                         {
-                            // First chunk creates the message.
+                            // first chunk creates the message
                             MessageTube?.Invoke(this, new MessageRecievedBottle(
                                 conversationId,
                                 new Message(assistantMessageId, modelUser, DateTime.UtcNow, streamedText.ToString()),
@@ -281,7 +274,7 @@ namespace VoidAI
                         }
                         else
                         {
-                            // Every subsequent chunk edits that same message in place.
+                            // every subsequent chunk edits that same message in place
                             MessageTube?.Invoke(this, new MessageEditedBottle(
                                 conversationId,
                                 assistantMessageId,
@@ -311,9 +304,9 @@ namespace VoidAI
 
                 _history.AddAssistantMessage(conversationId, fullResponse);
                 return true;
-            
+
             }
-            catch (VoidAIException ex)
+            catch (ChacoException ex)
             {
                 if (!firstChunk)
                 {
@@ -321,8 +314,8 @@ namespace VoidAI
                 }
 
                 var friendly = ex.ErrorCode == "RATE_LIMITED"
-                    ? "VoidAI rate limit hit (100 requests/minute). Try again shortly."
-                    : $"VoidAI error: {ex.Message}";
+                    ? "Provider rate limit hit. Try again shortly."
+                    : $"Chaco error: {ex.Message}";
 
                 DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, friendly, ex.ToString()));
                 return false;
@@ -331,7 +324,7 @@ namespace VoidAI
             {
                 DialogTube?.Invoke(this, new DialogBottle(
                     DialogType.Error,
-                    "Something went wrong talking to VoidAI.",
+                    "Something went wrong talking to the provider.",
                     ex.ToString()));
                 return false;
             }
@@ -339,13 +332,13 @@ namespace VoidAI
 
         public Task<bool> EditMessage(string conversationId, string messageId, string newText)
         {
-            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Editing isn't supported for VoidAI conversations."));
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Editing isn't supported for Chaco conversations."));
             return Task.FromResult(false);
         }
 
         public Task<bool> DeleteMessage(string conversationId, string messageId)
         {
-            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Deleting isn't supported for VoidAI conversations."));
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Deleting isn't supported for Chaco conversations."));
             return Task.FromResult(false);
         }
 

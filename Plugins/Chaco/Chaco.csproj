@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<AssemblyName>smp.voidai</AssemblyName>
-		<AssemblyTitle>VoidAI</AssemblyTitle>
+		<AssemblyName>smp.chaco</AssemblyName>
+		<AssemblyTitle>Chaco</AssemblyTitle>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<FileVersion>1.0.0.0</FileVersion>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>..\bin\voidai.smp</OutputPath>
+		<OutputPath>..\bin\chaco.smp</OutputPath>
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>

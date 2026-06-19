@@ -67,7 +67,7 @@ namespace Skymu.Skype6
             Password.Foreground = new SolidColorBrush(Colors.Black);
             passwordTokenBox.IsEnabled = true;
             Password.FontStyle = FontStyles.Normal;
-            Password.Text = Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            Password.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
             LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             SkypeName.Foreground = new SolidColorBrush(Colors.Black);
@@ -188,7 +188,7 @@ namespace Skymu.Skype6
             if (_viewModel.PendingAutoLogin != null && !switchuser)
                 LoginToggleAnimation(true);
             else
-                comboProtocolBox.SelectedIndex = 0;
+                SelectDefaultProtocol();
 
             if (switchuser && _viewModel.PendingAutoLogin != null)
             {
@@ -199,6 +199,15 @@ namespace Skymu.Skype6
                 ProtocolSelectionChanged(null, null);
                 SetProtocolSelection(pal, pa);
             }
+        }
+
+        private void SelectDefaultProtocol()
+        {
+            var preferred = _viewModel.GetPreferredDefaultListing();
+            if (preferred != null)
+                comboProtocolBox.SelectedItem = preferred;
+            else
+                comboProtocolBox.SelectedIndex = 0;
         }
 
         private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
@@ -236,7 +245,7 @@ namespace Skymu.Skype6
             if (!switchuser)
                 await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && comboProtocolBox.SelectedIndex == -1)
-                comboProtocolBox.SelectedIndex = 0;
+                SelectDefaultProtocol();
         }
 
         private void LoginToggleAnimation(bool anim)

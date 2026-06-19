@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skymu.Tests", "Skymu.Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skymu.Benchmarks", "Skymu.Benchmarks\Skymu.Benchmarks.csproj", "{CAA76D0C-9393-44EB-927A-C14244B7B92B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoidAI", "Plugins\VoidAI\VoidAI.csproj", "{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaco", "Plugins\Chaco\Chaco.csproj", "{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

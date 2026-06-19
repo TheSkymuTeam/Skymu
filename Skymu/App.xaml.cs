@@ -48,9 +48,9 @@ namespace Skymu
         public static readonly string Theme = Settings.Theme;
 
         public const string Name = "Skymu"; // Change this to update the name everywhere, even internally. Do not use special characters or spaces.
-        public const string BuildVersion = "0.4.5";
-        public const string BuildName = "Empyreal Frostlord";
-        public static string Platform = Runtime.DetectOS().ToDisplayString();
+        public const string BuildVersion = "0.4.2";
+        public const string BuildName = "Elusive Frostlord";
+        public static string Platform = Runtime.DetectOS().ToDisplayString(); 
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
 
         #if DEBUG

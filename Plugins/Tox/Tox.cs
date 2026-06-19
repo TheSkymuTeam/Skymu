@@ -441,7 +441,7 @@ namespace Tox
             if (newprofile)
                 DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "No existing profile found, starting with a new one. Your Tox ID: " + tid));
             // The username that appears on the statistics. It should be the Tox ID.
-            _currentUser.PublicUsername = tid;
+            _currentUser.Username = tid;
 
             user_data = GCHandle.ToIntPtr(GCHandle.Alloc(this));
             cbs.Init(tox, user_data, av);
@@ -525,7 +525,7 @@ namespace Tox
                     var pkey = BATS(p.publicKey);
                     foreach (var u in friends.Values)
                     {
-                        if (u.PublicUsername == pkey)
+                        if (u.Username == pkey)
                         {
                             peers[i++] = u;
                             goto next;
@@ -539,7 +539,7 @@ namespace Tox
                     var pkey = BATS(p.publicKey);
                     foreach (var u in friends.Values)
                     {
-                        if (u.PublicUsername == pkey)
+                        if (u.Username == pkey)
                         {
                             peers[i++] = u;
                             goto next2;

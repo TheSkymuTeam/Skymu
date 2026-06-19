@@ -64,7 +64,6 @@ namespace Yggdrasil.Models
     {
         private string _status;
         private string _username;
-        private string _publicusername;
         private PresenceStatus _presence_status;
 
         public string Status
@@ -77,13 +76,6 @@ namespace Yggdrasil.Models
         {
             get => _username;
             set => Set(ref _username, value, nameof(Username));
-        }
-
-        // for services where the username on the titlebar should be distinct from the username
-        public string PublicUsername
-        {
-            get => String.IsNullOrEmpty(_publicusername) ? _username : _publicusername;
-            set => Set(ref _publicusername, value, nameof(PublicUsername));
         }
 
         public PresenceStatus ConnectionStatus
@@ -299,18 +291,21 @@ namespace Yggdrasil.Models
     {
         public AuthenticationMethod AuthType { get; set; }
         public string CustomTextUsername { get; set; }
+        public string CustomTextPassword { get; set; }
         public string CustomTextAuthType { get; set; }
         public string Url { get; set; }
 
         public AuthTypeInfo(
             AuthenticationMethod type,
             string custom_text_username_field = null,
-            string custom_text_auth_type = null
+            string custom_text_auth_type = null,
+            string custom_text_password_field = null
         )
         {
             AuthType = type;
             CustomTextAuthType = custom_text_auth_type;
             CustomTextUsername = custom_text_username_field;
+            CustomTextPassword = custom_text_password_field;
         }
     }
 
