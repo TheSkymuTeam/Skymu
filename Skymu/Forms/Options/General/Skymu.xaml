@@ -105,7 +105,7 @@
                         Tag="Skype6" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Skype 7"
+                        Content="Skype 7 (expiremental)"
                         Tag="Skype7" />
                 </ComboBox>
                 <TextBlock

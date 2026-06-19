@@ -53,7 +53,7 @@ namespace Stub
             {
                 return new[]
                 {
-                    new AuthTypeInfo(AuthenticationMethod.Token, "Fancy stub username?"),
+                    new AuthTypeInfo(AuthenticationMethod.Token, "Fancy a stub username?"),
                 };
             }
         }

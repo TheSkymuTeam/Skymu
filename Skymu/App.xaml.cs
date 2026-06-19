@@ -461,10 +461,11 @@ namespace Skymu
 
         public static void ShowMessage(
             string content,
-            string title = "Information",
+            string title = null,
             WindowBase.IconType icon = WindowBase.IconType.Information
         )
         {
+            if (title is null) title = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
             new Dialog(
                 icon,
                 content,

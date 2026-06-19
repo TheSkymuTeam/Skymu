@@ -97,6 +97,10 @@ namespace Skymu.Skype7
                         Universal.CurrentUser,
                         vmodel.ContactList.ToList()
                     );
+                Universal.ShowMessage("The Skype 7 theme is expiremental, having been ported from an older project (SeanKype)" +
+                    " that was developed by different people.\n\n" +
+                    "It has numerous bugs, structural issues, design flaws, and differences with the rest of the " +
+                    "codebase.\n\nIt is highly recommended to use the other themes instead.");
                 Ready?.Invoke(this, EventArgs.Empty);
             };
 
