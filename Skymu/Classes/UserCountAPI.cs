@@ -24,13 +24,13 @@ namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
-        private static readonly string DOMAIN = "skymu.kier.ovh";
-        private static readonly string WEBSOCKET_URL = $"wss://{DOMAIN}/ws";
+        private static readonly string DOMAIN = "usercount.skymu.app";
+        private static readonly string WEBSOCKET_URL = $"ws://{DOMAIN}/ws";
 
         // REST API variables
         private static readonly HttpClient client = new HttpClient(new BifrostEngine())
         {
-            BaseAddress = new Uri("https://" + DOMAIN),
+            BaseAddress = new Uri("http://" + DOMAIN),
         };
         public static string ApiTkn = null;
 
