@@ -418,13 +418,13 @@
                                 <Image
                                     Width="12"
                                     Height="12"
-                                    Source="Assets/Universal/Sidebar/collapse-toggle-background.png" />
+                                    Source="Assets/Universal/Main/collapse-toggle-background.png" />
                                 <Image
                                     x:Name="ToggleImage"
                                     Width="12"
                                     Height="12"
                                     RenderTransformOrigin="0.5,0.5"
-                                    Source="Assets/Universal/Sidebar/collapse-toggle-arrow.png">
+                                    Source="Assets/Universal/Main/collapse-toggle-arrow.png">
                                     <Image.RenderTransform>
                                         <RotateTransform Angle="0" />
                                     </Image.RenderTransform>
@@ -576,7 +576,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="Assets/Themeable/Chat/reply-arrow.png" />
+                            Source="Assets/Themeable/Main/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -638,7 +638,7 @@
                             ElementCount="72"
                             IsAnimation="True"
                             SliceMode="0"
-                            Source="Assets/Universal/Chat/loading.png"
+                            Source="Assets/Universal/Main/loading.png"
                             StackDirection="Vertical"
                             Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
                     </Grid>
@@ -712,7 +712,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="Assets/Themeable/Chat/reply-arrow.png" />
+                            Source="Assets/Themeable/Main/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -774,7 +774,7 @@
                             ElementCount="72"
                             IsAnimation="True"
                             SliceMode="0"
-                            Source="Assets/Universal/Chat/loading.png"
+                            Source="Assets/Universal/Main/loading.png"
                             StackDirection="Vertical"
                             Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
                     </Grid>
@@ -1206,7 +1206,7 @@
                                             IsRadioButton="True"
                                             MouseLeftButtonUp="Chat_Close"
                                             PressedIndex="2"
-                                            Source="Assets/Themeable/Sidebar/status-top.png"
+                                            Source="Assets/Themeable/Main/status-top.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="#FFFFFF"
@@ -1345,7 +1345,7 @@
                                                 Height="16"
                                                 Margin="0,0,0,0"
                                                 HorizontalAlignment="Left"
-                                                Source="Assets/Themeable/Sidebar/dropdown.png" />
+                                                Source="Assets/Themeable/Main/dropdown.png" />
                                         </StackPanel>
                                         <global:SliceControl
                                             x:Name="SBHomeButton"
@@ -1360,7 +1360,7 @@
                                             Interactive="False"
                                             PressedIndex="2"
                                             SliceMode="0"
-                                            Source="Assets/Themeable/Sidebar/home.png"
+                                            Source="Assets/Themeable/Main/home.png"
                                             StackDirection="Horizontal"
                                             Themeable="True" />
                                         <global:SliceControl
@@ -1372,7 +1372,7 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="-1"
-                                            Source="Assets/Themeable/Sidebar/status-bottom.png"
+                                            Source="Assets/Themeable/Main/status-bottom.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sACCOUNT_PANEL_NO_SUBSCRIPTION], Source={StaticResource Lang}, StringFormat=$ 0.00 - {0}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1386,7 +1386,7 @@
                                             Height="16"
                                             Margin="9,0,0,0"
                                             HorizontalAlignment="Left"
-                                            Source="Assets/Universal/Sidebar/credit.png" />
+                                            Source="Assets/Universal/Main/credit.png" />
                                     </Grid>
                                     <Grid x:Name="SidebarTabs" Margin="0,4,0,0">
                                         <Grid.ColumnDefinitions>
@@ -1406,7 +1406,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="Assets/Themeable/Sidebar/contacts.png"
+                                            Source="Assets/Themeable/Main/contacts.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1427,7 +1427,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="Assets/Themeable/Sidebar/servers.png"
+                                            Source="Assets/Themeable/Main/servers.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1449,7 +1449,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
-                                            Source="Assets/Themeable/Sidebar/recents.png"
+                                            Source="Assets/Themeable/Main/recents.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sRECENTS_TAB_TEXT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1480,7 +1480,7 @@
                                             HoverIndex="-1"
                                             Interactive="False"
                                             PressedIndex="0"
-                                            Source="Assets/Themeable/Sidebar/search-box.png"
+                                            Source="Assets/Themeable/Main/search-box.png"
                                             StackDirection="Vertical"
                                             Themeable="True" />
                                         <TextBox
@@ -1529,7 +1529,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1580,7 +1580,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1612,7 +1612,7 @@
                                             HoverTransition="False"
                                             MouseLeftButtonUp="AddContact_Click"
                                             PressedIndex="2"
-                                            Source="Assets/Themeable/Sidebar/add-contact.png"
+                                            Source="Assets/Themeable/Main/add-contact.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
                                             Text="{Binding [sADD_CONTACT_LONG], Source={StaticResource Lang}}"
@@ -1631,7 +1631,7 @@
                                             MouseLeftButtonUp="MakeGroup_Click"
                                             PressedIndex="2"
                                             RightWidth="1"
-                                            Source="Assets/Themeable/Sidebar/create-group.png"
+                                            Source="Assets/Themeable/Main/create-group.png"
                                             StackDirection="Vertical"
                                             Style="{StaticResource AddButtonHoverStyle}"
                                             Text="{Binding [sCREATE_GROUP_LONG], Source={StaticResource Lang}}"
@@ -1651,7 +1651,7 @@
                                                 HoverIndex="1"
                                                 MouseLeftButtonUp="CallPhones_Click"
                                                 PressedIndex="2"
-                                                Source="Assets/Themeable/Sidebar/call-phones.png"
+                                                Source="Assets/Themeable/Main/call-phones.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -1669,7 +1669,7 @@
                                         DefaultIndex="0"
                                         ElementCount="1"
                                         Interactive="False"
-                                        Source="Assets/Themeable/Sidebar/user-count-background.png"
+                                        Source="Assets/Themeable/Main/user-count-background.png"
                                         StackDirection="Vertical"
                                         Text="Sky Multiprotocol. All rights reserved."
                                         TextColor="{StaticResource Text.LowContrast}"
@@ -1722,7 +1722,7 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
-                                        Source="Assets/Themeable/Chat/tab-left.png"
+                                        Source="Assets/Themeable/Main/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1741,7 +1741,7 @@
                                         HoverIndex="1"
                                         MouseLeftButtonUp="Chat_Close"
                                         PressedIndex="2"
-                                        Source="Assets/Themeable/Chat/tab-right.png"
+                                        Source="Assets/Themeable/Main/tab-right.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CLOSE]}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1758,7 +1758,7 @@
                                         Margin="7,0,0,0"
                                         HorizontalAlignment="Left"
                                         IsHitTestVisible="False"
-                                        Source="Assets/Themeable/Chat/close.png" />
+                                        Source="Assets/Themeable/Main/close.png" />
                                 </Grid>
                                 <Grid
                                     x:Name="HomeTopbar"
@@ -1780,7 +1780,7 @@
                                         HoverIndex="-1"
                                         IsRadioButton="True"
                                         PressedIndex="2"
-                                        Source="Assets/Themeable/Chat/tab-left.png"
+                                        Source="Assets/Themeable/Main/tab-left.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SKYPEHOME]}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1797,7 +1797,7 @@
                                         Margin="8,0,0,0"
                                         HorizontalAlignment="Left"
                                         IsHitTestVisible="False"
-                                        Source="Assets/Universal/Chat/skypehome.png" />
+                                        Source="Assets/Universal/Main/skypehome.png" />
                                     <global:SliceControl
                                         x:Name="ProfileButton"
                                         Grid.Column="1"
@@ -1807,7 +1807,7 @@
                                         HoverIndex="1"
                                         IsRadioButton="False"
                                         PressedIndex="2"
-                                        Source="Assets/Themeable/Chat/tab-middle.png"
+                                        Source="Assets/Themeable/Main/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_PROFILE]}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1824,7 +1824,7 @@
                                         Margin="8,0,0,0"
                                         HorizontalAlignment="Left"
                                         IsHitTestVisible="False"
-                                        Source="Assets/Universal/Chat/profile.png" />
+                                        Source="Assets/Universal/Main/profile.png" />
                                     <global:SliceControl
                                         x:Name="FeedbackButton"
                                         Grid.Column="2"
@@ -1835,7 +1835,7 @@
                                         IsRadioButton="False"
                                         MouseLeftButtonUp="OnFeedbackClick"
                                         PressedIndex="2"
-                                        Source="Assets/Themeable/Chat/tab-middle.png"
+                                        Source="Assets/Themeable/Main/tab-middle.png"
                                         StackDirection="Vertical"
                                         Text="Report a bug"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -1852,7 +1852,7 @@
                                         Margin="8,0,0,0"
                                         HorizontalAlignment="Left"
                                         IsHitTestVisible="False"
-                                        Source="Assets/Universal/Chat/feedback.png" />
+                                        Source="Assets/Universal/Main/feedback.png" />
                                     <global:SliceControl
                                         Grid.Column="3"
                                         HorizontalAlignment="Stretch"
@@ -1860,7 +1860,7 @@
                                         ElementCount="5"
                                         HoverIndex="-1"
                                         PressedIndex="-1"
-                                        Source="Assets/Themeable/Chat/tab-right.png"
+                                        Source="Assets/Themeable/Main/tab-right.png"
                                         StackDirection="Vertical"
                                         Themeable="True" />
                                 </Grid>
@@ -1925,7 +1925,7 @@
                                                                 <Image
                                                                     Width="16"
                                                                     Height="16"
-                                                                    Source="Assets/Universal/Chat/mood.png" />
+                                                                    Source="Assets/Universal/Main/mood.png" />
                                                                 <TextBlock
                                                                     Margin="9,0,0,0"
                                                                     FontFamily="Tahoma"
@@ -1943,7 +1943,7 @@
                                                                 <Image
                                                                     Width="16"
                                                                     Height="16"
-                                                                    Source="Assets/Universal/Chat/clock.png" />
+                                                                    Source="Assets/Universal/Main/clock.png" />
                                                                 <TextBlock
                                                                     Margin="9,0,0,0"
                                                                     FontFamily="Tahoma"
@@ -2201,7 +2201,7 @@
                                                 LeftWidth="22"
                                                 PressedIndex="2"
                                                 RightWidth="22"
-                                                Source="Assets/Universal/Chat/btn_video_call.png"
+                                                Source="Assets/Universal/Main/btn_video_call.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
                                                 TextColor="White"
@@ -2221,7 +2221,7 @@
                                                 MouseLeftButtonUp="CallButtonClick"
                                                 PressedIndex="2"
                                                 RightWidth="4"
-                                                Source="Assets/Universal/Chat/btn_call_left.png"
+                                                Source="Assets/Universal/Main/btn_call_left.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
                                                 TextColor="White"
@@ -2239,7 +2239,7 @@
                                                 LeftWidth="1"
                                                 PressedIndex="2"
                                                 RightWidth="1"
-                                                Source="Assets/Universal/Chat/btn_call_right.png"
+                                                Source="Assets/Universal/Main/btn_call_right.png"
                                                 StackDirection="Vertical" />
                                             <global:SliceControl
                                                 Width="44"
@@ -2249,7 +2249,7 @@
                                                 MouseLeftButtonUp="AddButtonClick"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Source="Assets/Themeable/Chat/add.png"
+                                                Source="Assets/Themeable/Main/add.png"
                                                 StackDirection="Vertical"
                                                 Themeable="True" />
                                             <global:SliceControl
@@ -2262,7 +2262,7 @@
                                                 HoverIndex="1"
                                                 PressedIndex="2"
                                                 SliceMode="0"
-                                                Source="Assets/Themeable/Chat/network-none.png"
+                                                Source="Assets/Themeable/Main/network-none.png"
                                                 StackDirection="Vertical"
                                                 Themeable="True" />
                                         </StackPanel>
@@ -2352,7 +2352,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Source="Assets/Themeable/Chat/message-box-header25.png"
+                                                Source="Assets/Themeable/Main/message-box-header25.png"
                                                 StackDirection="Vertical"
                                                 Themeable="True"
                                                 TopHeight="25" />
@@ -2379,7 +2379,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Source="Assets/Themeable/Chat/emoji.png"
+                                                            Source="Assets/Themeable/Main/emoji.png"
                                                             StackDirection="Vertical"
                                                             Themeable="True" />
                                                     </StackPanel>
@@ -2454,7 +2454,7 @@
                                                             IsAnimation="True"
                                                             PressedIndex="-1"
                                                             SliceMode="0"
-                                                            Source="Assets/Universal/Chat/pencil-write.png"
+                                                            Source="Assets/Universal/Main/pencil-write.png"
                                                             StackDirection="Vertical" />
                                                         <TextBlock
                                                             x:Name="TypingIndicatorText"
@@ -2504,7 +2504,7 @@
                                                 MouseLeftButtonUp="OnMsgSendClickButton"
                                                 PressedIndex="2"
                                                 RightWidth="22"
-                                                Source="Assets/Universal/Chat/msg-send-button-full.png"
+                                                Source="Assets/Universal/Main/msg-send-button-full.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}"
                                                 TextColor="White"

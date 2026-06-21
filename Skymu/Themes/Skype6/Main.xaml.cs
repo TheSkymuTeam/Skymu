@@ -92,9 +92,9 @@ namespace Skymu.Skype6
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad("Themeable/Sidebar/contacts.png");
-        private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad("Themeable/Sidebar/recents.png");
-        private readonly BitmapImage sidebarBtnEmpty = ImageHelper.FreezeLoad("Themeable/Sidebar/empty.png");
+        private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad("Themeable/Main/contacts.png");
+        private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad("Themeable/Main/recents.png");
+        private readonly BitmapImage sidebarBtnEmpty = ImageHelper.FreezeLoad("Themeable/Main/empty.png");
 
         private Metadata SelectedContact;
 

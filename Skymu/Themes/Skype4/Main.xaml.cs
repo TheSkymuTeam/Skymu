@@ -103,10 +103,10 @@ namespace Skymu.Skype4
         }
 
         private BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
-            "Universal/Chat/msg-send-button.png"
+            "Universal/Main/msg-send-button.png"
         );
         private BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
-            "Universal/Chat/msg-send-button-full.png"
+            "Universal/Main/msg-send-button-full.png"
         );
 
         private Metadata SelectedContact;

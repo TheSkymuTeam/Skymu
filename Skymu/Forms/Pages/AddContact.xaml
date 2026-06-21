@@ -378,7 +378,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Chat/mood.png'}" />
+                                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Main/mood.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"
@@ -396,7 +396,7 @@
                                     <Image
                                         Width="16"
                                         Height="16"
-                                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Chat/clock.png'}" />
+                                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Main/clock.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
                                         FontFamily="Tahoma"

@@ -1022,7 +1022,7 @@ namespace Skymu.ViewModels
                     while (!token.IsCancellationRequested)
                     {
                         string uri =
-                            "Themeable/Chat/"
+                            "Themeable/Main/"
                             + PREFIX
                             + (idx + 1)
                             + ".png";
@@ -1063,7 +1063,7 @@ namespace Skymu.ViewModels
             }
 
             SpeedTestIconUpdated?.Invoke(
-                "Themeable/Chat/" + final + ".png"
+                "Themeable/Main/" + final + ".png"
             );
         }
 

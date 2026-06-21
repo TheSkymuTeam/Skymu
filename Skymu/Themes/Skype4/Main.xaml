@@ -419,13 +419,13 @@
                                 <Image
                                     Width="12"
                                     Height="12"
-                                    Source="Assets/Universal/Sidebar/collapse-toggle-background.png" />
+                                    Source="Assets/Universal/Main/collapse-toggle-background.png" />
                                 <Image
                                     x:Name="ToggleImage"
                                     Width="12"
                                     Height="12"
                                     RenderTransformOrigin="0.5,0.5"
-                                    Source="Assets/Universal/Sidebar/collapse-toggle-arrow.png">
+                                    Source="Assets/Universal/Main/collapse-toggle-arrow.png">
                                     <Image.RenderTransform>
                                         <RotateTransform Angle="0" />
                                     </Image.RenderTransform>
@@ -577,7 +577,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="Assets/Themeable/Chat/reply-arrow.png" />
+                            Source="Assets/Themeable/Main/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -639,7 +639,7 @@
                             ElementCount="72"
                             IsAnimation="True"
                             SliceMode="0"
-                            Source="Assets/Universal/Chat/loading.png"
+                            Source="Assets/Universal/Main/loading.png"
                             StackDirection="Vertical"
                             Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
                     </Grid>
@@ -713,7 +713,7 @@
                             Margin="0,0,6,0"
                             VerticalAlignment="Center"
                             SnapsToDevicePixels="True"
-                            Source="Assets/Themeable/Chat/reply-arrow.png" />
+                            Source="Assets/Themeable/Main/reply-arrow.png" />
                         <TextBlock
                             Grid.Column="1"
                             FontFamily="Tahoma"
@@ -775,7 +775,7 @@
                             ElementCount="72"
                             IsAnimation="True"
                             SliceMode="0"
-                            Source="Assets/Universal/Chat/loading.png"
+                            Source="Assets/Universal/Main/loading.png"
                             StackDirection="Vertical"
                             Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
                     </Grid>
@@ -1206,7 +1206,7 @@
                                             ElementCount="4"
                                             HoverIndex="1"
                                             PressedIndex="2"
-                                            Source="Assets/Themeable/Sidebar/header.png"
+                                            Source="Assets/Themeable/Main/header.png"
                                             StackDirection="Vertical"
                                             Text="Saul Goodman"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1343,7 +1343,7 @@
                                                 Width="12"
                                                 Height="16"
                                                 HorizontalAlignment="Left"
-                                                Source="Assets/Themeable/Sidebar/dropdown.png" />
+                                                Source="Assets/Themeable/Main/dropdown.png" />
                                         </StackPanel>
                                         <!--  TODO: Make this collapsable  -->
                                         <Border
@@ -1402,7 +1402,7 @@
                                                     DefaultIndex="4"
                                                     ElementCount="8"
                                                     SliceMode="0"
-                                                    Source="Assets/Themeable/Sidebar/bubble-sprite.png"
+                                                    Source="Assets/Themeable/Main/bubble-sprite.png"
                                                     StackDirection="Vertical"
                                                     Themeable="True" />
                                                 <!--  TODO: lang  -->
@@ -1420,7 +1420,7 @@
                                                         PressedIndex="1"
                                                         RightWidth="6"
                                                         SliceMode="2"
-                                                        Source="Assets/Themeable/Sidebar/status-box.png"
+                                                        Source="Assets/Themeable/Main/status-box.png"
                                                         StackDirection="Vertical"
                                                         Themeable="True"
                                                         TopHeight="6" />
@@ -1457,7 +1457,7 @@
                                                         PressedIndex="2"
                                                         RightWidth="10"
                                                         SliceMode="1"
-                                                        Source="Assets/Themeable/Sidebar/profile.png"
+                                                        Source="Assets/Themeable/Main/button-small.png"
                                                         Text="Personalize"
                                                         TextColor="{StaticResource Text.HighContrast}"
                                                         TextFont="Tahoma"
@@ -1475,7 +1475,7 @@
                                                     Margin="0,2,2,0"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Stretch"
-                                                    Source="Assets/Themeable/Sidebar/dropdown.png" />
+                                                    Source="Assets/Themeable/Main/dropdown.png" />
                                             </Grid>
                                         </Border>
                                         <Border
@@ -1530,7 +1530,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="13"
                                                 SliceMode="1"
-                                                Source="Assets/Themeable/Sidebar/new.png"
+                                                Source="Assets/Themeable/Main/new.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding [sZAPBUTTON_NEW], Source={StaticResource Lang}}"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -1557,7 +1557,7 @@
                                                 PressedIndex="0"
                                                 RightWidth="5"
                                                 SliceMode="2"
-                                                Source="Assets/Themeable/Sidebar/search-box.png"
+                                                Source="Assets/Themeable/Main/search-box.png"
                                                 StackDirection="Vertical"
                                                 Themeable="True"
                                                 TopHeight="5" />
@@ -1593,7 +1593,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="Assets/Themeable/Sidebar/tab-left.png"
+                                            Source="Assets/Themeable/Main/tab-left.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_CONTACTS], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1615,7 +1615,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="Assets/Themeable/Sidebar/tab-middle.png"
+                                            Source="Assets/Themeable/Main/tab-middle.png"
                                             StackDirection="Vertical"
                                             Text="Servers"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1638,7 +1638,7 @@
                                             MouseLeftButtonUp="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="5"
-                                            Source="Assets/Themeable/Sidebar/tab-right.png"
+                                            Source="Assets/Themeable/Main/tab-right.png"
                                             StackDirection="Vertical"
                                             Text="Conversations"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1683,7 +1683,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1733,7 +1733,7 @@
                                                                     <Trigger Property="IsSelected" Value="True">
                                                                         <Setter TargetName="ItemBorder" Property="Background">
                                                                             <Setter.Value>
-                                                                                <ImageBrush ImageSource="Assets/Themeable/Sidebar/selection-background.png" Stretch="Fill" />
+                                                                                <ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Trigger>
@@ -1798,7 +1798,7 @@
                                                             MouseLeftButtonUp="CloseConversationHint"
                                                             PressedIndex="2"
                                                             RightWidth="10"
-                                                            Source="Assets/Themeable/Sidebar/profile.png"
+                                                            Source="Assets/Themeable/Main/button-small.png"
                                                             StackDirection="Vertical"
                                                             Text="{Binding Path='[sZAPBUTTON_CLOSE]', Source={StaticResource Lang}}"
                                                             TextColor="{StaticResource Text.MediumContrast}"
@@ -1808,7 +1808,7 @@
                                                             Width="12"
                                                             Margin="5,0,0,0"
                                                             HorizontalAlignment="Left"
-                                                            Source="Assets/Universal/Sidebar/close-icon.png" />
+                                                            Source="Assets/Universal/Main/close-icon.png" />
                                                     </Grid>
                                                 </StackPanel>
                                             </Border>
@@ -1822,7 +1822,7 @@
                                                 HoverIndex="1"
                                                 MouseLeftButtonUp="CloseConversationHint"
                                                 PressedIndex="2"
-                                                Source="Assets/Universal/Sidebar/close-hint.png"
+                                                Source="Assets/Universal/Main/close-hint.png"
                                                 StackDirection="Vertical" />
                                         </Grid>
                                     </Grid>
@@ -1841,14 +1841,14 @@
                                             HoverIndex="1"
                                             IconHeight="16"
                                             IconLeftMargin="6"
-                                            IconSource="Assets/Universal/Sidebar/skypeout.png"
+                                            IconSource="Assets/Universal/Main/skypeout.png"
                                             IconWidth="20"
                                             LeftWidth="10"
                                             MouseLeftButtonUp="CallPhones_Click"
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="Assets/Themeable/Sidebar/bottom-buttons.png"
+                                            Source="Assets/Themeable/Main/bottom-buttons.png"
                                             StackDirection="Vertical"
                                             Text="{Binding [sZAPBUTTON_SKYPEOUT], Source={StaticResource Lang}}"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1867,14 +1867,14 @@
                                             HoverIndex="1"
                                             IconHeight="16"
                                             IconLeftMargin="6"
-                                            IconSource="Assets/Universal/Sidebar/directory.png"
+                                            IconSource="Assets/Universal/Main/directory.png"
                                             IconWidth="20"
                                             LeftWidth="10"
                                             MouseLeftButtonUp="Directory_Click"
                                             PressedIndex="2"
                                             RightWidth="10"
                                             SliceMode="1"
-                                            Source="Assets/Themeable/Sidebar/bottom-buttons.png"
+                                            Source="Assets/Themeable/Main/bottom-buttons.png"
                                             StackDirection="Vertical"
                                             Text="Directory"
                                             TextColor="{StaticResource Text.HighContrast}"
@@ -1982,7 +1982,7 @@
                                         ElementCount="4"
                                         HoverIndex="1"
                                         PressedIndex="2"
-                                        Source="Assets/Themeable/Sidebar/header.png"
+                                        Source="Assets/Themeable/Main/header.png"
                                         StackDirection="Vertical"
                                         Text="{Binding DisplayName}"
                                         TextColor="{StaticResource Text.HighContrast}"
@@ -2119,7 +2119,7 @@
                                                                 <Image
                                                                     Width="16"
                                                                     Height="16"
-                                                                    Source="Assets/Universal/Chat/mood.png" />
+                                                                    Source="Assets/Universal/Main/mood.png" />
                                                                 <TextBlock
                                                                     Margin="9,0,0,0"
                                                                     FontFamily="Tahoma"
@@ -2137,7 +2137,7 @@
                                                                 <Image
                                                                     Width="16"
                                                                     Height="16"
-                                                                    Source="Assets/Universal/Chat/clock.png" />
+                                                                    Source="Assets/Universal/Main/clock.png" />
                                                                 <TextBlock
                                                                     Margin="9,0,0,0"
                                                                     FontFamily="Tahoma"
@@ -2353,7 +2353,7 @@
                                                     MouseLeftButtonUp="CallButtonClick"
                                                     PressedIndex="2"
                                                     RightWidth="15"
-                                                    Source="Assets/Universal/Chat/btn_call.png"
+                                                    Source="Assets/Universal/Main/btn_call.png"
                                                     StackDirection="Vertical"
                                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_CALL]}"
                                                     TextColor="White"
@@ -2373,7 +2373,7 @@
                                                     LeftWidth="22"
                                                     PressedIndex="2"
                                                     RightWidth="22"
-                                                    Source="Assets/Universal/Chat/btn_video_call.png"
+                                                    Source="Assets/Universal/Main/btn_video_call.png"
                                                     StackDirection="Vertical"
                                                     Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_STARTVIDEOCALL]}"
                                                     TextColor="White"
@@ -2395,7 +2395,7 @@
                                                 PressedIndex="2"
                                                 RightWidth="35"
                                                 SliceMode="1"
-                                                Source="Assets/Themeable/Chat/network-none.png"
+                                                Source="Assets/Themeable/Main/network-none.png"
                                                 StackDirection="Vertical"
                                                 Text="Check settings"
                                                 TextColor="{StaticResource Text.HighContrast}"
@@ -2492,7 +2492,7 @@
                                                 DefaultIndex="0"
                                                 ElementCount="7"
                                                 SliceMode="2"
-                                                Source="Assets/Themeable/Chat/message-box-header25.png"
+                                                Source="Assets/Themeable/Main/message-box-header25.png"
                                                 StackDirection="Vertical"
                                                 Themeable="True"
                                                 TopHeight="25" />
@@ -2519,7 +2519,7 @@
                                                             MouseLeftButtonUp="EmojiButton_Click"
                                                             PressedIndex="2"
                                                             SliceMode="0"
-                                                            Source="Assets/Themeable/Chat/emoji.png"
+                                                            Source="Assets/Themeable/Main/emoji.png"
                                                             StackDirection="Vertical"
                                                             Themeable="True" />
                                                     </StackPanel>
@@ -2594,7 +2594,7 @@
                                                             IsAnimation="True"
                                                             PressedIndex="-1"
                                                             SliceMode="0"
-                                                            Source="Assets/Universal/Chat/pencil-write.png"
+                                                            Source="Assets/Universal/Main/pencil-write.png"
                                                             StackDirection="Vertical" />
                                                         <TextBlock
                                                             x:Name="TypingIndicatorText"
@@ -2644,7 +2644,7 @@
                                                 MouseLeftButtonUp="OnMsgSendClickButton"
                                                 PressedIndex="2"
                                                 RightWidth="22"
-                                                Source="Assets/Universal/Chat/msg-send-button-full.png"
+                                                Source="Assets/Universal/Main/msg-send-button-full.png"
                                                 StackDirection="Vertical"
                                                 Text="{Binding Source={StaticResource Lang}, Path=[sZAPBUTTON_SENDMESSAGE]}"
                                                 TextColor="White"

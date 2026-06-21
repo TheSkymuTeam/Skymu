@@ -1080,7 +1080,7 @@
                         PressedIndex="2"
                         SliceMode="0"
                         Themeable="True"
-                        Source="Assets/Themeable/Chat/network-none.png"
+                        Source="Assets/Themeable/Main/network-none.png"
                         StackDirection="Vertical" />
                     <!--  Video call button  -->
                     <!--  TODO change to SliceControl "{Binding VideoCallCommand}"  -->
@@ -1211,7 +1211,7 @@
                     Cursor="Hand"
                     MouseLeftButtonUp="EmojiButton_Click"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="Assets/Themeable/Chat/emoji.png"
+                    Source="Assets/Themeable/Main/emoji.png"
                     ToolTip="Emoji" />
                 <Popup
                     x:Name="EmojiFlyout"

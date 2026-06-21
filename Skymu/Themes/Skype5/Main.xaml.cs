@@ -96,23 +96,23 @@ namespace Skymu.Skype5
         }
 
         private readonly BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
-            "Universal/Chat/msg-send-button.png"
+            "Universal/Main/msg-send-button.png"
         );
         private readonly BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
-            "Universal/Chat/msg-send-button-full.png"
+            "Universal/Main/msg-send-button-full.png"
         );
 
         private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad(
-            "Themeable/Sidebar/contacts.png"
+            "Themeable/Main/contacts.png"
         );
         private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad(
-            "Themeable/Sidebar/recents.png"
+            "Themeable/Main/recents.png"
         );
         private readonly BitmapImage contactsBtnImageEmpty = ImageHelper.FreezeLoad(
-            "Themeable/Sidebar/contacts-empty.png"
+            "Themeable/Main/contacts-empty.png"
         );
         private readonly BitmapImage recentsBtnImageEmpty = ImageHelper.FreezeLoad(
-            "Themeable/Sidebar/recents-empty.png"
+            "Themeable/Main/recents-empty.png"
         );
 
         private Metadata SelectedContact;
