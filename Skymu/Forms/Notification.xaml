@@ -33,7 +33,7 @@
     Topmost="True"
     WindowStyle="None">
     <Window.Resources>
-        
+
         <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Grid>
@@ -43,8 +43,8 @@
             DefaultIndex="0"
             ElementCount="1"
             SliceMode="2"
-            Themeable="True"
-            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Notifications/bubble-orange.png'}" />
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Notifications/bubble-orange.png'}"
+            Themeable="True" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="26" />

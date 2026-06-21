@@ -30,7 +30,7 @@
     Style="{StaticResource Page}"
     mc:Ignorable="d">
     <Page.Resources>
-        
+
         <converters:AssetLoader x:Key="AssetLoader" />
         <Style x:Key="ActionButtonStyle" TargetType="global:SliceControl">
             <Setter Property="StackDirection" Value="Vertical" />

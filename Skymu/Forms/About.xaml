@@ -29,7 +29,7 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        
+
         <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Window.Background>

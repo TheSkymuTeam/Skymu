@@ -42,7 +42,7 @@
 
     <Window.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
-        
+
         <Style x:Key="SidebarHeaderStyle" TargetType="global:SliceControl">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="ElementCount" Value="5" />
@@ -75,9 +75,9 @@
                             Interactive="False"
                             PressedIndex="-1"
                             SliceMode="2"
-                            Themeable="True"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                             StackDirection="Vertical"
+                            Themeable="True"
                             TopHeight="2" />
                     </ControlTemplate>
                 </Setter.Value>
@@ -362,9 +362,9 @@
                         ElementSpan="2"
                         Interactive="False"
                         SliceMode="2"
-                        Themeable="True"
                         Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Themeable/Options/header_background.png}"
                         StackDirection="Vertical"
+                        Themeable="True"
                         TopHeight="37" />
                     <StackPanel
                         Margin="10,12,0,6"

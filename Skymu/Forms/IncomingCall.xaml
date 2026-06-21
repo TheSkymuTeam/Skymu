@@ -33,7 +33,7 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
     <Window.Resources>
-        
+
         <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Grid>
