@@ -66,15 +66,15 @@ namespace Skymu.UserDirectory
             string id = null
         )
         {
-            string anon_random = $"{Universal.Name.ToLowerInvariant()}-user-" + GenerateRandomNumberString(10);
+            string anon_random = $"{Universal.NAME.ToLowerInvariant()}-user-" + GenerateRandomNumberString(10);
             var payload = new
             {
                 display_name = Settings.Anonymize ? "Anonymous" : dn,
                 username = Settings.Anonymize ? anon_random : user,
                 identifier = Settings.Anonymize ? anon_random : id,
                 plugin = Universal.Plugin.Name,
-                skymu_build_codename = Universal.BuildName,
-                skymu_build_version = Universal.BuildVersion,
+                skymu_build_codename = Universal.BUILD_NAME,
+                skymu_build_version = Universal.BUILD_VERSION,
                 token = ApiTkn,
                 online,
             };

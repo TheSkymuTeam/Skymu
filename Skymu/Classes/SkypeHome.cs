@@ -28,7 +28,7 @@ using Yggdrasil.Models;
 
 namespace Skymu
 {
-    class SkypeHome // Who knows why Skype decided to make a critical UI component a webpage? I don't, either...
+    class SkypeHome // Who knows why Skype decided to make a critical UI component a webpage?
     {
         private static WebBrowser _browser;
         private static User _user;

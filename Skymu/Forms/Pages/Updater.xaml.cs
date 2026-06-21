@@ -27,7 +27,7 @@ namespace Skymu.Forms.Pages
     {
         private CancellationTokenSource _cts;
         private const string Author = "TheSkymuTeam";
-        private const string Repo = Universal.Name;
+        private const string Repo = Universal.NAME;
         private readonly string brand = Settings.BrandingName;
         private updateInfo? update_info;
         private WindowBase window;
@@ -297,7 +297,7 @@ namespace Skymu.Forms.Pages
                         if (string.IsNullOrWhiteSpace(latestTag))
                             return null;
 
-                        string currentVerStr = Universal.BuildVersion;
+                        string currentVerStr = Universal.BUILD_VERSION;
                         currentVerStr = currentVerStr.Replace("v", "");
 
                         Version.TryParse(currentVerStr, out Version currentVer);

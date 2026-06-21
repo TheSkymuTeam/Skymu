@@ -72,7 +72,7 @@ namespace Skymu.Sounds
             Load("BUSY.WAV");
         }
 
-        static void Load(string filename, string path = "", string fallback = Universal.Name)
+        static void Load(string filename, string path = "", string fallback = Universal.NAME)
         {
             if (path == "")
                 path = Settings.SoundPack.ToString();
@@ -102,7 +102,7 @@ namespace Skymu.Sounds
             }
 
             if (fallback != string.Empty && path != fallback)
-                Load(filename, fallback, Universal.Name);
+                Load(filename, fallback, Universal.NAME);
         }
 
         public static void Play(string key)

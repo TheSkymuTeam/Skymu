@@ -59,7 +59,7 @@
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/connection.png}" />
                 <TextBlock Margin="15,0,0,0" VerticalAlignment="Center">
-                    <Hyperlink NavigateUri="https://github.com/TheSkymuTeam/Skymu/pulls" RequestNavigate="OURL">Contribute to Skymu</Hyperlink>
+                    <Hyperlink NavigateUri="{Binding Source={x:Static global:Universal.GITHUB_PULLS_URL}}" RequestNavigate="OURL">Contribute to Skymu</Hyperlink>
                 </TextBlock>
             </StackPanel>
         </StackPanel>

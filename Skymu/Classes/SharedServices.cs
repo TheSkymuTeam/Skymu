@@ -199,9 +199,9 @@ namespace Skymu.Infrastructure.Main
                     string url;
                     Random _random = new Random(); // what is this bro // for the easter egg to decide what video to show
                     if (_random.Next(0, 100) < 12) // oh hello im le underscore yeah I change everything and it totally makes sense guys
-                        url = "https://www.youtube.com/watch?v=cdtNIyx10DM"; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
+                        url = Universal.EASTER_CHANTE_SKYPE; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
                     else
-                        url = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+                        url = Universal.EASTER_SKYPE_SOUNDS_REMIX;
                     Universal.OpenUrl(url);
                     break;
             }

@@ -857,7 +857,7 @@ namespace Skymu.Formatting
                                         if (args.Length >= 1 && args[0] is Dictionary<string, object> dic)
                                             href = dic[key]?.ToString() ?? "null";
                                     }
-                                    if (href.StartsWith($"{Universal.Name.ToLowerInvariant()}:"))
+                                    if (href.StartsWith($"{Universal.NAME.ToLowerInvariant()}:"))
                                         // handle internal skymu links here if needed
                                         hyperlink.Click += (s, e) => Universal.URIHandler(href.Substring(6));
                                     else if (Uri.TryCreate(href, UriKind.Absolute, out Uri uri))
@@ -871,7 +871,7 @@ namespace Skymu.Formatting
                                 {
                                     var name = elem.Attribute("name")?.Value;
                                     if (name != null)
-                                        hyperlink.Click += (s, e) => Universal.URIHandler($"{Universal.Name.ToLowerInvariant()}:#{name}");
+                                        hyperlink.Click += (s, e) => Universal.URIHandler($"{Universal.NAME.ToLowerInvariant()}:#{name}");
                                 }
                                 inlines.Add(hyperlink);
                                 break;

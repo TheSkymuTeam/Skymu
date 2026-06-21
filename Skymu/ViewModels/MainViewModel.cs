@@ -157,7 +157,7 @@ namespace Skymu.ViewModels
                 _isDownloading = true;
 
                 string url = attachments[0].Url;
-                string tempPath = Path.Combine(Path.GetTempPath(), $"{Universal.Name.ToLowerInvariant()}_attachment_temp");
+                string tempPath = Path.Combine(Path.GetTempPath(), $"{Universal.NAME.ToLowerInvariant()}_attachment_temp");
                 using (var response = await Universal.SkymuHttpClient.GetStreamAsync(url))
                 using (var fileStream = File.Create(tempPath))
                 {

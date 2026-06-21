@@ -41,40 +41,41 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
+        // Skymu-specific constants. Change if forking.
+        public const string NAME = "Skymu"; 
+        public const string REPOSITORY = NAME;
+        public const string ORGANIZATION = "TheSkymuTeam";
+        public const string BUILD_VERSION = "0.4.6";
+        public const string BUILD_NAME = "Elder Guardian";
+        public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
+        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
+        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
+
+        // Generic constants. Change if URL changes.
+        public const string NET_LATEST_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet";
+        public const string NET_SIX_DOWNLOAD_LINK = NET_LATEST_DOWNLOAD_LINK + "/6.0";
+        public const string EASTER_SKYPE_SOUNDS_REMIX = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
+        public const string EASTER_CHANTE_SKYPE = "https://www.youtube.com/=watch?v=cdtNIyx10DM";
+        public const string GITHUB_BASE_URL = "https://api.github.com/repos/" + ORGANIZATION + "/" + REPOSITORY;
+        public const string GITHUB_RELEASES_URL = GITHUB_BASE_URL + "/releases/latest";
+        public const string GITHUB_PULLS_URL = GITHUB_BASE_URL + "/pulls";
+
+        // Globally scoped variables.
         public static ICore Plugin;
         public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
         public static readonly string Theme = Settings.Theme;
-
-        public const string Name = "Skymu"; // Change this to update the name everywhere, even internally. Do not use special characters or spaces.
-        public const string BuildVersion = "0.4.6";
-        public const string BuildName = "Elder Guardian";
-        public static string Platform = Runtime.DetectOS().ToDisplayString(); 
+        public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
-
-        #if DEBUG
-        internal const bool DebugBuild = true;
-        #else
-        internal const bool DebugBuild = false;
-        #endif
-
-        public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
-        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
-        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
-        public const string NET_LATEST_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet";
-        public const string NET_SIX_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet/6.0";
-
         public static User CurrentUser;
         public static bool IsDarkTheme = false;
         public static BitmapImage AnonymousAvatar;
         public static BitmapImage GroupAvatar;
         public static BitmapImage UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
-
-        public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
-
         private static Mutex mutex;
+        public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
         private static void PluginPopup(
             object sender,
@@ -189,7 +190,7 @@ namespace Skymu
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
                         System.Windows.MessageBox.Show(
-                            $"{Name} is already running.\n\nYou can configure {Name} to allow running multiple instances at the same time in the Options menu."
+                            $"{NAME} is already running.\n\nYou can configure {NAME} to allow running multiple instances at the same time in the Options menu."
                         );
                         Terminate();
                         return;
@@ -267,7 +268,7 @@ namespace Skymu
             {
                 while (true)
                 {
-                    var pipe = new NamedPipeServerStream($"{Name}Pipe", PipeDirection.In);
+                    var pipe = new NamedPipeServerStream($"{NAME}Pipe", PipeDirection.In);
 
                     pipe.WaitForConnection();
 
@@ -368,7 +369,7 @@ namespace Skymu
             {
                 ExceptionHandler(
                     new Exception(
-                        $"{Name} Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n"
+                        $"{NAME} Exception Handling: CurrentDomain non-exception object thrown of an unknown nature.\n\n"
                             + ev.ToString()
                     )
                 );
@@ -494,7 +495,7 @@ namespace Skymu
         {
             try
             {
-                var pipe = new NamedPipeClientStream(".", $"{Name}Pipe", PipeDirection.Out);
+                var pipe = new NamedPipeClientStream(".", $"{NAME}Pipe", PipeDirection.Out);
 
                 pipe.Connect(1000);
 
@@ -521,7 +522,7 @@ namespace Skymu
                 );
             Colorizer.LoadFromSettings();
             Migrator.Run();
-            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{Name}Client-" + BuildVersion);
+            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + BUILD_VERSION);
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {

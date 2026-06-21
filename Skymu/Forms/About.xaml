@@ -58,8 +58,8 @@
             Foreground="#555555">
             <TextBlock.Text>
                 <MultiBinding StringFormat="v{0} {1}">
-                    <Binding Source="{x:Static global:Universal.BuildVersion}" />
-                    <Binding Source="{x:Static global:Universal.BuildName}" />
+                    <Binding Source="{x:Static global:Universal.BUILD_VERSION}" />
+                    <Binding Source="{x:Static global:Universal.BUILD_NAME}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>

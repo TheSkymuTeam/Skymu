@@ -66,7 +66,7 @@ namespace Skymu.Databases
             {
                 folderPath = Path.Combine(
 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-Universal.Name,
+Universal.NAME,
 Universal.Plugin.InternalName,
 SanitizeFolderName(user.Identifier)
 );
@@ -190,7 +190,7 @@ SanitizeFolderName(user.Identifier)
         {
             new System.Xml.Linq.XDocument(
                 new System.Xml.Linq.XElement(
-                    $"{Universal.Name}Database",
+                    $"{Universal.NAME}Database",
                     new System.Xml.Linq.XElement("DatabaseVersion", Version)
                 )
             ).Save(configPath);

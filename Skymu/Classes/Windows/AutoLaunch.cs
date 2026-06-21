@@ -36,7 +36,7 @@ namespace Skymu.Windows
                     return BootstrapValue;
                 }
 
-                object value = key.GetValue(Universal.Name);
+                object value = key.GetValue(Universal.NAME);
 
                 if (value == null)
                 {
@@ -65,11 +65,11 @@ namespace Skymu.Windows
             {
                 if (yes)
                     key.SetValue(
-                        Universal.Name,
+                        Universal.NAME,
                         "\"" + Process.GetCurrentProcess().MainModule.FileName + "\""
                     );
                 else
-                    key.DeleteValue(Universal.Name, false);
+                    key.DeleteValue(Universal.NAME, false);
             }
         }
     }
