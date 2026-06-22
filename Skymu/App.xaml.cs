@@ -157,18 +157,18 @@ namespace Skymu
                                     type: WindowBase.IconType.Information,
                                     content: e.Message,
                                     header: ((ICore)sender).Name + " requests your choice",
-                                    brText: Lang["sF_CONFIRM_YES"],
+                                    brText: Lang["sF_CONFIRM_NO_BTN"],
                                     blEnabled: true,
-                                    blText: Lang["sF_CONFIRM_NO_BTN"]
+                                    blText: Lang["sF_CONFIRM_YES"]
                                 );
                                 dialog.BRAction = () =>
                                 {
-                                    e.Action(true);
+                                    e.Action(false);
                                     dialog.Close();
                                 };
                                 dialog.BLAction = () =>
                                 {
-                                    e.Action(false);
+                                    e.Action(true);
                                     dialog.Close();
                                 };
                                 dialog.ShowDialog();
@@ -566,8 +566,8 @@ namespace Skymu
                     case "UseSystemCulture":
                     case "CertificateStore":
                         Dialog dialog = new Dialog(
-                                   type: WindowBase.IconType.Information,
-                                   content: "You need to restart " + Settings.BrandingName + " to fully apply this change.",
+                                   type: WindowBase.IconType.Question,
+                                   content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
                                    header: "Restart " + Settings.BrandingName + "?",
                                    brText: Lang["sF_CONFIRM_NO_BTN"],
                                    blEnabled: true,
@@ -575,7 +575,6 @@ namespace Skymu
                                );
                         dialog.BRAction = () =>
                         {
-                            e.Action(false);
                             dialog.Close();
                         };
                         dialog.BLAction = () =>
