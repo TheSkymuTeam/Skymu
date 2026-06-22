@@ -554,37 +554,50 @@ namespace Skymu
             if (string.IsNullOrEmpty(frameworkName))
                 frameworkName = "Aero.NormalColor";
 
-            string assemblyName = "";
-            switch (frameworkName)
-            {
-                case "Classic":
-                    assemblyName = "PresentationFramework.Classic";
-                    break;
-                default:
-                    if (frameworkName.StartsWith("Luna"))
-                        assemblyName = "PresentationFramework.Luna";
-                    else if (frameworkName.StartsWith("Royale"))
-                        assemblyName = "PresentationFramework.Royale";
-                    else if (frameworkName.StartsWith("Aero2"))
-                        assemblyName = "PresentationFramework.Aero2";
-                    else if (frameworkName.StartsWith("AeroLite"))
-                        assemblyName = "PresentationFramework.AeroLite";
-                    else if (frameworkName.StartsWith("Aero"))
-                        assemblyName = "PresentationFramework.Aero";
-                    else if (frameworkName.StartsWith("Classic"))
-                        assemblyName = "PresentationFramework.Classic";
-                    break;
-            }
+            ResourceDictionary theme;
 
-            try
+            if (frameworkName.StartsWith("Fluent"))
             {
+                var themeFileName = frameworkName.Split('.')[1]; // "Light", "Dark", "HC"
+                var themeUri = new Uri(
+                    $"pack://application:,,,/Presentation/Themes/Fluent.{themeFileName}.xaml",
+                    UriKind.Absolute
+                );
+                theme = new ResourceDictionary { Source = themeUri };
+            }
+            else
+            {
+                string assemblyName = "";
+                switch (frameworkName)
+                {
+                    case "Classic":
+                        assemblyName = "PresentationFramework.Classic";
+                        break;
+                    default:
+                        if (frameworkName.StartsWith("Luna"))
+                            assemblyName = "PresentationFramework.Luna";
+                        else if (frameworkName.StartsWith("Royale"))
+                            assemblyName = "PresentationFramework.Royale";
+                        else if (frameworkName.StartsWith("Aero2"))
+                            assemblyName = "PresentationFramework.Aero2";
+                        else if (frameworkName.StartsWith("AeroLite"))
+                            assemblyName = "PresentationFramework.AeroLite";
+                        else if (frameworkName.StartsWith("Aero"))
+                            assemblyName = "PresentationFramework.Aero";
+                        else if (frameworkName.StartsWith("Classic"))
+                            assemblyName = "PresentationFramework.Classic";
+                        break;
+                }
+
                 var themeUri = new Uri(
                     $"/{assemblyName};component/themes/{frameworkName}.xaml",
                     UriKind.Relative
                 );
-                var theme = new ResourceDictionary { Source = themeUri };
+                theme = new ResourceDictionary { Source = themeUri };
+            }
 
-                // keep custom resources
+            try
+            {
                 var customResources = new ResourceDictionary();
                 foreach (var key in Resources.Keys)
                 {
@@ -592,15 +605,11 @@ namespace Skymu
                         customResources[key] = Resources[key];
                 }
 
-                // clear and add theme first
                 Resources.MergedDictionaries.Clear();
                 Resources.MergedDictionaries.Add(theme);
 
-                // re-add custom resources
                 foreach (var key in customResources.Keys)
-                {
                     Resources[key] = customResources[key];
-                }
             }
             catch (Exception ex)
             {

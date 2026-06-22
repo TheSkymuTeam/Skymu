@@ -11,12 +11,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-/*==========================================================*/
-// This code is EXPIREMENTAL and has not been reviewed by
-// persfidious, patricktbp, or HUBAXE. Port is by Xaero.
-// This also applies to the associated XAML file.
-/*==========================================================*/
-
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;

@@ -61,7 +61,9 @@
     <SolidColorBrush x:Key="Separator" Color="#E4E4E4" />
     <SolidColorBrush x:Key="Card.Background" Color="#FFFFFF" />
     <SolidColorBrush x:Key="Card.Border" Color="#26000000" />
-    <SolidColorBrush x:Key="Accent" Color="#00AFF0" />
+
+    <Color x:Key="AccentColor">#00AFF0</Color>
+    <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
 
     <SolidColorBrush x:Key="Text.VeryHighContrast" Color="#000000" />
     <SolidColorBrush x:Key="Text.HighContrast" Color="#333333" />

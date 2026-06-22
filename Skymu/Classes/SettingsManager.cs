@@ -81,7 +81,10 @@ namespace Skymu.Preferences
         public static string PresentationFramework
         {
             get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");
-            set => WRITE("PresentationFramework", value, nameof(PresentationFramework), "UI/General");
+            set 
+            {
+                WRITE("PresentationFramework", value, nameof(PresentationFramework), "UI/General");
+            }
         }
         public static string Language
         {

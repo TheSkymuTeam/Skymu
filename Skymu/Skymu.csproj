@@ -268,4 +268,8 @@
 	  <Resource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Presentation\" />
+	</ItemGroup>
+
 </Project>

@@ -67,7 +67,8 @@
     <SolidColorBrush x:Key="Metro.Background" Color="#FF313338" />
     <SolidColorBrush x:Key="Metro.Border" Color="#FF1E1F22" />
     <SolidColorBrush x:Key="Metro.Sidebar.UserCountTab" Color="#FF2B2D31" />
-    <SolidColorBrush x:Key="Accent" Color="#FF5865F2" />
+    <Color x:Key="AccentColor">#FF5865F2</Color>
+    <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
 
     <SolidColorBrush x:Key="Metro.Bubble" Color="#FF35373C" />
     <SolidColorBrush x:Key="Metro.Bubble.Tinted" Color="#FF383A40" />

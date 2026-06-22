@@ -238,6 +238,18 @@
                         Tag="AeroLite.NormalColor" />
                     <ComboBoxItem
                         Padding="6,0"
+                        Content="Windows 11 (Light)"
+                        Tag="Fluent.Light" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Windows 11 (Dark)"
+                        Tag="Fluent.Dark" />
+                    <ComboBoxItem
+                        Padding="6,0"
+                        Content="Windows 11 (High contrast)"
+                        Tag="Fluent.HC" />
+                    <ComboBoxItem
+                        Padding="6,0"
                         Content="Windows Classic"
                         Tag="Classic" />
                 </ComboBox>
