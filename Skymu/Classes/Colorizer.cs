@@ -114,6 +114,13 @@ namespace Skymu.Theming
 
             (string, bool) information = ReadColorwayInfo(absolutePath);
             Universal.IsDarkTheme = information.Item2;
+            if (Settings.PresentationFramework.StartsWith("Fluent")) // dynamic theme switching
+            {
+                if (Universal.IsDarkTheme && Settings.PresentationFramework == "Fluent.Light")
+                    Settings.PresentationFramework = "Fluent.Dark";
+                else if (!Universal.IsDarkTheme && Settings.PresentationFramework == "Fluent.Dark")
+                    Settings.PresentationFramework = "Fluent.Light";
+            }
 
             appResources.MergedDictionaries.Add(new_colorway);
             _currentColorway = new_colorway;

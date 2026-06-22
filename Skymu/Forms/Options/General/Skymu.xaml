@@ -107,7 +107,7 @@
                         Tag="Skype6" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Skype 7 (expiremental)"
+                        Content="Skype 7 (experimental)"
                         Tag="Skype7" />
                 </ComboBox>
                 <TextBlock
@@ -242,15 +242,11 @@
                         Tag="AeroLite.NormalColor" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Windows 11 Light (expiremental)"
-                        Tag="Fluent.Light" />
+                        Content="Windows 11 Dynamic (experimental)"
+                        Tag="Fluent.Dynamic" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Windows 11 Dark (expiremental)"
-                        Tag="Fluent.Dark" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows 11 High Contrast (expiremental)"
+                        Content="Windows 11 High Contrast (experimental)"
                         Tag="Fluent.HC" />
                 </ComboBox>
             </StackPanel>
@@ -439,7 +435,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Allow multiple instances of the application to run at the same time (disabling this is expiremental)"
+                Content="Allow multiple instances of the application to run at the same time (disabling this is experimental)"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[AllowMultipleInstances], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             <CheckBox

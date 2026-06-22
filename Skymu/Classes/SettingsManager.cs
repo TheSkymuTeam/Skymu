@@ -83,7 +83,13 @@ namespace Skymu.Preferences
             get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");
             set 
             {
-                WRITE("PresentationFramework", value, nameof(PresentationFramework), "UI/General");
+                string framework = value;
+                if (value == "Fluent.Dynamic")
+                {
+                    if (Universal.IsDarkTheme) framework = "Fluent.Dark";
+                    else framework = "Fluent.Light";
+                }
+                WRITE("PresentationFramework", framework, nameof(PresentationFramework), "UI/General");
             }
         }
         public static string Language
