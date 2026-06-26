@@ -63,7 +63,6 @@ namespace Skymu.Skype4
             img_split,
             img_join;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
-        internal static bool IsWindowActive = false;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
@@ -351,14 +350,14 @@ namespace Skymu.Skype4
 
         private void HandleWindowButtonLeave(SliceControl button)
         {
-            if (IsWindowActive)
+            if (vmodel.IsWindowActive)
             {
                 if (button != null)
                 {
                     button.Effect = null;
                 }
             }
-            else if (!IsWindowActive)
+            else if (!vmodel.IsWindowActive)
             {
                 button.Effect = null;
             }
@@ -380,7 +379,6 @@ namespace Skymu.Skype4
 
         private void HandleWindowActivated()
         {
-            IsWindowActive = true;
             if (vmodel != null)
                 vmodel.IsWindowActive = true;
 
@@ -409,7 +407,6 @@ namespace Skymu.Skype4
 
         private void HandleWindowDeactivated()
         {
-            IsWindowActive = false;
             if (vmodel != null)
                 vmodel.IsWindowActive = false;
 

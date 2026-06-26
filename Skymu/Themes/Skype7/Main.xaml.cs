@@ -276,7 +276,7 @@ namespace Skymu.Skype7
 
             RightColumn.Visibility = Visibility.Visible;
             browser.Visibility = Visibility.Collapsed;
-            HomeUnavailable.Visibility = Visibility.Collapsed;
+            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
 
             var conv = vmodel.SelectedConversation;
             LabelUsername1.Content = conv?.DisplayName;
@@ -530,13 +530,13 @@ namespace Skymu.Skype7
                 if (Settings.EnableSkypeHome)
                     browser.Visibility = Visibility.Visible;
                 else
-                    HomeUnavailable.Visibility = Visibility.Visible;
+                    HomeUnavailableFrame.Visibility = Visibility.Visible;
                 ConversationList_SelectionChanged(null, null);
                 return;
             }
             RightColumn.Visibility = Visibility.Visible;
             browser.Visibility = Visibility.Collapsed;
-            HomeUnavailable.Visibility = Visibility.Collapsed;
+            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
         }
 
         private void TabContacts_Click(object sender, MouseButtonEventArgs e)

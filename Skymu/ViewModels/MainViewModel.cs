@@ -120,7 +120,7 @@ namespace Skymu.ViewModels
             set => SetProperty(ref _isCallActive, value);
         }
 
-        public bool IsWindowActive { get; set; }
+        public bool IsWindowActive = false;
 
         #endregion
 

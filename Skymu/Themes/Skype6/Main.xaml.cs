@@ -60,7 +60,6 @@ namespace Skymu.Skype6
         private SliceControl _currentTab;
         private bool _userScrolledUp = false;
         private readonly Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
-        internal static bool IsWindowActive = false;
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
@@ -210,14 +209,12 @@ namespace Skymu.Skype6
 
         private void HandleWindowActivated()
         {
-            IsWindowActive = true;
             if (vmodel != null)
                 vmodel.IsWindowActive = true;
         }
 
         private void HandleWindowDeactivated()
         {
-            IsWindowActive = false;
             if (vmodel != null)
                 vmodel.IsWindowActive = false;
         }
