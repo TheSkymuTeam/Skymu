@@ -20,7 +20,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;

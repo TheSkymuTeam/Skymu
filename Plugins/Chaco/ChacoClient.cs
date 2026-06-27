@@ -45,7 +45,7 @@ namespace Chaco
 
             _baseUrl = baseUrl.TrimEnd('/');
 
-            _http = new HttpClient(new Yggdrasil.Networking.BifrostEngine())
+            _http = new HttpClient(new OmegaAOL.Bifrost.BifrostEngine())
             {
                 Timeout = Timeout.InfiniteTimeSpan
             };

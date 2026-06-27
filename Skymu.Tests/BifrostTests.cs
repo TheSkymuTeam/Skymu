@@ -27,7 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 
 namespace Yggdrasil.Tests
 {
@@ -194,7 +194,7 @@ namespace Yggdrasil.Tests
                 await stream.WriteAsync(buf, 0, 1, ct).ConfigureAwait(false);
             }, cts.Token);
 
-            // Use reflection to call internal OpenAsync (it's internal to Yggdrasil.Networking)
+            // Use reflection to call internal OpenAsync (it's internal to OmegaAOL.Bifrost)
             var method = typeof(BifrostTLS_Accessor).GetMethod("OpenAsync");
             // BifrostTLS is internal; test via BifrostEngine (which wraps it) for plain HTTP.
             // Direct plain-TCP test: just verify we can connect a socket to the port.

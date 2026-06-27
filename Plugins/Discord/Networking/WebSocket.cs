@@ -23,7 +23,7 @@
 using Discord.Helpers;
 using Discord.Networking.Managers;
 using Discord.Users;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using System;
 using System.Buffers;

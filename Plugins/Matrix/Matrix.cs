@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 
 namespace Matrix
 {

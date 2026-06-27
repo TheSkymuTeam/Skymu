@@ -1,13 +1,7 @@
 ﻿/*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
-// For any inquiries or concerns, email contact@skymu.app.
+// Copyright © OmegaAOL and EAZY BLACK.
 /*==========================================================*/
-// Modification or redistribution of this code is governed
-// by the terms set out in the project license agreement.
-// If you do not comply with those terms, you may not
-// modify or distribute any original code from the project.
-/*==========================================================*/
-// License: https://skymu.app/legal/license
+// License: https://spdx.org/licenses/AGPL-3.0-or-later
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 // BifrostWebSocket is a WebSocket client backed by BifrostTLS,
@@ -23,10 +17,11 @@ using System.IO;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
+using OmegaAOL.Bifrost.Tls;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Yggdrasil.Networking
+namespace OmegaAOL.Bifrost.WebSockets
 {
     public sealed class BifrostWebSocketOptions
     {
@@ -86,26 +81,26 @@ namespace Yggdrasil.Networking
             {
                 if (_state != WebSocketState.None)
                     throw new InvalidOperationException(
-                        $"Cannot connect in state {_state}.");
+                        string.Format("Cannot connect in state {0}.", _state));
                 _state = WebSocketState.Connecting;
             }
 
             bool isWss = uri.Scheme.Equals("wss", StringComparison.OrdinalIgnoreCase);
             if (!isWss && !uri.Scheme.Equals("ws", StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException($"Unsupported scheme: {uri.Scheme}. Use ws:// or wss://.");
+                throw new ArgumentException(string.Format("Unsupported scheme: {0}. Use ws:// or wss://.", uri.Scheme));
 
             int port = uri.Port > 0 ? uri.Port : (isWss ? 443 : 80);
             string host = uri.Host;
             string path = string.IsNullOrEmpty(uri.PathAndQuery) ? "/" : uri.PathAndQuery;
 
-            Debug.WriteLine($"[BIFROST-WS] Connecting to {uri}");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Connecting to {0}", uri));
 
             _stream = await BifrostTLS.OpenAsync(host, port, isWss, ct).ConfigureAwait(false);
 
             await PerformUpgradeAsync(host, path, ct).ConfigureAwait(false);
 
             lock (_stateLock) _state = WebSocketState.Open;
-            Debug.WriteLine($"[BIFROST-WS] Connection open: {uri}");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Connection open: {0}", uri));
         }
 
         public async Task SendAsync(
@@ -139,14 +134,14 @@ namespace Yggdrasil.Networking
                 _writeLock.Release();
             }
 
-            Debug.WriteLine($"[BIFROST-WS] Sent {buffer.Count} byte {messageType} frame.");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Sent {0} byte {1} frame.", buffer.Count, messageType));
         }
 
         private static string SanitizeHeader(string value)
         {
             if (value == null) return string.Empty;
             if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0)
-                throw new ArgumentException($"Header contains illegal CR or LF characters.");
+                throw new ArgumentException("Header contains illegal CR or LF characters.");
             return value;
         }
 
@@ -186,7 +181,7 @@ namespace Yggdrasil.Networking
 
                         case 0x00:
                             {
-                                var msgType = _currentMessageOpcode == 0x01
+                                WebSocketMessageType msgType = _currentMessageOpcode == 0x01
                                     ? WebSocketMessageType.Text
                                     : WebSocketMessageType.Binary;
 
@@ -224,7 +219,7 @@ namespace Yggdrasil.Networking
                             return new WebSocketReceiveResult(payload.Length, WebSocketMessageType.Close, true);
 
                         default:
-                            throw new WebSocketException($"Unknown WebSocket opcode 0x{opcode:X2}.");
+                            throw new WebSocketException(string.Format("Unknown WebSocket opcode 0x{0:X2}.", opcode));
                     }
                 }
             }
@@ -250,7 +245,7 @@ namespace Yggdrasil.Networking
                 ? Encoding.UTF8.GetBytes(statusDescription)
                 : Array.Empty<byte>();
 
-            var payload = new byte[2 + reason.Length];
+            byte[] payload = new byte[2 + reason.Length];
             payload[0] = (byte)((int)closeStatus >> 8);
             payload[1] = (byte)((int)closeStatus & 0xFF);
             Buffer.BlockCopy(reason, 0, payload, 2, reason.Length);
@@ -269,29 +264,29 @@ namespace Yggdrasil.Networking
             }
 
             lock (_stateLock) _state = WebSocketState.Closed;
-            Debug.WriteLine($"[BIFROST-WS] Close sent: {closeStatus} '{statusDescription}'");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Close sent: {0} '{1}'", closeStatus, statusDescription));
         }
 
         private async Task PerformUpgradeAsync(string host, string path, CancellationToken ct)
         {
-            var keyBytes = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
+            byte[] keyBytes = new byte[16];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
                 rng.GetBytes(keyBytes);
             string wsKey = Convert.ToBase64String(keyBytes);
 
-            var sb = new StringBuilder();
-            sb.Append($"GET {path} HTTP/1.1\r\n");
-            sb.Append($"Host: {host}\r\n");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(string.Format("GET {0} HTTP/1.1\r\n", path));
+            sb.Append(string.Format("Host: {0}\r\n", host));
             sb.Append("Upgrade: websocket\r\n");
             sb.Append("Connection: Upgrade\r\n");
-            sb.Append($"Sec-WebSocket-Key: {wsKey}\r\n");
+            sb.Append(string.Format("Sec-WebSocket-Key: {0}\r\n", wsKey));
             sb.Append("Sec-WebSocket-Version: 13\r\n");
 
             if (!string.IsNullOrEmpty(RequestedSubProtocol))
-                sb.Append($"Sec-WebSocket-Protocol: {RequestedSubProtocol}\r\n");
+                sb.Append(string.Format("Sec-WebSocket-Protocol: {0}\r\n", RequestedSubProtocol));
 
-            foreach (var kvp in RequestHeaders)
-                sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(kvp.Value)}\r\n");
+            foreach (KeyValuePair<string, string> kvp in RequestHeaders)
+                sb.Append(string.Format("{0}: {1}\r\n", SanitizeHeader(kvp.Key), SanitizeHeader(kvp.Value)));
 
             sb.Append("\r\n");
 
@@ -299,21 +294,21 @@ namespace Yggdrasil.Networking
             await _stream.WriteAsync(upgradeBytes, 0, upgradeBytes.Length, ct).ConfigureAwait(false);
             await _stream.FlushAsync(ct).ConfigureAwait(false);
 
-            Debug.WriteLine($"[BIFROST-WS] Upgrade request sent to {host}{path}");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Upgrade request sent to {0}{1}", host, path));
 
 
             // IMPORTANT!!!: LineReader buffers up to 4096 bytes at a time. Any WebSocket
             // frame data that arrives together with the HTTP 101 response would be lost
             // if we discarded the reader. We recover leftover bytes into a PrependStream
             // so the first frame is not silently dropped.
-            var reader = new LineReader(_stream);
+            LineReader reader = new LineReader(_stream);
 
             string statusLine = await reader.ReadLineAsync(ct).ConfigureAwait(false);
-            Debug.WriteLine($"[BIFROST-WS] Upgrade response: {statusLine}");
+            Debug.WriteLine(string.Format("[BIFROST-WS] Upgrade response: {0}", statusLine));
 
             if (statusLine == null || !statusLine.Contains("101"))
                 throw new WebSocketException(
-                    $"WebSocket upgrade failed. Server responded: {statusLine}");
+                    string.Format("WebSocket upgrade failed. Server responded: {0}", statusLine));
 
             string expectedAccept = ComputeAcceptKey(wsKey);
             bool acceptValid = false;
@@ -339,10 +334,10 @@ namespace Yggdrasil.Networking
                     "Sec-WebSocket-Accept header missing or invalid. Server is not a valid WebSocket endpoint.");
 
             // recover any bytes the LineReader pulled in beyond the HTTP headers
-            var leftover = reader.Unconsumed;
+            ArraySegment<byte> leftover = reader.Unconsumed;
             if (leftover.Count > 0)
             {
-                Debug.WriteLine($"[BIFROST-WS] Recovering {leftover.Count} byte(s) buffered during upgrade.");
+                Debug.WriteLine(string.Format("[BIFROST-WS] Recovering {0} byte(s) buffered during upgrade.", leftover.Count));
                 _stream = new PrependStream(leftover.Array, leftover.Offset, leftover.Count, _stream);
             }
 
@@ -352,7 +347,7 @@ namespace Yggdrasil.Networking
         private static string ComputeAcceptKey(string key)
         {
             const string Magic = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-            using (var sha1 = SHA1.Create())
+            using (SHA1 sha1 = SHA1.Create())
             {
                 byte[] combined = Encoding.ASCII.GetBytes(key + Magic);
                 return Convert.ToBase64String(sha1.ComputeHash(combined));
@@ -362,12 +357,12 @@ namespace Yggdrasil.Networking
         private static byte[] BuildFrame(
             byte opcode, bool fin, byte[] data, int offset, int count)
         {
-            var maskKey = new byte[4];
-            using (var rng = RandomNumberGenerator.Create())
+            byte[] maskKey = new byte[4];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
                 rng.GetBytes(maskKey);
 
             int headerSize = count < 126 ? 2 : (count < 65536 ? 4 : 10);
-            var frame = new byte[headerSize + 4 + count];
+            byte[] frame = new byte[headerSize + 4 + count];
 
             frame[0] = (byte)((fin ? 0x80 : 0x00) | (opcode & 0x0F));
 
@@ -451,7 +446,7 @@ namespace Yggdrasil.Networking
 
         private async Task<byte[]> ReadExactAsync(int count, CancellationToken ct)
         {
-            var buf = new byte[count];
+            byte[] buf = new byte[count];
             int read = 0;
             while (read < count)
             {
@@ -467,11 +462,11 @@ namespace Yggdrasil.Networking
 
         private void EnsureOpen(bool allowClosing = false)
         {
-            var s = State;
+            WebSocketState s = State;
             if (s == WebSocketState.Open) return;
             if (allowClosing && s == WebSocketState.CloseReceived) return;
             throw new WebSocketException(
-                $"WebSocket is not open (current state: {s}).");
+                string.Format("WebSocket is not open (current state: {0}).", s));
         }
 
         public void Abort()
@@ -528,7 +523,7 @@ namespace Yggdrasil.Networking
 
             public async Task<string> ReadLineAsync(CancellationToken ct)
             {
-                var line = new List<byte>(128);
+                List<byte> line = new List<byte>(128);
                 while (true)
                 {
                     byte? b = await ReadByteAsync(ct).ConfigureAwait(false);

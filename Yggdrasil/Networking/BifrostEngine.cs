@@ -1,13 +1,7 @@
 ﻿/*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
-// For any inquiries or concerns, email contact@skymu.app.
+// Copyright © OmegaAOL and EAZY BLACK.
 /*==========================================================*/
-// Modification or redistribution of this code is governed
-// by the terms set out in the project license agreement.
-// If you do not comply with those terms, you may not
-// modify or distribute any original code from the project.
-/*==========================================================*/
-// License: https://skymu.app/legal/license
+// License: https://spdx.org/licenses/AGPL-3.0-or-later
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 // BifrostEngine is an HttpMessageHandler backed by
@@ -28,8 +22,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OmegaAOL.Bifrost.Tls;
 
-namespace Yggdrasil.Networking
+namespace OmegaAOL.Bifrost.Engine
 {
     public sealed class BifrostEngine : HttpMessageHandler // i still am surprised HttpClient has an overload to accept a custom HttpMH, given that at this time there were literally none
     {
@@ -54,7 +49,7 @@ namespace Yggdrasil.Networking
         {
             if (value == null) return string.Empty;
             if (value.IndexOf('\r') >= 0 || value.IndexOf('\n') >= 0)
-                throw new ArgumentException($"Header contains illegal CR or LF characters.");
+                throw new ArgumentException("Header contains illegal CR or LF characters.");
             return value;
         }
 
@@ -70,15 +65,15 @@ namespace Yggdrasil.Networking
             if (request == null) throw new ArgumentNullException(nameof(request));
 
             if (redirectDepth > MaxRedirects)
-                throw new HttpRequestException($"Too many redirects (>{MaxRedirects})");
+                throw new HttpRequestException(string.Format("Too many redirects (>{0})", MaxRedirects));
 
-            var uri = request.RequestUri
+            Uri uri = request.RequestUri
                 ?? throw new InvalidOperationException("Request URI must not be null.");
 
             bool isHttps = uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase);
             int port = uri.Port > 0 ? uri.Port : (isHttps ? 443 : 80);
             string host = uri.Host;
-            string poolKey = $"{host}:{port}";
+            string poolKey = string.Format("{0}:{1}", host, port);
 
             Stream stream = TryRentFromPool(poolKey)
                 ?? await BifrostTLS.OpenAsync(host, port, isHttps, ct).ConfigureAwait(false);
@@ -103,28 +98,28 @@ namespace Yggdrasil.Networking
                 ? await request.Content.ReadAsByteArrayAsync().ConfigureAwait(false)
                 : null;
 
-            var sb = new StringBuilder();
-            sb.Append($"{request.Method.Method} {uri.PathAndQuery} HTTP/1.1\r\n"); // idgaf im not implementing http/2
-            sb.Append($"Host: {host}\r\n");
+            StringBuilder sb = new StringBuilder();
+            sb.Append(string.Format("{0} {1} HTTP/1.1\r\n", request.Method.Method, uri.PathAndQuery)); // idgaf im not implementing http/2
+            sb.Append(string.Format("Host: {0}\r\n", host));
             sb.Append("Connection: keep-alive\r\n");
 
             foreach (var kvp in request.Headers)
                 foreach (var val in kvp.Value)
-                    sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(val)}\r\n");
+                    sb.Append(string.Format("{0}: {1}\r\n", SanitizeHeader(kvp.Key), SanitizeHeader(val)));
 
             if (request.Content != null)
             {
                 foreach (var kvp in request.Content.Headers)
                     foreach (var val in kvp.Value)
-                        sb.Append($"{SanitizeHeader(kvp.Key)}: {SanitizeHeader(val)}\r\n");
+                        sb.Append(string.Format("{0}: {1}\r\n", SanitizeHeader(kvp.Key), SanitizeHeader(val)));
 
                 if (bodyBytes != null && bodyBytes.Length > 0
                     && !request.Content.Headers.Contains("Content-Length"))
-                    sb.Append($"Content-Length: {bodyBytes.Length}\r\n");
+                    sb.Append(string.Format("Content-Length: {0}\r\n", bodyBytes.Length));
             }
 
             sb.Append("\r\n");
-            Debug.WriteLine($"[BIFROST-HTTP] --> {request.Method.Method} {uri}");
+            Debug.WriteLine(string.Format("[BIFROST-HTTP] --> {0} {1}", request.Method.Method, uri));
 
             ct.ThrowIfCancellationRequested();
             byte[] requestBytes = Encoding.ASCII.GetBytes(sb.ToString());
@@ -141,7 +136,7 @@ namespace Yggdrasil.Networking
 
             var parts = statusLine.Split(new[] { ' ' }, 3);
             if (parts.Length < 2 || !int.TryParse(parts[1], out int statusCode))
-                throw new HttpRequestException($"Invalid HTTP status line: {statusLine}");
+                throw new HttpRequestException(string.Format("Invalid HTTP status line: {0}", statusLine));
 
             var responseHeaders = new List<KeyValuePair<string, string>>();
             string headerLine;
@@ -216,7 +211,7 @@ namespace Yggdrasil.Networking
 
             if (hasNoBody || contentLength == 0)
             {
-                Debug.WriteLine($"[BIFROST-HTTP] Status {statusCode} has no body.");
+                Debug.WriteLine(string.Format("[BIFROST-HTTP] Status {0} has no body.", statusCode));
                 if (connectionClose)
                     stream.Dispose();
                 else
@@ -225,12 +220,12 @@ namespace Yggdrasil.Networking
             }
             else if (contentLength > 0)
             {
-                Debug.WriteLine($"[BIFROST-HTTP] Streaming {contentLength} byte body via PooledStream.");
+                Debug.WriteLine(string.Format("[BIFROST-HTTP] Streaming {0} byte body via PooledStream.", contentLength));
                 responseBody = new PooledStream(reader, stream, poolKey, this, contentLength, connectionClose);
             }
             else if (chunked)
             {
-                Debug.WriteLine($"[BIFROST-HTTP] Streaming chunked body via ChunkedStream.");
+                Debug.WriteLine("[BIFROST-HTTP] Streaming chunked body via ChunkedStream.");
                 responseBody = new ChunkedStream(reader, stream, poolKey, this, connectionClose, responseHeaders);
             }
             else
@@ -294,7 +289,7 @@ namespace Yggdrasil.Networking
                 default: description = "Unknown"; break;
             }
 
-            Debug.WriteLine($"[BIFROST-HTTP] <-- {statusCode} {description} ({uri})");
+            Debug.WriteLine(string.Format("[BIFROST-HTTP] <-- {0} {1} ({2})", statusCode, description, uri));
 
             foreach (var h in headers)
             {
@@ -306,7 +301,7 @@ namespace Yggdrasil.Networking
                  || h.Key.Equals("X-RateLimit-Reset", StringComparison.OrdinalIgnoreCase)
                  || h.Key.Equals("Retry-After", StringComparison.OrdinalIgnoreCase)
                  || h.Key.Equals("Connection", StringComparison.OrdinalIgnoreCase))
-                    Debug.WriteLine($"[BIFROST-HTTP]   {h.Key}: {h.Value}");
+                    Debug.WriteLine(string.Format("[BIFROST-HTTP] {0}: {1}", h.Key, h.Value));
             }
         }
 
@@ -326,7 +321,7 @@ namespace Yggdrasil.Networking
             if (string.IsNullOrEmpty(encoding) || data.Length == 0)
                 return data;
 
-            Debug.WriteLine($"[BIFROST-HTTP] Decompressing: {encoding}");
+            Debug.WriteLine(string.Format("[BIFROST-HTTP] Decompressing: {0}", encoding));
 
             if (encoding == "gzip")
             {
@@ -359,7 +354,7 @@ namespace Yggdrasil.Networking
                 }
             }
 
-            Debug.WriteLine($"[BIFROST-HTTP] Warning: unsupported Content-Encoding '{encoding}', returning raw.");
+            Debug.WriteLine(string.Format("[BIFROST-HTTP] Warning: unsupported Content-Encoding '{0}', returning raw.", encoding));
             return data;
         }
 
@@ -369,7 +364,7 @@ namespace Yggdrasil.Networking
             {
                 if (_pool.TryGetValue(key, out var queue) && queue.Count > 0)
                 {
-                    Debug.WriteLine($"[BIFROST-HTTP] Reusing pooled connection for {key}.");
+                    Debug.WriteLine(string.Format("[BIFROST-HTTP] Reusing pooled connection for {0}.", key));
                     return queue.Dequeue();
                 }
             }
@@ -386,7 +381,7 @@ namespace Yggdrasil.Networking
                 if (queue.Count < _maxPoolSize)
                 {
                     queue.Enqueue(stream);
-                    Debug.WriteLine($"[BIFROST-HTTP] Connection returned to pool for {key}.");
+                    Debug.WriteLine(string.Format("[BIFROST-HTTP] Connection returned to pool for {0}.", key));
                 }
                 else
                 {
@@ -477,7 +472,7 @@ namespace Yggdrasil.Networking
                     if (!_returnedToPool)
                     {
                         _returnedToPool = true;
-                        Debug.WriteLine($"[BIFROST-HTTP] PooledStream disposed with {_remaining} bytes remaining, dropping connection.");
+                        Debug.WriteLine(string.Format("[BIFROST-HTTP] PooledStream disposed with {0} bytes remaining, dropping connection.", _remaining));
                         _rawStream.Dispose();
                     }
                 }

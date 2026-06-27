@@ -15,7 +15,7 @@ using Skymu.Enumerations;
 using Skymu.Preferences;
 using System.Windows;
 using System.Windows.Controls;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 
 namespace Skymu.Forms.OptionPages.General
 {

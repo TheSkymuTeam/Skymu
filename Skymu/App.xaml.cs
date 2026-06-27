@@ -37,7 +37,7 @@ using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Bottles;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 
 namespace Skymu
 {

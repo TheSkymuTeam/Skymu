@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Xml.Linq;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 
 namespace Skymu.Preferences
 {

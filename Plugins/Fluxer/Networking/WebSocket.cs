@@ -23,7 +23,7 @@
 using Fluxer.Helpers;
 using Fluxer.Networking.Managers;
 using Fluxer.Users;
-using Yggdrasil.Networking;
+using OmegaAOL.Bifrost;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using System;
 using System.Buffers;
