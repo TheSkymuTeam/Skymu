@@ -80,6 +80,9 @@ namespace Skymu
         // Globally scoped variables.
         // -----------------------------------------------------------------------------
 
+       
+        public static List<ICore> ActivePlugins;
+        public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
         public static ICall CallPlugin;
         public static ICore[] PluginList;
@@ -188,7 +191,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        ActiveViewModel?.HandleIncoming(e);
+                        ActiveViewModel?.HandleIncoming(sender as ICore, e);
                     }
                 )
             );

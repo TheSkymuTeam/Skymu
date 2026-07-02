@@ -16,7 +16,6 @@
 /*==========================================================*/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Skymu.Databases;
@@ -47,7 +46,7 @@ namespace Skymu.Tests
                 "SkymuTests_" + Guid.NewGuid().ToString("N")
             );
             Directory.CreateDirectory(FolderPath);
-            DB = new DatabaseManager(user: null, custom_db_folder: FolderPath);
+            DB = new DatabaseManager(null, null, custom_db_folder: FolderPath);
         }
 
         public void Dispose()
@@ -69,7 +68,7 @@ namespace Skymu.Tests
             string display = "Alice",
             string status = null,
             byte[] avatar = null)
-            => new User(display, username, id, status, avatar: avatar);
+            => new User(null, display, username, id, status, avatar: avatar);
 
         public static DirectMessage DM(
             string convoId = "dm-alice",
@@ -89,7 +88,7 @@ namespace Skymu.Tests
             var members = memberIds.Length > 0
                 ? memberIds.Select(id => User(id)).ToArray()
                 : new[] { User("bob"), User("charlie") };
-            return new Group(name, convoId, unread, members, last_message_time: DateTime.UtcNow);
+            return new Group(null, name, convoId, unread, members, last_message_time: DateTime.UtcNow);
         }
 
         public static Message TextMessage(
@@ -189,14 +188,14 @@ namespace Skymu.Tests
         [Fact]
         public void Constructor_CustomFolder_CreatesDbFile()
         {
-            var db = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db = new DatabaseManager(null, null, custom_db_folder: _folder);
             Assert.True(File.Exists(Path.Combine(_folder, "main.db")));
         }
 
         [Fact]
         public void Constructor_CustomFolder_CreatesConfigFile()
         {
-            var db = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db = new DatabaseManager(null, null, custom_db_folder: _folder);
             Assert.True(File.Exists(Path.Combine(_folder, "config.xml")));
         }
 
@@ -204,16 +203,16 @@ namespace Skymu.Tests
         public void Constructor_CalledTwice_SameFolderDoesNotThrow()
         {
             // Simulates reopening the same database (e.g. after a restart).
-            var db1 = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db1 = new DatabaseManager(null, null, custom_db_folder: _folder);
             var ex = Record.Exception(
-                () => new DatabaseManager(user: null, custom_db_folder: _folder));
+                () => new DatabaseManager(null, null, custom_db_folder: _folder));
             Assert.Null(ex);
         }
 
         [Fact]
         public void Constructor_ExposesAllTableProperties()
         {
-            var db = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db = new DatabaseManager(null, null, custom_db_folder: _folder);
             Assert.NotNull(db.Accounts);
             Assert.NotNull(db.Contacts);
             Assert.NotNull(db.Conversations);
@@ -779,7 +778,7 @@ namespace Skymu.Tests
         [Fact]
         public void Constructor_CreatesValidXmlConfigFile()
         {
-            new DatabaseManager(user: null, custom_db_folder: _folder);
+            new DatabaseManager(null, null, custom_db_folder: _folder);
 
             string configPath = Path.Combine(_folder, "config.xml");
             Assert.True(File.Exists(configPath));
@@ -799,7 +798,7 @@ namespace Skymu.Tests
             File.WriteAllText(configPath, "THIS IS NOT XML <<<");
 
             var ex = Record.Exception(
-                () => new DatabaseManager(user: null, custom_db_folder: _folder));
+                () => new DatabaseManager(null, null, custom_db_folder: _folder));
             Assert.Null(ex);
             Assert.True(File.Exists(configPath));
 
@@ -812,7 +811,7 @@ namespace Skymu.Tests
         public void Constructor_StaleVersionInConfig_WipesDb()
         {
             // First, create a DB with some data.
-            var db = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db = new DatabaseManager(null, null, custom_db_folder: _folder);
             var dm = Make.DM("dm-a", "a");
             db.Conversations.Write(new[] { dm });
 
@@ -824,7 +823,7 @@ namespace Skymu.Tests
             ).Save(configPath);
 
             // Recreating the manager should wipe the old database.
-            var db2 = new DatabaseManager(user: null, custom_db_folder: _folder);
+            var db2 = new DatabaseManager(null, null, custom_db_folder: _folder);
             Assert.Empty(db2.Conversations.Read());
         }
     }

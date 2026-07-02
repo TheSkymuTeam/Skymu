@@ -436,7 +436,7 @@ namespace Tox
             var status = tox.statusMessage;
 
             var avatarPath = Path.Combine(AvatarDir, pubkey + ".png");
-            _currentUser = new User(uname, profile, pubkey, status, PresenceStatus.Offline, File.Exists(avatarPath) ? File.ReadAllBytes(avatarPath) : null);
+            _currentUser = new User(this, uname, profile, pubkey, status, PresenceStatus.Offline, File.Exists(avatarPath) ? File.ReadAllBytes(avatarPath) : null);
 
             var tid = tox.address;
             Debug.WriteLine("Tox: Tox ID: " + tid);
@@ -487,6 +487,7 @@ namespace Tox
             {
                 if (!friends.ContainsKey(f.id))
                     friends.Add(f.id, new User(
+                        this,
                         f.name,
                         BATS(f.publicKey),
                         BATS(f.publicKey),
@@ -510,6 +511,7 @@ namespace Tox
 
             foreach (var f in tox.friendArray)
                 friends.Add(f.id, new User(
+                    this,
                     f.name,
                     BATS(f.publicKey),
                     BATS(f.publicKey),
@@ -533,7 +535,7 @@ namespace Tox
                             goto next;
                         }
                     }
-                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Online);
+                    peers[i++] = new User(this, p.name, pkey, pkey, null, PresenceStatus.Online);
                 next:;
                 }
                 foreach (var p in c.offlinePeers)
@@ -547,10 +549,11 @@ namespace Tox
                             goto next2;
                         }
                     }
-                    peers[i++] = new User(p.name, pkey, pkey, null, PresenceStatus.Offline);
+                    peers[i++] = new User(this, p.name, pkey, pkey, null, PresenceStatus.Offline);
                 next2:;
                 }
                 conferences.Add(c.id, new Group(
+                    this,
                     c.title,
                     BATS(c.cid),
                     0,
@@ -709,9 +712,9 @@ namespace Tox
             bool user = query.Length == Size.address * 2;
             bool group = query.Length == Size.groupId * 2;
             if (user)
-                return Task.FromResult(new Metadata[1] { new User(query, "ToxUser", query) });
+                return Task.FromResult(new Metadata[1] { new User(this, query, "ToxUser", query) });
             else if (group)
-                return Task.FromResult(new Metadata[1] { new Group(query, query, 0, new User[0]) });
+                return Task.FromResult(new Metadata[1] { new Group(this, query, query, 0, new User[0]) });
             else
                 return Task.FromResult(new Metadata[0]);
         }
@@ -722,7 +725,7 @@ namespace Tox
             {
                 var fid = tox.FriendAdd(user.Identifier, message);
                 var pk = user.DisplayName.Substring(0, (int)Size.publicKey * 2);
-                var f = new User(pk, pk, pk, null, PresenceStatus.Offline, GrabAvatar(pk));
+                var f = new User(this, pk, pk, pk, null, PresenceStatus.Offline, GrabAvatar(pk));
                 friends[fid] = f;
                 var dm = new DirectMessage(f, 0, f.Identifier);
                 ListTube?.Invoke(this, new ListItemUpdatedBottle(ListType.Contacts, dm));
@@ -737,7 +740,7 @@ namespace Tox
 
                 tox_group_join(tox.ptr, idt, _currentUser.DisplayName, (UIntPtr)_currentUser.DisplayName.Length, null, (UIntPtr)0, out var err);
                 Debug.WriteLine($"Tox group join: {PTSA(tox_err_group_join_to_string(err))}");
-                var g = new Group(group.Identifier, group.Identifier, 0, new User[0]);
+                var g = new Group(this, group.Identifier, group.Identifier, 0, new User[0]);
                 // yes, this will die without error handling
                 conferences.Add(tox_group_by_id(tox.ptr, idt, out _), g);
                 //ContactEvent?.Invoke(this, new ContactEventArgs(ContactEventType.Added, ContactListType.Conversations, g));

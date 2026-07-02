@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Xml.Linq;
 using Yggdrasil.Enumerations;
 
 namespace Yggdrasil.Models
@@ -25,6 +24,7 @@ namespace Yggdrasil.Models
         private string _displayName;
         private byte[] _avatar;
 
+        public ICore Core { get; set; }
         public string Identifier { get; set; }
 
         public string DisplayName
@@ -39,8 +39,9 @@ namespace Yggdrasil.Models
             set => Set(ref _avatar, value, nameof(Avatar));
         }
 
-        protected Metadata(string displayName, string identifier, byte[] avatar = null)
+        protected Metadata(ICore core, string displayName, string identifier, byte[] avatar = null)
         {
+            Core = core;
             _displayName = displayName;
             Identifier = identifier;
             _avatar = avatar;
@@ -59,8 +60,8 @@ namespace Yggdrasil.Models
 
     public abstract class Participant : Metadata
     {
-        protected Participant(string displayName, string identifier, byte[] avatar = null)
-            : base(displayName, identifier, avatar) { }
+        protected Participant(ICore core, string displayName, string identifier, byte[] avatar = null)
+            : base(core, displayName, identifier, avatar) { }
     }
 
     public class Role : Metadata
@@ -88,13 +89,14 @@ namespace Yggdrasil.Models
         }
 
         public Role(
+            ICore core,
             string title,
             string identifier,
             uint hex_color = 0,
             byte[] avatar = null,
             bool hoist = false,
             bool mentionable = false
-        ) : base(title, identifier, avatar)
+        ) : base(core, title, identifier, avatar)
         {
             _hex_color = hex_color;
             _hoist = hoist;
@@ -127,6 +129,7 @@ namespace Yggdrasil.Models
         }
 
         public User(
+            ICore core,
             string display_name,
             string username,
             string identifier,
@@ -134,7 +137,7 @@ namespace Yggdrasil.Models
             PresenceStatus presence_status = PresenceStatus.Offline,
             byte[] avatar = null
         )
-            : base(display_name, identifier, avatar)
+            : base(core, display_name, identifier, avatar)
         {
             _username = username;
             _status = status;
@@ -160,13 +163,14 @@ namespace Yggdrasil.Models
         }
 
         protected Conversation(
+            ICore core,
             string display_name,
             string identifier,
             int unread_count,
             byte[] profile_picture = null,
             DateTime? last_message_time = null
         )
-            : base(display_name, identifier, profile_picture)
+            : base(core, display_name, identifier, profile_picture)
         {
             _unreadCount = unread_count;
             _lastMessageTime = last_message_time ?? DateTime.Now;
@@ -184,6 +188,25 @@ namespace Yggdrasil.Models
             DateTime? last_message_time = null
         )
             : base(
+                partner.Core,
+                partner.DisplayName,
+                identifier,
+                unread_count,
+                partner.Avatar,
+                last_message_time
+            )
+        {
+            Partner = partner;
+        }
+        public DirectMessage(
+            ICore core,
+            User partner,
+            int unread_count,
+            string identifier,
+            DateTime? last_message_time = null
+        )
+            : base(
+                core,
                 partner.DisplayName,
                 identifier,
                 unread_count,
@@ -206,6 +229,7 @@ namespace Yggdrasil.Models
         }
 
         public Group(
+            ICore core,
             string name,
             string identifier,
             int unread_count,
@@ -213,7 +237,7 @@ namespace Yggdrasil.Models
             byte[] profile_picture = null,
             DateTime? last_message_time = null
         )
-            : base(name, identifier, unread_count, profile_picture, last_message_time)
+            : base(core, name, identifier, unread_count, profile_picture, last_message_time)
         {
             _members = members;
         }
@@ -260,6 +284,7 @@ namespace Yggdrasil.Models
         public Dictionary<string, string> CategoryMap { get; set; }
 
         public Server(
+            ICore core,
             string name,
             string identifier,
             List<ServerMember> members,
@@ -269,7 +294,7 @@ namespace Yggdrasil.Models
             Dictionary<string, string> category_map = null,
             int member_count = 0
         )
-            : base(name, identifier, profile_picture)
+            : base(core, name, identifier, profile_picture)
         {
             _members = members;
             _roles = roles;
@@ -289,6 +314,7 @@ namespace Yggdrasil.Models
         public int Position { get; }
 
         public ServerChannel(
+            ICore core,
             string name,
             string identifier,
             string parent_server_id,
@@ -299,7 +325,7 @@ namespace Yggdrasil.Models
             string description = null,
             DateTime? last_message_time = null
         )
-            : base(name, identifier, unread_count, null, last_message_time)
+            : base(core, name, identifier, unread_count, null, last_message_time)
         {
             ParentServerID = parent_server_id;
             Description = description;

@@ -31,6 +31,7 @@ using Markdig.Syntax.Inlines;
 using Skymu.Emoticons;
 using Skymu.Helpers;
 using Skymu.Preferences;
+using Yggdrasil;
 using Yggdrasil.Models;
 using MarkdigBlock = Markdig.Syntax.Block;
 using MarkdigInline = Markdig.Syntax.Inlines.Inline;
@@ -113,7 +114,7 @@ namespace Skymu.Formatting
             .UseGenericAttributes() // {#id .class key=value}
             .Build();
 
-        public static TextBlock Parse(string input, bool doNotFormat = false, Style style = null) // The main function. You put text in, completely formatted textblock comes out. Ta da!!!!
+        public static TextBlock Parse(ICore plugin, string input, bool doNotFormat = false, Style style = null) // The main function. You put text in, completely formatted textblock comes out. Ta da!!!!
         {
             var textBlock = new TextBlock
             {
@@ -132,7 +133,7 @@ namespace Skymu.Formatting
             // parse the input into a Markdig AST and walk it to produce WPF inlines
             // then add all the emoji-fied, linked, and markdown'ed inlines to the textblock
             var document = Markdown.Parse(input, _pipeline);
-            ProcessMarkdigBlocks(textBlock.Inlines, document, input);
+            ProcessMarkdigBlocks(textBlock.Inlines, document, plugin, input);
 
             // Return
             return textBlock;
@@ -142,6 +143,7 @@ namespace Skymu.Formatting
         private static void ProcessMarkdigBlocks(
             InlineCollection inlines,
             MarkdownDocument document,
+            ICore plugin,
             string input
         )
         {
@@ -161,7 +163,7 @@ namespace Skymu.Formatting
                         inlines.Add(new LineBreak());
                 }
 
-                ProcessBlock(inlines, blocks[i]);
+                ProcessBlock(inlines, plugin, blocks[i]);
             }
         }
 
@@ -219,7 +221,7 @@ namespace Skymu.Formatting
         }
 
         // converts a Markdig block node to WPF inlines for insertion
-        private static void ProcessBlock(InlineCollection inlines, MarkdigBlock block)
+        private static void ProcessBlock(InlineCollection inlines, ICore plugin, MarkdigBlock block)
         {
             switch (block)
             {
@@ -244,7 +246,7 @@ namespace Skymu.Formatting
                     }
 
                     if (heading.Inline != null)
-                        ProcessInlines(span.Inlines, heading.Inline);
+                        ProcessInlines(span.Inlines, plugin, heading.Inline);
 
                     inlines.Add(span);
                     break;
@@ -253,7 +255,7 @@ namespace Skymu.Formatting
                 case ParagraphBlock para:
                 {
                     if (para.Inline != null)
-                        ProcessInlines(inlines, para.Inline);
+                        ProcessInlines(inlines, plugin, para.Inline);
 
                     break;
                 }
@@ -278,7 +280,7 @@ namespace Skymu.Formatting
                             TextWrapping = TextWrapping.Wrap,
                         };
 
-                        ProcessBlock(tb.Inlines, child);
+                        ProcessBlock(tb.Inlines, plugin, child);
 
                         stack.Children.Add(tb);
                     }
@@ -299,7 +301,7 @@ namespace Skymu.Formatting
                             inlines.Add(new Run("• "));
 
                         foreach (var child in item)
-                            ProcessBlock(inlines, child);
+                            ProcessBlock(inlines, plugin, child);
 
                         inlines.Add(new LineBreak());
                         index++;
@@ -383,7 +385,7 @@ namespace Skymu.Formatting
                             foreach (var cellBlock in mdCell)
                             {
                                 if (cellBlock is ParagraphBlock para && para.Inline != null)
-                                    ProcessInlines(tb.Inlines, para.Inline);
+                                    ProcessInlines(tb.Inlines, plugin, para.Inline);
                             }
 
                             if (isHeaderRow)
@@ -409,25 +411,25 @@ namespace Skymu.Formatting
             }
         }
 
-        private static void ProcessInlines(InlineCollection inlines, ContainerInline container)
+        private static void ProcessInlines(InlineCollection inlines, ICore plugin, ContainerInline container)
         {
             foreach (var node in container)
-                ProcessInline(inlines, node);
+                ProcessInline(inlines, plugin, node);
         }
 
         // converts a Markdig inline node to WPF inlines
-        private static void ProcessInline(InlineCollection inlines, MarkdigInline node)
+        private static void ProcessInline(InlineCollection inlines, ICore plugin, MarkdigInline node)
         {
             switch (node)
             {
                 case LiteralInline literal:
-                    AddTextOrLinkOrClickable(inlines, literal.Content.ToString());
+                    AddTextOrLinkOrClickable(inlines, plugin, literal.Content.ToString());
                     break;
 
                 case EmphasisInline emphasis:
                 {
                     var span = new Span();
-                    ProcessInlines(span.Inlines, emphasis);
+                    ProcessInlines(span.Inlines, plugin, emphasis);
 
                     char delimiter = emphasis.DelimiterChar;
                     int count = emphasis.DelimiterCount;
@@ -524,7 +526,7 @@ namespace Skymu.Formatting
                 {
                     // generic container fallback
                     var span = new Span();
-                    ProcessInlines(span.Inlines, container);
+                    ProcessInlines(span.Inlines, plugin, container);
                     inlines.Add(span);
                     break;
                 }
@@ -537,8 +539,10 @@ namespace Skymu.Formatting
 
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
         // the main method, and the span, containg formatted text, is added to the global inline list. This, and the emoji-processing function only update the inline collection, and as such, return void.
-        private static void AddTextOrLinkOrClickable(IList<WpfInline> inlines, string text)
+        private static void AddTextOrLinkOrClickable(IList<WpfInline> inlines, ICore plugin, string text)
         {
+            if (plugin == null)
+                return;
             if (string.IsNullOrEmpty(text))
                 return;
 
@@ -569,7 +573,7 @@ namespace Skymu.Formatting
 
                 // find and set the next clickable to be parsed in the text (clickables defined in plugin)
                 // this loop only checks for clickables in delimiters, not standalone clickables
-                foreach (var config in Universal.Plugin.ClickableConfigurations)
+                foreach (var config in plugin.ClickableConfigurations)
                 {
                     if (string.IsNullOrEmpty(config.DelimiterLeft))
                         continue;
@@ -672,10 +676,10 @@ namespace Skymu.Formatting
             }
         }
 
-        private static void AddTextOrLinkOrClickable(InlineCollection inlines, string text)
+        private static void AddTextOrLinkOrClickable(InlineCollection inlines, ICore plugin, string text)
         {
             var temp = new List<WpfInline>();
-            AddTextOrLinkOrClickable(temp, text);
+            AddTextOrLinkOrClickable(temp, plugin, text);
             foreach (var il in temp)
                 inlines.Add(il);
         }

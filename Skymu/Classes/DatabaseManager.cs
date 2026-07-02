@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil;
 
 namespace Skymu.Databases
 {
@@ -51,6 +52,8 @@ namespace Skymu.Databases
         // incrementing the number. Originally started at: 1.
         private const int Version = 4;
 
+        private ICore plugin = null;
+
         internal string DbPath;
         public AccountsTable Accounts { get; private set; }
         public ContactsTable Contacts { get; private set; }
@@ -60,16 +63,17 @@ namespace Skymu.Databases
 
         internal Dictionary<string, User> _contactMap;
 
-        public DatabaseManager(User user, string custom_db_folder = null)
+        public DatabaseManager(User user, ICore plugin, string custom_db_folder = null)
         {
             string folderPath;
+            this.plugin = plugin;
 
             if (String.IsNullOrEmpty(custom_db_folder))
             {
                 folderPath = Path.Combine(
 Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
 Universal.NAME,
-Universal.Plugin.InternalName,
+plugin.InternalName,
 SanitizeFolderName(user.Identifier)
 );
             }
@@ -236,7 +240,7 @@ SanitizeFolderName(user.Identifier)
             return result;
         }
 
-        private static User UserFromReader(SqliteDataReader reader, int offset = 0)
+        private User UserFromReader(SqliteDataReader reader, int offset = 0)
         {
             string identifier = reader.IsDBNull(offset + 0)
                 ? null
@@ -247,12 +251,12 @@ SanitizeFolderName(user.Identifier)
             if (avatar != null && avatar.Length > 0 && avatar[0] == 0x00)
                 avatar = avatar.Skip(1).ToArray();
             string status = reader.IsDBNull(offset + 4) ? null : reader.GetString(offset + 4);
-            return new User(displayName, username, identifier, status, avatar: avatar);
+            return new User(plugin, displayName, username, identifier, status, avatar: avatar);
         }
 
-        private static User StubUser(string identifier)
+        private User StubUser(string identifier)
         {
-            return new User(identifier, identifier, identifier);
+            return new User(plugin, identifier, identifier, identifier);
         }
 
         #endregion
@@ -1297,7 +1301,7 @@ SanitizeFolderName(user.Identifier)
                         "SELECT skypename, username, displayname, avatar_image, mood_text FROM Contacts;";
                     using (SqliteDataReader reader = cmd.ExecuteReader())
                         while (reader.Read())
-                            users.Add(UserFromReader(reader));
+                            users.Add(_db.UserFromReader(reader));
                 }
                 return users.ToArray();
             }
@@ -1313,7 +1317,7 @@ SanitizeFolderName(user.Identifier)
                         identifier
                     );
                     using (SqliteDataReader reader = cmd.ExecuteReader())
-                        return reader.Read() ? UserFromReader(reader) : null;
+                        return reader.Read() ? _db.UserFromReader(reader) : null;
                 }
             }
 
@@ -1594,7 +1598,7 @@ SanitizeFolderName(user.Identifier)
                 return map;
             }
 
-            private static DirectMessage BuildDM(
+            private DirectMessage BuildDM(
                 string skymuConvoId,
                 string dialogPartner,
                 int unread,
@@ -1605,14 +1609,14 @@ SanitizeFolderName(user.Identifier)
                 string partnerId = dialogPartner ?? skymuConvoId;
                 contactMap.TryGetValue(partnerId, out User partner);
                 return new DirectMessage(
-                    partner ?? StubUser(partnerId),
+                    partner ?? _db.StubUser(partnerId),
                     unread,
                     skymuConvoId,
                     lastTime
                 );
             }
 
-            private static Group BuildGroup(
+            private Group BuildGroup(
                 string skymuConvoId,
                 string displayName,
                 int unread,
@@ -1626,9 +1630,10 @@ SanitizeFolderName(user.Identifier)
                     foreach (string mid in memberIds)
                     {
                         contactMap.TryGetValue(mid, out User m);
-                        members.Add(m ?? StubUser(mid));
+                        members.Add(m ?? _db.StubUser(mid));
                     }
                 return new Group(
+                    _db.plugin,
                     displayName,
                     skymuConvoId,
                     unread,
@@ -2083,7 +2088,7 @@ SanitizeFolderName(user.Identifier)
                                 {
                                     _db._contactMap.TryGetValue(authorId, out sender);
                                     if (sender == null)
-                                        sender = new User(authorDisp, authorUser, authorId);
+                                        sender = new User(_db.plugin, authorDisp, authorUser, authorId);
                                 }
 
                                 DateTime time =
@@ -2184,7 +2189,7 @@ SanitizeFolderName(user.Identifier)
 
                             contactMap.TryGetValue(authorId ?? string.Empty, out User sender);
                             if (sender == null && authorId != null)
-                                sender = new User(authorDisp, authorUser, authorId);
+                                sender = new User(_db.plugin, authorDisp, authorUser, authorId);
 
                             DateTime time =
                                 tsMs != 0

@@ -12,7 +12,6 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Linq;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
@@ -20,17 +19,18 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
-using System.Threading;
 using Skymu.Windows;
 using Skymu.Sounds;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using System.IO;
 
 namespace Skymu.ViewModels
 {
@@ -97,7 +97,7 @@ namespace Skymu.ViewModels
                 allowAutoLogin = !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode;
                 if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
-                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
+                    PendingAutoLogin = new SavedCredential(new User(null, "Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
                     Universal.Plugin = plugin;
                     Universal.CallPlugin = Universal.Plugin as ICall;
                 }
@@ -484,9 +484,21 @@ namespace Skymu.ViewModels
 
             HeaderTextRequested?.Invoke("Loading user data");
 
+            Universal.ActivePlugins = new List<ICore>() { Universal.Plugin };
             IMainWindowHolder mainWindow = _createMainWindow();
             mainWindow.Ready += (s, e) => MainWindowReady?.Invoke(mainWindow);
-            _ = mainWindow.BeginLoading();
+
+            try
+            {
+                await mainWindow.BeginLoading();
+            }
+            catch (Exception ex)
+            {
+                Universal.Plugin.Dispose();
+                AnimationToggleRequested?.Invoke(false);
+                HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
+                Universal.ExceptionHandler(ex);
+            }
         }
 
         public class PluginListing

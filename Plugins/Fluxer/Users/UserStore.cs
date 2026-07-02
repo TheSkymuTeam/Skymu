@@ -22,9 +22,9 @@ namespace Fluxer.Users
     {
         private static readonly ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
 
-        public static async Task<User> GetOrCreateWithAvatar(string userId, string displayName, string username, string avatarHash = null)
+        public static async Task<User> GetOrCreateWithAvatar(Core core, string userId, string displayName, string username, string avatarHash = null)
         {
-            var user = GetOrCreate(userId, displayName, username);
+            var user = GetOrCreate(core, userId, displayName, username);
 
             if (user.Avatar == null && avatarHash != null)
             {
@@ -35,9 +35,9 @@ namespace Fluxer.Users
             return user;
         }
 
-        public static User GetOrCreate(string userId, string displayName, string username)
+        public static User GetOrCreate(Core core, string userId, string displayName, string username)
         {
-            var user = _users.GetOrAdd(userId, _ => new User(displayName, username, userId));
+            var user = _users.GetOrAdd(userId, _ => new User(core, displayName, username, userId));
 
             if (string.IsNullOrEmpty(user.DisplayName) && !string.IsNullOrEmpty(displayName))
                 user.DisplayName = displayName;
@@ -47,14 +47,14 @@ namespace Fluxer.Users
             return user;
         }
 
-        public static User Get(string userId)
+        public static User Get(Core core, string userId)
             => _users.TryGetValue(userId, out var u) ? u : null;
 
         public static void Clear() => _users.Clear();
 
-        public static void UpdatePresence(string userId, string status, string customStatus = null)
+        public static void UpdatePresence(Core core, string userId, string status, string customStatus = null)
         {
-            var user = _users.GetOrAdd(userId, _ => new User(null, null, userId));
+            var user = _users.GetOrAdd(userId, _ => new User(core, null, null, userId));
             user.ConnectionStatus = HelperMethods.MapStatus(status);
             user.Status = customStatus;
         }

@@ -23,8 +23,8 @@
 using Fluxer.Helpers;
 using Fluxer.Networking.Managers;
 using Fluxer.Users;
-using OmegaAOL.Bifrost.WebSockets;
 using ICSharpCode.SharpZipLib.Zip.Compression;
+using OmegaAOL.Bifrost.WebSockets;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -40,6 +40,7 @@ using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using Yggdrasil;
 
 namespace Fluxer.Networking
 {
@@ -255,7 +256,7 @@ namespace Fluxer.Networking
                             case "READY":
                                 // Only uncomment this if you need to debug the READY event from Fluxer.
                                 // Debug.WriteLine(json["d"]?.ToJsonString());
-                                StatusManager.HandleUserStatus(json["d"]);
+                                StatusManager.HandleUserStatus(_core, json["d"]);
 
                                 var readyData = json["d"];
 
@@ -288,7 +289,7 @@ namespace Fluxer.Networking
                                 Debug.WriteLine($"[WebSocket] USER_SETTINGS_UPDATE received: {json["d"]?.ToJsonString()}");
                                 break;
                             case "PRESENCE_UPDATE":
-                                StatusManager.HandleUserStatus(json["d"]);
+                                StatusManager.HandleUserStatus(_core, json["d"]);
                                 break;
                         }
                         break;
@@ -312,7 +313,7 @@ namespace Fluxer.Networking
         {
             if (messageData == null) return;
 
-            var messageItem = await MessageParser.ParseMessage(messageData);
+            var messageItem = await MessageParser.ParseMessage(_core, messageData);
             if (messageItem == null) return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
@@ -335,7 +336,7 @@ namespace Fluxer.Networking
         private async Task HandleMessageUpdate(JsonNode messageData) // omega
         {
             if (messageData == null) return;
-            var messageItem = await MessageParser.ParseMessage(messageData);
+            var messageItem = await MessageParser.ParseMessage(_core, messageData);
             if (messageItem == null) return;
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
             var args = new HelperClasses.FluxerMessageReceivedEventArgs
@@ -424,9 +425,9 @@ namespace Fluxer.Networking
 
             _ = Task.Run(async () =>
             {
-                string globalName = await HelperMethods.ReplaceIDWithNameForTyping(userId, FluxerToken);
+                string globalName = await HelperMethods.ReplaceIDWithNameForTyping(_core, userId, FluxerToken);
 
-                var typingUser = UserStore.GetOrCreate(userId, globalName, globalName);
+                var typingUser = UserStore.GetOrCreate(_core, userId, globalName, globalName);
 
                 _core?._uiContext?.Post(_ =>
                 {

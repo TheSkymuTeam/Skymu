@@ -11,23 +11,20 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Converters;
 using Skymu.Enumerations;
-using Skymu.Emoticons;
 using Skymu.Formatting;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Helpers;
+using Skymu.Infrastructure.Main;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Forms;
-using Skymu.Infrastructure.Main;
-using Skymu.Forms.Pages;
+using Skymu.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,8 +34,6 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Skymu.Windows;
-using Skymu.Sounds;
 using System.Windows.Threading;
 using Yggdrasil;
 using Yggdrasil.Models;
@@ -554,18 +549,18 @@ namespace Skymu.Skype5
             GridLength small = new GridLength(32);
 
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.Plugin.SupportsServers)
+            if (Universal.ActivePlugins.Count(e => e.SupportsServers) > 0) // TODO see if a better way exists. Like Where but returns bool and not an object.
                 buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.Plugin.SupportsServers)
+                if (Universal.ActivePlugins.Count(e => e.SupportsServers) > 0) // TODO see if a better way exists. Like Where but returns bool and not an object.
                     buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
-                        ? small
-                        : dynamic;
+                        Settings.DynamicSidebarTabs
+                            ? small
+                            : dynamic;
             }
 
             //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
@@ -926,7 +921,7 @@ namespace Skymu.Skype5
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
         {
-            new Updater(true);
+            _ = new Updater(true);
         }
 
         private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
@@ -934,6 +929,11 @@ namespace Skymu.Skype5
         private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
 
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
+
+        private void OnManageAccounts(object sender, RoutedEventArgs e)
+        {
+            new AccountManagerSimple(vmodel).Show();
+        }
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
@@ -1413,11 +1413,12 @@ namespace Skymu.Skype5
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
-                if (Universal.Plugin is IExtras iep)
-                {
-                    iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
-                    RefreshExtras();
-                }
+                foreach (var p in Universal.ActivePlugins)
+                    if (p is IExtras iep)
+                    {
+                        iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
+                    }
+                RefreshExtras();
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1471,6 +1472,10 @@ namespace Skymu.Skype5
                         if (item is Conversation c && c.Identifier == sc.Identifier)
                         { ConversationList.SelectedItem = item as Conversation; break; }
                 }
+                StatusBox.Text = Universal.CurrentUser.DisplayName;
+                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
+                    Universal.CurrentUser.ConnectionStatus
+                );
                 _ = SetConversation();
             };
 
@@ -1512,7 +1517,7 @@ namespace Skymu.Skype5
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!Universal.Plugin.SupportsServers)
+            if (!(Universal.ActivePlugins.Count(e => e.SupportsServers) > 0))
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);

@@ -106,6 +106,7 @@ namespace Skymu.Credentials
                 Enum.TryParse(authStr, out authType);
 
             var user = new User(
+                null,
                 (string)e.Element("DisplayName"),
                 (string)e.Element("Username"),
                 (string)e.Element("Identifier"),
