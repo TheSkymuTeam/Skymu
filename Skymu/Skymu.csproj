@@ -118,13 +118,6 @@
 		<Compile Remove="Emoji\**\*" />
 		<Resource Include="Emoji\**\*" />
 
-		<!-- Page assets -->
-		<None Remove="Forms\Pages\Assets\**\*" />
-		<Page Remove="Forms\Pages\Assets\**\*" />
-		<EmbeddedResource Remove="Forms\Pages\Assets\**\*" />
-		<Compile Remove="Forms\Pages\Assets\**\*" />
-		<Resource Include="Forms\Pages\Assets\**\*" />
-
 		<!-- Sounds -->
 		<None Remove="Sounds*\**\*" />
 		<Page Remove="Properties\**" />
