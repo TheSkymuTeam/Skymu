@@ -12,6 +12,8 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -38,7 +40,6 @@ using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Bottles;
 using OmegaAOL.Bifrost.Http;
-using System.ComponentModel;
 
 namespace Skymu
 {
@@ -506,8 +507,8 @@ namespace Skymu
             if (title is null) title = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
             new Dialog(
                 icon,
-                title,
                 content,
+                title,
                 Lang["sF_CONFIRM_OK_BTN"]
             ).ShowDialog();
         }
