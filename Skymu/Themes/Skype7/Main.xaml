@@ -162,7 +162,6 @@
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
         <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
-        <converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 
         <DrawingImage x:Key="UserHolderDrawingImage">
             <DrawingImage.Drawing>

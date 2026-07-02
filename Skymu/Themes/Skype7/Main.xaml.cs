@@ -16,7 +16,6 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Infrastructure.Main;
@@ -26,6 +25,7 @@ using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Windows;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;

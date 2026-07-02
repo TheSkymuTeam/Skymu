@@ -76,7 +76,7 @@ namespace Skymu.Skype7
             if (!(_source[i] is Message firstMsg))
                 return i + 1;
 
-            bool isSelf = firstMsg.Author?.Identifier == Universal.CurrentUser?.Identifier;
+            bool isSelf = Universal.ActiveUsers.TryGetValue(firstMsg.Author?.Core, out var selfu) && firstMsg.Author?.Identifier == selfu?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(firstMsg);
 
@@ -107,7 +107,7 @@ namespace Skymu.Skype7
 
         private void Append(Message message, bool isGroupOrServer)
         {
-            bool isSelf = message.Author?.Identifier == Universal.CurrentUser?.Identifier;
+            bool isSelf = Universal.ActiveUsers.TryGetValue(message.Author?.Core, out var selfu) && message.Author?.Identifier == selfu?.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(message);
 
