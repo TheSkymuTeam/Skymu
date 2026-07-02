@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
+// Copyright ï¿½ The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is governed
@@ -29,19 +29,8 @@ namespace Skymu.Converters
             if (image_path == null)
                 return null;
 
-            string theme;
-            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
-            {
-                // designer: hard-code theme if not specified
-                theme = "Skype5";
-            }
-            else
-            {
-                // runtime: use the configured theme
-                theme = Universal.Theme;
-            }
             if (image_path.StartsWith("/")) image_path = image_path.Substring(1); // just in case
-            return ImageHelper.FreezeLoadFromPackUri($"pack://application:,,,/Themes/{theme}/{image_path}");
+            return ImageHelper.FreezeLoadFromPackUri($"pack://application:,,,/Skymu;component/Themes/{Universal.Theme}/{image_path}");
         }
 
         public object ConvertBack(
