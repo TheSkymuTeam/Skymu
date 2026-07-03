@@ -26,6 +26,113 @@ namespace Skymu.Preferences
     {
         private const int ConfigRevision = 2;
 
+        #region Lib/Account
+
+        public class SkymuAccount
+        {
+            public string Plugin { get; set; }
+            public string User { get; set; }
+
+            public SkymuAccount(string plugin, string user)
+            {
+                Plugin = plugin;
+                User = user;
+            }
+        }
+
+        // TODO: Migrate this to a helper function in case we do more class parsing
+        public static SkymuAccount DefaultAccount
+        {
+            get
+            {
+                try
+                {
+                    var doc = LoadOrCreate();
+                    var el = GetOrCreateNode(doc, "Lib/Account").Element("Default");
+                    if (el == null || string.IsNullOrWhiteSpace(el.Value)) return null;
+
+                    return new SkymuAccount(el.Attribute("Plugin").Value, el.Value);
+                }
+                catch { return null; }
+            }
+            set
+            {
+                var doc = LoadOrCreate();
+                var node = GetOrCreateNode(doc, "Lib/Account");
+                var el = node.Element("Default");
+
+                if (el == null)
+                {
+                    el = new XElement("Default");
+                    node.Add(el);
+                }
+
+                if (value != null)
+                {
+                    el.SetAttributeValue("Plugin", value.Plugin);
+                    el.Value = value.User;
+                }
+                else
+                {
+                    el.Remove();
+                }
+
+                doc.Save(FilePath);
+                Default.Notify(nameof(DefaultAccount));
+            }
+        }
+
+        public static SkymuAccount[] ExtraAccounts
+        {
+            get
+            {
+                try
+                {
+                    var doc = LoadOrCreate();
+                    var elements = GetOrCreateNode(doc, "Lib/Account").Element("Extras")?.Elements("Account");
+                    if (elements == null) return new SkymuAccount[0];
+
+                    var list = new List<SkymuAccount>();
+                    foreach (var item in elements)
+                    {
+                        list.Add(new SkymuAccount(item.Attribute("Plugin").Value, item.Value));
+                    }
+                    return list.ToArray();
+                }
+                catch { return Array.Empty<SkymuAccount>(); }
+            }
+            set
+            {
+                var doc = LoadOrCreate();
+                var node = GetOrCreateNode(doc, "Lib/Account");
+                var el = node.Element("Extras");
+
+                if (el == null)
+                {
+                    el = new XElement("Extras");
+                    node.Add(el);
+                }
+                else
+                {
+                    el.RemoveNodes();
+                }
+
+                if (value != null)
+                {
+                    foreach (var item in value)
+                    {
+                        var accNode = new XElement("Account", item.User);
+                        accNode.SetAttributeValue("Plugin", item.Plugin);
+                        el.Add(accNode);
+                    }
+                }
+
+                doc.Save(FilePath);
+                Default.Notify(nameof(ExtraAccounts));
+            }
+        }
+        #endregion
+
         #region UI/General
 
         public static bool StartMinimized
