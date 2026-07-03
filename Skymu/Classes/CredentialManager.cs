@@ -155,12 +155,15 @@ namespace Skymu.Credentials
         }
 
         internal static SavedCredential Get(User user, string plugin)
+            => Get(user?.Identifier, plugin);
+
+        internal static SavedCredential Get(string user, string plugin)
         {
             XDocument doc = ReadFile();
 
             foreach (XElement e in doc.Root.Elements("Credential"))
             {
-                if (Matches(e, plugin, user?.Identifier))
+                if (Matches(e, plugin, user))
                     return FromElement(e);
             }
 

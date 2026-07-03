@@ -36,8 +36,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using Yggdrasil;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Skype5
 {
@@ -53,6 +53,7 @@ namespace Skymu.Skype5
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
+        private User _oldUser;
         private bool _userScrolledUp = false;
         private BitmapImage img_maximize,
             img_restore,
@@ -549,21 +550,19 @@ namespace Skymu.Skype5
             GridLength small = new GridLength(32);
 
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.ActivePlugins.Count(e => e.SupportsServers) > 0) // TODO see if a better way exists. Like Where but returns bool and not an object.
+            if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                 buttonToColumn[tab_to_select].Width = dynamic;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.ActivePlugins.Count(e => e.SupportsServers) > 0) // TODO see if a better way exists. Like Where but returns bool and not an object.
+                if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                     buttonToColumn[tab].Width =
                         Settings.DynamicSidebarTabs
                             ? small
                             : dynamic;
             }
-
-            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -755,23 +754,6 @@ namespace Skymu.Skype5
 
         #endregion
 
-        #region User count API
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -811,8 +793,8 @@ namespace Skymu.Skype5
         private void ConversationList_ItemClicked(object sender, MouseButtonEventArgs e)
         {
             var selected = ((ListBox)sender).SelectedItem;
-            if (selected != null && selected is Metadata)
-                SelectedContact = (Metadata)selected;
+            if (selected != null && selected is Metadata metadata)
+                SelectedContact = metadata;
             if (selected is DateHeaderItem)
             {
                 ((ListBox)sender).SelectedItem = null;
@@ -962,6 +944,41 @@ namespace Skymu.Skype5
         private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
         {
             HandleConversationItems();
+        }
+
+        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cu = sender as User; // TODO delay ish fix
+            if (e == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                    Tray.SetStatus(cu.ConnectionStatus);
+                    TitleMain.Text = cu.DisplayName;
+                    StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                });
+            }
+            else
+                switch (e.PropertyName)
+                {
+                    case nameof(User.ConnectionStatus):
+                        Dispatcher.Invoke(() =>
+                        {
+                            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                            Tray.SetStatus(cu.ConnectionStatus);
+                        });
+                        break;
+                    case nameof(User.DisplayName):
+                        Dispatcher.Invoke(() =>
+                        {
+                            TitleMain.Text = cu.DisplayName;
+                            StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                        });
+                        break;
+                }
         }
 
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1408,11 +1425,8 @@ namespace Skymu.Skype5
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
-                {
-                    if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
-                };
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
                 foreach (var p in Universal.ActivePlugins)
                     if (p is IExtras iep)
                     {
@@ -1439,6 +1453,14 @@ namespace Skymu.Skype5
             {
                 if (!is_loading_conversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
+            };
+
+            vmodel.ConversationOpened += (s, e) =>
+            {
+                _oldUser.PropertyChanged -= SelfInfoChanged;
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>

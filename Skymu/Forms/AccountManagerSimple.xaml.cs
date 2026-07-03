@@ -13,63 +13,73 @@
 
 using Skymu.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using Yggdrasil;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms
 {
 	public partial class AccountManagerSimple : Window
 	{
-		readonly MainViewModel mainvmodel;
+		bool isLoginOpen = false;
 		AccountManagerViewModel vmodel { get; }
 
 		public AccountManagerSimple(MainViewModel mainvmodel)
 		{
 			InitializeComponent();
 
-            this.mainvmodel = mainvmodel;
             vmodel = new AccountManagerViewModel(mainvmodel);
 			DataContext = vmodel;
-
-            vmodel.AccountEnabledChanged += HandleAccountEnabledChanged;
-            vmodel.AccountRemoving += HandleAccountRemoving;
 		}
 
-		private void HandleAccountEnabledChanged(ICore plugin, User user, bool enabled)
-		{
-            _ = mainvmodel.OnAccountEnabledChanged(plugin, user, enabled);
-        }
-
-        private void HandleAccountRemoving(ICore plugin, User user)
-		{
-            // public void OnAccountRemoved(ICore plugin, User user)
-            //mainvmodel.OnAccountRemoved(plugin, user);
-        }
-
-        protected override void OnClosed(EventArgs e)
-		{
-			vmodel.AccountEnabledChanged -= HandleAccountEnabledChanged;
-            vmodel.AccountRemoving -= HandleAccountRemoving;
-			base.OnClosed(e);
-		}
-
-		private void ToggleButton_Click(object sender, RoutedEventArgs e)
-		{
-			if (sender is FrameworkElement fe && fe.DataContext is AccountEntry entry)
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
                 vmodel.ToggleAccount(entry);
-		}
+        }
 
-		private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private void ALButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
+                vmodel.ToggleAutoLogin(entry);
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (sender is FrameworkElement fe && fe.DataContext is AccountEntry entry)
+			if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
                 vmodel.RemoveAccount(entry);
 		}
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
-		{
-			Close();
-		}
-	}
+			=> Close();
+
+		private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isLoginOpen)
+            {
+                isLoginOpen = true;
+				var lw = Universal.LoginDispenser(true, async (plugin) => {
+					User pif;
+					try
+					{
+						pif = await plugin.GetUserInfo();
+                    }
+					catch (Exception ex)
+					{
+						Universal.ExceptionHandler(ex);
+						plugin.Dispose();
+                        return;
+                    }
+					if (pif == null)
+					{
+						Universal.ShowMessage("The plugin did not return a valid user data.", null, WindowBase.IconType.Crash);
+                        plugin.Dispose();
+                        return;
+                    }
+					vmodel.AccountEnabledInvoke(plugin, pif);
+				});
+                lw.Closed += (s, args) => isLoginOpen = false;
+                lw.ShowDialog();
+            }
+        }
+    }
 }

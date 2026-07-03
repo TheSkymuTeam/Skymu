@@ -298,33 +298,36 @@ namespace Skymu.ViewModels
             Universal.ActiveUsers.Clear();
 
             foreach (var p in Universal.ActivePlugins)
+                await UsePlugin(p, true);
+
+            foreach (var acc in Settings.ExtraAccounts)
             {
-                var u = (ReferenceEquals(p, Universal.Plugin) ? Universal.CurrentUser : null) ?? await p.GetUserInfo();
-                if (string.IsNullOrEmpty(u.Identifier))
-                {
-                    Universal.ExceptionHandler(
-                        new InvalidOperationException(
-                            "One or more plugin(s) did not return a valid user object to initialize the database."
-                        )
-                    );
-                    return;
-                }
-                if (Universal.CurrentUser == null)
-                    Universal.CurrentUser = u;
-                Universal.ActiveUsers[p] = u;
-                _databases[p] = new DatabaseManager(u, p);
-                _databases[p].Accounts.Write(u);
-                _userInfo[p] = u;
-
-                var convs = await p.FetchConversations();
-                foreach (var conv in convs)
-                    ConversationList.Add(conv);
-                _databases[p].Conversations.Write(convs);
-
-                var conts = await p.FetchContacts();
-                foreach (var cont in conts)
-                    ContactList.Add(cont);
-                _databases[p].Contacts.Write(conts);
+                var cred = CredentialManager.Get(acc.User, acc.Plugin);
+                if (cred != null)
+                    new Task(async () =>
+                    {
+                        var plugin = Universal.PluginList.FirstOrDefault(p => p.InternalName == acc.Plugin);
+                        if (plugin == null)
+                            return;
+                        try
+                        {
+                            Debug.WriteLine($"[SKYMU] Logging in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
+                            LoginResult result = plugin.Authenticate(cred).Result;
+                            if (result != LoginResult.Success)
+                            {
+                                Universal.ShowMessage($"Failed to log in to plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\": {result.ToDisplayString()}", "Account login failed", WindowBase.IconType.Crash);
+                            }
+                            else
+                            {
+                                Debug.WriteLine($"[SKYMU] Logged in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
+                                await UsePlugin(plugin, true);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Universal.ExceptionHandler(ex, $"A plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\" caused this.");
+                        }
+                    }).Start();
             }
 
             Universal.CurrentUser = Universal.ActiveUsers[Universal.Plugin];
@@ -344,51 +347,15 @@ namespace Skymu.ViewModels
                         Tray.SetStatus(Universal.CurrentUser.ConnectionStatus)
                     , null);
             };
-            foreach (var p in Universal.ActivePlugins)
-                p.ListTube += (o, e) =>
-                {
-                    if (e is ListItemUpdatedBottle ubot)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            switch (ubot.List)
-                            {
-                                case ListType.Contacts:
-                                    ContactList.Add(ubot.Item as DirectMessage);
-                                    break;
-                                case ListType.Conversations:
-                                    ConversationList.Add(ubot.Item as Conversation);
-                                    break;
-                            }
-                        }));
-                    }
-                    else if (e is ListItemRemovedBottle rbot)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            switch (rbot.List)
-                            {
-                                case ListType.Contacts:
-                                    var toRemove = ContactList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
-                                    if (toRemove != null)
-                                        ContactList.Remove(toRemove);
-                                    break;
-                                case ListType.Conversations:
-                                    var toRemoveConv = ConversationList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
-                                    if (toRemoveConv != null)
-                                        ConversationList.Remove(toRemoveConv);
-                                    break;
-                            }
-                        }));
-                    }
-                };
 
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
         private async Task LoadAndCacheServers()
         {
-            List<Server> servers = await Universal.Plugin.FetchServers();
+            List<Server> servers = new List<Server>();
+            foreach (var p in Universal.ActivePlugins)
+                servers.AddRange(await p.FetchServers());
             //_database?.Servers.Write(servers); // TODO add servers to database
             ServerList = new ObservableCollection<Server>(servers);
             _serversLoadedSource.TrySetResult(true);
@@ -402,8 +369,6 @@ namespace Skymu.ViewModels
         public void SelectConversation(Conversation conversation)
         {
             SelectedConversation = conversation;
-            Universal.Plugin = conversation.Core;
-            Universal.CurrentUser = _userInfo[Universal.Plugin];
             ConversationChanged?.Invoke(conversation, EventArgs.Empty);
         }
 
@@ -428,13 +393,13 @@ namespace Skymu.ViewModels
             if (SelectedConversation == null)
                 return;
 
+            Universal.Plugin = SelectedConversation.Core ?? Universal.Plugin;
+            Universal.CallPlugin = Universal.Plugin as ICall;
+            Universal.CurrentUser = _userInfo[Universal.Plugin];
+
             ClearActiveConversation();
             ConversationOpened?.Invoke(this, EventArgs.Empty);
-            IsLoadingConversation = true;
-
-
-            Universal.Plugin = SelectedConversation.Core ?? Universal.Plugin;
-            Universal.CurrentUser = _userInfo[Universal.Plugin];
+            IsLoadingConversation = true;;
 
             List<ConversationItem> cached = _databases[Universal.Plugin]?.Messages.Read(
                 SelectedConversation,
@@ -832,75 +797,11 @@ namespace Skymu.ViewModels
             return ServerList.ToList();
         }
 
-
-
         public async Task OnAccountEnabledChanged(ICore plugin, User user, bool enabled)
         {
             if (enabled)
             {
-                var u = await plugin.GetUserInfo();
-                if (string.IsNullOrEmpty(u.Identifier))
-                {
-                    Universal.ExceptionHandler(
-                        new InvalidOperationException(
-                            "One or more plugin(s) did not return a valid user object to initialize the database."
-                        )
-                    );
-                    return;
-                }
-                if (Universal.CurrentUser == null)
-                    Universal.CurrentUser = u;
-                Universal.ActiveUsers[plugin] = u;
-                _databases[plugin] = new DatabaseManager(u, plugin);
-                _databases[plugin].Accounts.Write(u);
-                _userInfo[plugin] = u;
-
-                var convs = await plugin.FetchConversations();
-                foreach (var conv in convs)
-                    ConversationList.Add(conv);
-                _databases[plugin].Conversations.Write(convs);
-
-                var conts = await plugin.FetchContacts();
-                foreach (var cont in conts)
-                    ContactList.Add(cont);
-                _databases[plugin].Contacts.Write(conts);
-                plugin.ListTube += (o, e) =>
-                {
-                    if (e is ListItemUpdatedBottle ubot)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            switch (ubot.List)
-                            {
-                                case ListType.Contacts:
-                                    ContactList.Add(ubot.Item as DirectMessage);
-                                    break;
-                                case ListType.Conversations:
-                                    ConversationList.Add(ubot.Item as Conversation);
-                                    break;
-                            }
-                        }));
-                    }
-                    else if (e is ListItemRemovedBottle rbot)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            switch (rbot.List)
-                            {
-                                case ListType.Contacts:
-                                    var toRemove = ContactList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
-                                    if (toRemove != null)
-                                        ContactList.Remove(toRemove);
-                                    break;
-                                case ListType.Conversations:
-                                    var toRemoveConv = ConversationList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
-                                    if (toRemoveConv != null)
-                                        ConversationList.Remove(toRemoveConv);
-                                    break;
-                            }
-                        }));
-                    }
-                };
+                await UsePlugin(plugin, false);
             }
             else
             {
@@ -1111,6 +1012,89 @@ namespace Skymu.ViewModels
                 Universal.Plugin.SetTyping(SelectedConversation?.Identifier, true);
                 _typingRepeatTimer.Change(Universal.Plugin.TypingRepeat, Universal.Plugin.TypingRepeat);
                 _typingActive = true;
+            }
+        }
+
+        private async Task UsePlugin(ICore p, bool initialLoad)
+        {
+            p.ListTube += (o, e) =>
+            {
+                if (e is ListItemUpdatedBottle ubot)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        switch (ubot.List)
+                        {
+                            case ListType.Contacts:
+                                ContactList.Add(ubot.Item as DirectMessage);
+                                break;
+                            case ListType.Conversations:
+                                ConversationList.Add(ubot.Item as Conversation);
+                                break;
+                        }
+                    }));
+                }
+                else if (e is ListItemRemovedBottle rbot)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        switch (rbot.List)
+                        {
+                            case ListType.Contacts:
+                                var toRemove = ContactList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
+                                if (toRemove != null)
+                                    ContactList.Remove(toRemove);
+                                break;
+                            case ListType.Conversations:
+                                var toRemoveConv = ConversationList.FirstOrDefault(c => c.Identifier == rbot.Identifier);
+                                if (toRemoveConv != null)
+                                    ConversationList.Remove(toRemoveConv);
+                                break;
+                        }
+                    }));
+                }
+            };
+            var u = (ReferenceEquals(p, Universal.Plugin) ? Universal.CurrentUser : null) ?? await p.GetUserInfo();
+            if (string.IsNullOrEmpty(u.Identifier))
+            {
+                Universal.ExceptionHandler(
+                    new InvalidOperationException(
+                        "One or more plugin(s) did not return a valid user object to initialize the database."
+                    )
+                );
+                Universal.ActiveUsers.Remove(p);
+                Universal.ActivePlugins.Remove(p);
+                p.Dispose();
+                if (ReferenceEquals(Universal.Plugin, p))
+                {
+                    Universal.Plugin = Universal.ActivePlugins[0];
+                    SelectConversation(null);
+                }
+                return;
+            }
+            if (Universal.CurrentUser == null)
+                Universal.CurrentUser = u;
+            Universal.ActiveUsers[p] = u;
+            _databases[p] = new DatabaseManager(u, p);
+            _databases[p].Accounts.Write(u);
+            _userInfo[p] = u;
+
+            var convs = await p.FetchConversations();
+            foreach (var conv in convs)
+                ConversationList.Add(conv);
+            _databases[p].Conversations.Write(convs);
+
+            var conts = await p.FetchContacts();
+            foreach (var cont in conts)
+                ContactList.Add(cont);
+            _databases[p].Contacts.Write(conts);
+
+            if (p.SupportsServers)
+            {
+                var servers = await p.FetchServers();
+                foreach (var server in servers)
+                    ServerList.Add(server);
+                // TODO store servers in DB _databases[p].Servers.Write(servers);
             }
         }
 

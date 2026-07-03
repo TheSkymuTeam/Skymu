@@ -80,7 +80,8 @@ namespace Skymu
         // Globally scoped variables.
         // -----------------------------------------------------------------------------
 
-       
+
+#pragma warning disable CA2211 // Non-constant fields should not be visible
         public static List<ICore> ActivePlugins;
         public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
@@ -95,6 +96,7 @@ namespace Skymu
         public static BitmapImage GroupAvatar;
         public static BitmapImage UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
+#pragma warning restore CA2211 // Non-constant fields should not be visible
         private static Mutex mutex;
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
@@ -199,7 +201,7 @@ namespace Skymu
 
         static Universal()
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()) && !Settings.AllowMultipleInstances)
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 try
                 {
@@ -213,7 +215,7 @@ namespace Skymu
 
                     Debug.WriteLine($"[Universal] Mutex creation: {created}");
 
-                    if (!created)
+                    if (!created && !Settings.AllowMultipleInstances)
                     {
                         foreach (var arg in Environment.GetCommandLineArgs())
                         {
@@ -224,6 +226,8 @@ namespace Skymu
                                 Terminate();
                                 return;
                             }
+                            else if (arg == "/secondary")
+                                return;
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
                         System.Windows.MessageBox.Show(
@@ -277,6 +281,24 @@ namespace Skymu
             return "en-US";
         }
 
+        public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null)
+        {
+            if (Theme != "Skype5" && addAccount)
+                throw new NotImplementedException("Using addaccount flag on non-Skype5 themes");
+            switch (Theme)
+            {
+                case "Skype7":
+                    return new Skype7.Login(false);
+                case "Skype6":
+                    return new Skype6.Login(false);
+                case "Skype4":
+                    return new Skype4.Login(false);
+                case "Skype5":
+                default:
+                    return new Skype5.Login(false, addAccount, accountAdded);
+            }
+        }
+
         private void App_Startup(object sender, StartupEventArgs e)
         {
             if (!Settings.UseSystemCulture)
@@ -285,22 +307,8 @@ namespace Skymu
                     false
                 );
             // TODO: Dynamically switch language without restart
-            switch (Theme)
-            {
-                case "Skype7":
-                    new Skype7.Login().Show();
-                    break;
-                case "Skype6":
-                    new Skype6.Login().Show();
-                    break;
-                case "Skype4":
-                    new Skype4.Login().Show();
-                    break;
-                case "Skype5":
-                default:
-                    new Skype5.Login().Show();
-                    break;
-            }
+
+            LoginDispenser().Show();
 
             Task.Run(() =>
             {
@@ -484,10 +492,10 @@ namespace Skymu
             }
         }
 
-        public static void ExceptionHandler(Exception ex)
+        public static void ExceptionHandler(Exception ex, string context = null)
         {
             string brand = Settings.BrandingName;
-            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
+            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString(), context);
             WindowBase frame = new WindowBase(page)
             {
                 HeaderIcon = WindowBase.IconType.Crash,
@@ -665,11 +673,11 @@ namespace Skymu
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
-        protected override void OnExit(ExitEventArgs ev)
+        protected override async void OnExit(ExitEventArgs ev)
         {
             try
             {
-                _ = UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+                await UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
             }
             catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)

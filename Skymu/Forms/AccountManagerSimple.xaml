@@ -20,11 +20,11 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Account Manager"
-	Width="420" Height="480"
-    MinWidth="310" MinHeight="350"
-	WindowStartupLocation="CenterOwner"
+	Width="450" Height="480"
+    MinWidth="420" MinHeight="350"
+	WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-	<Grid Margin="12">
+	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
@@ -77,6 +77,22 @@
                             <Button
                                 Grid.Column="3"
                                 Margin="5,0,0,0"
+                                Click="ALButton_Click"
+                                Width="130" >
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Content" Value="Disable auto login"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAutoLoginEnabled}" Value="False">
+                                                <Setter Property="Content" Value="Enable auto login"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button
+                                Grid.Column="3"
+                                Margin="5,0,0,0"
                                 Content="Remove"
                                 Click="RemoveButton_Click"
                                 Width="80" />
@@ -85,13 +101,22 @@
                 </DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-
-		<Button
+        <StackPanel
+            Margin="5,5,5,0"
             Grid.Row="1"
-            Content="Close"
-            HorizontalAlignment="Right"
-            Margin="0,8,0,0"
-            Width="80"
-            Click="CloseButton_Click" />
-	</Grid>
+            Orientation="Horizontal"
+            HorizontalAlignment="Right" >
+            <Button
+                Content="Add..."
+                HorizontalAlignment="Right"
+                Width="80"
+                Click="AddButton_Click" />
+            <Button
+                Content="Close"
+                HorizontalAlignment="Right"
+                Margin="5,0,0,0"
+                Width="80"
+                Click="CloseButton_Click" />
+        </StackPanel>
+    </Grid>
 </Window>

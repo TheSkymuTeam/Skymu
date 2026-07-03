@@ -14,10 +14,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Skymu.Credentials;
 using Skymu.Forms;
+using Skymu.Preferences;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
@@ -26,8 +26,6 @@ namespace Skymu.ViewModels
 {
     public partial class AccountManagerViewModel : ObservableObject
 	{
-		public event Action<ICore, User, bool> AccountEnabledChanged;
-		public event Action<ICore, User> AccountRemoving;
 		MainViewModel _mainvmodel;
 
 		ObservableCollection<AccountEntry> _accounts;
@@ -63,15 +61,39 @@ namespace Skymu.ViewModels
 				Universal.ActiveUsers.TryGetValue(plugin, out User user);
 				Accounts.Add(new AccountEntry(plugin.InternalName, user, true, null));
 			}
+			var ea = Settings.ExtraAccounts;
 			foreach (var credential in CredentialManager.GetAll())
             {
                 if (Accounts.Any(a => a.PluginIdentifier == credential.Plugin && a.User.Identifier == credential.User.Identifier))
                     continue;
-                Accounts.Add(new AccountEntry(credential.Plugin, credential.User, false, credential));
+				var ae = new AccountEntry(credential.Plugin, credential.User, false, credential);
+				if (ea.Any(e => e.Plugin == credential.Plugin && e.User == credential.User.Identifier))
+					ae.IsAutoLoginEnabled = true;
+                Accounts.Add(ae);
             }
-		}
+        }
 
-		public async void ToggleAccount(AccountEntry entry)
+		public async void AccountEnabledInvoke(ICore plugin, User user)
+		{
+			Accounts.Add(new AccountEntry(plugin.InternalName, user, true, CredentialManager.GetAll().FirstOrDefault(e => e.Plugin == plugin.InternalName && e.User.Identifier == user.Identifier)));
+            _ = _mainvmodel.OnAccountEnabledChanged(plugin, user, true);
+        }
+
+		public async void ToggleAutoLogin(AccountEntry entry)
+		{
+            if (entry == null)
+                return;
+            entry.IsAutoLoginEnabled = !entry.IsAutoLoginEnabled;
+			if (entry.IsAutoLoginEnabled)
+			{
+				var list = Settings.ExtraAccounts.ToList();
+				list.Add(new Settings.SkymuAccount(entry.PluginIdentifier, entry.User.Identifier));
+				Settings.ExtraAccounts = list.ToArray();
+                Settings.Save();
+            }
+        }
+
+        public async void ToggleAccount(AccountEntry entry)
 		{
 			if (entry == null)
 				return;
@@ -81,17 +103,22 @@ namespace Skymu.ViewModels
 			{
 				if (entry.IsEnabled)
 				{
-					entry.Plugin = (ICore)Activator.CreateInstance(
-						(Universal.PluginList.FirstOrDefault(p => p.InternalName == entry.PluginIdentifier)
-						?? throw new Exception("Failed to convert the internal name into a plugin object. This plugin is likely uninstalled."))
-							.GetType()
+
+					var type = Universal.PluginList.FirstOrDefault(p => p.InternalName == entry.PluginIdentifier)?.GetType();
+					if (type == null)
+					{
+						Universal.ShowMessage("Failed to convert the internal name into a plugin object. This plugin is likely uninstalled.", null, WindowBase.IconType.Crash);
+                        return;
+					}
+                    entry.Plugin = (ICore)Activator.CreateInstance(
+						type
 					);
                     entry.Plugin.DialogTube += Universal.PluginDialogHandler;
                     entry.Plugin.MessageTube += Universal.PluginNotificationHandler;
                     var result = await entry.Plugin.Authenticate(entry.Credential);
 					if (result != LoginResult.Success)
 					{
-						Universal.ShowMessage("Got result: " + result, "Failed to authenticate", WindowBase.IconType.Error);
+						Universal.ShowMessage("Got result: " + result, "Failed to authenticate", WindowBase.IconType.Crash);
 						return;
                     }
                     Universal.ActiveUsers[entry.Plugin] = entry.User;
@@ -99,18 +126,18 @@ namespace Skymu.ViewModels
 				}
 				else
 				{
-					if (entry.Credential == null)
+                    if (Accounts.Count(e => e.IsEnabled) <= 1)
+                    {
+                        entry.IsEnabled = true;
+                        Universal.ShowMessage(
+                            "You cannot disable the last remaining plugin. Log out, or switch user instead.",
+                            null,
+                            WindowBase.IconType.Error
+                        );
+                        return;
+                    }
+                    if (entry.Credential == null)
 					{
-						if (Accounts.Count(e => e.IsEnabled) <= 1)
-						{
-							entry.IsEnabled = true;
-                            Universal.ShowMessage(
-                                "You cannot disable the last remaining plugin.",
-								null,
-                                WindowBase.IconType.Error
-							);
-							return;
-                        }
 						var dialog = new Dialog(
 							WindowBase.IconType.Question,
 							"Are you sure you want to disable this account?",
@@ -121,15 +148,16 @@ namespace Skymu.ViewModels
 						);
 						dialog.BRAction = () =>
 						{
-							entry.Plugin.Dispose();
 							Universal.ActiveUsers.Remove(entry.Plugin);
 							Universal.ActivePlugins.Remove(entry.Plugin);
+							entry.Plugin.Dispose();
 							if (ReferenceEquals(Universal.Plugin, entry.Plugin))
-							{
+                            {
 								Universal.Plugin = Universal.ActivePlugins[0];
                                 _mainvmodel.SelectConversation(null);
 							}
-							AccountEnabledChanged?.Invoke(entry.Plugin, entry.User, entry.IsEnabled);
+
+                            _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, entry.IsEnabled);
 							dialog.Close();
 						};
 						dialog.BLAction = () =>
@@ -151,7 +179,7 @@ namespace Skymu.ViewModels
 				entry.IsEnabled = !entry.IsEnabled;
 				throw;
 			}
-            AccountEnabledChanged?.Invoke(entry.Plugin, entry.User, entry.IsEnabled);
+            _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, entry.IsEnabled);
 		}
 
 		public void RemoveAccount(AccountEntry entry)
@@ -159,17 +187,24 @@ namespace Skymu.ViewModels
 			if (entry == null)
 				return;
 
-			AccountRemoving?.Invoke(entry.Plugin, entry.User);
-            Accounts.Remove(entry);
-			if (entry.Plugin != null)
-			{
-				entry.Plugin.Dispose();
-				Universal.ActiveUsers.Remove(entry.Plugin);
-                Universal.ActivePlugins.Remove(entry.Plugin);
-			}
+            if (Accounts.Count(e => e.IsEnabled) <= 1)
+            {
+                entry.IsEnabled = true;
+                Universal.ShowMessage(
+                    "You cannot delete the last remaining plugin. Log out, or switch user instead.",
+                    null,
+                    WindowBase.IconType.Error
+                );
+                return;
+            }
 
-			if (SelectedAccount == entry)
+            entry.Plugin.Dispose();
+            Universal.ActiveUsers.Remove(entry.Plugin);
+            Universal.ActivePlugins.Remove(entry.Plugin);
+
+            if (SelectedAccount == entry)
 				SelectedAccount = null;
+            _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
 		}
 	}
 
@@ -181,14 +216,21 @@ namespace Skymu.ViewModels
         public User User { get; }
         public SavedCredential Credential;
 
-		private bool _isEnabled;
-		public bool IsEnabled
-		{
-			get => _isEnabled;
-			set => SetProperty(ref _isEnabled, value);
-		}
+        private bool _isEnabled;
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set => SetProperty(ref _isEnabled, value);
+        }
 
-		public string DisplayName => User.DisplayName;
+        private bool _isAutoLoginEnabled;
+        public bool IsAutoLoginEnabled
+        {
+            get => _isAutoLoginEnabled;
+            set => SetProperty(ref _isAutoLoginEnabled, value);
+        }
+
+        public string DisplayName => User.DisplayName;
 
 		public AccountEntry(string pluginIdentifier, User user, bool isEnabled, SavedCredential credential)
 		{
