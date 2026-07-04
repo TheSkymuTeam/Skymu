@@ -52,7 +52,7 @@
                                 Text="{Binding DisplayName}"
                                 FontWeight="Bold" />
                             <TextBlock
-                                Text="{Binding ProtocolName}"
+                                Text="{Binding PluginName}"
                                 FontSize="11"
                                 Opacity="0.6" />
                         </StackPanel>

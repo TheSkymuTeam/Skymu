@@ -339,15 +339,6 @@ namespace Skymu.ViewModels
 
             _ = SkymuApiStatusHandler();
 
-            var curContext = SynchronizationContext.Current;
-            Universal.CurrentUser.PropertyChanged += (o, e) =>
-            {
-                if (e.PropertyName == nameof(User.ConnectionStatus))
-                    curContext.Post(_ =>
-                        Tray.SetStatus(Universal.CurrentUser.ConnectionStatus)
-                    , null);
-            };
-
             Ready?.Invoke(this, EventArgs.Empty);
         }
 
@@ -809,6 +800,7 @@ namespace Skymu.ViewModels
                 Universal.ActiveUsers.Remove(plugin);
                 ConversationList.Where(c => ReferenceEquals(c.Core, plugin)).ToList().ForEach(c => ConversationList.Remove(c));
                 ContactList.Where(c => ReferenceEquals(c.Core, plugin)).ToList().ForEach(c => ContactList.Remove(c));
+                ServerList.Where(c => ReferenceEquals(c.Core, plugin)).ToList().ForEach(c => ServerList.Remove(c));
             }
         }
 
