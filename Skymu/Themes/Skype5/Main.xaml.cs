@@ -1429,9 +1429,7 @@ namespace Skymu.Skype5
                 _oldUser = Universal.CurrentUser;
                 foreach (var p in Universal.ActivePlugins)
                     if (p is IExtras iep)
-                    {
                         iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
-                    }
                 RefreshExtras();
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);

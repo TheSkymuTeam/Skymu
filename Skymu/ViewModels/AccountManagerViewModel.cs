@@ -26,7 +26,7 @@ namespace Skymu.ViewModels
 {
     public partial class AccountManagerViewModel : ObservableObject
 	{
-		MainViewModel _mainvmodel;
+        readonly MainViewModel _mainvmodel;
 
 		ObservableCollection<AccountEntry> _accounts;
 		public ObservableCollection<AccountEntry> Accounts
@@ -53,45 +53,83 @@ namespace Skymu.ViewModels
 		public void LoadAccounts()
 		{
 			Accounts.Clear();
-			if (Universal.ActivePlugins == null)
-				return;
 
 			foreach (var plugin in Universal.ActivePlugins)
 			{
-				Universal.ActiveUsers.TryGetValue(plugin, out User user);
-				Accounts.Add(new AccountEntry(plugin.InternalName, user, true, null));
+				Universal.ActiveUsers.TryGetValue(plugin, out var user);
+                Accounts.Add(new AccountEntry(plugin.InternalName, user, true, null));
 			}
 			var ea = Settings.ExtraAccounts;
 			foreach (var credential in CredentialManager.GetAll())
             {
-                if (Accounts.Any(a => a.PluginIdentifier == credential.Plugin && a.User?.Identifier == credential.User.Identifier))
-                    continue;
-				var ae = new AccountEntry(credential.Plugin, credential.User, false, credential);
+				var alog = false;
 				if (ea.Any(e => e.Plugin == credential.Plugin && e.User == credential.User.Identifier))
-					ae.IsAutoLoginEnabled = true;
+					alog = true;
+                if (Accounts.Any(a => a.PluginIdentifier == credential.Plugin && a.User?.Identifier == credential.User.Identifier))
+				{
+					var acc = Accounts.FirstOrDefault(e => e.PluginIdentifier == credential.Plugin && e.User?.Identifier == credential.User.Identifier);
+					if (acc != null)
+                        acc.IsAutoLoginEnabled = alog;
+					continue;
+				}
+				var ae = new AccountEntry(credential.Plugin, credential.User, false, credential)
+				{
+					IsAutoLoginEnabled = alog
+				};
                 Accounts.Add(ae);
             }
         }
 
 		public async void AccountEnabledInvoke(ICore plugin, User user)
 		{
-			var ent = new AccountEntry(plugin.InternalName, user, true, CredentialManager.GetAll().FirstOrDefault(e => e.Plugin == plugin.InternalName && e.User.Identifier == user.Identifier));
-			ent.Plugin = plugin;
+            var ent = new AccountEntry(plugin.InternalName, user, true, CredentialManager
+				.GetAll()
+				.FirstOrDefault(e => e.Plugin == plugin.InternalName && e.User?.Identifier == user.Identifier)
+			)
+            {
+                Plugin = plugin
+            };
             Accounts.Add(ent);
+            Universal.ActivePlugins.Add(plugin);
             _ = _mainvmodel.OnAccountEnabledChanged(plugin, user, true);
         }
 
-		public async void ToggleAutoLogin(AccountEntry entry)
+		internal static SavedCredential GetCred(AccountEntry entry)
+			=> entry._credential ?? CredentialManager.Get(entry.User?.Identifier ?? "NOOOOOOSKAIMUUU", entry.PluginIdentifier);
+        static bool HasCred(AccountEntry entry)
+			=> GetCred(entry) != null;
+
+        public static async void ToggleAutoLogin(AccountEntry entry)
 		{
             if (entry == null)
                 return;
             entry.IsAutoLoginEnabled = !entry.IsAutoLoginEnabled;
 			if (entry.IsAutoLoginEnabled)
 			{
+				if (!HasCred(entry))
+				{
+                    Universal.ShowMessage(
+                        "You cannot enable auto-login of a plugin where the credentials were not successfully stored.",
+                        null,
+                        WindowBase.IconType.Error
+                    );
+					entry.IsAutoLoginEnabled = false;
+                }
 				var list = Settings.ExtraAccounts.ToList();
 				list.Add(new Settings.SkymuAccount(entry.PluginIdentifier, entry.User.Identifier));
 				Settings.ExtraAccounts = list.ToArray();
                 Settings.Save();
+            }
+			else
+			{
+                var list = Settings.ExtraAccounts.ToList();
+				var entr = list.FirstOrDefault(e => entry.PluginIdentifier == e.Plugin && entry.User.Identifier == e.User);
+				if (entr != null)
+				{
+					list.Remove(entr);
+					Settings.ExtraAccounts = list.ToArray();
+					Settings.Save();
+				}
             }
         }
 
@@ -105,7 +143,6 @@ namespace Skymu.ViewModels
 			{
 				if (entry.IsEnabled)
 				{
-
 					var type = Universal.PluginList.FirstOrDefault(p => p.InternalName == entry.PluginIdentifier)?.GetType();
 					if (type == null)
 					{
@@ -123,13 +160,12 @@ namespace Skymu.ViewModels
 						Universal.ShowMessage("Got result: " + result, "Failed to authenticate", WindowBase.IconType.Crash);
 						return;
                     }
-                    Universal.ActiveUsers[entry.Plugin] = entry.User;
 					Universal.ActivePlugins.Add(entry.Plugin);
 					_ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, true);
                 }
                 else
 				{
-                    if (Accounts.Count(e => e.IsEnabled) == 0)
+                    if (!Accounts.Any(e => e.IsEnabled))
                     {
                         entry.IsEnabled = true;
                         Universal.ShowMessage(
@@ -139,7 +175,7 @@ namespace Skymu.ViewModels
                         );
                         return;
                     }
-                    if (entry.Credential == null && CredentialManager.Get(entry.User?.Identifier ?? "NOOOOOOSKAIMUUU", entry.PluginIdentifier) == null)
+                    if (!HasCred(entry))
 					{
 						var dialog = new Dialog(
 							WindowBase.IconType.Question,
@@ -182,8 +218,8 @@ namespace Skymu.ViewModels
 						Universal.ActivePlugins.Remove(entry.Plugin);
 						entry.Plugin.Dispose();
 					}
+					_ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
                 }
-				_ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
             }
             catch
 			{
@@ -229,16 +265,22 @@ namespace Skymu.ViewModels
 		public string PluginIdentifier { get; }
 		public string PluginName { get; }
         public User User { get; }
-        public SavedCredential Credential;
 
-        private bool _isEnabled;
+		internal SavedCredential _credential;
+        public SavedCredential Credential
+		{
+			get => _credential ?? AccountManagerViewModel.GetCred(this);
+			set => _credential = value;
+		}
+
+        bool _isEnabled;
         public bool IsEnabled
         {
             get => _isEnabled;
             set => SetProperty(ref _isEnabled, value);
         }
 
-        private bool _isAutoLoginEnabled;
+        bool _isAutoLoginEnabled;
         public bool IsAutoLoginEnabled
         {
             get => _isAutoLoginEnabled;

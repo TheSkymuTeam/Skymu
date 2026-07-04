@@ -58,13 +58,14 @@
                         </StackPanel>
                         <StackPanel
                             Grid.Column="1"
+                            Margin="5,0,0,0"
                             Orientation="Horizontal" >
                             <Button
                                 Grid.Column="2"
                                 Click="ToggleButton_Click"
                                 Width="80" >
                                 <Button.Style>
-                                    <Style TargetType="Button">
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                         <Setter Property="Content" Value="Disable"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsEnabled}" Value="False">
@@ -80,7 +81,7 @@
                                 Click="ALButton_Click"
                                 Width="130" >
                                 <Button.Style>
-                                    <Style TargetType="Button">
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                         <Setter Property="Content" Value="Disable auto login"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsAutoLoginEnabled}" Value="False">

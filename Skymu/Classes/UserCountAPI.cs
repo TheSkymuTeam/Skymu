@@ -63,7 +63,7 @@ namespace Skymu.UserDirectory
             return sb.ToString();
         }
 
-        // TODO runme on plugin list modification PLEASE REMEMBER PLEASE PLEASE
+        // TODO multiuser
         public static async Task<bool> SetUserStatus(
             bool online,
             string dn = null,
@@ -72,18 +72,12 @@ namespace Skymu.UserDirectory
         )
         {
             string anon_random = $"{Universal.NAME.ToLowerInvariant()}-user-" + GenerateRandomNumberString(10);
-            var plist = new string[Universal.ActivePlugins.Count];
-            for (int i = 0; i < Universal.ActivePlugins.Count; i++)
-            {
-                plist[i] = Universal.ActivePlugins[i].Name;
-            }
             var payload = new
             {
                 display_name = Settings.Anonymize ? "Anonymous" : dn,
                 username = Settings.Anonymize ? anon_random : user,
                 identifier = Settings.Anonymize ? anon_random : id,
                 plugin = Universal.Plugin.Name,
-                plugins = plist,
                 skymu_build_codename = Universal.BUILD_NAME,
                 skymu_build_version = Universal.BUILD_VERSION,
                 token = ApiTkn,

@@ -520,7 +520,7 @@ namespace Skymu
                 icon,
                 content,
                 title,
-                Lang["sF_CONFIRM_OK_BTN"]
+                brText: Lang["sF_CONFIRM_OK_BTN"]
             ).ShowDialog();
         }
 
@@ -530,7 +530,7 @@ namespace Skymu
                 WindowBase.IconType.Information,
                 "Feature not implemented",
                 feature + " hasn't been added to " + Settings.BrandingName + " yet.",
-                "OK"
+                brText: "OK"
             ).ShowDialog();
         }
 

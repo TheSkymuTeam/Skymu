@@ -40,7 +40,7 @@ namespace Skymu.Forms
         private void ALButton_Click(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
-                vmodel.ToggleAutoLogin(entry);
+                AccountManagerViewModel.ToggleAutoLogin(entry);
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)

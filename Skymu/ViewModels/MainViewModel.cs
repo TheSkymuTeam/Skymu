@@ -304,30 +304,30 @@ namespace Skymu.ViewModels
             {
                 var cred = CredentialManager.Get(acc.User, acc.Plugin);
                 if (cred != null)
-                    new Task(async () =>
+                    try
                     {
-                        var plugin = Universal.PluginList.FirstOrDefault(p => p.InternalName == acc.Plugin);
-                        if (plugin == null)
-                            return;
-                        try
+                        var plugin = (ICore)Activator.CreateInstance(
+                            Universal.PluginList.FirstOrDefault(p => p.InternalName == acc.Plugin).GetType()
+                        );
+                        plugin.DialogTube += Universal.PluginDialogHandler;
+                        plugin.MessageTube += Universal.PluginNotificationHandler;
+                        Debug.WriteLine($"[SKYMU] Logging in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
+                        LoginResult result = plugin.Authenticate(cred).Result;
+                        if (result != LoginResult.Success)
                         {
-                            Debug.WriteLine($"[SKYMU] Logging in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
-                            LoginResult result = plugin.Authenticate(cred).Result;
-                            if (result != LoginResult.Success)
-                            {
-                                Universal.ShowMessage($"Failed to log in to plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\": {result.ToDisplayString()}", "Account login failed", WindowBase.IconType.Crash);
-                            }
-                            else
-                            {
-                                Debug.WriteLine($"[SKYMU] Logged in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
-                                await UsePlugin(plugin, true);
-                            }
+                            Universal.ShowMessage($"Failed to log in to plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\": {result.ToDisplayString()}", "Account login failed", WindowBase.IconType.Crash);
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            Universal.ExceptionHandler(ex, $"A plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\" caused this.");
+                            Debug.WriteLine($"[SKYMU] Logged in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
+                            await UsePlugin(plugin, true);
+                            Universal.ActivePlugins.Add(plugin);
                         }
-                    }).Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Universal.ExceptionHandler(ex, $"A plugin \"{acc.Plugin}\" with user \"{cred.User?.DisplayName ?? acc.User}\" caused this.");
+                    }
             }
 
             Universal.CurrentUser = Universal.ActiveUsers[Universal.Plugin];
@@ -1054,7 +1054,6 @@ namespace Skymu.ViewModels
                         "One or more plugin(s) did not return a valid user object to initialize the database."
                     )
                 );
-                Universal.ActiveUsers.Remove(p);
                 Universal.ActivePlugins.Remove(p);
                 p.Dispose();
                 if (ReferenceEquals(Universal.Plugin, p))
