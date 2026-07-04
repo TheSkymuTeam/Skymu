@@ -32,9 +32,9 @@ jobs:
     - name: 4. Build NSIS
       run: makensis NSIS/SkymuBetaSetup.nsi
 
-    - name: 5. Export Release Folder to Artifacts
+    - name: 5. Export Installer to Artifacts
       uses: actions/upload-artifact@v7
       with:
-        name: beta-build
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
+        archive: false
