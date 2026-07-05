@@ -24,7 +24,6 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.UserDirectory;
-using Skymu.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
