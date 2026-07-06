@@ -58,6 +58,7 @@ namespace Skymu.Skype6
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private SliceControl _currentTab;
+        private User _oldUser;
         private bool _userScrolledUp = false;
         private readonly Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
@@ -302,7 +303,7 @@ namespace Skymu.Skype6
             GridLength small = new GridLength(32);
 
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.Plugin.SupportsServers)
+            if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                 buttonToColumn[tab_to_select].Width = dynamic;
             tab_to_select.SetState(ButtonVisualState.Pressed);
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
@@ -310,14 +311,12 @@ namespace Skymu.Skype6
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.Plugin.SupportsServers)
+                if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                     buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
+                    Settings.DynamicSidebarTabs
                         ? small
                         : dynamic;
             }
-
-            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -497,23 +496,6 @@ namespace Skymu.Skype6
 
         #endregion
 
-        #region User count API
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -648,6 +630,39 @@ namespace Skymu.Skype6
             HandleConversationItems();
         }
 
+        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cu = sender as User; // TODO delay ish fix
+            if (e == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                    Tray.SetStatus(cu.ConnectionStatus);
+                    StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                });
+            }
+            else
+                switch (e.PropertyName)
+                {
+                    case nameof(User.ConnectionStatus):
+                        Dispatcher.Invoke(() =>
+                        {
+                            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                            Tray.SetStatus(cu.ConnectionStatus);
+                        });
+                        break;
+                    case nameof(User.DisplayName):
+                        Dispatcher.Invoke(() =>
+                        {
+                            StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                        });
+                        break;
+                }
+        }
+
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
@@ -712,7 +727,7 @@ namespace Skymu.Skype6
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            StartCall();
+            StartCall(vmodel.SelectedConversation.Core as ICall);
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -730,19 +745,20 @@ namespace Skymu.Skype6
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private async void StartCall(User partner = null)
+        private async void StartCall(ICall callPlugin, Conversation conversation = null, User partner = null)
         {
             bool answer_call = true;
-            if (Universal.CallPlugin == null)
-                return;
 
-            if (partner == null)
+            if (conversation == null)
             {
-                if (!(vmodel.SelectedConversation is DirectMessage dm))
+                conversation = vmodel.SelectedConversation as DirectMessage;
+                if (conversation == null)
                     return; // group calls not supported yet
-                partner = dm.Partner;
+                partner = ((DirectMessage)conversation).Partner;
                 answer_call = false;
             }
+            if (partner == null)
+                partner = ((DirectMessage)conversation).Partner;
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
@@ -764,14 +780,14 @@ namespace Skymu.Skype6
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(partner, initial_location, answer_call);
+            screen = new CallScreen(callPlugin, partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
 
-            await screen.StartCall(vmodel.SelectedConversation, false);
+            await screen.StartCall(conversation, false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
@@ -1088,11 +1104,8 @@ namespace Skymu.Skype6
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
-                {
-                    if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
-                };
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1113,6 +1126,14 @@ namespace Skymu.Skype6
             {
                 if (!IsLoadingConversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
+            };
+
+            vmodel.ConversationOpened += (s, e) =>
+            {
+                _oldUser.PropertyChanged -= SelfInfoChanged;
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
@@ -1149,6 +1170,16 @@ namespace Skymu.Skype6
                 _ = SetConversation();
             };
 
+            vmodel.IncomingCallAccepted += (p, c) =>
+            {
+                var convo = vmodel.ContactList.FirstOrDefault(e => e.Identifier == c)
+                    ?? vmodel.ConversationList.FirstOrDefault(e => e.Identifier == c);
+                if (convo != null)
+                    StartCall(p, convo);
+                else
+                    Universal.ExceptionHandler(new Exception("Could not find the conversation with the right ID."), "The conversation identifier was " + c + ".");
+            };
+
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
@@ -1161,6 +1192,22 @@ namespace Skymu.Skype6
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
                     Dispatcher.Invoke(() => TypingIndicator.Visibility =
                         vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
+            };
+
+            vmodel.PluginEnabledChanged += (s, p) =>
+            {
+                if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+                {
+                    btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = new GridLength(0);
+                    SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
+                }
+                else
+                {
+                    btnServers.Visibility = Visibility.Visible;
+                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
+                    SidebarTabs.ColumnDefinitions[0].MinWidth = 0;
+                }
             };
 
             Universal.GroupAvatar = GenerateAvatarImage("group");
@@ -1182,7 +1229,7 @@ namespace Skymu.Skype6
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!Universal.Plugin.SupportsServers)
+            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
@@ -1212,6 +1259,7 @@ namespace Skymu.Skype6
                         case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
                         case MMBController.Action.Call: CallButtonClick(null, null); break;
                         case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                        case MMBController.Action.AccountManager: new AccountManagerSimple(vmodel).Show(); break;
                     }
                 };
                 _mmbController.Build();

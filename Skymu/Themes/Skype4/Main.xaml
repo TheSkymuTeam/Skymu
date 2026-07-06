@@ -1053,6 +1053,7 @@
                         <Separator />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
+                        <MenuItem Click="OnManageAccounts" Header="Manage accounts..." />
                         <MenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
                         <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                     </MenuItem>
@@ -1380,7 +1381,7 @@
                                                                 Color="{DynamicResource Avatar.Shadow}" />
                                                         </Border.Effect>
                                                         <Grid>
-                                                            <Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                                            <Image x:Name="SidebarAvatar" RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
                                                                 <Image.Source>
                                                                     <MultiBinding Converter="{StaticResource AvatarConverter}">
                                                                         <Binding Path="Avatar" />
@@ -2259,7 +2260,7 @@
                                                                     Margin="11,0,0,0"
                                                                     FontFamily="Tahoma"
                                                                     FontSize="11"
-                                                                    Text="{Binding Channels.Length, StringFormat='{}Server - {0} channels'}"
+                                                                    Text="{Binding Channels.Count, StringFormat='{}Server - {0} channels'}"
                                                                     TextTrimming="CharacterEllipsis" />
                                                             </StackPanel>
                                                         </StackPanel>

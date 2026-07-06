@@ -134,6 +134,8 @@ namespace Skymu.ViewModels
 
         public event EventHandler CompactRecentsRefreshRequested;
 
+        public event Action<bool, ICore> PluginEnabledChanged;
+
         public event EventHandler<SignOutRequestedEventArgs> SignOutRequested;
 
         public event Action<string> UserCountUpdated;
@@ -141,6 +143,8 @@ namespace Skymu.ViewModels
         public event Action<string> SpeedTestIconUpdated;
 
         public event Action<bool> CallActiveChanged;
+
+        public event Action<ICall, string> IncomingCallAccepted;
 
         #endregion
 
@@ -384,7 +388,6 @@ namespace Skymu.ViewModels
                 return;
 
             Universal.Plugin = SelectedConversation.Core ?? Universal.Plugin;
-            Universal.CallPlugin = Universal.Plugin as ICall;
             Universal.CurrentUser = _userInfo[Universal.Plugin];
 
             ClearActiveConversation();
@@ -801,6 +804,7 @@ namespace Skymu.ViewModels
                 ContactList.Where(c => ReferenceEquals(c.Core, plugin)).ToList().ForEach(c => ContactList.Remove(c));
                 ServerList.Where(c => ReferenceEquals(c.Core, plugin)).ToList().ForEach(c => ServerList.Remove(c));
             }
+            PluginEnabledChanged?.Invoke(enabled, plugin);
         }
 
         #endregion
@@ -967,6 +971,7 @@ namespace Skymu.ViewModels
             string text;
             switch (count)
             {
+                // TODO: language
                 case 1:
                     text = $"{Universal.Plugin.TypingUsersList[0].DisplayName} is typing...";
                     break;
@@ -993,6 +998,7 @@ namespace Skymu.ViewModels
         public void StopTyping()
         {
             _typingTimer.Change(0, Timeout.Infinite);
+            Universal.Plugin.SetTyping(SelectedConversation?.Identifier, false);
         }
 
         public void StartTyping()
@@ -1086,6 +1092,25 @@ namespace Skymu.ViewModels
                     ServerList.Add(server);
                 // TODO store servers in DB _databases[p].Servers.Write(servers);
             }
+
+            // while this is supposed to be one of the most advanced language, there is no nullable +=
+            var cp = p as ICall;
+            if (cp != null)
+                cp.IncomingCallTube += (sender, e) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        IncomingCall ic = new IncomingCall(e);
+                        EventHandler handler = null;
+                        handler = (s, args) =>
+                        {
+                            ic.Answered -= handler;
+                            IncomingCallAccepted?.Invoke(cp, e.ConversationId);
+                        };
+                        ic.Answered += handler;
+                        ic.Show();
+                    });
+                };
         }
 
         public async Task RunSpeedTest()

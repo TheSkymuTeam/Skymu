@@ -158,6 +158,8 @@ namespace Skymu.ViewModels
                     if (result != LoginResult.Success)
                     {
                         Universal.ShowMessage("Got result: " + result, "Failed to authenticate", WindowBase.IconType.Crash);
+                        entry.IsEnabled = false;
+                        entry.Plugin = null;
                         return;
                     }
                     Universal.ActivePlugins.Add(entry.Plugin);
@@ -193,7 +195,7 @@ namespace Skymu.ViewModels
                                 _ = Universal.ActivePlugins.Remove(entry.Plugin);
                                 entry.Plugin.Dispose();
                             }
-                            Accounts.Remove(entry);
+                            _ = Accounts.Remove(entry);
                             if (ReferenceEquals(Universal.Plugin, entry.Plugin))
                             {
                                 Universal.Plugin = Universal.ActivePlugins[0];

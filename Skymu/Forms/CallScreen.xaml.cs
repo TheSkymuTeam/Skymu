@@ -27,6 +27,7 @@ using System.Windows.Navigation;
 using System.Windows.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil;
 
 namespace Skymu.Forms
 {
@@ -51,18 +52,21 @@ namespace Skymu.Forms
         private bool _is_answer;
         private bool _hangUpRequested = false;
         private ActiveCall _call;
+        private ICall _callPlugin;
         private LocationChangeEventArgs location;
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;
         private Frame _originalFrame;
 
         public CallScreen(
+            ICall callPlugin,
             User partner,
-            CallScreen.LocationChangeEventArgs initial_location,
+            LocationChangeEventArgs initial_location,
             bool is_answering_call = false
         )
         {
             InitializeComponent();
+            _callPlugin = callPlugin;
 
             if (Universal.CurrentUser.Avatar != null)
                 MyAvatar.Source = ImageHelper.GenerateFromArray(
@@ -118,7 +122,7 @@ namespace Skymu.Forms
 
         public async Task StartCall(Conversation conversation, bool is_video)
         {
-            Universal.CallPlugin.CallStateChangedTube += OnCallStateChanged;
+            _callPlugin.CallStateChangedTube += OnCallStateChanged;
             _call = new ActiveCall(
                 "INIT",
                 conversation.Identifier,
@@ -140,7 +144,7 @@ namespace Skymu.Forms
                 }
             });
 
-            ActiveCall call = await Universal.CallPlugin.StartCall(
+            ActiveCall call = await _callPlugin.StartCall(
                 conversation.Identifier,
                 is_video,
                 true
@@ -173,7 +177,7 @@ namespace Skymu.Forms
             ConnectionAnimation = null;
 
             _callElapsed = TimeSpan.Zero;
-            CallStatus.Text = "00:00";
+            CallStatus.Text = "00:00"; // TODO: hours
 
             _callTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _callTimer.Tick += (s, e) =>
@@ -219,7 +223,7 @@ namespace Skymu.Forms
                 MuteButton.Source = muted;
             else
                 MuteButton.Source = unmuted;
-            await Universal.CallPlugin.SetMuted(_call, isMuted);
+            await _callPlugin.SetMuted(_call, isMuted);
         }
 
         private void OnSidebarToggled(object sender, MouseButtonEventArgs e)
@@ -340,8 +344,8 @@ namespace Skymu.Forms
             _ringCts?.Cancel();
             SoundManager.StopPlayback("CALL_OUT");
             SoundManager.StopPlayback("CALL_INIT");
-            Universal.CallPlugin.CallStateChangedTube -= OnCallStateChanged;
-            _ = Universal.CallPlugin.EndCall(_call);
+            _callPlugin.CallStateChangedTube -= OnCallStateChanged;
+            _ = _callPlugin.EndCall(_call);
             _callTimer?.Stop();
             _callTimer = null;
             SoundManager.Play("HANGUP");

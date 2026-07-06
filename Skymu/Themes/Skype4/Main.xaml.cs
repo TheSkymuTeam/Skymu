@@ -11,24 +11,23 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Infrastructure.Main;
-using Skymu.Converters;
-using Skymu.Emoticons;
+using Skymu.Enumerations;
 using Skymu.Formatting;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Helpers;
+using Skymu.Infrastructure.Main;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Windows;
-using Skymu.Sounds;
+using Skymu.ViewModels;
+using Skymu.Windows;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,6 +41,7 @@ using System.Windows.Threading;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using System.Linq;
 
 namespace Skymu.Skype4
 {
@@ -64,6 +64,7 @@ namespace Skymu.Skype4
             img_join;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
+        private User _oldUser;
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
@@ -895,6 +896,9 @@ namespace Skymu.Skype4
 
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
 
+        private void OnManageAccounts(object sender, RoutedEventArgs e)
+            => new AccountManagerSimple(vmodel).Show();
+
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
         private async void OnStatus(object sender, RoutedEventArgs e)
@@ -963,6 +967,47 @@ namespace Skymu.Skype4
             Keyboard.ClearFocus();
         }
 
+        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cu = sender as User; // TODO delay ish fix
+            if (e == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                    Tray.SetStatus(cu.ConnectionStatus);
+                    TitleMain.Text = cu.DisplayName;
+                    StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                    SidebarAvatar.InvalidateVisual();
+                });
+            }
+            else
+                switch (e.PropertyName)
+                {
+                    case nameof(User.ConnectionStatus):
+                        Dispatcher.Invoke(() =>
+                        {
+                            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                            Tray.SetStatus(cu.ConnectionStatus);
+                        });
+                        break;
+                    case nameof(User.DisplayName):
+                        Dispatcher.Invoke(() =>
+                        {
+                            TitleMain.Text = cu.DisplayName;
+                            StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                        });
+                        break;
+                    case nameof(User.Avatar):
+                        Dispatcher.Invoke(() =>
+                            SidebarAvatar.InvalidateVisual()
+                        );
+                        break;
+                }
+        }
+
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
@@ -984,7 +1029,7 @@ namespace Skymu.Skype4
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            StartCall();
+            StartCall(vmodel.SelectedConversation.Core as ICall);
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1032,20 +1077,20 @@ namespace Skymu.Skype4
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private async void StartCall(User partner = null)
+        private async void StartCall(ICall callPlugin, Conversation conversation = null, User partner = null)
         {
             bool answer_call = true;
-            if (Universal.CallPlugin == null)
-                return;
 
-            if (partner == null)
+            if (conversation == null)
             {
-                var dm = vmodel.SelectedConversation as DirectMessage;
-                if (dm == null)
+                conversation = vmodel.SelectedConversation as DirectMessage;
+                if (conversation == null)
                     return; // group calls not supported yet
-                partner = dm.Partner;
+                partner = ((DirectMessage)conversation).Partner;
                 answer_call = false;
             }
+            if (partner == null)
+                partner = ((DirectMessage)conversation).Partner;
 
             if (TWR_ORIGINAL_HEIGHT == default)
                 TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
@@ -1065,14 +1110,14 @@ namespace Skymu.Skype4
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(partner, initial_location, answer_call);
+            screen = new CallScreen(callPlugin, partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
 
-            await screen.StartCall(vmodel.SelectedConversation, false);
+            await screen.StartCall(conversation, false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
@@ -1364,11 +1409,12 @@ namespace Skymu.Skype4
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
                         Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
-                if (Universal.Plugin is IExtras iep)
-                {
-                    iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
-                    RefreshExtras();
-                }
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                foreach (var p in Universal.ActivePlugins)
+                    if (p is IExtras iep)
+                        iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
+                RefreshExtras();
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1384,6 +1430,14 @@ namespace Skymu.Skype4
             {
                 if (!is_loading_conversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
+            };
+            
+            vmodel.ConversationOpened += (s, e) =>
+            {
+                _oldUser.PropertyChanged -= SelfInfoChanged;
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
@@ -1420,6 +1474,16 @@ namespace Skymu.Skype4
                 _ = SetConversation();
             };
 
+            vmodel.IncomingCallAccepted += (p, c) =>
+            {
+                var convo = vmodel.ContactList.FirstOrDefault(e => e.Identifier == c)
+                    ?? vmodel.ConversationList.FirstOrDefault(e => e.Identifier == c);
+                if (convo != null)
+                    StartCall(p, convo);
+                else
+                    Universal.ExceptionHandler(new Exception("Could not find the conversation with the right ID."), "The conversation identifier was " + c + ".");
+            };
+
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
@@ -1435,6 +1499,20 @@ namespace Skymu.Skype4
                             ? Visibility.Visible
                             : Visibility.Collapsed
                     );
+            };
+
+            vmodel.PluginEnabledChanged += (s, p) =>
+            {
+                if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+                {
+                    btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = new GridLength(0);
+                }
+                else
+                {
+                    btnServers.Visibility = Visibility.Visible;
+                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
+                }
             };
 
             InitializeWindowFrame();
@@ -1458,7 +1536,7 @@ namespace Skymu.Skype4
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!Universal.Plugin.SupportsServers)
+            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
@@ -1488,25 +1566,6 @@ namespace Skymu.Skype4
                     SidebarColumn.Width = new GridLength(Settings.ConvListWidth);
                 }
             };
-
-            if (Universal.CallPlugin != null)
-            {
-                Universal.CallPlugin.IncomingCallTube += (sender, e) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        IncomingCall ic = new IncomingCall(e);
-                        EventHandler handler = null;
-                        handler = (s, args) =>
-                        {
-                            ic.Answered -= handler;
-                            StartCall(e.Caller);
-                        };
-                        ic.Answered += handler;
-                        ic.Show();
-                    });
-                };
-            }
 
             this.AllowsTransparency = false;
         }

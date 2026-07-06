@@ -492,7 +492,6 @@ namespace Skymu.ViewModels
             if (!_addaccount)
             {
                 Universal.Plugin = _selectedPlugin;
-                Universal.CallPlugin = _selectedPlugin as ICall;
                 Universal.ActivePlugins = new List<ICore>() { _selectedPlugin };
                 IMainWindowHolder mainWindow = _createMainWindow();
                 mainWindow.Ready += (s, e) => MainWindowReady?.Invoke(mainWindow);

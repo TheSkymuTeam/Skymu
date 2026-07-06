@@ -1039,7 +1039,7 @@ namespace Skymu.Skype5
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            StartCall();
+            StartCall(vmodel.SelectedConversation.Core as ICall);
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1087,20 +1087,20 @@ namespace Skymu.Skype5
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private async void StartCall(User partner = null)
+        private async void StartCall(ICall callPlugin, Conversation conversation = null, User partner = null)
         {
             bool answer_call = true;
-            if (Universal.CallPlugin == null)
-                return;
 
-            if (partner == null)
+            if (conversation == null)
             {
-                var dm = vmodel.SelectedConversation as DirectMessage;
-                if (dm == null)
+                conversation = vmodel.SelectedConversation as DirectMessage;
+                if (conversation == null)
                     return; // group calls not supported yet
-                partner = dm.Partner;
+                partner = ((DirectMessage)conversation).Partner;
                 answer_call = false;
             }
+            if (partner == null)
+                partner = ((DirectMessage)conversation).Partner;
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
@@ -1122,14 +1122,14 @@ namespace Skymu.Skype5
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(partner, initial_location, answer_call);
+            screen = new CallScreen(callPlugin, partner, initial_location, answer_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
 
-            await screen.StartCall(vmodel.SelectedConversation, false);
+            await screen.StartCall(conversation, false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
@@ -1499,6 +1499,16 @@ namespace Skymu.Skype5
                 _ = SetConversation();
             };
 
+            vmodel.IncomingCallAccepted += (p, c) =>
+            {
+                var convo = vmodel.ContactList.FirstOrDefault(e => e.Identifier == c)
+                    ?? vmodel.ConversationList.FirstOrDefault(e => e.Identifier == c);
+                if (convo != null)
+                    StartCall(p, convo);
+                else
+                    Universal.ExceptionHandler(new Exception("Could not find the conversation with the right ID."), "The conversation identifier was " + c + ".");
+            };
+
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
@@ -1514,6 +1524,20 @@ namespace Skymu.Skype5
                             ? Visibility.Visible
                             : Visibility.Collapsed
                     );
+            };
+
+            vmodel.PluginEnabledChanged += (s, p) =>
+            {
+                if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+                {
+                    btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = new GridLength(0);
+                }
+                else
+                {
+                    btnServers.Visibility = Visibility.Visible;
+                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
+                }
             };
 
             InitializeWindowFrame();
@@ -1537,7 +1561,7 @@ namespace Skymu.Skype5
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!(Universal.ActivePlugins.Count(e => e.SupportsServers) > 0))
+            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
@@ -1573,25 +1597,6 @@ namespace Skymu.Skype5
                 }
                 Sidebar_SizeChanged_Refresh();
             };
-
-            if (Universal.CallPlugin != null)
-            {
-                Universal.CallPlugin.IncomingCallTube += (sender, e) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        IncomingCall ic = new IncomingCall(e);
-                        EventHandler handler = null;
-                        handler = (s, args) =>
-                        {
-                            ic.Answered -= handler;
-                            StartCall(e.Caller);
-                        };
-                        ic.Answered += handler;
-                        ic.Show();
-                    });
-                };
-            }
 
             this.AllowsTransparency = false;
         }

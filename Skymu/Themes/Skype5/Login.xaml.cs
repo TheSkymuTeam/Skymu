@@ -193,6 +193,9 @@ namespace Skymu.Skype5
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
+            if (addaccount && _viewModel.PendingAutoLogin != null)
+                _viewModel.ClearPendingAutoLogin();
+
             if (_viewModel.PendingAutoLogin != null && !switchuser && !addaccount)
                 LoginToggleAnimation(true);
             else
@@ -238,13 +241,16 @@ namespace Skymu.Skype5
         {
             var listing = (LoginViewModel.PluginListing)ProtocolComboBox.SelectedItem;
             if (!addaccount)
+            {
                 foreach (var cred in _viewModel.SavedCredentials)
                 {
-                    if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
+                    if (cred.Plugin.ToLowerInvariant() == listing?.InternalName?.ToLowerInvariant())
                     {
                         SetProtocolSelection(listing, cred);
+                        return;
                     }
                 }
+            }
             if (listing != null)
                 _viewModel.HandleProtocolSelected(listing);
         }

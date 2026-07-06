@@ -12,18 +12,18 @@
 /*==========================================================*/
 
 using Skymu.Preferences;
+using Skymu.Sounds;
 using Skymu.ViewModels;
+using Skymu.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using Skymu.Sounds;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Yggdrasil.Enumerations;
-using Skymu.Windows;
-using System.Windows.Input;
 using Yggdrasil.Models;
+using Yggdrasil.Enumerations;
 
 namespace Skymu.Skype7
 {
@@ -248,14 +248,14 @@ namespace Skymu.Skype7
         private void Login_Closing(object sender, CancelEventArgs e)
         {
             if (!noCloseEvent)
-                Application.Current.Shutdown();
+                Universal.Terminate();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             if (!noCloseEvent)
-                Application.Current.Shutdown();
+                Universal.Terminate();
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

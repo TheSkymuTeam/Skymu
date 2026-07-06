@@ -11,18 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Preferences;
-using Skymu.ViewModels;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using Skymu.Preferences;
 using Skymu.Sounds;
+using Skymu.ViewModels;
+using Skymu.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Skymu.Windows;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
