@@ -176,7 +176,7 @@ namespace Yggdrasil.Bottles
         public string ConversationId { get; }
         public CallState State { get; }
         public string FailReason { get; }
-        public User Caller { get; }
+        public Conversation Caller { get; }
 
         public CallBottle(string convo_id, CallState state)
         {
@@ -191,7 +191,7 @@ namespace Yggdrasil.Bottles
             FailReason = fail_reason;
         }
 
-        public CallBottle(string convo_id, CallState state, User caller)
+        public CallBottle(string convo_id, CallState state, Conversation caller)
         {
             ConversationId = convo_id;
             State = state;

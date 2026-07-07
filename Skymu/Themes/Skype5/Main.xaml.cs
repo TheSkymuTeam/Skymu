@@ -1022,7 +1022,7 @@ namespace Skymu.Skype5
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            StartCall();
+            InitiateCall(vmodel.SelectedConversation);
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -1070,20 +1070,20 @@ namespace Skymu.Skype5
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private async void StartCall(User partner = null)
+        private async void InitiateCall(Conversation conversation, bool is_answering_call = false)
         {
-            bool answer_call = true;
             if (Universal.CallPlugin == null)
                 return;
 
-            if (partner == null)
+            var dm = conversation as DirectMessage;
+            if (dm == null)
             {
-                var dm = vmodel.SelectedConversation as DirectMessage;
-                if (dm == null)
-                    return; // group calls not supported yet
-                partner = dm.Partner;
-                answer_call = false;
+                Universal.ShowMessage("Joining group calls and server voice channels is not supported yet.", "Cannot start call", WindowBase.IconType.GroupCall);
+                return;
             }
+
+            User partner = dm.Partner;
+
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
@@ -1105,7 +1105,7 @@ namespace Skymu.Skype5
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(partner, initial_location, answer_call);
+            screen = new CallScreen(partner, initial_location, is_answering_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
@@ -1560,7 +1560,7 @@ namespace Skymu.Skype5
                         handler = (s, args) =>
                         {
                             ic.Answered -= handler;
-                            StartCall(e.Caller);
+                            InitiateCall(e.Caller, true);
                         };
                         ic.Answered += handler;
                         ic.Show();
