@@ -45,6 +45,7 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
+#pragma warning disable CA1707 // pls no underscore
         // -----------------------------------------------------------------------------
         // Skymu metadata.
         // -----------------------------------------------------------------------------
@@ -76,6 +77,8 @@ namespace Skymu
         public const string GITHUB_RELEASES_URL = GITHUB_BASE_URL + "/releases/latest";
         public const string GITHUB_PULLS_URL = GITHUB_BASE_URL + "/pulls";
 
+#pragma warning restore CA1707 // pls no underscore
+
         // -----------------------------------------------------------------------------
         // Globally scoped variables.
         // -----------------------------------------------------------------------------
@@ -85,10 +88,9 @@ namespace Skymu
         public static List<ICore> ActivePlugins;
         public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
-        public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
-        public static readonly string Theme = Settings.Theme;
+        public static string Theme = Settings.Theme;
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
@@ -230,9 +232,6 @@ namespace Skymu
                                 return;
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
-                        System.Windows.MessageBox.Show(
-                            $"{NAME} is already running.\n\nYou can configure {NAME} to allow running multiple instances at the same time in the Options menu."
-                        );
                         Terminate();
                         return;
                     }
@@ -281,21 +280,21 @@ namespace Skymu
             return "en-US";
         }
 
-        public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null)
+        public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null, bool switchUser = false)
         {
-            if (Theme != "Skype5" && addAccount)
-                throw new NotImplementedException("Using addaccount flag on non-Skype5 themes");
+            if (!addAccount)
+                Theme = Settings.Theme;
             switch (Theme)
             {
                 case "Skype7":
-                    return new Skype7.Login(false);
+                    return new Skype7.Login(switchUser, addAccount, accountAdded);
                 case "Skype6":
-                    return new Skype6.Login(false);
+                    return new Skype6.Login(switchUser, addAccount, accountAdded);
                 case "Skype4":
-                    return new Skype4.Login(false);
+                    return new Skype4.Login(switchUser, addAccount, accountAdded);
                 case "Skype5":
                 default:
-                    return new Skype5.Login(false, addAccount, accountAdded);
+                    return new Skype5.Login(switchUser, addAccount, accountAdded);
             }
         }
 
@@ -481,15 +480,8 @@ namespace Skymu
 
         public static void Terminate()
         {
-            try
-            {
-                Tray.DisposeIcon();
-            }
-            catch { } // in case app is already too dead to clear icon by the time this is called
-            finally
-            {
-                Application.Current.Shutdown();
-            }
+            Cleanup();
+            Application.Current.Shutdown();
         }
 
         public static void ExceptionHandler(Exception ex, string context = null)
@@ -528,8 +520,8 @@ namespace Skymu
         {
             new Dialog(
                 WindowBase.IconType.Information,
-                "Feature not implemented",
                 feature + " hasn't been added to " + Settings.BrandingName + " yet.",
+                "Feature not implemented",
                 brText: "OK"
             ).ShowDialog();
         }
@@ -575,8 +567,7 @@ namespace Skymu
                         break;
                     case "Colorway":
                     case "WindowFrame":
-                    case "Theme":
-                    case "UseSystemCulture":
+                    case "UseSystemCulture": // TODO fix the issue where this appears twice?
                         Dialog dialog = new Dialog(
                                    WindowBase.IconType.Question,
                                    "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
@@ -670,21 +661,27 @@ namespace Skymu
 
         public static void OpenUrl(string url)
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            _ = Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
-        protected override async void OnExit(ExitEventArgs ev)
+        private static async void Cleanup()
         {
             try
             {
-                await UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
+                Tray.DisposeIcon();
+                PluginManager.DisposeAll();
+                await UserCountAPI.CloseWS();
             }
             catch { } // If it doesn't work, too bad.
+        }
+
+        protected override void OnExit(ExitEventArgs ev)
+        {
             if (HasLoggedIn)
             {
-                PluginManager.DisposeAll();
                 SoundManager.PlaySynchronous("LOGOUT");
             }
+            Cleanup(); // If a single thing was not cleaned up, and performs async, this is where the app and debugger dies
             base.OnExit(ev);
         }
     }

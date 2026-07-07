@@ -23,9 +23,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using Yggdrasil;
 
 namespace Skymu.Skype5
 {

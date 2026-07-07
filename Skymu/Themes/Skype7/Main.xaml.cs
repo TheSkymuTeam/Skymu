@@ -111,7 +111,7 @@ namespace Skymu.Skype7
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };

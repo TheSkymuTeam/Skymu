@@ -46,7 +46,9 @@
             Grid.Row="1"
             Margin="0,10,0,0"
             TextWrapping="Wrap"
-            FontSize="10"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="{StaticResource Text.HighContrast}"
             Text="Context" 
             Visibility="Collapsed" />
         <ScrollViewer

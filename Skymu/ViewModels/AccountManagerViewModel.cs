@@ -221,6 +221,7 @@ namespace Skymu.ViewModels
                         entry.Plugin.Dispose();
                     }
                     _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
+                    entry.Plugin = null;
                 }
             }
             catch

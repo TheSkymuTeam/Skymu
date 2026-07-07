@@ -13,7 +13,10 @@ namespace Skymu.Forms.Pages
             InitializeComponent();
             DetailsBox.Text = text;
             if (!string.IsNullOrEmpty(context))
+            {
                 ContextBlock.Text = context;
+                ContextBlock.Visibility = Visibility.Visible;
+            }
         }
 
         public void CopyToClipboard()

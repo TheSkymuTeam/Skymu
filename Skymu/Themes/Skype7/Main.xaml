@@ -133,7 +133,9 @@
         <SolidColorBrush x:Key="Metro.Bubble" Color="#E5F7FD" />-->
 
         <!--  mapped to Skymu's standard theme format  -->
-        <SolidColorBrush x:Key="SkDarkBlue" Color="{Binding Color, Source={DynamicResource Accent}}" />
+        <SolidColorBrush x:Key="SkDarkBlue" Color="{Binding Color, Source={StaticResource Accent}}" />
+        <!--  TODO Colorway this  -->
+        <SolidColorBrush x:Key="SkBlack" Color="#2B2B30" />
 
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Left" />

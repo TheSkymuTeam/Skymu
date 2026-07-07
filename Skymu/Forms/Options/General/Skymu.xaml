@@ -114,7 +114,7 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource Text.MediumContrast}"
-                    Text="(Requires restart)" />
+                    Text="(Requires relogin)" />
             </StackPanel>
 
 

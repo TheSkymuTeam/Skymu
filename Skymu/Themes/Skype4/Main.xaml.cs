@@ -11,7 +11,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Enumerations;
 using Skymu.Formatting;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
@@ -20,10 +19,6 @@ using Skymu.Infrastructure.Main;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Windows;
-using Skymu.ViewModels;
-using Skymu.Windows;
-using Skymu.Forms;
-using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1421,7 +1416,7 @@ namespace Skymu.Skype4
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1504,15 +1499,9 @@ namespace Skymu.Skype4
             vmodel.PluginEnabledChanged += (s, p) =>
             {
                 if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
-                {
                     btnServers.Visibility = Visibility.Collapsed;
-                    ServersColumn.Width = new GridLength(0);
-                }
                 else
-                {
                     btnServers.Visibility = Visibility.Visible;
-                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
-                }
             };
 
             InitializeWindowFrame();

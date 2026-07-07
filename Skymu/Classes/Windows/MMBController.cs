@@ -44,6 +44,7 @@ namespace Skymu.Windows
                 SEP(),
                 MI(L("sMAINMENU_SKYPE_CHANGEPASSWORD")),
                 MI(L("sMAINMENU_SKYPE_SIGN_OUT"), (s, e2) => OnSignOut(null, null)),
+                MI("Manage accounts...", (s, e2) => OnAccountManager(null, null)),
                 MI(L("sMAINMENU_SKYPE_SWITCH_USER"), (s, e2) => OnSwitchUser(null, null)),
                 MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
             );
@@ -151,7 +152,7 @@ namespace Skymu.Windows
 
         #region Event system
 
-        public enum Action { Home, Contacts, Servers, Recents, Call, AddContact }
+        public enum Action { Home, Contacts, Servers, Recents, Call, AddContact, AccountManager }
         public event EventHandler<Action> ActionRequested;
         private void Raise(Action action) => ActionRequested?.Invoke(this, action);
 
@@ -161,6 +162,7 @@ namespace Skymu.Windows
 
         private async void OnStatus(PresenceStatus status) => await Universal.Plugin.SetConnectionStatus(status);
         private void OnSignOut(object sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(false);
+        private void OnAccountManager(object sender, EventArgs e) => Raise(Action.AccountManager);
         private void OnSwitchUser(object sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
         private void OnClose(object sender, EventArgs e) => Universal.Close();
         private void OnAbout(object sender, EventArgs e) => new About().Show();

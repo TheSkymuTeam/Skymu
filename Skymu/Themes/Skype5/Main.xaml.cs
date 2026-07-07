@@ -532,6 +532,8 @@ namespace Skymu.Skype5
             ConversationList.ItemsSource = grouped;
         }
 
+        private static readonly GridLength DYNAMIC_TAB = new GridLength(1, GridUnitType.Star);
+        private static readonly GridLength SMALL_TAB = new GridLength(32);
         private async Task SelectTab(SliceControl tab_to_select)
         {
             if (tab_to_select.Name == "btnServers")
@@ -546,12 +548,9 @@ namespace Skymu.Skype5
                 ConversationList.ItemsSource = null;
             }
 
-            GridLength dynamic = new GridLength(1, GridUnitType.Star);
-            GridLength small = new GridLength(32);
-
             tab_to_select.SetState(ButtonVisualState.Pressed);
             if (Universal.ActivePlugins.Any(e => e.SupportsServers))
-                buttonToColumn[tab_to_select].Width = dynamic;
+                buttonToColumn[tab_to_select].Width = DYNAMIC_TAB;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
@@ -560,8 +559,8 @@ namespace Skymu.Skype5
                 if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                     buttonToColumn[tab].Width =
                         Settings.DynamicSidebarTabs
-                            ? small
-                            : dynamic;
+                            ? SMALL_TAB
+                            : DYNAMIC_TAB;
             }
 
             switch (tab_to_select.Name)
@@ -1442,7 +1441,7 @@ namespace Skymu.Skype5
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1528,15 +1527,19 @@ namespace Skymu.Skype5
 
             vmodel.PluginEnabledChanged += (s, p) =>
             {
-                if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+                bool ss = Universal.ActivePlugins.Any(e => e.SupportsServers);
+                if (!ss || ServersList.Visibility == Visibility.Collapsed)
                 {
-                    btnServers.Visibility = Visibility.Collapsed;
-                    ServersColumn.Width = new GridLength(0);
+                    if (!ss)
+                        btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = !ss
+                        ? new GridLength(0)
+                        : SMALL_TAB;
                 }
                 else
                 {
                     btnServers.Visibility = Visibility.Visible;
-                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
+                    ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
                 }
             };
 

@@ -281,6 +281,8 @@ namespace Skymu.Skype6
             }
         }
 
+        private static readonly GridLength DYNAMIC_TAB = new GridLength(1, GridUnitType.Star);
+        private static readonly GridLength SMALL_TAB = new GridLength(32);
         private async Task SelectTab(SliceControl tab_to_select)
         {
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
@@ -1117,7 +1119,7 @@ namespace Skymu.Skype6
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1196,17 +1198,19 @@ namespace Skymu.Skype6
 
             vmodel.PluginEnabledChanged += (s, p) =>
             {
-                if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+                bool ss = Universal.ActivePlugins.Any(e => e.SupportsServers);
+                if (!ss || ServersList.Visibility == Visibility.Collapsed)
                 {
-                    btnServers.Visibility = Visibility.Collapsed;
-                    ServersColumn.Width = new GridLength(0);
-                    SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
+                    if (!ss)
+                        btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = !ss
+                        ? new GridLength(0)
+                        : SMALL_TAB;
                 }
                 else
                 {
                     btnServers.Visibility = Visibility.Visible;
-                    ServersColumn.Width = new GridLength(1, GridUnitType.Star);
-                    SidebarTabs.ColumnDefinitions[0].MinWidth = 0;
+                    ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
                 }
             };
 
