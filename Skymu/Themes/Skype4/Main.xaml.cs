@@ -1034,17 +1034,8 @@ namespace Skymu.Skype4
 
         private async void InitiateCall(Conversation conversation, bool is_answering_call = false)
         {
-            if (Universal.CallPlugin == null)
+            if (vmodel.CheckCallEligibility(conversation))
                 return;
-
-            var dm = conversation as DirectMessage;
-            if (dm == null)
-            {
-                Universal.ShowMessage("Joining group calls and server voice channels is not supported yet.", "Cannot start call", WindowBase.IconType.GroupCall);
-                return; 
-            }
-
-            User partner = dm.Partner;
 
             if (TWR_ORIGINAL_HEIGHT == default)
                 TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
@@ -1064,14 +1055,14 @@ namespace Skymu.Skype4
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(partner, initial_location, is_answering_call);
+            screen = new CallScreen(conversation, initial_location, is_answering_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
 
-            await screen.StartCall(conversation, false);
+            await screen.StartCall(false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)

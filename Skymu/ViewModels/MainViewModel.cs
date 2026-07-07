@@ -1082,6 +1082,19 @@ namespace Skymu.ViewModels
             }
         }
 
+        public bool CheckCallEligibility(Conversation c)
+        {
+            if (Universal.CallPlugin == null)
+                return false;
+
+            bool e = c is DirectMessage
+                || c is Group
+                || (c is ServerChannel sc && sc.ChannelType == ChannelType.Voice);
+
+            if (!e) Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", WindowBase.IconType.GroupCall);
+            return e;
+        }
+
         /*
         private async Task HandleCall()
         {

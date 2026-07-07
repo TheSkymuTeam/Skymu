@@ -55,14 +55,38 @@ namespace Skymu.Forms
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;
         private Frame _originalFrame;
+        private Conversation _conversation;
 
         public CallScreen(
-            User partner,
+            Conversation conversation,
             CallScreen.LocationChangeEventArgs initial_location,
             bool is_answering_call = false
         )
         {
             InitializeComponent();
+            _conversation = conversation;
+            byte[] partner_avatar;
+
+            if (_conversation is DirectMessage dm)
+            {
+                partner_avatar = dm.Partner.Avatar;
+                PartnerDisplayName.Text = dm.Partner.DisplayName;
+            }
+            else if (_conversation is Group group)
+            {
+                partner_avatar = group.Avatar;
+                PartnerDisplayName.Text = string.Format("{0} ({1} members)", group.DisplayName, group.Members.Length);
+            }
+            else if (conversation is ServerChannel channel && channel.ChannelType == ChannelType.Voice)
+            {
+                is_answering_call = true;
+                partner_avatar = null; // take care of this 
+                PartnerDisplayName.Text = string.Format("{0} (voice channel)", channel.DisplayName);
+            }
+            else
+            {
+                return;
+            }
 
             if (Universal.CurrentUser.Avatar != null)
                 MyAvatar.Source = ImageHelper.GenerateFromArray(
@@ -70,15 +94,14 @@ namespace Skymu.Forms
                 );
             else
                 MyAvatar.Source = Universal.AnonymousAvatar;
-            if (partner.Avatar != null)
-                PartnerAvatar.Source = ImageHelper.GenerateFromArray(partner.Avatar);
+            if (partner_avatar != null)
+                PartnerAvatar.Source = ImageHelper.GenerateFromArray(partner_avatar);
             else
                 PartnerAvatar.Source = Universal.AnonymousAvatar;
 
             _is_answer = is_answering_call;
             if (_is_answer)
                 CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];
-            PartnerDisplayName.Text = partner.DisplayName;
             isMuted = true;
 
             string prefix = "Universal/"; // TODO make less repetitive
@@ -116,12 +139,12 @@ namespace Skymu.Forms
 
         private CancellationTokenSource _ringCts;
 
-        public async Task StartCall(Conversation conversation, bool is_video)
+        public async Task StartCall(bool is_video)
         {
             Universal.CallPlugin.CallStateChangedTube += OnCallStateChanged;
             _call = new ActiveCall(
                 "INIT",
-                conversation.Identifier,
+                _conversation.Identifier,
                 is_video,
                 new User[] { Universal.CurrentUser }
             );
@@ -141,7 +164,7 @@ namespace Skymu.Forms
             });
 
             ActiveCall call = await Universal.CallPlugin.StartCall(
-                conversation.Identifier,
+                _conversation.Identifier,
                 is_video,
                 true
             );
