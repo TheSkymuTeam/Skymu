@@ -12,13 +12,13 @@
 *.env
 
 # installer
-NSIS/*.exe
+/NSIS/*.exe
 
 # BDN artifacts
 BenchmarkDotNet.Artifacts/
 
 # debug config
-Skymu/DebugConfig.cs
+/Skymu/DebugConfig.cs
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -49,6 +49,8 @@ bld/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
+# And Rider...
+.idea/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 

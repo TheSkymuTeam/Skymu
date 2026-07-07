@@ -97,9 +97,10 @@
                                 Margin="4,-1,4,2"
                                 Background="#ffffff"
                                 BackgroundPressed="{DynamicResource Settings.ActiveTab}"
-                                Interactive="False"
                                 IsRadioButton="True"
+                                MouseLeftButtonDown="TabSelect"
                                 PressedOffsetY="0"
+                                Tag="{Binding RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
                                 Text="{TemplateBinding Text}"
                                 TextColor="{DynamicResource Text.MediumContrast}"
                                 TextFont="Tahoma"
@@ -127,6 +128,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="0,0,3,0">
+                <!--  TODO: only use SidebarItmeContainer or SidebarHeader  -->
                 <global:SliceControl
                     x:Name="HGeneral"
                     ButtonStateOnInit="Pressed"

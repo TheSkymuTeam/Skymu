@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using System.IO;
 
 namespace Skymu.ViewModels
 {
@@ -76,7 +77,16 @@ namespace Skymu.ViewModels
         public void LoadPlugins()
         {
             PluginManager.DisposeAll();
-            Universal.PluginList = PluginManager.Load(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins"));
+
+            string runpath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins");
+#if DEBUG
+            Universal.PluginList = PluginManager.Load(String.IsNullOrWhiteSpace(Settings.CustomPluginPath)
+                ? runpath
+                : Settings.CustomPluginPath
+            );
+#else
+            Universal.PluginList = PluginManager.Load(runpath);
+#endif
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
             SavedCredentials = savedCredentials;
@@ -93,7 +103,7 @@ namespace Skymu.ViewModels
                 }
 #endif
 
-                SavedCredential match = null;
+            SavedCredential match = null;
                 foreach (SavedCredential cred in savedCredentials)
                 {
                     if (cred.Plugin == plugin.InternalName)

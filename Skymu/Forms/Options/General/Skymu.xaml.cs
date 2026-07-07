@@ -25,9 +25,6 @@ namespace Skymu.Forms.OptionPages.General
         {
             InitializeComponent();
             LoadVisualSettings();
-#if DEBUG
-CredDebugSepCB.Visibility = Visibility.Visible;
-#endif
         }
 
         private void LoadVisualSettings()

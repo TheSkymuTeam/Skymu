@@ -36,7 +36,6 @@
 
     <Page.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
-
     </Page.Resources>
 
     <Grid Margin="15,20,15,35">
@@ -47,8 +46,36 @@
         <StackPanel Orientation="Vertical">
             <CheckBox
                 Margin="0,5"
-                Content="Separate credentials when Skymu is built as debug"
+                Content="Separate credentials between debug and release build"
                 IsChecked="{Binding Path=[SeparateCredentialsForDebug], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+            <Grid Margin="0,5" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Absolute path to load plugins from"
+                    VerticalAlignment="Center" />
+                <TextBox
+                    x:Name="PluginPathBox"
+                    Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Text="{Binding Path=[CustomPluginPath], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+                <Button
+                    Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Padding="10,0"
+                    Click="PluginPathBrowseClick"
+                    Content="Browse..." />
+            </Grid>
+            <TextBlock
+                Margin="0,-5"
+                Grid.Column="0"
+                Foreground="{StaticResource Text.MediumContrast}"
+                Text="Hint: Set it to (Skymu source)\Plugins\bin to ease plugin development"
+                VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel

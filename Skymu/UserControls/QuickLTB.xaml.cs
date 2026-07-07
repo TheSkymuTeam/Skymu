@@ -16,7 +16,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Windows.Media;
 
 namespace Skymu.UserControls
 {
@@ -33,7 +32,7 @@ namespace Skymu.UserControls
                nameof(Key),
                typeof(string),
                typeof(QuickLTB),
-               new PropertyMetadata("", OnAnyChange)
+               new PropertyMetadata("", OnKeyChange)
            );
 
         public ObservableCollection<BindingBase> Bindings { get; } =
@@ -46,7 +45,7 @@ namespace Skymu.UserControls
             Bindings.CollectionChanged += (_, __) => UpdateBinding();
         }
 
-        public static void OnAnyChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static void OnKeyChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is QuickLTB qltb)
                 qltb.UpdateBinding();
@@ -62,14 +61,10 @@ namespace Skymu.UserControls
             };
 
             if (Bindings != null)
-            {
                 foreach (var binding in Bindings)
-                {
                     multiBinding.Bindings.Add(binding);
-                }
-            }
 
-            ContentCtrl.SetBinding(ContentControl.ContentProperty, multiBinding);
+            ContentCtrl.SetBinding(ContentProperty, multiBinding);
         }
     }
 }

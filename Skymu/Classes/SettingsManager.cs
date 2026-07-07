@@ -139,6 +139,15 @@ namespace Skymu.Preferences
             get => SELECT("SeparateCredentialsForDebug", false, "UI/General");
             set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug), "UI/General");
         }
+
+        /// <summary>
+        /// Has to be an absolute path.
+        /// </summary>
+        public static string CustomPluginPath
+        {
+            get => SELECT("CustomPluginPath", String.Empty, "UI/General");
+            set => WRITE("CustomPluginPath", value, nameof(CustomPluginPath), "UI/General");
+        }
         public static bool EnableNotifications
         {
             get => SELECT("EnableNotifications", true, "UI/General");

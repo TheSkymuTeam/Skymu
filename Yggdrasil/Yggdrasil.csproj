@@ -16,9 +16,4 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="Networking\cacert.pem" />
 	</ItemGroup>
-	<ItemGroup>
-	  <None Update="libcurl-x64.dll">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 </Project>

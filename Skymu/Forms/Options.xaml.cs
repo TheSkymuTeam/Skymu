@@ -29,8 +29,6 @@ namespace Skymu.Forms
         readonly Dictionary<SliceControl, Func<Page>> tabDispenser;
         readonly Dictionary<SliceControl, string> tabToText;
 
-        SliceControl currentCategory;
-
         public Options()
         {
             InitializeComponent();
@@ -39,8 +37,6 @@ namespace Skymu.Forms
             if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6") background_color = "Metro.Background";
             else background_color = "Background";
             Background = (SolidColorBrush)Application.Current.Resources[background_color];
-
-            currentCategory = HGeneral;
 
             catToGrid = new Dictionary<SliceControl, Grid>
             {
@@ -85,7 +81,7 @@ namespace Skymu.Forms
                 { Advanced_Hotkeys, "sF_OPTIONS_LBC_HOTKEYS" },
                 {
                     Advanced_Debug,
-                    "<b>Debug options:</b> Options that only appears on \"Debug\" build variant"
+                    "<b>Debug options:</b> Options that only appears and works on \"Debug\" build variant"
                 },
             };
 
@@ -108,7 +104,6 @@ namespace Skymu.Forms
         private void CatSelect(object sender, MouseButtonEventArgs e)
         {
             var sc = (SliceControl)sender;
-            currentCategory = sc;
             foreach (var cat in catToGrid)
             {
                 if (ReferenceEquals(cat.Key, sc))
@@ -131,17 +126,20 @@ namespace Skymu.Forms
         private void TabSelect(object sender, MouseButtonEventArgs e)
         {
             var sc = (SliceControl)sender;
+            // In case the inner slice is clicked, we want to get the parent SliceControl, which is the actual tab.
+            if (((SliceControl)sc.Template.FindName("InnerSlice", sc)) == null)
+                sc = sc.Tag as SliceControl;
             foreach (SliceControl tab in (sc.Parent as StackPanel).Children)
             {
                 if (ReferenceEquals(tab, sc))
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                ((SliceControl)tab.Template.FindName("InnerSlice", tab))?.SetState(
+                ((SliceControl)tab.Template.FindName("InnerSlice", tab)).SetState(
                     ButtonVisualState.Default
                 );
             }
             sc.SetState(ButtonVisualState.Pressed);
-            ((SliceControl)sc.Template.FindName("InnerSlice", sc))?.SetState(
+            ((SliceControl)sc.Template.FindName("InnerSlice", sc)).SetState(
                 ButtonVisualState.Pressed
             );
 

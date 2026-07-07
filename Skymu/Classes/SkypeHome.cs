@@ -39,6 +39,7 @@ namespace Skymu
 
         public static async Task<bool> Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
         {
+            browser.Visibility = Visibility.Collapsed;
             _browser = browser;
             _user = user;
             _contacts = contacts;
@@ -58,7 +59,7 @@ namespace Skymu
                 using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Internet Explorer"))
                 {
                     string k = (string)key.GetValue("Version");
-                    ie9 = k != null ? int.Parse(k.Substring(0, 1)) >= 2 : false;
+                    ie9 = k != null && int.Parse(k.Substring(0, 1)) >= 2;
                 }
             }
             catch
@@ -110,6 +111,7 @@ namespace Skymu
             System.Windows.Navigation.NavigationEventArgs e
         )
         {
+            _browser.Visibility = Visibility.Visible;
             (_browser.ObjectForScripting as SkypeExternalObject)
                 ?.GetAPI()
                 ?.FireShowingChanged(true);

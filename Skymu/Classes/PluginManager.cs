@@ -76,7 +76,7 @@ namespace Skymu.Plugins
             {
                 Universal.ExceptionHandler(
                     new Exception(
-                        "No plugins detected in the plugin folder. You are most likely getting this error because you extracted the .7z archive with Windows Explorer. Use 7-Zip instead."
+                        "No plugins detected in the plugin folder."
                     )
                 );
             }
