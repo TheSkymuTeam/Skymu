@@ -61,8 +61,8 @@ namespace Fluxer
             {
                 return new[]
                 {
-                    new AuthTypeInfo(AuthenticationMethod.Password),
-                    new AuthTypeInfo(AuthenticationMethod.Token)
+                    new AuthTypeInfo(AuthenticationMethod.Password, "Email"),
+                    new AuthTypeInfo(AuthenticationMethod.Token, "Token")
                 };
             }
         }
@@ -128,6 +128,8 @@ namespace Fluxer
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Choice, "Fluxer support in Skymu is highly experimental. " +
+                "We make no guarantees toward any functionality in this plugin. It might not even log in.\n\nWould you still like to continue?"));
             FluxerToken = credential.PasswordOrToken;
             if (string.IsNullOrWhiteSpace(FluxerToken))
             {
@@ -139,8 +141,6 @@ namespace Fluxer
 
         public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
         {
-            DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Fluxer support in Skymu is highly experimental. " +
-            "We make no guarantees regarding any functionality in this plugin. It might not even log in.\n\nYou have been warned."));
             if (authType == AuthenticationMethod.Token) FluxerToken = username;
             else if (authType == AuthenticationMethod.Password)
             {

@@ -7,7 +7,7 @@
 // If you do not comply with those terms, you may not
 // modify or distribute any original code from the project.
 /*==========================================================*/
-// License: https://skymu.app/legal/license
+// License: https://skymu.app/license
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
