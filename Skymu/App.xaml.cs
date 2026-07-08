@@ -12,12 +12,11 @@
 /*==========================================================*/
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -157,10 +156,10 @@ namespace Skymu
                             delegate
                             {
                                 Dialog dialog = new Dialog(
-                                    WindowBase.IconType.Information,
-                                    e.Message,
-                                    ((ICore)sender).Name + " requests your choice",
-                                    Lang["sF_CONFIRM_NO_BTN"],
+                                    type: WindowBase.IconType.Information,
+                                    content: e.Message,
+                                    header: ((ICore)sender).Name + " requests your choice",
+                                    brText: Lang["sF_CONFIRM_NO_BTN"],
                                     blEnabled: true,
                                     blText: Lang["sF_CONFIRM_YES"]
                                 );
@@ -196,7 +195,7 @@ namespace Skymu
 
         static Universal()
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()) && !Settings.AllowMultipleInstances)
+            if (!Settings.AllowMultipleInstances)
             {
                 try
                 {
@@ -218,8 +217,6 @@ namespace Skymu
                             {
                                 var uri = arg.Substring(5 + 6);
                                 WriteToPipe("URI:" + uri);
-                                Terminate();
-                                return;
                             }
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
@@ -229,7 +226,6 @@ namespace Skymu
                         Terminate();
                         return;
                     }
-                    // TODO: URI handling on launch
                 }
                 catch
                 {
@@ -311,7 +307,7 @@ namespace Skymu
 
                     string msg = reader.ReadLine();
 
-                    if (msg == "WINDOW_ACTIVATE" || msg.StartsWith("URI:"))
+                    if (msg == "WINDOW_ACTIVATE")
                         Dispatcher.Invoke(() =>
                         {
                             if (MainWindow.WindowState == WindowState.Minimized)
@@ -319,7 +315,7 @@ namespace Skymu
                             MainWindow.Show();
                             MainWindow.Activate();
                         });
-                    if (msg.StartsWith("URI:"))
+                    else if (msg.StartsWith("URI:"))
                     {
                         msg = msg.Substring(msg.IndexOf(":") + 1);
                         Debug.WriteLine($"[Universal] Got skymu URI: {msg}");
@@ -350,7 +346,6 @@ namespace Skymu
                 if (ActiveViewModel != null)
                 {
                     Conversation found = null;
-                    // TOOD: This might be inaccurate?
                     foreach (var c in ActiveViewModel.ConversationList)
                         if ((c is DirectMessage u) && u.Partner.Username == skypename)
                         {
@@ -365,15 +360,7 @@ namespace Skymu
                                 break;
                             }
                     if (found != null)
-                        Current.Dispatcher.Invoke(() =>
-                        {
-                            ActiveViewModel.SelectConversation(found);
-                            if (Current.MainWindow.WindowState == WindowState.Minimized)
-                                Current.MainWindow.WindowState = WindowState.Normal;
-                            Current.MainWindow.Show();
-                            Current.MainWindow.Activate();
-                        });
-
+                        Current.Dispatcher.Invoke(() => ActiveViewModel.SelectConversation(found));
                 }
             }
         }
@@ -449,10 +436,18 @@ namespace Skymu
                     Lang["sQUIT_PROMPT"],
                     Lang["sQUIT_PROMPT_CAP"],
                     Lang["sQUIT_PROMPT_TITLE"],
-                    brText: Lang["sZAPBUTTON_CANCEL"],
-                    blEnabled: true,
-                    blText: Lang["sF_CONFIRM_QUIT"],
-                    cbEnabled: donotask
+                    null,
+                    Lang["sZAPBUTTON_CANCEL"],
+                    true,
+                    null,
+                    Lang["sF_CONFIRM_QUIT"],
+                    false,
+                    null,
+                    null,
+                    false,
+                    null,
+                    null,
+                    donotask
                 );
                 dialog.BLAction = () =>
                 {
@@ -492,7 +487,7 @@ namespace Skymu
                 Title = brand + " Error"
             };
             frame.ButtonRightAction = () => frame.Close();
-            frame.ButtonRightText = Lang["sZAPBUTTON_CLOSE"];
+            frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
             frame.ButtonLeftAction = () => page.CopyToClipboard();
             frame.ButtonLeftText = "Copy to clipboard";
             frame.ShowDialog();
@@ -509,7 +504,9 @@ namespace Skymu
                 icon,
                 content,
                 title,
-                Lang["sF_CONFIRM_OK_BTN"]
+                null,
+                null,
+                Universal.Lang["sF_CONFIRM_OK_BTN"]
             ).ShowDialog();
         }
 
@@ -517,8 +514,10 @@ namespace Skymu
         {
             new Dialog(
                 WindowBase.IconType.Information,
-                "Feature not implemented",
                 feature + " hasn't been added to " + Settings.BrandingName + " yet.",
+                "Feature not implemented",
+                null,
+                null,
                 "OK"
             ).ShowDialog();
         }
@@ -531,7 +530,8 @@ namespace Skymu
 
                 pipe.Connect(1000);
 
-                var writer = new StreamWriter(pipe) { AutoFlush = true };
+                var writer = new StreamWriter(pipe);
+                writer.AutoFlush = true;
 
                 writer.WriteLine(data);
 
@@ -567,9 +567,9 @@ namespace Skymu
                     case "Theme":
                     case "UseSystemCulture":
                         Dialog dialog = new Dialog(
-                                   WindowBase.IconType.Question,
-                                   "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
-                                   "Restart " + Settings.BrandingName + "?",
+                                   type: WindowBase.IconType.Question,
+                                   content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
+                                   header: "Restart " + Settings.BrandingName + "?",
                                    brText: Lang["sF_CONFIRM_NO_BTN"],
                                    blEnabled: true,
                                    blText: Lang["sF_CONFIRM_YES"]

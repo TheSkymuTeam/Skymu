@@ -1030,6 +1030,18 @@ SanitizeFolderName(user.Identifier)
                         UNIQUE(convo_id, identity)
                     );
 
+                    CREATE TABLE IF NOT EXISTS Servers (
+                        id                                      INTEGER NOT NULL PRIMARY KEY,
+                        identity                                TEXT UNIQUE,
+                        name                                    TEXT,
+                        folder_id                               TEXT,
+                        icon                                    BLOB,
+                        banner                                  BLOB,
+                        description                             TEXT,
+                        join_url                                TEXT,
+                        member_count                            INTEGER
+                    );
+
                     CREATE TABLE IF NOT EXISTS SMSes (
                         id                          INTEGER NOT NULL PRIMARY KEY,
                         is_permanent                INTEGER,
@@ -1503,7 +1515,7 @@ SanitizeFolderName(user.Identifier)
                 return result.ToArray();
             }
 
-            public Conversation Read(string skymuConvoId) // JUMP conversation read one
+            public Conversation Read(string skymu_conversation_id) // JUMP conversation read one
             {
                 _db.BuildContactMap();
 
@@ -1524,7 +1536,7 @@ SanitizeFolderName(user.Identifier)
                                    last_activity_timestamp, unconsumed_normal_messages
                             FROM Conversations WHERE conversation_id = @conversation_id LIMIT 1;";
                         cmd.Parameters.Add("@conversation_id", SqliteType.Text).Value =
-                            ConvertIdentifier(skymuConvoId);
+                            ConvertIdentifier(skymu_conversation_id);
 
                         using (SqliteDataReader reader = cmd.ExecuteReader())
                         {
@@ -1559,9 +1571,9 @@ SanitizeFolderName(user.Identifier)
                     }
 
                     return type == 1
-                        ? BuildDM(skymuConvoId, dlgPartner, unread, lastTime, _db._contactMap)
+                        ? BuildDM(skymu_conversation_id, dlgPartner, unread, lastTime, _db._contactMap)
                         : (Conversation)BuildGroup(
-                            skymuConvoId,
+                            skymu_conversation_id,
                             displayName,
                             unread,
                             lastTime,

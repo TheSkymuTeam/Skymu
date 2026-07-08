@@ -2259,7 +2259,7 @@
                                                                     Margin="11,0,0,0"
                                                                     FontFamily="Tahoma"
                                                                     FontSize="11"
-                                                                    Text="{Binding Channels.Length, StringFormat='{}Server - {0} channels'}"
+                                                                    Text="{Binding Channels.Count, StringFormat='{}Server - {0} channels'}"
                                                                     TextTrimming="CharacterEllipsis" />
                                                             </StackPanel>
                                                         </StackPanel>

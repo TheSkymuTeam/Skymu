@@ -139,15 +139,6 @@ namespace Skymu.Preferences
             get => SELECT("SeparateCredentialsForDebug", false, "UI/General");
             set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug), "UI/General");
         }
-
-        /// <summary>
-        /// Has to be an absolute path.
-        /// </summary>
-        public static string CustomPluginPath
-        {
-            get => SELECT("CustomPluginPath", String.Empty, "UI/General");
-            set => WRITE("CustomPluginPath", value, nameof(CustomPluginPath), "UI/General");
-        }
         public static bool EnableNotifications
         {
             get => SELECT("EnableNotifications", true, "UI/General");
@@ -299,6 +290,16 @@ namespace Skymu.Preferences
 
         #endregion
 
+        #region Skymu/Plugins
+
+        public static string CustomPluginPath
+        {
+            get => SELECT("CustomPluginPath", string.Empty, "Skymu/Plugins");
+            set => WRITE("CustomPluginPath", value, nameof(CustomPluginPath), "Skymu/Plugins");
+        }
+
+        #endregion
+
         #region Skymu/Server
 
         /// <summary>
@@ -354,7 +355,7 @@ namespace Skymu.Preferences
 
         #endregion
 
-        #region Custom
+        #region Registry
 
         /// <summary>
         /// If FALSE Skymu will not start when the computer starts.

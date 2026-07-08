@@ -296,10 +296,9 @@ namespace Yggdrasil.Models
             ChannelType channel_type,
             string category_id = null,
             int position = 0,
-            string description = null,
-            DateTime? last_message_time = null
+            string description = null
         )
-            : base(name, identifier, unread_count, null, last_message_time)
+            : base(name, identifier, unread_count, null)
         {
             ParentServerID = parent_server_id;
             Description = description;

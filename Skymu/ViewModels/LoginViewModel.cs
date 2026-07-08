@@ -80,7 +80,7 @@ namespace Skymu.ViewModels
 
             string runpath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins");
 #if DEBUG
-            Universal.PluginList = PluginManager.Load(String.IsNullOrWhiteSpace(Settings.CustomPluginPath)
+            Universal.PluginList = PluginManager.Load(string.IsNullOrWhiteSpace(Settings.CustomPluginPath)
                 ? runpath
                 : Settings.CustomPluginPath
             );

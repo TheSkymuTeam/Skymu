@@ -1091,7 +1091,8 @@ namespace Skymu.ViewModels
                 || c is Group
                 || (c is ServerChannel sc && sc.ChannelType == ChannelType.Voice);
 
-            if (!e) Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", WindowBase.IconType.GroupCall);
+            if (!e)
+                Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", WindowBase.IconType.GroupCall);
             return e;
         }
 

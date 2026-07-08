@@ -142,26 +142,31 @@ namespace Skymu.Skype5
         {
             if (vmodel.SelectedConversation is Group)
             {
-                VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.IsEnabled = false;
-                CallDropdown.IsEnabled = false;
+                VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
                 CallDropdown.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
-            else if (vmodel.SelectedConversation is ServerChannel)
+            else if (vmodel.SelectedConversation is ServerChannel s)
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.Visibility = Visibility.Collapsed;
-                CallDropdown.Visibility = Visibility.Collapsed;
+                if (s.ChannelType == ChannelType.Voice)
+                {
+                    CallButton.Visibility = Visibility.Visible;
+                    CallDropdown.Visibility = Visibility.Visible;
+                    CallButton.Text = "Join voice channel";
+                }
+                else
+                {
+                    CallButton.Visibility = Visibility.Collapsed;
+                    CallDropdown.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
                 CallDropdown.Visibility = Visibility.Visible;
-                CallButton.IsEnabled = true;
-                CallDropdown.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -1072,7 +1077,7 @@ namespace Skymu.Skype5
 
         private async void InitiateCall(Conversation conversation, bool is_answering_call = false)
         {
-            if (vmodel.CheckCallEligibility(conversation))
+            if (!vmodel.CheckCallEligibility(conversation))
                 return;
 
             CallScreen.LocationChangeEventArgs initial_location =

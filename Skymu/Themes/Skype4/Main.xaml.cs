@@ -136,21 +136,27 @@ namespace Skymu.Skype4
         {
             if (vmodel.SelectedConversation is Group)
             {
-                VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.IsEnabled = false;
+                VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
-            else if (vmodel.SelectedConversation is ServerChannel)
+            else if (vmodel.SelectedConversation is ServerChannel s)
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.Visibility = Visibility.Collapsed;
+                if (s.ChannelType == ChannelType.Voice)
+                {
+                    CallButton.Visibility = Visibility.Visible;
+                    CallButton.Text = "Join voice channel";
+                }
+                else
+                {
+                    CallButton.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
-                CallButton.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -1034,7 +1040,7 @@ namespace Skymu.Skype4
 
         private async void InitiateCall(Conversation conversation, bool is_answering_call = false)
         {
-            if (vmodel.CheckCallEligibility(conversation))
+            if (!vmodel.CheckCallEligibility(conversation))
                 return;
 
             if (TWR_ORIGINAL_HEIGHT == default)
