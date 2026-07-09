@@ -349,8 +349,10 @@ namespace Skymu.ViewModels
         {
             List<Server> servers = new List<Server>();
             foreach (var p in Universal.ActivePlugins)
+            {
                 servers.AddRange(await p.FetchServers());
-            //_database?.Servers.Write(servers); // TODO add servers to database
+                _database?.Servers.Write(servers);
+            }
             ServerList = new ObservableCollection<Server>(servers);
             _serversLoadedSource.TrySetResult(true);
         }
@@ -1115,7 +1117,7 @@ namespace Skymu.ViewModels
 
         public async Task RunSpeedTest()
         {
-            const string TEST_URL = "https://speed.cloudflare.com/__down?bytes=10485760";
+            const string TEST_URL = "https://speed.cloudflare.com/__down?bytes=3485760";
             const string PREFIX = "network-";
 
             var cts = new CancellationTokenSource();
@@ -1147,16 +1149,11 @@ namespace Skymu.ViewModels
                 var data = await Universal.SkymuHttpClient.GetByteArrayAsync(TEST_URL);
                 sw.Stop();
                 double mbps = data.Length * 8.0 / 1_000_000 / sw.Elapsed.TotalSeconds;
-                if (mbps >= 50)
-                    final += "5";
-                else if (mbps >= 20)
-                    final += "4";
-                else if (mbps >= 10)
-                    final += "3";
-                else if (mbps >= 5)
-                    final += "2";
-                else
-                    final += "1";
+                final += mbps >= 50 ? "5"
+                       : mbps >= 20 ? "4"
+                       : mbps >= 10 ? "3"
+                       : mbps >= 5 ? "2"
+                       : "1";
             }
             catch
             {
@@ -1189,6 +1186,20 @@ namespace Skymu.ViewModels
                 await Task.Run(() => SoundManager.PlaySynchronous("CALL_INIT"));
                 SoundManager.PlayLoop("CALL_IN");
             }
+        }
+
+        public bool CheckCallEligibility(Conversation c)
+        {
+            if (Universal.CallPlugin == null)
+                return false;
+
+            bool e = c is DirectMessage
+                || c is Group
+                || (c is ServerChannel sc && sc.ChannelType == ChannelType.Voice);
+
+            if (!e)
+                Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", WindowBase.IconType.GroupCall);
+            return e;
         }
 
         /*

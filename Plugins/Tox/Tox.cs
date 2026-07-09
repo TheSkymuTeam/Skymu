@@ -47,8 +47,8 @@ namespace Tox
         public bool SupportsVideoCalls => false;
         public AuthTypeInfo[] AuthenticationTypes => new[]
         {
-            new AuthTypeInfo(AuthenticationMethod.Password, "Profile name", "encrypted save"),
-            new AuthTypeInfo(AuthenticationMethod.Token, "Profile name", "unencrypted save")
+            new AuthTypeInfo(AuthenticationMethod.Password, "Profile name", "Encrypted save"),
+            new AuthTypeInfo(AuthenticationMethod.Token, "Profile name", "Unencrypted save")
         };
         public ObservableCollection<ExtraConfiguration> ExtraConfigurations => new ObservableCollection<ExtraConfiguration>()
         {

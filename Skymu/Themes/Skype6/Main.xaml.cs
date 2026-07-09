@@ -115,25 +115,31 @@ namespace Skymu.Skype6
         {
             if (vmodel.SelectedConversation is Group)
             {
-                VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.IsEnabled = false;
-                CallDropdown.IsEnabled = false;
+                VideoCallButton.Visibility = Visibility.Visible;
+                CallButton.Visibility = Visibility.Visible;
                 CallDropdown.Visibility = Visibility.Visible;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
-            else if (vmodel.SelectedConversation is ServerChannel)
+            else if (vmodel.SelectedConversation is ServerChannel s)
             {
                 VideoCallButton.Visibility = Visibility.Collapsed;
-                CallButton.Visibility = Visibility.Collapsed;
-                CallDropdown.Visibility = Visibility.Collapsed;
+                if (s.ChannelType == ChannelType.Voice)
+                {
+                    CallButton.Visibility = Visibility.Visible;
+                    CallDropdown.Visibility = Visibility.Visible;
+                    CallButton.Text = "Join voice channel";
+                }
+                else
+                {
+                    CallButton.Visibility = Visibility.Collapsed;
+                    CallDropdown.Visibility = Visibility.Collapsed;
+                }
             }
             else
             {
                 VideoCallButton.Visibility = Visibility.Visible;
                 CallButton.Visibility = Visibility.Visible;
                 CallDropdown.Visibility = Visibility.Visible;
-                CallButton.IsEnabled = true;
-                CallDropdown.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -729,7 +735,7 @@ namespace Skymu.Skype6
 
         private void CallButtonClick(object sender, MouseButtonEventArgs e)
         {
-            StartCall(vmodel.SelectedConversation.Core as ICall);
+            InitiateCall(vmodel.SelectedConversation);
         }
 
         private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
@@ -747,20 +753,11 @@ namespace Skymu.Skype6
         private CallScreen.LocationChangeEventArgs initial_location =
             new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
-        private async void StartCall(ICall callPlugin, Conversation conversation = null, User partner = null)
+        private async void InitiateCall(Conversation conversation, bool is_answering_call = false)
         {
-            bool answer_call = true;
+            if (!vmodel.CheckCallEligibility(conversation))
+                return;
 
-            if (conversation == null)
-            {
-                conversation = vmodel.SelectedConversation as DirectMessage;
-                if (conversation == null)
-                    return; // group calls not supported yet
-                partner = ((DirectMessage)conversation).Partner;
-                answer_call = false;
-            }
-            if (partner == null)
-                partner = ((DirectMessage)conversation).Partner;
             CallScreen.LocationChangeEventArgs initial_location =
                 new CallScreen.LocationChangeEventArgs(Settings.HideLeftHandSide != true, false);
 
@@ -782,14 +779,14 @@ namespace Skymu.Skype6
             TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
-            screen = new CallScreen(callPlugin, partner, initial_location, answer_call);
+            screen = new CallScreen(conversation, initial_location, is_answering_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
             frame = new Frame();
             frame.Navigate(screen);
             SetCallPageLocation(initial_location);
 
-            await screen.StartCall(conversation, false);
+            await screen.StartCall(false);
         }
 
         private void OnLocationChanged(object sender, CallScreen.LocationChangeEventArgs e)
@@ -1247,8 +1244,6 @@ namespace Skymu.Skype6
             // seanFinx Crazy Hack
             btnContacts.OverlayText.TextTrimming = TextTrimming.None;
             btnRecents.OverlayText.TextTrimming = TextTrimming.None;
-
-            //HomeUnavailable.Navigate(new HomeUnavailable());
 
             SourceInitialized += (s, e) =>
             {

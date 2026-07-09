@@ -22,6 +22,7 @@ namespace Yggdrasil.Models
     public abstract class Metadata : INotifyPropertyChanged
     {
         private string _displayName;
+        private string _description;
         private byte[] _avatar;
 
         public ICore Core { get; set; }
@@ -39,12 +40,19 @@ namespace Yggdrasil.Models
             set => Set(ref _avatar, value, nameof(Avatar));
         }
 
-        protected Metadata(ICore core, string displayName, string identifier, byte[] avatar = null)
+        public string Description
+        {
+            get => _description;
+            set => Set(ref _description, value, nameof(Description));
+        }
+
+        protected Metadata(ICore core, string displayName, string identifier, byte[] avatar = null, string description = null)
         {
             Core = core;
             _displayName = displayName;
             Identifier = identifier;
             _avatar = avatar;
+            _description = description;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -168,9 +176,10 @@ namespace Yggdrasil.Models
             string identifier,
             int unread_count,
             byte[] profile_picture = null,
-            DateTime? last_message_time = null
+            DateTime? last_message_time = null,
+            string description = null
         )
-            : base(core, display_name, identifier, profile_picture)
+            : base(core, display_name, identifier, profile_picture, description)
         {
             _unreadCount = unread_count;
             _lastMessageTime = last_message_time ?? DateTime.Now;
@@ -250,6 +259,8 @@ namespace Yggdrasil.Models
         private List<ServerChannel> _channels;
         private ObservableCollection<object> _groupedChannels;
         private int _memberCount;
+        private int _position;
+        private string _invite;
 
         public List<ServerMember> Members
         {
@@ -281,6 +292,18 @@ namespace Yggdrasil.Models
             set => Set(ref _memberCount, value, nameof(MemberCount));
         }
 
+        public int Position
+        {
+            get => _position;
+            set => Set(ref _position, value, nameof(Position));
+        }
+
+        public string Invite
+        {
+            get => _invite;
+            set => Set(ref _invite, value, nameof(Invite));
+        }
+
         public Dictionary<string, string> CategoryMap { get; set; }
 
         public Server(
@@ -292,9 +315,12 @@ namespace Yggdrasil.Models
             List<ServerChannel> channels,
             byte[] profile_picture = null,
             Dictionary<string, string> category_map = null,
-            int member_count = 0
+            int member_count = 0,
+            string description = null,
+            int position = 0,
+            string invite = null
         )
-            : base(core, name, identifier, profile_picture)
+            : base(core, name, identifier, profile_picture, description)
         {
             _members = members;
             _roles = roles;
@@ -302,13 +328,14 @@ namespace Yggdrasil.Models
             CategoryMap = category_map ?? new Dictionary<string, string>();
             _groupedChannels = new ObservableCollection<object>();
             _memberCount = member_count == 0 && members != null ? members.Count : member_count;
+            _invite = invite;
+            _position = position;
         }
     }
 
     public class ServerChannel : Conversation
     {
         public string ParentServerID { get; }
-        public string Description { get; }
         public ChannelType ChannelType { get; }
         public string CategoryID { get; }
         public int Position { get; }
@@ -322,10 +349,9 @@ namespace Yggdrasil.Models
             ChannelType channel_type,
             string category_id = null,
             int position = 0,
-            string description = null,
-            DateTime? last_message_time = null
+            string description = null
         )
-            : base(core, name, identifier, unread_count, null, last_message_time)
+            : base(core, name, identifier, unread_count, null, last_message_time, description)
         {
             ParentServerID = parent_server_id;
             Description = description;

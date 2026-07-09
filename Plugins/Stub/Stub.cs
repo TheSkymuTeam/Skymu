@@ -167,7 +167,7 @@ namespace Stub
                     user = group.Members[0];
                 else
                     return Task.FromResult(false);
-                IncomingCallTube?.Invoke(this, new CallBottle("TotallyRandomIncomingCall", CallState.Ringing, user));
+                IncomingCallTube?.Invoke(this, new CallBottle(new DirectMessage(user, 0, "TotallyRandomIncomingCall"), CallState.Ringing));
                 return Task.FromResult(true);
             }
             if (text != null)

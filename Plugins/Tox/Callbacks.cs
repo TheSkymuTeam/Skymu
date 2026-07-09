@@ -605,7 +605,7 @@ namespace Tox
         {
             var core = GC(user_data);
             Debug.WriteLine($"Tox: Incoming call from {fid} with audio {audio_enabled}, video {video_enabled}");
-            core.CALL(new CallBottle(fid.ToString(), CallState.Ringing, core.friends[fid]));
+            core.CALL(new CallBottle(new DirectMessage(core.friends[fid], 0, fid.ToString()), CallState.Ringing));
         }
 
         // TODO: call_state

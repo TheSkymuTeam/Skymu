@@ -24,9 +24,6 @@
     xmlns:theming="clr-namespace:Skymu.Theming"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
-    d:Background="#FFFFFF"
-    d:Height="505"
-    d:Width="514"
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
@@ -48,7 +45,7 @@
                 Margin="0,5"
                 Content="Separate credentials between debug and release build"
                 IsChecked="{Binding Path=[SeparateCredentialsForDebug], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
-            <Grid Margin="0,5" >
+            <Grid Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -56,8 +53,8 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock
                     Grid.Column="0"
-                    Text="Absolute path to load plugins from"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    Text="Absolute path to load plugins from" />
                 <TextBox
                     x:Name="PluginPathBox"
                     Grid.Column="1"
@@ -71,11 +68,11 @@
                     Content="Browse..." />
             </Grid>
             <TextBlock
-                Margin="0,-5"
                 Grid.Column="0"
+                Margin="0,-5"
+                VerticalAlignment="Center"
                 Foreground="{StaticResource Text.MediumContrast}"
-                Text="Hint: Set it to (Skymu source)\Plugins\bin to ease plugin development"
-                VerticalAlignment="Center" />
+                Text="Hint: Set it to (Skymu source)\Plugins\bin to ease plugin development" />
         </StackPanel>
 
         <StackPanel
