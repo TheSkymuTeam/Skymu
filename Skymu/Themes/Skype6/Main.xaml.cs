@@ -1173,16 +1173,6 @@ namespace Skymu.Skype6
                 _ = SetConversation();
             };
 
-            vmodel.IncomingCallAccepted += (p, c) =>
-            {
-                var convo = vmodel.ContactList.FirstOrDefault(e => e.Identifier == c)
-                    ?? vmodel.ConversationList.FirstOrDefault(e => e.Identifier == c);
-                if (convo != null)
-                    StartCall(p, convo);
-                else
-                    Universal.ExceptionHandler(new Exception("Could not find the conversation with the right ID."), "The conversation identifier was " + c + ".");
-            };
-
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
@@ -1217,7 +1207,7 @@ namespace Skymu.Skype6
 
             vmodel.IncomingCallAccepted += (e) =>
             {
-                StartCall(e.Caller, true);
+                InitiateCall(e.Caller, true);
             };
 
             Universal.GroupAvatar = GenerateAvatarImage("group");

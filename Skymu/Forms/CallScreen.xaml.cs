@@ -90,9 +90,9 @@ namespace Skymu.Forms
                 return;
             }
 
-            if (Universal.ActiveUsers[((ICall)_conversation.Core)].Avatar != null)
+            if (Universal.ActiveUsers[_conversation.Core].Avatar != null)
                 MyAvatar.Source = ImageHelper.GenerateFromArray(
-                    Universal.ActiveUsers[((ICall)_conversation.Core)].Avatar
+                    Universal.ActiveUsers[_conversation.Core].Avatar
                 );
             else
                 MyAvatar.Source = Universal.AnonymousAvatar;
@@ -148,7 +148,7 @@ namespace Skymu.Forms
                 "INIT",
                 _conversation.Identifier,
                 is_video,
-                new User[] { Universal.ActiveUsers[((ICall)_conversation.Core)] }
+                new User[] { Universal.ActiveUsers[_conversation.Core] }
             );
 
             _ringCts = new CancellationTokenSource();

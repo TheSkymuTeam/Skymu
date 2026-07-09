@@ -351,7 +351,7 @@ namespace Skymu.ViewModels
             foreach (var p in Universal.ActivePlugins)
             {
                 servers.AddRange(await p.FetchServers());
-                _database?.Servers.Write(servers);
+                _databases[p].Servers.Write(servers);
             }
             ServerList = new ObservableCollection<Server>(servers);
             _serversLoadedSource.TrySetResult(true);
@@ -1196,7 +1196,7 @@ namespace Skymu.ViewModels
 
         public bool CheckCallEligibility(Conversation c)
         {
-            if (Universal.CallPlugin == null)
+            if (!(c.Core is ICore))
                 return false;
 
             bool e = c is DirectMessage

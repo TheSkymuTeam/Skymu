@@ -1469,11 +1469,6 @@ namespace Skymu.Skype4
                 _ = SetConversation();
             };
 
-            vmodel.IncomingCallAccepted += (e) =>
-            {
-                InitiateCall(e.Caller, true);
-            };
-
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));

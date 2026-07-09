@@ -1800,6 +1800,7 @@ SanitizeFolderName(user.Identifier)
                             int position = reader.IsDBNull(9) ? 0 : reader.GetInt32(9);
 
                             Server server = new Server(
+                                null,
                                 name,
                                 identity,
                                 null,
