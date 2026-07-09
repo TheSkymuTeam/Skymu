@@ -52,6 +52,7 @@ namespace Skymu.Skype5
         private readonly WindowFrame _currentFrame = Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
+        private bool _conversationOpening;
         private ScrollViewer _conversationScrollViewer;
         private User _oldUser;
         private bool _userScrolledUp = false;
@@ -1026,6 +1027,7 @@ namespace Skymu.Skype5
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_conversationOpening) return;
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
@@ -1263,6 +1265,7 @@ namespace Skymu.Skype5
 
         private async Task SetConversation()
         {
+            _conversationOpening = true;
             _userScrolledUp = false;
             ClearConversation();
             SetWindow(WindowType.Chat);
@@ -1283,6 +1286,7 @@ namespace Skymu.Skype5
             Spinner.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
             UpdateMessageSendButtonState();
+            _conversationOpening = false;
         }
 
         private void HandleConversationItems()
@@ -1537,6 +1541,11 @@ namespace Skymu.Skype5
                     btnServers.Visibility = Visibility.Visible;
                     ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
                 }
+            };
+
+            vmodel.IncomingCallAccepted += (e) =>
+            {
+                StartCall(e.Caller, true);
             };
 
             InitializeWindowFrame();

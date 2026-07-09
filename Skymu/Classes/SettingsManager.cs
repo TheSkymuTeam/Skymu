@@ -256,6 +256,11 @@ namespace Skymu.Preferences
             get => SELECT("NotificationTrigger", NotificationTriggerType.PDM, "UI/General");
             set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger), "UI/General");
         }
+        public static bool AllowImplicitMentions
+        {
+            get => SELECT("AllowImplicitMentions", true, "UI/General");
+            set => WRITE("AllowImplicitMentions", value, nameof(NotificationTrigger), "UI/General");
+        }
         public static bool EnableSkypeHome
         {
             get => SELECT("EnableSkypeHome", false, "UI/General");

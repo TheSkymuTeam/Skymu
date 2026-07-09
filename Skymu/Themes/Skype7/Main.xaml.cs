@@ -39,6 +39,8 @@ using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
+// TODO typing status send
+
 namespace Skymu.Skype7
 {
     public partial class Main : Window, IMainWindowHolder

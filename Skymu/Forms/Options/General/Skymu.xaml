@@ -519,6 +519,12 @@
             </StackPanel>
             <CheckBox
                 Margin="0,5"
+                Padding="6, 0"
+                Content="Allow implicit nick mentions to trigger a notification (supported protocols only)"
+                Foreground="{DynamicResource Text.VeryHighContrast}"
+                IsChecked="{Binding Path=[AllowImplicitMentions], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+            <CheckBox
+                Margin="0,5"
                 Padding="6,0"
                 Content="Force active notifications to be blue instead of the accurate orange"
                 Foreground="{DynamicResource Text.VeryHighContrast}"

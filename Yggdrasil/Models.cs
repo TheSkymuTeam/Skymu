@@ -464,6 +464,7 @@ namespace Yggdrasil.Models
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
         public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message)
         public bool IsForwarded { get; set; }
+        public MentionType MentionType { get; set; }
 
         public string PreviousMessageIdentifier { get; set; } // TODO: TO BE REMOVED!!
         public bool PreviousMessageIsAction { get; set; } // TODO: REMOVE THIS TOO!!!
@@ -475,7 +476,8 @@ namespace Yggdrasil.Models
             string text = null,
             Attachment[] attachments = null,
             Message parent_message = null,
-            bool is_forwarded = false
+            bool is_forwarded = false,
+            MentionType mention_type = MentionType.None
         )
         {
             Identifier = identifier;
@@ -485,6 +487,7 @@ namespace Yggdrasil.Models
             Attachments = attachments;
             ParentMessage = parent_message;
             IsForwarded = is_forwarded;
+            MentionType = mention_type;
         }
     }
 

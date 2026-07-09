@@ -144,7 +144,7 @@ namespace Skymu.ViewModels
 
         public event Action<bool> CallActiveChanged;
 
-        public event Action<ICall, string> IncomingCallAccepted;
+        public event Action<CallBottle> IncomingCallAccepted;
 
         #endregion
 
@@ -610,7 +610,13 @@ namespace Skymu.ViewModels
                         else if (
                             !string.IsNullOrEmpty(message.Text)
                             && !string.IsNullOrEmpty(Universal.CurrentUser?.DisplayName)
-                            && message.Text.Contains($"<@{Universal.CurrentUser.DisplayName}>")
+                            && (
+                                message.MentionType == MentionType.Explicit
+                                || (
+                                    message.MentionType == MentionType.Implicit
+                                    && Settings.AllowImplicitMentions
+                                )
+                            )
                         )
                         { /* case 2 is true, continue */
                         }
@@ -950,7 +956,7 @@ namespace Skymu.ViewModels
         {
             while (true)
             {
-                await Task.Delay(500);
+                await Task.Delay(500); // TODO: I don't think this was how it works...
                 if ((DateTime.UtcNow - lastTypingActivity).TotalMilliseconds < 500)
                     StartTyping();
             }
@@ -1107,7 +1113,7 @@ namespace Skymu.ViewModels
                         handler = (s, args) =>
                         {
                             ic.Answered -= handler;
-                            IncomingCallAccepted?.Invoke(cp, e.ConversationId);
+                            IncomingCallAccepted?.Invoke(e);
                         };
                         ic.Answered += handler;
                         ic.Show();

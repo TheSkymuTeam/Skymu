@@ -56,6 +56,7 @@ namespace Skymu.Skype6
 
         // Other file-level variables
         private bool noCloseEvent;
+        private bool _conversationOpening;
         private ScrollViewer _conversationScrollViewer;
         private SliceControl _currentTab;
         private User _oldUser;
@@ -717,6 +718,7 @@ namespace Skymu.Skype6
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_conversationOpening) return;
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
@@ -955,6 +957,7 @@ namespace Skymu.Skype6
 
         private async Task SetConversation()
         {
+            _conversationOpening = true;
             _userScrolledUp = false;
             ClearConversation();
             Topbar.Text = vmodel.SelectedConversation?.DisplayName;
@@ -975,6 +978,7 @@ namespace Skymu.Skype6
             ConversationItemsList.ItemsSource = vmodel.ActiveConversation;
             Spinner.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
+            _conversationOpening = false;
         }
 
         private void HandleConversationItems()
@@ -1209,6 +1213,11 @@ namespace Skymu.Skype6
                     btnServers.Visibility = Visibility.Visible;
                     ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
                 }
+            };
+
+            vmodel.IncomingCallAccepted += (e) =>
+            {
+                StartCall(e.Caller, true);
             };
 
             Universal.GroupAvatar = GenerateAvatarImage("group");

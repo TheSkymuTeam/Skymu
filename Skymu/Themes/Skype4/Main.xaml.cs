@@ -51,6 +51,7 @@ namespace Skymu.Skype4
         private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
+        private bool _conversationOpening;
         private ScrollViewer _conversationScrollViewer;
         private bool _userScrolledUp = false;
         private BitmapImage img_maximize,
@@ -1011,6 +1012,7 @@ namespace Skymu.Skype4
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_conversationOpening) return;
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
@@ -1247,6 +1249,7 @@ namespace Skymu.Skype4
 
         private async Task SetConversation()
         {
+            _conversationOpening = true;
             _userScrolledUp = false;
             ClearConversation();
             SetWindow(WindowType.Chat);
@@ -1267,6 +1270,7 @@ namespace Skymu.Skype4
             Spinner.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
             RefreshChatSendButton();
+            _conversationOpening = false;
         }
 
         private void HandleConversationItems()
@@ -1465,14 +1469,9 @@ namespace Skymu.Skype4
                 _ = SetConversation();
             };
 
-            vmodel.IncomingCallAccepted += (p, c) =>
+            vmodel.IncomingCallAccepted += (e) =>
             {
-                var convo = vmodel.ContactList.FirstOrDefault(e => e.Identifier == c)
-                    ?? vmodel.ConversationList.FirstOrDefault(e => e.Identifier == c);
-                if (convo != null)
-                    StartCall(p, convo);
-                else
-                    Universal.ExceptionHandler(new Exception("Could not find the conversation with the right ID."), "The conversation identifier was " + c + ".");
+                InitiateCall(e.Caller, true);
             };
 
             vmodel.SpeedTestIconUpdated += uri =>
@@ -1498,6 +1497,11 @@ namespace Skymu.Skype4
                     btnServers.Visibility = Visibility.Collapsed;
                 else
                     btnServers.Visibility = Visibility.Visible;
+            };
+
+            vmodel.IncomingCallAccepted += (e) =>
+            {
+                InitiateCall(e.Caller, true);
             };
 
             InitializeWindowFrame();
