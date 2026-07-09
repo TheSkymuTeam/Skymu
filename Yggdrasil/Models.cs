@@ -351,7 +351,7 @@ namespace Yggdrasil.Models
             int position = 0,
             string description = null
         )
-            : base(core, name, identifier, unread_count, null, last_message_time, description)
+            : base(core, name, identifier, unread_count, null, null, description)
         {
             ParentServerID = parent_server_id;
             Description = description;
