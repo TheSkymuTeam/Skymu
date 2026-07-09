@@ -16,7 +16,6 @@
 // "SeanKype" project.
 /*==========================================================*/
 
-using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
 using Skymu.Infrastructure.Main;
@@ -26,6 +25,7 @@ using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Windows;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -39,6 +39,8 @@ using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
+// TODO typing status send
+
 namespace Skymu.Skype7
 {
     public partial class Main : Window, IMainWindowHolder
@@ -47,6 +49,7 @@ namespace Skymu.Skype7
         private MessageGrouper _grouper;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
+        private User _oldUser;
         private bool _userScrolledUp;
         private MMBController _mmbController;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
@@ -84,15 +87,8 @@ namespace Skymu.Skype7
                     UserPicture.Source = Universal.AnonymousAvatar;
                 if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
-                {
-                    if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() =>
-                            _currentStatusIndex = MainViewModel.GetIntFromStatus(
-                                Universal.CurrentUser.ConnectionStatus
-                            )
-                        );
-                };
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
                 if (Settings.EnableSkypeHome)
                 {
                     vmodel.IsHomeAvailable = await SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
@@ -117,7 +113,7 @@ namespace Skymu.Skype7
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -126,6 +122,14 @@ namespace Skymu.Skype7
             {
                 if (!is_loading_conversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
+            };
+
+            vmodel.ConversationOpened += (s, e) =>
+            {
+                _oldUser.PropertyChanged -= SelfInfoChanged;
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.ConversationChanged += async (s, e) =>
@@ -205,6 +209,7 @@ namespace Skymu.Skype7
                         case MMBController.Action.AddContact:
                             AddContact_Click(null, null);
                             break;
+                        case MMBController.Action.AccountManager: new AccountManagerSimple(vmodel).Show(); break;
                     }
                 };
                 _mmbController.Build();
@@ -235,10 +240,11 @@ namespace Skymu.Skype7
                 }
             };
 
-            if (!Universal.Plugin.SupportsServers)
+            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
                 TabServersText.Visibility = Visibility.Collapsed;
 
-            SetActiveTab(3); // default to Home tab
+            // TODO: Enum it. EVERYTHING but SeanKype does this.
+            SetActiveTab(2); // default to Recents tab
         }
 
         public Task BeginLoading() => vmodel.InitSidebar();
@@ -375,6 +381,36 @@ namespace Skymu.Skype7
         }
 
         #endregion
+
+        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cu = sender as User; // TODO delay ish fix
+            if (e == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Tray.SetStatus(cu.ConnectionStatus);
+                    LabelUsername.Text = Universal.CurrentUser?.DisplayName;
+                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                });
+            }
+            else
+                switch (e.PropertyName)
+                {
+                    case nameof(User.ConnectionStatus):
+                        Dispatcher.Invoke(() =>
+                        {
+                            Tray.SetStatus(cu.ConnectionStatus);
+                        });
+                        break;
+                    case nameof(User.DisplayName):
+                        Dispatcher.Invoke(() =>
+                        {
+                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                        });
+                        break;
+                }
+        }
 
         #region Avatar helpers
 

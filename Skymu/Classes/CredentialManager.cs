@@ -106,6 +106,7 @@ namespace Skymu.Credentials
                 Enum.TryParse(authStr, out authType);
 
             var user = new User(
+                null,
                 (string)e.Element("DisplayName"),
                 (string)e.Element("Username"),
                 (string)e.Element("Identifier"),
@@ -154,12 +155,15 @@ namespace Skymu.Credentials
         }
 
         internal static SavedCredential Get(User user, string plugin)
+            => Get(user?.Identifier, plugin);
+
+        internal static SavedCredential Get(string user, string plugin)
         {
             XDocument doc = ReadFile();
 
             foreach (XElement e in doc.Root.Elements("Credential"))
             {
-                if (Matches(e, plugin, user?.Identifier))
+                if (Matches(e, plugin, user))
                     return FromElement(e);
             }
 

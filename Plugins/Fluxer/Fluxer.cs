@@ -226,7 +226,7 @@ namespace Fluxer
                 string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
                 string avatarHash = parsedUser["avatar"]?.GetValue<string>();
                 byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.FluxerChannelType.DirectMessage);
-                _currentUser = new User(displayName, username, id, null, PresenceStatus.Offline, avatar); // temp just for StoreCredential
+                _currentUser = new User(this, displayName, username, id, null, PresenceStatus.Offline, avatar); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
@@ -290,8 +290,8 @@ namespace Fluxer
                     return null;
                 }
 
-                _currentUser.ConnectionStatus = UserStore.Get("0")?.ConnectionStatus ?? PresenceStatus.Offline;
-                _currentUser.Status = UserStore.Get(_currentUser.Identifier)?.Status;
+                _currentUser.ConnectionStatus = UserStore.Get(this, "0")?.ConnectionStatus ?? PresenceStatus.Offline;
+                _currentUser.Status = UserStore.Get(this, _currentUser.Identifier)?.Status;
 
                 return _currentUser;
             }
@@ -408,10 +408,10 @@ namespace Fluxer
                                     channelType = ChannelType.NoAccess;
                                     break;
                             }
-                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
+                            channelList.Add(new ServerChannel(this, channelName, channelId, guildId, 0, channelType, parentId, position));
                         }
                     }
-                    results.Add(new Server(guildName, guildId, null, null, channelList, guildAvatar, categoryMap, memberCount));
+                    results.Add(new Server(this, guildName, guildId, null, null, channelList, guildAvatar, categoryMap, memberCount));
                 }
             }
             catch (Exception ex)
@@ -454,7 +454,7 @@ namespace Fluxer
                         if (listType == ListType.Recents)
                             _recentChannelMap[channelId] = userId;
 
-                        var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
+                        var profileData = await UserStore.GetOrCreateWithAvatar(this, userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
@@ -474,6 +474,7 @@ namespace Fluxer
                                 recipients
                                     .OfType<JsonObject>()
                                     .Select(async r => await UserStore.GetOrCreateWithAvatar(
+                                        this,
                                         r["id"]?.GetValue<string>() ?? "0",
                                         r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
                                         r["username"]?.GetValue<string>() ?? "Unknown"
@@ -508,7 +509,7 @@ namespace Fluxer
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.FluxerChannelType.Group);
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
-                        results.Add(new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime));
+                        results.Add(new Group(this, groupName, channelId, 0, members, avatarImage, lastMessageTime));
                     }
                 }
             }
@@ -581,7 +582,7 @@ namespace Fluxer
                 foreach (var node in messages.Reverse())
                 {
                     token.ThrowIfCancellationRequested();
-                    var item = await MessageParser.ParseMessage(node);
+                    var item = await MessageParser.ParseMessage(this, node);
                     if (item != null)
                         messageList.Add(item);
                 }
@@ -633,7 +634,7 @@ namespace Fluxer
                         {
                             foreach (var node in messages)
                             {
-                                var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+                                var item = await MessageParser.ParseMessage(this, node).ConfigureAwait(false);
 
                                 // last msg by the logged in user
                                 if (item is Message msg && msg.Author?.Identifier == _currentUser?.Identifier)
@@ -666,7 +667,7 @@ namespace Fluxer
                     {
                         foreach (var node in messages)
                         {
-                            var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+                            var item = await MessageParser.ParseMessage(this, node).ConfigureAwait(false);
 
                             // last msg by the logged in user
                             if (item is Message msg && msg.Author?.Identifier == _currentUser?.Identifier)

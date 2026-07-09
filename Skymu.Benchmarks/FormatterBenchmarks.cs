@@ -91,43 +91,43 @@ namespace Skymu.Benchmarks
 
         [Benchmark(Baseline = true, Description = "Plain text, no formatting")]
         public object Baseline()
-            => Formatter.Parse(PlainText, doNotFormat: true);
+            => Formatter.Parse(null, PlainText, doNotFormat: true);
 
         [Benchmark(Description = "Plain text through full pipeline")]
         public object PlainFormatted()
-            => Formatter.Parse(PlainText);
+            => Formatter.Parse(null, PlainText);
 
         [Benchmark(Description = "Bold, italic, strikethrough")]
         public object BoldItalic_Formatted()
-            => Formatter.Parse(BoldItalic);
+            => Formatter.Parse(null, BoldItalic);
 
         [Benchmark(Description = "URLs only")]
         public object Url_Formatted()
-            => Formatter.Parse(WithUrl);
+            => Formatter.Parse(null, WithUrl);
 
         [Benchmark(Description = "Emoji only")]
         public object Emoji_Formatted()
-            => Formatter.Parse(WithEmoji);
+            => Formatter.Parse(null, WithEmoji);
 
         [Benchmark(Description = "Code inline and block")]
         public object Code_Formatted()
-            => Formatter.Parse(WithCode);
+            => Formatter.Parse(null, WithCode);
 
         [Benchmark(Description = "Pipe table")]
         public object Table_Formatted()
-            => Formatter.Parse(WithTable);
+            => Formatter.Parse(null, WithTable);
 
         [Benchmark(Description = "Combined markdown + emoji + URL")]
         public object Combined_Formatted()
-            => Formatter.Parse(Combined);
+            => Formatter.Parse(null, Combined);
 
         [Benchmark(Description = "Long plain text")]
         public object LongPlain_Formatted()
-            => Formatter.Parse(LongPlain);
+            => Formatter.Parse(null, LongPlain);
 
         [Benchmark(Description = "Long markdown document")]
         public object LongMarkdown_Formatted()
-            => Formatter.Parse(LongMarkdown);
+            => Formatter.Parse(null, LongMarkdown);
 
         [Benchmark(Description = "Lang text with %s substitution")]
         public object Lang_Simple()
