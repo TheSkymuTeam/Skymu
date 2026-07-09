@@ -39,6 +39,7 @@ using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Bottles;
 using OmegaAOL.Bifrost.Http;
+using System.Collections.Generic;
 
 namespace Skymu
 {
