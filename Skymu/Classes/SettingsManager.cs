@@ -326,8 +326,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool AnonymizeOptOutShown
         {
-            get => SELECT("FirstRunCompleted", false, "Skymu/Server");
-            set => WRITE("FirstRunCompleted", value, nameof(AnonymizeOptOutShown), "Skymu/Server");
+            get => SELECT("AnonymizeOptOutShown", false, "Skymu/Server");
+            set => WRITE("AnonymizeOptOutShown", value, nameof(AnonymizeOptOutShown), "Skymu/Server");
         }
 
         #endregion
