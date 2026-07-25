@@ -84,7 +84,7 @@ namespace Skymu.Tests
             // Parse("") must not throw; result must be non-null
             RunSta(() =>
             {
-                var tb = Formatter.Parse("");
+                var tb = Formatter.Parse(null, "");
                 Assert.NotNull(tb);
             });
         }
@@ -94,7 +94,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("test");
+                var tb = Formatter.Parse(null, "test");
                 Assert.IsType<TextBlock>(tb);
             });
         }
@@ -105,7 +105,7 @@ namespace Skymu.Tests
             // All access to tb must happen on the same STA thread that created it.
             RunSta(() =>
             {
-                var tb = Formatter.Parse("hello world", doNotFormat: true);
+                var tb = Formatter.Parse(null, "hello world", doNotFormat: true);
                 Assert.Equal("hello world", tb.Text);
             });
         }
@@ -115,7 +115,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("**bold**", doNotFormat: true);
+                var tb = Formatter.Parse(null, "**bold**", doNotFormat: true);
                 // doNotFormat sets .Text directly — the Inlines collection must be empty
                 Assert.Empty(tb.Inlines);
             });
@@ -131,7 +131,7 @@ namespace Skymu.Tests
             // assert the TextBlock itself is non-null and is the right type.
             RunSta(() =>
             {
-                var tb = Formatter.Parse("hello world");
+                var tb = Formatter.Parse(null, "hello world");
                 Assert.NotNull(tb);
                 Assert.IsType<TextBlock>(tb);
             });
@@ -151,7 +151,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("**bold text**");
+                var tb = Formatter.Parse(null, "**bold text**");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontWeight == FontWeights.Bold),
                     "Expected at least one bold Span.");
@@ -163,7 +163,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("*italic text*");
+                var tb = Formatter.Parse(null,              "*italic text*");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontStyle == FontStyles.Italic),
                     "Expected at least one italic Span.");
@@ -175,7 +175,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("~~strikethrough~~");
+                var tb = Formatter.Parse(null, "~~strikethrough~~");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.TextDecorations == TextDecorations.Strikethrough),
                     "Expected at least one strikethrough Span.");
@@ -187,7 +187,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("++underline++");
+                var tb = Formatter.Parse(null, "++underline++");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.TextDecorations == TextDecorations.Underline),
                     "Expected at least one underline Span.");
@@ -199,7 +199,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("==highlight==");
+                var tb = Formatter.Parse(null, "==highlight==");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.Background == Brushes.Yellow),
                     "Expected at least one yellow-background Span.");
@@ -211,7 +211,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("***bolditalic***");
+                var tb = Formatter.Parse(null, "***bolditalic***");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(
                     spans.Any(s =>
@@ -230,7 +230,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("# Heading 1");
+                var tb = Formatter.Parse(null, "# Heading 1");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontSize == 24),
                     "Expected H1 Span with FontSize 24.");
@@ -242,7 +242,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("## Heading 2");
+                var tb = Formatter.Parse(null, "## Heading 2");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontSize == 20),
                     "Expected H2 Span with FontSize 20.");
@@ -254,7 +254,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("### Heading 3");
+                var tb = Formatter.Parse(null, "### Heading 3");
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(spans.Any(s => s.FontSize == 16),
                     "Expected H3 Span with FontSize 16.");
@@ -272,7 +272,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("https://skymu.app");
+                var tb = Formatter.Parse(null, "https://skymu.app");
                 Assert.True(
                     tb.Inlines.OfType<Hyperlink>().Any() || HasNestedHyperlink(tb.Inlines),
                     "Expected at least one Hyperlink for a bare URL.");
@@ -284,7 +284,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("[Skymu](https://skymu.app)");
+                var tb = Formatter.Parse(null, "[Skymu](https://skymu.app)");
                 var links = tb.Inlines.OfType<Hyperlink>().ToList();
                 Assert.True(
                     links.Any(h => h.NavigateUri?.Host == "skymu.app"),
@@ -299,7 +299,7 @@ namespace Skymu.Tests
             {
                 // Display text looks like a URL but points to a different host.
                 // Formatter appends a warning Run containing the real destination.
-                var tb = Formatter.Parse("[https://evil.com](https://skymu.app)");
+                var tb = Formatter.Parse(null, "[https://evil.com](https://skymu.app)");
                 string flat = FlattenInlines(tb.Inlines);
                 Assert.True(flat.Contains("skymu.app"),
                     "Expected warning Run to contain the real destination host.");
@@ -315,7 +315,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("`code`");
+                var tb = Formatter.Parse(null, "`code`");
                 Assert.True(
                     tb.Inlines.OfType<InlineUIContainer>().Any(),
                     "Expected an InlineUIContainer for inline code.");
@@ -327,7 +327,7 @@ namespace Skymu.Tests
         {
             RunSta(() =>
             {
-                var tb = Formatter.Parse("```\ncode block\n```");
+                var tb = Formatter.Parse(null, "```\ncode block\n```");
                 Assert.True(
                     tb.Inlines.OfType<InlineUIContainer>().Any(),
                     "Expected an InlineUIContainer for a fenced code block.");

@@ -30,6 +30,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" TextWrapping="Wrap">
@@ -40,8 +41,18 @@
                     StringFormat="{}Oh no! {0} encountered an unexpected error. Details are provided below. Please report this to the developers so it can be investigated and resolved." />
             </TextBlock.Text>
         </TextBlock>
-        <ScrollViewer
+        <TextBlock
+            x:Name="ContextBlock"
             Grid.Row="1"
+            Margin="0,10,0,0"
+            TextWrapping="Wrap"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="{StaticResource Text.HighContrast}"
+            Text="Context" 
+            Visibility="Collapsed" />
+        <ScrollViewer
+            Grid.Row="2"
             Margin="0,20"
             Background="#0A0A0A"
             HorizontalScrollBarVisibility="Disabled"

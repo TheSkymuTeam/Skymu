@@ -106,9 +106,9 @@ namespace Fluxer.Helpers
             return content;
         }
 
-        public static async Task<string> ReplaceIDWithNameForTyping(string id, string token)
+        public static async Task<string> ReplaceIDWithNameForTyping(Core core, string id, string token)
         {
-            var user = UserStore.Get(id);
+            var user = UserStore.Get(core, id);
             if (user != null)
                 return user.DisplayName ?? id;
 

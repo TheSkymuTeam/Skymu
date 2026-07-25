@@ -39,11 +39,13 @@ using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Bottles;
 using OmegaAOL.Bifrost.Http;
+using System.Collections.Generic;
 
 namespace Skymu
 {
     public partial class Universal : Application
     {
+#pragma warning disable CA1707 // pls no underscore
         // -----------------------------------------------------------------------------
         // Skymu metadata.
         // -----------------------------------------------------------------------------
@@ -75,15 +77,20 @@ namespace Skymu
         public const string GITHUB_RELEASES_URL = GITHUB_BASE_URL + "/releases/latest";
         public const string GITHUB_PULLS_URL = GITHUB_BASE_URL + "/pulls";
 
+#pragma warning restore CA1707 // pls no underscore
+
         // -----------------------------------------------------------------------------
         // Globally scoped variables.
         // -----------------------------------------------------------------------------
 
+
+#pragma warning disable CA2211 // Non-constant fields should not be visible
+        public static List<ICore> ActivePlugins;
+        public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
-        public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool HasLoggedIn = false;
-        public static readonly string Theme = Settings.Theme;
+        public static string Theme = Settings.Theme;
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
@@ -91,6 +98,7 @@ namespace Skymu
         public static BitmapImage GroupAvatar;
         public static BitmapImage UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
+#pragma warning restore CA2211 // Non-constant fields should not be visible
         private static Mutex mutex;
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
@@ -187,7 +195,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        ActiveViewModel?.HandleIncoming(e);
+                        ActiveViewModel?.HandleIncoming(sender as ICore, e);
                     }
                 )
             );
@@ -195,7 +203,7 @@ namespace Skymu
 
         static Universal()
         {
-            if (!Settings.AllowMultipleInstances)
+            if (!Settings.AllowMultipleInstances && !!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 try
                 {
@@ -209,7 +217,7 @@ namespace Skymu
 
                     Debug.WriteLine($"[Universal] Mutex creation: {created}");
 
-                    if (!created)
+                    if (!created && !Settings.AllowMultipleInstances)
                     {
                         foreach (var arg in Environment.GetCommandLineArgs())
                         {
@@ -218,11 +226,10 @@ namespace Skymu
                                 var uri = arg.Substring(5 + 6);
                                 WriteToPipe("URI:" + uri);
                             }
+                            else if (arg == "/secondary")
+                                return;
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
-                        System.Windows.MessageBox.Show(
-                            $"{NAME} is already running.\n\nYou can configure {NAME} to allow running multiple instances at the same time in the Options menu."
-                        );
                         Terminate();
                         return;
                     }
@@ -270,6 +277,24 @@ namespace Skymu
             return "en-US";
         }
 
+        public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null, bool switchUser = false)
+        {
+            if (!addAccount)
+                Theme = Settings.Theme;
+            switch (Theme)
+            {
+                case "Skype7":
+                    return new Skype7.Login(switchUser, addAccount, accountAdded);
+                case "Skype6":
+                    return new Skype6.Login(switchUser, addAccount, accountAdded);
+                case "Skype4":
+                    return new Skype4.Login(switchUser, addAccount, accountAdded);
+                case "Skype5":
+                default:
+                    return new Skype5.Login(switchUser, addAccount, accountAdded);
+            }
+        }
+
         private void App_Startup(object sender, StartupEventArgs e)
         {
             if (!Settings.UseSystemCulture)
@@ -278,22 +303,8 @@ namespace Skymu
                     false
                 );
             // TODO: Dynamically switch language without restart
-            switch (Theme)
-            {
-                case "Skype7":
-                    new Skype7.Login().Show();
-                    break;
-                case "Skype6":
-                    new Skype6.Login().Show();
-                    break;
-                case "Skype4":
-                    new Skype4.Login().Show();
-                    break;
-                case "Skype5":
-                default:
-                    new Skype5.Login().Show();
-                    break;
-            }
+
+            LoginDispenser().Show();
 
             Task.Run(() =>
             {
@@ -465,21 +476,14 @@ namespace Skymu
 
         public static void Terminate()
         {
-            try
-            {
-                Tray.DisposeIcon();
-            }
-            catch { } // in case app is already too dead to clear icon by the time this is called
-            finally
-            {
-                Application.Current.Shutdown();
-            }
+            Cleanup();
+            Application.Current.Shutdown();
         }
 
-        public static void ExceptionHandler(Exception ex)
+        public static void ExceptionHandler(Exception ex, string context = null)
         {
             string brand = Settings.BrandingName;
-            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
+            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString(), context);
             WindowBase frame = new WindowBase(page)
             {
                 HeaderIcon = WindowBase.IconType.Crash,
@@ -564,8 +568,7 @@ namespace Skymu
                         break;
                     case "Colorway":
                     case "WindowFrame":
-                    case "Theme":
-                    case "UseSystemCulture":
+                    case "UseSystemCulture": // TODO fix the issue where this appears twice?
                         Dialog dialog = new Dialog(
                                    type: WindowBase.IconType.Question,
                                    content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
@@ -659,21 +662,27 @@ namespace Skymu
 
         public static void OpenUrl(string url)
         {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            _ = Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+
+        private static async void Cleanup()
+        {
+            try
+            {
+                Tray.DisposeIcon();
+                PluginManager.DisposeAll();
+                await UserCountAPI.CloseWS();
+            }
+            catch { } // If it doesn't work, too bad.
         }
 
         protected override void OnExit(ExitEventArgs ev)
         {
-            try
-            {
-                _ = UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
-            }
-            catch { } // If it doesn't work, too bad.
             if (HasLoggedIn)
             {
-                PluginManager.DisposeAll();
                 SoundManager.PlaySynchronous("LOGOUT");
             }
+            Cleanup(); // If a single thing was not cleaned up, and performs async, this is where the app and debugger dies
             base.OnExit(ev);
         }
     }

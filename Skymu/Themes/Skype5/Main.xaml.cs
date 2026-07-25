@@ -11,23 +11,20 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Converters;
 using Skymu.Enumerations;
-using Skymu.Emoticons;
 using Skymu.Formatting;
+using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Helpers;
+using Skymu.Infrastructure.Main;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Forms;
-using Skymu.Infrastructure.Main;
-using Skymu.Forms.Pages;
+using Skymu.Windows;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,12 +34,10 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Skymu.Windows;
-using Skymu.Sounds;
 using System.Windows.Threading;
 using Yggdrasil;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Skype5
 {
@@ -57,7 +52,9 @@ namespace Skymu.Skype5
         private readonly WindowFrame _currentFrame = Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
+        private bool _conversationOpening;
         private ScrollViewer _conversationScrollViewer;
+        private User _oldUser;
         private bool _userScrolledUp = false;
         private BitmapImage img_maximize,
             img_restore,
@@ -541,6 +538,8 @@ namespace Skymu.Skype5
             ConversationList.ItemsSource = grouped;
         }
 
+        private static readonly GridLength DYNAMIC_TAB = new GridLength(1, GridUnitType.Star);
+        private static readonly GridLength SMALL_TAB = new GridLength(32);
         private async Task SelectTab(SliceControl tab_to_select)
         {
             if (tab_to_select.Name == "btnServers")
@@ -555,25 +554,20 @@ namespace Skymu.Skype5
                 ConversationList.ItemsSource = null;
             }
 
-            GridLength dynamic = new GridLength(1, GridUnitType.Star);
-            GridLength small = new GridLength(32);
-
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.Plugin.SupportsServers)
-                buttonToColumn[tab_to_select].Width = dynamic;
+            if (Universal.ActivePlugins.Any(e => e.SupportsServers))
+                buttonToColumn[tab_to_select].Width = DYNAMIC_TAB;
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
             {
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.Plugin.SupportsServers)
+                if (Universal.ActivePlugins.Any(e => e.SupportsServers))
                     buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
-                        ? small
-                        : dynamic;
+                        Settings.DynamicSidebarTabs
+                            ? SMALL_TAB
+                            : DYNAMIC_TAB;
             }
-
-            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -765,23 +759,6 @@ namespace Skymu.Skype5
 
         #endregion
 
-        #region User count API
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -821,8 +798,8 @@ namespace Skymu.Skype5
         private void ConversationList_ItemClicked(object sender, MouseButtonEventArgs e)
         {
             var selected = ((ListBox)sender).SelectedItem;
-            if (selected != null && selected is Metadata)
-                SelectedContact = (Metadata)selected;
+            if (selected != null && selected is Metadata metadata)
+                SelectedContact = metadata;
             if (selected is DateHeaderItem)
             {
                 ((ListBox)sender).SelectedItem = null;
@@ -931,7 +908,7 @@ namespace Skymu.Skype5
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
         {
-            new Updater(true);
+            _ = new Updater(true);
         }
 
         private void OnCall(object sender, RoutedEventArgs e) => CallButtonClick(null, null);
@@ -939,6 +916,11 @@ namespace Skymu.Skype5
         private void OnAddContact(object sender, RoutedEventArgs e) => AddContact_Click(null, null);
 
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
+
+        private void OnManageAccounts(object sender, RoutedEventArgs e)
+        {
+            new AccountManagerSimple(vmodel).Show();
+        }
 
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
@@ -967,6 +949,41 @@ namespace Skymu.Skype5
         private void ConversationItemsList_Loaded(object sender, RoutedEventArgs e)
         {
             HandleConversationItems();
+        }
+
+        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var cu = sender as User; // TODO delay ish fix
+            if (e == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                    Tray.SetStatus(cu.ConnectionStatus);
+                    TitleMain.Text = cu.DisplayName;
+                    StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                });
+            }
+            else
+                switch (e.PropertyName)
+                {
+                    case nameof(User.ConnectionStatus):
+                        Dispatcher.Invoke(() =>
+                        {
+                            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
+                            Tray.SetStatus(cu.ConnectionStatus);
+                        });
+                        break;
+                    case nameof(User.DisplayName):
+                        Dispatcher.Invoke(() =>
+                        {
+                            TitleMain.Text = cu.DisplayName;
+                            StatusBox.Text = Universal.CurrentUser?.DisplayName;
+                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
+                        });
+                        break;
+                }
         }
 
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
@@ -1010,6 +1027,7 @@ namespace Skymu.Skype5
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (_conversationOpening) return;
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
@@ -1247,6 +1265,7 @@ namespace Skymu.Skype5
 
         private async Task SetConversation()
         {
+            _conversationOpening = true;
             _userScrolledUp = false;
             ClearConversation();
             SetWindow(WindowType.Chat);
@@ -1267,6 +1286,7 @@ namespace Skymu.Skype5
             Spinner.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
             UpdateMessageSendButtonState();
+            _conversationOpening = false;
         }
 
         private void HandleConversationItems()
@@ -1404,16 +1424,12 @@ namespace Skymu.Skype5
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
-                {
-                    if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
-                };
-                if (Universal.Plugin is IExtras iep)
-                {
-                    iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
-                    RefreshExtras();
-                }
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                foreach (var p in Universal.ActivePlugins)
+                    if (p is IExtras iep)
+                        iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
+                RefreshExtras();
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1425,7 +1441,7 @@ namespace Skymu.Skype5
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                new Login(e.switchuser).Show();
+                Universal.LoginDispenser(switchUser: e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1434,6 +1450,14 @@ namespace Skymu.Skype5
             {
                 if (!is_loading_conversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
+            };
+
+            vmodel.ConversationOpened += (s, e) =>
+            {
+                _oldUser.PropertyChanged -= SelfInfoChanged;
+                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
+                _oldUser = Universal.CurrentUser;
+                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
@@ -1467,6 +1491,10 @@ namespace Skymu.Skype5
                         if (item is Conversation c && c.Identifier == sc.Identifier)
                         { ConversationList.SelectedItem = item as Conversation; break; }
                 }
+                StatusBox.Text = Universal.CurrentUser.DisplayName;
+                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
+                    Universal.CurrentUser.ConnectionStatus
+                );
                 _ = SetConversation();
             };
 
@@ -1485,6 +1513,29 @@ namespace Skymu.Skype5
                             ? Visibility.Visible
                             : Visibility.Collapsed
                     );
+            };
+
+            vmodel.PluginEnabledChanged += (s, p) =>
+            {
+                bool ss = Universal.ActivePlugins.Any(e => e.SupportsServers);
+                if (!ss || ServersList.Visibility == Visibility.Collapsed)
+                {
+                    if (!ss)
+                        btnServers.Visibility = Visibility.Collapsed;
+                    ServersColumn.Width = !ss
+                        ? new GridLength(0)
+                        : SMALL_TAB;
+                }
+                else
+                {
+                    btnServers.Visibility = Visibility.Visible;
+                    ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
+                }
+            };
+
+            vmodel.IncomingCallAccepted += (e) =>
+            {
+                InitiateCall(e.Caller, true);
             };
 
             InitializeWindowFrame();
@@ -1508,7 +1559,7 @@ namespace Skymu.Skype5
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!Universal.Plugin.SupportsServers)
+            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
@@ -1541,25 +1592,6 @@ namespace Skymu.Skype5
                 }
                 Sidebar_SizeChanged_Refresh();
             };
-
-            if (Universal.CallPlugin != null)
-            {
-                Universal.CallPlugin.IncomingCallTube += (sender, e) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        IncomingCall ic = new IncomingCall(e);
-                        EventHandler handler = null;
-                        handler = (s, args) =>
-                        {
-                            ic.Answered -= handler;
-                            InitiateCall(e.Caller, true);
-                        };
-                        ic.Answered += handler;
-                        ic.Show();
-                    });
-                };
-            }
 
             this.AllowsTransparency = false;
         }

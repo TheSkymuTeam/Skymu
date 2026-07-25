@@ -137,14 +137,14 @@ namespace Tox
             foreach (var p in conference.peers)
             { 
                 var pkey = BATS(p.publicKey);
-                users.Add(p.id, new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey)));
+                users.Add(p.id, new User(core, p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey)));
             }
             var ua = users.Values.ToList();
             // Who needs to access offline users anyways.
             foreach (var p in conference.offlinePeers)
             {
                 var pkey = BATS(p.publicKey);
-                ua.Add(new User(p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(pkey)));
+                ua.Add(new User(core, p.name, pkey, pkey, null, PresenceStatus.Offline, GrabAvatar(pkey)));
             }
             var cid = BATS(conference.cid);
             foreach (var conv in core.conferences)
@@ -164,12 +164,6 @@ namespace Tox
                     return i;
             return null;
         }
-
-        #endregion
-
-        #region native fun
-
-
 
         #endregion
     }

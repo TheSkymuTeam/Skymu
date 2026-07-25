@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OmegaAOL.Bifrost.Http;
 using OmegaAOL.Bifrost.WebSockets;
+using System.Windows.Documents;
 
 namespace Skymu.UserDirectory
 {
@@ -62,6 +63,7 @@ namespace Skymu.UserDirectory
             return sb.ToString();
         }
 
+        // TODO multiuser
         public static async Task<bool> SetUserStatus(
             bool online,
             string dn = null,
@@ -75,7 +77,7 @@ namespace Skymu.UserDirectory
                 display_name = Settings.Anonymize ? "Anonymous" : dn,
                 username = Settings.Anonymize ? anon_random : user,
                 identifier = Settings.Anonymize ? anon_random : id,
-                plugin = Universal.Plugin.Name,
+                plugin = Universal.Plugin?.Name,
                 skymu_build_codename = Universal.BUILD_NAME,
                 skymu_build_version = Universal.BUILD_VERSION,
                 token = ApiTkn,

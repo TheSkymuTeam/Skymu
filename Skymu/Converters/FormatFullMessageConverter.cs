@@ -16,20 +16,21 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using Yggdrasil.Models;
 
 namespace Skymu.Converters
 {
-    public sealed class FormatFullTextConverter : IValueConverter
+    public sealed class FormatFullMessageConverter : IValueConverter
     {
         public Style ViewerStyle { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var text = value as string;
-            if (text == null)
+            var msg = value as Message;
+            if (msg == null)
                 return DependencyProperty.UnsetValue;
 
-            return Formatter.Parse(text, false, ViewerStyle);
+            return Formatter.Parse(msg.Author.Core, msg.Text, false, ViewerStyle);
         }
 
         public object ConvertBack(

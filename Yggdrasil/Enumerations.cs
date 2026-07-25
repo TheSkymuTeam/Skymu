@@ -111,4 +111,14 @@ namespace Yggdrasil.Enumerations
         Group,
         Server,
     }
+
+    /// <summary>
+    /// If both is present, use Explicit over Implicit.
+    /// </summary>
+    public enum MentionType
+    {
+        None,
+        Implicit,
+        Explicit
+    }
 }

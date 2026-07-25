@@ -232,7 +232,7 @@ namespace Skymu.Forms
                 ? (body != null ? $"{message.Author.DisplayName} {body}" : message.Author.DisplayName)
                 : body ?? "(no message)";
 
-            messageText = Formatter.Parse(raw);
+            messageText = Formatter.Parse(message.Author.Core, raw);
             messageText.Foreground = (SolidColorBrush)Application.Current.Resources["Text.MediumContrast"];
             messageText.FontSize = 11;
             messageText.Margin = new Thickness(0, 1, 0, 6);

@@ -12,14 +12,14 @@
 /*==========================================================*/
 
 using Skymu.Helpers;
+using Skymu.Sounds;
 using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using Yggdrasil.Models;
+using Yggdrasil;
 using Yggdrasil.Bottles;
-using Skymu.Sounds;
 
 namespace Skymu.Forms
 {
@@ -78,7 +78,7 @@ namespace Skymu.Forms
         private void OnDecline(object sender, MouseButtonEventArgs e)
         {
             SoundManager.StopPlayback("CALL_IN");
-            _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
+            _ = ((ICall)_call.Caller.Core).DeclineCall(_call.ConversationId); // TODO: Anything better? This technically works but looks shit. I am talking about the call.Caller.Core and casting it.
             SoundManager.Play("HANGUP");
             Close();
         }
