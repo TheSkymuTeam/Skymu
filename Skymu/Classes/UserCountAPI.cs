@@ -27,7 +27,7 @@ namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
-        private static readonly string DOMAIN = "usercount.skymu.app";
+        private static readonly string DOMAIN = "ledger.skymu.app";
         private static readonly string WEBSOCKET_URL = $"wss://{DOMAIN}/ws";
 
         // REST API variables
