@@ -21,7 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System.Windows.Input;
 using Yggdrasil.Models;
 

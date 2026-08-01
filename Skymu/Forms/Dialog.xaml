@@ -74,11 +74,7 @@
         </Grid>
         <!--  Content Section (grows with text)  -->
         <Grid Grid.Row="1" Margin="0,10,0,10">
-            <Image
-                x:Name="BodyImg"
-                Width="250"
-                Height="250"
-                Visibility="Collapsed" />
+            <ContentControl x:Name="BodyCC" Visibility="Collapsed" />
             <ScrollViewer
                 x:Name="tb"
                 Width="260"

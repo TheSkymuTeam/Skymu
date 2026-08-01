@@ -15,7 +15,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     public enum PlatformType
     {

@@ -18,7 +18,7 @@ using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Skymu.Sounds;
 using Skymu.Forms;
 using Skymu.Forms.Pages;

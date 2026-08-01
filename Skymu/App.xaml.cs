@@ -33,7 +33,7 @@ using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
 using Skymu.UserDirectory;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
@@ -45,7 +45,7 @@ namespace Skymu
     public partial class Universal : Application
     {
         // -----------------------------------------------------------------------------
-        // Skymu metadata.
+        // Build information
         // -----------------------------------------------------------------------------
 
         public const string NAME = "Skymu";
@@ -53,7 +53,7 @@ namespace Skymu
         public const string BUILD_NAME = "Elder Guardian";
 
         // -----------------------------------------------------------------------------
-        // Skymu URLs.
+        // Skymu controlled URLs
         // -----------------------------------------------------------------------------
 
         public const string GITHUB_OWNER = "TheSkymuTeam";
@@ -64,7 +64,7 @@ namespace Skymu
         public const string SKYMU_PACKAGE_ENDPOINT = "https://skymu.app/packages";
 
         // -----------------------------------------------------------------------------
-        // External URLs.
+        // Third party URLs
         // -----------------------------------------------------------------------------
 
         public const string NET_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet";
@@ -76,13 +76,13 @@ namespace Skymu
         public const string GITHUB_PULLS_URL = GITHUB_BASE_URL + "/pulls";
 
         // -----------------------------------------------------------------------------
-        // Globally scoped variables.
+        // Globals
         // -----------------------------------------------------------------------------
 
         public static ICore Plugin;
         public static ICall CallPlugin;
         public static ICore[] PluginList;
-        public static bool HasLoggedIn = false;
+        public static bool SignedIn = false;
         public static readonly string Theme = Settings.Theme;
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
@@ -600,7 +600,7 @@ namespace Skymu
             {
                 var themeFileName = frameworkName.Split('.')[1]; // "Light", "Dark", "HC"
                 var themeUri = new Uri(
-                    $"pack://application:,,,/Presentation/Themes/Fluent.{themeFileName}.xaml",
+                    $"pack://application:,,,/Presentation/Fluent/Themes/Fluent.{themeFileName}.xaml",
                     UriKind.Absolute
                 );
                 theme = new ResourceDictionary { Source = themeUri };
@@ -669,7 +669,7 @@ namespace Skymu
                 _ = UserCountAPI.CloseWS(); // Sends close to the websocket while the app is dying around it. This only works cos of the delay caused by the logout sound.
             }
             catch { } // If it doesn't work, too bad.
-            if (HasLoggedIn)
+            if (SignedIn)
             {
                 PluginManager.DisposeAll();
                 SoundManager.PlaySynchronous("LOGOUT");

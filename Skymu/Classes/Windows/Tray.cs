@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     public class Tray
     {

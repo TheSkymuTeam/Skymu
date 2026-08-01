@@ -24,7 +24,7 @@ using Skymu.Forms;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

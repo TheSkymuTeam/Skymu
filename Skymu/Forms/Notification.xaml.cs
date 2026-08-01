@@ -24,7 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Yggdrasil.Bottles;
 using System.Windows.Media;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;

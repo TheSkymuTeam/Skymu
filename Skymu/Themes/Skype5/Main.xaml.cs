@@ -37,7 +37,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Skymu.Sounds;
 using System.Windows.Threading;
 using Yggdrasil;

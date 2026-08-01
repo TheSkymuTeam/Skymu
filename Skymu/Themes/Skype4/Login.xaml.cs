@@ -19,7 +19,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Skymu.Sounds;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;

@@ -14,7 +14,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     public class DwmHelper
     {

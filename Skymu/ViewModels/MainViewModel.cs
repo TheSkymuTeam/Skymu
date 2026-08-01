@@ -24,7 +24,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.UserDirectory;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,7 +36,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
 using System.Windows.Input;
 using System.Windows.Media;
 using Yggdrasil;
@@ -826,7 +825,7 @@ namespace Skymu.ViewModels
             if (!switchuser)
                 CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
             SoundManager.Play("LOGOUT");
-            Universal.HasLoggedIn = false;
+            Universal.SignedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
             _ = UserCountAPI.CloseWS();
         }

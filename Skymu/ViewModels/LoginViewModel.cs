@@ -17,11 +17,14 @@ using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
 using Skymu.Plugins;
+using System.Windows.Media.Imaging;
 using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System.Threading;
-using Skymu.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Skymu.Native.Windows;
 using Skymu.Sounds;
 using System;
 using System.Collections.ObjectModel;
@@ -201,7 +204,7 @@ namespace Skymu.ViewModels
         public void RunPostLogin(IMainWindowHolder mainWindow)
         {
             Tray.SetStatus(Universal.CurrentUser.ConnectionStatus);
-            Universal.HasLoggedIn = true;
+            Universal.SignedIn = true;
             mainWindow.Show();
             SoundManager.Play("LOGIN");
             new Updater();
@@ -418,6 +421,15 @@ namespace Skymu.ViewModels
                 string qr = await Universal.Plugin.GetQRCode();
                 if (!string.IsNullOrEmpty(qr))
                 {
+                    // Captcha.hCaptcha.ShowPrompt("blablabla", "blablabla");
+                    Image qrImage = new Image();
+                    qrImage.Source = ImageHelper.GenerateFromArray(
+                            new PngByteQRCode(
+                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q)
+                            ).GetGraphic(20)
+                        );
+                    qrImage.Width = 250;
+                    qrImage.Height = 250;
                     Dialog qrDialog = new Dialog(
                         WindowBase.IconType.ContactRequest,
                         null,
@@ -426,11 +438,7 @@ namespace Skymu.ViewModels
                         null,
                         "Cancel",
                         false, null, null, false,
-                        ImageHelper.GenerateFromArray(
-                            new PngByteQRCode(
-                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q)
-                            ).GetGraphic(20)
-                        )
+                        qrImage
                     );
                     EventHandler onClosed = (s, e) => AnimationToggleRequested?.Invoke(false);
                     qrDialog.Closed += onClosed;

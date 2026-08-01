@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 

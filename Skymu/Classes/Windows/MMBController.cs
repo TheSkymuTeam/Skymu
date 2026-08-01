@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using Yggdrasil.Enumerations;
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     class MMBController
     {

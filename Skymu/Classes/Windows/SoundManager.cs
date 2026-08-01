@@ -21,6 +21,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
+// TODO(omega): This native code should be migrated to some sort of NET Core / NET Standard compatible
+// solution. That's why the namespace isn't currently Skymu.Native.Windows.xxx. It's on WinMM purely
+// for historical deveopment and performance reasons now, which is a detriment to any Avalonia migration plans. 
+
 namespace Skymu.Sounds
 {
     static class SoundManager

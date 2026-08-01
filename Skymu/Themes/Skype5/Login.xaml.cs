@@ -16,7 +16,7 @@ using Skymu.Forms.Pages;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.ViewModels;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
