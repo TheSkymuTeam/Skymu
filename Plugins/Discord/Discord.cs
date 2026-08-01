@@ -160,6 +160,103 @@ namespace Discord
             return tcs.Task;
         }
 
+        #region Fluxer (unused)
+
+        /*
+         
+        public AuthTypeInfo[] AuthenticationTypes
+        {
+            get
+            {
+                return new[]
+                {
+                    new AuthTypeInfo(AuthenticationMethod.Password, "Email"),
+                    new AuthTypeInfo(AuthenticationMethod.Token, "Token")
+                };
+            }
+        }
+         
+        public async Task<LoginResult> Authenticate(SavedCredential credential)
+        {
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Choice, "Fluxer support in Skymu is highly experimental. " +
+                "We make no guarantees toward any functionality in this plugin. It might not even log in.\n\nWould you still like to continue?"));
+            FluxerToken = credential.PasswordOrToken;
+            if (string.IsNullOrWhiteSpace(FluxerToken))
+            {
+                return LoginResult.Failure;
+            }
+
+            return await StartClient();
+        }
+
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        {
+            if (authType == AuthenticationMethod.Token) FluxerToken = username;
+            else if (authType == AuthenticationMethod.Password)
+            {
+                var loginBody = new
+                {
+                    login = username,
+                    password = password
+                };
+                var loginResponse = JsonNode.Parse(await Client.Send("auth/login", HttpMethod.Post, null, loginBody)).AsObject();
+                //Console.WriteLine($"The response from the API is: {loginResponse}");
+
+                if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
+                {
+                    FluxerToken = loginResponse["token"].GetValue<string>();
+                }
+                else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
+                {
+                    MFATicket = loginResponse["ticket"]?.GetValue<string>();
+                    InstanceID = loginResponse["login_instance_id"]?.GetValue<string>();
+
+                    var fingerprintResponse = JsonNode.Parse(await Client.Send("experiments?with_guild_experiments=true", HttpMethod.Get, null, null)).AsObject();
+                    if (fingerprintResponse.ContainsKey("fingerprint"))
+                    {
+                        Fingerprint = fingerprintResponse["fingerprint"]?.GetValue<string>();
+                    }
+                    return LoginResult.TwoFARequired;
+                }
+                else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
+                {
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Fluxer has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
+                    return LoginResult.Failure;
+                }
+                else
+                {
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Failed to log in. Error:\n\n" + loginResponse.ToJsonString()));
+                    return LoginResult.Failure;
+                }
+            }
+            else return LoginResult.UnsupportedAuthType;
+
+            return await StartClient();
+        }
+
+        public async Task<LoginResult> AuthenticateTwoFA(string code)
+        {
+            string payload = JsonSerializer.Serialize(new { ticket = MFATicket, login_instance_id = InstanceID, code });
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            headers.Add("X-Super-Properties", Fingerprint);
+            JsonNode response = JsonNode.Parse(await Client.Send("auth/mfa/totp", HttpMethod.Post, null, payload, null, null, headers));
+            if (response != null && response["token"] != null)
+            {
+                FluxerToken = response["token"].GetValue<string>();
+                return await StartClient();
+            }
+            else
+            {
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Your MFA code is invalid, please double check that it is correct before retrying."));
+                return LoginResult.Failure;
+            }
+
+        }
+         
+        */
+
+        #endregion
+
         public async Task<string> GetQRCode()
         {
             var tcs = new TaskCompletionSource<string>();

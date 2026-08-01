@@ -197,7 +197,8 @@ namespace OmegaAOL.Bifrost.Tls
                 {
                     string xmlPath = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "Yggdrasil",
+                        "OmegaAOL",
+                        "Bifrost",
                         "ratatoskr.xml"
                     );
                     if (File.Exists(xmlPath))

@@ -20,7 +20,7 @@ using Skymu.Preferences;
 
 namespace Skymu.Captcha
 {
-    class hCaptcha
+    class HCaptcha
     {
         private const string CaptchaHtml =
             @"

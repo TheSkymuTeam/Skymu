@@ -363,8 +363,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool AutoLaunch
         {
-            get => Windows.AutoLaunch.Get();
-            set => Windows.AutoLaunch.Set(value);
+            get => Native.Windows.AutoLaunch.Get();
+            set => Native.Windows.AutoLaunch.Set(value);
         }
 
         #endregion
