@@ -798,6 +798,7 @@ namespace Skymu.ViewModels
 
             foreach (var server in ServerList)
             {
+                _database.Conversations.Write(server.Channels);
                 server.GroupedChannels = ServerChannelHelper.GroupByCategory(
                     server.Channels,
                     server.CategoryMap

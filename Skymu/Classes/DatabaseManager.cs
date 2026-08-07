@@ -1766,7 +1766,7 @@ SanitizeFolderName(user.Identifier)
                 _db = db;
             }
 
-            public List<Server> Read() // JUMP server read
+            public List<Server> Read() // JUMP servers read
             {
                 var result = new List<Server>();
 
