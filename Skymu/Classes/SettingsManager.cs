@@ -151,7 +151,7 @@ namespace Skymu.Preferences
         }
         public static bool EnableSkypeHome
         {
-            get => SELECT("EnableSkypeHome", true, "UI/General");
+            get => SELECT("EnableSkypeHome", false, "UI/General");
             set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "UI/General");
         }
         public static bool EnableAdBlock
