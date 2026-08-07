@@ -140,6 +140,7 @@ namespace Skymu.Skype5
 
         private void SetWindow(WindowType type, bool force = false)
         {
+            CallButton.UpdateLayout();
             if (vmodel.SelectedConversation is Group)
             {
                 VideoCallButton.Visibility = Visibility.Visible;

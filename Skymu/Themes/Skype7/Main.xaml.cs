@@ -494,14 +494,19 @@ namespace Skymu.Skype7
         // Recent is the default tab
         private double waveLeft = -141.5;
 
+        public static readonly DependencyProperty ActiveTabProperty =
+    DependencyProperty.Register(nameof(ActiveTab), typeof(int), typeof(Main), new PropertyMetadata(0));
+
+        public int ActiveTab
+        {
+            get => (int)GetValue(ActiveTabProperty);
+            set => SetValue(ActiveTabProperty, value);
+        }
+
         /// <summary> 0: Contacts, 1: Recent, 2: Servers </summary>
         private void SetActiveTab(int tab)
         {
-            var blue = (Brush)FindResource("SkDarkBlue");
-            var black = (Brush)FindResource("SkBlack");
-            TabContactsText.Foreground = tab == 0 ? blue : black;
-            TabRecentText.Foreground = tab == 1 ? blue : black;
-            TabServersText.Foreground = tab == 2 ? blue : black;
+            ActiveTab = tab;
             // TODO: Use dynamic positioning instead of precompted values
             // CONTACTS centre ≈ 48px  → leftMargin = 48-280 = -232
             // RECENT   centre ≈ 135px → leftMargin = -141.5 (original)

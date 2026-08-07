@@ -49,8 +49,8 @@ namespace Skymu
         // -----------------------------------------------------------------------------
 
         public const string NAME = "Skymu";
-        public const string BUILD_VERSION = "0.4.6";
-        public const string BUILD_NAME = "Elder Guardian";
+        public const string BUILD_VERSION = "0.4.7";
+        public const string BUILD_NAME = "Elgon Hazelnut Mousse";
 
         // -----------------------------------------------------------------------------
         // Skymu controlled URLs

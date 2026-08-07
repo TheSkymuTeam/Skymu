@@ -143,7 +143,7 @@ namespace Skymu.Skype7
             }
         }
 
-        private void Login_Loaded(object sender, RoutedEventArgs e)
+        private async void Login_Loaded(object sender, RoutedEventArgs e)
         {
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
@@ -155,20 +155,22 @@ namespace Skymu.Skype7
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
-            if (_viewModel.PendingAutoLogin != null && !switchuser)
-                LoginToggleAnimation(true);
-            else
-                SelectDefaultProtocol();
-
-            if (switchuser && _viewModel.PendingAutoLogin != null)
+            if (_viewModel.PendingAutoLogin != null)
             {
                 var pal = _viewModel.PendingAutoLoginListing;
                 var pa = _viewModel.PendingAutoLogin;
-                _viewModel.ClearPendingAutoLogin();
                 ProtocolComboBox.SelectedItem = pal;
                 ProtocolSelectionChanged(null, null);
                 SetProtocolSelection(pal, pa);
             }
+
+            if (_viewModel.PendingAutoLogin != null && !switchuser)
+            {
+                LoginToggleAnimation(true);
+                await _viewModel.TryAutoLogin();
+            }
+            else
+                SelectDefaultProtocol();
         }
 
         private void SelectDefaultProtocol()
@@ -208,14 +210,6 @@ namespace Skymu.Skype7
             }
             if (listing != null)
                 _viewModel.HandleProtocolSelected(listing);
-        }
-
-        private async void Login_ContentRendered(object sender, EventArgs e)
-        {
-            if (!switchuser)
-                await _viewModel.TryAutoLogin();
-            if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
-                SelectDefaultProtocol();
         }
 
         private void LoginToggleAnimation(bool anim)

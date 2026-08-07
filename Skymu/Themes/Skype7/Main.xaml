@@ -963,6 +963,15 @@
                         Text="{Binding [sZAPBUTTON_CONTACTS], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Left"
                         TextWrapping="NoWrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="0">
+                                        <Setter Property="Foreground" Value="{DynamicResource SkDarkBlue}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock.LayoutTransform>
                             <ScaleTransform ScaleX="1.09" />
                         </TextBlock.LayoutTransform>
@@ -977,11 +986,20 @@
                         VerticalAlignment="Top"
                         Cursor="Hand"
                         FontFamily="Segoe UI Historic"
-                        Foreground="{DynamicResource SkDarkBlue}"
+                        Foreground="{DynamicResource Metro.Text.HighContrast}"
                         MouseLeftButtonUp="TabRecent_Click"
                         Text="{Binding [sRECENTS_TAB_TEXT], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Center"
                         TextWrapping="NoWrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="1">
+                                        <Setter Property="Foreground" Value="{DynamicResource SkDarkBlue}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock.LayoutTransform>
                             <ScaleTransform ScaleX="1.09" />
                         </TextBlock.LayoutTransform>
@@ -999,6 +1017,15 @@
                         TextAlignment="Left"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="2">
+                                        <Setter Property="Foreground" Value="{DynamicResource SkDarkBlue}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
                         <TextBlock.LayoutTransform>
                             <ScaleTransform ScaleX="1.09" />
                         </TextBlock.LayoutTransform>
