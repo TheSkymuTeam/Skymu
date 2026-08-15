@@ -7,6 +7,13 @@
 ![GitHub watchers](https://img.shields.io/github/watchers/TheSkymuTeam/Skymu)
 ![GitHub repo stars](https://img.shields.io/github/stars/TheSkymuTeam/Skymu)
 
+# NOTICE ME SEMP... UHHH ... I MEAN OMEGA !
+Omega, can you give me owner rank on GitHub pwease~ ?
+Me can't add Patrick to GitHub là ... So not very cool là ...
+I don't see any option to add people là, that's not okie dokie ...
+So, notice me pleaaaase and give me owner là, else i can't add Patrick ... :/
+- Sean Kévin
+
 # What is Skymu?
 Skymu is a modern multi-platform IM client that looks like classic versions of Skype, with skins perfectly resembling Skype 4, 5, 6, and 7. Officially supported messaging services include Matrix, Tox, MSNP11, and some other platforms.
 
