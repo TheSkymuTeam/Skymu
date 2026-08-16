@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.WebSockets;
+using DiscordRewrite.Networking;
 using OmegaAOL.Bifrost.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -154,24 +156,19 @@ namespace DiscordRewrite.Authentication.Sockets
         private async Task HandlePendingLogin(JsonElement rootElement)
         {
             string loginTicket = rootElement.GetProperty("ticket").GetString();
-            // string loginResponse = await API.Instance.SendAPI(loginEndpoint, HttpMethod.Post, data: new { loginTicket });
+            string loginResponse = await API.Instance.SendAPI(loginEndpoint, HttpMethod.Post, reqData: new { loginTicket });
 
-            /*
             using (var jsonDoc = JsonDocument.Parse(loginResponse))
             {
                 var rootEl = jsonDoc.RootElement;
                 if (rootEl.TryGetProperty("captcha_key", out _) || rootEl.TryGetProperty("captcha_sitekey", out _))
                 {
-                    // You are now stuck in a CAPTCHA loop, good luck!
-                    // This will be implemented soon.
-                    // Fire<string>(_ => MessageBox.Show("Discord is requesting for a CAPTCHA to be completed, Naticord does not support these as of now. Please try again later.", "Naticord", MessageBoxButtons.OK, MessageBoxIcon.Error), null);
                     return;
                 }
                 if (!rootEl.TryGetProperty("encrypted_token", out var tokenEl) || tokenEl.ValueKind != JsonValueKind.String) { return; }
 
                 Fire(tokenReceived, DecryptToUtf8(tokenEl.GetString()));
             }
-            */
         }
         #endregion
 
