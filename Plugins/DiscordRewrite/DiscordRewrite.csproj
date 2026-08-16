@@ -10,7 +10,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<AssemblyName>smp.discord-rewrite</AssemblyName>
-		<AssemblyTitle>Discord</AssemblyTitle>
+		<AssemblyTitle>Discord Rewrite</AssemblyTitle>
 		<OutputPath>..\bin\discord-rewrite.smp</OutputPath>
 	</PropertyGroup>
 
