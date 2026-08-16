@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skymu.Tests", "Skymu.Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat Completions", "Plugins\Chat Completions\Chat Completions.csproj", "{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordRewrite", "DiscordRewrite\DiscordRewrite.csproj", "{15B566E2-07B6-4795-ADB7-F1AEDFF91950}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +163,22 @@ Global
 		{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}.Release|x64.Build.0 = Release|Any CPU
 		{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}.Release|x86.ActiveCfg = Release|Any CPU
 		{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605}.Release|x86.Build.0 = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|arm64.Build.0 = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|x64.Build.0 = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Debug|x86.Build.0 = Debug|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|arm64.ActiveCfg = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|arm64.Build.0 = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|x64.ActiveCfg = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|x64.Build.0 = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|x86.ActiveCfg = Release|Any CPU
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +189,7 @@ Global
 		{A3162020-D14E-4C12-9C1C-F1ED89C98023} = {E41413D5-8999-415D-A41D-B821197D0DE1}
 		{DDE64A87-29EC-1573-F99C-3DB9CC076F43} = {E41413D5-8999-415D-A41D-B821197D0DE1}
 		{C1B671B4-AEC6-49B3-BA37-10C1B0D9E605} = {E41413D5-8999-415D-A41D-B821197D0DE1}
+		{15B566E2-07B6-4795-ADB7-F1AEDFF91950} = {E41413D5-8999-415D-A41D-B821197D0DE1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6028F380-C24A-49EE-99A8-85A393B956CC}
