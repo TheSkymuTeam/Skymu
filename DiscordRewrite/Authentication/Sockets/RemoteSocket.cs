@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.WebSockets;
+using OmegaAOL.Bifrost.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -26,7 +26,7 @@ namespace Naticord.Networking.WebSockets
         private static readonly JsonSerializerOptions jsonOptions = new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
         // The client required for the WebSockets to function
-        private ClientWebSocket _webSocket;
+        private BifrostWebSocket _webSocket;
         private readonly SemaphoreSlim _sendLock = new SemaphoreSlim(1, 1);
 
         // Cancellation token for the socket
@@ -60,7 +60,7 @@ namespace Naticord.Networking.WebSockets
         public async Task StartSocket()
         {
             _cancellationToken = new CancellationTokenSource();
-            _webSocket = new ClientWebSocket();
+            _webSocket = new BifrostWebSocket();
 
             // Required so Discord doesn't kick us out for being an unknown source
             _webSocket.Options.SetRequestHeader("Origin", "https://discord.com");
