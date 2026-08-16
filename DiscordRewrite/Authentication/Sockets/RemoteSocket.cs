@@ -14,7 +14,7 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 
-namespace Naticord.Networking.WebSockets
+namespace DiscordRewrite.Authentication.Sockets
 {
     internal class AuthSocket : IDisposable
     {
