@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OmegaAOL.Bifrost.Http;
 
 namespace DiscordRewrite.Networking
 {
@@ -29,7 +30,7 @@ namespace DiscordRewrite.Networking
 
         private API()
         {
-            var compressionHandler = new HttpClientHandler
+            var compressionHandler = new BifrostEngine
             {
                 // Possibly add Brotli and zstd compression in the future?
                 AutomaticDecompression =
