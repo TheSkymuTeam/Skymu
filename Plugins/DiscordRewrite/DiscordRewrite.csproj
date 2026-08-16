@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
-    <ProjectReference Include="..\Yggdrasil\Yggdrasil.csproj" />
   </ItemGroup>
 
 </Project>
