@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Net.Http;
+using System.Text.Json;
 using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using DiscordRewrite.Networking;
+using DiscordRewrite.Authentication.Sockets;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -44,6 +48,13 @@ namespace DiscordRewrite
         }
         #endregion
 
+        #region Plugin variables
+        private AuthSocket _authSocket;
+        private TaskCompletionSource<string> _qrTokenSource;
+
+        private string _dscToken;
+        #endregion
+
         public int TypingTimeout => throw new NotImplementedException();
         
         public int TypingRepeat => throw new NotImplementedException();
@@ -57,25 +68,66 @@ namespace DiscordRewrite
             throw new NotImplementedException();
         }
 
-        public Task<string> GetQRCode()
+        public async Task<string> GetQRCode()
         {
-            throw new NotImplementedException();
+            _authSocket?.Dispose();
+            _authSocket = new AuthSocket();
+
+            var qrReadySource = new TaskCompletionSource<string>();
+            _qrTokenSource = new TaskCompletionSource<string>();
+
+            _authSocket.qrCodeReady += url => qrReadySource.TrySetResult(url);
+            _authSocket.tokenReceived += token => _qrTokenSource.TrySetResult(token);
+
+            await _authSocket.StartSocket();
+            return await qrReadySource.Task;
         }
 
-        public Task<LoginResult> Authenticate(AuthenticationMethod auth_type, string username, string password)
+        public async Task<LoginResult> Authenticate(AuthenticationMethod auth_type, string username, string password)
         {
-            throw new NotImplementedException();
+            switch (auth_type)
+            {
+                // case AuthenticationMethod.Password: return await AuthenticateWithPassword(username, password);
+                case AuthenticationMethod.Token: return await AuthenticateWithToken(password);
+                case AuthenticationMethod.QRCode: return await AuthenticateWithQRCode();
+                default: return LoginResult.UnsupportedAuthType;
+            }
         }
 
-        public Task<LoginResult> Authenticate(SavedCredential credential)
+        private async Task<LoginResult> AuthenticateWithToken(string dscToken)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(dscToken)) return LoginResult.Failure;
+            // Verify if the token is legitimate and not a random string that Discord won't accept as a token.
+            string usersResponse = await API.Instance.SendAPI("users/@me", HttpMethod.Get, dscToken: dscToken);
+
+            using (var jsonDoc = JsonDocument.Parse(usersResponse))
+            {
+                if (!jsonDoc.RootElement.TryGetProperty("id", out _)) return LoginResult.Failure;
+
+                _dscToken = dscToken;
+                return LoginResult.Success;
+            }
         }
 
-        public Task<LoginResult> AuthenticateTwoFA(string code)
+        private async Task<LoginResult> AuthenticateWithQRCode()
         {
-            throw new NotImplementedException();
+            if (_qrTokenSource == null) return LoginResult.Failure;
+
+            Task timeoutTask = Task.Delay(TimeSpan.FromMinutes(5));
+            Task completedTask = await Task.WhenAny(_qrTokenSource.Task, timeoutTask);
+
+            if (completedTask == timeoutTask)
+            {
+                _authSocket?.StopSocket();
+                return LoginResult.Failure;
+            }
+
+            _dscToken = await _qrTokenSource.Task;
+            return LoginResult.Success;
         }
+
+        public Task<LoginResult> Authenticate(SavedCredential credential) { throw new NotImplementedException(); }
+        public Task<LoginResult> AuthenticateTwoFA(string code) { throw new NotImplementedException(); }
 
         public Task<bool> SendMessage(string conversation_id, string text = null, Attachment attachment = null, string parent_message_id = null, bool action = false)
         {

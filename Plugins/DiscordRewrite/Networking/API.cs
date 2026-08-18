@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using OmegaAOL.Bifrost.Http;
 
@@ -15,8 +16,8 @@ namespace DiscordRewrite.Networking
         private readonly ConfigMgr configMgr = new ConfigMgr();
 
         // Singleton, so we don't create multiple HttpClient clients
-        private static readonly Lazy<API> _instance = new Lazy<API>(() => new API());
-        public static API Instance => _instance.Value;
+        private static readonly Lazy<API> _apiInstance = new Lazy<API>(() => new API());
+        public static API Instance => _apiInstance.Value;
 
         // Reuse the HttpClient throughout the API
         internal readonly HttpClient InternalHttpClient;
@@ -49,6 +50,9 @@ namespace DiscordRewrite.Networking
             InternalHttpClient.DefaultRequestHeaders.Add("Origin", "https://discord.com");
         }
 
+        private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+        private bool _initializedApi;
+
         private async Task InitializeAsync()
         {
             XSuperProperties = await configMgr.GetXSPJson();
@@ -63,8 +67,25 @@ namespace DiscordRewrite.Networking
             return apiClass;
         }
 
+        private async Task EnsureInitializedAsync()
+        {
+            if (_initializedApi) return;
+
+            await _initLock.WaitAsync();
+            try
+            {
+                if (_initializedApi) return;
+                await InitializeAsync();
+
+                _initializedApi = true;
+            }
+            finally { _initLock.Release(); }
+        }
+
         public async Task<string> SendAPI(string apiEndpoint, HttpMethod httpMethod, string dscToken = null, object reqData = null, byte[] fileData = null, string fileName = null, Dictionary<string, string> httpHeaders = null)
         {
+            await EnsureInitializedAsync();
+
             string apiUrl = "https://discord.com/api/v" + API_VERSION + "/" + apiEndpoint.TrimStart('/');
             using (var httpRequest = new HttpRequestMessage(httpMethod, apiUrl))
             {
