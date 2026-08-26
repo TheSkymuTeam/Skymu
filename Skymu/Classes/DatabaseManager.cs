@@ -50,7 +50,6 @@ namespace Skymu.Databases
         // or just when you feel like your changes could cause incompatibilities with old databases.
         // Increment this number liberally. DO NOT use migration functions etc as an alternative to
         // incrementing the number. Originally started at: 1.
-        private const int Version = 4;
         private const int Version = 5;
 
         private ICore plugin = null;

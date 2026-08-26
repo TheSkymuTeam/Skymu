@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Skymu.Classes;
 using Skymu.ViewModels;
 using System;
 using System.Windows;
@@ -21,32 +22,49 @@ namespace Skymu.Forms
 	public partial class AccountManagerSimple : Window
 	{
 		bool isLoginOpen = false;
-		AccountManagerViewModel vmodel { get; }
+		MainViewModel vmodel;
 
 		public AccountManagerSimple(MainViewModel mainvmodel)
 		{
 			InitializeComponent();
-
-            vmodel = new AccountManagerViewModel(mainvmodel);
-			DataContext = vmodel;
+			vmodel = mainvmodel;
+			DataContext = AccountManager.Accounts;
 		}
 
-        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        private async void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
-                vmodel.ToggleAccount(entry);
+			if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
+			{
+				var res = await AccountManager.ToggleAccount(entry);
+				if (res == false)
+                {
+					if (ReferenceEquals(Universal.Plugin, entry.Plugin))
+					{
+						Universal.Plugin = Universal.ActivePlugins[0];
+						vmodel.SelectConversation(null);
+					}
+
+					_ = vmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
+				}	
+				else if (res == true)
+					_ = vmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, true);
+				// null? do nothing
+			}
         }
 
         private void ALButton_Click(object sender, RoutedEventArgs e)
         {
             if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
-                AccountManagerViewModel.ToggleAutoLogin(entry);
+                AccountManager.ToggleAutoLogin(entry);
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+		private void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (((FrameworkElement)sender)?.DataContext is AccountEntry entry)
-                vmodel.RemoveAccount(entry);
+			{
+				AccountManager.RemoveAccount(entry);
+				_ = vmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
+			}
 		}
 
 		private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -75,7 +93,8 @@ namespace Skymu.Forms
                         plugin.Dispose();
                         return;
                     }
-					vmodel.AccountEnabledInvoke(plugin, pif);
+					AccountManager.AccountEnabledInvoke(plugin, pif);
+					_ = vmodel.OnAccountEnabledChanged(plugin, pif, true);
 				});
                 lw.Closed += (s, args) => isLoginOpen = false;
                 lw.ShowDialog();

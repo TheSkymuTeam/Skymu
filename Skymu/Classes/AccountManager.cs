@@ -1,4 +1,4 @@
-/*==========================================================*/
+﻿/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -14,57 +14,44 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Skymu.Credentials;
 using Skymu.Forms;
-using Skymu.Preferences;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 
-namespace Skymu.ViewModels
+namespace Skymu.Classes
 {
-    public partial class AccountManagerViewModel : ObservableObject
+    public static class AccountManager
     {
-        readonly MainViewModel _mainvmodel;
-
-        ObservableCollection<AccountEntry> _accounts;
-        public ObservableCollection<AccountEntry> Accounts
+        static ObservableCollection<AccountEntry> _accounts;
+        public static ObservableCollection<AccountEntry> Accounts
         {
-            get => _accounts;
-            set => SetProperty(ref _accounts, value);
+            get
+            {
+                if (_accounts != null)
+                    return _accounts;
+                LoadAccounts();
+                return _accounts;
+            }
         }
 
-        AccountEntry _selectedAccount;
-        public AccountEntry SelectedAccount
+        public static void LoadAccounts()
         {
-            get => _selectedAccount;
-            set => SetProperty(ref _selectedAccount, value);
-        }
-
-        public AccountManagerViewModel(MainViewModel mainvmodel)
-        {
-            _mainvmodel = mainvmodel;
-
-            _accounts = new ObservableCollection<AccountEntry>();
-            LoadAccounts();
-        }
-
-        public void LoadAccounts()
-        {
-            Accounts.Clear();
+            _accounts?.Clear();
+            if (_accounts == null)
+                _accounts = new ObservableCollection<AccountEntry>();
 
             foreach (var plugin in Universal.ActivePlugins)
             {
                 _ = Universal.ActiveUsers.TryGetValue(plugin, out var user);
                 Accounts.Add(new AccountEntry(plugin.InternalName, user, true, null));
             }
-            var ea = Settings.ExtraAccounts;
             foreach (var credential in CredentialManager.GetAll())
             {
-                var alog = false;
-                if (ea.Any(e => e.Plugin == credential.Plugin && e.User == credential.User.Identifier))
-                    alog = true;
+                var alog = credential.AutoLoginEnabled;
                 if (Accounts.Any(a => a.PluginIdentifier == credential.Plugin && a.User?.Identifier == credential.User.Identifier))
                 {
                     var acc = Accounts.FirstOrDefault(e => e.PluginIdentifier == credential.Plugin && e.User?.Identifier == credential.User.Identifier);
@@ -80,7 +67,7 @@ namespace Skymu.ViewModels
             }
         }
 
-        public void AccountEnabledInvoke(ICore plugin, User user)
+        public static void AccountEnabledInvoke(ICore plugin, User user)
         {
             var ent = new AccountEntry(plugin.InternalName, user, true, CredentialManager
                 .GetAll()
@@ -91,11 +78,15 @@ namespace Skymu.ViewModels
             };
             Accounts.Add(ent);
             Universal.ActivePlugins.Add(plugin);
-            _ = _mainvmodel.OnAccountEnabledChanged(plugin, user, true);
         }
 
-        internal static SavedCredential GetCred(AccountEntry entry)
+        internal static CredentialManager.SavedCredential GetCred(AccountEntry entry)
             => entry._credential ?? CredentialManager.Get(entry.User?.Identifier ?? "NOOOOOOSKAIMUUU", entry.PluginIdentifier);
+        internal static bool TryGetCred(AccountEntry entry, out CredentialManager.SavedCredential cred)
+        {
+            cred = GetCred(entry);
+            return cred != null;
+        }
         static bool HasCred(AccountEntry entry)
             => GetCred(entry) != null;
 
@@ -104,39 +95,24 @@ namespace Skymu.ViewModels
             if (entry == null)
                 return;
             entry.IsAutoLoginEnabled = !entry.IsAutoLoginEnabled;
-            if (entry.IsAutoLoginEnabled)
+
+            if (!TryGetCred(entry, out var cred))
             {
-                if (!HasCred(entry))
-                {
-                    Universal.ShowMessage(
-                        "You cannot enable auto-login of a plugin where the credentials were not successfully stored.",
-                        null,
-                        WindowBase.IconType.Error
-                    );
-                    entry.IsAutoLoginEnabled = false;
-                }
-                var list = Settings.ExtraAccounts.ToList();
-                list.Add(new Settings.SkymuAccount(entry.PluginIdentifier, entry.User.Identifier));
-                Settings.ExtraAccounts = list.ToArray();
-                Settings.Save();
+                Universal.ShowMessage(
+                    "You cannot toggle auto-login of a plugin where the credentials were not successfully stored.",
+                    null,
+                    WindowBase.IconType.Error
+                );
+                entry.IsAutoLoginEnabled = false;
             }
-            else
-            {
-                var list = Settings.ExtraAccounts.ToList();
-                var entr = list.FirstOrDefault(e => entry.PluginIdentifier == e.Plugin && entry.User.Identifier == e.User);
-                if (entr != null)
-                {
-                    _ = list.Remove(entr);
-                    Settings.ExtraAccounts = list.ToArray();
-                    Settings.Save();
-                }
-            }
+            cred.AutoLoginEnabled = !cred.AutoLoginEnabled;
+            CredentialManager.Save(cred);
         }
 
-        public async void ToggleAccount(AccountEntry entry)
+        public static async Task<bool?> ToggleAccount(AccountEntry entry)
         {
             if (entry == null)
-                return;
+                return null;
 
             entry.IsEnabled = !entry.IsEnabled;
             try
@@ -147,7 +123,7 @@ namespace Skymu.ViewModels
                     if (type == null)
                     {
                         Universal.ShowMessage("Failed to convert the internal name into a plugin object. This plugin is likely uninstalled.", null, WindowBase.IconType.Crash);
-                        return;
+                        return null;
                     }
                     entry.Plugin = (ICore)Activator.CreateInstance(
                         type
@@ -160,10 +136,9 @@ namespace Skymu.ViewModels
                         Universal.ShowMessage("Got result: " + result, "Failed to authenticate", WindowBase.IconType.Crash);
                         entry.IsEnabled = false;
                         entry.Plugin = null;
-                        return;
+                        return null;
                     }
                     Universal.ActivePlugins.Add(entry.Plugin);
-                    _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, true);
                 }
                 else
                 {
@@ -175,7 +150,7 @@ namespace Skymu.ViewModels
                             null,
                             WindowBase.IconType.Error
                         );
-                        return;
+                        return null;
                     }
                     if (!HasCred(entry))
                     {
@@ -196,13 +171,7 @@ namespace Skymu.ViewModels
                                 entry.Plugin.Dispose();
                             }
                             _ = Accounts.Remove(entry);
-                            if (ReferenceEquals(Universal.Plugin, entry.Plugin))
-                            {
-                                Universal.Plugin = Universal.ActivePlugins[0];
-                                _mainvmodel.SelectConversation(null);
-                            }
 
-                            _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
                             dialog.Close();
                         };
                         dialog.BLAction = () =>
@@ -211,7 +180,7 @@ namespace Skymu.ViewModels
                             dialog.Close();
                         };
                         dialog.ShowDialog();
-                        return;
+                        return entry.IsEnabled;
                     }
 
                     if (entry.Plugin != null)
@@ -220,7 +189,6 @@ namespace Skymu.ViewModels
                         Universal.ActivePlugins.Remove(entry.Plugin);
                         entry.Plugin.Dispose();
                     }
-                    _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
                     entry.Plugin = null;
                 }
             }
@@ -229,12 +197,13 @@ namespace Skymu.ViewModels
                 entry.IsEnabled = !entry.IsEnabled;
                 throw;
             }
+            return entry.IsEnabled;
         }
 
-        public void RemoveAccount(AccountEntry entry)
+        public static bool RemoveAccount(AccountEntry entry)
         {
             if (entry == null)
-                return;
+                return false;
 
             if (Accounts.Count == 1)
             {
@@ -243,7 +212,7 @@ namespace Skymu.ViewModels
                     null,
                     WindowBase.IconType.Error
                 );
-                return;
+                return false;
             }
 
             if (entry.Plugin != null)
@@ -252,28 +221,27 @@ namespace Skymu.ViewModels
                 _ = Universal.ActiveUsers.Remove(entry.Plugin);
                 _ = Universal.ActivePlugins.Remove(entry.Plugin);
                 entry.Plugin = null;
-                _ = _mainvmodel.OnAccountEnabledChanged(entry.Plugin, entry.User, false);
             }
 
-            if (SelectedAccount == entry)
-                SelectedAccount = null;
             _ = Accounts.Remove(entry);
 
             CredentialManager.Purge(entry.User, entry.PluginIdentifier);
+
+            return true;
         }
     }
 
-    public partial class AccountEntry : ObservableObject
+    public class AccountEntry : ObservableObject
     {
         public ICore Plugin { get; set; }
         public string PluginIdentifier { get; }
         public string PluginName { get; }
         public User User { get; }
 
-        internal SavedCredential _credential;
-        public SavedCredential Credential
+        internal CredentialManager.SavedCredential _credential;
+        internal CredentialManager.SavedCredential Credential
         {
-            get => _credential ?? AccountManagerViewModel.GetCred(this);
+            get => _credential ?? AccountManager.GetCred(this);
             set => _credential = value;
         }
 
@@ -293,7 +261,7 @@ namespace Skymu.ViewModels
 
         public string DisplayName => User?.DisplayName;
 
-        public AccountEntry(string pluginIdentifier, User user, bool isEnabled, SavedCredential credential)
+        internal AccountEntry(string pluginIdentifier, User user, bool isEnabled, CredentialManager.SavedCredential credential)
         {
             PluginIdentifier = pluginIdentifier;
             PluginName = Universal.PluginList.FirstOrDefault(p => p.InternalName == pluginIdentifier)?.Name ?? pluginIdentifier;

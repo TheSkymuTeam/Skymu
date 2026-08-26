@@ -17,7 +17,6 @@ using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.ViewModels;
-using Skymu.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;

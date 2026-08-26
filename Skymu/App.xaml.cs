@@ -279,8 +279,6 @@ namespace Skymu
 
         public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null, bool switchUser = false)
         {
-            if (!addAccount)
-                Theme = Settings.Theme;
             switch (Theme)
             {
                 case "Skype7":
@@ -675,9 +673,11 @@ namespace Skymu
             }
             catch { } // If it doesn't work, too bad.
             if (SignedIn)
-            {
                 SoundManager.PlaySynchronous("LOGOUT");
-            }
+        }
+
+        protected override void OnExit(ExitEventArgs ev)
+        {
             Cleanup(); // If a single thing was not cleaned up, and performs async, this is where the app and debugger dies
             base.OnExit(ev);
         }

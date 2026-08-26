@@ -304,34 +304,33 @@ namespace Skymu.ViewModels
             foreach (var p in Universal.ActivePlugins)
                 await UsePlugin(p, true);
 
-            foreach (var acc in Settings.ExtraAccounts)
+            // If there are two IsPrimary ones - that's your problem.
+            foreach (var cred in CredentialManager.GetAll().Where(c => c.AutoLoginEnabled && !c.IsPrimary))
             {
-                var cred = CredentialManager.Get(acc.User, acc.Plugin);
-                if (cred != null)
-                    try
+                try
+                {
+                    var plugin = (ICore)Activator.CreateInstance(
+                        Universal.PluginList.FirstOrDefault(p => p.InternalName == cred.Plugin).GetType()
+                    );
+                    plugin.DialogTube += Universal.PluginDialogHandler;
+                    plugin.MessageTube += Universal.PluginNotificationHandler;
+                    Debug.WriteLine($"[SKYMU] Logging in to {plugin.Name} with {cred.User?.DisplayName ?? cred.User?.Username ?? cred.User?.Identifier ?? "Unknown user"}");
+                    LoginResult result = plugin.Authenticate(cred).Result;
+                    if (result != LoginResult.Success)
                     {
-                        var plugin = (ICore)Activator.CreateInstance(
-                            Universal.PluginList.FirstOrDefault(p => p.InternalName == acc.Plugin).GetType()
-                        );
-                        plugin.DialogTube += Universal.PluginDialogHandler;
-                        plugin.MessageTube += Universal.PluginNotificationHandler;
-                        Debug.WriteLine($"[SKYMU] Logging in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
-                        LoginResult result = plugin.Authenticate(cred).Result;
-                        if (result != LoginResult.Success)
-                        {
-                            Universal.ShowMessage($"Failed to log in to plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? acc.User}\": {result.ToDisplayString()}", "Account login failed", WindowBase.IconType.Crash);
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"[SKYMU] Logged in to {plugin.Name} with {cred.User?.DisplayName ?? acc.User}");
-                            await UsePlugin(plugin, true);
-                            Universal.ActivePlugins.Add(plugin);
-                        }
+                        Universal.ShowMessage($"Failed to log in to plugin \"{plugin.Name}\" with user \"{cred.User?.DisplayName ?? cred.User?.Username ?? cred.User?.Identifier ?? "Unknown user"}\": {result.ToDisplayString()}", "Account login failed", WindowBase.IconType.Crash);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Universal.ExceptionHandler(ex, $"A plugin \"{acc.Plugin}\" with user \"{cred.User?.DisplayName ?? acc.User}\" caused this.");
+                        Debug.WriteLine($"[SKYMU] Logged in to {plugin.Name} with {cred.User?.DisplayName ?? cred.User?.Username ?? cred.User?.Identifier ?? "Unknown user"}");
+                        await UsePlugin(plugin, true);
+                        Universal.ActivePlugins.Add(plugin);
                     }
+                }
+                catch (Exception ex)
+                {
+                    Universal.ExceptionHandler(ex, $"A plugin \"{cred.Plugin}\" with user \"{cred.User?.DisplayName ?? cred.User?.Username ?? cred.User?.Identifier ?? "Unknown user"}\" caused this.");
+                }
             }
 
             Universal.CurrentUser = Universal.ActiveUsers[Universal.Plugin];
@@ -791,7 +790,7 @@ namespace Skymu.ViewModels
 
             foreach (var server in ServerList)
             {
-                _database.Conversations.Write(server.Channels);
+                _databases[server.Core].Conversations.Write(server.Channels);
                 server.GroupedChannels = ServerChannelHelper.GroupByCategory(
                     server.Channels,
                     server.CategoryMap
@@ -836,6 +835,15 @@ namespace Skymu.ViewModels
             if (!switchuser)
                 foreach (var p in Universal.ActivePlugins)
                     CredentialManager.Purge(_userInfo[p], p.InternalName);
+            else
+            {
+                var cred = CredentialManager.GetAll().FirstOrDefault(c => c.IsPrimary);
+                if (cred != null)
+                {
+                    cred.IsPrimary = false;
+                    CredentialManager.Save(cred);
+                }
+            }
             SoundManager.Play("LOGOUT");
             Universal.SignedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));

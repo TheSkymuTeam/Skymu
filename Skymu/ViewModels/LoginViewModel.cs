@@ -15,7 +15,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using QRCoder;
 using Skymu.Credentials;
 using Skymu.Forms;
-using Skymu.Forms.Pages
+using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Native.Windows;
 using Skymu.Plugins;
@@ -97,7 +97,7 @@ namespace Skymu.ViewModels
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
             SavedCredentials = savedCredentials;
-            var AutoLoginAccount = Settings.DefaultAccount;
+            var AutoLoginAccount = CredentialManager.GetAll().FirstOrDefault(c => c.IsPrimary);
 
             foreach (var plugin in Universal.PluginList)
             {
@@ -132,7 +132,7 @@ namespace Skymu.ViewModels
                     );
 
                     if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin
-                        && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User == match.User.Identifier)
+                        && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User.Identifier == match.User.Identifier)
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
@@ -178,7 +178,7 @@ namespace Skymu.ViewModels
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername, ati.CustomTextPassword);
                         if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin
-                            && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User == match.User.Identifier) // TODO check against authentication type too?
+                            && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User.Identifier == match.User.Identifier) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
@@ -490,8 +490,11 @@ namespace Skymu.ViewModels
                 SavedCredential cred = await _selectedPlugin.StoreCredential();
                 if (cred != null)
                 {
-                    CredentialManager.Save(cred);
-                    Settings.DefaultAccount = new Settings.SkymuAccount(cred.Plugin, cred.User.Identifier);
+                    CredentialManager.Save(new CredentialManager.SavedCredential(cred)
+                    {
+                        IsPrimary = !_addaccount,
+                        AutoLoginEnabled = true
+                    });
                     Settings.Save();
                 }
             }
