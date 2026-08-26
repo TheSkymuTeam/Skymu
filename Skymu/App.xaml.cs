@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -33,7 +33,7 @@ using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
 using Skymu.UserDirectory;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
@@ -47,15 +47,15 @@ namespace Skymu
     {
 #pragma warning disable CA1707 // pls no underscore
         // -----------------------------------------------------------------------------
-        // Skymu metadata.
+        // Build information
         // -----------------------------------------------------------------------------
 
         public const string NAME = "Skymu";
-        public const string BUILD_VERSION = "0.4.6";
-        public const string BUILD_NAME = "Elder Guardian";
+        public const string BUILD_VERSION = "0.4.7";
+        public const string BUILD_NAME = "Elgon Hazelnut Mousse";
 
         // -----------------------------------------------------------------------------
-        // Skymu URLs.
+        // Skymu controlled URLs
         // -----------------------------------------------------------------------------
 
         public const string GITHUB_OWNER = "TheSkymuTeam";
@@ -66,7 +66,7 @@ namespace Skymu
         public const string SKYMU_PACKAGE_ENDPOINT = "https://skymu.app/packages";
 
         // -----------------------------------------------------------------------------
-        // External URLs.
+        // Third party URLs
         // -----------------------------------------------------------------------------
 
         public const string NET_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet";
@@ -80,7 +80,7 @@ namespace Skymu
 #pragma warning restore CA1707 // pls no underscore
 
         // -----------------------------------------------------------------------------
-        // Globally scoped variables.
+        // Globals
         // -----------------------------------------------------------------------------
 
 
@@ -89,8 +89,8 @@ namespace Skymu
         public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
         public static ICore[] PluginList;
-        public static bool HasLoggedIn = false;
-        public static string Theme = Settings.Theme;
+        public static bool SignedIn = false;
+        public static readonly string Theme = Settings.Theme;
         public static string Platform = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
@@ -603,7 +603,7 @@ namespace Skymu
             {
                 var themeFileName = frameworkName.Split('.')[1]; // "Light", "Dark", "HC"
                 var themeUri = new Uri(
-                    $"pack://application:,,,/Presentation/Themes/Fluent.{themeFileName}.xaml",
+                    $"pack://application:,,,/Presentation/Fluent/Themes/Fluent.{themeFileName}.xaml",
                     UriKind.Absolute
                 );
                 theme = new ResourceDictionary { Source = themeUri };
@@ -674,11 +674,7 @@ namespace Skymu
                 await UserCountAPI.CloseWS();
             }
             catch { } // If it doesn't work, too bad.
-        }
-
-        protected override void OnExit(ExitEventArgs ev)
-        {
-            if (HasLoggedIn)
+            if (SignedIn)
             {
                 SoundManager.PlaySynchronous("LOGOUT");
             }

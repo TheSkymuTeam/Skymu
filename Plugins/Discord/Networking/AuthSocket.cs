@@ -258,6 +258,7 @@ namespace Discord.Networking
 
         public string DecryptRSA(string base64Input)
         {
+            Debug.WriteLine(base64Input);
             byte[] encBytes = Convert.FromBase64String(base64Input);
             byte[] plainBytes = DecryptOaepSha256(encBytes);
             return Encoding.UTF8.GetString(plainBytes);
@@ -368,6 +369,8 @@ namespace Discord.Networking
                 null,
                 null
             );
+
+            Debug.WriteLine(encToken);
 
             var encJson = JsonObject.Parse(encToken);
             string discordEncTkn = encJson["encrypted_token"]?.GetValue<string>();

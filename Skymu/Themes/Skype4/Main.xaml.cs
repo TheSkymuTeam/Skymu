@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -16,9 +16,10 @@ using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Infrastructure.Main;
-using Skymu.Preferences;
+using Skymu.Native.Windows;
 using Skymu.ViewModels;
-using Skymu.Windows;
+using Skymu.Sounds;
+using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

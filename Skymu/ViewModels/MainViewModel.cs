@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -21,6 +21,7 @@ using Skymu.Enumerations;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
+using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.UserDirectory;
@@ -790,6 +791,7 @@ namespace Skymu.ViewModels
 
             foreach (var server in ServerList)
             {
+                _database.Conversations.Write(server.Channels);
                 server.GroupedChannels = ServerChannelHelper.GroupByCategory(
                     server.Channels,
                     server.CategoryMap
@@ -835,7 +837,7 @@ namespace Skymu.ViewModels
                 foreach (var p in Universal.ActivePlugins)
                     CredentialManager.Purge(_userInfo[p], p.InternalName);
             SoundManager.Play("LOGOUT");
-            Universal.HasLoggedIn = false;
+            Universal.SignedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
             _ = UserCountAPI.CloseWS();
         }

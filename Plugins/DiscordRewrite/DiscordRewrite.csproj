@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<OutputType>Library</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+		<LangVersion>7.3</LangVersion>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<AssemblyName>smp.discord-rewrite</AssemblyName>
+		<AssemblyTitle>Discord Rewrite</AssemblyTitle>
+		<OutputPath>..\bin\discord-rewrite.smp</OutputPath>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="10.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />
+  </ItemGroup>
+
+</Project>

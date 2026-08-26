@@ -1,0 +1,79 @@
+﻿/*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is governed
+// by the terms set out in the project license agreement.
+// If you do not comply with those terms, you may not
+// modify or distribute any original code from the project.
+/*==========================================================*/
+// License: https://skymu.app/legal/license
+// SPDX-License-Identifier: AGPL-3.0-or-later
+/*==========================================================*/
+
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+
+namespace ChatCompletions
+{
+    // one turn in conversation
+    internal sealed class ChatTurn
+    {
+        public string Role { get; }   
+        public string Content { get; }
+
+        public ChatTurn(string role, string content)
+        {
+            Role = role;
+            Content = content;
+        }
+    }
+
+    // Keeps a real back-and-forth history per conversation, so each
+    // new request resends the full transcript as context (a good proper chat
+    // behaviour instead of the single-turn (stateless) requests).
+    internal sealed class History
+    {
+        private readonly ConcurrentDictionary<string, List<ChatTurn>> _byConversation =
+            new ConcurrentDictionary<string, List<ChatTurn>>();
+
+        public void AddUserMessage(string conversationId, string text)
+        {
+            GetList(conversationId).Add(new ChatTurn("user", text));
+        }
+
+        public void AddAssistantMessage(string conversationId, string text)
+        {
+            GetList(conversationId).Add(new ChatTurn("assistant", text));
+        }
+
+        // removes the most recently added turn
+        public void RemoveLastAssistantMessage(string conversationId)
+        {
+            var list = GetList(conversationId);
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].Role == "assistant")
+                {
+                    list.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        public IReadOnlyList<ChatTurn> GetHistory(string conversationId)
+        {
+            return GetList(conversationId);
+        }
+
+        public void Clear(string conversationId)
+        {
+            _byConversation.TryRemove(conversationId, out _);
+        }
+
+        private List<ChatTurn> GetList(string conversationId)
+        {
+            return _byConversation.GetOrAdd(conversationId, _ => new List<ChatTurn>());
+        }
+    }
+}

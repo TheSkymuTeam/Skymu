@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
+// Copyright ï¿½ The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is governed
@@ -14,12 +14,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using QRCoder;
 using Skymu.Credentials;
+using Skymu.Forms;
+using Skymu.Forms.Pages
 using Skymu.Helpers;
+using Skymu.Native.Windows;
 using Skymu.Plugins;
 using Skymu.Preferences;
-using Skymu.Forms;
-using Skymu.Forms.Pages;
-using Skymu.Windows;
 using Skymu.Sounds;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,11 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
@@ -203,7 +207,7 @@ namespace Skymu.ViewModels
         public void RunPostLogin(IMainWindowHolder mainWindow)
         {
             Tray.SetStatus(Universal.CurrentUser.ConnectionStatus);
-            Universal.HasLoggedIn = true;
+            Universal.SignedIn = true;
             mainWindow.Show();
             SoundManager.Play("LOGIN");
             _ = new Updater();
@@ -419,6 +423,15 @@ namespace Skymu.ViewModels
                 string qr = await _selectedPlugin.GetQRCode();
                 if (!string.IsNullOrEmpty(qr))
                 {
+                    // Captcha.hCaptcha.ShowPrompt("blablabla", "blablabla");
+                    Image qrImage = new Image();
+                    qrImage.Source = ImageHelper.GenerateFromArray(
+                            new PngByteQRCode(
+                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q)
+                            ).GetGraphic(20)
+                        );
+                    qrImage.Width = 250;
+                    qrImage.Height = 250;
                     Dialog qrDialog = new Dialog(
                         WindowBase.IconType.ContactRequest,
                         null,
@@ -427,11 +440,7 @@ namespace Skymu.ViewModels
                         null,
                         "Cancel",
                         false, null, null, false,
-                        ImageHelper.GenerateFromArray(
-                            new PngByteQRCode(
-                                new QRCodeGenerator().CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q)
-                            ).GetGraphic(20)
-                        )
+                        qrImage
                     );
                     EventHandler onClosed = (s, e) => AnimationToggleRequested?.Invoke(false);
                     qrDialog.Closed += onClosed;

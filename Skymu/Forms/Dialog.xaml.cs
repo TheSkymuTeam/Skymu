@@ -16,7 +16,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows;
-using System.Windows.Media.Imaging;
+using System.Windows.Controls;
 
 namespace Skymu.Forms
 {
@@ -38,7 +38,7 @@ namespace Skymu.Forms
             Action blAction = null,
             string blText = null,
             bool enableTextBox = false,
-            BitmapImage img = null,
+            FrameworkElement img = null,
             Size? customDimensions = null,
             bool bmEnabled = false,
             Action bmAction = null,
@@ -60,8 +60,8 @@ namespace Skymu.Forms
                 if (img != null)
                 {
                     tb.Visibility = Visibility.Collapsed;
-                    BodyImg.Source = img;
-                    BodyImg.Visibility = Visibility.Visible;
+                    BodyCC.Content = img;
+                    BodyCC.Visibility = Visibility.Visible;
                 }
 
                 if (customDimensions != null)

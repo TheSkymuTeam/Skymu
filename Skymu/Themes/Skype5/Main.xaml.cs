@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -17,7 +17,9 @@ using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Infrastructure.Main;
+using Skymu.Native.Windows;
 using Skymu.Preferences;
+using Skymu.Sounds;
 using Skymu.ViewModels;
 using Skymu.Windows;
 using System;
@@ -137,6 +139,7 @@ namespace Skymu.Skype5
 
         private void SetWindow(WindowType type, bool force = false)
         {
+            CallButton.UpdateLayout();
             if (vmodel.SelectedConversation is Group)
             {
                 VideoCallButton.Visibility = Visibility.Visible;

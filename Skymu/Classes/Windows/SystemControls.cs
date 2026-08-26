@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     public class NativeMenuBar
     {

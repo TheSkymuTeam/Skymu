@@ -14,7 +14,7 @@
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.ViewModels;
-using Skymu.Windows;
+using Skymu.Native.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -155,7 +155,7 @@ namespace Skymu.Skype7
             }
         }
 
-        private void Login_Loaded(object sender, RoutedEventArgs e)
+        private async void Login_Loaded(object sender, RoutedEventArgs e)
         {
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
@@ -179,11 +179,18 @@ namespace Skymu.Skype7
             {
                 var pal = _viewModel.PendingAutoLoginListing;
                 var pa = _viewModel.PendingAutoLogin;
-                _viewModel.ClearPendingAutoLogin();
                 ProtocolComboBox.SelectedItem = pal;
                 ProtocolSelectionChanged(null, null);
                 SetProtocolSelection(pal, pa);
             }
+
+            if (_viewModel.PendingAutoLogin != null && !switchuser)
+            {
+                LoginToggleAnimation(true);
+                await _viewModel.TryAutoLogin();
+            }
+            else
+                SelectDefaultProtocol();
         }
 
         private void SelectDefaultProtocol()

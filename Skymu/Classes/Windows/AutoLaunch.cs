@@ -18,7 +18,7 @@ using Skymu.Preferences;
 
 #pragma warning disable CA1416
 
-namespace Skymu.Windows
+namespace Skymu.Native.Windows
 {
     internal class AutoLaunch
     {

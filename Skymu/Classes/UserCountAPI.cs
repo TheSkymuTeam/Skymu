@@ -28,8 +28,8 @@ namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
-        private static readonly string DOMAIN = "usercount.skymu.app:55968";
-        private static readonly string WEBSOCKET_URL = $"ws://{DOMAIN}/ws";
+        private static readonly string DOMAIN = "ledger.skymu.app";
+        private static readonly string WEBSOCKET_URL = $"wss://{DOMAIN}/ws";
 
         // REST API variables
         private static readonly HttpClient client = new HttpClient(new BifrostEngine())
