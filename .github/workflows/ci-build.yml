@@ -38,3 +38,11 @@ jobs:
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
         archive: false
+
+    - name: 6. Export zipped Installer to Artifacts (nightly.link support)
+      uses: actions/upload-artifact@v7
+      with:
+        name: based
+        path: 'NSIS/Skymu Installer (BETA).exe'
+        retention-days: 7
+        archive: true
