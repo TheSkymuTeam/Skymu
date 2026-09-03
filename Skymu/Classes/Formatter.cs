@@ -493,7 +493,7 @@ namespace Skymu.Formatting
                             Uri.TryCreate(display, UriKind.Absolute, out Uri displayUri) // thanks epicness
                             && displayUri.Host != uri.Host;
                         string label = string.IsNullOrEmpty(display) ? url : display;
-                        var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri };
+                        var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri, ToolTip = uri };
                         hyperlink.RequestNavigate += (s, e) =>
                         {
                             Universal.OpenUrl(e.Uri.AbsoluteUri);
@@ -610,7 +610,7 @@ namespace Skymu.Formatting
                         string url = nextLink.Groups[1].Value.TrimEnd(punctuation); // Standard links
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            var hyperlink = new Hyperlink(new Run(url)) { NavigateUri = uri };
+                            var hyperlink = new Hyperlink(new Run(url)) { NavigateUri = uri, ToolTip = uri };
                             hyperlink.RequestNavigate += (s, e) =>
                             {
                                 Universal.OpenUrl(e.Uri.AbsoluteUri);
@@ -872,12 +872,17 @@ namespace Skymu.Formatting
                                         hyperlink.RequestNavigate += (s, e) =>
                                             Universal.OpenUrl(e.Uri.AbsoluteUri);
                                     }
+                                    hyperlink.ToolTip = href;
                                 }
                                 else
                                 {
                                     var name = elem.Attribute("name")?.Value;
                                     if (name != null)
-                                        hyperlink.Click += (s, e) => Universal.URIHandler($"{Universal.NAME.ToLowerInvariant()}:#{name}");
+                                    {
+                                        var uri = $"{Universal.NAME.ToLowerInvariant()}:#{name}";
+                                        hyperlink.ToolTip = uri;
+                                        hyperlink.Click += (s, e) => Universal.URIHandler(uri);
+                                    }
                                 }
                                 inlines.Add(hyperlink);
                                 break;
