@@ -135,13 +135,9 @@ namespace Skymu.Skype7
         private void CheckEnableLoginButton()
         {
             if (
-                (
-                    UsernameBox.Text.Trim() != string.Empty
-                    && (
-                        PasswordTokenBox.Password.Trim() != string.Empty
-                        || !PasswordTokenBox.IsEnabled
-                    )
-                ) || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled)
+                (!string.IsNullOrWhiteSpace(UsernameBox.Text)
+                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
+                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled)
             )
             {
                 if (!LoginButton.IsEnabled) { LoginButtonLabel.Opacity = 1; LoginButton.Opacity = 1; }

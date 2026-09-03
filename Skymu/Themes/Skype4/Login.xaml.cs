@@ -26,6 +26,8 @@ using System.Windows.Navigation;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Skymu.Credentials;
+using System.Linq;
 
 namespace Skymu.Skype4
 {
@@ -129,22 +131,25 @@ namespace Skymu.Skype4
 
         private void CheckEnableLoginButton()
         {
-            if (
-                (UsernameBox.Text.Trim() != string.Empty
-                    && (PasswordTokenBox.Password.Trim() != string.Empty || !PasswordTokenBox.IsEnabled))
-                || !PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled
-            )
-            {
-                LoginButton.IsEnabled = true;
-            }
-            else
-            {
-                LoginButton.IsEnabled = false;
-            }
+            LoginButton.IsEnabled = (!string.IsNullOrWhiteSpace(UsernameBox.Text)
+                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
+                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled);
         }
 
         private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
         private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
+        private void OnDisableAutoLogin(object sender, EventArgs e)
+        {
+            var cs = CredentialManager.GetAll()
+                .Where(c => c.AutoLoginEnabled || c.IsPrimary);
+            foreach (var cred in cs)
+            {
+                cred.AutoLoginEnabled = false;
+                cred.IsPrimary = false; // to be safe
+                CredentialManager.Save(cred);
+            }
+            Universal.ShowMessage("Please restart to see the login form.", "Auto login has been disabled for all logins");
+        }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
         private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
@@ -173,6 +178,7 @@ namespace Skymu.Skype4
                 MI(L("sLOGIN_CHANGE_LANGUAGE"), OnChangeLanguage),
                 SEP(),
                 MI(L("sLOGIN_CONNECTION_OPTIONS"), OnConnectionOptions),
+                MI(L("Disable auto login"), OnDisableAutoLogin),
                 SEP(),
                 MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"), OnAccessibility)
             );
