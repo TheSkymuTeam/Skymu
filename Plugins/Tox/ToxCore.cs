@@ -269,8 +269,6 @@ public static class ToxCore
     [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_dht_id_size();
     [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
-    public static extern UInt32 tox_conference_uid_size();
-    [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_conference_id_size();
     [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern UInt32 tox_nospam_size();
@@ -1005,7 +1003,7 @@ public static class ToxCore
     }
     [DllImport(LibTox, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr tox_err_conference_by_uid_to_string(Tox_Err_Conference_By_Uid value);
-    // Why is the above not marked as deprecated? The actual function is. // EDIT: This is how ToxCore moves
+    // Why is the above not marked as deprecated? The actual function is. // EDIT: This is how ToxCore works consistently. ToString is here but not the actual stuff.
 
     // tox_conference_by_uid: deprecated
 
@@ -1070,6 +1068,8 @@ public static class ToxCore
     public static extern UInt16 tox_self_get_tcp_port(IntPtr tox, out Tox_Err_Get_Port error);
 
     #endregion
+
+    // TODO: One or two signature(s) here is inaccurate. I fixed in my local working copy on my MBP, so I need to push it here.
 
     #region group chats (NGC?)
 

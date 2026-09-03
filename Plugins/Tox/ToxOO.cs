@@ -229,7 +229,6 @@ namespace ToxOO
         public static UInt32 publicKey { get => tox_public_key_size(); }
         public static UInt32 secretKey { get => tox_secret_key_size(); }
         public static UInt32 dhtId { get => tox_dht_id_size(); }
-        public static UInt32 conferenceUid { get => tox_conference_uid_size(); }
         public static UInt32 conferenceId { get => tox_conference_id_size(); }
         public static UInt32 groupTopic { get => tox_group_max_topic_length(); }
         public static UInt32 groupPart { get => tox_group_max_part_length(); }
