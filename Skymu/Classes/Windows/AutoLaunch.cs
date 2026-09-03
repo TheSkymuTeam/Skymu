@@ -14,7 +14,6 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Win32;
-using Skymu.CSHelper;
 
 namespace Skymu.Native.Windows
 {
