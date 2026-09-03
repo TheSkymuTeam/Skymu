@@ -14,36 +14,23 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Win32;
-using Skymu.Preferences;
-
-#pragma warning disable CA1416
+using Skymu.CSHelper;
 
 namespace Skymu.Native.Windows
 {
     internal class AutoLaunch
     {
-        internal const bool BootstrapValue = true;
+        private const string KEY = @"Software\Microsoft\Windows\CurrentVersion\Run";
+
         internal static bool Get()
         {
-            using (
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                    @"Software\Microsoft\Windows\CurrentVersion\Run",
-                    false
-                )
-            )
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(KEY, false))
             {
-                if (key == null)
-                {
-                    Set(BootstrapValue);
-                    return BootstrapValue;
-                }
-
                 object value = key.GetValue(Universal.NAME);
 
                 if (value == null)
                 {
-                    Set(BootstrapValue);
-                    return BootstrapValue;
+                    return false;
                 }
 
                 string currentPath = "\"" + Process.GetCurrentProcess().MainModule.FileName + "\"";
@@ -58,16 +45,12 @@ namespace Skymu.Native.Windows
 
         internal static void Set(bool yes)
         {
-            using (
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                    @"Software\Microsoft\Windows\CurrentVersion\Run",
-                    true
-                )
-            )
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(KEY, true))
             {
                 if (yes)
                     key.SetValue(
                         Universal.NAME,
+                        // TODO proper escapes? Although very rare if not never that we have to deal with it.
                         "\"" + Process.GetCurrentProcess().MainModule.FileName + "\""
                     );
                 else
