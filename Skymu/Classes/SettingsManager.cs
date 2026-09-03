@@ -144,11 +144,14 @@ namespace Skymu.Preferences
             get => SELECT("EnableNotifications", true, "UI/General");
             set => WRITE("EnableNotifications", value, nameof(EnableNotifications), "UI/General");
         }
+        // TODO Above is not needed if we have a NotificationTrigger of 0.
+        // TODO This should be migrated to a check list. The code works fine I believe - we'd like to have a checkbox that calculates the value.
         public static NotificationTriggerType NotificationTrigger
         {
             get => SELECT("NotificationTrigger", NotificationTriggerType.PDM, "UI/General");
             set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger), "UI/General");
         }
+        // TODO This should be merged with above after the change. Make sure to add a Migrator.cs rule detecting this, and merging two variables.
         public static bool AllowImplicitMentions
         {
             get => SELECT("AllowImplicitMentions", true, "UI/General");
