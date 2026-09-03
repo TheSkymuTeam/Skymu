@@ -51,6 +51,7 @@ namespace Skymu.Forms
             {
                 { General_Skymu, () => new OptionPages.General.Skymu() },
                 { Advanced_Debug, () => new OptionPages.Advanced.Debug() },
+                { General_Main, () => new OptionPages.General.Main() }
             };
             tabToText = new Dictionary<SliceControl, string>
             {
