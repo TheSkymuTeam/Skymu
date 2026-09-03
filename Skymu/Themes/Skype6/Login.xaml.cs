@@ -133,9 +133,9 @@ namespace Skymu.Skype6
         private void CheckEnableLoginButton()
         {
             if (
-            LoginButton.IsEnabled = (!string.IsNullOrWhiteSpace(UsernameBox.Text)
+                (!string.IsNullOrWhiteSpace(UsernameBox.Text)
                     && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
-                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled);
+                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled)
             )
             {
                 LoginButton.IsEnabled = true;
