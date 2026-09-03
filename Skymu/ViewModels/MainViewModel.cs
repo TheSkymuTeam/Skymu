@@ -21,7 +21,6 @@ using Skymu.Enumerations;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
-using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.UserDirectory;
@@ -40,6 +39,8 @@ using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+
+// TODO call button might be triggering when not an ICall, fix that
 
 namespace Skymu.ViewModels
 {
@@ -1070,7 +1071,7 @@ namespace Skymu.ViewModels
                 }
             };
             var u = (ReferenceEquals(p, Universal.Plugin) ? Universal.CurrentUser : null) ?? await p.GetUserInfo();
-            if (string.IsNullOrEmpty(u.Identifier))
+            if (string.IsNullOrEmpty(u?.Identifier))
             {
                 Universal.ExceptionHandler(
                     new InvalidOperationException(
