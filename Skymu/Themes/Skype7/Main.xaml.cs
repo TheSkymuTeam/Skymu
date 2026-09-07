@@ -99,9 +99,9 @@ namespace Skymu.Skype7
                     HomeUnavailableFrame.Visibility = Visibility.Visible;
                     HomeUnavailableFrame.Content = new HomeUnavailable();
                 }
-                Universal.ShowMessage("The Skype 7 theme is expiremental, having been ported from an older project (SeanKype)" +
+                Universal.ShowMessage("The Skype 7 theme is expiremental, having been partially ported from an older project (SeanKype)" +
                     " that was developed by different people.\n\n" +
-                    "It has numerous bugs, structural issues, design flaws, and differences with the rest of the " +
+                    "This port has numerous bugs, structural issues, design flaws, and differences with the rest of the " +
                     "codebase.\n\nIt is highly recommended to use the other themes instead.");
                 Ready?.Invoke(this, EventArgs.Empty);
             };
