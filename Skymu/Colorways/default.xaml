@@ -104,6 +104,7 @@
     <SolidColorBrush x:Key="EmojiFlyout.Border" Color="#666666" />
 
     <SolidColorBrush x:Key="Settings.ActiveTab" Color="#85c0fc" />
+    <SolidColorBrush x:Key="Settings.ActiveTabText" Color="#666666" />
 
     <LinearGradientBrush x:Key="Strip.Background" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F2F2F2" />
