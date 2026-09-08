@@ -103,6 +103,7 @@
                                 Tag="{Binding RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
                                 Text="{TemplateBinding Text}"
                                 TextColor="{DynamicResource Text.MediumContrast}"
+                                TextColorPressed="{DynamicResource Settings.ActiveTabText}"
                                 TextFont="Tahoma"
                                 TextLeftMargin="39"
                                 TextSize="11" />

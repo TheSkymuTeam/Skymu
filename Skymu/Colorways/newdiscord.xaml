@@ -100,6 +100,7 @@
 
     <!--  TODO  -->
     <SolidColorBrush x:Key="Settings.ActiveTab" Color="#85c0fc" />
+    <SolidColorBrush x:Key="Settings.ActiveTabText" Color="#FFB5BAC1" />
 
     <LinearGradientBrush x:Key="Strip.Background" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#33343b" />
