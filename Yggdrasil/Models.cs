@@ -1,12 +1,11 @@
 /*==========================================================*/
 // Yggdrasil API copyright © OmegaAOL 2025-2026.
 // For any inquiries, email hackersword666@gmail.com.
-// I reserve the right to reject commits here. No AI use.
 /*==========================================================*/
-// License: https://opensource.org/license/mit
-// SPDX-License-Identifier: MIT
+// License: GNU Lesser General Public License v2.1 or later
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
 /*==========================================================*/
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
