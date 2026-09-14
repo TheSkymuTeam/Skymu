@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Yggdrasil copyright © OmegaAOL 2025-2026.
+// Copyright © OmegaAOL and other contributors, 2025-2026.
 // For any inquiries, email hackersword666@gmail.com.
 // Avoid AI use when contributing to this library.
 /*==========================================================*/
