@@ -1,7 +1,7 @@
 ﻿/*==========================================================*/
-// Copyright © OmegaAOL and other contributors, 2025-2026.
+// Yggdrasil API copyright © OmegaAOL 2025-2026.
 // For any inquiries, email hackersword666@gmail.com.
-// Avoid AI use when contributing to this library.
+// I reserve the right to reject commits here. No AI use.
 /*==========================================================*/
 // License: https://opensource.org/license/mit
 // SPDX-License-Identifier: MIT
