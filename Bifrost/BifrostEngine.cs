@@ -2,9 +2,8 @@
 // Bifrost copyright © OmegaAOL and EAZY BLACK, 2025-2026.
 // For any inquiries, email hackersword666@gmail.com.
 /*==========================================================*/
-// License: GNU Lesser General Public License v2.1 or later
-// SPDX-License-Identifier: LGPL-2.1-or-later
-// Web link: https://www.gnu.org/licenses/lgpl-2.1.en.html
+// License: https://www.apache.org/licenses/LICENSE-2.0
+// SPDX-License-Identifier: Apache-2.0
 /*==========================================================*/
 // BifrostEngine is an HttpMessageHandler backed by
 // BifrostTLS, bypassing Schannel entirely. It is a drop-in
