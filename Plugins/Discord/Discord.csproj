@@ -16,7 +16,7 @@
 		<DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+		<PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
 		<PackageReference Include="Concentus" Version="2.2.2" />
 		<PackageReference Include="Google.Protobuf" Version="3.34.1" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
