@@ -4,7 +4,7 @@
 /*==========================================================*/
 // License: GNU Lesser General Public License v2.1 or later
 // SPDX-License-Identifier: LGPL-2.1-or-later
-// https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
+// Web link: https://www.gnu.org/licenses/lgpl-2.1.en.html
 /*==========================================================*/
 // BifrostWebSocket is a WebSocket client backed by BifrostTLS,
 // bypassing Schannel entirely. It connects via raw TCP +
