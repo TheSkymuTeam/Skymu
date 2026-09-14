@@ -14,13 +14,11 @@
 using Skymu.Preferences;
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using Yggdrasil;
 using Yggdrasil.Models;
 
@@ -32,16 +30,21 @@ namespace Skymu.Forms.Pages
 
         CancellationTokenSource cts;
         Task findTask;
-        public Metadata FoundData { get; private set; } = new User("Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
-        public User FoundUser { get; private set; } = new User("Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
-        IListManagement lmg;
-        // event PropertyChangedEventHandler PropertyChanged; // seems to be unused?
+        public Metadata FoundData { get; private set; }
         public ObservableCollection<Metadata> FoundList { get; private set; } =
-            new ObservableCollection<Metadata>() { new User("Walter White", "w.white", "3621", "Cooking") };
+            new ObservableCollection<Metadata>();
+        public User FoundUser { get; private set; }
+        IListManagement lmg;
+        ICore plugin;
         WindowBase window;
 
-        public AddContact()
+        public AddContact(ICore plugin)
         {
+            this.plugin = plugin;
+            FoundData = new User(plugin, "Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
+            FoundList.Clear();
+            FoundList.Add(new User(plugin, "Walter White", "w.white", "3621", "Cooking"));
+            FoundUser = new User(plugin, "Saul Goodman", "sgoodman", "3926", "BETTER CALL SAUL");
             InitializeComponent();
             UserListView.ItemsSource = FoundList;
         }
@@ -50,6 +53,7 @@ namespace Skymu.Forms.Pages
 
         public void ShowWindow()
         {
+            // TODO add plugin list for privacy. Do. Not. Query. All. Plugins.
             lmg = Universal.Plugin as IListManagement;
             window = new WindowBase(this)
             {

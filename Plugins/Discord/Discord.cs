@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -296,7 +296,7 @@ namespace Discord
                 string displayName = parsedUser["global_name"]?.GetValue<string>() ?? username;
                 string avatarHash = parsedUser["avatar"]?.GetValue<string>();
                 byte[] avatar = await HelperMethods.GetCachedAvatarAsync(id, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
-                _currentUser = new User(displayName, username, id, null, PresenceStatus.Offline, avatar); // temp just for StoreCredential
+                _currentUser = new User(this, displayName, username, id, null, PresenceStatus.Offline, avatar); // temp just for StoreCredential
                 return LoginResult.Success;
             }
             else
@@ -489,7 +489,7 @@ namespace Discord
                                     channelType = ChannelType.NoAccess;
                                     break;
                             }
-                            channelList.Add(new ServerChannel(channelName, channelId, guildId, 0, channelType, parentId, position));
+                            channelList.Add(new ServerChannel(this, channelName, channelId, guildId, 0, channelType, parentId, position));
                         }
                     }
 
@@ -514,11 +514,11 @@ namespace Discord
                             bool mentionable = r["mentionable"]?.GetValue<bool>() ?? false;
 
                             // TODO add role icons like Aerochat
-                            roleList.Add(new Role(roleName, roleId, color, null, hoist, mentionable));
+                            roleList.Add(new Role(this, roleName, roleId, color, null, hoist, mentionable));
                         }
                     }
 
-                    results.Add(new Server(guildName, guildId, null, roleList, channelList, guildAvatar, categoryMap, memberCount));
+                    results.Add(new Server(this, guildName, guildId, null, roleList, channelList, guildAvatar, categoryMap, memberCount));
                 }
             }
             catch (Exception ex)
@@ -561,7 +561,7 @@ namespace Discord
                         if (listType == ListType.Recents)
                             _recentChannelMap[channelId] = userId;
 
-                        var profileData = await UserStore.GetOrCreateWithAvatar(userId, displayName ?? dscUserName, dscUserName, avatarHash);
+                        var profileData = await UserStore.GetOrCreateWithAvatar(this, userId, displayName ?? dscUserName, dscUserName, avatarHash);
 
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
@@ -581,6 +581,7 @@ namespace Discord
                                 recipients
                                     .OfType<JsonObject>()
                                     .Select(async r => await UserStore.GetOrCreateWithAvatar(
+                                        this,
                                         r["id"]?.GetValue<string>() ?? "0",
                                         r["global_name"]?.GetValue<string>() ?? r["username"]?.GetValue<string>() ?? "Unknown",
                                         r["username"]?.GetValue<string>() ?? "Unknown"
@@ -615,7 +616,7 @@ namespace Discord
                         byte[] avatarImage = await HelperMethods.GetCachedAvatarAsync(channelId, avatarHash, HelperMethods.DiscordChannelType.Group);
                         DateTime lastMessageTime = GetTimestampFromSnowflake(channel["last_message_id"]?.GetValue<string>());
 
-                        results.Add(new Group(groupName, channelId, 0, members, avatarImage, lastMessageTime));
+                        results.Add(new Group(this, groupName, channelId, 0, members, avatarImage, lastMessageTime));
                     }
                 }
             }
@@ -688,7 +689,7 @@ namespace Discord
                 foreach (var node in messages.Reverse())
                 {
                     token.ThrowIfCancellationRequested();
-                    var item = await MessageParser.ParseMessage(node);
+                    var item = await MessageParser.ParseMessage(this, node);
                     if (item != null)
                         messageList.Add(item);
                 }
@@ -740,7 +741,7 @@ namespace Discord
                         {
                             foreach (var node in messages)
                             {
-                                var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+                                var item = await MessageParser.ParseMessage(this, node).ConfigureAwait(false);
 
                                 // last msg by the logged in user
                                 if (item is Message msg && msg.Author?.Identifier == _currentUser?.Identifier)
@@ -773,7 +774,7 @@ namespace Discord
                     {
                         foreach (var node in messages)
                         {
-                            var item = await MessageParser.ParseMessage(node).ConfigureAwait(false);
+                            var item = await MessageParser.ParseMessage(this, node).ConfigureAwait(false);
 
                             // last msg by the logged in user
                             if (item is Message msg && msg.Author?.Identifier == _currentUser?.Identifier)

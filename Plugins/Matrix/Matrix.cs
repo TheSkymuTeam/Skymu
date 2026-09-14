@@ -145,7 +145,7 @@ namespace Matrix
                         }
                     }
 
-                    _user = new User(displayName, userId, userId);
+                    _user = new User(this, displayName, userId, userId);
                     _credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
                     return await StartClient();
                 }
@@ -207,7 +207,7 @@ namespace Matrix
                         }
                     }
 
-                    _pendingBeeperUser = new User(username, username, username);
+                    _pendingBeeperUser = new User(this, username, username, username);
                     Debug.WriteLine("[Beeper] OTP email sent successfully.");
                     return LoginResult.TwoFARequired;
                 }
@@ -302,7 +302,7 @@ namespace Matrix
                     }
                 }
 
-                _user = new User(displayName, userId, userId);
+                _user = new User(this, displayName, userId, userId);
                 Debug.WriteLine($"[Beeper] Logged in as {userId} ({displayName}) on {_homeserver}");
                 _credData = new SavedCredential(_user, _accessToken, AuthenticationMethod.Token, InternalName);
                 _pendingBeeperUser = null;
@@ -484,7 +484,7 @@ namespace Matrix
                                         dn = dnProp.GetString();
 
                                     _displayNameCache[userId] = dn;
-                                    memberUsers.Add(new User(dn, userId, userId));
+                                    memberUsers.Add(new User(this, dn, userId, userId));
                                 }
                             }
                         }
@@ -496,14 +496,14 @@ namespace Matrix
                         if (isDirect)
                         {
                             var dm = new DirectMessage(
-                                new User(roomName, roomId, roomId, string.Empty, PresenceStatus.Online, null),
+                                new User(this, roomName, roomId, roomId, string.Empty, PresenceStatus.Online, null),
                                 0, roomId, DateTime.Now);
                             conversation = dm;
                             contactList.Add(dm);
                         }
                         else
                         {
-                            conversation = new Group(roomName, roomId, 0, memberUsers.ToArray(), null, DateTime.Now);
+                            conversation = new Group(this, roomName, roomId, 0, memberUsers.ToArray(), null, DateTime.Now);
                         }
 
                         conversationList.Add(conversation);
@@ -847,7 +847,7 @@ namespace Matrix
 
                     string displayName = _displayNameCache.TryGetValue(sender, out var cached)
                         ? cached : sender;
-                    var senderData = new User(displayName, sender, sender);
+                    var senderData = new User(this, displayName, sender, sender);
 
                     if (eventType == "m.room.encrypted")
                     {
@@ -1016,7 +1016,7 @@ namespace Matrix
                         ? cached : await GetDisplayNameForUser(sender, roomId);
 
                     var encItem = new Message(
-                        eventId, new User(displayName, sender, sender),
+                        eventId, new User(this, displayName, sender, sender),
                         timestamp, "[encrypted message]", null, null);
 
                     _uiContext?.Post(_ =>
@@ -1040,7 +1040,7 @@ namespace Matrix
 
                 string dName = _displayNameCache.TryGetValue(senderMsg, out var dn)
                     ? dn : await GetDisplayNameForUser(senderMsg, roomId);
-                var senderData = new User(dName, senderMsg, senderMsg);
+                var senderData = new User(this, dName, senderMsg, senderMsg);
                 Attachment[] attachments = null;
 
                 if (msgtype == "m.image" && content.TryGetProperty("url", out var urlPropEvt))
@@ -1092,7 +1092,7 @@ namespace Matrix
                         string displayName = _displayNameCache.TryGetValue(userIdStr, out var name)
                             ? name : await GetDisplayNameForUser(userIdStr, roomId);
 
-                        typingUsers.Add(new User(displayName, userIdStr, userIdStr));
+                        typingUsers.Add(new User(this, displayName, userIdStr, userIdStr));
                     }
 
                     _uiContext?.Post(_ =>
@@ -1129,7 +1129,7 @@ namespace Matrix
                 DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(ts).DateTime;
 
                 string displayName = _displayNameCache.TryGetValue(sender, out var name) ? name : sender;
-                var senderData = new User(displayName, sender, sender);
+                var senderData = new User(this, displayName, sender, sender);
 
                 if (eventType == "m.room.encrypted")
                     return new Message(eventId, senderData, timestamp,

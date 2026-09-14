@@ -44,6 +44,7 @@ namespace Skymu
     {
         #region Constructor
         private Brush _background;
+        private Brush _textColor;
         private ButtonVisualState _visualState = ButtonVisualState.Default;
         private static DispatcherTimer _sharedAnimationTimer;
         private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
@@ -77,6 +78,7 @@ namespace Skymu
             InitializeComponent();
             Universal.ThemeChanged += OnThemeChanged;
             _background = Background;
+            _textColor = TextColor;
             _overlayRects = new[] { OverlayLeft, OverlayMiddle, OverlayRight };
 
             // Animation timer
@@ -252,6 +254,19 @@ namespace Skymu
         public static readonly DependencyProperty BackgroundPressedProperty =
             DependencyProperty.Register(
                nameof(BackgroundPressed),
+               typeof(Brush),
+               typeof(SliceControl),
+               new PropertyMetadata(null, OnAnyPropertyChanged)
+           );
+
+        public Brush TextColorPressed
+        {
+            get { return (Brush)GetValue(TextColorPressedProperty); }
+            set { SetValue(TextColorPressedProperty, value); }
+        }
+        public static readonly DependencyProperty TextColorPressedProperty =
+            DependencyProperty.Register(
+               nameof(TextColorPressed),
                typeof(Brush),
                typeof(SliceControl),
                new PropertyMetadata(null, OnAnyPropertyChanged)
@@ -990,6 +1005,7 @@ namespace Skymu
             UpdateTextOffset();
             UpdateIconOffset();
             UpdateBackground();
+            UpdateTextColor();
         }
 
         public ButtonVisualState GetState()
@@ -1036,6 +1052,26 @@ namespace Skymu
                 case ButtonVisualState.Pressed:
                     if (BackgroundPressed != null)
                         Background = BackgroundPressed;
+                    break;
+                    // TODO: Disabled
+            }
+        }
+
+        private void UpdateTextColor()
+        {
+            switch (_visualState)
+            {
+                case ButtonVisualState.Default:
+                    if (_textColor != null)
+                        TextColor = _textColor;
+                    break;
+                /*case ButtonVisualState.Hover:
+                    if (BackgroundHover != null)
+                        TextColor = BackgroundHover;
+                    break;*/
+                case ButtonVisualState.Pressed:
+                    if (TextColorPressed != null)
+                        TextColor = TextColorPressed;
                     break;
                     // TODO: Disabled
             }

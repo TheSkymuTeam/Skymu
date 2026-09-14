@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
+// Copyright ï¿½ The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is governed
@@ -130,10 +130,10 @@ namespace ChatCompletions
             _modelUsers.Clear();
             foreach (var modelId in _modelIds)
             {
-                _modelUsers[modelId] = new User(modelId, modelId, modelId, _baseUrl, PresenceStatus.Online);
+                _modelUsers[modelId] = new User(this, modelId, modelId, modelId, _baseUrl, PresenceStatus.Online);
             }
 
-            _me = new User("You", _baseUrl, _baseUrl, presence_status: PresenceStatus.Online);
+            _me = new User(this, "You", _baseUrl, _baseUrl, presence_status: PresenceStatus.Online);
             return LoginResult.Success;
         }
 
@@ -208,7 +208,7 @@ namespace ChatCompletions
             // so reopening a conversation shows prior turns in this session.
             var modelId = conversation.Identifier;
             var history = _history.GetHistory(modelId);
-            var modelUser = _modelUsers.TryGetValue(modelId, out var u) ? u : new User(modelId, modelId, modelId);
+            var modelUser = _modelUsers.TryGetValue(modelId, out var u) ? u : new User(this, modelId, modelId, modelId);
 
             var items = new List<ConversationItem>();
             var baseTime = DateTime.UtcNow.AddSeconds(-history.Count);

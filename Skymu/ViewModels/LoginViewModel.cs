@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Copyright © The Skymu Team and other contributors.
+// Copyright ï¿½ The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is governed
@@ -12,33 +12,36 @@
 /*==========================================================*/
 
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Linq;
 using QRCoder;
 using Skymu.Credentials;
-using Skymu.Helpers;
-using Skymu.Plugins;
-using System.Windows.Media.Imaging;
-using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
-using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Skymu.Helpers;
 using Skymu.Native.Windows;
+using Skymu.Plugins;
+using Skymu.Preferences;
 using Skymu.Sounds;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using System.IO;
 
 namespace Skymu.ViewModels
 {
     public partial class LoginViewModel : ObservableObject
     {
+        private bool _addaccount;
+        private ICore _selectedPlugin;
         private PluginListing _selectedListing;
         private readonly Func<IMainWindowHolder> _createMainWindow;
 
@@ -46,6 +49,7 @@ namespace Skymu.ViewModels
         public event Action<string> HeaderTextRequested;
         public event Action<PluginListing> PluginSelectionUpdated;
         public event Action<IMainWindowHolder> MainWindowReady;
+        public event Action<ICore> AccountAdded;
 
         private ObservableCollection<PluginListing> _pluginItems;
         public ObservableCollection<PluginListing> PluginItems
@@ -70,16 +74,16 @@ namespace Skymu.ViewModels
 
         bool allowAutoLogin = true;
 
-
-
-        public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
+        public LoginViewModel(Func<IMainWindowHolder> createMainWindow, bool addAccount = false)
         {
+            _addaccount = addAccount;
             _createMainWindow = createMainWindow;
             _pluginItems = new ObservableCollection<PluginListing>();
         }
         public void LoadPlugins()
         {
-            PluginManager.DisposeAll();
+            if (!_addaccount) // TODO: Check for potential leaks from here...
+                PluginManager.DisposeAll();
 
             string runpath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0])), "Plugins");
 #if DEBUG
@@ -93,20 +97,20 @@ namespace Skymu.ViewModels
             int pluginIndex = 0;
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
             SavedCredentials = savedCredentials;
+            var AutoLoginAccount = CredentialManager.GetAll().FirstOrDefault(c => c.IsPrimary);
 
             foreach (var plugin in Universal.PluginList)
             {
 #if DEBUG
-                allowAutoLogin = !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode;
+                allowAutoLogin = !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode && !_addaccount;
                 if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
-                    PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
-                    Universal.Plugin = plugin;
-                    Universal.CallPlugin = Universal.Plugin as ICall;
+                    PendingAutoLogin = new SavedCredential(new User(null, "Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
+                    _selectedPlugin = plugin;
                 }
 #endif
 
-            SavedCredential match = null;
+                SavedCredential match = null;
                 foreach (SavedCredential cred in savedCredentials)
                 {
                     if (cred.Plugin == plugin.InternalName)
@@ -127,12 +131,12 @@ namespace Skymu.ViewModels
                         plugin.AuthenticationTypes[0].CustomTextPassword
                     );
 
-                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin)
+                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin
+                        && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User.Identifier == match.User.Identifier)
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
-                        Universal.Plugin = plugin;
-                        Universal.CallPlugin = Universal.Plugin as ICall;
+                        _selectedPlugin = plugin;
                     }
                     PluginItems.Add(listing);
 #if DEBUG
@@ -173,12 +177,12 @@ namespace Skymu.ViewModels
                             }
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername, ati.CustomTextPassword);
-                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin) // TODO check against authentication type too?
+                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin
+                            && AutoLoginAccount?.Plugin == plugin.InternalName && AutoLoginAccount?.User.Identifier == match.User.Identifier) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
-                            Universal.Plugin = plugin;
-                            Universal.CallPlugin = Universal.Plugin as ICall;
+                            _selectedPlugin = plugin;
                         }
                         PluginItems.Add(listing);
                     }
@@ -190,8 +194,7 @@ namespace Skymu.ViewModels
         {
             if (listing == null || PendingAutoLogin != null) return;
             _selectedListing = listing;
-            Universal.Plugin = Universal.PluginList[listing.PluginIndex];
-            Universal.CallPlugin = Universal.Plugin as ICall;
+            _selectedPlugin = Universal.PluginList[listing.PluginIndex];
             PluginSelectionUpdated?.Invoke(listing);
         }
 
@@ -207,7 +210,7 @@ namespace Skymu.ViewModels
             Universal.SignedIn = true;
             mainWindow.Show();
             SoundManager.Play("LOGIN");
-            new Updater();
+            _ = new Updater();
             string brand = Settings.BrandingName;
 
             // something must have went wrong with Runtime.DetectOS() at app startup
@@ -354,8 +357,7 @@ namespace Skymu.ViewModels
 
         public async Task TryAutoLogin()
         {
-
-            if (PendingAutoLogin == null)
+            if (_addaccount || PendingAutoLogin == null)
             {
                 AnimationToggleRequested?.Invoke(false);
                 return;
@@ -364,7 +366,7 @@ namespace Skymu.ViewModels
             Tray.SetConnecting();
 
             LoginResult lr = await Task.Run(async () =>
-                await Universal.Plugin.Authenticate(PendingAutoLogin)
+                await _selectedPlugin.Authenticate(PendingAutoLogin)
             );
 
             if (lr == LoginResult.Success)
@@ -389,7 +391,7 @@ namespace Skymu.ViewModels
             AnimationToggleRequested?.Invoke(true);
             Tray.SetConnecting();
 
-            var result = await Universal.Plugin.Authenticate(
+            var result = await _selectedPlugin.Authenticate(
                 _selectedListing.AuthenticationType,
                 username,
                 password
@@ -418,7 +420,7 @@ namespace Skymu.ViewModels
 
             if (_selectedListing.AuthenticationType == AuthenticationMethod.QRCode)
             {
-                string qr = await Universal.Plugin.GetQRCode();
+                string qr = await _selectedPlugin.GetQRCode();
                 if (!string.IsNullOrEmpty(qr))
                 {
                     // Captcha.hCaptcha.ShowPrompt("blablabla", "blablabla");
@@ -443,7 +445,7 @@ namespace Skymu.ViewModels
                     EventHandler onClosed = (s, e) => AnimationToggleRequested?.Invoke(false);
                     qrDialog.Closed += onClosed;
                     qrDialog.Show();
-                    LoginResult qrResult = await Universal.Plugin.AuthenticateTwoFA(null);
+                    LoginResult qrResult = await _selectedPlugin.AuthenticateTwoFA(null);
                     qrDialog.Closed -= onClosed;
                     qrDialog.Close();
                     if (qrResult == LoginResult.Success)
@@ -459,7 +461,7 @@ namespace Skymu.ViewModels
 
             var dlg = new Dialog(
                 WindowBase.IconType.ContactRequest,
-                Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
+                _selectedPlugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
                 "Two-factor authentication required",
                 Settings.BrandingName + " - Login",
                 null,
@@ -469,7 +471,7 @@ namespace Skymu.ViewModels
             if (dlg.ShowDialog() == true)
                 totp = dlg.TextBoxText;
 
-            LoginResult optResult = await Universal.Plugin.AuthenticateTwoFA(totp);
+            LoginResult optResult = await _selectedPlugin.AuthenticateTwoFA(totp);
             if (optResult == LoginResult.Success)
             {
                 await InitiateMain();
@@ -482,19 +484,47 @@ namespace Skymu.ViewModels
 
         private async Task InitiateMain()
         {
-            Debug.WriteLine($"[SKYMU] Login success. Initiating main window...");
+            Debug.WriteLine($"[SKYMU] Login success. Initiating main window, or proceeding with account adding...");
             if (Settings.SaveCredentials)
             {
-                SavedCredential cred = await Universal.Plugin.StoreCredential();
+                SavedCredential cred = await _selectedPlugin.StoreCredential();
                 if (cred != null)
-                    CredentialManager.Save(cred);
+                {
+                    CredentialManager.Save(new CredentialManager.SavedCredential(cred)
+                    {
+                        IsPrimary = !_addaccount,
+                        AutoLoginEnabled = true
+                    });
+                    Settings.Save();
+                }
             }
 
             HeaderTextRequested?.Invoke("Loading user data");
 
-            IMainWindowHolder mainWindow = _createMainWindow();
-            mainWindow.Ready += (s, e) => MainWindowReady?.Invoke(mainWindow);
-            _ = mainWindow.BeginLoading();
+            if (!_addaccount)
+            {
+                Universal.Plugin = _selectedPlugin;
+                Universal.ActivePlugins = new List<ICore>() { _selectedPlugin };
+                IMainWindowHolder mainWindow = _createMainWindow();
+                mainWindow.Ready += (s, e) => MainWindowReady?.Invoke(mainWindow);
+
+                try
+                {
+                    await mainWindow.BeginLoading();
+                }
+                catch (Exception ex)
+                {
+                    _selectedPlugin.Dispose();
+                    AnimationToggleRequested?.Invoke(false);
+                    HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
+                    Universal.ExceptionHandler(ex);
+                }
+            }
+            else
+            {
+                Universal.ActivePlugins.Add(_selectedPlugin);
+                AccountAdded?.Invoke(_selectedPlugin);
+            }
         }
 
         public class PluginListing

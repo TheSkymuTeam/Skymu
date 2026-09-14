@@ -17,7 +17,7 @@ namespace Discord.Users
 {
     internal class StatusManager
     {
-        public static void HandleUserStatus(JsonNode messageData)
+        public static void HandleUserStatus(Core core, JsonNode messageData)
         {
             // READY
             if (messageData["user_settings"] is JsonObject userSettings)
@@ -26,19 +26,19 @@ namespace Discord.Users
                 string rawCustomStatus = string.Empty;
                 if (userSettings["custom_status"] is JsonObject customStatusObj)
                     rawCustomStatus = customStatusObj["text"]?.GetValue<string>() ?? string.Empty;
-                UserStore.UpdatePresence("0", rawMainStatus, rawCustomStatus);
+                UserStore.UpdatePresence(core, "0", rawMainStatus, rawCustomStatus);
             }
 
             // READY bulk
             foreach (var presence in (messageData["presences"] as JsonArray) ?? new JsonArray())
-                ApplyPresence(presence);
+                ApplyPresence(core, presence);
 
             // PRESENCE_UPDATE 
             if (messageData["user"] is JsonObject)
-                ApplyPresence(messageData);
+                ApplyPresence(core, messageData);
         }
 
-        private static void ApplyPresence(JsonNode presence)
+        private static void ApplyPresence(Core core, JsonNode presence)
         {
             string userId = presence["user"]?["id"]?.GetValue<string>();
             if (userId == null) return;
@@ -59,7 +59,7 @@ namespace Discord.Users
                 }
             }
 
-            UserStore.UpdatePresence(userId, status, customStatus);
+            UserStore.UpdatePresence(core, userId, status, customStatus);
         }
 
         public class StatusData

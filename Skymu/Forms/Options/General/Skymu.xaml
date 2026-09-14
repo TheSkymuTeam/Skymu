@@ -114,7 +114,7 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource Text.MediumContrast}"
-                    Text="(Requires restart)" />
+                    Text="(Requires relogin)" />
             </StackPanel>
 
 
@@ -517,6 +517,12 @@
                         Tag="{x:Static enums:NotificationTriggerType.DM}" />
                 </ComboBox>
             </StackPanel>
+            <CheckBox
+                Margin="0,5"
+                Padding="6, 0"
+                Content="Allow implicit nick mentions to trigger a notification (supported protocols only)"
+                Foreground="{DynamicResource Text.VeryHighContrast}"
+                IsChecked="{Binding Path=[AllowImplicitMentions], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"

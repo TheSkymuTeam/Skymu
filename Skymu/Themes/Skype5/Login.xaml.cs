@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -22,11 +22,12 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using Skymu.Helpers;
+using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Skymu.Credentials;
+using System.Linq;
 
 namespace Skymu.Skype5
 {
@@ -34,10 +35,12 @@ namespace Skymu.Skype5
     {
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
+        private bool addaccount = false;
         private bool switchuser = false;
 
-        public Login(bool switchuser = false)
+        public Login(bool switchuser = false, bool addAccount = false, Action<ICore> accountAdded = null)
         {
+            this.addaccount = addAccount;
             this.switchuser = switchuser;
             InitializeComponent();
             UsernameBox.KeyUp += BoxKeyUp;
@@ -45,11 +48,17 @@ namespace Skymu.Skype5
             LoginButton.MouseLeftButtonUp += buttonLaunch;
             this.ContentRendered += Login_ContentRendered;
 
-            _viewModel = new LoginViewModel(() => new Main());
+            _viewModel = new LoginViewModel(() => new Main(), addaccount);
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
             _viewModel.HeaderTextRequested += text => header.Text = text;
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
+            _viewModel.AccountAdded += (plugin) =>
+            {
+                accountAdded?.Invoke(plugin);
+                noCloseEvent = true;
+                Close();
+            };
 
             SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
@@ -122,28 +131,31 @@ namespace Skymu.Skype5
 
         private void CheckEnableLoginButton()
         {
-            if (
-                (UsernameBox.Text.Trim() != string.Empty
-                    && (PasswordTokenBox.Password.Trim() != string.Empty || !PasswordTokenBox.IsEnabled))
-                || !PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled
-            )
-            {
-                LoginButton.IsEnabled = true;
-            }
-            else
-            {
-                LoginButton.IsEnabled = false;
-            }
+            LoginButton.IsEnabled = (!string.IsNullOrWhiteSpace(UsernameBox.Text)
+                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
+                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled);
         }
 
         private void OnChangeLanguage(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sLOGIN_CHANGE_LANGUAGE"]); }
         private void OnConnectionOptions(object sender, EventArgs e) { new Options().Show(); }
+        private void OnDisableAutoLogin(object sender, EventArgs e)
+        {
+            var cs = CredentialManager.GetAll()
+                .Where(c => c.AutoLoginEnabled || c.IsPrimary);
+            foreach (var cred in cs)
+            {
+                cred.AutoLoginEnabled = false;
+                cred.IsPrimary = false; // to be safe
+                CredentialManager.Save(cred);
+            }
+            Universal.ShowMessage("Please restart to see the login form.", "Auto login has been disabled for all logins");
+        }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
         private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
         private void OnPrivacy(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY); }
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
-        private void OnClose(object sender, EventArgs e) { Universal.Close(false); }
+        private void OnClose(object sender, EventArgs e) { if (addaccount) Close(); else Universal.Close(false); }
 
         private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
         private static (string, EventHandler) SEP() { return ("$", null); }
@@ -166,6 +178,7 @@ namespace Skymu.Skype5
                 MI(L("sLOGIN_CHANGE_LANGUAGE"), OnChangeLanguage),
                 SEP(),
                 MI(L("sLOGIN_CONNECTION_OPTIONS"), OnConnectionOptions),
+                MI(L("Disable auto login"), OnDisableAutoLogin),
                 SEP(),
                 MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"), OnAccessibility)
             );
@@ -186,7 +199,10 @@ namespace Skymu.Skype5
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
-            if (_viewModel.PendingAutoLogin != null && !switchuser)
+            if (addaccount && _viewModel.PendingAutoLogin != null)
+                _viewModel.ClearPendingAutoLogin();
+
+            if (_viewModel.PendingAutoLogin != null && !switchuser && !addaccount)
                 LoginToggleAnimation(true);
             else
                 SelectDefaultProtocol();
@@ -230,11 +246,15 @@ namespace Skymu.Skype5
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listing = (LoginViewModel.PluginListing)ProtocolComboBox.SelectedItem;
-            foreach (var cred in _viewModel.SavedCredentials)
+            if (!addaccount)
             {
-                if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
+                foreach (var cred in _viewModel.SavedCredentials)
                 {
-                    SetProtocolSelection(listing, cred);
+                    if (cred.Plugin.ToLowerInvariant() == listing?.InternalName?.ToLowerInvariant())
+                    {
+                        SetProtocolSelection(listing, cred);
+                        return;
+                    }
                 }
             }
             if (listing != null)
@@ -243,7 +263,7 @@ namespace Skymu.Skype5
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            if (!switchuser)
+            if (!switchuser && !addaccount)
                 await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
                 SelectDefaultProtocol();
@@ -271,14 +291,9 @@ namespace Skymu.Skype5
             e.Handled = true;
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-        }
-
         private void Login_Closing(object sender, CancelEventArgs ev)
         {
-            if (!noCloseEvent)
+            if (!noCloseEvent && !addaccount)
                 Universal.Hide(ev);
         }
     }

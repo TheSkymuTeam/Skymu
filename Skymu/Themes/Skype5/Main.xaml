@@ -68,7 +68,7 @@
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
         <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
-        <converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
+        <converters:FormatFullMessageConverter x:Key="FormatFullMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
         <converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
         <Style x:Key="WindowButtonStyle" TargetType="global:SliceControl">
             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -735,7 +735,7 @@
                         Grid.Column="1"
                         Margin="0,0,20,0"
                         Orientation="Vertical">
-                        <ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+                        <ContentControl Content="{Binding Converter={StaticResource FormatFullMessageConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
                         <Image
                             MaxWidth="300"
                             MaxHeight="300"
@@ -1052,6 +1052,7 @@
                         <Separator />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
+                        <MenuItem Click="OnManageAccounts" Header="Manage accounts..." />
                         <MenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
                         <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                     </MenuItem>

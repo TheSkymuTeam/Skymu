@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,6 @@ using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
-using System.Linq;
 
 namespace Stub
 {
@@ -70,6 +70,39 @@ namespace Stub
 
         #endregion
 
+        public Core()
+        {
+            users = new User[]
+            {
+                new User(this, "Mario", "mario", "012", "It's-a me!", PresenceStatus.Online),
+                new User(this, "Luigi", "luigi", "013", "NO", PresenceStatus.DoNotDisturb),
+                new User(this, "Peach", "peach", "014", "In the castle", PresenceStatus.Away),
+                new User(
+                    this,
+                    "Bowser",
+                    "bowser",
+                    "015",
+                    "Planning something...",
+                    PresenceStatus.Online
+                ),
+                new User(this, "Yoshi", "yoshi", "016", "Yoshi!", PresenceStatus.Online),
+                new User(this, "Toad", "toad", "017", "Welcome!", PresenceStatus.Online),
+                new User(this, "Wario", "wario", "018", "Hehehe", PresenceStatus.DoNotDisturb),
+                new User(this, "Waluigi", "waluigi", "019", "Wah!", PresenceStatus.Invisible),
+                new User(this, "Daisy", "daisy", "020", "Hi!", PresenceStatus.Online),
+                new User(
+                    this,
+                    "Rosalina",
+                    "rosalina",
+                    "021",
+                    "Watching the stars",
+                    PresenceStatus.Away
+                ),
+                new User(this, "Donkey Kong", "dk", "022", "Bananas!", PresenceStatus.Online),
+                new User(this, "Koopa", "koopa", "023", "Patrolling", PresenceStatus.Offline),
+            };
+        }
+
         // Also called on logout
         public void Dispose()
         {
@@ -84,7 +117,7 @@ namespace Stub
             string password = null
         )
         {
-            Me = new User(username, username, username);
+            Me = new User(this, username, username, username);
             MessageTube.Invoke(
                 this,
                 new MessageRecievedBottle(
@@ -99,6 +132,7 @@ namespace Stub
         public Task<LoginResult> Authenticate(SavedCredential autoLoginCredentials)
         {
             Me = autoLoginCredentials.User;
+            Me.Core = this; // Make sure to refresh the core reference, as Skymu's, and hopefully all other implementations, will not store the core reference in the SavedCredential object.
             return Task.FromResult(LoginResult.Success);
         }
 
@@ -154,11 +188,11 @@ namespace Stub
             if (parent_message_identifier != null)
                 DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message references a parent."));
             TypingUsersList.Clear();
-            TypingUsersList.Add(new User("Nova", "20202", "20202"));
-            TypingUsersList.Add(new User("omega", "20203", "20203"));
-            TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
-            TypingUsersList.Add(new User("Xaero", "20200", "20200"));
-            TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
+            TypingUsersList.Add(new User(this, "Nova", "20202", "20202"));
+            TypingUsersList.Add(new User(this, "omega", "20203", "20203"));
+            TypingUsersList.Add(new User(this, "patricktbp", "20204", "20204"));
+            TypingUsersList.Add(new User(this, "Xaero", "20200", "20200"));
+            TypingUsersList.Add(new User(this, "HUBAXE", "20205", "20205"));
 
             Task.Run(async () =>
             {
@@ -210,7 +244,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 10, 0),
                     "Hey, I’ve been playing Genshin Impact on the Steam Deck, it works fine."
                 )
@@ -218,7 +252,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20203",
-                    new User("omega", "omega", "omega"),
+                    new User(this, "omega", "omega", "omega"),
                     new DateTime(2025, 4, 30, 8, 10, 10),
                     "Oh nice, I’ve heard good things about it."
                 )
@@ -226,7 +260,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20204",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 10, 20),
                     "Yeah, it’s a really fun game."
                 )
@@ -234,7 +268,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20205",
-                    new User("omega", "omega", "omega"),
+                    new User(this, "omega", "omega", "omega"),
                     new DateTime(2025, 4, 30, 8, 10, 30),
                     "Cool, I might try it out sometime."
                 )
@@ -242,7 +276,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20206",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 10, 40),
                     "It’s pretty enjoyable even without spending money."
                 )
@@ -250,7 +284,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20207",
-                    new User("omega", "omega", "omega"),
+                    new User(this, "omega", "omega", "omega"),
                     new DateTime(2025, 4, 30, 8, 10, 50),
                     "That’s good to know."
                 )
@@ -258,7 +292,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 11, 0),
                     "I just wanted to share it’s a solid game."
                 )
@@ -266,7 +300,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("omega", "omega", "omega"),
+                    new User(this, "omega", "omega", "omega"),
                     new DateTime(2025, 4, 30, 8, 11, 10),
                     "Thanks for the info!"
                 )
@@ -274,7 +308,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 11, 20),
                     "Gameplay-wise it’s really engaging and well-designed."
                 )
@@ -282,7 +316,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new User(this, "patricktbp", "patricktbp", "patricktbp"),
                     new DateTime(2025, 4, 30, 8, 12, 40),
                     "Sounds interesting, I’ll check it out."
                 )
@@ -290,7 +324,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new User(this, "patricktbp", "patricktbp", "patricktbp"),
                     new DateTime(2025, 4, 30, 8, 13, 30),
                     "@Amongus do you want to discuss this more in DMs?"
                 )
@@ -298,7 +332,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 14, 0),
                     "Just sharing my experience, I think most people would enjoy it."
                 )
@@ -306,7 +340,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Nova", "Nova", "Nova"),
+                    new User(this, "Nova", "Nova", "Nova"),
                     new DateTime(2025, 4, 30, 8, 15, 0),
                     "I think it could be fun to collaborate on the project with this in mind."
                 )
@@ -314,7 +348,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("omega", "omega", "omega"),
+                    new User(this, "omega", "omega", "omega"),
                     new DateTime(2025, 4, 30, 8, 15, 20),
                     "Yeah, that makes sense. Thanks for sharing."
                 )
@@ -322,7 +356,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("patricktbp", "patricktbp", "patricktbp"),
+                    new User(this, "patricktbp", "patricktbp", "patricktbp"),
                     new DateTime(2025, 4, 30, 8, 15, 30),
                     "Great, let’s move forward."
                 )
@@ -330,7 +364,7 @@ namespace Stub
             messages.Add(
                 new Message(
                     "20202",
-                    new User("Amongus", "Amongus", "Amongus"),
+                    new User(this, "Amongus", "Amongus", "Amongus"),
                     new DateTime(2025, 4, 30, 8, 15, 40),
                     "Got it, thanks everyone. Also, Genshin impact fuckin sucks ass lol"
                 )
@@ -347,14 +381,15 @@ namespace Stub
             string id = "2132";
             servers.Add(
                 new Server(
+                    this,
                     "Epic gamer soyciety",
                     id,
                     null,
                     null,
                     new ServerChannel[]
                     {
-                        new ServerChannel("channel1", "2132/1", id, 0, ChannelType.Standard),
-                        new ServerChannel("read only", "2132/2", id, 0, ChannelType.ReadOnly),
+                        new ServerChannel(this, "channel1", "2132/1", id, 0, ChannelType.Standard),
+                        new ServerChannel(this, "read only", "2132/2", id, 0, ChannelType.ReadOnly),
                     }.ToList()
                 )
             );
@@ -373,8 +408,9 @@ namespace Stub
         {
             List<DirectMessage> contacts = new List<DirectMessage>
             {
-                new DirectMessage(
+                new DirectMessage( 
                     new User(
+                        this,
                         "Skymu user 1",
                         "u1",
                         "u1",
@@ -385,7 +421,7 @@ namespace Stub
                     "u1"
                 ),
                 new DirectMessage(
-                    new User("Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
+                    new User(this, "Skymu user 2", "u2", "u2", "HELLO", PresenceStatus.Away),
                     0,
                     "u2"
                 )
@@ -428,6 +464,7 @@ namespace Stub
 
             conversations.Add(
                 new Group(
+                    this,
                     "Giga based coalition",
                     "067",
                     users.Length,
@@ -585,13 +622,13 @@ namespace Stub
                     members[i] = users[i % users.Length];
                 }
                 return Task.FromResult(new Metadata[2] {
-                    new Group("Mega Based Coalition", "mbc", 0, members),
-                    new User(query, query, query)
+                    new Group(this, "Mega Based Coalition", "mbc", 0, members),
+                    new User(this, query, query, query)
                 });
             }
             return Task.FromResult(new Metadata[1]
             {
-                new User(query, query, query)
+                new User(this, query, query, query)
             });
         }
 
@@ -611,33 +648,7 @@ namespace Stub
 
         #region Stub specific stuff
 
-        private readonly User[] users = new User[]
-        {
-            new User("Mario", "mario", "012", "It's-a me!", PresenceStatus.Online),
-            new User("Luigi", "luigi", "013", "NO", PresenceStatus.DoNotDisturb),
-            new User("Peach", "peach", "014", "In the castle", PresenceStatus.Away),
-            new User(
-                "Bowser",
-                "bowser",
-                "015",
-                "Planning something...",
-                PresenceStatus.Online
-            ),
-            new User("Yoshi", "yoshi", "016", "Yoshi!", PresenceStatus.Online),
-            new User("Toad", "toad", "017", "Welcome!", PresenceStatus.Online),
-            new User("Wario", "wario", "018", "Hehehe", PresenceStatus.DoNotDisturb),
-            new User("Waluigi", "waluigi", "019", "Wah!", PresenceStatus.Invisible),
-            new User("Daisy", "daisy", "020", "Hi!", PresenceStatus.Online),
-            new User(
-                "Rosalina",
-                "rosalina",
-                "021",
-                "Watching the stars",
-                PresenceStatus.Away
-            ),
-            new User("Donkey Kong", "dk", "022", "Bananas!", PresenceStatus.Online),
-            new User("Koopa", "koopa", "023", "Patrolling", PresenceStatus.Offline),
-        };
+        private readonly User[] users;
 
         private Timer presenceTimer;
         private readonly Random rand = new Random();

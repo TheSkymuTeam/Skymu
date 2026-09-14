@@ -16,20 +16,21 @@ using System;
 using System.IO;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using Yggdrasil.Models;
+using Yggdrasil;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Discord.Helpers
 {
     internal class MessageParser
     {
-        public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
+        public static async Task<Message> ParseMessage(Core core, JsonNode message, bool isForwarded = false)
         {
             if (message == null)
                 return null;
 
             if (message["message_snapshots"] != null)
-                return await ParseMessage(message["message_snapshots"][0]["message"], true);
+                return await ParseMessage(core, message["message_snapshots"][0]["message"], true);
 
             string messageId = message["id"]?.GetValue<string>() ?? "0";
             string authorId = message["author"]?["id"]?.GetValue<string>() ?? "0";
@@ -48,24 +49,24 @@ namespace Discord.Helpers
                     AttachmentType.ThumbnailImage
                 ),
             };
-            Message parent = ParseReply(message["referenced_message"]);
+            Message parent = ParseReply(core, message["referenced_message"]);
             User sender = UserStore.Get(authorId);
             var (displayName, username) = GetAuthorInfo(message);
             if (sender == null)
             {
-                sender = UserStore.GetOrCreate(authorId, displayName, username);
+                sender = UserStore.GetOrCreate(core, authorId, displayName, username);
             }
             else if (
                 string.IsNullOrEmpty(sender.DisplayName) || string.IsNullOrEmpty(sender.Username)
             )
             {
-                sender = UserStore.GetOrCreate(authorId, displayName, username);
+                sender = UserStore.GetOrCreate(core, authorId, displayName, username);
             }
 
             return new Message(messageId, sender, timestamp, content, media, parent, isForwarded);
         }
 
-        public static Message ParseReply(JsonNode refMsg)
+        public static Message ParseReply(Core core, JsonNode refMsg)
         {
             if (refMsg == null)
                 return null;
@@ -77,7 +78,7 @@ namespace Discord.Helpers
             string authorId = refMsg["author"]?["id"]?.GetValue<string>() ?? "0";
             return new Message(
                 refMsg["id"]?.GetValue<string>() ?? "0",
-                UserStore.GetOrCreate(authorId, displayName, username),
+                UserStore.GetOrCreate(core, authorId, displayName, username),
                 ParseTimestamp(refMsg["timestamp"]?.GetValue<string>()),
                 replyContent
             );

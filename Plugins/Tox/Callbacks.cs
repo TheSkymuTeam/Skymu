@@ -265,7 +265,7 @@ namespace Tox
                     var fid = core.tox.FriendAdd(pkey);
                     core.SAVE();
                     var bpkey = BATS(pkey);
-                    var f = new User(bpkey, bpkey, bpkey);
+                    var f = new User(core, bpkey, bpkey, bpkey);
                     var dm = new DirectMessage(f, 0, BATS(pkey));
                     core.friends[fid] = f;
                     core.LIST(new ListItemUpdatedBottle(ListType.Contacts, dm));
@@ -482,7 +482,7 @@ namespace Tox
             var p = new ConferencePeer(tox, cid, pid);
             var pkey = BATS(p.publicKey);
             // You can receive your own message too. In this case, we can abuse that to easily confirm message send.
-            User sender = new User(p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey));
+            User sender = new User(core, p.name, pkey, pkey, null, PresenceStatus.Online, GrabAvatar(pkey));
             if (BATS(c.peers[pid].publicKey) == core._currentUser.Identifier)
                 sender = core._currentUser;
             Message message;

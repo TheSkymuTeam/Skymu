@@ -85,8 +85,18 @@ namespace Skymu.Plugins
 
         public static void DisposeAll()
         {
+            Universal.Plugin?.Dispose();
             if (Universal.Plugin != null)
-                Universal.Plugin.Dispose();
+                Universal.ActivePlugins.Remove(Universal.Plugin);
+            Universal.Plugin = null;
+
+            if (Universal.ActivePlugins != null)
+            {
+                foreach (var item in Universal.ActivePlugins)
+                    item.Dispose();
+                Universal.ActivePlugins = null;
+            }
+
             if (Universal.PluginList == null)
                 return;
 
@@ -105,8 +115,6 @@ namespace Skymu.Plugins
                 catch { }
             }
             Universal.PluginList = null;
-            Universal.Plugin = null;
-            Universal.CallPlugin = null;
         }
     }
 }

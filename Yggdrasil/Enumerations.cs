@@ -1,10 +1,14 @@
 ﻿/*==========================================================*/
-// Yggdrasil copyright © OmegaAOL 2025-2026.
-// For any inquiries, email hackersword666@gmail.com.
-// Avoid AI use when contributing to this library.
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
-// License: https://opensource.org/license/mit
-// SPDX-License-Identifier: MIT
+// Modification or redistribution of this code is governed
+// by the terms set out in the project license agreement.
+// If you do not comply with those terms, you may not
+// modify or distribute any original code from the project.
+/*==========================================================*/
+// License: https://skymu.app/legal/licenses/agpl-3.0
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
 namespace Yggdrasil.Enumerations
@@ -106,5 +110,15 @@ namespace Yggdrasil.Enumerations
         DirectMessage,
         Group,
         Server,
+    }
+
+    /// <summary>
+    /// If both is present, use Explicit over Implicit.
+    /// </summary>
+    public enum MentionType
+    {
+        None,
+        Implicit,
+        Explicit
     }
 }
