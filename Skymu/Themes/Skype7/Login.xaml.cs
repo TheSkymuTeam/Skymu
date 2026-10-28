@@ -86,7 +86,12 @@ namespace Skymu.Skype7
             UsernameBox.IsEnabled = true;
             UsernameHint.FontStyle = FontStyles.Normal;
             UsernameHint.Text = listing.TextUsername ?? UsernameHint.Text;
-            SubHeader.Content = $"with {Universal.Plugin.Name} account";
+            if (Universal.Plugin is null) { // TODO : Too busy to fix that properly, Universal.Plugin seems to be always null, please fix it if possible . - Sean Kévin
+                SubHeader.Content = $"";
+            } else {
+                SubHeader.Content = $"with {Universal.Plugin.Name} account";
+            }
+                
 
             if (listing.AuthenticationType != AuthenticationMethod.Password)
             {

@@ -394,7 +394,7 @@
                             <Border x:Name="Rail" Background="{TemplateBinding Background}" />
                             <Track
                                 x:Name="PART_Track"
-                                Margin="-8,9,0,0"
+                                Margin="0,0,0,0"
                                 IsDirectionReversed="True"
                                 Maximum="{TemplateBinding Maximum}"
                                 Minimum="{TemplateBinding Minimum}"
@@ -526,12 +526,12 @@
         <DataTemplate x:Key="MessageTemplate" DataType="{x:Type local:MessageGroup}">
             <Grid Margin="0,12,0,0" HorizontalAlignment="Stretch">
 
-                <!--  RECIEVED BUBBLE  -->
+                <!--  RECEIVED BUBBLE  -->
                 <StackPanel
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
-                    Visibility="{Binding Author.Identifier, Converter={StaticResource SenderToReceivedVis}}">
+                    Visibility="{Binding IsSelf, Converter={StaticResource BoolToInverseVis}}">
                     <Ellipse
                         Width="36"
                         Height="36"
@@ -623,7 +623,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
-                    Visibility="{Binding Author.Identifier, Converter={StaticResource SenderToSentVis}}">
+                    Visibility="{Binding IsSelf, Converter={StaticResource BoolToVis}}">
                     <!--  Image attachment (sent)  -->
                     <Border
                         ClipToBounds="True"
@@ -765,7 +765,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Metro.Avatar.Background}" />
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Metro.Selected}" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource Metro.Separator}" />
@@ -1050,6 +1050,7 @@
                     HorizontalAlignment="Stretch">
                     <ListBox
                         x:Name="ConversationList"
+                        Margin="0 9 0 0"
                         Background="Transparent"
                         BorderThickness="0"
                         ItemContainerStyle="{StaticResource SidebarItemStyle}"

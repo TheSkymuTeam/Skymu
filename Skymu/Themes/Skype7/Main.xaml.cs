@@ -12,8 +12,8 @@
 /*==========================================================*/
 // This code is EXPIREMENTAL and has not been reviewed by
 // persfidious, patricktbp, or HUBAXE.
-// It is a port of logic that previously lived in the old
-// "SeanKype" project.
+// It is a partial port of logic that previously lived in the old
+// "SeanKype" project, being (slowly & slighly) reworked by HUBAXE.
 /*==========================================================*/
 
 using Skymu.Emoticons;

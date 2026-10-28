@@ -49,13 +49,20 @@ namespace Skymu.Skype7
 
             _handler = (s, e) =>
             {
-                if (e.Action != NotifyCollectionChangedAction.Add)
-                    return;
-                foreach (var item in e.NewItems)
-                {
-                    if (item is Message msg)
-                        Append(msg, isGroupOrServer);
-                    // non-Message items (CallStartedNotice etc) don't appear in Skype7
+                switch(e.Action) {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach(var item in e.NewItems) {
+                            if(item is Message msg)
+                                Append(msg, isGroupOrServer);
+                            // non-Message items (CallStartedNotice etc) don't appear in Skype7
+                        }
+                        break;
+
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach(var item in e.OldItems)
+                            if(item is Message msg)
+                                Remove(msg);
+                        break;
                 }
             };
             _source.CollectionChanged += _handler;
@@ -76,13 +83,13 @@ namespace Skymu.Skype7
             if (!(_source[i] is Message firstMsg))
                 return i + 1;
 
-            bool isSelf = Universal.ActiveUsers.TryGetValue(firstMsg.Author?.Core, out var selfu) && firstMsg.Author?.Identifier == selfu?.Identifier;
+            bool isSelf = Universal.CurrentUser.Identifier == firstMsg.Author.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(firstMsg);
 
             if (isImage)
             {
-                Grouped.Add(new MessageGroup(new[] { firstMsg }, showName));
+                Grouped.Add(new MessageGroup(new[] { firstMsg }, showName, isSelf));
                 return i + 1;
             }
 
@@ -101,13 +108,13 @@ namespace Skymu.Skype7
                 batch.Add(next);
                 j++;
             }
-            Grouped.Add(new MessageGroup(batch, showName));
+            Grouped.Add(new MessageGroup(batch, showName, isSelf));
             return j;
         }
 
         private void Append(Message message, bool isGroupOrServer)
         {
-            bool isSelf = Universal.ActiveUsers.TryGetValue(message.Author?.Core, out var selfu) && message.Author?.Identifier == selfu?.Identifier;
+            bool isSelf = Universal.CurrentUser.Identifier == message.Author.Identifier;
             bool showName = !isSelf && isGroupOrServer;
             bool isImage = IsImageMessage(message);
 
@@ -124,7 +131,17 @@ namespace Skymu.Skype7
                     }
                 }
             }
-            Grouped.Add(new MessageGroup(new[] { message }, showName));
+            Grouped.Add(new MessageGroup(new[] { message }, showName, isSelf));
+        }
+
+        private void Remove(Message Msg) {
+            for(int i = Grouped.Count - 1; i >= 0; i--) {
+                var Group = Grouped[i];
+                if (Group.Messages.Remove(Msg)) {
+                    if (Group.Messages.Count == 0) { Grouped.RemoveAt(i); }
+                    return;
+                }
+            }
         }
 
         private static bool IsImageMessage(Message m)
@@ -145,6 +162,7 @@ namespace Skymu.Skype7
         public User Sender => Messages.Count > 0 ? Messages[0].Author : null;
         public DateTime Time =>
             Messages.Count > 0 ? Messages[Messages.Count - 1].Time : default(DateTime);
+        public bool IsSelf { get; }
 
         public bool IsImageGroup
         {
@@ -159,10 +177,11 @@ namespace Skymu.Skype7
             }
         }
 
-        public MessageGroup(IList<Message> messages, bool showSenderName)
+        public MessageGroup(IList<Message> messages, bool showSenderName, bool isSelf)
         {
             Messages = new ObservableCollection<Message>(messages);
             ShowSenderName = showSenderName;
+            IsSelf = isSelf;
         }
     }
 }
