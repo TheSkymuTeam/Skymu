@@ -79,6 +79,55 @@ namespace Skymu.ViewModels
             _addaccount = addAccount;
             _createMainWindow = createMainWindow;
             _pluginItems = new ObservableCollection<PluginListing>();
+            if (!Settings.SWSOptOutShown)
+            {
+                Dialog dlg = null;
+                dlg = new Dialog(
+                    WindowBase.IconType.Question,
+                    "Don't want to read this? Almost all users will want to click Yes. Clicking No leads to loss of client functionality. If you are very concerned about privacy, read on. Once upon a time...\n\n" +
+                    Settings.BrandingName + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
+                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes', otherwise click 'Yes, but keep me anonymous.'"
+                        + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
+                        + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."
+                        + " The client information we store is detailed at " + Universal.SKYMU_WEBSITE_PRIVACY + ". It's a very short privacy policy because we don't collect your personal data (that could lead to a lot of legal liabilities for us!), we're only interested in keeping our infrastructure secure and " +
+                        "running. Knowing all this, do you still want to connect to Skymu web services?",
+                    "Optional privacy configurations",
+                    $"{Universal.NAME} web service manager",
+                    new Action(() => // no
+                    {
+                        Settings.SWSOptOutShown = true;
+                        Settings.Anonymize = true;
+                        Settings.DisableSWS = true;
+                        Settings.Save();
+                        dlg.Close();
+                    }),
+                    Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
+                    true,
+                    new Action(() => // yes and don't anonymize
+                    {
+                        Settings.SWSOptOutShown = true;
+                        Settings.Anonymize = false;
+                        Settings.DisableSWS = false;
+                        Settings.Save();
+                        dlg.Close();
+                    }),
+                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"],
+                    false,
+                    null,
+                    null,
+                    true,
+                    new Action(() => // yes and anonymize
+                    {
+                        Settings.SWSOptOutShown = true;
+                        Settings.Anonymize = true;
+                        Settings.DisableSWS = false;
+                        Settings.Save();
+                        dlg.Close();
+                    }),
+                    "Yes, but keep me anonymous"
+                );
+                dlg.ShowDialog();
+            }
         }
         public void LoadPlugins()
         {
@@ -211,56 +260,6 @@ namespace Skymu.ViewModels
             mainWindow.Show();
             SoundManager.Play("LOGIN");
             _ = new Updater();
-            string brand = Settings.BrandingName;
-
-            // request the user to publish their details on the public userlist
-            if (!Settings.WebServicesOptOutShown)
-            {
-                Dialog dlg = null;
-                dlg = new Dialog(
-                    WindowBase.IconType.Question,
-                    brand + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
-                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes', otherwise click 'Yes, but keep me anonymous.'"
-                        + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
-                        + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."
-                        + " The client information we store is detailed at " + Universal.SKYMU_WEBSITE_PRIVACY + ". It's a very short privacy policy because we don't want to collect your data (that leads to a lot of legal liabilities for us!), we're only interested in keeping our infrastructure secure and running.",
-                    "Connect to official Skymu servers?",
-                    $"{Universal.NAME} web service manager",
-                    new Action(() => // no
-                    {
-                        Settings.WebServicesOptOutShown = true;
-                        Settings.Anonymize = true;
-                        Settings.DisableSkymuWebServices = true;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
-                    true,
-                    new Action(() => // yes and don't anonymize
-                    {
-                        Settings.WebServicesOptOutShown = true;
-                        Settings.Anonymize = false;
-                        Settings.DisableSkymuWebServices = false;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"],
-                    false,
-                    null,
-                    null,
-                    true,
-                    new Action(() => // yes and anonymize
-                    {
-                        Settings.WebServicesOptOutShown = true;
-                        Settings.Anonymize = true;
-                        Settings.DisableSkymuWebServices = false;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    "Yes, but keep me anonymous"
-                );
-                dlg.ShowDialog();
-            }
 
             // warn the user once if they're running an old OS like XP / old Wine version
             if (!Settings.OldPlatformWarningShown)
@@ -268,26 +267,26 @@ namespace Skymu.ViewModels
                 string message = null;
 
                 if (Universal.Platform == PlatformType.Unknown)
-                    message = brand + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
+                    message = Settings.BrandingName + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
 
                 else if (Universal.Platform < PlatformType.Windows2000)
                 {
                     if (Universal.Platform == PlatformType.WineLegacy)
-                        message = brand + " does not support Wine versions older than 10. You may encounter significant bugs.";
+                        message = Settings.BrandingName + " does not support Wine versions older than 10. You may encounter significant bugs.";
                     else if (Universal.Platform == PlatformType.Wine10)
-                        message = brand + " has limited support for Wine 10. Some features may not work as expected.";
+                        message = Settings.BrandingName + " has limited support for Wine 10. Some features may not work as expected.";
                     else if (Universal.Platform == PlatformType.Wine11)
-                        message = brand + " does not have complete support for Wine 11. Some features may not work as expected.";
+                        message = Settings.BrandingName + " does not have complete support for Wine 11. Some features may not work as expected.";
                 }
 
                 else if (Universal.Platform < PlatformType.WindowsVista)
                 {
                     if (Universal.Platform == PlatformType.WindowsXP)
-                        message = brand + " does not officially support Windows XP or the One Core API, and you may encounter " +
+                        message = Settings.BrandingName + " does not officially support Windows XP or the One Core API, and you may encounter " +
                             "significant bugs. However, if you are using Projek01, you should not expect any problems, and" +
                             " if you are using EAZY BLACK's official Skymu XP wrapper you should be (mostly) fine.";
                     else if (Universal.Platform == PlatformType.Windows2000)
-                        message = brand + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
+                        message = Settings.BrandingName + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
                 }
 
                 // Windows is well known for its backwards compatibility, this should never be an issue.
@@ -314,7 +313,7 @@ namespace Skymu.ViewModels
                     Dialog dlg = null;
                     dlg = new Dialog(
                         WindowBase.IconType.Question,
-                        brand + $" has detected that you have an older version of .NET installed ({netVersion}) than the latest supported for your platform. " +
+                        Settings.BrandingName + $" has detected that you have an older version of .NET installed ({netVersion}) than the latest supported for your platform. " +
                         $"It is recommended that you download the latest .NET Desktop Runtime for performance improvements, reduction in memory usage, " +
                         $"and critical security fixes.",
                         "Update your .NET runtime?",

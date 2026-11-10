@@ -256,7 +256,7 @@ namespace Skymu.ViewModels
         {
             Universal.ActiveViewModel = this;
 
-            if (!Settings.DisableSkymuWebServices && Settings.EnableSkypeHome) UseSkypeHome = true;
+            if (!Settings.DisableSWS && Settings.EnableSkypeHome) UseSkypeHome = true;
 
             ActiveConversation = new ObservableCollection<ConversationItem>();
 
@@ -858,7 +858,7 @@ namespace Skymu.ViewModels
 
         private async Task SkymuApiStatusHandler()
         {
-            if (Settings.DisableSkymuWebServices)
+            if (Settings.DisableSWS)
                 return;
             await UserCountAPI.GenerateUID();
             await UserCountAPI.SetUserStatus(

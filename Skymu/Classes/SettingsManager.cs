@@ -316,26 +316,26 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool Anonymize
         {
-            get => SELECT("Anonymize", true, "Skymu/Server");
+            get => SELECT("Anonymize", false, "Skymu/Server");
             set => WRITE("Anonymize", value, nameof(Anonymize), "Skymu/Server");
         }
         /// <summary>
         /// If FALSE Skymu will make connections to skymu.app servers as usual.
         /// If TRUE Skymu will block all connections to skymu.app servers.
         /// </summary>
-        public static bool DisableSkymuWebServices
+        public static bool DisableSWS
         {
-            get => SELECT("DisableSkymuWebServices", false, "Skymu/Server");
-            set => WRITE("DisableSkymuWebServices", value, nameof(DisableSkymuWebServices), "Skymu/Server");
+            get => SELECT("DisableSWS", false, "Skymu/Server");
+            set => WRITE("DisableSWS", value, nameof(DisableSWS), "Skymu/Server");
         }
         /// <summary>
         /// If FALSE a dialog will be shown 
         /// If TRUE no dialog will be shown. Automatically set to TRUE after dialog is shown once.
         /// </summary>
-        public static bool WebServicesOptOutShown
+        public static bool SWSOptOutShown
         {
-            get => SELECT("WebServicesOptOutShown", false, "Skymu/Server");
-            set => WRITE("WebServicesOptOutShown", value, nameof(WebServicesOptOutShown), "Skymu/Server");
+            get => SELECT("SWSOptOutShown", false, "Skymu/Server");
+            set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/Server");
         }
 
         #endregion
