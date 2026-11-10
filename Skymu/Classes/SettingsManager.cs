@@ -308,7 +308,7 @@ namespace Skymu.Preferences
 
         #endregion
 
-        #region Skymu/Server
+        #region Skymu/WebServices
 
         /// <summary>
         /// If FALSE user statistics like display name and username will be sent to Skymu servers. (Opt-in)
@@ -316,8 +316,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool Anonymize
         {
-            get => SELECT("Anonymize", false, "Skymu/Server");
-            set => WRITE("Anonymize", value, nameof(Anonymize), "Skymu/Server");
+            get => SELECT("Anonymize", false, "Skymu/WebServices");
+            set => WRITE("Anonymize", value, nameof(Anonymize), "Skymu/WebServices");
         }
         /// <summary>
         /// If FALSE Skymu will make connections to skymu.app servers as usual.
@@ -325,8 +325,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool DisableSWS
         {
-            get => SELECT("DisableSWS", false, "Skymu/Server");
-            set => WRITE("DisableSWS", value, nameof(DisableSWS), "Skymu/Server");
+            get => SELECT("DisableSWS", false, "Skymu/WebServices");
+            set => WRITE("DisableSWS", value, nameof(DisableSWS), "Skymu/WebServices");
         }
         /// <summary>
         /// If FALSE a dialog will be shown 
@@ -334,8 +334,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool SWSOptOutShown
         {
-            get => SELECT("SWSOptOutShown", false, "Skymu/Server");
-            set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/Server");
+            get => SELECT("SWSOptOutShown", false, "Skymu/WebServices");
+            set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/WebServices");
         }
 
         #endregion
