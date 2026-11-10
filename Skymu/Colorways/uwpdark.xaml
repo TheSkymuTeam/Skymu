@@ -73,6 +73,7 @@
     <SolidColorBrush x:Key="Metro.Bubble.Tinted" Color="#FF2C2B31" />
     <SolidColorBrush x:Key="Metro.Border" Color="#FF002D3E" />
     <SolidColorBrush x:Key="Metro.Avatar.Background" Color="#FF84D9F8" />
+    <SolidColorBrush x:Key="Metro.Selected" Color="#C7EDFC" />
     <SolidColorBrush x:Key="Metro.Sidebar.UserCountTab" Color="#FF021420" />
     <SolidColorBrush x:Key="Metro.Text.VeryHighContrast" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="Metro.Text.HighContrast" Color="#FFFFFFFF" />
