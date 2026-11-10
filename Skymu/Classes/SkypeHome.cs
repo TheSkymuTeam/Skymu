@@ -30,9 +30,9 @@ using System.Windows;
 using System.Windows.Controls;
 using Yggdrasil.Models;
 
-namespace Skymu
+namespace Skymu.WebServices
 {
-    class SkypeHome // Who knows why Skype decided to make a critical UI component a webpage?
+    class Home // Who knows why Skype decided to make a critical UI component a webpage?
     {
         private static WebBrowser _browser;
         private static User _user;
@@ -364,7 +364,7 @@ namespace Skymu
                 Application.Current.Dispatcher.BeginInvoke(
                     new Action(() =>
                     {
-                        SkypeHome.InvokeEval(
+                        Home.InvokeEval(
                             $"window.OnAdsLoaded({JsonSerializer.Serialize(ads)});");
                     }));
             });

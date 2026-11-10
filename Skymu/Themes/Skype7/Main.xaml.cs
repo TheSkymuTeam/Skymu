@@ -24,6 +24,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Native.Windows;
+using Skymu.WebServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -91,7 +92,7 @@ namespace Skymu.Skype7
                 _oldUser = Universal.CurrentUser;
                 if (vmodel.UseSkypeHome)
                 {
-                    if (!await SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
+                    if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
                     {
                         browser.Visibility = Visibility.Collapsed;
                         HomeUnavailableFrame.Visibility = Visibility.Visible;

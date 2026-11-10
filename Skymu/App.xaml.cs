@@ -32,7 +32,7 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
-using Skymu.UserServer;
+using Skymu.WebServices;
 using Skymu.Native.Windows;
 using Yggdrasil;
 using Yggdrasil.Models;
@@ -680,7 +680,7 @@ namespace Skymu
             {
                 Tray.DisposeIcon();
                 PluginManager.DisposeAll();
-                await UServAPI.StopPolling();
+                await UserServerAPI.StopPolling();
             }
             catch { } // If it doesn't work, too bad.
             if (SignedIn)

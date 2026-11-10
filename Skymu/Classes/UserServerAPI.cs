@@ -24,9 +24,9 @@ using OmegaAOL.Bifrost.Http;
 using OmegaAOL.Bifrost.WebSockets;
 using System.Windows.Documents;
 
-namespace Skymu.UserServer
+namespace Skymu.WebServices
 {
-    internal static class UServAPI
+    internal static class UserServerAPI
 
     {
         // REST API variables

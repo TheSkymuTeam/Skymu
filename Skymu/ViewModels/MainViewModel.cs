@@ -23,7 +23,7 @@ using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.Sounds;
-using Skymu.UserServer;
+using Skymu.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -849,7 +849,7 @@ namespace Skymu.ViewModels
             SoundManager.Play("LOGOUT");
             Universal.SignedIn = false;
             SignOutRequested?.Invoke(this, new SignOutRequestedEventArgs(switchuser));
-            _ = UServAPI.StopPolling();
+            _ = UserServerAPI.StopPolling();
         }
         #endregion
 
@@ -859,18 +859,18 @@ namespace Skymu.ViewModels
         {
             if (Settings.DisableSWS)
                 return;
-            await UServAPI.GenerateUID();
-            await UServAPI.SetUserStatus(
+            await UserServerAPI.GenerateUID();
+            await UserServerAPI.SetUserStatus(
                 true,
                 Universal.CurrentUser?.DisplayName,
                 Universal.CurrentUser?.Username,
                 Universal.CurrentUser?.Identifier
             );
-            await UServAPI.StartPolling();
+            await UserServerAPI.StartPolling();
             _ = PingLoop();
 
             if (_userCountHandler != null)
-                UServAPI.UserCountUpdated -= _userCountHandler;
+                UserServerAPI.UserCountUpdated -= _userCountHandler;
 
             _userCountHandler = count =>
             {
@@ -878,7 +878,7 @@ namespace Skymu.ViewModels
                 UserCountText = text;
                 UserCountUpdated?.Invoke(text);
             };
-            UServAPI.UserCountUpdated += _userCountHandler;
+            UserServerAPI.UserCountUpdated += _userCountHandler;
         }
 
         private static async Task PingLoop()
@@ -886,7 +886,7 @@ namespace Skymu.ViewModels
             while (true)
             {
                 await Task.Delay(45000);
-                await UServAPI.PingServer();
+                await UserServerAPI.PingServer();
             }
         }
 

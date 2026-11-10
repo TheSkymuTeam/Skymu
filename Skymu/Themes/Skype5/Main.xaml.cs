@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Skymu.WebServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -1415,7 +1416,7 @@ namespace Skymu.Skype5
                 ConfigureCompactRecentsList();
                 if (vmodel.UseSkypeHome)
                 {
-                    if (!await SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
+                    if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
                     {
                         browser.Visibility = Visibility.Collapsed;
                         HomeUnavailableFrame.Visibility = Visibility.Visible;
