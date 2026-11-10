@@ -277,7 +277,6 @@ namespace Skymu.Forms.Pages
 
         internal static async Task<updateInfo?> GetUpdateInfo()
         {
-            if (Settings.BlockSkymuServerConnections) return null;
             try
             {
                 string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";

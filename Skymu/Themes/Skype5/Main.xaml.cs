@@ -185,7 +185,7 @@ namespace Skymu.Skype5
                     MessageWindow.Visibility = Visibility.Collapsed;
 
                     MessageWindowRow.Height = new GridLength(0);
-                    if (Settings.EnableSkypeHome)
+                    if (vmodel.UseSkypeHome)
                         browser.Visibility = Visibility.Visible;
                     else
                         HomeUnavailableFrame.Visibility = Visibility.Visible;
@@ -1412,8 +1412,7 @@ namespace Skymu.Skype5
                     Universal.CurrentUser.ConnectionStatus
                 );
                 ConfigureCompactRecentsList();
-                vmodel.IsHomeAvailable = Settings.EnableSkypeHome;
-                if (vmodel.IsHomeAvailable)
+                if (vmodel.UseSkypeHome)
                 {
                     SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
                 }

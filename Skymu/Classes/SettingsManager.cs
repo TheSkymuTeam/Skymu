@@ -159,7 +159,7 @@ namespace Skymu.Preferences
         }
         public static bool EnableSkypeHome
         {
-            get => SELECT("EnableSkypeHome", false, "UI/General");
+            get => SELECT("EnableSkypeHome", true, "UI/General");
             set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "UI/General");
         }
         public static bool EnableAdBlock
@@ -323,19 +323,19 @@ namespace Skymu.Preferences
         /// If FALSE Skymu will make connections to skymu.app servers as usual.
         /// If TRUE Skymu will block all connections to skymu.app servers.
         /// </summary>
-        public static bool BlockSkymuServerConnections
+        public static bool DisableSkymuWebServices
         {
-            get => SELECT("BlockSkymuServerConnections", false, "Skymu/Server");
-            set => WRITE("BlockSkymuServerConnections", value, nameof(BlockSkymuServerConnections), "Skymu/Server");
+            get => SELECT("DisableSkymuWebServices", false, "Skymu/Server");
+            set => WRITE("DisableSkymuWebServices", value, nameof(DisableSkymuWebServices), "Skymu/Server");
         }
         /// <summary>
-        /// If FALSE a dialog will be shown asking the user to un-anonymize him or herself to improve the user list.
+        /// If FALSE a dialog will be shown 
         /// If TRUE no dialog will be shown. Automatically set to TRUE after dialog is shown once.
         /// </summary>
-        public static bool AnonymizeOptOutShown
+        public static bool WebServicesOptOutShown
         {
-            get => SELECT("AnonymizeOptOutShown", false, "Skymu/Server");
-            set => WRITE("AnonymizeOptOutShown", value, nameof(AnonymizeOptOutShown), "Skymu/Server");
+            get => SELECT("WebServicesOptOutShown", false, "Skymu/Server");
+            set => WRITE("WebServicesOptOutShown", value, nameof(WebServicesOptOutShown), "Skymu/Server");
         }
 
         #endregion

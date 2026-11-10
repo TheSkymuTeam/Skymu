@@ -160,7 +160,7 @@ namespace Skymu.Skype6
 
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     MessageWindowRow.Height = new GridLength(0);
-                    if (Settings.EnableSkypeHome)
+                    if (vmodel.UseSkypeHome)
                         browser.Visibility = Visibility.Visible;
                     else
                         HomeUnavailableFrame.Visibility = Visibility.Visible;
@@ -1093,8 +1093,7 @@ namespace Skymu.Skype6
                 StatusBox.Text = Universal.CurrentUser.DisplayName;
                 StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus);
                 ConfigureCompactRecentsList();
-                vmodel.IsHomeAvailable = Settings.EnableSkypeHome;
-                if (vmodel.IsHomeAvailable)
+                if (vmodel.UseSkypeHome)
                 {
                     SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
                 }

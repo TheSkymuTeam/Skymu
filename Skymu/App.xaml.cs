@@ -95,7 +95,8 @@ namespace Skymu
         public static ICore[] PluginList;
         public static bool SignedIn = false;
         public static readonly string Theme = Settings.Theme;
-        public static string Platform = Runtime.DetectOS().ToDisplayString();
+        public static PlatformType Platform = Runtime.DetectOS();
+        public static string PlatformStr = Runtime.DetectOS().ToDisplayString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
         public static BitmapImage AnonymousAvatar;

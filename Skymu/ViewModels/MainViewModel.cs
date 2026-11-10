@@ -57,7 +57,7 @@ namespace Skymu.ViewModels
         public ObservableCollection<Server> ServerList;
         public ObservableCollection<Conversation> ConversationList;
 
-        public bool IsHomeAvailable = false;
+        public bool UseSkypeHome = false;
 
         // since the servers list is lazy-loaded, we need a TCS to handle the clicks on the "Servers" 
         // tab before the list has actually been populated
@@ -255,6 +255,8 @@ namespace Skymu.ViewModels
         public MainViewModel()
         {
             Universal.ActiveViewModel = this;
+
+            if (!Settings.DisableSkymuWebServices && Settings.EnableSkypeHome) UseSkypeHome = true;
 
             ActiveConversation = new ObservableCollection<ConversationItem>();
 
@@ -856,7 +858,7 @@ namespace Skymu.ViewModels
 
         private async Task SkymuApiStatusHandler()
         {
-            if (Settings.BlockSkymuServerConnections)
+            if (Settings.DisableSkymuWebServices)
                 return;
             await UserCountAPI.GenerateUID();
             await UserCountAPI.SetUserStatus(

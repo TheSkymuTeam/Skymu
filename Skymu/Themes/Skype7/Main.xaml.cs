@@ -89,8 +89,7 @@ namespace Skymu.Skype7
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
                 _oldUser = Universal.CurrentUser;
-                vmodel.IsHomeAvailable = Settings.EnableSkypeHome;
-                if (vmodel.IsHomeAvailable)
+                if (vmodel.UseSkypeHome)
                 {
                     SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
                 }
@@ -569,7 +568,7 @@ namespace Skymu.Skype7
             if (tab == 3)
             {
                 RightColumn.Visibility = Visibility.Collapsed;
-                if (Settings.EnableSkypeHome)
+                if (vmodel.UseSkypeHome)
                     browser.Visibility = Visibility.Visible;
                 else
                     HomeUnavailableFrame.Visibility = Visibility.Visible;

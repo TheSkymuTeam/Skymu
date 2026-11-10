@@ -213,38 +213,51 @@ namespace Skymu.ViewModels
             _ = new Updater();
             string brand = Settings.BrandingName;
 
-            // something must have went wrong with Runtime.DetectOS() at app startup
-            // both code blocks below depend on knowing the OS, so don't run them
-            if (!Enum.TryParse(Universal.Platform, true, out PlatformType platform)) return;
-
             // request the user to publish their details on the public userlist
-            if (!Settings.AnonymizeOptOutShown)
+            if (!Settings.WebServicesOptOutShown)
             {
                 Dialog dlg = null;
                 dlg = new Dialog(
                     WindowBase.IconType.Question,
                     brand + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
-                        + "count at the bottom of the sidebar, and also to form a searchable list of online users.\n\nYour data is not retained, stored, cached, sold, or otherwise used by Skymu in any way. "
-                        + "Your username and display name are only used to populate the list.\n\nTo improve the accuracy of the public list, it is recommended that you click 'Yes'.",
-                    "Publicly display user statistics?",
-                    $"{Universal.NAME} User Statistics",
-                    new Action(() =>
+                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes', otherwise click 'Yes, but keep me anonymous.'"
+                        + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
+                        + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."
+                        + " The client information we store is detailed at " + Universal.SKYMU_WEBSITE_PRIVACY + ". It's a very short privacy policy because we don't want to collect your data (that leads to a lot of legal liabilities for us!), we're only interested in keeping our infrastructure secure and running.",
+                    "Connect to official Skymu servers?",
+                    $"{Universal.NAME} web service manager",
+                    new Action(() => // no
                     {
+                        Settings.WebServicesOptOutShown = true;
                         Settings.Anonymize = true;
-                        Settings.AnonymizeOptOutShown = true;
+                        Settings.DisableSkymuWebServices = true;
                         Settings.Save();
                         dlg.Close();
                     }),
                     Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
                     true,
-                    new Action(() =>
+                    new Action(() => // yes and don't anonymize
                     {
-                        Settings.AnonymizeOptOutShown = true;
+                        Settings.WebServicesOptOutShown = true;
                         Settings.Anonymize = false;
+                        Settings.DisableSkymuWebServices = false;
                         Settings.Save();
                         dlg.Close();
                     }),
-                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"],
+                    false,
+                    null,
+                    null,
+                    true,
+                    new Action(() => // yes and anonymize
+                    {
+                        Settings.WebServicesOptOutShown = true;
+                        Settings.Anonymize = true;
+                        Settings.DisableSkymuWebServices = false;
+                        Settings.Save();
+                        dlg.Close();
+                    }),
+                    "Yes, but keep me anonymous"
                 );
                 dlg.ShowDialog();
             }
@@ -254,26 +267,26 @@ namespace Skymu.ViewModels
             {
                 string message = null;
 
-                if (platform == PlatformType.Unknown)
+                if (Universal.Platform == PlatformType.Unknown)
                     message = brand + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
 
-                else if (platform < PlatformType.Windows2000)
+                else if (Universal.Platform < PlatformType.Windows2000)
                 {
-                    if (platform == PlatformType.WineLegacy)
+                    if (Universal.Platform == PlatformType.WineLegacy)
                         message = brand + " does not support Wine versions older than 10. You may encounter significant bugs.";
-                    else if (platform == PlatformType.Wine10)
+                    else if (Universal.Platform == PlatformType.Wine10)
                         message = brand + " has limited support for Wine 10. Some features may not work as expected.";
-                    else if (platform == PlatformType.Wine11)
+                    else if (Universal.Platform == PlatformType.Wine11)
                         message = brand + " does not have complete support for Wine 11. Some features may not work as expected.";
                 }
 
-                else if (platform < PlatformType.WindowsVista)
+                else if (Universal.Platform < PlatformType.WindowsVista)
                 {
-                    if (platform == PlatformType.WindowsXP)
+                    if (Universal.Platform == PlatformType.WindowsXP)
                         message = brand + " does not officially support Windows XP or the One Core API, and you may encounter " +
                             "significant bugs. However, if you are using Projek01, you should not expect any problems, and" +
                             " if you are using EAZY BLACK's official Skymu XP wrapper you should be (mostly) fine.";
-                    else if (platform == PlatformType.Windows2000)
+                    else if (Universal.Platform == PlatformType.Windows2000)
                         message = brand + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
                 }
 
@@ -293,7 +306,7 @@ namespace Skymu.ViewModels
                 {
                     newNetLink = Universal.NET_DOWNLOAD_LINK;
                     // 6 is the last version to reliably support Windows 8.1 and below, so it's the best recommendation
-                    if (platform < PlatformType.Windows10) newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
+                    if (Universal.Platform < PlatformType.Windows10) newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
 
                 }
                 if (!String.IsNullOrEmpty(newNetLink))

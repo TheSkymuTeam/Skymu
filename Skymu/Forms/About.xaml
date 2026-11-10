@@ -100,7 +100,7 @@
             <TextBlock.Text>
                 <MultiBinding StringFormat="Common Language Runtime: {0} on {1}">
                     <Binding Source="{x:Static global:Universal.NetVersion}" />
-                    <Binding Source="{x:Static global:Universal.Platform}" />
+                    <Binding Source="{x:Static global:Universal.PlatformStr}" />
                 </MultiBinding>
             </TextBlock.Text>
         </TextBlock>
