@@ -255,7 +255,6 @@ namespace Skymu.ViewModels
         public MainViewModel()
         {
             Universal.ActiveViewModel = this;
-
             if (!Settings.DisableSWS && Settings.EnableSkypeHome) UseSkypeHome = true;
 
             ActiveConversation = new ObservableCollection<ConversationItem>();

@@ -49,7 +49,7 @@ namespace Skymu.Skype4
         private MainViewModel vmodel;
 
         // Other file-level variables
-        private readonly WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
+        private WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
         private bool _conversationOpening;
@@ -221,6 +221,7 @@ namespace Skymu.Skype4
         {
             if (_currentFrame != WindowFrame.Native) // using Skype's custom border
             {
+                if (!Skymu.Native.Windows.DwmHelper.IsDwmEnabled() && _currentFrame == WindowFrame.SkypeAero) _currentFrame = WindowFrame.SkypeBasic; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 WindowChrome chrome = new WindowChrome();
                 //chrome.UseAeroCaptionButtons = false;
