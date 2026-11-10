@@ -74,7 +74,7 @@
     <SolidColorBrush x:Key="Metro.Separator" Color="#FF202225" />
     <SolidColorBrush x:Key="Metro.Separator.Tinted" Color="#FF26282C" />
     <SolidColorBrush x:Key="Metro.Avatar.Background" Color="#FF7289DA" />
-    <SolidColorBrush x:Key="Metro.Selected" Color="#C7EDFC" /> 
+    <SolidColorBrush x:Key="Metro.Selected" Color="#C7EDFC" />
     <!--  WARNING : Made for Skype 7 accuracy, old was using Avatar.Background, not accurate at all . - Sean Kévin  -->
     <SolidColorBrush x:Key="Metro.Text.VeryHighContrast" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="Metro.Text.HighContrast" Color="#FFDCDDDE" />

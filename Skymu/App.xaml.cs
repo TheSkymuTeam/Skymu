@@ -32,7 +32,7 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
-using Skymu.UserDirectory;
+using Skymu.UserServer;
 using Skymu.Native.Windows;
 using Yggdrasil;
 using Yggdrasil.Models;
@@ -54,7 +54,7 @@ namespace Skymu
 
         public const string NAME = "Skymu";
         public const string BUILD_VERSION = "0.4.8";
-        public const string BUILD_NAME = "Elgon Ice Cream";
+        public const string BUILD_NAME = "Elgon Ice Cream PB1";
 
         // -----------------------------------------------------------------------------
         // Skymu controlled URLs
@@ -62,14 +62,13 @@ namespace Skymu
 
         public const string GITHUB_OWNER = "TheSkymuTeam";
         public const string GITHUB_REPO = "Skymu";
-        public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
-        public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
-        public const string SKYMU_WEBSITE = "https://skymu.app";
-        public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
-        public const string SKYMU_WEBSERVICES_PACKAGE_REPO = "https://skymu.app/packages";
-        public const string SKYMU_WEBSERVICES_SKYPEHOME = "https://skymu.app/home";
-        public const string SKYMU_WEBSERVICES_USERCOUNT_DOMAIN = "skymu.kier.ovh";
-        public const string SKYMU_WEBSERVICES_USERCOUNT_WS = "wss://" + SKYMU_WEBSERVICES_USERCOUNT_DOMAIN + "/ws";
+        public const string DISCORD_SERVER_INVITE = "https://www.skymu.app/discord";
+        public const string SKYMU_WEBSITE_HELP = "https://www.skymu.app/wiki/about";
+        public const string SKYMU_WEBSITE = "https://www.skymu.app";
+        public const string SKYMU_WEBSITE_PRIVACY = "https://www.skymu.app/legal/privacy";
+        public const string SKYMU_WEBSERVICES_PACKAGE_REPO = "https://www.skymu.app/packages";
+        public const string SKYMU_WEBSERVICES_SKYPEHOME = "https://www.skymu.app/home";
+        public const string SKYMU_WEBSERVICES_USERSERVER = "https://www.skymu.app/userver/";
 
         // -----------------------------------------------------------------------------
         // Third party URLs
@@ -681,7 +680,7 @@ namespace Skymu
             {
                 Tray.DisposeIcon();
                 PluginManager.DisposeAll();
-                await UserCountAPI.CloseWS();
+                await UServAPI.StopPolling();
             }
             catch { } // If it doesn't work, too bad.
             if (SignedIn)
