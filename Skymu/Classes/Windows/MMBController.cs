@@ -18,7 +18,7 @@ namespace Skymu.Native.Windows
 
         #region Constructor
 
-        private IntPtr ICN(int index) => IconHelper.LoadHBitmapFromSheet(index);
+        private IntPtr ICN(int index) => IconHelper.LoadHBitmapFromSheet(index, $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
         private string L(string key) => Universal.Lang[key];
         private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
         private static (string, NativeSubMenu) MI(string label, NativeSubMenu subMenu) { return (label, subMenu); }

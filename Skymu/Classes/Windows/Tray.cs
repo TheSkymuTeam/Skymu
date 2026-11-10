@@ -214,7 +214,7 @@ namespace Skymu.Native.Windows
             {
                 AppendMenu(hStatus, MF_STRING, (UIntPtr)menuId, Universal.Lang[langKey]);
 
-                IntPtr hBmp = IconHelper.LoadHBitmapFromSheet(MainViewModel.GetIntFromStatus(status));
+                IntPtr hBmp = IconHelper.LoadHBitmapFromSheet(MainViewModel.GetIntFromStatus(status), $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
                 if (hBmp != IntPtr.Zero)
                 {
                     SetMenuItemBitmap(hStatus, menuId, hBmp);
@@ -278,7 +278,7 @@ namespace Skymu.Native.Windows
 
         private static Icon LoadIcon(PresenceStatus status)
         {
-            return IconHelper.LoadIconFromSheet(MainViewModel.GetIntFromStatus(status));
+            return IconHelper.LoadIconFromSheet(MainViewModel.GetIntFromStatus(status), $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
         }
 
         private static void SetStatusInternal(string statusText, PresenceStatus status, bool isSignedIn)

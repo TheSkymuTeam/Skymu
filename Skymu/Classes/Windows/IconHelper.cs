@@ -77,12 +77,8 @@ namespace Skymu.Native.Windows
 
         const uint MIIM_BITMAP = 0x00000080;
 
-        private static Bitmap CropSheet(string custom_path, int index)
+        private static Bitmap CropSheet(string path, int index)
         {
-            string path = !string.IsNullOrEmpty(custom_path)
-                ? custom_path
-                : $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png";
-
             var sri = System.Windows.Application.GetResourceStream(new Uri(path, UriKind.Absolute));
             if (sri == null)
                 return null;
@@ -146,15 +142,15 @@ namespace Skymu.Native.Windows
             return hbmp;
         }
 
-        public static IntPtr LoadHBitmapFromSheet(int index, string custom_path = null)
+        public static IntPtr LoadHBitmapFromSheet(int index, string path)
         {
-            using (var bmp = CropSheet(custom_path, index))
+            using (var bmp = CropSheet(path, index))
                 return bmp == null ? IntPtr.Zero : CreatePremultipliedBitmap(bmp);
         }
 
-        public static Icon LoadIconFromSheet(int index, string custom_path = null)
+        public static Icon LoadIconFromSheet(int index, string path)
         {
-            using (var bmp = CropSheet(custom_path, index))
+            using (var bmp = CropSheet(path, index))
                 return bmp == null ? SystemIcons.Application : Icon.FromHandle(bmp.GetHicon());
         }
 
