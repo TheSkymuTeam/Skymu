@@ -44,7 +44,6 @@ namespace Skymu
     {
         #region Constructor
         private Brush _background;
-        private Brush _textColor;
         private ButtonVisualState _visualState = ButtonVisualState.Default;
         private static DispatcherTimer _sharedAnimationTimer;
         private static HashSet<SliceControl> _animatingControls = new HashSet<SliceControl>();
@@ -78,7 +77,6 @@ namespace Skymu
             InitializeComponent();
             Universal.ThemeChanged += OnThemeChanged;
             _background = Background;
-            _textColor = TextColor;
             _overlayRects = new[] { OverlayLeft, OverlayMiddle, OverlayRight };
 
             // Animation timer
@@ -1057,24 +1055,17 @@ namespace Skymu
             }
         }
 
+        private Brush GetEffectiveTextColor()
+        {
+            if (_visualState == ButtonVisualState.Pressed && TextColorPressed != null)
+                return TextColorPressed;
+            return TextColor;
+        }
+
         private void UpdateTextColor()
         {
-            switch (_visualState)
-            {
-                case ButtonVisualState.Default:
-                    if (_textColor != null)
-                        TextColor = _textColor;
-                    break;
-                /*case ButtonVisualState.Hover:
-                    if (BackgroundHover != null)
-                        TextColor = BackgroundHover;
-                    break;*/
-                case ButtonVisualState.Pressed:
-                    if (TextColorPressed != null)
-                        TextColor = TextColorPressed;
-                    break;
-                    // TODO: Disabled
-            }
+            if (OverlayText != null)
+                OverlayText.Foreground = GetEffectiveTextColor();
         }
 
         private static void OnAnimationPropertyChanged(
@@ -1136,7 +1127,7 @@ namespace Skymu
             OverlayText.Text = Text;
             OverlayText.FontFamily = TextFont;
             OverlayText.FontSize = TextSize;
-            OverlayText.Foreground = TextColor;
+            OverlayText.Foreground = GetEffectiveTextColor();
             OverlayText.HorizontalAlignment = TextHorizontalAlignment;
             OverlayText.VerticalAlignment = TextVerticalAlignment;
             OverlayText.FontWeight = TextWeight;

@@ -29,7 +29,7 @@ namespace Skymu.Forms
 
         private void RefreshText(object sender, PropertyChangedEventArgs e)
         {
-            var el = SkypeHome.GetLanguage();
+            var el = WebServices.Home.GetLanguage();
             if (el == null) return;
             var lang = (JsonElement)el;
             NoHomeHead.Text = lang.GetProperty("header").GetString().Replace("Skype", Settings.BrandingName);

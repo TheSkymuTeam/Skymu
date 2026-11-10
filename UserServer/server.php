@@ -253,6 +253,52 @@ if ($method === 'GET' && $path === '/list') {
     send_json($result);
 }
 
+/* GET /search?q=term */
+if ($method === 'GET' && $path === '/search') {
+    $query = isset($_GET['q']) ? trim($_GET['q']) : '';
+
+    if ($query === '') {
+        send_json(array('error' => 'Missing search query parameter q'), 400);
+    }
+
+    $result = with_state(function (&$sessions) use ($query) {
+        cleanup_inactive($sessions);
+        $users = array();
+
+        foreach ($sessions as $session) {
+            if (empty($session['online'])) {
+                continue;
+            }
+
+            $username = isset($session['username']) ? $session['username'] : '';
+            $display_name = isset($session['display_name']) ? $session['display_name'] : '';
+
+            if (
+                stripos($username, $query) !== false ||
+                stripos($display_name, $query) !== false
+            ) {
+                $users[] = array(
+                    'display_name' => $display_name,
+                    'username' => $username,
+                    'plugin' => isset($session['plugin']) ? $session['plugin'] : null,
+                    'skymu_build_codename' => isset($session['skymu_build_codename']) ? $session['skymu_build_codename'] : null,
+                    'skymu_build_version' => isset($session['skymu_build_version']) ? $session['skymu_build_version'] : null,
+                    'online' => true,
+                    'last_ping' => $session['last_ping']
+                );
+            }
+        }
+
+        return array(
+            'online_count' => count($users),
+            'users' => $users,
+            'timestamp' => microtime(true)
+        );
+    });
+
+    send_json($result);
+}
+
 if ($method === 'GET' && $path === '/count') {
     $count = with_state(function (&$sessions) {
         cleanup_inactive($sessions);
