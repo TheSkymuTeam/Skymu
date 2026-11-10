@@ -53,21 +53,23 @@ namespace Skymu
         // -----------------------------------------------------------------------------
 
         public const string NAME = "Skymu";
-        public const string BUILD_VERSION = "0.4.7";
-        public const string BUILD_NAME = "Elgon Hazelnut Mousse";
+        public const string BUILD_VERSION = "0.4.8";
+        public const string BUILD_NAME = "Elgon Ice Cream";
 
         // -----------------------------------------------------------------------------
         // Skymu controlled URLs
         // -----------------------------------------------------------------------------
 
         public const string GITHUB_OWNER = "TheSkymuTeam";
-        public const string GITHUB_REPO = NAME;
+        public const string GITHUB_REPO = "Skymu";
         public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
         public const string SKYMU_WEBSITE = "https://skymu.app";
-        public const string SKYMU_WEBSITE_SKYPEHOME = "http://skymu.app/home";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
-        public const string SKYMU_PACKAGE_ENDPOINT = "https://skymu.app/packages";
+        public const string SKYMU_WEBSERVICES_PACKAGE_REPO = "https://skymu.app/packages";
+        public const string SKYMU_WEBSERVICES_SKYPEHOME = "https://skymu.app/home";
+        public const string SKYMU_WEBSERVICES_USERCOUNT_DOMAIN = "skymu.app/users";
+        public const string SKYMU_WEBSERVICES_USERCOUNT_WS = "wss://" + SKYMU_WEBSERVICES_USERCOUNT_DOMAIN + "/ws";
 
         // -----------------------------------------------------------------------------
         // Third party URLs

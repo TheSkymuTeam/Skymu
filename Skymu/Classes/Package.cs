@@ -26,7 +26,7 @@ namespace Skymu.Packaging
             {
                 using (
                     HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(
-                        Universal.SKYMU_PACKAGE_ENDPOINT
+                        Universal.SKYMU_WEBSERVICES_PACKAGE_REPO
                             + "/"
                             + package_name
                             + ".zip",

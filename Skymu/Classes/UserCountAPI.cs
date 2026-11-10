@@ -28,13 +28,12 @@ namespace Skymu.UserDirectory
 {
     internal static class UserCountAPI
     {
-        private static readonly string DOMAIN = "ledger.skymu.app";
-        private static readonly string WEBSOCKET_URL = $"wss://{DOMAIN}/ws";
+
 
         // REST API variables
         private static readonly HttpClient client = new HttpClient(new BifrostEngine())
         {
-            BaseAddress = new Uri("http://" + DOMAIN),
+            BaseAddress = new Uri("http://" + Universal.SKYMU_WEBSERVICES_USERCOUNT_DOMAIN),
         };
         public static string ApiTkn = null;
 
@@ -118,7 +117,7 @@ namespace Skymu.UserDirectory
         public static async Task ConnectWS()
         {
             ws = new BifrostWebSocket();
-            await ws.ConnectAsync(new Uri(WEBSOCKET_URL), cts.Token);
+            await ws.ConnectAsync(new Uri(Universal.SKYMU_WEBSERVICES_USERCOUNT_WS), cts.Token);
 
             var initMsg = JsonSerializer.Serialize(new { token = ApiTkn });
             var initBytes = Encoding.UTF8.GetBytes(initMsg);
