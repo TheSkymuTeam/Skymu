@@ -157,16 +157,6 @@ namespace Skymu.Preferences
             get => SELECT("AllowImplicitMentions", true, "UI/General");
             set => WRITE("AllowImplicitMentions", value, nameof(NotificationTrigger), "UI/General");
         }
-        public static bool EnableSkypeHome
-        {
-            get => SELECT("EnableSkypeHome", true, "UI/General");
-            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "UI/General");
-        }
-        public static bool EnableAdBlock
-        {
-            get => SELECT("EnableAdBlock", false, "UI/General");
-            set => WRITE("EnableAdBlock", value, nameof(EnableAdBlock), "UI/General");
-        }
         public static bool UseClearType
         {
             get => SELECT("UseClearType", true, "UI/General");
@@ -336,6 +326,17 @@ namespace Skymu.Preferences
         {
             get => SELECT("SWSOptOutShown", false, "Skymu/WebServices");
             set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/WebServices");
+        }
+
+        public static bool EnableSkypeHome
+        {
+            get => SELECT("EnableSkypeHome", true, "Skymu/WebServices");
+            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "Skymu/WebServices");
+        }
+        public static bool EnableAdBlock
+        {
+            get => SELECT("EnableAdBlock", false, "Skymu/WebServices");
+            set => WRITE("EnableAdBlock", value, nameof(EnableAdBlock), "Skymu/WebServices");
         }
 
         #endregion

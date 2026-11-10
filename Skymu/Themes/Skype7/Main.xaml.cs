@@ -91,7 +91,12 @@ namespace Skymu.Skype7
                 _oldUser = Universal.CurrentUser;
                 if (vmodel.UseSkypeHome)
                 {
-                    SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
+                    if (!await SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
+                    {
+                        browser.Visibility = Visibility.Collapsed;
+                        HomeUnavailableFrame.Visibility = Visibility.Visible;
+                        HomeUnavailableFrame.Content = new HomeUnavailable();
+                    }
                 }
                 else
                 {

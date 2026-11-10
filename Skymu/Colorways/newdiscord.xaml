@@ -83,7 +83,8 @@
     <SolidColorBrush x:Key="Metro.Separator" Color="#FF1E1F22" />
     <SolidColorBrush x:Key="Metro.Separator.Tinted" Color="#FF26282C" />
     <SolidColorBrush x:Key="Metro.Avatar.Background" Color="#FF5865F2" />
-    <SolidColorBrush x:Key="Metro.Selected" Color="#C7EDFC" /> <!-- WARNING : Made for Skype 7 accuracy, old was using Avatar.Background, not accurate at all . - Sean Kévin -->
+    <SolidColorBrush x:Key="Metro.Selected" Color="#C7EDFC" /> 
+    <!--  WARNING : Made for Skype 7 accuracy, old was using Avatar.Background, not accurate at all . - Sean Kévin  -->
     <SolidColorBrush x:Key="Metro.Text.VeryHighContrast" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="Metro.Text.HighContrast" Color="#FFF2F3F5" />
     <SolidColorBrush x:Key="Metro.Text.MediumContrast" Color="#FFB5BAC1" />

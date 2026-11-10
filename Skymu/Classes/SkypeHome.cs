@@ -38,7 +38,7 @@ namespace Skymu
         private static User _user;
         private static List<DirectMessage> _contacts;
 
-        public static void Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
+        public static async Task<bool> Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
         {
             browser.Visibility = Visibility.Collapsed;
             _browser = browser;
@@ -47,14 +47,14 @@ namespace Skymu
             _browser.ObjectForScripting = new SkypeExternalObject(user, contacts);
             _browser.LoadCompleted += OnLoadCompleted;
 
-            _browser.Navigate(new Uri(Universal.SKYMU_WEBSITE_SKYPEHOME)); // fetch the webpage from the internet
+            // _browser.Navigate(new Uri(Universal.SKYMU_WEBSITE_SKYPEHOME)); // fetch the webpage from the internet
 
-            // !!!!! WE DON'T USE THE PACKAGE SYSTEM ANYMORE, DON'T DELETE THIS THOUGH !!!!!
-            /* string home_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Universal.NAME, "HomeCache");
+
+            string home_dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Universal.NAME, "HomeCache");
             string home_index = Path.Combine(home_dir, "index.html");
             if (!File.Exists(home_index))
             {
-                if (!await Package.Install("skymu-home-5", home_dir)) return false;
+                if (!await Package.Install("SkymuHomeLAF", home_dir)) return false;
             }
 
             bool ie9 = false;
@@ -82,9 +82,9 @@ namespace Skymu
                 // C:\path\to\Home\index.html
                 Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {home_index}");
                 _browser.Navigate(new Uri(home_index));
-            } */
+            } 
 
-            // return true; // home has been generated
+            return true; // home has been generated
         }
 
         internal static void InvokeEval(string script)

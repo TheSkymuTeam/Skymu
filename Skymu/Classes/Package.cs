@@ -28,7 +28,7 @@ namespace Skymu.Packaging
                     HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(
                         Universal.SKYMU_PACKAGE_ENDPOINT
                             + "/"
-                            + package_name.ToLowerInvariant()
+                            + package_name
                             + ".zip",
                         HttpCompletionOption.ResponseHeadersRead
                     )
