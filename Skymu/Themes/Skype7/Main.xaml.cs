@@ -89,11 +89,12 @@ namespace Skymu.Skype7
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
                 _oldUser = Universal.CurrentUser;
-                if (Settings.EnableSkypeHome)
+                vmodel.IsHomeAvailable = Settings.EnableSkypeHome;
+                if (vmodel.IsHomeAvailable)
                 {
-                    vmodel.IsHomeAvailable = await SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
+                    SkypeHome.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList());
                 }
-                if (!Settings.EnableSkypeHome || !vmodel.IsHomeAvailable)
+                else
                 {
                     browser.Visibility = Visibility.Collapsed;
                     HomeUnavailableFrame.Visibility = Visibility.Visible;

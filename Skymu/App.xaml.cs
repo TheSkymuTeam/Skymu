@@ -64,6 +64,8 @@ namespace Skymu
         public const string GITHUB_REPO = NAME;
         public const string DISCORD_SERVER_INVITE = "https://skymu.app/discord";
         public const string SKYMU_WEBSITE_HELP = "https://skymu.app/wiki/about";
+        public const string SKYMU_WEBSITE = "https://skymu.app";
+        public const string SKYMU_WEBSITE_SKYPEHOME = "http://skymu.app/home";
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
         public const string SKYMU_PACKAGE_ENDPOINT = "https://skymu.app/packages";
 
