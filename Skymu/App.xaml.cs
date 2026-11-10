@@ -68,7 +68,7 @@ namespace Skymu
         public const string SKYMU_WEBSITE_PRIVACY = "https://skymu.app/legal/privacy";
         public const string SKYMU_WEBSERVICES_PACKAGE_REPO = "https://skymu.app/packages";
         public const string SKYMU_WEBSERVICES_SKYPEHOME = "https://skymu.app/home";
-        public const string SKYMU_WEBSERVICES_USERCOUNT_DOMAIN = "skymu.app/users";
+        public const string SKYMU_WEBSERVICES_USERCOUNT_DOMAIN = "skymu.kier.ovh";
         public const string SKYMU_WEBSERVICES_USERCOUNT_WS = "wss://" + SKYMU_WEBSERVICES_USERCOUNT_DOMAIN + "/ws";
 
         // -----------------------------------------------------------------------------
