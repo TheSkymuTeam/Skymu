@@ -1,16 +1,21 @@
 /*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
-// Yggdrasil API copyright © OmegaAOL 2025-2026.
-// For any inquiries, email hackersword666@gmail.com.
+// Modification or redistribution of this code is governed
+// by the terms set out in the project license agreement.
+// If you do not comply with those terms, you may not
+// modify or distribute any original code from the project.
 /*==========================================================*/
-// License: https://www.apache.org/licenses/LICENSE-2.0
-// SPDX-License-Identifier: Apache-2.0
+// License: https://skymu.app/legal/license
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Xml.Linq;
 using Yggdrasil.Enumerations;
 
 namespace Yggdrasil.Models
@@ -21,7 +26,6 @@ namespace Yggdrasil.Models
         private string _description;
         private byte[] _avatar;
 
-        public ICore Core { get; set; }
         public string Identifier { get; set; }
 
         public string DisplayName
@@ -42,9 +46,8 @@ namespace Yggdrasil.Models
             set => Set(ref _description, value, nameof(Description));
         }
 
-        protected Metadata(ICore core, string displayName, string identifier, byte[] avatar = null, string description = null)
+        protected Metadata(string displayName, string identifier, byte[] avatar = null, string description = null)
         {
-            Core = core;
             _displayName = displayName;
             Identifier = identifier;
             _avatar = avatar;
@@ -64,8 +67,8 @@ namespace Yggdrasil.Models
 
     public abstract class Participant : Metadata
     {
-        protected Participant(ICore core, string displayName, string identifier, byte[] avatar = null)
-            : base(core, displayName, identifier, avatar) { }
+        protected Participant(string displayName, string identifier, byte[] avatar = null)
+            : base(displayName, identifier, avatar) { }
     }
 
     public class Role : Metadata
@@ -93,14 +96,13 @@ namespace Yggdrasil.Models
         }
 
         public Role(
-            ICore core,
             string title,
             string identifier,
             uint hex_color = 0,
             byte[] avatar = null,
             bool hoist = false,
             bool mentionable = false
-        ) : base(core, title, identifier, avatar)
+        ) : base(title, identifier, avatar)
         {
             _hex_color = hex_color;
             _hoist = hoist;
@@ -133,7 +135,6 @@ namespace Yggdrasil.Models
         }
 
         public User(
-            ICore core,
             string display_name,
             string username,
             string identifier,
@@ -141,7 +142,7 @@ namespace Yggdrasil.Models
             PresenceStatus presence_status = PresenceStatus.Offline,
             byte[] avatar = null
         )
-            : base(core, display_name, identifier, avatar)
+            : base(display_name, identifier, avatar)
         {
             _username = username;
             _status = status;
@@ -167,7 +168,6 @@ namespace Yggdrasil.Models
         }
 
         protected Conversation(
-            ICore core,
             string display_name,
             string identifier,
             int unread_count,
@@ -175,7 +175,7 @@ namespace Yggdrasil.Models
             DateTime? last_message_time = null,
             string description = null
         )
-            : base(core, display_name, identifier, profile_picture, description)
+            : base(display_name, identifier, profile_picture, description)
         {
             _unreadCount = unread_count;
             _lastMessageTime = last_message_time ?? DateTime.Now;
@@ -193,25 +193,6 @@ namespace Yggdrasil.Models
             DateTime? last_message_time = null
         )
             : base(
-                partner.Core,
-                partner.DisplayName,
-                identifier,
-                unread_count,
-                partner.Avatar,
-                last_message_time
-            )
-        {
-            Partner = partner;
-        }
-        public DirectMessage(
-            ICore core,
-            User partner,
-            int unread_count,
-            string identifier,
-            DateTime? last_message_time = null
-        )
-            : base(
-                core,
                 partner.DisplayName,
                 identifier,
                 unread_count,
@@ -234,7 +215,6 @@ namespace Yggdrasil.Models
         }
 
         public Group(
-            ICore core,
             string name,
             string identifier,
             int unread_count,
@@ -242,7 +222,7 @@ namespace Yggdrasil.Models
             byte[] profile_picture = null,
             DateTime? last_message_time = null
         )
-            : base(core, name, identifier, unread_count, profile_picture, last_message_time)
+            : base(name, identifier, unread_count, profile_picture, last_message_time)
         {
             _members = members;
         }
@@ -303,7 +283,6 @@ namespace Yggdrasil.Models
         public Dictionary<string, string> CategoryMap { get; set; }
 
         public Server(
-            ICore core,
             string name,
             string identifier,
             List<ServerMember> members,
@@ -316,7 +295,7 @@ namespace Yggdrasil.Models
             int position = 0,
             string invite = null
         )
-            : base(core, name, identifier, profile_picture, description)
+            : base(name, identifier, profile_picture, description)
         {
             _members = members;
             _roles = roles;
@@ -337,7 +316,6 @@ namespace Yggdrasil.Models
         public int Position { get; }
 
         public ServerChannel(
-            ICore core,
             string name,
             string identifier,
             string parent_server_id,
@@ -347,7 +325,7 @@ namespace Yggdrasil.Models
             int position = 0,
             string description = null
         )
-            : base(core, name, identifier, unread_count, null, null, description)
+            : base(name, identifier, unread_count, null, null, description)
         {
             ParentServerID = parent_server_id;
             Description = description;
@@ -460,7 +438,6 @@ namespace Yggdrasil.Models
         public Attachment[] Attachments { get; set; } // Media or files attached to the message
         public Message ParentMessage { get; set; } // Parent message, if applicable (e.g. this message is a reply to another message)
         public bool IsForwarded { get; set; }
-        public MentionType MentionType { get; set; }
 
         public string PreviousMessageIdentifier { get; set; } // TODO: TO BE REMOVED!!
         public bool PreviousMessageIsAction { get; set; } // TODO: REMOVE THIS TOO!!!
@@ -472,8 +449,7 @@ namespace Yggdrasil.Models
             string text = null,
             Attachment[] attachments = null,
             Message parent_message = null,
-            bool is_forwarded = false,
-            MentionType mention_type = MentionType.None
+            bool is_forwarded = false
         )
         {
             Identifier = identifier;
@@ -483,7 +459,6 @@ namespace Yggdrasil.Models
             Attachments = attachments;
             ParentMessage = parent_message;
             IsForwarded = is_forwarded;
-            MentionType = mention_type;
         }
     }
 
@@ -556,7 +531,7 @@ namespace Yggdrasil.Models
     {
         public string title { get; set; }
         public string description { get; set; }
-        public Action onRun { get; set; }
+        public Action onRun { get; set;  }
 
         public ExtraConfiguration(
             string title,

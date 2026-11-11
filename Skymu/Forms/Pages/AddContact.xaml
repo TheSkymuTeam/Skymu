@@ -269,8 +269,7 @@
                         Grid.ColumnSpan="2"
                         SelectionChanged="UserListView_Selected"
                         SelectionMode="Single"
-                        Visibility="Collapsed"
-                        d:Visibility="Visible" >
+                        Visibility="Collapsed">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn

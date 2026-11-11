@@ -281,26 +281,26 @@ namespace Skymu.Infrastructure.Main
         public static List<object> GetExtras(MenuItem GetExtrasMenuItem)
         {
             List<object> items = new List<object>();
-            foreach (ICore p in Universal.ActivePlugins)
+            var ep = Universal.Plugin as IExtras;
+            if (ep.ExtraConfigurations.Count == 0)
             {
-                if (p is IExtras ep && ep.ExtraConfigurations.Count > 0)
-                {
-                    foreach (var extra in ep.ExtraConfigurations)
-                    {
-                        var item = new MenuItem()
-                        {
-                            Header = extra.title,
-                            ToolTip = extra.description
-                        };
-                        item.Click += (_, __) => extra.onRun();
-                        items.Add(item);
-                    }
-
-                    items.Add(new Separator());
-                }
+                items.Add(GetExtrasMenuItem);
+                return items;
             }
+            foreach (var extra in ep.ExtraConfigurations)
+            {
+                var item = new MenuItem()
+                {
+                    Header = extra.title,
+                    ToolTip = extra.description
+                };
+                item.Click += (_, __) => extra.onRun();
+                items.Add(item);
+            }
+            items.Add(new Separator());
             items.Add(GetExtrasMenuItem);
             return items;
+
         }
     }
 

@@ -1,4 +1,4 @@
-<!--
+﻿<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -133,9 +133,7 @@
         <SolidColorBrush x:Key="Metro.Bubble" Color="#E5F7FD" />-->
 
         <!--  mapped to Skymu's standard theme format  -->
-        <SolidColorBrush x:Key="SkDarkBlue" Color="{Binding Color, Source={StaticResource Accent}}" />
-        <!--  TODO Colorway this  -->
-        <SolidColorBrush x:Key="SkBlack" Color="#2B2B30" />
+        <SolidColorBrush x:Key="SkDarkBlue" Color="{Binding Color, Source={DynamicResource Accent}}" />
 
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Left" />
@@ -164,6 +162,7 @@
         <converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
         <converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
         <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
+        <converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 
         <DrawingImage x:Key="UserHolderDrawingImage">
             <DrawingImage.Drawing>

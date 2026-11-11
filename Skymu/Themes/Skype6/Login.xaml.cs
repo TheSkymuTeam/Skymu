@@ -1,4 +1,4 @@
-/*==========================================================*/
+﻿/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -11,19 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Skymu.Preferences;
+using Skymu.ViewModels;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
-using Skymu.Native.Windows;
-using Skymu.Preferences;
 using Skymu.Sounds;
-using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Yggdrasil;
+using Skymu.Native.Windows;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Skymu.Credentials;
@@ -36,14 +35,12 @@ namespace Skymu.Skype6
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
-        private bool addaccount = false;
         private bool switchuser = false;
         private AuthenticationMethod _lastAuthType = AuthenticationMethod.Password;
 
-        public Login(bool switchuser = false, bool addAccount = false, Action<ICore> accountAdded = null)
+        public Login(bool switchuser = false)
         {
             this.switchuser = switchuser;
-            this.addaccount = addAccount;
             InitializeComponent();
             //ThemeManager.Load("default"); // TODO themes login
             UsernameBox.KeyUp += BoxKeyUp;
@@ -54,17 +51,11 @@ namespace Skymu.Skype6
             LoginButton.MouseLeftButtonUp += buttonLaunch;
             this.ContentRendered += Login_ContentRendered;
 
-            _viewModel = new LoginViewModel(() => new Main(), addaccount);
+            _viewModel = new LoginViewModel(() => new Main());
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
             _viewModel.HeaderTextRequested += text => header.Text = text;
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
-            _viewModel.AccountAdded += (plugin) =>
-            {
-                accountAdded?.Invoke(plugin);
-                noCloseEvent = true;
-                Close();
-            };
 
             SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
@@ -235,7 +226,7 @@ namespace Skymu.Skype6
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
         private void OnPrivacy(object sender, EventArgs e) { Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY); }
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
-        private void OnClose(object sender, EventArgs e) { if (addaccount) Close(); else Universal.Close(false); }
+        private void OnClose(object sender, EventArgs e) { Universal.Close(false); }
 
         private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
         private static (string, EventHandler) SEP() { return ("$", null); }
@@ -279,10 +270,7 @@ namespace Skymu.Skype6
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
-            if (addaccount && _viewModel.PendingAutoLogin != null)
-                _viewModel.ClearPendingAutoLogin();
-
-            if (_viewModel.PendingAutoLogin != null && !switchuser && !addaccount)
+            if (_viewModel.PendingAutoLogin != null && !switchuser)
                 LoginToggleAnimation(true);
             else
                 SelectDefaultProtocol();
@@ -326,15 +314,11 @@ namespace Skymu.Skype6
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listing = (LoginViewModel.PluginListing)ProtocolComboBox.SelectedItem;
-            if (!addaccount)
-             {
-                foreach (var cred in _viewModel.SavedCredentials)
-                 {
-                    if (cred.Plugin.ToLowerInvariant() == listing?.InternalName?.ToLowerInvariant())
-                    {
-                        SetProtocolSelection(listing, cred);
-                        return;
-                    }
+            foreach (var cred in _viewModel.SavedCredentials)
+            {
+                if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
+                {
+                    SetProtocolSelection(listing, cred);
                 }
             }
             if (listing != null)
@@ -343,7 +327,7 @@ namespace Skymu.Skype6
 
         private async void Login_ContentRendered(object sender, EventArgs e)
         {
-            if (!switchuser && !addaccount)
+            if (!switchuser)
                 await _viewModel.TryAutoLogin();
             if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
                 SelectDefaultProtocol();
@@ -378,7 +362,7 @@ namespace Skymu.Skype6
 
         private void Login_Closing(object sender, CancelEventArgs ev)
         {
-            if (!noCloseEvent && !addaccount)
+            if (!noCloseEvent)
                 Universal.Hide(ev);
         }
     }

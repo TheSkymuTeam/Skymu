@@ -11,8 +11,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-// This entire thing is inaccurate. TODO: rewrite?
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,22 +34,6 @@ namespace Skymu.Credentials
             "credentials.xml"
 #endif
         );
-
-        public class SavedCredential : Yggdrasil.Models.SavedCredential
-        {
-            public bool AutoLoginEnabled { get; set; }
-            public bool IsPrimary { get; set; }
-
-            public SavedCredential(
-                User user,
-                string password_or_token,
-                AuthenticationMethod authentication_type,
-                string plugin
-            ) : base(user, password_or_token, authentication_type, plugin) { }
-
-            public SavedCredential(Yggdrasil.Models.SavedCredential credential)
-                : base(credential.User, credential.PasswordOrToken, credential.AuthenticationType, credential.Plugin) { }
-        }
 
         private static XDocument ReadFile()
         {
@@ -101,8 +83,6 @@ namespace Skymu.Credentials
                 new XElement("DisplayName", cred.User?.DisplayName),
                 new XElement("PasswordOrToken", encryptedToken),
                 new XElement("AuthenticationType", cred.AuthenticationType.ToString()),
-                new XElement("IsPrimary", cred.IsPrimary ? 1 : 0),
-                new XElement("AutoLoginEnabled", cred.AutoLoginEnabled ? 1 : 0),
                 new XElement("Avatar", avatar)
             );
         }
@@ -126,7 +106,6 @@ namespace Skymu.Credentials
                 Enum.TryParse(authStr, out authType);
 
             var user = new User(
-                null,
                 (string)e.Element("DisplayName"),
                 (string)e.Element("Username"),
                 (string)e.Element("Identifier"),
@@ -155,11 +134,7 @@ namespace Skymu.Credentials
                 }
             }
 
-            return new SavedCredential(user, token, authType, (string)e.Element("Plugin"))
-            {
-                IsPrimary = int.TryParse(e.Element("IsPrimary")?.Value, out var num) && num > 0,
-                AutoLoginEnabled = int.TryParse(e.Element("AutoLoginEnabled")?.Value, out var num2) && num2 > 0
-            };
+            return new SavedCredential(user, token, authType, (string)e.Element("Plugin"));
         }
 
         private static bool Matches(XElement e, string plugin, string identifier) =>
@@ -179,15 +154,12 @@ namespace Skymu.Credentials
         }
 
         internal static SavedCredential Get(User user, string plugin)
-            => Get(user?.Identifier, plugin);
-
-        internal static SavedCredential Get(string user, string plugin)
         {
             XDocument doc = ReadFile();
 
             foreach (XElement e in doc.Root.Elements("Credential"))
             {
-                if (Matches(e, plugin, user))
+                if (Matches(e, plugin, user?.Identifier))
                     return FromElement(e);
             }
 

@@ -1,4 +1,4 @@
-/*==========================================================*/
+﻿/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -40,7 +40,6 @@ using Yggdrasil.Enumerations;
 using Skymu.Versioning;
 using Yggdrasil.Bottles;
 using OmegaAOL.Bifrost.Http;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
@@ -48,7 +47,6 @@ namespace Skymu
 {
     public partial class Universal : Application
     {
-#pragma warning disable CA1707 // pls no underscore
         // -----------------------------------------------------------------------------
         // Build information
         // -----------------------------------------------------------------------------
@@ -90,17 +88,12 @@ namespace Skymu
         public const string GITHUB_RELEASES_URL = GITHUB_BASE_URL + "/releases/latest";
         public const string GITHUB_PULLS_URL = GITHUB_BASE_URL + "/pulls";
 
-#pragma warning restore CA1707 // pls no underscore
-
         // -----------------------------------------------------------------------------
         // Globals
         // -----------------------------------------------------------------------------
 
-
-#pragma warning disable CA2211 // Non-constant fields should not be visible
-        public static List<ICore> ActivePlugins;
-        public static Dictionary<ICore, User> ActiveUsers = new Dictionary<ICore, User>();
         public static ICore Plugin;
+        public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool SignedIn = false;
         public static readonly string Theme = Settings.Theme;
@@ -112,7 +105,6 @@ namespace Skymu
         public static BitmapImage GroupAvatar;
         public static BitmapImage UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
-#pragma warning restore CA2211 // Non-constant fields should not be visible
         private static Mutex mutex;
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
@@ -209,7 +201,7 @@ namespace Skymu
                 new Action(
                     delegate
                     {
-                        ActiveViewModel?.HandleIncoming(sender as ICore, e);
+                        ActiveViewModel?.HandleIncoming(e);
                     }
                 )
             );
@@ -217,7 +209,7 @@ namespace Skymu
 
         static Universal()
         {
-            if (!Settings.AllowMultipleInstances && !!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+            if (!Settings.AllowMultipleInstances)
             {
                 try
                 {
@@ -231,7 +223,7 @@ namespace Skymu
 
                     Debug.WriteLine($"[Universal] Mutex creation: {created}");
 
-                    if (!created && !Settings.AllowMultipleInstances)
+                    if (!created)
                     {
                         foreach (var arg in Environment.GetCommandLineArgs())
                         {
@@ -240,10 +232,11 @@ namespace Skymu
                                 var uri = arg.Substring(5 + 6);
                                 WriteToPipe("URI:" + uri);
                             }
-                            else if (arg == "/secondary")
-                                return;
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
+                        System.Windows.MessageBox.Show(
+                            $"{NAME} is already running.\n\nYou can configure {NAME} to allow running multiple instances at the same time in the Options menu."
+                        );
                         Terminate();
                         return;
                     }
@@ -291,27 +284,6 @@ namespace Skymu
             return "en-US";
         }
 
-        public static Window LoginDispenser(bool addAccount = false, Action<ICore> accountAdded = null, bool switchUser = false)
-        {
-            switch (Theme)
-            {
-                case "Skype7":
-                    return new Skype7.Login(switchUser, addAccount, accountAdded);
-                case "Skype6":
-                    // TODO: Make a better fix
-                    // Override Settings.ActiveTab on default colorway with the proper color (#0095cc)
-                    Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0095cc"));
-                    // Override Settings.ActiveTabText to white
-                    Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
-                    return new Skype6.Login(switchUser, addAccount, accountAdded);
-                case "Skype4":
-                    return new Skype4.Login(switchUser, addAccount, accountAdded);
-                case "Skype5":
-                default:
-                    return new Skype5.Login(switchUser, addAccount, accountAdded);
-            }
-        }
-
         private void App_Startup(object sender, StartupEventArgs e)
         {
             if (!Settings.UseSystemCulture)
@@ -320,8 +292,26 @@ namespace Skymu
                     false
                 );
             // TODO: Dynamically switch language without restart
-
-            LoginDispenser().Show();
+            switch (Theme)
+            {
+                case "Skype7":
+                    new Skype7.Login().Show();
+                    break;
+                case "Skype6":
+                    // TODO: Make a better fix
+                    // Override Settings.ActiveTab on default colorway with the proper color (#0095cc)
+                    Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0095cc"));
+                    // Override Settings.ActiveTabText to white
+                    Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
+                    return new Skype6.Login(switchUser, addAccount, accountAdded);
+                case "Skype4":
+                    new Skype4.Login().Show();
+                    break;
+                case "Skype5":
+                default:
+                    new Skype5.Login().Show();
+                    break;
+            }
 
             Task.Run(() =>
             {
@@ -493,14 +483,21 @@ namespace Skymu
 
         public static void Terminate()
         {
-            Cleanup();
-            Application.Current.Shutdown();
+            try
+            {
+                Tray.DisposeIcon();
+            }
+            catch { } // in case app is already too dead to clear icon by the time this is called
+            finally
+            {
+                Application.Current.Shutdown();
+            }
         }
 
-        public static void ExceptionHandler(Exception ex, string context = null)
+        public static void ExceptionHandler(Exception ex)
         {
             string brand = Settings.BrandingName;
-            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString(), context);
+            Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
             WindowBase frame = new WindowBase(page)
             {
                 HeaderIcon = WindowBase.IconType.Crash,
@@ -585,7 +582,8 @@ namespace Skymu
                         break;
                     case "Colorway":
                     case "WindowFrame":
-                    case "UseSystemCulture": // TODO fix the issue where this appears twice?
+                    case "Theme":
+                    case "UseSystemCulture":
                         Dialog dialog = new Dialog(
                                    type: WindowBase.IconType.Question,
                                    content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
@@ -732,7 +730,7 @@ namespace Skymu
 
         }
 
-        private static async void Cleanup()
+        protected override void OnExit(ExitEventArgs ev)
         {
             try
             {
@@ -742,12 +740,10 @@ namespace Skymu
             }
             catch { } // If it doesn't work, too bad.
             if (SignedIn)
+            {
+                PluginManager.DisposeAll();
                 SoundManager.PlaySynchronous("LOGOUT");
-        }
-
-        protected override void OnExit(ExitEventArgs ev)
-        {
-            Cleanup(); // If a single thing was not cleaned up, and performs async, this is where the app and debugger dies
+            }
             base.OnExit(ev);
         }
     }

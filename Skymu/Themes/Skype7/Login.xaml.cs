@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Copyright ï¿½ The Skymu Team and other contributors.
+// Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
 // Modification or redistribution of this code is governed
@@ -12,21 +12,18 @@
 /*==========================================================*/
 
 using Skymu.Preferences;
-using Skymu.Sounds;
 using Skymu.ViewModels;
-using Skymu.Native.Windows;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using Skymu.Sounds;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using Yggdrasil;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Skymu.Native.Windows;
 using System.Windows.Input;
-
-// TODO menubar
+using Yggdrasil.Models;
 
 namespace Skymu.Skype7
 {
@@ -35,14 +32,12 @@ namespace Skymu.Skype7
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
-        private bool addaccount = false;
         private bool switchuser = false;
         private AuthenticationMethod _lastAuthType = AuthenticationMethod.Password;
 
-        public Login(bool switchuser = false, bool addAccount = false, Action<ICore> accountAdded = null)
+        public Login(bool switchuser = false)
         {
             this.switchuser = switchuser;
-            this.addaccount = addAccount;
             InitializeComponent();
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
@@ -51,17 +46,11 @@ namespace Skymu.Skype7
             PlainTokenBox.TextChanged += PlainTokenBox_TextChanged;
             this.ContentRendered += Login_ContentRendered;
 
-            _viewModel = new LoginViewModel(() => new Main(), addaccount);
+            _viewModel = new LoginViewModel(() => new Main());
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
             _viewModel.HeaderTextRequested += text => Header.Content = text;
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
-            _viewModel.AccountAdded += (plugin) =>
-            {
-                accountAdded?.Invoke(plugin);
-                noCloseEvent = true;
-                Close();
-            };
 
             SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
@@ -90,7 +79,7 @@ namespace Skymu.Skype7
             UsernameBox.IsEnabled = true;
             UsernameHint.FontStyle = FontStyles.Normal;
             UsernameHint.Text = listing.TextUsername ?? UsernameHint.Text;
-            if (Universal.Plugin is null) { // TODO : Too busy to fix that properly, Universal.Plugin seems to be always null, please fix it if possible . - Sean KÃ©vin
+            if (Universal.Plugin is null) { // TODO : Too busy to fix that properly, Universal.Plugin seems to be always null, please fix it if possible . - Sean Kévin
                 SubHeader.Content = $"";
             } else {
                 SubHeader.Content = $"with {Universal.Plugin.Name} account";
@@ -236,15 +225,7 @@ namespace Skymu.Skype7
             foreach (var item in _viewModel.PluginItems)
                 ProtocolComboBox.Items.Add(item);
 
-            if (addaccount && _viewModel.PendingAutoLogin != null)
-                _viewModel.ClearPendingAutoLogin();
-            
-            if (_viewModel.PendingAutoLogin != null && !switchuser && !addaccount)
-                LoginToggleAnimation(true);
-            else
-                SelectDefaultProtocol();
-
-            if (switchuser && _viewModel.PendingAutoLogin != null)
+            if (_viewModel.PendingAutoLogin != null)
             {
                 var pal = _viewModel.PendingAutoLoginListing;
                 var pa = _viewModel.PendingAutoLogin;
@@ -290,27 +271,15 @@ namespace Skymu.Skype7
         private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listing = (LoginViewModel.PluginListing)ProtocolComboBox.SelectedItem;
-            if (!addaccount)
+            foreach (var cred in _viewModel.SavedCredentials)
             {
-                foreach (var cred in _viewModel.SavedCredentials)
+                if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
                 {
-                    if (cred.Plugin.ToLowerInvariant() == listing?.InternalName?.ToLowerInvariant())
-                    {
-                        SetProtocolSelection(listing, cred);
-                        return;
-                    }
+                    SetProtocolSelection(listing, cred);
                 }
             }
             if (listing != null)
                 _viewModel.HandleProtocolSelected(listing);
-        }
-
-        private async void Login_ContentRendered(object sender, EventArgs e)
-        {
-            if (!switchuser && !addaccount)
-                await _viewModel.TryAutoLogin();
-            if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
-                SelectDefaultProtocol();
         }
 
         private void LoginToggleAnimation(bool anim)
@@ -340,18 +309,17 @@ namespace Skymu.Skype7
             Universal.OpenURL(DISCORD_SERVER_INVITE);
         }
 
-        // TODO: These two are not aligning with the rest of login themes? Also why have two instead of just one function (_Closing)?
         private void Login_Closing(object sender, CancelEventArgs e)
         {
-            if (!noCloseEvent && !addaccount)
-                Universal.Terminate();
+            if (!noCloseEvent)
+                Application.Current.Shutdown();
         }
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            if (!noCloseEvent && !addaccount)
-                Universal.Terminate();
+            if (!noCloseEvent)
+                Application.Current.Shutdown();
         }
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)

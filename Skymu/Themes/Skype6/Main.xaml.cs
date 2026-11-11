@@ -1,4 +1,4 @@
-/*==========================================================*/
+﻿/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -57,10 +57,8 @@ namespace Skymu.Skype6
 
         // Other file-level variables
         private bool noCloseEvent;
-        private bool _conversationOpening;
         private ScrollViewer _conversationScrollViewer;
         private SliceControl _currentTab;
-        private User _oldUser;
         private bool _userScrolledUp = false;
         private readonly Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
@@ -289,8 +287,6 @@ namespace Skymu.Skype6
             }
         }
 
-        private static readonly GridLength DYNAMIC_TAB = new GridLength(1, GridUnitType.Star);
-        private static readonly GridLength SMALL_TAB = new GridLength(32);
         private async Task SelectTab(SliceControl tab_to_select)
         {
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
@@ -313,7 +309,7 @@ namespace Skymu.Skype6
             GridLength small = new GridLength(32);
 
             tab_to_select.SetState(ButtonVisualState.Pressed);
-            if (Universal.ActivePlugins.Any(e => e.SupportsServers))
+            if (Universal.Plugin.SupportsServers)
                 buttonToColumn[tab_to_select].Width = dynamic;
             tab_to_select.SetState(ButtonVisualState.Pressed);
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
@@ -321,12 +317,14 @@ namespace Skymu.Skype6
                 if (tab == tab_to_select)
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                if (Universal.ActivePlugins.Any(e => e.SupportsServers))
+                if (Universal.Plugin.SupportsServers)
                     buttonToColumn[tab].Width =
-                    Settings.DynamicSidebarTabs
+                    Settings.DynamicSidebarTabs && Universal.Plugin.SupportsServers
                         ? small
                         : dynamic;
             }
+
+            //SetWindow(WindowType.Home); Okay - this was here before, but why? Isn't this inaccurate?
 
             switch (tab_to_select.Name)
             {
@@ -506,6 +504,23 @@ namespace Skymu.Skype6
 
         #endregion
 
+        #region User count API
+
+        private bool CanSetStatus()
+        {
+            int index = StatusIcon.DefaultIndex;
+            if (index == 5 || index == 2 || index == 3 || index == 19)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -640,39 +655,6 @@ namespace Skymu.Skype6
             HandleConversationItems();
         }
 
-        private void SelfInfoChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var cu = sender as User; // TODO delay ish fix
-            if (e == null)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
-                    Tray.SetStatus(cu.ConnectionStatus);
-                    StatusBox.Text = Universal.CurrentUser?.DisplayName;
-                    this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
-                });
-            }
-            else
-                switch (e.PropertyName)
-                {
-                    case nameof(User.ConnectionStatus):
-                        Dispatcher.Invoke(() =>
-                        {
-                            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(cu.ConnectionStatus);
-                            Tray.SetStatus(cu.ConnectionStatus);
-                        });
-                        break;
-                    case nameof(User.DisplayName):
-                        Dispatcher.Invoke(() =>
-                        {
-                            StatusBox.Text = Universal.CurrentUser?.DisplayName;
-                            this.Title = Settings.BrandingName + "\u2122 - " + Universal.CurrentUser?.Username;
-                        });
-                        break;
-                }
-        }
-
         private void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
@@ -719,7 +701,6 @@ namespace Skymu.Skype6
 
         private void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (_conversationOpening) return;
             if (SendMsgButton != null) SendMsgButton.IsEnabled = SharedServices.CheckIfMessageSendable(MessageTextBox);
             if (SharedServices.HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
@@ -958,7 +939,6 @@ namespace Skymu.Skype6
 
         private async Task SetConversation()
         {
-            _conversationOpening = true;
             _userScrolledUp = false;
             ClearConversation();
             Topbar.Text = vmodel.SelectedConversation?.DisplayName;
@@ -979,7 +959,6 @@ namespace Skymu.Skype6
             ConversationItemsList.ItemsSource = vmodel.ActiveConversation;
             Spinner.Visibility = Visibility.Collapsed;
             _conversationScrollViewer?.ScrollToEnd();
-            _conversationOpening = false;
         }
 
         private void HandleConversationItems()
@@ -1113,8 +1092,11 @@ namespace Skymu.Skype6
                 this.Title = WindowTitle;
                 if (Settings.AutoSpeedTest)
                     vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
-                _oldUser = Universal.CurrentUser;
+                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
+                {
+                    if (ee.PropertyName == nameof(User.ConnectionStatus))
+                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                };
                 Main_SizeChanged(null, null);
                 Ready?.Invoke(this, EventArgs.Empty);
             };
@@ -1126,7 +1108,7 @@ namespace Skymu.Skype6
 
             vmodel.SignOutRequested += (s, e) =>
             {
-                Universal.LoginDispenser(switchUser: e.switchuser).Show();
+                new Login(e.switchuser).Show();
                 noCloseEvent = true;
                 Close();
             };
@@ -1135,14 +1117,6 @@ namespace Skymu.Skype6
             {
                 if (!IsLoadingConversation && !_userScrolledUp)
                     _conversationScrollViewer?.ScrollToEnd();
-            };
-
-            vmodel.ConversationOpened += (s, e) =>
-            {
-                _oldUser.PropertyChanged -= SelfInfoChanged;
-                Universal.CurrentUser.PropertyChanged += SelfInfoChanged;
-                _oldUser = Universal.CurrentUser;
-                SelfInfoChanged(Universal.CurrentUser, null);
             };
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
@@ -1193,29 +1167,6 @@ namespace Skymu.Skype6
                         vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
             };
 
-            vmodel.PluginEnabledChanged += (s, p) =>
-            {
-                bool ss = Universal.ActivePlugins.Any(e => e.SupportsServers);
-                if (!ss || ServersList.Visibility == Visibility.Collapsed)
-                {
-                    if (!ss)
-                        btnServers.Visibility = Visibility.Collapsed;
-                    ServersColumn.Width = !ss
-                        ? new GridLength(0)
-                        : SMALL_TAB;
-                }
-                else
-                {
-                    btnServers.Visibility = Visibility.Visible;
-                    ServersColumn.Width = Settings.DynamicSidebarTabs ? DYNAMIC_TAB : SMALL_TAB;
-                }
-            };
-
-            vmodel.IncomingCallAccepted += (e) =>
-            {
-                InitiateCall(e.Caller, true);
-            };
-
             Universal.GroupAvatar = GenerateAvatarImage("group");
             Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
             Universal.UnknownAvatar = GenerateAvatarImage("unknown");
@@ -1235,7 +1186,7 @@ namespace Skymu.Skype6
             SharedServices.SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
 
-            if (!Universal.ActivePlugins.Any(e => e.SupportsServers))
+            if (!Universal.Plugin.SupportsServers)
             {
                 btnServers.Visibility = Visibility.Collapsed;
                 ServersColumn.Width = new GridLength(0);
@@ -1263,7 +1214,6 @@ namespace Skymu.Skype6
                         case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
                         case MMBController.Action.Call: CallButtonClick(null, null); break;
                         case MMBController.Action.AddContact: AddContact_Click(null, null); break;
-                        case MMBController.Action.AccountManager: new AccountManagerSimple(vmodel).Show(); break;
                     }
                 };
                 _mmbController.Build();
@@ -1293,6 +1243,25 @@ namespace Skymu.Skype6
                 }
                 Sidebar_SizeChanged_Refresh();
             };
+
+            if (Universal.CallPlugin != null)
+            {
+                Universal.CallPlugin.IncomingCallTube += (sender, e) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        IncomingCall ic = new IncomingCall(e);
+                        EventHandler handler = null;
+                        handler = (s, args) =>
+                        {
+                            ic.Answered -= handler;
+                            InitiateCall(e.Caller, true);
+                        };
+                        ic.Answered += handler;
+                        ic.Show();
+                    });
+                };
+            }
 
             this.AllowsTransparency = false;
         }
