@@ -278,9 +278,7 @@ namespace Skymu.Forms.Pages
         {
             try
             {
-                string url = $"https://api.github.com/repos/{Universal.GITHUB_OWNER}/{Universal.GITHUB_REPO}/releases/latest";
-
-                using (HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(url))
+                using (HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(Universal.GITHUB_RELEASES_URL))
                 {
                     if (!response.IsSuccessStatusCode)
                         return null;

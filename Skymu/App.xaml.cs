@@ -83,7 +83,7 @@ namespace Skymu
         // -----------------------------------------------------------------------------
 
         public const string NET_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet";
-        public const string NET_SIX_DOWNLOAD_LINK = NET_DOWNLOAD_LINK + "/6.0";
+        public const string NET_SIX_DOWNLOAD_LINK = "https://dotnet.microsoft.com/en-us/download/dotnet/6.0";
         public const string EASTER_SKYPE_SOUNDS_REMIX = "https://www.youtube.com/watch?v=kVsH_ySm5_E";
         public const string EASTER_CHANTE_SKYPE = "https://www.youtube.com/watch?v=cdtNIyx10DM";
         public const string GITHUB_BASE_URL = "https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO;
