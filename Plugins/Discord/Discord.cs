@@ -307,7 +307,8 @@ namespace Discord
                 }
                 else if (userCheckTkn.Contains("[API/ParseError]"))
                 {
-                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "The provided token has an invalid format. Please ensure that you are entering it correctly."));
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "That doesn't look like a Discord token. This is NOT a bug in the application, you've made a mistake when fetching or pasting your token.\n\n1)" +
+                        " Make sure you removed the quotation marks around the token.\n2) Make sure you pasted the right type of token in.\n3) Ensure your token doesn't have 'token:' in front of it."));
                 }
                 else if (userCheckTkn.Contains("[API/RequestError]"))
                 {
