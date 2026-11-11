@@ -686,7 +686,7 @@ namespace Skymu
                 if (!notWebpage && Settings.DoNotWarnOnInlineWebLink)
                 {
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                    return;ent
+                    return;
                 }
                 Dialog dialog = new Dialog(
                 type: notWebpage ? WindowBase.IconType.Information : WindowBase.IconType.Question,
