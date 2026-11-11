@@ -386,7 +386,7 @@
                                         Text="{Binding Status, TargetNullValue=''}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
-                                <!--  Time row for remote user. TODO: implement this in MiddleMan  -->
+                                <!--  Time row for remote user. TODO: implement this in Yggdrasil  -->
                                 <StackPanel
                                     x:Name="TimeRow"
                                     Margin="0,0,0,15"

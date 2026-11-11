@@ -67,26 +67,11 @@ namespace Skymu.Preferences
             set => WRITE("UseSystemCulture", value, nameof(UseSystemCulture), "UI/General");
         }
 
-
         public static bool EnableNotifications
         {
             get => SELECT("EnableNotifications", true, "UI/General");
             set => WRITE("EnableNotifications", value, nameof(EnableNotifications), "UI/General");
         }
-        // TODO Above is not needed if we have a NotificationTrigger of 0.
-        // TODO This should be migrated to a check list. The code works fine I believe - we'd like to have a checkbox that calculates the value.
-        public static NotificationTriggerType NotificationTrigger
-        {
-            get => SELECT("NotificationTrigger", NotificationTriggerType.PDM, "UI/General");
-            set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger), "UI/General");
-        }
-        // TODO This should be merged with above after the change. Make sure to add a Migrator.cs rule detecting this, and merging two variables.
-        public static bool AllowImplicitMentions
-        {
-            get => SELECT("AllowImplicitMentions", true, "UI/General");
-            set => WRITE("AllowImplicitMentions", value, nameof(NotificationTrigger), "UI/General");
-        }
-
         public static bool QuitWithoutAsking
         {
             get => SELECT("QuitWithoutAsking", false, "UI/General");
@@ -310,6 +295,20 @@ namespace Skymu.Preferences
 
         #region Skymu/Messaging
 
+        // TODO Above is not needed if we have a NotificationTrigger of 0.
+        // TODO This should be migrated to a check list. The code works fine I believe - we'd like to have a checkbox that calculates the value.
+        public static NotificationTriggerType NotificationTrigger
+        {
+            get => SELECT("NotificationTrigger", NotificationTriggerType.PDM, "Skymu/Messaging");
+            set => WRITE("NotificationTrigger", value, nameof(NotificationTrigger), "Skymu/Messaging");
+        }
+        // TODO This should be merged with above after the change. Make sure to add a Migrator.cs rule detecting this, and merging two variables.
+        public static bool AllowImplicitMentions
+        {
+            get => SELECT("AllowImplicitMentions", true, "Skymu/Messaging");
+            set => WRITE("AllowImplicitMentions", value, nameof(AllowImplicitMentions), "Skymu/Messaging");
+        }
+
         public static bool ShowInlineLinkWarning
         {
             get => SELECT("ShowInlineLinkWarning", true, "Skymu/Messaging");
@@ -526,11 +525,11 @@ namespace Skymu.Preferences
                 catch { }
 
                 System.Windows.MessageBox.Show(
-                    $"{Universal.NAME} has discovered that your configuration file is corrupt or from an older version of the application. " +
+                    $"{Universal.NAME} has discovered that your configuration file is corrupt or from an incompatible version of the application. " +
                     "It has been reset and your settings have been wiped.",
                     "Configuration file reset",
                     System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Warning
+                    System.Windows.MessageBoxImage.Information
                 );
                 File.Delete(FilePath);
             }

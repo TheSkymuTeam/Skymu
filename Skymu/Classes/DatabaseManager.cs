@@ -49,7 +49,14 @@ namespace Skymu.Databases
         // or just when you feel like your changes could cause incompatibilities with old databases.
         // Increment this number liberally. DO NOT use migration functions etc as an alternative to
         // incrementing the number. Originally started at: 1.
-        private const int Version = 4;
+
+        // bumped to 2
+        // bumped to 3
+        // bumped to 4
+        // bumped to 5: multiprotocol account storage
+        // bumped to 6: revert multi account but don't purge database for users with v5
+
+        private const int Version = 6;
 
         internal string DbPath;
         public AccountsTable Accounts { get; private set; }
