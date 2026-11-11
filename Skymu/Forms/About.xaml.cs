@@ -21,6 +21,7 @@ namespace Skymu.Forms
         public About()
         {
             InitializeComponent();
+            BuildVersion.Text = Universal.BUILD_INFO.GetVersionString() + " " + Universal.BUILD_INFO.GetCodeName();
             PreviewMouseDown += (_, __) => RequestClose();
             Deactivated += (_, __) => RequestClose();
         }

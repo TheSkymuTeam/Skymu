@@ -37,6 +37,7 @@ using Skymu.Native.Windows;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Skymu.Versioning;
 using Yggdrasil.Bottles;
 using OmegaAOL.Bifrost.Http;
 using System.Collections.Generic;
@@ -53,8 +54,15 @@ namespace Skymu
         // -----------------------------------------------------------------------------
 
         public const string NAME = "Skymu";
-        public const string BUILD_VERSION = "0.4.8";
-        public const string BUILD_NAME = "Elgon Ice Cream PB1";
+        public static readonly BuildInfo BUILD_INFO = new BuildInfo(
+            major: 4,
+            minor: 8,
+            patch: 1,
+            major_name: "Elgon",
+            minor_name: "Ice Cream",
+            is_beta: false,
+            beta_number: 0
+            );
 
         // -----------------------------------------------------------------------------
         // Skymu controlled URLs
@@ -566,7 +574,7 @@ namespace Skymu
                 );
             Colorizer.LoadFromSettings();
             Migrator.Run();
-            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + BUILD_VERSION);
+            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + Universal.BUILD_INFO.GetVersionString());
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {

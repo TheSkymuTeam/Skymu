@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using Skymu.Versioning;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,8 +39,7 @@ namespace Skymu.Forms.Pages
         {
             public bool status;
             public string[] urls;
-            public string tag;
-            public string name;
+            public BuildInfo info;
             // changelog, error log
             public string log;
         }
@@ -55,7 +55,7 @@ namespace Skymu.Forms.Pages
             update_info = await GetUpdateInfo();
 
             if (update_info != null && (manual || // not up to date, must show window
-                (IsNullOrEmpty(Settings.SkippedVersion) && update_info?.tag != Settings.SkippedVersion)))
+                (IsNullOrEmpty(Settings.SkippedVersion) && update_info?.info.GetVersionString() != Settings.SkippedVersion)))
             {
                 if (exwin != null)
                     window = exwin;
@@ -84,14 +84,15 @@ namespace Skymu.Forms.Pages
                 }
                 else // update is available
                 {
+                    string name = update_info?.info.GetVersionString() + " " + update_info?.info.GetCodeName();
                     window.HeaderIcon = WindowBase.IconType.PackageCheckmark;
                     window.HeaderText =
-                        Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + update_info?.name;
+                        Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + name;
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
                     window.ButtonLeftAction = () => InitiateUpdate();
                     window.ButtonMiddleText = Universal.Lang["sZAPBUTTON_SKIPVERSION"]; 
                     window.ButtonMiddleEnabled = true;
-                    window.ButtonMiddleAction = () => { SkipUpdate(update_info?.tag); window.Close(); };
+                    window.ButtonMiddleAction = () => { SkipUpdate(update_info?.info.GetVersionString()); window.Close(); };
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_DECIDELATER"];
                     Description.Text = Universal.Lang["sF_UPGRADE_NORMAL_TEXT1"];
                     string changelog = update_info?.log;
@@ -292,32 +293,27 @@ namespace Skymu.Forms.Pages
                     {
                         string latestTag = doc
                             .RootElement.GetProperty("tag_name")
-                            .GetString()
-                            ?.TrimStart('v');
+                            .GetString();
 
-                        if (string.IsNullOrWhiteSpace(latestTag))
+                        // abort: the latest build's tag is empty or invalid
+                        if (string.IsNullOrWhiteSpace(latestTag) || !VersionTools.Validate(latestTag))
                             return null;
 
-                        string currentVerStr = Universal.BUILD_VERSION;
-                        currentVerStr = currentVerStr.Replace("v", "");
+                        string releaseName = doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
+                        BuildInfo latest_build;
+                        if (releaseName.Length > 2) 
+                        {
+                            int idx = releaseName.IndexOf(" ");
+                            latest_build = new BuildInfo(latestTag, releaseName.Substring(0, idx), releaseName.Substring(idx + 1));
+                         }
+                        else latest_build = new BuildInfo(latestTag, "(invalid", "codename)");
 
-                        Version.TryParse(currentVerStr, out Version currentVer);
-
-                        latestTag = latestTag.Replace("v", "");
-
-                        if (!Version.TryParse(latestTag, out Version updateVer))
+                        // abort: the build we are updating to is not newer than the build installed
+                        if (!latest_build.IsNewerThan(Universal.BUILD_INFO))
                             return null;
-
-                        if (currentVer >= updateVer)
-                            return null;
-
-                        string releaseName =
-                            doc.RootElement.GetProperty("name").GetString() ?? string.Empty;
 
                         string changelog =
                             doc.RootElement.GetProperty("body").GetString() ?? string.Empty;
-
-                        string buildName = "v" + updateVer.ToString() + " " + releaseName;
 
                         JsonElement assets = doc.RootElement.GetProperty("assets");
                         List<string> urls = new List<string>();
@@ -336,8 +332,7 @@ namespace Skymu.Forms.Pages
                         {
                             status = true,
                             urls = urls.ToArray(),
-                            tag = latestTag,
-                            name = buildName,
+                            info = latest_build,
                             log = changelog
                         };
                     }

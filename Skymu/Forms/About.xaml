@@ -57,14 +57,8 @@
             FontFamily="Arial"
             FontSize="13"
             FontWeight="Bold"
-            Foreground="#555555">
-            <TextBlock.Text>
-                <MultiBinding StringFormat="v{0} {1}">
-                    <Binding Source="{x:Static global:Universal.BUILD_VERSION}" />
-                    <Binding Source="{x:Static global:Universal.BUILD_NAME}" />
-                </MultiBinding>
-            </TextBlock.Text>
-        </TextBlock>
+            Foreground="#555555"
+            Text="vX.Y.Z Major Minor" />
         <TextBlock
             Width="390"
             Margin="0,23,10,0"

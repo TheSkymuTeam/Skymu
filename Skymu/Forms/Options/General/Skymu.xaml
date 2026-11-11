@@ -519,7 +519,7 @@
             </StackPanel>
             <CheckBox
                 Margin="0,5"
-                Padding="6, 0"
+                Padding="6,0"
                 Content="Allow implicit nick mentions to trigger a notification (supported protocols only)"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[AllowImplicitMentions], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
@@ -567,8 +567,8 @@
                 Margin="0,5"
                 HorizontalAlignment="Left"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
-                IsChecked="{Binding Path=[BlockSkymuServerConnections], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
-                <TextBlock Margin="2,0" TextWrapping="Wrap"><Run Text="Completely block communication with the Skymu server and the updater (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
+                IsChecked="{Binding Path=[DisableSWS], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}">
+                <TextBlock Margin="2,0" TextWrapping="Wrap"><Run Text="Disable Skymu Web Services (warning: not recommended, doing this breaks features in the Skymu client!)" /></TextBlock>
             </CheckBox>
 
             <Rectangle

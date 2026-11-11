@@ -1381,7 +1381,10 @@
                                                                 Color="{DynamicResource Avatar.Shadow}" />
                                                         </Border.Effect>
                                                         <Grid>
-                                                            <Image x:Name="SidebarAvatar" RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+                                                            <Image
+                                                                x:Name="SidebarAvatar"
+                                                                RenderOptions.BitmapScalingMode="HighQuality"
+                                                                Stretch="UniformToFill">
                                                                 <Image.Source>
                                                                     <MultiBinding Converter="{StaticResource AvatarConverter}">
                                                                         <Binding Path="Avatar" />
