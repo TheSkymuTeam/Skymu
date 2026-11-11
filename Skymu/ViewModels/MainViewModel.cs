@@ -151,6 +151,13 @@ namespace Skymu.ViewModels
 
         #region Commands
 
+        // Message context menu stuff
+        public IAsyncRelayCommand<Message> DeleteMessageCommand { get; }
+        public IAsyncRelayCommand<Message> EditMessageCommand { get; }
+        public IAsyncRelayCommand<Message> ReplyToMessageCommand { get; }
+        public IRelayCommand<Message> MoveBookmarkCommand { get; }
+        public IRelayCommand<Message> CopyMessageCommand { get; }
+        // End message context menu stuff
         public IAsyncRelayCommand<string> SendMessageCommand { get; }
         public IAsyncRelayCommand RunSpeedTestCommand { get; }
         private bool _isDownloading = false;
@@ -248,6 +255,44 @@ namespace Skymu.ViewModels
 
         #endregion
 
+        #region Message context menu functions
+
+        public async Task DeleteMessage(Message message)
+        {
+            if (message?.Identifier == null || SelectedConversation == null)
+                return;
+
+            // previews that are still sending don't exist on the server yet
+            if (message.Identifier.StartsWith(SKYMU_SENDING))
+                return;
+
+            bool ok = await Universal.Plugin.DeleteMessage(SelectedConversation.Identifier, message.Identifier);
+            if (!ok)
+                Universal.ShowMessage("Could not delete the message.");
+        }
+
+        public async Task EditMessage(Message message)
+        {
+            Universal.NotImplemented("Editing messages from the context menu");
+        }
+
+        public void CopyMessage(Message message)
+        {
+            if (!string.IsNullOrEmpty(message?.Text)) Clipboard.SetText(message.Text);
+        }
+
+        public async Task ReplyToMessage(Message message)
+        {
+            Universal.NotImplemented("Replying to messages from the context menu");
+        }
+
+        public void MoveBookmark(Message message)
+        {
+            Universal.NotImplemented("Message bookmarking");
+        }
+
+        #endregion
+
         #region Init
 
         public MainViewModel()
@@ -286,6 +331,14 @@ namespace Skymu.ViewModels
                 Timeout.Infinite,
                 Timeout.Infinite
             );
+
+            // message context menu stuff
+            DeleteMessageCommand = new AsyncRelayCommand<Message>(DeleteMessage);
+            EditMessageCommand = new AsyncRelayCommand<Message>(EditMessage);
+            ReplyToMessageCommand = new AsyncRelayCommand<Message>(ReplyToMessage);
+            MoveBookmarkCommand = new RelayCommand<Message>(MoveBookmark);
+            CopyMessageCommand = new RelayCommand<Message>(CopyMessage);
+            // end stuff
 
             SendMessageCommand = new AsyncRelayCommand<string>(SendMessage);
             RunSpeedTestCommand = new AsyncRelayCommand(RunSpeedTest);

@@ -25,7 +25,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
                 <ResourceDictionary Source="pack://siteoforigin:,,,/Colorways/default.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/ResourceDicts/ContextMenus.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/UIComponents/MessageContextMenu.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:LanguageManager x:Key="Lang" />
             <Style
