@@ -1354,7 +1354,7 @@ namespace Skymu.Skype4
                 ConfigureCompactRecentsList();
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                if (Settings.AutoSpeedTest)
+                if (Settings.CheckSpeedOnStartup)
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {

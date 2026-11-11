@@ -25,7 +25,7 @@ namespace Discord.Helpers
     {
         public static async Task<Message> ParseMessage(JsonNode message, bool isForwarded = false)
         {
-            if (message == null)
+            if (message is null)
                 return null;
 
             if (message["message_snapshots"] != null)
@@ -51,7 +51,7 @@ namespace Discord.Helpers
             Message parent = ParseReply(message["referenced_message"]);
             User sender = UserStore.Get(authorId);
             var (displayName, username) = GetAuthorInfo(message);
-            if (sender == null)
+            if (sender is null)
             {
                 sender = UserStore.GetOrCreate(authorId, displayName, username);
             }
@@ -67,7 +67,7 @@ namespace Discord.Helpers
 
         public static Message ParseReply(JsonNode refMsg)
         {
-            if (refMsg == null)
+            if (refMsg is null)
                 return null;
             string replyContent = HelperMethods.ReplaceIDWithName(
                 refMsg["mentions"] as JsonArray,

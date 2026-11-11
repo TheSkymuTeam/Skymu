@@ -181,7 +181,7 @@ namespace Discord.Networking
         {
             if (WSClient?.State != WebSocketState.Open) return;
 
-            if (payload == null)
+            if (payload is null)
             {
                 await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
                 return;
@@ -289,7 +289,7 @@ namespace Discord.Networking
 
         private void HandleCallUpdate(JsonNode data)
         {
-            if (data == null) return;
+            if (data is null) return;
             IncomingCall?.Invoke(this, data);
         }
 
@@ -376,10 +376,10 @@ namespace Discord.Networking
 
         private async Task HandleMessageCreate(JsonNode messageData)
         {
-            if (messageData == null) return;
+            if (messageData is null) return;
 
             var messageItem = await MessageParser.ParseMessage(messageData);
-            if (messageItem == null) return;
+            if (messageItem is null) return;
 
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
 
@@ -400,9 +400,9 @@ namespace Discord.Networking
 
         private async Task HandleMessageUpdate(JsonNode messageData) // omega
         {
-            if (messageData == null) return;
+            if (messageData is null) return;
             var messageItem = await MessageParser.ParseMessage(messageData);
-            if (messageItem == null) return;
+            if (messageItem is null) return;
             string channelId = messageData["channel_id"]?.GetValue<string>() ?? "0";
             var args = new HelperClasses.DiscordMessageReceivedEventArgs
             {
@@ -423,7 +423,7 @@ namespace Discord.Networking
             var messageId = data?["id"]?.GetValue<string>();
             var channelId = data?["channel_id"]?.GetValue<string>();
 
-            if (messageId == null || channelId == null)
+            if (messageId is null || channelId is null)
                 return Task.CompletedTask;
 
             var args = new HelperClasses.DiscordMessageReceivedEventArgs
@@ -443,7 +443,7 @@ namespace Discord.Networking
             var ids = data?["ids"]?.AsArray();
             var channelId = data?["channel_id"]?.GetValue<string>();
 
-            if (ids == null || channelId == null)
+            if (ids is null || channelId is null)
                 return Task.CompletedTask;
 
             var args = new HelperClasses.DiscordMessageReceivedEventArgs

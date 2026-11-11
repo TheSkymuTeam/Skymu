@@ -307,7 +307,7 @@ namespace Discord.Networking
             uint ssrc = (uint)((data[8] << 24) | (data[9] << 16) | (data[10] << 8) | data[11]);
 
             // We can't decrypt without the secret key from op_code: 4
-            if (_secretKey == null || _secretKey.Length == 0)
+            if (_secretKey is null || _secretKey.Length == 0)
             {
                 Debug.WriteLine("[UDP] No secret key yet, cannot decrypt.");
                 return;
@@ -315,7 +315,7 @@ namespace Discord.Networking
 
             // Layer 1: strip transport encryption (aead_aes256_gcm_rtpsize)
             byte[] decrypted = Decrypt(data, _secretKey);
-            if (decrypted == null)
+            if (decrypted is null)
             {
                 return;
             }
@@ -330,7 +330,7 @@ namespace Discord.Networking
 
             // Layer 2: strip DAVE E2EE using libdave if a session is active
             // Without a session the transport plaintext is already raw Opus
-            if (_daveSession == null)
+            if (_daveSession is null)
             {
                 Debug.WriteLine($"[UDP] No DAVE session yet, treating as raw Opus.");
                 return;
@@ -361,7 +361,7 @@ namespace Discord.Networking
             int samplesDecoded;
 
             byte[] opus = _daveSession.DecryptAudioFrame(ssrc, davePayload);
-            if (opus == null)
+            if (opus is null)
             {
                 Debug.WriteLine($"[UDP] DAVE decryption failed for ssrc={ssrc}. Timestamp: {DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
                 samplesDecoded = decoder.Decode(ReadOnlySpan<byte>.Empty, pcm.AsSpan(), 960);
@@ -469,8 +469,8 @@ namespace Discord.Networking
 
         private void OnMicData(object sender, WaveInEventArgs e)
         {
-            if (_secretKey == null || _secretKey.Length == 0) return;
-            if (_daveSession == null) return;
+            if (_secretKey is null || _secretKey.Length == 0) return;
+            if (_daveSession is null) return;
             // To prevent artifacting in calls, it mostly works, but there's more to the issue
             // However, the artifacting could also be because of my DroidCam setup, need to investigate
             // UPDATE: It is not just my DroidCam setup, tested with a friend and it's still choppy / artifacting.
@@ -484,10 +484,10 @@ namespace Discord.Networking
             Buffer.BlockCopy(_opusBuf, 0, opusFrame, 0, opusLen);
 
             byte[] daveFrame = _daveSession.EncryptAudioFrame((uint)_ssrc, opusFrame);
-            if (daveFrame == null) return;
+            if (daveFrame is null) return;
 
             byte[] packet = BuildAndEncryptRtp(daveFrame);
-            if (packet == null) return;
+            if (packet is null) return;
 
             _sendQueue.Writer.TryWrite(packet);
         }

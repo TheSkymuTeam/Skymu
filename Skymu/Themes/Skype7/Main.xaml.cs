@@ -83,7 +83,7 @@ namespace Skymu.Skype7
                     );
                 else
                     UserPicture.Source = Universal.AnonymousAvatar;
-                if (Settings.AutoSpeedTest)
+                if (Settings.CheckSpeedOnStartup)
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {

@@ -24,80 +24,38 @@ namespace Skymu.Preferences
 {
     public static class Settings
     {
-        private const int ConfigRevision = 2;
+        private const int ConfigRevision = 3;
+
+        #region UI/Devices
+
+        public static string InputName
+        {
+            get => SELECT("InputName", string.Empty, "UI/Devices");
+            set => WRITE("InputName", value, nameof(InputName), "UI/Devices");
+        }
+
+        public static string OutputName
+        {
+            get => SELECT("OutputName", string.Empty, "UI/Devices");
+            set => WRITE("OutputName", value, nameof(OutputName), "UI/Devices");
+        }
+
+        public static string RingingName
+        {
+            get => SELECT("RingingName", string.Empty, "UI/Devices");
+            set => WRITE("RingingName", value, nameof(RingingName), "UI/Devices");
+        }
+
+        #endregion
 
         #region UI/General
 
-        public static bool StartMinimized
+        public static bool CheckUpdates
         {
-            get => SELECT("StartMinimized", false, "UI/General");
-            set => WRITE("StartMinimized", value, nameof(StartMinimized), "UI/General");
+            get => SELECT("CheckUpdates", true, "UI/General");
+            set => WRITE("CheckUpdates", value, nameof(CheckUpdates), "UI/General");
         }
 
-        public static bool DoNotWarnOnInlineWebLink
-        {
-            get => SELECT("DoNotWarnOnInlineWebLink", false, "UI/General");
-            set => WRITE("DoNotWarnOnInlineWebLink", value, nameof(DoNotWarnOnInlineWebLink), "UI/General");
-        }
-
-        public static bool AllowMultipleInstances
-        {
-            get => SELECT("AllowMultipleInstances", true, "UI/General");
-            set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances), "UI/General");
-        }
-
-        public static WindowFrame WindowFrame
-        {
-            get => SELECT("WindowFrame", WindowFrame.SkypeAero, "UI/General");
-            set => WRITE("WindowFrame", value, nameof(WindowFrame), "UI/General");
-        }
-        public static int EmojiFps
-        {
-            get => SELECT("EmojiFps", 50, "UI/General");
-            set => WRITE("EmojiFps", value, nameof(EmojiFps), "UI/General");
-        }
-        public static int MsgLoadCount
-        {
-            get => SELECT("MsgLoadCount", 30, "UI/General");
-            set => WRITE("MsgLoadCount", value, nameof(MsgLoadCount), "UI/General");
-        }
-        public static int CredsSubCount
-        {
-            get => SELECT("CredsSubCount", 0, "UI/General");
-            set => WRITE("CredsSubCount", value, nameof(CredsSubCount), "UI/General");
-        }
-
-        public static string BrandingName
-        {
-            get => SELECT("BrandingName", "Skype", "UI/General");
-            set => WRITE("BrandingName", value, nameof(BrandingName), "UI/General");
-        }
-
-        public static string Colorway
-        {
-            get => SELECT("Colorway", "Default", "UI/General");
-            set => WRITE("Colorway", value, nameof(Colorway), "UI/General");
-        }
-        public static string CredsText
-        {
-            get => SELECT("CredsText", "$ 0.00", "UI/General");
-            set => WRITE("CredsText", value, nameof(CredsText), "UI/General");
-        }
-
-        public static string PresentationFramework
-        {
-            get => SELECT("PresentationFramework", "Aero.NormalColor", "UI/General");
-            set 
-            {
-                string framework = value;
-                if (value == "Fluent.Dynamic")
-                {
-                    if (Universal.IsDarkTheme) framework = "Fluent.Dark";
-                    else framework = "Fluent.Light";
-                }
-                WRITE("PresentationFramework", framework, nameof(PresentationFramework), "UI/General");
-            }
-        }
         public static string Language
         {
             get => SELECT("Language", "English", "UI/General");
@@ -108,43 +66,8 @@ namespace Skymu.Preferences
             get => SELECT("UseSystemCulture", true, "UI/General");
             set => WRITE("UseSystemCulture", value, nameof(UseSystemCulture), "UI/General");
         }
-        public static string Theme
-        {
-            get => SELECT("Theme", "Skype5", "UI/General");
-            set => WRITE("Theme", value, nameof(Theme), "UI/General");
-        }
-        public static bool RoomCallUI
-        {
-            get => SELECT("RoomCallUI", false, "UI/General");
-            set => WRITE("RoomCallUI", value, nameof(RoomCallUI), "UI/General");
-        }
-        public static bool CallOutToReconnectSound
-        {
-            get => SELECT("CallOutToReconnectSound", false, "UI/General");
-            set => WRITE("CallOutToReconnectSound", value, nameof(CallOutToReconnectSound), "UI/General");
-        }
-        public static string SkippedVersion
-        {
-            get => SELECT("SkippedVersion", string.Empty, "UI/General");
-            set => WRITE("SkippedVersion", value, nameof(SkippedVersion), "UI/General");
-        }
-        public static Soundpack SoundPack
-        {
-            get => SELECT("SoundPack", Soundpack.Enhanced, "UI/General");
-            set => WRITE("SoundPack", value, nameof(SoundPack), "UI/General");
-        }
 
-        public static bool AutoSpeedTest
-        {
-            get => SELECT("AutoSpeedTest", false, "UI/General");
-            set => WRITE("AutoSpeedTest", value, nameof(AutoSpeedTest), "UI/General");
-        }
 
-        public static bool SeparateCredentialsForDebug
-        {
-            get => SELECT("SeparateCredentialsForDebug", false, "UI/General");
-            set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug), "UI/General");
-        }
         public static bool EnableNotifications
         {
             get => SELECT("EnableNotifications", true, "UI/General");
@@ -163,45 +86,7 @@ namespace Skymu.Preferences
             get => SELECT("AllowImplicitMentions", true, "UI/General");
             set => WRITE("AllowImplicitMentions", value, nameof(NotificationTrigger), "UI/General");
         }
-        public static bool UseClearType
-        {
-            get => SELECT("UseClearType", true, "UI/General");
-            set => WRITE("UseClearType", value, nameof(UseClearType), "UI/General");
-        }
-        public static bool DynamicSidebarTabs
-        {
-            get => SELECT("DynamicSidebarTabs", true, "UI/General");
-            set => WRITE("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs), "UI/General");
-        }
-        public static bool BlueNotifications
-        {
-            get => SELECT("BlueNotifications", false, "UI/General");
-            set => WRITE("BlueNotifications", value, nameof(BlueNotifications), "UI/General");
-        }
-        /// <summary>
-        /// If FALSE dynamic window colors will be used, i.e. inactive window = gray gradient, active window = blue gradient.
-        /// If TRUE a single solid window color will be maintained whether the window is active or inactive.
-        /// </summary>
-        public static bool FallbackFillColors
-        {
-            get => SELECT("FallbackFillColors", false, "UI/General");
-            set => WRITE("FallbackFillColors", value, nameof(FallbackFillColors), "UI/General");
-        }
-        /// <summary>
-        /// If FALSE original versions of edited and deleted messages will not be stored.
-        /// If TRUE original versions of edited and deleted messages will be stored. Not recommended for message streaming plugins.
-        /// </summary>
-        public static bool StoreMessageHistory
-        {
-            get => SELECT("StoreMessageHistory", false, "UI/General");
-            set => WRITE("StoreMessageHistory", value, nameof(StoreMessageHistory), "UI/General");
-        }
-        public static bool NikoIcons
-        {
-            get => SELECT("NikoIcons", false, "UI/General");
-            set => WRITE("NikoIcons", value, nameof(NikoIcons), "UI/General");
-        }
-        // TODO: Rename to QuitWithoutAsking with migration
+
         public static bool QuitWithoutAsking
         {
             get => SELECT("QuitWithoutAsking", false, "UI/General");
@@ -224,6 +109,16 @@ namespace Skymu.Preferences
         {
             get => SELECT("HideLeftHandSide", false, "UI/General");
             set => WRITE("HideLeftHandSide", value, nameof(HideLeftHandSide), "UI/General");
+        }
+
+        #endregion
+
+        #region UI/Live
+
+        public static bool Watermark
+        {
+            get => SELECT("Watermark", true, "UI/Live");
+            set => WRITE("Watermark", value, nameof(Watermark), "UI/Live");
         }
 
         #endregion
@@ -294,6 +189,151 @@ namespace Skymu.Preferences
 
         #endregion
 
+        #region Skymu/Appearance
+
+        public static WindowFrame WindowFrame
+        {
+            get => SELECT("WindowFrame", WindowFrame.SkypeAero, "Skymu/Appearance"); 
+            set 
+            {
+                // I tried
+                if (value == WindowFrame.Native) WRITE("ChromeEnabled", false, "UI");
+                else WRITE("ChromeEnabled", true, "UI");
+                // Normal code path
+                WRITE("WindowFrame", value, nameof(WindowFrame), "Skymu/Appearance");
+            }
+        } 
+
+        public static bool RoomCallUI
+        {
+            get => SELECT("RoomCallUI", false, "UI/General");
+            set => WRITE("RoomCallUI", value, nameof(RoomCallUI), "UI/General");
+        }
+
+        public static int EmojiFps
+        {
+            get => SELECT("EmojiFps", 50, "Skymu/Appearance");
+            set => WRITE("EmojiFps", value, nameof(EmojiFps), "Skymu/Appearance");
+        }
+
+        public static string Colorway
+        {
+            get => SELECT("Colorway", "Default", "Skymu/Appearance");
+            set => WRITE("Colorway", value, nameof(Colorway), "Skymu/Appearance");
+        }
+
+        public static string PresentationFramework
+        {
+            get => SELECT("PresentationFramework", "Aero.NormalColor", "Skymu/Appearance");
+            set
+            {
+                string framework = value;
+                if (value == "Fluent.Dynamic")
+                {
+                    if (Universal.IsDarkTheme) framework = "Fluent.Dark";
+                    else framework = "Fluent.Light";
+                }
+                WRITE("PresentationFramework", framework, nameof(PresentationFramework), "Skymu/Appearance");
+            }
+        }
+
+        public static string Theme
+        {
+            get => SELECT("Theme", "Skype5", "Skymu/Appearance");
+            set => WRITE("Theme", value, nameof(Theme), "Skymu/Appearance");
+        }
+
+        public static bool UseClearType
+        {
+            get => SELECT("UseClearType", true, "Skymu/Appearance");
+            set => WRITE("UseClearType", value, nameof(UseClearType), "Skymu/Appearance");
+        }
+        public static bool DynamicSidebarTabs
+        {
+            get => SELECT("DynamicSidebarTabs", true, "Skymu/Appearance");
+            set => WRITE("DynamicSidebarTabs", value, nameof(DynamicSidebarTabs), "Skymu/Appearance");
+        }
+        public static bool BlueNotifications
+        {
+            get => SELECT("BlueNotifications", false, "Skymu/Appearance");
+            set => WRITE("BlueNotifications", value, nameof(BlueNotifications), "Skymu/Appearance");
+        }
+        /// <summary>
+        /// If FALSE dynamic window colors will be used, i.e. inactive window = gray gradient, active window = blue gradient.
+        /// If TRUE a single solid window color will be maintained whether the window is active or inactive.
+        /// </summary>
+        public static bool FallbackFillColors
+        {
+            get => SELECT("FallbackFillColors", false, "Skymu/Appearance");
+            set => WRITE("FallbackFillColors", value, nameof(FallbackFillColors), "Skymu/Appearance");
+        }
+
+        public static bool NikoIcons
+        {
+            get => SELECT("NikoIcons", false, "Skymu/Appearance");
+            set => WRITE("NikoIcons", value, nameof(NikoIcons), "Skymu/Appearance");
+        }
+
+        #endregion
+
+        #region Skymu/Debug
+
+        public static bool SeparateCredentialsForDebug
+        {
+            get => SELECT("SeparateCredentialsForDebug", false, "Skymu/Debug");
+            set => WRITE("SeparateCredentialsForDebug", value, nameof(SeparateCredentialsForDebug), "Skymu/Debug");
+        }
+
+        #endregion
+
+        #region Skymu/Larp
+
+        public static int CredsSubCount
+        {
+            get => SELECT("CredsSubCount", 0, "Skymu/Larp");
+            set => WRITE("CredsSubCount", value, nameof(CredsSubCount), "Skymu/Larp");
+        }
+
+        public static string BrandingName
+        {
+            get => SELECT("BrandingName", "Skype", "Skymu/Larp");
+            set => WRITE("BrandingName", value, nameof(BrandingName), "Skymu/Larp");
+        }
+
+        public static string CredsText
+        {
+            get => SELECT("CredsText", "$ 0.00", "Skymu/Larp");
+            set => WRITE("CredsText", value, nameof(CredsText), "Skymu/Larp");
+        }
+
+        #endregion
+
+        #region Skymu/Messaging
+
+        public static bool ShowInlineLinkWarning
+        {
+            get => SELECT("ShowInlineLinkWarning", true, "Skymu/Messaging");
+            set => WRITE("ShowInlineLinkWarning", value, nameof(ShowInlineLinkWarning), "Skymu/Messaging");
+        }
+
+        public static int MessagesToFetch
+        {
+            get => SELECT("MessagesToFetch", 30, "Skymu/Messaging");
+            set => WRITE("MessagesToFetch", value, nameof(MessagesToFetch), "Skymu/Messaging");
+        }
+
+        /// <summary>
+        /// If FALSE original versions of edited and deleted messages will not be stored.
+        /// If TRUE original versions of edited and deleted messages will be stored. Not recommended for message streaming plugins.
+        /// </summary>
+        public static bool MessageLogger
+        {
+            get => SELECT("MessageLogger", false, "Skymu/Messaging");
+            set => WRITE("MessageLogger", value, nameof(MessageLogger), "Skymu/Messaging");
+        }
+
+        #endregion
+
         #region Skymu/Plugins
 
         public static string CustomPluginPath
@@ -305,6 +345,14 @@ namespace Skymu.Preferences
         #endregion
 
         #region Skymu/Updater
+
+        // Enabling or disabling the updater is in UI/General as it's a Skype setting.
+
+        public static string SkippedVersion
+        {
+            get => SELECT("SkippedVersion", string.Empty, "Skymu/Updater");
+            set => WRITE("SkippedVersion", value, nameof(SkippedVersion), "Skymu/Updater");
+        }
 
         public static bool AllowBetaBuildUpdates
         {
@@ -357,6 +405,21 @@ namespace Skymu.Preferences
 
         #endregion
 
+        #region Skymu/Sounds
+
+        public static bool CallOutToReconnectSound
+        {
+            get => SELECT("CallOutToReconnectSound", false, "Skymu/Sounds");
+            set => WRITE("CallOutToReconnectSound", value, nameof(CallOutToReconnectSound), "Skymu/Sounds");
+        }
+        public static Soundpack SoundPack
+        {
+            get => SELECT("SoundPack", Soundpack.Enhanced, "Skymu/Sounds");
+            set => WRITE("SoundPack", value, nameof(SoundPack), "Skymu/Sounds");
+        }
+
+        #endregion
+
         #region Skymu/System
 
         /// <summary>
@@ -376,6 +439,28 @@ namespace Skymu.Preferences
         {
             get => SELECT("ShowOldDotNetWarnings", false, "Skymu/System");
             set => WRITE("ShowOldDotNetWarnings", value, nameof(ShowOldDotNetWarnings), "Skymu/System");
+        }
+
+        #endregion
+
+        #region Skymu/Startup
+
+        public static bool CheckSpeedOnStartup
+        {
+            get => SELECT("CheckSpeedOnStartup", false, "Skymu/Startup");
+            set => WRITE("CheckSpeedOnStartup", value, nameof(CheckSpeedOnStartup), "Skymu/Startup");
+        }
+
+        public static bool AllowMultipleInstances
+        {
+            get => SELECT("AllowMultipleInstances", true, "Skymu/Startup");
+            set => WRITE("AllowMultipleInstances", value, nameof(AllowMultipleInstances), "Skymu/Startup");
+        }
+
+        public static bool StartMinimized
+        {
+            get => SELECT("StartMinimized", false, "Skymu/Startup");
+            set => WRITE("StartMinimized", value, nameof(StartMinimized), "Skymu/Startup");
         }
 
         #endregion
@@ -567,6 +652,12 @@ namespace Skymu.Preferences
             string serialized = value is bool b ? (b ? "1" : "0") : value.ToString();
             Set(key, serialized, path_xml);
             Default.Notify(propName);
+        }
+
+        private static void WRITE<T>(string key, T value, string path_xml)
+        {
+            string serialized = value is bool b ? (b ? "1" : "0") : value.ToString();
+            Set(key, serialized, path_xml);
         }
 
         private static readonly string Y_FilePath = Path.Combine(

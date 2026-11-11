@@ -41,7 +41,7 @@ namespace Discord.Users
         private static void ApplyPresence(JsonNode presence)
         {
             string userId = presence["user"]?["id"]?.GetValue<string>();
-            if (userId == null) return;
+            if (userId is null) return;
 
             string status = presence["status"]?.GetValue<string>() ?? "offline";
             string customStatus = string.Empty;

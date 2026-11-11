@@ -544,10 +544,10 @@ namespace Discord
                     if (type == DM_CHANNEL_TYPE)
                     {
                         var recipients = channel["recipients"] as JsonArray;
-                        if (recipients == null || recipients.Count == 0) continue;
+                        if (recipients is null || recipients.Count == 0) continue;
 
                         var recipient = recipients[0] as JsonObject;
-                        if (recipient == null) continue;
+                        if (recipient is null) continue;
 
                         string userId = recipient["id"]?.GetValue<string>();
                         string channelId = channel["id"]?.GetValue<string>();
@@ -715,7 +715,7 @@ namespace Discord
 
         public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
-            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment == null))
+            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment is null))
                 return false;
 
             if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))

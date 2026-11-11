@@ -1090,7 +1090,7 @@ namespace Skymu.Skype6
                 }
                 WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
                 this.Title = WindowTitle;
-                if (Settings.AutoSpeedTest)
+                if (Settings.CheckSpeedOnStartup)
                     vmodel.RunSpeedTestCommand.Execute(null);
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {

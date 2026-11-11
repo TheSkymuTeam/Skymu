@@ -50,10 +50,11 @@ namespace Skymu.Forms.Pages
 
         public async void UpdateHandler(bool manual, WindowBase exwin = null)
         {
+            if (!Settings.CheckUpdates) return;
+
             update_info = await GetUpdateInfo();
 
-            if (update_info != null && (manual || // not up to date, must show window
-                (IsNullOrEmpty(Settings.SkippedVersion) && update_info?.info.GetVersionString() != Settings.SkippedVersion)))
+            if (update_info != null && (manual || (IsNullOrEmpty(Settings.SkippedVersion) && update_info?.info.GetVersionString() != Settings.SkippedVersion)))
             {
                 if (exwin != null)
                     window = exwin;
@@ -102,7 +103,7 @@ namespace Skymu.Forms.Pages
                 }
 
                 window.ShowDialog(); // show window as dialog
-            }
+            } // not up to date, must show window
             else // up to date, show dialog
             {
                 if (manual)

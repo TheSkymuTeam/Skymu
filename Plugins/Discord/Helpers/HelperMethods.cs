@@ -84,13 +84,13 @@ namespace Discord.Helpers
 
         public static string ReplaceIDWithName(JsonArray idArray, string content)
         {
-            if (idArray == null || string.IsNullOrEmpty(content))
+            if (idArray is null || string.IsNullOrEmpty(content))
                 return content;
 
             foreach (var array in idArray)
             {
                 string id = array["id"]?.GetValue<string>();
-                if (id == null) continue;
+                if (id is null) continue;
 
                 string displayName = array["member"]?["nick"]?.GetValue<string>()
                                      ?? array["global_name"]?.GetValue<string>()

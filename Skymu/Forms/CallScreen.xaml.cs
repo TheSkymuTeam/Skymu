@@ -99,6 +99,8 @@ namespace Skymu.Forms
             else
                 PartnerAvatar.Source = Universal.AnonymousAvatar;
 
+            if (!Settings.Watermark) Logo.Visibility = Visibility.Hidden;
+
             _is_answer = is_answering_call;
             if (_is_answer)
                 CallStatus.Text = Universal.Lang["sF_OPTIONS_SOUNDS_CONNECTING"];

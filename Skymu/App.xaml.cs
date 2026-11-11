@@ -682,7 +682,7 @@ namespace Skymu
             {
                 bool notWebpage = false;
                 if (!url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://") && !url.StartsWith("sftp://") && !url.StartsWith("gopher://")) notWebpage = true;
-                if (!notWebpage && Settings.DoNotWarnOnInlineWebLink)
+                if (!notWebpage && !Settings.ShowInlineLinkWarning)
                 {
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                     return;
@@ -706,11 +706,11 @@ namespace Skymu
                             {
                                 if (((Dialog)s).CheckBox.IsChecked == true)
                                 {
-                                    Settings.DoNotWarnOnInlineWebLink = true;
+                                    Settings.ShowInlineLinkWarning = false;
                                 }
                                 else
                                 {
-                                    Settings.DoNotWarnOnInlineWebLink = false;
+                                    Settings.ShowInlineLinkWarning = true;
                                 }
                             }
 

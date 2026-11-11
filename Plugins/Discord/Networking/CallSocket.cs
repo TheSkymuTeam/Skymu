@@ -164,7 +164,7 @@ namespace Discord.Networking
         {
             if (WSClient?.State != WebSocketState.Open) return;
 
-            if (payload == null)
+            if (payload is null)
             {
                 await WSClient.SendAsync(_identifyBuffer, WebSocketMessageType.Text, true, CancellationToken.None);
                 return;
@@ -305,7 +305,7 @@ namespace Discord.Networking
                 // Payload begins after the 2-byte sequence number and 1-byte opcode
                 byte[] payload = data.Length > 3 ? Slice(data, 3) : Array.Empty<byte>();
 
-                if (_daveSession == null)
+                if (_daveSession is null)
                 {
                     if (opcode == 25) { _pendingExternalSender = payload; }
                     else { Debug.WriteLine($"[DAVE] Binary op {opcode} received before session was created, ignoring."); }
@@ -326,9 +326,9 @@ namespace Discord.Networking
                     case 27:
                         // Add/remove proposals from the voice gateway external sender
                         // We commit them and send back the commit (+ welcome if adding members)
-                        Debug.WriteLine($"[DAVE] MLS proposals, daveSession null={_daveSession == null}, externalSenderSet={_pendingExternalSender == null}");
+                        Debug.WriteLine($"[DAVE] MLS proposals, daveSession null={_daveSession is null}, externalSenderSet={_pendingExternalSender is null}");
                         byte[] commitWelcome = _daveSession.ProcessProposals(payload);
-                        Debug.WriteLine($"[DAVE] ProcessProposals result: commitWelcome null={commitWelcome == null}");
+                        Debug.WriteLine($"[DAVE] ProcessProposals result: commitWelcome null={commitWelcome is null}");
                         if (commitWelcome != null) { await SendBinaryOpcode(28, commitWelcome); }
                         break;
                     case 29:
@@ -386,7 +386,7 @@ namespace Discord.Networking
                         _ssrc = (int)readyData["ssrc"];
 
                         _discovery = await PerformIpDiscovery(voiceIp, voicePort, _ssrc);
-                        if (_discovery == null)
+                        if (_discovery is null)
                         {
                             Debug.WriteLine("IP discovery failed, you might want to check that out!");
                             return;
@@ -556,7 +556,7 @@ namespace Discord.Networking
 
                         int epoch = json["d"]?["epoch"]?.GetValue<int>() ?? 0;
                         int epochProtoVersion = json["d"]?["protocol_version"]?.GetValue<int>() ?? 1;
-                        Debug.WriteLine($"[DAVE] Op 24 received, epoch={epoch}, daveSession null={_daveSession == null}");
+                        Debug.WriteLine($"[DAVE] Op 24 received, epoch={epoch}, daveSession null={_daveSession is null}");
                         _pendingEpoch = epoch;
                         _pendingEpochProtoVersion = epochProtoVersion;
 

@@ -1476,155 +1476,155 @@ namespace DiscordProtos.DiscordUsers.V1 {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void MergeFrom(PreloadedUserSettings other) {
-      if (other == null) {
+      if (other is null) {
         return;
       }
       if (other.versions_ != null) {
-        if (versions_ == null) {
+        if (versions_ is null) {
           Versions = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Versions();
         }
         Versions.MergeFrom(other.Versions);
       }
       if (other.inbox_ != null) {
-        if (inbox_ == null) {
+        if (inbox_ is null) {
           Inbox = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InboxSettings();
         }
         Inbox.MergeFrom(other.Inbox);
       }
       if (other.guilds_ != null) {
-        if (guilds_ == null) {
+        if (guilds_ is null) {
           Guilds = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllGuildSettings();
         }
         Guilds.MergeFrom(other.Guilds);
       }
       if (other.userContent_ != null) {
-        if (userContent_ == null) {
+        if (userContent_ is null) {
           UserContent = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.UserContentSettings();
         }
         UserContent.MergeFrom(other.UserContent);
       }
       if (other.voiceAndVideo_ != null) {
-        if (voiceAndVideo_ == null) {
+        if (voiceAndVideo_ is null) {
           VoiceAndVideo = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VoiceAndVideoSettings();
         }
         VoiceAndVideo.MergeFrom(other.VoiceAndVideo);
       }
       if (other.textAndImages_ != null) {
-        if (textAndImages_ == null) {
+        if (textAndImages_ is null) {
           TextAndImages = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.TextAndImagesSettings();
         }
         TextAndImages.MergeFrom(other.TextAndImages);
       }
       if (other.notifications_ != null) {
-        if (notifications_ == null) {
+        if (notifications_ is null) {
           Notifications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.NotificationSettings();
         }
         Notifications.MergeFrom(other.Notifications);
       }
       if (other.privacy_ != null) {
-        if (privacy_ == null) {
+        if (privacy_ is null) {
           Privacy = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.PrivacySettings();
         }
         Privacy.MergeFrom(other.Privacy);
       }
       if (other.debug_ != null) {
-        if (debug_ == null) {
+        if (debug_ is null) {
           Debug = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DebugSettings();
         }
         Debug.MergeFrom(other.Debug);
       }
       if (other.gameLibrary_ != null) {
-        if (gameLibrary_ == null) {
+        if (gameLibrary_ is null) {
           GameLibrary = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GameLibrarySettings();
         }
         GameLibrary.MergeFrom(other.GameLibrary);
       }
       if (other.status_ != null) {
-        if (status_ == null) {
+        if (status_ is null) {
           Status = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.StatusSettings();
         }
         Status.MergeFrom(other.Status);
       }
       if (other.localization_ != null) {
-        if (localization_ == null) {
+        if (localization_ is null) {
           Localization = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.LocalizationSettings();
         }
         Localization.MergeFrom(other.Localization);
       }
       if (other.appearance_ != null) {
-        if (appearance_ == null) {
+        if (appearance_ is null) {
           Appearance = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AppearanceSettings();
         }
         Appearance.MergeFrom(other.Appearance);
       }
       if (other.guildFolders_ != null) {
-        if (guildFolders_ == null) {
+        if (guildFolders_ is null) {
           GuildFolders = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GuildFolders();
         }
         GuildFolders.MergeFrom(other.GuildFolders);
       }
       if (other.favorites_ != null) {
-        if (favorites_ == null) {
+        if (favorites_ is null) {
           Favorites = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Favorites();
         }
         Favorites.MergeFrom(other.Favorites);
       }
       if (other.audioContextSettings_ != null) {
-        if (audioContextSettings_ == null) {
+        if (audioContextSettings_ is null) {
           AudioContextSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AudioSettings();
         }
         AudioContextSettings.MergeFrom(other.AudioContextSettings);
       }
       if (other.communities_ != null) {
-        if (communities_ == null) {
+        if (communities_ is null) {
           Communities = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CommunitiesSettings();
         }
         Communities.MergeFrom(other.Communities);
       }
       if (other.broadcast_ != null) {
-        if (broadcast_ == null) {
+        if (broadcast_ is null) {
           Broadcast = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.BroadcastSettings();
         }
         Broadcast.MergeFrom(other.Broadcast);
       }
       if (other.clips_ != null) {
-        if (clips_ == null) {
+        if (clips_ is null) {
           Clips = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClipsSettings();
         }
         Clips.MergeFrom(other.Clips);
       }
       if (other.forLater_ != null) {
-        if (forLater_ == null) {
+        if (forLater_ is null) {
           ForLater = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ForLaterSettings();
         }
         ForLater.MergeFrom(other.ForLater);
       }
       if (other.safetySettings_ != null) {
-        if (safetySettings_ == null) {
+        if (safetySettings_ is null) {
           SafetySettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SafetySettings();
         }
         SafetySettings.MergeFrom(other.SafetySettings);
       }
       if (other.icymiSettings_ != null) {
-        if (icymiSettings_ == null) {
+        if (icymiSettings_ is null) {
           IcymiSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ICYMISettings();
         }
         IcymiSettings.MergeFrom(other.IcymiSettings);
       }
       if (other.applications_ != null) {
-        if (applications_ == null) {
+        if (applications_ is null) {
           Applications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllApplicationSettings();
         }
         Applications.MergeFrom(other.Applications);
       }
       if (other.ads_ != null) {
-        if (ads_ == null) {
+        if (ads_ is null) {
           Ads = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AdsSettings();
         }
         Ads.MergeFrom(other.Ads);
       }
       if (other.inAppFeedbackSettings_ != null) {
-        if (inAppFeedbackSettings_ == null) {
+        if (inAppFeedbackSettings_ is null) {
           InAppFeedbackSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InAppFeedbackSettings();
         }
         InAppFeedbackSettings.MergeFrom(other.InAppFeedbackSettings);
@@ -1645,175 +1645,175 @@ namespace DiscordProtos.DiscordUsers.V1 {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            if (versions_ == null) {
+            if (versions_ is null) {
               Versions = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Versions();
             }
             input.ReadMessage(Versions);
             break;
           }
           case 18: {
-            if (inbox_ == null) {
+            if (inbox_ is null) {
               Inbox = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InboxSettings();
             }
             input.ReadMessage(Inbox);
             break;
           }
           case 26: {
-            if (guilds_ == null) {
+            if (guilds_ is null) {
               Guilds = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllGuildSettings();
             }
             input.ReadMessage(Guilds);
             break;
           }
           case 34: {
-            if (userContent_ == null) {
+            if (userContent_ is null) {
               UserContent = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.UserContentSettings();
             }
             input.ReadMessage(UserContent);
             break;
           }
           case 42: {
-            if (voiceAndVideo_ == null) {
+            if (voiceAndVideo_ is null) {
               VoiceAndVideo = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VoiceAndVideoSettings();
             }
             input.ReadMessage(VoiceAndVideo);
             break;
           }
           case 50: {
-            if (textAndImages_ == null) {
+            if (textAndImages_ is null) {
               TextAndImages = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.TextAndImagesSettings();
             }
             input.ReadMessage(TextAndImages);
             break;
           }
           case 58: {
-            if (notifications_ == null) {
+            if (notifications_ is null) {
               Notifications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.NotificationSettings();
             }
             input.ReadMessage(Notifications);
             break;
           }
           case 66: {
-            if (privacy_ == null) {
+            if (privacy_ is null) {
               Privacy = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.PrivacySettings();
             }
             input.ReadMessage(Privacy);
             break;
           }
           case 74: {
-            if (debug_ == null) {
+            if (debug_ is null) {
               Debug = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DebugSettings();
             }
             input.ReadMessage(Debug);
             break;
           }
           case 82: {
-            if (gameLibrary_ == null) {
+            if (gameLibrary_ is null) {
               GameLibrary = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GameLibrarySettings();
             }
             input.ReadMessage(GameLibrary);
             break;
           }
           case 90: {
-            if (status_ == null) {
+            if (status_ is null) {
               Status = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.StatusSettings();
             }
             input.ReadMessage(Status);
             break;
           }
           case 98: {
-            if (localization_ == null) {
+            if (localization_ is null) {
               Localization = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.LocalizationSettings();
             }
             input.ReadMessage(Localization);
             break;
           }
           case 106: {
-            if (appearance_ == null) {
+            if (appearance_ is null) {
               Appearance = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AppearanceSettings();
             }
             input.ReadMessage(Appearance);
             break;
           }
           case 114: {
-            if (guildFolders_ == null) {
+            if (guildFolders_ is null) {
               GuildFolders = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GuildFolders();
             }
             input.ReadMessage(GuildFolders);
             break;
           }
           case 122: {
-            if (favorites_ == null) {
+            if (favorites_ is null) {
               Favorites = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Favorites();
             }
             input.ReadMessage(Favorites);
             break;
           }
           case 130: {
-            if (audioContextSettings_ == null) {
+            if (audioContextSettings_ is null) {
               AudioContextSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AudioSettings();
             }
             input.ReadMessage(AudioContextSettings);
             break;
           }
           case 138: {
-            if (communities_ == null) {
+            if (communities_ is null) {
               Communities = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CommunitiesSettings();
             }
             input.ReadMessage(Communities);
             break;
           }
           case 146: {
-            if (broadcast_ == null) {
+            if (broadcast_ is null) {
               Broadcast = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.BroadcastSettings();
             }
             input.ReadMessage(Broadcast);
             break;
           }
           case 154: {
-            if (clips_ == null) {
+            if (clips_ is null) {
               Clips = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClipsSettings();
             }
             input.ReadMessage(Clips);
             break;
           }
           case 162: {
-            if (forLater_ == null) {
+            if (forLater_ is null) {
               ForLater = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ForLaterSettings();
             }
             input.ReadMessage(ForLater);
             break;
           }
           case 170: {
-            if (safetySettings_ == null) {
+            if (safetySettings_ is null) {
               SafetySettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SafetySettings();
             }
             input.ReadMessage(SafetySettings);
             break;
           }
           case 178: {
-            if (icymiSettings_ == null) {
+            if (icymiSettings_ is null) {
               IcymiSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ICYMISettings();
             }
             input.ReadMessage(IcymiSettings);
             break;
           }
           case 186: {
-            if (applications_ == null) {
+            if (applications_ is null) {
               Applications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllApplicationSettings();
             }
             input.ReadMessage(Applications);
             break;
           }
           case 194: {
-            if (ads_ == null) {
+            if (ads_ is null) {
               Ads = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AdsSettings();
             }
             input.ReadMessage(Ads);
             break;
           }
           case 202: {
-            if (inAppFeedbackSettings_ == null) {
+            if (inAppFeedbackSettings_ is null) {
               InAppFeedbackSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InAppFeedbackSettings();
             }
             input.ReadMessage(InAppFeedbackSettings);
@@ -1835,175 +1835,175 @@ namespace DiscordProtos.DiscordUsers.V1 {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            if (versions_ == null) {
+            if (versions_ is null) {
               Versions = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Versions();
             }
             input.ReadMessage(Versions);
             break;
           }
           case 18: {
-            if (inbox_ == null) {
+            if (inbox_ is null) {
               Inbox = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InboxSettings();
             }
             input.ReadMessage(Inbox);
             break;
           }
           case 26: {
-            if (guilds_ == null) {
+            if (guilds_ is null) {
               Guilds = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllGuildSettings();
             }
             input.ReadMessage(Guilds);
             break;
           }
           case 34: {
-            if (userContent_ == null) {
+            if (userContent_ is null) {
               UserContent = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.UserContentSettings();
             }
             input.ReadMessage(UserContent);
             break;
           }
           case 42: {
-            if (voiceAndVideo_ == null) {
+            if (voiceAndVideo_ is null) {
               VoiceAndVideo = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VoiceAndVideoSettings();
             }
             input.ReadMessage(VoiceAndVideo);
             break;
           }
           case 50: {
-            if (textAndImages_ == null) {
+            if (textAndImages_ is null) {
               TextAndImages = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.TextAndImagesSettings();
             }
             input.ReadMessage(TextAndImages);
             break;
           }
           case 58: {
-            if (notifications_ == null) {
+            if (notifications_ is null) {
               Notifications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.NotificationSettings();
             }
             input.ReadMessage(Notifications);
             break;
           }
           case 66: {
-            if (privacy_ == null) {
+            if (privacy_ is null) {
               Privacy = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.PrivacySettings();
             }
             input.ReadMessage(Privacy);
             break;
           }
           case 74: {
-            if (debug_ == null) {
+            if (debug_ is null) {
               Debug = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DebugSettings();
             }
             input.ReadMessage(Debug);
             break;
           }
           case 82: {
-            if (gameLibrary_ == null) {
+            if (gameLibrary_ is null) {
               GameLibrary = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GameLibrarySettings();
             }
             input.ReadMessage(GameLibrary);
             break;
           }
           case 90: {
-            if (status_ == null) {
+            if (status_ is null) {
               Status = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.StatusSettings();
             }
             input.ReadMessage(Status);
             break;
           }
           case 98: {
-            if (localization_ == null) {
+            if (localization_ is null) {
               Localization = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.LocalizationSettings();
             }
             input.ReadMessage(Localization);
             break;
           }
           case 106: {
-            if (appearance_ == null) {
+            if (appearance_ is null) {
               Appearance = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AppearanceSettings();
             }
             input.ReadMessage(Appearance);
             break;
           }
           case 114: {
-            if (guildFolders_ == null) {
+            if (guildFolders_ is null) {
               GuildFolders = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GuildFolders();
             }
             input.ReadMessage(GuildFolders);
             break;
           }
           case 122: {
-            if (favorites_ == null) {
+            if (favorites_ is null) {
               Favorites = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Favorites();
             }
             input.ReadMessage(Favorites);
             break;
           }
           case 130: {
-            if (audioContextSettings_ == null) {
+            if (audioContextSettings_ is null) {
               AudioContextSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AudioSettings();
             }
             input.ReadMessage(AudioContextSettings);
             break;
           }
           case 138: {
-            if (communities_ == null) {
+            if (communities_ is null) {
               Communities = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CommunitiesSettings();
             }
             input.ReadMessage(Communities);
             break;
           }
           case 146: {
-            if (broadcast_ == null) {
+            if (broadcast_ is null) {
               Broadcast = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.BroadcastSettings();
             }
             input.ReadMessage(Broadcast);
             break;
           }
           case 154: {
-            if (clips_ == null) {
+            if (clips_ is null) {
               Clips = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClipsSettings();
             }
             input.ReadMessage(Clips);
             break;
           }
           case 162: {
-            if (forLater_ == null) {
+            if (forLater_ is null) {
               ForLater = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ForLaterSettings();
             }
             input.ReadMessage(ForLater);
             break;
           }
           case 170: {
-            if (safetySettings_ == null) {
+            if (safetySettings_ is null) {
               SafetySettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SafetySettings();
             }
             input.ReadMessage(SafetySettings);
             break;
           }
           case 178: {
-            if (icymiSettings_ == null) {
+            if (icymiSettings_ is null) {
               IcymiSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ICYMISettings();
             }
             input.ReadMessage(IcymiSettings);
             break;
           }
           case 186: {
-            if (applications_ == null) {
+            if (applications_ is null) {
               Applications = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AllApplicationSettings();
             }
             input.ReadMessage(Applications);
             break;
           }
           case 194: {
-            if (ads_ == null) {
+            if (ads_ is null) {
               Ads = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.AdsSettings();
             }
             input.ReadMessage(Ads);
             break;
           }
           case 202: {
-            if (inAppFeedbackSettings_ == null) {
+            if (inAppFeedbackSettings_ is null) {
               InAppFeedbackSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InAppFeedbackSettings();
             }
             input.ReadMessage(InAppFeedbackSettings);
@@ -2342,7 +2342,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(Versions other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.ClientVersion != 0) {
@@ -2580,7 +2580,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(InboxSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.CurrentTab != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.InboxTab.Unspecified) {
@@ -2833,21 +2833,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ChannelIconEmoji other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.id_ != null) {
-            if (id_ == null || other.Id != 0UL) {
+            if (id_ is null || other.Id != 0UL) {
               Id = other.Id;
             }
           }
           if (other.name_ != null) {
-            if (name_ == null || other.Name != "") {
+            if (name_ is null || other.Name != "") {
               Name = other.Name;
             }
           }
           if (other.color_ != null) {
-            if (color_ == null || other.Color != 0UL) {
+            if (color_ is null || other.Color != 0UL) {
               Color = other.Color;
             }
           }
@@ -2868,21 +2868,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_id_codec.Read(input);
-                if (id_ == null || value != 0UL) {
+                if (id_ is null || value != 0UL) {
                   Id = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_name_codec.Read(input);
-                if (name_ == null || value != "") {
+                if (name_ is null || value != "") {
                   Name = value;
                 }
                 break;
               }
               case 26: {
                 ulong? value = _single_color_codec.Read(input);
-                if (color_ == null || value != 0UL) {
+                if (color_ is null || value != 0UL) {
                   Color = value;
                 }
                 break;
@@ -2904,21 +2904,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_id_codec.Read(ref input);
-                if (id_ == null || value != 0UL) {
+                if (id_ is null || value != 0UL) {
                   Id = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_name_codec.Read(ref input);
-                if (name_ == null || value != "") {
+                if (name_ is null || value != "") {
                   Name = value;
                 }
                 break;
               }
               case 26: {
                 ulong? value = _single_color_codec.Read(ref input);
-                if (color_ == null || value != 0UL) {
+                if (color_ is null || value != 0UL) {
                   Color = value;
                 }
                 break;
@@ -3069,11 +3069,11 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(CustomNotificationSoundConfig other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.notificationSoundPackId_ != null) {
-            if (notificationSoundPackId_ == null || other.NotificationSoundPackId != "") {
+            if (notificationSoundPackId_ is null || other.NotificationSoundPackId != "") {
               NotificationSoundPackId = other.NotificationSoundPackId;
             }
           }
@@ -3094,7 +3094,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_notificationSoundPackId_codec.Read(input);
-                if (notificationSoundPackId_ == null || value != "") {
+                if (notificationSoundPackId_ is null || value != "") {
                   NotificationSoundPackId = value;
                 }
                 break;
@@ -3116,7 +3116,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_notificationSoundPackId_codec.Read(ref input);
-                if (notificationSoundPackId_ == null || value != "") {
+                if (notificationSoundPackId_ is null || value != "") {
                   NotificationSoundPackId = value;
                 }
                 break;
@@ -3319,20 +3319,20 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ChannelSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.CollapsedInInbox != false) {
             CollapsedInInbox = other.CollapsedInInbox;
           }
           if (other.iconEmoji_ != null) {
-            if (iconEmoji_ == null) {
+            if (iconEmoji_ is null) {
               IconEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelIconEmoji();
             }
             IconEmoji.MergeFrom(other.IconEmoji);
           }
           if (other.customNotificationSoundConfig_ != null) {
-            if (customNotificationSoundConfig_ == null) {
+            if (customNotificationSoundConfig_ is null) {
               CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
             }
             CustomNotificationSoundConfig.MergeFrom(other.CustomNotificationSoundConfig);
@@ -3357,14 +3357,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 18: {
-                if (iconEmoji_ == null) {
+                if (iconEmoji_ is null) {
                   IconEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelIconEmoji();
                 }
                 input.ReadMessage(IconEmoji);
                 break;
               }
               case 26: {
-                if (customNotificationSoundConfig_ == null) {
+                if (customNotificationSoundConfig_ is null) {
                   CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
                 }
                 input.ReadMessage(CustomNotificationSoundConfig);
@@ -3390,14 +3390,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 18: {
-                if (iconEmoji_ == null) {
+                if (iconEmoji_ is null) {
                   IconEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelIconEmoji();
                 }
                 input.ReadMessage(IconEmoji);
                 break;
               }
               case 26: {
-                if (customNotificationSoundConfig_ == null) {
+                if (customNotificationSoundConfig_ is null) {
                   CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
                 }
                 input.ReadMessage(CustomNotificationSoundConfig);
@@ -3575,7 +3575,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(CustomCallSound other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.SoundId != 0UL) {
@@ -3802,16 +3802,16 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ChannelListSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.layout_ != null) {
-            if (layout_ == null || other.Layout != "") {
+            if (layout_ is null || other.Layout != "") {
               Layout = other.Layout;
             }
           }
           if (other.messagePreviews_ != null) {
-            if (messagePreviews_ == null || other.MessagePreviews != "") {
+            if (messagePreviews_ is null || other.MessagePreviews != "") {
               MessagePreviews = other.MessagePreviews;
             }
           }
@@ -3832,14 +3832,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_layout_codec.Read(input);
-                if (layout_ == null || value != "") {
+                if (layout_ is null || value != "") {
                   Layout = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_messagePreviews_codec.Read(input);
-                if (messagePreviews_ == null || value != "") {
+                if (messagePreviews_ is null || value != "") {
                   MessagePreviews = value;
                 }
                 break;
@@ -3861,14 +3861,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_layout_codec.Read(ref input);
-                if (layout_ == null || value != "") {
+                if (layout_ is null || value != "") {
                   Layout = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_messagePreviews_codec.Read(ref input);
-                if (messagePreviews_ == null || value != "") {
+                if (messagePreviews_ is null || value != "") {
                   MessagePreviews = value;
                 }
                 break;
@@ -4123,7 +4123,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GuildDismissibleContentState other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Dismissed != false) {
@@ -4625,7 +4625,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GuildSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           channels_.MergeFrom(other.channels_);
@@ -4636,7 +4636,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             GuildOnboardingProgress = other.GuildOnboardingProgress;
           }
           if (other.guildRecentsDismissedAt_ != null) {
-            if (guildRecentsDismissedAt_ == null) {
+            if (guildRecentsDismissedAt_ is null) {
               GuildRecentsDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             GuildRecentsDismissedAt.MergeFrom(other.GuildRecentsDismissedAt);
@@ -4645,13 +4645,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
             DismissedGuildContent = other.DismissedGuildContent;
           }
           if (other.joinSound_ != null) {
-            if (joinSound_ == null) {
+            if (joinSound_ is null) {
               JoinSound = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomCallSound();
             }
             JoinSound.MergeFrom(other.JoinSound);
           }
           if (other.mobileRedesignChannelListSettings_ != null) {
-            if (mobileRedesignChannelListSettings_ == null) {
+            if (mobileRedesignChannelListSettings_ is null) {
               MobileRedesignChannelListSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelListSettings();
             }
             MobileRedesignChannelListSettings.MergeFrom(other.MobileRedesignChannelListSettings);
@@ -4663,7 +4663,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             DisableRaidAlertNag = other.DisableRaidAlertNag;
           }
           if (other.customNotificationSoundConfig_ != null) {
-            if (customNotificationSoundConfig_ == null) {
+            if (customNotificationSoundConfig_ is null) {
               CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
             }
             CustomNotificationSoundConfig.MergeFrom(other.CustomNotificationSoundConfig);
@@ -4700,7 +4700,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 34: {
-                if (guildRecentsDismissedAt_ == null) {
+                if (guildRecentsDismissedAt_ is null) {
                   GuildRecentsDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(GuildRecentsDismissedAt);
@@ -4711,14 +4711,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 50: {
-                if (joinSound_ == null) {
+                if (joinSound_ is null) {
                   JoinSound = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomCallSound();
                 }
                 input.ReadMessage(JoinSound);
                 break;
               }
               case 58: {
-                if (mobileRedesignChannelListSettings_ == null) {
+                if (mobileRedesignChannelListSettings_ is null) {
                   MobileRedesignChannelListSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelListSettings();
                 }
                 input.ReadMessage(MobileRedesignChannelListSettings);
@@ -4733,7 +4733,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 82: {
-                if (customNotificationSoundConfig_ == null) {
+                if (customNotificationSoundConfig_ is null) {
                   CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
                 }
                 input.ReadMessage(CustomNotificationSoundConfig);
@@ -4775,7 +4775,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 34: {
-                if (guildRecentsDismissedAt_ == null) {
+                if (guildRecentsDismissedAt_ is null) {
                   GuildRecentsDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(GuildRecentsDismissedAt);
@@ -4786,14 +4786,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 50: {
-                if (joinSound_ == null) {
+                if (joinSound_ is null) {
                   JoinSound = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomCallSound();
                 }
                 input.ReadMessage(JoinSound);
                 break;
               }
               case 58: {
-                if (mobileRedesignChannelListSettings_ == null) {
+                if (mobileRedesignChannelListSettings_ is null) {
                   MobileRedesignChannelListSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ChannelListSettings();
                 }
                 input.ReadMessage(MobileRedesignChannelListSettings);
@@ -4808,7 +4808,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 82: {
-                if (customNotificationSoundConfig_ == null) {
+                if (customNotificationSoundConfig_ is null) {
                   CustomNotificationSoundConfig = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomNotificationSoundConfig();
                 }
                 input.ReadMessage(CustomNotificationSoundConfig);
@@ -4959,7 +4959,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AllGuildSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           guilds_.MergeFrom(other.guilds_);
@@ -5225,7 +5225,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(RecurringDismissibleContentState other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.LastDismissedVersion != 0) {
@@ -5595,31 +5595,31 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(UserContentSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.DismissedContents.Length != 0) {
             DismissedContents = other.DismissedContents;
           }
           if (other.lastDismissedOutboundPromotionStartDate_ != null) {
-            if (lastDismissedOutboundPromotionStartDate_ == null || other.LastDismissedOutboundPromotionStartDate != "") {
+            if (lastDismissedOutboundPromotionStartDate_ is null || other.LastDismissedOutboundPromotionStartDate != "") {
               LastDismissedOutboundPromotionStartDate = other.LastDismissedOutboundPromotionStartDate;
             }
           }
           if (other.premiumTier0ModalDismissedAt_ != null) {
-            if (premiumTier0ModalDismissedAt_ == null) {
+            if (premiumTier0ModalDismissedAt_ is null) {
               PremiumTier0ModalDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             PremiumTier0ModalDismissedAt.MergeFrom(other.PremiumTier0ModalDismissedAt);
           }
           if (other.guildOnboardingUpsellDismissedAt_ != null) {
-            if (guildOnboardingUpsellDismissedAt_ == null) {
+            if (guildOnboardingUpsellDismissedAt_ is null) {
               GuildOnboardingUpsellDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             GuildOnboardingUpsellDismissedAt.MergeFrom(other.GuildOnboardingUpsellDismissedAt);
           }
           if (other.safetyUserSentimentNoticeDismissedAt_ != null) {
-            if (safetyUserSentimentNoticeDismissedAt_ == null) {
+            if (safetyUserSentimentNoticeDismissedAt_ is null) {
               SafetyUserSentimentNoticeDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
             SafetyUserSentimentNoticeDismissedAt.MergeFrom(other.SafetyUserSentimentNoticeDismissedAt);
@@ -5649,27 +5649,27 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 18: {
                 string value = _single_lastDismissedOutboundPromotionStartDate_codec.Read(input);
-                if (lastDismissedOutboundPromotionStartDate_ == null || value != "") {
+                if (lastDismissedOutboundPromotionStartDate_ is null || value != "") {
                   LastDismissedOutboundPromotionStartDate = value;
                 }
                 break;
               }
               case 26: {
-                if (premiumTier0ModalDismissedAt_ == null) {
+                if (premiumTier0ModalDismissedAt_ is null) {
                   PremiumTier0ModalDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(PremiumTier0ModalDismissedAt);
                 break;
               }
               case 34: {
-                if (guildOnboardingUpsellDismissedAt_ == null) {
+                if (guildOnboardingUpsellDismissedAt_ is null) {
                   GuildOnboardingUpsellDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(GuildOnboardingUpsellDismissedAt);
                 break;
               }
               case 42: {
-                if (safetyUserSentimentNoticeDismissedAt_ == null) {
+                if (safetyUserSentimentNoticeDismissedAt_ is null) {
                   SafetyUserSentimentNoticeDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(SafetyUserSentimentNoticeDismissedAt);
@@ -5704,27 +5704,27 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 18: {
                 string value = _single_lastDismissedOutboundPromotionStartDate_codec.Read(ref input);
-                if (lastDismissedOutboundPromotionStartDate_ == null || value != "") {
+                if (lastDismissedOutboundPromotionStartDate_ is null || value != "") {
                   LastDismissedOutboundPromotionStartDate = value;
                 }
                 break;
               }
               case 26: {
-                if (premiumTier0ModalDismissedAt_ == null) {
+                if (premiumTier0ModalDismissedAt_ is null) {
                   PremiumTier0ModalDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(PremiumTier0ModalDismissedAt);
                 break;
               }
               case 34: {
-                if (guildOnboardingUpsellDismissedAt_ == null) {
+                if (guildOnboardingUpsellDismissedAt_ is null) {
                   GuildOnboardingUpsellDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(GuildOnboardingUpsellDismissedAt);
                 break;
               }
               case 42: {
-                if (safetyUserSentimentNoticeDismissedAt_ == null) {
+                if (safetyUserSentimentNoticeDismissedAt_ is null) {
                   SafetyUserSentimentNoticeDismissedAt = new global::Google.Protobuf.WellKnownTypes.Timestamp();
                 }
                 input.ReadMessage(SafetyUserSentimentNoticeDismissedAt);
@@ -5884,7 +5884,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(VideoFilterBackgroundBlur other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.UseBlur != false) {
@@ -6100,7 +6100,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(VideoFilterAsset other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Id != 0UL) {
@@ -6301,7 +6301,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(SoundboardSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Volume != 0F) {
@@ -6423,7 +6423,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
           get { return videoBackgroundFilterDesktopCase_ == VideoBackgroundFilterDesktopOneofCase.Blur ? (global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VideoFilterBackgroundBlur) videoBackgroundFilterDesktop_ : null; }
           set {
             videoBackgroundFilterDesktop_ = value;
-            videoBackgroundFilterDesktopCase_ = value == null ? VideoBackgroundFilterDesktopOneofCase.None : VideoBackgroundFilterDesktopOneofCase.Blur;
+            videoBackgroundFilterDesktopCase_ = value is null ? VideoBackgroundFilterDesktopOneofCase.None : VideoBackgroundFilterDesktopOneofCase.Blur;
           }
         }
 
@@ -6461,7 +6461,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
           get { return videoBackgroundFilterDesktopCase_ == VideoBackgroundFilterDesktopOneofCase.CustomAsset ? (global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VideoFilterAsset) videoBackgroundFilterDesktop_ : null; }
           set {
             videoBackgroundFilterDesktop_ = value;
-            videoBackgroundFilterDesktopCase_ = value == null ? VideoBackgroundFilterDesktopOneofCase.None : VideoBackgroundFilterDesktopOneofCase.CustomAsset;
+            videoBackgroundFilterDesktopCase_ = value is null ? VideoBackgroundFilterDesktopOneofCase.None : VideoBackgroundFilterDesktopOneofCase.CustomAsset;
           }
         }
 
@@ -6772,48 +6772,48 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(VoiceAndVideoSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.alwaysPreviewVideo_ != null) {
-            if (alwaysPreviewVideo_ == null || other.AlwaysPreviewVideo != false) {
+            if (alwaysPreviewVideo_ is null || other.AlwaysPreviewVideo != false) {
               AlwaysPreviewVideo = other.AlwaysPreviewVideo;
             }
           }
           if (other.afkTimeout_ != null) {
-            if (afkTimeout_ == null || other.AfkTimeout != 0) {
+            if (afkTimeout_ is null || other.AfkTimeout != 0) {
               AfkTimeout = other.AfkTimeout;
             }
           }
           if (other.streamNotificationsEnabled_ != null) {
-            if (streamNotificationsEnabled_ == null || other.StreamNotificationsEnabled != false) {
+            if (streamNotificationsEnabled_ is null || other.StreamNotificationsEnabled != false) {
               StreamNotificationsEnabled = other.StreamNotificationsEnabled;
             }
           }
           if (other.nativePhoneIntegrationEnabled_ != null) {
-            if (nativePhoneIntegrationEnabled_ == null || other.NativePhoneIntegrationEnabled != false) {
+            if (nativePhoneIntegrationEnabled_ is null || other.NativePhoneIntegrationEnabled != false) {
               NativePhoneIntegrationEnabled = other.NativePhoneIntegrationEnabled;
             }
           }
           if (other.soundboardSettings_ != null) {
-            if (soundboardSettings_ == null) {
+            if (soundboardSettings_ is null) {
               SoundboardSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SoundboardSettings();
             }
             SoundboardSettings.MergeFrom(other.SoundboardSettings);
           }
           if (other.disableStreamPreviews_ != null) {
-            if (disableStreamPreviews_ == null || other.DisableStreamPreviews != false) {
+            if (disableStreamPreviews_ is null || other.DisableStreamPreviews != false) {
               DisableStreamPreviews = other.DisableStreamPreviews;
             }
           }
           if (other.soundmojiVolume_ != null) {
-            if (soundmojiVolume_ == null || other.SoundmojiVolume != 0F) {
+            if (soundmojiVolume_ is null || other.SoundmojiVolume != 0F) {
               SoundmojiVolume = other.SoundmojiVolume;
             }
           }
           switch (other.VideoBackgroundFilterDesktopCase) {
             case VideoBackgroundFilterDesktopOneofCase.Blur:
-              if (Blur == null) {
+              if (Blur is null) {
                 Blur = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VideoFilterBackgroundBlur();
               }
               Blur.MergeFrom(other.Blur);
@@ -6822,7 +6822,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               PresetOption = other.PresetOption;
               break;
             case VideoBackgroundFilterDesktopOneofCase.CustomAsset:
-              if (CustomAsset == null) {
+              if (CustomAsset is null) {
                 CustomAsset = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.VideoFilterAsset();
               }
               CustomAsset.MergeFrom(other.CustomAsset);
@@ -6868,34 +6868,34 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 42: {
                 bool? value = _single_alwaysPreviewVideo_codec.Read(input);
-                if (alwaysPreviewVideo_ == null || value != false) {
+                if (alwaysPreviewVideo_ is null || value != false) {
                   AlwaysPreviewVideo = value;
                 }
                 break;
               }
               case 50: {
                 uint? value = _single_afkTimeout_codec.Read(input);
-                if (afkTimeout_ == null || value != 0) {
+                if (afkTimeout_ is null || value != 0) {
                   AfkTimeout = value;
                 }
                 break;
               }
               case 58: {
                 bool? value = _single_streamNotificationsEnabled_codec.Read(input);
-                if (streamNotificationsEnabled_ == null || value != false) {
+                if (streamNotificationsEnabled_ is null || value != false) {
                   StreamNotificationsEnabled = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_nativePhoneIntegrationEnabled_codec.Read(input);
-                if (nativePhoneIntegrationEnabled_ == null || value != false) {
+                if (nativePhoneIntegrationEnabled_ is null || value != false) {
                   NativePhoneIntegrationEnabled = value;
                 }
                 break;
               }
               case 74: {
-                if (soundboardSettings_ == null) {
+                if (soundboardSettings_ is null) {
                   SoundboardSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SoundboardSettings();
                 }
                 input.ReadMessage(SoundboardSettings);
@@ -6903,14 +6903,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_disableStreamPreviews_codec.Read(input);
-                if (disableStreamPreviews_ == null || value != false) {
+                if (disableStreamPreviews_ is null || value != false) {
                   DisableStreamPreviews = value;
                 }
                 break;
               }
               case 90: {
                 float? value = _single_soundmojiVolume_codec.Read(input);
-                if (soundmojiVolume_ == null || value != 0F) {
+                if (soundmojiVolume_ is null || value != 0F) {
                   SoundmojiVolume = value;
                 }
                 break;
@@ -6954,34 +6954,34 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 42: {
                 bool? value = _single_alwaysPreviewVideo_codec.Read(ref input);
-                if (alwaysPreviewVideo_ == null || value != false) {
+                if (alwaysPreviewVideo_ is null || value != false) {
                   AlwaysPreviewVideo = value;
                 }
                 break;
               }
               case 50: {
                 uint? value = _single_afkTimeout_codec.Read(ref input);
-                if (afkTimeout_ == null || value != 0) {
+                if (afkTimeout_ is null || value != 0) {
                   AfkTimeout = value;
                 }
                 break;
               }
               case 58: {
                 bool? value = _single_streamNotificationsEnabled_codec.Read(ref input);
-                if (streamNotificationsEnabled_ == null || value != false) {
+                if (streamNotificationsEnabled_ is null || value != false) {
                   StreamNotificationsEnabled = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_nativePhoneIntegrationEnabled_codec.Read(ref input);
-                if (nativePhoneIntegrationEnabled_ == null || value != false) {
+                if (nativePhoneIntegrationEnabled_ is null || value != false) {
                   NativePhoneIntegrationEnabled = value;
                 }
                 break;
               }
               case 74: {
-                if (soundboardSettings_ == null) {
+                if (soundboardSettings_ is null) {
                   SoundboardSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SoundboardSettings();
                 }
                 input.ReadMessage(SoundboardSettings);
@@ -6989,14 +6989,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_disableStreamPreviews_codec.Read(ref input);
-                if (disableStreamPreviews_ == null || value != false) {
+                if (disableStreamPreviews_ is null || value != false) {
                   DisableStreamPreviews = value;
                 }
                 break;
               }
               case 90: {
                 float? value = _single_soundmojiVolume_codec.Read(ref input);
-                if (soundmojiVolume_ == null || value != 0F) {
+                if (soundmojiVolume_ is null || value != 0F) {
                   SoundmojiVolume = value;
                 }
                 break;
@@ -7199,7 +7199,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ExplicitContentSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.ExplicitContentGuilds != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentRedaction.UnsetExplicitContentRedaction) {
@@ -7463,21 +7463,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(KeywordFilterSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.profanity_ != null) {
-            if (profanity_ == null || other.Profanity != false) {
+            if (profanity_ is null || other.Profanity != false) {
               Profanity = other.Profanity;
             }
           }
           if (other.sexualContent_ != null) {
-            if (sexualContent_ == null || other.SexualContent != false) {
+            if (sexualContent_ is null || other.SexualContent != false) {
               SexualContent = other.SexualContent;
             }
           }
           if (other.slurs_ != null) {
-            if (slurs_ == null || other.Slurs != false) {
+            if (slurs_ is null || other.Slurs != false) {
               Slurs = other.Slurs;
             }
           }
@@ -7498,21 +7498,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_profanity_codec.Read(input);
-                if (profanity_ == null || value != false) {
+                if (profanity_ is null || value != false) {
                   Profanity = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_sexualContent_codec.Read(input);
-                if (sexualContent_ == null || value != false) {
+                if (sexualContent_ is null || value != false) {
                   SexualContent = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_slurs_codec.Read(input);
-                if (slurs_ == null || value != false) {
+                if (slurs_ is null || value != false) {
                   Slurs = value;
                 }
                 break;
@@ -7534,21 +7534,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_profanity_codec.Read(ref input);
-                if (profanity_ == null || value != false) {
+                if (profanity_ is null || value != false) {
                   Profanity = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_sexualContent_codec.Read(ref input);
-                if (sexualContent_ == null || value != false) {
+                if (sexualContent_ is null || value != false) {
                   SexualContent = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_slurs_codec.Read(ref input);
-                if (slurs_ == null || value != false) {
+                if (slurs_ is null || value != false) {
                   Slurs = value;
                 }
                 break;
@@ -7751,7 +7751,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GoreContentSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.GoreContentGuilds != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentRedaction.UnsetExplicitContentRedaction) {
@@ -8041,26 +8041,26 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(DefaultReactionEmoji other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.emojiId_ != null) {
-            if (emojiId_ == null || other.EmojiId != 0UL) {
+            if (emojiId_ is null || other.EmojiId != 0UL) {
               EmojiId = other.EmojiId;
             }
           }
           if (other.emojiName_ != null) {
-            if (emojiName_ == null || other.EmojiName != "") {
+            if (emojiName_ is null || other.EmojiName != "") {
               EmojiName = other.EmojiName;
             }
           }
           if (other.animated_ != null) {
-            if (animated_ == null || other.Animated != false) {
+            if (animated_ is null || other.Animated != false) {
               Animated = other.Animated;
             }
           }
           if (other.disableDoubleTap_ != null) {
-            if (disableDoubleTap_ == null || other.DisableDoubleTap != false) {
+            if (disableDoubleTap_ is null || other.DisableDoubleTap != false) {
               DisableDoubleTap = other.DisableDoubleTap;
             }
           }
@@ -8081,28 +8081,28 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_emojiId_codec.Read(input);
-                if (emojiId_ == null || value != 0UL) {
+                if (emojiId_ is null || value != 0UL) {
                   EmojiId = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_emojiName_codec.Read(input);
-                if (emojiName_ == null || value != "") {
+                if (emojiName_ is null || value != "") {
                   EmojiName = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_animated_codec.Read(input);
-                if (animated_ == null || value != false) {
+                if (animated_ is null || value != false) {
                   Animated = value;
                 }
                 break;
               }
               case 34: {
                 bool? value = _single_disableDoubleTap_codec.Read(input);
-                if (disableDoubleTap_ == null || value != false) {
+                if (disableDoubleTap_ is null || value != false) {
                   DisableDoubleTap = value;
                 }
                 break;
@@ -8124,28 +8124,28 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_emojiId_codec.Read(ref input);
-                if (emojiId_ == null || value != 0UL) {
+                if (emojiId_ is null || value != 0UL) {
                   EmojiId = value;
                 }
                 break;
               }
               case 18: {
                 string value = _single_emojiName_codec.Read(ref input);
-                if (emojiName_ == null || value != "") {
+                if (emojiName_ is null || value != "") {
                   EmojiName = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_animated_codec.Read(ref input);
-                if (animated_ == null || value != false) {
+                if (animated_ is null || value != false) {
                   Animated = value;
                 }
                 break;
               }
               case 34: {
                 bool? value = _single_disableDoubleTap_codec.Read(ref input);
-                if (disableDoubleTap_ == null || value != false) {
+                if (disableDoubleTap_ is null || value != false) {
                   DisableDoubleTap = value;
                 }
                 break;
@@ -8348,7 +8348,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(SelfHarmContentSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.SelfHarmContentGuilds != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentRedaction.UnsetExplicitContentRedaction) {
@@ -9417,119 +9417,119 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(TextAndImagesSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.diversitySurrogate_ != null) {
-            if (diversitySurrogate_ == null || other.DiversitySurrogate != "") {
+            if (diversitySurrogate_ is null || other.DiversitySurrogate != "") {
               DiversitySurrogate = other.DiversitySurrogate;
             }
           }
           if (other.useRichChatInput_ != null) {
-            if (useRichChatInput_ == null || other.UseRichChatInput != false) {
+            if (useRichChatInput_ is null || other.UseRichChatInput != false) {
               UseRichChatInput = other.UseRichChatInput;
             }
           }
           if (other.useThreadSidebar_ != null) {
-            if (useThreadSidebar_ == null || other.UseThreadSidebar != false) {
+            if (useThreadSidebar_ is null || other.UseThreadSidebar != false) {
               UseThreadSidebar = other.UseThreadSidebar;
             }
           }
           if (other.renderSpoilers_ != null) {
-            if (renderSpoilers_ == null || other.RenderSpoilers != "") {
+            if (renderSpoilers_ is null || other.RenderSpoilers != "") {
               RenderSpoilers = other.RenderSpoilers;
             }
           }
           emojiPickerCollapsedSections_.Add(other.emojiPickerCollapsedSections_);
           stickerPickerCollapsedSections_.Add(other.stickerPickerCollapsedSections_);
           if (other.viewImageDescriptions_ != null) {
-            if (viewImageDescriptions_ == null || other.ViewImageDescriptions != false) {
+            if (viewImageDescriptions_ is null || other.ViewImageDescriptions != false) {
               ViewImageDescriptions = other.ViewImageDescriptions;
             }
           }
           if (other.showCommandSuggestions_ != null) {
-            if (showCommandSuggestions_ == null || other.ShowCommandSuggestions != false) {
+            if (showCommandSuggestions_ is null || other.ShowCommandSuggestions != false) {
               ShowCommandSuggestions = other.ShowCommandSuggestions;
             }
           }
           if (other.inlineAttachmentMedia_ != null) {
-            if (inlineAttachmentMedia_ == null || other.InlineAttachmentMedia != false) {
+            if (inlineAttachmentMedia_ is null || other.InlineAttachmentMedia != false) {
               InlineAttachmentMedia = other.InlineAttachmentMedia;
             }
           }
           if (other.inlineEmbedMedia_ != null) {
-            if (inlineEmbedMedia_ == null || other.InlineEmbedMedia != false) {
+            if (inlineEmbedMedia_ is null || other.InlineEmbedMedia != false) {
               InlineEmbedMedia = other.InlineEmbedMedia;
             }
           }
           if (other.gifAutoPlay_ != null) {
-            if (gifAutoPlay_ == null || other.GifAutoPlay != false) {
+            if (gifAutoPlay_ is null || other.GifAutoPlay != false) {
               GifAutoPlay = other.GifAutoPlay;
             }
           }
           if (other.renderEmbeds_ != null) {
-            if (renderEmbeds_ == null || other.RenderEmbeds != false) {
+            if (renderEmbeds_ is null || other.RenderEmbeds != false) {
               RenderEmbeds = other.RenderEmbeds;
             }
           }
           if (other.renderReactions_ != null) {
-            if (renderReactions_ == null || other.RenderReactions != false) {
+            if (renderReactions_ is null || other.RenderReactions != false) {
               RenderReactions = other.RenderReactions;
             }
           }
           if (other.animateEmoji_ != null) {
-            if (animateEmoji_ == null || other.AnimateEmoji != false) {
+            if (animateEmoji_ is null || other.AnimateEmoji != false) {
               AnimateEmoji = other.AnimateEmoji;
             }
           }
           if (other.animateStickers_ != null) {
-            if (animateStickers_ == null || other.AnimateStickers != 0) {
+            if (animateStickers_ is null || other.AnimateStickers != 0) {
               AnimateStickers = other.AnimateStickers;
             }
           }
           if (other.enableTtsCommand_ != null) {
-            if (enableTtsCommand_ == null || other.EnableTtsCommand != false) {
+            if (enableTtsCommand_ is null || other.EnableTtsCommand != false) {
               EnableTtsCommand = other.EnableTtsCommand;
             }
           }
           if (other.messageDisplayCompact_ != null) {
-            if (messageDisplayCompact_ == null || other.MessageDisplayCompact != false) {
+            if (messageDisplayCompact_ is null || other.MessageDisplayCompact != false) {
               MessageDisplayCompact = other.MessageDisplayCompact;
             }
           }
           if (other.explicitContentFilter_ != null) {
-            if (explicitContentFilter_ == null || other.ExplicitContentFilter != 0) {
+            if (explicitContentFilter_ is null || other.ExplicitContentFilter != 0) {
               ExplicitContentFilter = other.ExplicitContentFilter;
             }
           }
           if (other.viewNsfwGuilds_ != null) {
-            if (viewNsfwGuilds_ == null || other.ViewNsfwGuilds != false) {
+            if (viewNsfwGuilds_ is null || other.ViewNsfwGuilds != false) {
               ViewNsfwGuilds = other.ViewNsfwGuilds;
             }
           }
           if (other.convertEmoticons_ != null) {
-            if (convertEmoticons_ == null || other.ConvertEmoticons != false) {
+            if (convertEmoticons_ is null || other.ConvertEmoticons != false) {
               ConvertEmoticons = other.ConvertEmoticons;
             }
           }
           if (other.expressionSuggestionsEnabled_ != null) {
-            if (expressionSuggestionsEnabled_ == null || other.ExpressionSuggestionsEnabled != false) {
+            if (expressionSuggestionsEnabled_ is null || other.ExpressionSuggestionsEnabled != false) {
               ExpressionSuggestionsEnabled = other.ExpressionSuggestionsEnabled;
             }
           }
           if (other.viewNsfwCommands_ != null) {
-            if (viewNsfwCommands_ == null || other.ViewNsfwCommands != false) {
+            if (viewNsfwCommands_ is null || other.ViewNsfwCommands != false) {
               ViewNsfwCommands = other.ViewNsfwCommands;
             }
           }
           if (other.useLegacyChatInput_ != null) {
-            if (useLegacyChatInput_ == null || other.UseLegacyChatInput != false) {
+            if (useLegacyChatInput_ is null || other.UseLegacyChatInput != false) {
               UseLegacyChatInput = other.UseLegacyChatInput;
             }
           }
           soundboardPickerCollapsedSections_.Add(other.soundboardPickerCollapsedSections_);
           if (other.dmSpamFilter_ != null) {
-            if (dmSpamFilter_ == null || other.DmSpamFilter != 0) {
+            if (dmSpamFilter_ is null || other.DmSpamFilter != 0) {
               DmSpamFilter = other.DmSpamFilter;
             }
           }
@@ -9537,52 +9537,52 @@ namespace DiscordProtos.DiscordUsers.V1 {
             DmSpamFilterV2 = other.DmSpamFilterV2;
           }
           if (other.includeStickersInAutocomplete_ != null) {
-            if (includeStickersInAutocomplete_ == null || other.IncludeStickersInAutocomplete != false) {
+            if (includeStickersInAutocomplete_ is null || other.IncludeStickersInAutocomplete != false) {
               IncludeStickersInAutocomplete = other.IncludeStickersInAutocomplete;
             }
           }
           if (other.explicitContentSettings_ != null) {
-            if (explicitContentSettings_ == null) {
+            if (explicitContentSettings_ is null) {
               ExplicitContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentSettings();
             }
             ExplicitContentSettings.MergeFrom(other.ExplicitContentSettings);
           }
           if (other.keywordFilterSettings_ != null) {
-            if (keywordFilterSettings_ == null) {
+            if (keywordFilterSettings_ is null) {
               KeywordFilterSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.KeywordFilterSettings();
             }
             KeywordFilterSettings.MergeFrom(other.KeywordFilterSettings);
           }
           if (other.includeSoundmojiInAutocomplete_ != null) {
-            if (includeSoundmojiInAutocomplete_ == null || other.IncludeSoundmojiInAutocomplete != false) {
+            if (includeSoundmojiInAutocomplete_ is null || other.IncludeSoundmojiInAutocomplete != false) {
               IncludeSoundmojiInAutocomplete = other.IncludeSoundmojiInAutocomplete;
             }
           }
           if (other.goreContentSettings_ != null) {
-            if (goreContentSettings_ == null) {
+            if (goreContentSettings_ is null) {
               GoreContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GoreContentSettings();
             }
             GoreContentSettings.MergeFrom(other.GoreContentSettings);
           }
           if (other.defaultReactionEmoji_ != null) {
-            if (defaultReactionEmoji_ == null) {
+            if (defaultReactionEmoji_ is null) {
               DefaultReactionEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DefaultReactionEmoji();
             }
             DefaultReactionEmoji.MergeFrom(other.DefaultReactionEmoji);
           }
           if (other.showMentionSuggestions_ != null) {
-            if (showMentionSuggestions_ == null || other.ShowMentionSuggestions != false) {
+            if (showMentionSuggestions_ is null || other.ShowMentionSuggestions != false) {
               ShowMentionSuggestions = other.ShowMentionSuggestions;
             }
           }
           if (other.selfHarmContentSettings_ != null) {
-            if (selfHarmContentSettings_ == null) {
+            if (selfHarmContentSettings_ is null) {
               SelfHarmContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SelfHarmContentSettings();
             }
             SelfHarmContentSettings.MergeFrom(other.SelfHarmContentSettings);
           }
           if (other.isCrossDmSearchEnabled_ != null) {
-            if (isCrossDmSearchEnabled_ == null || other.IsCrossDmSearchEnabled != false) {
+            if (isCrossDmSearchEnabled_ is null || other.IsCrossDmSearchEnabled != false) {
               IsCrossDmSearchEnabled = other.IsCrossDmSearchEnabled;
             }
           }
@@ -9603,28 +9603,28 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_diversitySurrogate_codec.Read(input);
-                if (diversitySurrogate_ == null || value != "") {
+                if (diversitySurrogate_ is null || value != "") {
                   DiversitySurrogate = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_useRichChatInput_codec.Read(input);
-                if (useRichChatInput_ == null || value != false) {
+                if (useRichChatInput_ is null || value != false) {
                   UseRichChatInput = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_useThreadSidebar_codec.Read(input);
-                if (useThreadSidebar_ == null || value != false) {
+                if (useThreadSidebar_ is null || value != false) {
                   UseThreadSidebar = value;
                 }
                 break;
               }
               case 34: {
                 string value = _single_renderSpoilers_codec.Read(input);
-                if (renderSpoilers_ == null || value != "") {
+                if (renderSpoilers_ is null || value != "") {
                   RenderSpoilers = value;
                 }
                 break;
@@ -9639,119 +9639,119 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 58: {
                 bool? value = _single_viewImageDescriptions_codec.Read(input);
-                if (viewImageDescriptions_ == null || value != false) {
+                if (viewImageDescriptions_ is null || value != false) {
                   ViewImageDescriptions = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_showCommandSuggestions_codec.Read(input);
-                if (showCommandSuggestions_ == null || value != false) {
+                if (showCommandSuggestions_ is null || value != false) {
                   ShowCommandSuggestions = value;
                 }
                 break;
               }
               case 74: {
                 bool? value = _single_inlineAttachmentMedia_codec.Read(input);
-                if (inlineAttachmentMedia_ == null || value != false) {
+                if (inlineAttachmentMedia_ is null || value != false) {
                   InlineAttachmentMedia = value;
                 }
                 break;
               }
               case 82: {
                 bool? value = _single_inlineEmbedMedia_codec.Read(input);
-                if (inlineEmbedMedia_ == null || value != false) {
+                if (inlineEmbedMedia_ is null || value != false) {
                   InlineEmbedMedia = value;
                 }
                 break;
               }
               case 90: {
                 bool? value = _single_gifAutoPlay_codec.Read(input);
-                if (gifAutoPlay_ == null || value != false) {
+                if (gifAutoPlay_ is null || value != false) {
                   GifAutoPlay = value;
                 }
                 break;
               }
               case 98: {
                 bool? value = _single_renderEmbeds_codec.Read(input);
-                if (renderEmbeds_ == null || value != false) {
+                if (renderEmbeds_ is null || value != false) {
                   RenderEmbeds = value;
                 }
                 break;
               }
               case 106: {
                 bool? value = _single_renderReactions_codec.Read(input);
-                if (renderReactions_ == null || value != false) {
+                if (renderReactions_ is null || value != false) {
                   RenderReactions = value;
                 }
                 break;
               }
               case 114: {
                 bool? value = _single_animateEmoji_codec.Read(input);
-                if (animateEmoji_ == null || value != false) {
+                if (animateEmoji_ is null || value != false) {
                   AnimateEmoji = value;
                 }
                 break;
               }
               case 122: {
                 uint? value = _single_animateStickers_codec.Read(input);
-                if (animateStickers_ == null || value != 0) {
+                if (animateStickers_ is null || value != 0) {
                   AnimateStickers = value;
                 }
                 break;
               }
               case 130: {
                 bool? value = _single_enableTtsCommand_codec.Read(input);
-                if (enableTtsCommand_ == null || value != false) {
+                if (enableTtsCommand_ is null || value != false) {
                   EnableTtsCommand = value;
                 }
                 break;
               }
               case 138: {
                 bool? value = _single_messageDisplayCompact_codec.Read(input);
-                if (messageDisplayCompact_ == null || value != false) {
+                if (messageDisplayCompact_ is null || value != false) {
                   MessageDisplayCompact = value;
                 }
                 break;
               }
               case 154: {
                 uint? value = _single_explicitContentFilter_codec.Read(input);
-                if (explicitContentFilter_ == null || value != 0) {
+                if (explicitContentFilter_ is null || value != 0) {
                   ExplicitContentFilter = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_viewNsfwGuilds_codec.Read(input);
-                if (viewNsfwGuilds_ == null || value != false) {
+                if (viewNsfwGuilds_ is null || value != false) {
                   ViewNsfwGuilds = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_convertEmoticons_codec.Read(input);
-                if (convertEmoticons_ == null || value != false) {
+                if (convertEmoticons_ is null || value != false) {
                   ConvertEmoticons = value;
                 }
                 break;
               }
               case 178: {
                 bool? value = _single_expressionSuggestionsEnabled_codec.Read(input);
-                if (expressionSuggestionsEnabled_ == null || value != false) {
+                if (expressionSuggestionsEnabled_ is null || value != false) {
                   ExpressionSuggestionsEnabled = value;
                 }
                 break;
               }
               case 186: {
                 bool? value = _single_viewNsfwCommands_codec.Read(input);
-                if (viewNsfwCommands_ == null || value != false) {
+                if (viewNsfwCommands_ is null || value != false) {
                   ViewNsfwCommands = value;
                 }
                 break;
               }
               case 194: {
                 bool? value = _single_useLegacyChatInput_codec.Read(input);
-                if (useLegacyChatInput_ == null || value != false) {
+                if (useLegacyChatInput_ is null || value != false) {
                   UseLegacyChatInput = value;
                 }
                 break;
@@ -9762,7 +9762,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 210: {
                 uint? value = _single_dmSpamFilter_codec.Read(input);
-                if (dmSpamFilter_ == null || value != 0) {
+                if (dmSpamFilter_ is null || value != 0) {
                   DmSpamFilter = value;
                 }
                 break;
@@ -9773,20 +9773,20 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 226: {
                 bool? value = _single_includeStickersInAutocomplete_codec.Read(input);
-                if (includeStickersInAutocomplete_ == null || value != false) {
+                if (includeStickersInAutocomplete_ is null || value != false) {
                   IncludeStickersInAutocomplete = value;
                 }
                 break;
               }
               case 234: {
-                if (explicitContentSettings_ == null) {
+                if (explicitContentSettings_ is null) {
                   ExplicitContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentSettings();
                 }
                 input.ReadMessage(ExplicitContentSettings);
                 break;
               }
               case 242: {
-                if (keywordFilterSettings_ == null) {
+                if (keywordFilterSettings_ is null) {
                   KeywordFilterSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.KeywordFilterSettings();
                 }
                 input.ReadMessage(KeywordFilterSettings);
@@ -9794,20 +9794,20 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 250: {
                 bool? value = _single_includeSoundmojiInAutocomplete_codec.Read(input);
-                if (includeSoundmojiInAutocomplete_ == null || value != false) {
+                if (includeSoundmojiInAutocomplete_ is null || value != false) {
                   IncludeSoundmojiInAutocomplete = value;
                 }
                 break;
               }
               case 258: {
-                if (goreContentSettings_ == null) {
+                if (goreContentSettings_ is null) {
                   GoreContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GoreContentSettings();
                 }
                 input.ReadMessage(GoreContentSettings);
                 break;
               }
               case 266: {
-                if (defaultReactionEmoji_ == null) {
+                if (defaultReactionEmoji_ is null) {
                   DefaultReactionEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DefaultReactionEmoji();
                 }
                 input.ReadMessage(DefaultReactionEmoji);
@@ -9815,13 +9815,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 274: {
                 bool? value = _single_showMentionSuggestions_codec.Read(input);
-                if (showMentionSuggestions_ == null || value != false) {
+                if (showMentionSuggestions_ is null || value != false) {
                   ShowMentionSuggestions = value;
                 }
                 break;
               }
               case 282: {
-                if (selfHarmContentSettings_ == null) {
+                if (selfHarmContentSettings_ is null) {
                   SelfHarmContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SelfHarmContentSettings();
                 }
                 input.ReadMessage(SelfHarmContentSettings);
@@ -9829,7 +9829,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 290: {
                 bool? value = _single_isCrossDmSearchEnabled_codec.Read(input);
-                if (isCrossDmSearchEnabled_ == null || value != false) {
+                if (isCrossDmSearchEnabled_ is null || value != false) {
                   IsCrossDmSearchEnabled = value;
                 }
                 break;
@@ -9851,28 +9851,28 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_diversitySurrogate_codec.Read(ref input);
-                if (diversitySurrogate_ == null || value != "") {
+                if (diversitySurrogate_ is null || value != "") {
                   DiversitySurrogate = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_useRichChatInput_codec.Read(ref input);
-                if (useRichChatInput_ == null || value != false) {
+                if (useRichChatInput_ is null || value != false) {
                   UseRichChatInput = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_useThreadSidebar_codec.Read(ref input);
-                if (useThreadSidebar_ == null || value != false) {
+                if (useThreadSidebar_ is null || value != false) {
                   UseThreadSidebar = value;
                 }
                 break;
               }
               case 34: {
                 string value = _single_renderSpoilers_codec.Read(ref input);
-                if (renderSpoilers_ == null || value != "") {
+                if (renderSpoilers_ is null || value != "") {
                   RenderSpoilers = value;
                 }
                 break;
@@ -9887,119 +9887,119 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 58: {
                 bool? value = _single_viewImageDescriptions_codec.Read(ref input);
-                if (viewImageDescriptions_ == null || value != false) {
+                if (viewImageDescriptions_ is null || value != false) {
                   ViewImageDescriptions = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_showCommandSuggestions_codec.Read(ref input);
-                if (showCommandSuggestions_ == null || value != false) {
+                if (showCommandSuggestions_ is null || value != false) {
                   ShowCommandSuggestions = value;
                 }
                 break;
               }
               case 74: {
                 bool? value = _single_inlineAttachmentMedia_codec.Read(ref input);
-                if (inlineAttachmentMedia_ == null || value != false) {
+                if (inlineAttachmentMedia_ is null || value != false) {
                   InlineAttachmentMedia = value;
                 }
                 break;
               }
               case 82: {
                 bool? value = _single_inlineEmbedMedia_codec.Read(ref input);
-                if (inlineEmbedMedia_ == null || value != false) {
+                if (inlineEmbedMedia_ is null || value != false) {
                   InlineEmbedMedia = value;
                 }
                 break;
               }
               case 90: {
                 bool? value = _single_gifAutoPlay_codec.Read(ref input);
-                if (gifAutoPlay_ == null || value != false) {
+                if (gifAutoPlay_ is null || value != false) {
                   GifAutoPlay = value;
                 }
                 break;
               }
               case 98: {
                 bool? value = _single_renderEmbeds_codec.Read(ref input);
-                if (renderEmbeds_ == null || value != false) {
+                if (renderEmbeds_ is null || value != false) {
                   RenderEmbeds = value;
                 }
                 break;
               }
               case 106: {
                 bool? value = _single_renderReactions_codec.Read(ref input);
-                if (renderReactions_ == null || value != false) {
+                if (renderReactions_ is null || value != false) {
                   RenderReactions = value;
                 }
                 break;
               }
               case 114: {
                 bool? value = _single_animateEmoji_codec.Read(ref input);
-                if (animateEmoji_ == null || value != false) {
+                if (animateEmoji_ is null || value != false) {
                   AnimateEmoji = value;
                 }
                 break;
               }
               case 122: {
                 uint? value = _single_animateStickers_codec.Read(ref input);
-                if (animateStickers_ == null || value != 0) {
+                if (animateStickers_ is null || value != 0) {
                   AnimateStickers = value;
                 }
                 break;
               }
               case 130: {
                 bool? value = _single_enableTtsCommand_codec.Read(ref input);
-                if (enableTtsCommand_ == null || value != false) {
+                if (enableTtsCommand_ is null || value != false) {
                   EnableTtsCommand = value;
                 }
                 break;
               }
               case 138: {
                 bool? value = _single_messageDisplayCompact_codec.Read(ref input);
-                if (messageDisplayCompact_ == null || value != false) {
+                if (messageDisplayCompact_ is null || value != false) {
                   MessageDisplayCompact = value;
                 }
                 break;
               }
               case 154: {
                 uint? value = _single_explicitContentFilter_codec.Read(ref input);
-                if (explicitContentFilter_ == null || value != 0) {
+                if (explicitContentFilter_ is null || value != 0) {
                   ExplicitContentFilter = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_viewNsfwGuilds_codec.Read(ref input);
-                if (viewNsfwGuilds_ == null || value != false) {
+                if (viewNsfwGuilds_ is null || value != false) {
                   ViewNsfwGuilds = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_convertEmoticons_codec.Read(ref input);
-                if (convertEmoticons_ == null || value != false) {
+                if (convertEmoticons_ is null || value != false) {
                   ConvertEmoticons = value;
                 }
                 break;
               }
               case 178: {
                 bool? value = _single_expressionSuggestionsEnabled_codec.Read(ref input);
-                if (expressionSuggestionsEnabled_ == null || value != false) {
+                if (expressionSuggestionsEnabled_ is null || value != false) {
                   ExpressionSuggestionsEnabled = value;
                 }
                 break;
               }
               case 186: {
                 bool? value = _single_viewNsfwCommands_codec.Read(ref input);
-                if (viewNsfwCommands_ == null || value != false) {
+                if (viewNsfwCommands_ is null || value != false) {
                   ViewNsfwCommands = value;
                 }
                 break;
               }
               case 194: {
                 bool? value = _single_useLegacyChatInput_codec.Read(ref input);
-                if (useLegacyChatInput_ == null || value != false) {
+                if (useLegacyChatInput_ is null || value != false) {
                   UseLegacyChatInput = value;
                 }
                 break;
@@ -10010,7 +10010,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 210: {
                 uint? value = _single_dmSpamFilter_codec.Read(ref input);
-                if (dmSpamFilter_ == null || value != 0) {
+                if (dmSpamFilter_ is null || value != 0) {
                   DmSpamFilter = value;
                 }
                 break;
@@ -10021,20 +10021,20 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 226: {
                 bool? value = _single_includeStickersInAutocomplete_codec.Read(ref input);
-                if (includeStickersInAutocomplete_ == null || value != false) {
+                if (includeStickersInAutocomplete_ is null || value != false) {
                   IncludeStickersInAutocomplete = value;
                 }
                 break;
               }
               case 234: {
-                if (explicitContentSettings_ == null) {
+                if (explicitContentSettings_ is null) {
                   ExplicitContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ExplicitContentSettings();
                 }
                 input.ReadMessage(ExplicitContentSettings);
                 break;
               }
               case 242: {
-                if (keywordFilterSettings_ == null) {
+                if (keywordFilterSettings_ is null) {
                   KeywordFilterSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.KeywordFilterSettings();
                 }
                 input.ReadMessage(KeywordFilterSettings);
@@ -10042,20 +10042,20 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 250: {
                 bool? value = _single_includeSoundmojiInAutocomplete_codec.Read(ref input);
-                if (includeSoundmojiInAutocomplete_ == null || value != false) {
+                if (includeSoundmojiInAutocomplete_ is null || value != false) {
                   IncludeSoundmojiInAutocomplete = value;
                 }
                 break;
               }
               case 258: {
-                if (goreContentSettings_ == null) {
+                if (goreContentSettings_ is null) {
                   GoreContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.GoreContentSettings();
                 }
                 input.ReadMessage(GoreContentSettings);
                 break;
               }
               case 266: {
-                if (defaultReactionEmoji_ == null) {
+                if (defaultReactionEmoji_ is null) {
                   DefaultReactionEmoji = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.DefaultReactionEmoji();
                 }
                 input.ReadMessage(DefaultReactionEmoji);
@@ -10063,13 +10063,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 274: {
                 bool? value = _single_showMentionSuggestions_codec.Read(ref input);
-                if (showMentionSuggestions_ == null || value != false) {
+                if (showMentionSuggestions_ is null || value != false) {
                   ShowMentionSuggestions = value;
                 }
                 break;
               }
               case 282: {
-                if (selfHarmContentSettings_ == null) {
+                if (selfHarmContentSettings_ is null) {
                   SelfHarmContentSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SelfHarmContentSettings();
                 }
                 input.ReadMessage(SelfHarmContentSettings);
@@ -10077,7 +10077,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 290: {
                 bool? value = _single_isCrossDmSearchEnabled_codec.Read(ref input);
-                if (isCrossDmSearchEnabled_ == null || value != false) {
+                if (isCrossDmSearchEnabled_ is null || value != false) {
                   IsCrossDmSearchEnabled = value;
                 }
                 break;
@@ -10748,16 +10748,16 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(NotificationSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.showInAppNotifications_ != null) {
-            if (showInAppNotifications_ == null || other.ShowInAppNotifications != false) {
+            if (showInAppNotifications_ is null || other.ShowInAppNotifications != false) {
               ShowInAppNotifications = other.ShowInAppNotifications;
             }
           }
           if (other.notifyFriendsOnGoLive_ != null) {
-            if (notifyFriendsOnGoLive_ == null || other.NotifyFriendsOnGoLive != false) {
+            if (notifyFriendsOnGoLive_ is null || other.NotifyFriendsOnGoLive != false) {
               NotifyFriendsOnGoLive = other.NotifyFriendsOnGoLive;
             }
           }
@@ -10765,12 +10765,12 @@ namespace DiscordProtos.DiscordUsers.V1 {
             NotificationCenterAckedBeforeId = other.NotificationCenterAckedBeforeId;
           }
           if (other.enableBurstReactionNotifications_ != null) {
-            if (enableBurstReactionNotifications_ == null || other.EnableBurstReactionNotifications != false) {
+            if (enableBurstReactionNotifications_ is null || other.EnableBurstReactionNotifications != false) {
               EnableBurstReactionNotifications = other.EnableBurstReactionNotifications;
             }
           }
           if (other.quietMode_ != null) {
-            if (quietMode_ == null || other.QuietMode != false) {
+            if (quietMode_ is null || other.QuietMode != false) {
               QuietMode = other.QuietMode;
             }
           }
@@ -10787,62 +10787,62 @@ namespace DiscordProtos.DiscordUsers.V1 {
             CustomStatusPushNotifications = other.CustomStatusPushNotifications;
           }
           if (other.gameActivityExcludeSteamNotifications_ != null) {
-            if (gameActivityExcludeSteamNotifications_ == null || other.GameActivityExcludeSteamNotifications != false) {
+            if (gameActivityExcludeSteamNotifications_ is null || other.GameActivityExcludeSteamNotifications != false) {
               GameActivityExcludeSteamNotifications = other.GameActivityExcludeSteamNotifications;
             }
           }
           if (other.enableVoiceActivityNotifications_ != null) {
-            if (enableVoiceActivityNotifications_ == null || other.EnableVoiceActivityNotifications != false) {
+            if (enableVoiceActivityNotifications_ is null || other.EnableVoiceActivityNotifications != false) {
               EnableVoiceActivityNotifications = other.EnableVoiceActivityNotifications;
             }
           }
           if (other.enableFriendOnlineNotifications_ != null) {
-            if (enableFriendOnlineNotifications_ == null || other.EnableFriendOnlineNotifications != false) {
+            if (enableFriendOnlineNotifications_ is null || other.EnableFriendOnlineNotifications != false) {
               EnableFriendOnlineNotifications = other.EnableFriendOnlineNotifications;
             }
           }
           if (other.enableUserResurrectionNotifications_ != null) {
-            if (enableUserResurrectionNotifications_ == null || other.EnableUserResurrectionNotifications != false) {
+            if (enableUserResurrectionNotifications_ is null || other.EnableUserResurrectionNotifications != false) {
               EnableUserResurrectionNotifications = other.EnableUserResurrectionNotifications;
             }
           }
           if (other.enableFriendAnniversaryNotifications_ != null) {
-            if (enableFriendAnniversaryNotifications_ == null || other.EnableFriendAnniversaryNotifications != false) {
+            if (enableFriendAnniversaryNotifications_ is null || other.EnableFriendAnniversaryNotifications != false) {
               EnableFriendAnniversaryNotifications = other.EnableFriendAnniversaryNotifications;
             }
           }
           if (other.enableGameUpdateNotifications_ != null) {
-            if (enableGameUpdateNotifications_ == null || other.EnableGameUpdateNotifications != false) {
+            if (enableGameUpdateNotifications_ is null || other.EnableGameUpdateNotifications != false) {
               EnableGameUpdateNotifications = other.EnableGameUpdateNotifications;
             }
           }
           if (other.enableProfileUpdatesNotifications_ != null) {
-            if (enableProfileUpdatesNotifications_ == null || other.EnableProfileUpdatesNotifications != false) {
+            if (enableProfileUpdatesNotifications_ is null || other.EnableProfileUpdatesNotifications != false) {
               EnableProfileUpdatesNotifications = other.EnableProfileUpdatesNotifications;
             }
           }
           if (other.enableServerTrendingNotifications_ != null) {
-            if (enableServerTrendingNotifications_ == null || other.EnableServerTrendingNotifications != false) {
+            if (enableServerTrendingNotifications_ is null || other.EnableServerTrendingNotifications != false) {
               EnableServerTrendingNotifications = other.EnableServerTrendingNotifications;
             }
           }
           if (other.enableDmReplyNudgeReminders_ != null) {
-            if (enableDmReplyNudgeReminders_ == null || other.EnableDmReplyNudgeReminders != false) {
+            if (enableDmReplyNudgeReminders_ is null || other.EnableDmReplyNudgeReminders != false) {
               EnableDmReplyNudgeReminders = other.EnableDmReplyNudgeReminders;
             }
           }
           if (other.enableSummaryReminderNotifications_ != null) {
-            if (enableSummaryReminderNotifications_ == null || other.EnableSummaryReminderNotifications != false) {
+            if (enableSummaryReminderNotifications_ is null || other.EnableSummaryReminderNotifications != false) {
               EnableSummaryReminderNotifications = other.EnableSummaryReminderNotifications;
             }
           }
           if (other.enableGdmAllReactionNotifications_ != null) {
-            if (enableGdmAllReactionNotifications_ == null || other.EnableGdmAllReactionNotifications != false) {
+            if (enableGdmAllReactionNotifications_ is null || other.EnableGdmAllReactionNotifications != false) {
               EnableGdmAllReactionNotifications = other.EnableGdmAllReactionNotifications;
             }
           }
           if (other.enableFriendGamingActivityNotifications_ != null) {
-            if (enableFriendGamingActivityNotifications_ == null || other.EnableFriendGamingActivityNotifications != false) {
+            if (enableFriendGamingActivityNotifications_ is null || other.EnableFriendGamingActivityNotifications != false) {
               EnableFriendGamingActivityNotifications = other.EnableFriendGamingActivityNotifications;
             }
           }
@@ -10863,14 +10863,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_showInAppNotifications_codec.Read(input);
-                if (showInAppNotifications_ == null || value != false) {
+                if (showInAppNotifications_ is null || value != false) {
                   ShowInAppNotifications = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_notifyFriendsOnGoLive_codec.Read(input);
-                if (notifyFriendsOnGoLive_ == null || value != false) {
+                if (notifyFriendsOnGoLive_ is null || value != false) {
                   NotifyFriendsOnGoLive = value;
                 }
                 break;
@@ -10881,14 +10881,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 34: {
                 bool? value = _single_enableBurstReactionNotifications_codec.Read(input);
-                if (enableBurstReactionNotifications_ == null || value != false) {
+                if (enableBurstReactionNotifications_ is null || value != false) {
                   EnableBurstReactionNotifications = value;
                 }
                 break;
               }
               case 42: {
                 bool? value = _single_quietMode_codec.Read(input);
-                if (quietMode_ == null || value != false) {
+                if (quietMode_ is null || value != false) {
                   QuietMode = value;
                 }
                 break;
@@ -10911,84 +10911,84 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_gameActivityExcludeSteamNotifications_codec.Read(input);
-                if (gameActivityExcludeSteamNotifications_ == null || value != false) {
+                if (gameActivityExcludeSteamNotifications_ is null || value != false) {
                   GameActivityExcludeSteamNotifications = value;
                 }
                 break;
               }
               case 90: {
                 bool? value = _single_enableVoiceActivityNotifications_codec.Read(input);
-                if (enableVoiceActivityNotifications_ == null || value != false) {
+                if (enableVoiceActivityNotifications_ is null || value != false) {
                   EnableVoiceActivityNotifications = value;
                 }
                 break;
               }
               case 98: {
                 bool? value = _single_enableFriendOnlineNotifications_codec.Read(input);
-                if (enableFriendOnlineNotifications_ == null || value != false) {
+                if (enableFriendOnlineNotifications_ is null || value != false) {
                   EnableFriendOnlineNotifications = value;
                 }
                 break;
               }
               case 106: {
                 bool? value = _single_enableUserResurrectionNotifications_codec.Read(input);
-                if (enableUserResurrectionNotifications_ == null || value != false) {
+                if (enableUserResurrectionNotifications_ is null || value != false) {
                   EnableUserResurrectionNotifications = value;
                 }
                 break;
               }
               case 114: {
                 bool? value = _single_enableFriendAnniversaryNotifications_codec.Read(input);
-                if (enableFriendAnniversaryNotifications_ == null || value != false) {
+                if (enableFriendAnniversaryNotifications_ is null || value != false) {
                   EnableFriendAnniversaryNotifications = value;
                 }
                 break;
               }
               case 122: {
                 bool? value = _single_enableGameUpdateNotifications_codec.Read(input);
-                if (enableGameUpdateNotifications_ == null || value != false) {
+                if (enableGameUpdateNotifications_ is null || value != false) {
                   EnableGameUpdateNotifications = value;
                 }
                 break;
               }
               case 130: {
                 bool? value = _single_enableProfileUpdatesNotifications_codec.Read(input);
-                if (enableProfileUpdatesNotifications_ == null || value != false) {
+                if (enableProfileUpdatesNotifications_ is null || value != false) {
                   EnableProfileUpdatesNotifications = value;
                 }
                 break;
               }
               case 138: {
                 bool? value = _single_enableServerTrendingNotifications_codec.Read(input);
-                if (enableServerTrendingNotifications_ == null || value != false) {
+                if (enableServerTrendingNotifications_ is null || value != false) {
                   EnableServerTrendingNotifications = value;
                 }
                 break;
               }
               case 146: {
                 bool? value = _single_enableDmReplyNudgeReminders_codec.Read(input);
-                if (enableDmReplyNudgeReminders_ == null || value != false) {
+                if (enableDmReplyNudgeReminders_ is null || value != false) {
                   EnableDmReplyNudgeReminders = value;
                 }
                 break;
               }
               case 154: {
                 bool? value = _single_enableSummaryReminderNotifications_codec.Read(input);
-                if (enableSummaryReminderNotifications_ == null || value != false) {
+                if (enableSummaryReminderNotifications_ is null || value != false) {
                   EnableSummaryReminderNotifications = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_enableGdmAllReactionNotifications_codec.Read(input);
-                if (enableGdmAllReactionNotifications_ == null || value != false) {
+                if (enableGdmAllReactionNotifications_ is null || value != false) {
                   EnableGdmAllReactionNotifications = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_enableFriendGamingActivityNotifications_codec.Read(input);
-                if (enableFriendGamingActivityNotifications_ == null || value != false) {
+                if (enableFriendGamingActivityNotifications_ is null || value != false) {
                   EnableFriendGamingActivityNotifications = value;
                 }
                 break;
@@ -11010,14 +11010,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_showInAppNotifications_codec.Read(ref input);
-                if (showInAppNotifications_ == null || value != false) {
+                if (showInAppNotifications_ is null || value != false) {
                   ShowInAppNotifications = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_notifyFriendsOnGoLive_codec.Read(ref input);
-                if (notifyFriendsOnGoLive_ == null || value != false) {
+                if (notifyFriendsOnGoLive_ is null || value != false) {
                   NotifyFriendsOnGoLive = value;
                 }
                 break;
@@ -11028,14 +11028,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 34: {
                 bool? value = _single_enableBurstReactionNotifications_codec.Read(ref input);
-                if (enableBurstReactionNotifications_ == null || value != false) {
+                if (enableBurstReactionNotifications_ is null || value != false) {
                   EnableBurstReactionNotifications = value;
                 }
                 break;
               }
               case 42: {
                 bool? value = _single_quietMode_codec.Read(ref input);
-                if (quietMode_ == null || value != false) {
+                if (quietMode_ is null || value != false) {
                   QuietMode = value;
                 }
                 break;
@@ -11058,84 +11058,84 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_gameActivityExcludeSteamNotifications_codec.Read(ref input);
-                if (gameActivityExcludeSteamNotifications_ == null || value != false) {
+                if (gameActivityExcludeSteamNotifications_ is null || value != false) {
                   GameActivityExcludeSteamNotifications = value;
                 }
                 break;
               }
               case 90: {
                 bool? value = _single_enableVoiceActivityNotifications_codec.Read(ref input);
-                if (enableVoiceActivityNotifications_ == null || value != false) {
+                if (enableVoiceActivityNotifications_ is null || value != false) {
                   EnableVoiceActivityNotifications = value;
                 }
                 break;
               }
               case 98: {
                 bool? value = _single_enableFriendOnlineNotifications_codec.Read(ref input);
-                if (enableFriendOnlineNotifications_ == null || value != false) {
+                if (enableFriendOnlineNotifications_ is null || value != false) {
                   EnableFriendOnlineNotifications = value;
                 }
                 break;
               }
               case 106: {
                 bool? value = _single_enableUserResurrectionNotifications_codec.Read(ref input);
-                if (enableUserResurrectionNotifications_ == null || value != false) {
+                if (enableUserResurrectionNotifications_ is null || value != false) {
                   EnableUserResurrectionNotifications = value;
                 }
                 break;
               }
               case 114: {
                 bool? value = _single_enableFriendAnniversaryNotifications_codec.Read(ref input);
-                if (enableFriendAnniversaryNotifications_ == null || value != false) {
+                if (enableFriendAnniversaryNotifications_ is null || value != false) {
                   EnableFriendAnniversaryNotifications = value;
                 }
                 break;
               }
               case 122: {
                 bool? value = _single_enableGameUpdateNotifications_codec.Read(ref input);
-                if (enableGameUpdateNotifications_ == null || value != false) {
+                if (enableGameUpdateNotifications_ is null || value != false) {
                   EnableGameUpdateNotifications = value;
                 }
                 break;
               }
               case 130: {
                 bool? value = _single_enableProfileUpdatesNotifications_codec.Read(ref input);
-                if (enableProfileUpdatesNotifications_ == null || value != false) {
+                if (enableProfileUpdatesNotifications_ is null || value != false) {
                   EnableProfileUpdatesNotifications = value;
                 }
                 break;
               }
               case 138: {
                 bool? value = _single_enableServerTrendingNotifications_codec.Read(ref input);
-                if (enableServerTrendingNotifications_ == null || value != false) {
+                if (enableServerTrendingNotifications_ is null || value != false) {
                   EnableServerTrendingNotifications = value;
                 }
                 break;
               }
               case 146: {
                 bool? value = _single_enableDmReplyNudgeReminders_codec.Read(ref input);
-                if (enableDmReplyNudgeReminders_ == null || value != false) {
+                if (enableDmReplyNudgeReminders_ is null || value != false) {
                   EnableDmReplyNudgeReminders = value;
                 }
                 break;
               }
               case 154: {
                 bool? value = _single_enableSummaryReminderNotifications_codec.Read(ref input);
-                if (enableSummaryReminderNotifications_ == null || value != false) {
+                if (enableSummaryReminderNotifications_ is null || value != false) {
                   EnableSummaryReminderNotifications = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_enableGdmAllReactionNotifications_codec.Read(ref input);
-                if (enableGdmAllReactionNotifications_ == null || value != false) {
+                if (enableGdmAllReactionNotifications_ is null || value != false) {
                   EnableGdmAllReactionNotifications = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_enableFriendGamingActivityNotifications_codec.Read(ref input);
-                if (enableFriendGamingActivityNotifications_ == null || value != false) {
+                if (enableFriendGamingActivityNotifications_ is null || value != false) {
                   EnableFriendGamingActivityNotifications = value;
                 }
                 break;
@@ -12004,16 +12004,16 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(PrivacySettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.allowActivityPartyPrivacyFriends_ != null) {
-            if (allowActivityPartyPrivacyFriends_ == null || other.AllowActivityPartyPrivacyFriends != false) {
+            if (allowActivityPartyPrivacyFriends_ is null || other.AllowActivityPartyPrivacyFriends != false) {
               AllowActivityPartyPrivacyFriends = other.AllowActivityPartyPrivacyFriends;
             }
           }
           if (other.allowActivityPartyPrivacyVoiceChannel_ != null) {
-            if (allowActivityPartyPrivacyVoiceChannel_ == null || other.AllowActivityPartyPrivacyVoiceChannel != false) {
+            if (allowActivityPartyPrivacyVoiceChannel_ is null || other.AllowActivityPartyPrivacyVoiceChannel != false) {
               AllowActivityPartyPrivacyVoiceChannel = other.AllowActivityPartyPrivacyVoiceChannel;
             }
           }
@@ -12025,27 +12025,27 @@ namespace DiscordProtos.DiscordUsers.V1 {
             AllowAccessibilityDetection = other.AllowAccessibilityDetection;
           }
           if (other.detectPlatformAccounts_ != null) {
-            if (detectPlatformAccounts_ == null || other.DetectPlatformAccounts != false) {
+            if (detectPlatformAccounts_ is null || other.DetectPlatformAccounts != false) {
               DetectPlatformAccounts = other.DetectPlatformAccounts;
             }
           }
           if (other.passwordless_ != null) {
-            if (passwordless_ == null || other.Passwordless != false) {
+            if (passwordless_ is null || other.Passwordless != false) {
               Passwordless = other.Passwordless;
             }
           }
           if (other.contactSyncEnabled_ != null) {
-            if (contactSyncEnabled_ == null || other.ContactSyncEnabled != false) {
+            if (contactSyncEnabled_ is null || other.ContactSyncEnabled != false) {
               ContactSyncEnabled = other.ContactSyncEnabled;
             }
           }
           if (other.friendSourceFlags_ != null) {
-            if (friendSourceFlags_ == null || other.FriendSourceFlags != 0) {
+            if (friendSourceFlags_ is null || other.FriendSourceFlags != 0) {
               FriendSourceFlags = other.FriendSourceFlags;
             }
           }
           if (other.friendDiscoveryFlags_ != null) {
-            if (friendDiscoveryFlags_ == null || other.FriendDiscoveryFlags != 0) {
+            if (friendDiscoveryFlags_ is null || other.FriendDiscoveryFlags != 0) {
               FriendDiscoveryFlags = other.FriendDiscoveryFlags;
             }
           }
@@ -12056,42 +12056,42 @@ namespace DiscordProtos.DiscordUsers.V1 {
           activityJoiningRestrictedGuildIds_.Add(other.activityJoiningRestrictedGuildIds_);
           messageRequestRestrictedGuildIds_.Add(other.messageRequestRestrictedGuildIds_);
           if (other.defaultMessageRequestRestricted_ != null) {
-            if (defaultMessageRequestRestricted_ == null || other.DefaultMessageRequestRestricted != false) {
+            if (defaultMessageRequestRestricted_ is null || other.DefaultMessageRequestRestricted != false) {
               DefaultMessageRequestRestricted = other.DefaultMessageRequestRestricted;
             }
           }
           if (other.dropsOptedOut_ != null) {
-            if (dropsOptedOut_ == null || other.DropsOptedOut != false) {
+            if (dropsOptedOut_ is null || other.DropsOptedOut != false) {
               DropsOptedOut = other.DropsOptedOut;
             }
           }
           if (other.nonSpamRetrainingOptIn_ != null) {
-            if (nonSpamRetrainingOptIn_ == null || other.NonSpamRetrainingOptIn != false) {
+            if (nonSpamRetrainingOptIn_ is null || other.NonSpamRetrainingOptIn != false) {
               NonSpamRetrainingOptIn = other.NonSpamRetrainingOptIn;
             }
           }
           if (other.familyCenterEnabled_ != null) {
-            if (familyCenterEnabled_ == null || other.FamilyCenterEnabled != false) {
+            if (familyCenterEnabled_ is null || other.FamilyCenterEnabled != false) {
               FamilyCenterEnabled = other.FamilyCenterEnabled;
             }
           }
           if (other.familyCenterEnabledV2_ != null) {
-            if (familyCenterEnabledV2_ == null || other.FamilyCenterEnabledV2 != false) {
+            if (familyCenterEnabledV2_ is null || other.FamilyCenterEnabledV2 != false) {
               FamilyCenterEnabledV2 = other.FamilyCenterEnabledV2;
             }
           }
           if (other.hideLegacyUsername_ != null) {
-            if (hideLegacyUsername_ == null || other.HideLegacyUsername != false) {
+            if (hideLegacyUsername_ is null || other.HideLegacyUsername != false) {
               HideLegacyUsername = other.HideLegacyUsername;
             }
           }
           if (other.inappropriateConversationWarnings_ != null) {
-            if (inappropriateConversationWarnings_ == null || other.InappropriateConversationWarnings != false) {
+            if (inappropriateConversationWarnings_ is null || other.InappropriateConversationWarnings != false) {
               InappropriateConversationWarnings = other.InappropriateConversationWarnings;
             }
           }
           if (other.recentGamesEnabled_ != null) {
-            if (recentGamesEnabled_ == null || other.RecentGamesEnabled != false) {
+            if (recentGamesEnabled_ is null || other.RecentGamesEnabled != false) {
               RecentGamesEnabled = other.RecentGamesEnabled;
             }
           }
@@ -12099,12 +12099,12 @@ namespace DiscordProtos.DiscordUsers.V1 {
             GuildsLeaderboardOptOutDefault = other.GuildsLeaderboardOptOutDefault;
           }
           if (other.allowGameFriendDmsInDiscord_ != null) {
-            if (allowGameFriendDmsInDiscord_ == null || other.AllowGameFriendDmsInDiscord != false) {
+            if (allowGameFriendDmsInDiscord_ is null || other.AllowGameFriendDmsInDiscord != false) {
               AllowGameFriendDmsInDiscord = other.AllowGameFriendDmsInDiscord;
             }
           }
           if (other.defaultGuildsRestrictedV2_ != null) {
-            if (defaultGuildsRestrictedV2_ == null || other.DefaultGuildsRestrictedV2 != false) {
+            if (defaultGuildsRestrictedV2_ is null || other.DefaultGuildsRestrictedV2 != false) {
               DefaultGuildsRestrictedV2 = other.DefaultGuildsRestrictedV2;
             }
           }
@@ -12115,12 +12115,12 @@ namespace DiscordProtos.DiscordUsers.V1 {
             DefaultGuildsActivityRestrictedV2 = other.DefaultGuildsActivityRestrictedV2;
           }
           if (other.quests3PDataOptedOut_ != null) {
-            if (quests3PDataOptedOut_ == null || other.Quests3PDataOptedOut != false) {
+            if (quests3PDataOptedOut_ is null || other.Quests3PDataOptedOut != false) {
               Quests3PDataOptedOut = other.Quests3PDataOptedOut;
             }
           }
           if (other.showLocalTime_ != null) {
-            if (showLocalTime_ == null || other.ShowLocalTime != false) {
+            if (showLocalTime_ is null || other.ShowLocalTime != false) {
               ShowLocalTime = other.ShowLocalTime;
             }
           }
@@ -12144,14 +12144,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowActivityPartyPrivacyFriends_codec.Read(input);
-                if (allowActivityPartyPrivacyFriends_ == null || value != false) {
+                if (allowActivityPartyPrivacyFriends_ is null || value != false) {
                   AllowActivityPartyPrivacyFriends = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_allowActivityPartyPrivacyVoiceChannel_codec.Read(input);
-                if (allowActivityPartyPrivacyVoiceChannel_ == null || value != false) {
+                if (allowActivityPartyPrivacyVoiceChannel_ is null || value != false) {
                   AllowActivityPartyPrivacyVoiceChannel = value;
                 }
                 break;
@@ -12171,35 +12171,35 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 66: {
                 bool? value = _single_detectPlatformAccounts_codec.Read(input);
-                if (detectPlatformAccounts_ == null || value != false) {
+                if (detectPlatformAccounts_ is null || value != false) {
                   DetectPlatformAccounts = value;
                 }
                 break;
               }
               case 74: {
                 bool? value = _single_passwordless_codec.Read(input);
-                if (passwordless_ == null || value != false) {
+                if (passwordless_ is null || value != false) {
                   Passwordless = value;
                 }
                 break;
               }
               case 82: {
                 bool? value = _single_contactSyncEnabled_codec.Read(input);
-                if (contactSyncEnabled_ == null || value != false) {
+                if (contactSyncEnabled_ is null || value != false) {
                   ContactSyncEnabled = value;
                 }
                 break;
               }
               case 90: {
                 uint? value = _single_friendSourceFlags_codec.Read(input);
-                if (friendSourceFlags_ == null || value != 0) {
+                if (friendSourceFlags_ is null || value != 0) {
                   FriendSourceFlags = value;
                 }
                 break;
               }
               case 98: {
                 uint? value = _single_friendDiscoveryFlags_codec.Read(input);
-                if (friendDiscoveryFlags_ == null || value != 0) {
+                if (friendDiscoveryFlags_ is null || value != 0) {
                   FriendDiscoveryFlags = value;
                 }
                 break;
@@ -12225,56 +12225,56 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 138: {
                 bool? value = _single_defaultMessageRequestRestricted_codec.Read(input);
-                if (defaultMessageRequestRestricted_ == null || value != false) {
+                if (defaultMessageRequestRestricted_ is null || value != false) {
                   DefaultMessageRequestRestricted = value;
                 }
                 break;
               }
               case 146: {
                 bool? value = _single_dropsOptedOut_codec.Read(input);
-                if (dropsOptedOut_ == null || value != false) {
+                if (dropsOptedOut_ is null || value != false) {
                   DropsOptedOut = value;
                 }
                 break;
               }
               case 154: {
                 bool? value = _single_nonSpamRetrainingOptIn_codec.Read(input);
-                if (nonSpamRetrainingOptIn_ == null || value != false) {
+                if (nonSpamRetrainingOptIn_ is null || value != false) {
                   NonSpamRetrainingOptIn = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_familyCenterEnabled_codec.Read(input);
-                if (familyCenterEnabled_ == null || value != false) {
+                if (familyCenterEnabled_ is null || value != false) {
                   FamilyCenterEnabled = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_familyCenterEnabledV2_codec.Read(input);
-                if (familyCenterEnabledV2_ == null || value != false) {
+                if (familyCenterEnabledV2_ is null || value != false) {
                   FamilyCenterEnabledV2 = value;
                 }
                 break;
               }
               case 178: {
                 bool? value = _single_hideLegacyUsername_codec.Read(input);
-                if (hideLegacyUsername_ == null || value != false) {
+                if (hideLegacyUsername_ is null || value != false) {
                   HideLegacyUsername = value;
                 }
                 break;
               }
               case 186: {
                 bool? value = _single_inappropriateConversationWarnings_codec.Read(input);
-                if (inappropriateConversationWarnings_ == null || value != false) {
+                if (inappropriateConversationWarnings_ is null || value != false) {
                   InappropriateConversationWarnings = value;
                 }
                 break;
               }
               case 194: {
                 bool? value = _single_recentGamesEnabled_codec.Read(input);
-                if (recentGamesEnabled_ == null || value != false) {
+                if (recentGamesEnabled_ is null || value != false) {
                   RecentGamesEnabled = value;
                 }
                 break;
@@ -12285,14 +12285,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 210: {
                 bool? value = _single_allowGameFriendDmsInDiscord_codec.Read(input);
-                if (allowGameFriendDmsInDiscord_ == null || value != false) {
+                if (allowGameFriendDmsInDiscord_ is null || value != false) {
                   AllowGameFriendDmsInDiscord = value;
                 }
                 break;
               }
               case 218: {
                 bool? value = _single_defaultGuildsRestrictedV2_codec.Read(input);
-                if (defaultGuildsRestrictedV2_ == null || value != false) {
+                if (defaultGuildsRestrictedV2_ is null || value != false) {
                   DefaultGuildsRestrictedV2 = value;
                 }
                 break;
@@ -12307,14 +12307,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 242: {
                 bool? value = _single_quests3PDataOptedOut_codec.Read(input);
-                if (quests3PDataOptedOut_ == null || value != false) {
+                if (quests3PDataOptedOut_ is null || value != false) {
                   Quests3PDataOptedOut = value;
                 }
                 break;
               }
               case 250: {
                 bool? value = _single_showLocalTime_codec.Read(input);
-                if (showLocalTime_ == null || value != false) {
+                if (showLocalTime_ is null || value != false) {
                   ShowLocalTime = value;
                 }
                 break;
@@ -12340,14 +12340,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowActivityPartyPrivacyFriends_codec.Read(ref input);
-                if (allowActivityPartyPrivacyFriends_ == null || value != false) {
+                if (allowActivityPartyPrivacyFriends_ is null || value != false) {
                   AllowActivityPartyPrivacyFriends = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_allowActivityPartyPrivacyVoiceChannel_codec.Read(ref input);
-                if (allowActivityPartyPrivacyVoiceChannel_ == null || value != false) {
+                if (allowActivityPartyPrivacyVoiceChannel_ is null || value != false) {
                   AllowActivityPartyPrivacyVoiceChannel = value;
                 }
                 break;
@@ -12367,35 +12367,35 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 66: {
                 bool? value = _single_detectPlatformAccounts_codec.Read(ref input);
-                if (detectPlatformAccounts_ == null || value != false) {
+                if (detectPlatformAccounts_ is null || value != false) {
                   DetectPlatformAccounts = value;
                 }
                 break;
               }
               case 74: {
                 bool? value = _single_passwordless_codec.Read(ref input);
-                if (passwordless_ == null || value != false) {
+                if (passwordless_ is null || value != false) {
                   Passwordless = value;
                 }
                 break;
               }
               case 82: {
                 bool? value = _single_contactSyncEnabled_codec.Read(ref input);
-                if (contactSyncEnabled_ == null || value != false) {
+                if (contactSyncEnabled_ is null || value != false) {
                   ContactSyncEnabled = value;
                 }
                 break;
               }
               case 90: {
                 uint? value = _single_friendSourceFlags_codec.Read(ref input);
-                if (friendSourceFlags_ == null || value != 0) {
+                if (friendSourceFlags_ is null || value != 0) {
                   FriendSourceFlags = value;
                 }
                 break;
               }
               case 98: {
                 uint? value = _single_friendDiscoveryFlags_codec.Read(ref input);
-                if (friendDiscoveryFlags_ == null || value != 0) {
+                if (friendDiscoveryFlags_ is null || value != 0) {
                   FriendDiscoveryFlags = value;
                 }
                 break;
@@ -12421,56 +12421,56 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 138: {
                 bool? value = _single_defaultMessageRequestRestricted_codec.Read(ref input);
-                if (defaultMessageRequestRestricted_ == null || value != false) {
+                if (defaultMessageRequestRestricted_ is null || value != false) {
                   DefaultMessageRequestRestricted = value;
                 }
                 break;
               }
               case 146: {
                 bool? value = _single_dropsOptedOut_codec.Read(ref input);
-                if (dropsOptedOut_ == null || value != false) {
+                if (dropsOptedOut_ is null || value != false) {
                   DropsOptedOut = value;
                 }
                 break;
               }
               case 154: {
                 bool? value = _single_nonSpamRetrainingOptIn_codec.Read(ref input);
-                if (nonSpamRetrainingOptIn_ == null || value != false) {
+                if (nonSpamRetrainingOptIn_ is null || value != false) {
                   NonSpamRetrainingOptIn = value;
                 }
                 break;
               }
               case 162: {
                 bool? value = _single_familyCenterEnabled_codec.Read(ref input);
-                if (familyCenterEnabled_ == null || value != false) {
+                if (familyCenterEnabled_ is null || value != false) {
                   FamilyCenterEnabled = value;
                 }
                 break;
               }
               case 170: {
                 bool? value = _single_familyCenterEnabledV2_codec.Read(ref input);
-                if (familyCenterEnabledV2_ == null || value != false) {
+                if (familyCenterEnabledV2_ is null || value != false) {
                   FamilyCenterEnabledV2 = value;
                 }
                 break;
               }
               case 178: {
                 bool? value = _single_hideLegacyUsername_codec.Read(ref input);
-                if (hideLegacyUsername_ == null || value != false) {
+                if (hideLegacyUsername_ is null || value != false) {
                   HideLegacyUsername = value;
                 }
                 break;
               }
               case 186: {
                 bool? value = _single_inappropriateConversationWarnings_codec.Read(ref input);
-                if (inappropriateConversationWarnings_ == null || value != false) {
+                if (inappropriateConversationWarnings_ is null || value != false) {
                   InappropriateConversationWarnings = value;
                 }
                 break;
               }
               case 194: {
                 bool? value = _single_recentGamesEnabled_codec.Read(ref input);
-                if (recentGamesEnabled_ == null || value != false) {
+                if (recentGamesEnabled_ is null || value != false) {
                   RecentGamesEnabled = value;
                 }
                 break;
@@ -12481,14 +12481,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 210: {
                 bool? value = _single_allowGameFriendDmsInDiscord_codec.Read(ref input);
-                if (allowGameFriendDmsInDiscord_ == null || value != false) {
+                if (allowGameFriendDmsInDiscord_ is null || value != false) {
                   AllowGameFriendDmsInDiscord = value;
                 }
                 break;
               }
               case 218: {
                 bool? value = _single_defaultGuildsRestrictedV2_codec.Read(ref input);
-                if (defaultGuildsRestrictedV2_ == null || value != false) {
+                if (defaultGuildsRestrictedV2_ is null || value != false) {
                   DefaultGuildsRestrictedV2 = value;
                 }
                 break;
@@ -12503,14 +12503,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 242: {
                 bool? value = _single_quests3PDataOptedOut_codec.Read(ref input);
-                if (quests3PDataOptedOut_ == null || value != false) {
+                if (quests3PDataOptedOut_ is null || value != false) {
                   Quests3PDataOptedOut = value;
                 }
                 break;
               }
               case 250: {
                 bool? value = _single_showLocalTime_codec.Read(ref input);
-                if (showLocalTime_ == null || value != false) {
+                if (showLocalTime_ is null || value != false) {
                   ShowLocalTime = value;
                 }
                 break;
@@ -12665,11 +12665,11 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(DebugSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.rtcPanelShowVoiceStates_ != null) {
-            if (rtcPanelShowVoiceStates_ == null || other.RtcPanelShowVoiceStates != false) {
+            if (rtcPanelShowVoiceStates_ is null || other.RtcPanelShowVoiceStates != false) {
               RtcPanelShowVoiceStates = other.RtcPanelShowVoiceStates;
             }
           }
@@ -12690,7 +12690,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_rtcPanelShowVoiceStates_codec.Read(input);
-                if (rtcPanelShowVoiceStates_ == null || value != false) {
+                if (rtcPanelShowVoiceStates_ is null || value != false) {
                   RtcPanelShowVoiceStates = value;
                 }
                 break;
@@ -12712,7 +12712,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_rtcPanelShowVoiceStates_codec.Read(ref input);
-                if (rtcPanelShowVoiceStates_ == null || value != false) {
+                if (rtcPanelShowVoiceStates_ is null || value != false) {
                   RtcPanelShowVoiceStates = value;
                 }
                 break;
@@ -12915,21 +12915,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GameLibrarySettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.installShortcutDesktop_ != null) {
-            if (installShortcutDesktop_ == null || other.InstallShortcutDesktop != false) {
+            if (installShortcutDesktop_ is null || other.InstallShortcutDesktop != false) {
               InstallShortcutDesktop = other.InstallShortcutDesktop;
             }
           }
           if (other.installShortcutStartMenu_ != null) {
-            if (installShortcutStartMenu_ == null || other.InstallShortcutStartMenu != false) {
+            if (installShortcutStartMenu_ is null || other.InstallShortcutStartMenu != false) {
               InstallShortcutStartMenu = other.InstallShortcutStartMenu;
             }
           }
           if (other.disableGamesTab_ != null) {
-            if (disableGamesTab_ == null || other.DisableGamesTab != false) {
+            if (disableGamesTab_ is null || other.DisableGamesTab != false) {
               DisableGamesTab = other.DisableGamesTab;
             }
           }
@@ -12950,21 +12950,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_installShortcutDesktop_codec.Read(input);
-                if (installShortcutDesktop_ == null || value != false) {
+                if (installShortcutDesktop_ is null || value != false) {
                   InstallShortcutDesktop = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_installShortcutStartMenu_codec.Read(input);
-                if (installShortcutStartMenu_ == null || value != false) {
+                if (installShortcutStartMenu_ is null || value != false) {
                   InstallShortcutStartMenu = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_disableGamesTab_codec.Read(input);
-                if (disableGamesTab_ == null || value != false) {
+                if (disableGamesTab_ is null || value != false) {
                   DisableGamesTab = value;
                 }
                 break;
@@ -12986,21 +12986,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_installShortcutDesktop_codec.Read(ref input);
-                if (installShortcutDesktop_ == null || value != false) {
+                if (installShortcutDesktop_ is null || value != false) {
                   InstallShortcutDesktop = value;
                 }
                 break;
               }
               case 18: {
                 bool? value = _single_installShortcutStartMenu_codec.Read(ref input);
-                if (installShortcutStartMenu_ == null || value != false) {
+                if (installShortcutStartMenu_ is null || value != false) {
                   InstallShortcutStartMenu = value;
                 }
                 break;
               }
               case 26: {
                 bool? value = _single_disableGamesTab_codec.Read(ref input);
-                if (disableGamesTab_ == null || value != false) {
+                if (disableGamesTab_ is null || value != false) {
                   DisableGamesTab = value;
                 }
                 break;
@@ -13281,7 +13281,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(CustomStatus other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Text.Length != 0) {
@@ -13300,7 +13300,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             CreatedAtMs = other.CreatedAtMs;
           }
           if (other.label_ != null) {
-            if (label_ == null || other.Label != "") {
+            if (label_ is null || other.Label != "") {
               Label = other.Label;
             }
           }
@@ -13341,7 +13341,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 50: {
                 string value = _single_label_codec.Read(input);
-                if (label_ == null || value != "") {
+                if (label_ is null || value != "") {
                   Label = value;
                 }
                 break;
@@ -13383,7 +13383,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 50: {
                 string value = _single_label_codec.Read(ref input);
-                if (label_ == null || value != "") {
+                if (label_ is null || value != "") {
                   Label = value;
                 }
                 break;
@@ -13638,22 +13638,22 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(StatusSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.status_ != null) {
-            if (status_ == null || other.Status != "") {
+            if (status_ is null || other.Status != "") {
               Status = other.Status;
             }
           }
           if (other.customStatus_ != null) {
-            if (customStatus_ == null) {
+            if (customStatus_ is null) {
               CustomStatus = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomStatus();
             }
             CustomStatus.MergeFrom(other.CustomStatus);
           }
           if (other.showCurrentGame_ != null) {
-            if (showCurrentGame_ == null || other.ShowCurrentGame != false) {
+            if (showCurrentGame_ is null || other.ShowCurrentGame != false) {
               ShowCurrentGame = other.ShowCurrentGame;
             }
           }
@@ -13661,7 +13661,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             StatusExpiresAtMs = other.StatusExpiresAtMs;
           }
           if (other.statusCreatedAtMs_ != null) {
-            if (statusCreatedAtMs_ == null || other.StatusCreatedAtMs != 0UL) {
+            if (statusCreatedAtMs_ is null || other.StatusCreatedAtMs != 0UL) {
               StatusCreatedAtMs = other.StatusCreatedAtMs;
             }
           }
@@ -13682,13 +13682,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_status_codec.Read(input);
-                if (status_ == null || value != "") {
+                if (status_ is null || value != "") {
                   Status = value;
                 }
                 break;
               }
               case 18: {
-                if (customStatus_ == null) {
+                if (customStatus_ is null) {
                   CustomStatus = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomStatus();
                 }
                 input.ReadMessage(CustomStatus);
@@ -13696,7 +13696,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 26: {
                 bool? value = _single_showCurrentGame_codec.Read(input);
-                if (showCurrentGame_ == null || value != false) {
+                if (showCurrentGame_ is null || value != false) {
                   ShowCurrentGame = value;
                 }
                 break;
@@ -13707,7 +13707,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 42: {
                 ulong? value = _single_statusCreatedAtMs_codec.Read(input);
-                if (statusCreatedAtMs_ == null || value != 0UL) {
+                if (statusCreatedAtMs_ is null || value != 0UL) {
                   StatusCreatedAtMs = value;
                 }
                 break;
@@ -13729,13 +13729,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_status_codec.Read(ref input);
-                if (status_ == null || value != "") {
+                if (status_ is null || value != "") {
                   Status = value;
                 }
                 break;
               }
               case 18: {
-                if (customStatus_ == null) {
+                if (customStatus_ is null) {
                   CustomStatus = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomStatus();
                 }
                 input.ReadMessage(CustomStatus);
@@ -13743,7 +13743,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 26: {
                 bool? value = _single_showCurrentGame_codec.Read(ref input);
-                if (showCurrentGame_ == null || value != false) {
+                if (showCurrentGame_ is null || value != false) {
                   ShowCurrentGame = value;
                 }
                 break;
@@ -13754,7 +13754,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 42: {
                 ulong? value = _single_statusCreatedAtMs_codec.Read(ref input);
-                if (statusCreatedAtMs_ == null || value != 0UL) {
+                if (statusCreatedAtMs_ is null || value != 0UL) {
                   StatusCreatedAtMs = value;
                 }
                 break;
@@ -13957,21 +13957,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(LocalizationSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.locale_ != null) {
-            if (locale_ == null || other.Locale != "") {
+            if (locale_ is null || other.Locale != "") {
               Locale = other.Locale;
             }
           }
           if (other.timezoneOffset_ != null) {
-            if (timezoneOffset_ == null || other.TimezoneOffset != 0) {
+            if (timezoneOffset_ is null || other.TimezoneOffset != 0) {
               TimezoneOffset = other.TimezoneOffset;
             }
           }
           if (other.timezoneName_ != null) {
-            if (timezoneName_ == null || other.TimezoneName != "") {
+            if (timezoneName_ is null || other.TimezoneName != "") {
               TimezoneName = other.TimezoneName;
             }
           }
@@ -13992,21 +13992,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_locale_codec.Read(input);
-                if (locale_ == null || value != "") {
+                if (locale_ is null || value != "") {
                   Locale = value;
                 }
                 break;
               }
               case 18: {
                 int? value = _single_timezoneOffset_codec.Read(input);
-                if (timezoneOffset_ == null || value != 0) {
+                if (timezoneOffset_ is null || value != 0) {
                   TimezoneOffset = value;
                 }
                 break;
               }
               case 26: {
                 string value = _single_timezoneName_codec.Read(input);
-                if (timezoneName_ == null || value != "") {
+                if (timezoneName_ is null || value != "") {
                   TimezoneName = value;
                 }
                 break;
@@ -14028,21 +14028,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 string value = _single_locale_codec.Read(ref input);
-                if (locale_ == null || value != "") {
+                if (locale_ is null || value != "") {
                   Locale = value;
                 }
                 break;
               }
               case 18: {
                 int? value = _single_timezoneOffset_codec.Read(ref input);
-                if (timezoneOffset_ == null || value != 0) {
+                if (timezoneOffset_ is null || value != 0) {
                   TimezoneOffset = value;
                 }
                 break;
               }
               case 26: {
                 string value = _single_timezoneName_codec.Read(ref input);
-                if (timezoneName_ == null || value != "") {
+                if (timezoneName_ is null || value != "") {
                   TimezoneName = value;
                 }
                 break;
@@ -14253,7 +14253,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(CustomUserThemeSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           colors_.Add(other.colors_);
@@ -14500,16 +14500,16 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ClientThemeSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.backgroundGradientPresetId_ != null) {
-            if (backgroundGradientPresetId_ == null || other.BackgroundGradientPresetId != 0) {
+            if (backgroundGradientPresetId_ is null || other.BackgroundGradientPresetId != 0) {
               BackgroundGradientPresetId = other.BackgroundGradientPresetId;
             }
           }
           if (other.customUserThemeSettings_ != null) {
-            if (customUserThemeSettings_ == null) {
+            if (customUserThemeSettings_ is null) {
               CustomUserThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomUserThemeSettings();
             }
             CustomUserThemeSettings.MergeFrom(other.CustomUserThemeSettings);
@@ -14531,13 +14531,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 18: {
                 uint? value = _single_backgroundGradientPresetId_codec.Read(input);
-                if (backgroundGradientPresetId_ == null || value != 0) {
+                if (backgroundGradientPresetId_ is null || value != 0) {
                   BackgroundGradientPresetId = value;
                 }
                 break;
               }
               case 34: {
-                if (customUserThemeSettings_ == null) {
+                if (customUserThemeSettings_ is null) {
                   CustomUserThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomUserThemeSettings();
                 }
                 input.ReadMessage(CustomUserThemeSettings);
@@ -14560,13 +14560,13 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 18: {
                 uint? value = _single_backgroundGradientPresetId_codec.Read(ref input);
-                if (backgroundGradientPresetId_ == null || value != 0) {
+                if (backgroundGradientPresetId_ is null || value != 0) {
                   BackgroundGradientPresetId = value;
                 }
                 break;
               }
               case 34: {
-                if (customUserThemeSettings_ == null) {
+                if (customUserThemeSettings_ is null) {
                   CustomUserThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.CustomUserThemeSettings();
                 }
                 input.ReadMessage(CustomUserThemeSettings);
@@ -15004,7 +15004,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AppearanceSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Theme != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.Theme.Unset) {
@@ -15014,7 +15014,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             DeveloperMode = other.DeveloperMode;
           }
           if (other.clientThemeSettings_ != null) {
-            if (clientThemeSettings_ == null) {
+            if (clientThemeSettings_ is null) {
               ClientThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClientThemeSettings();
             }
             ClientThemeSettings.MergeFrom(other.ClientThemeSettings);
@@ -15023,17 +15023,17 @@ namespace DiscordProtos.DiscordUsers.V1 {
             MobileRedesignDisabled = other.MobileRedesignDisabled;
           }
           if (other.channelListLayout_ != null) {
-            if (channelListLayout_ == null || other.ChannelListLayout != "") {
+            if (channelListLayout_ is null || other.ChannelListLayout != "") {
               ChannelListLayout = other.ChannelListLayout;
             }
           }
           if (other.messagePreviews_ != null) {
-            if (messagePreviews_ == null || other.MessagePreviews != "") {
+            if (messagePreviews_ is null || other.MessagePreviews != "") {
               MessagePreviews = other.MessagePreviews;
             }
           }
           if (other.searchResultExactCountEnabled_ != null) {
-            if (searchResultExactCountEnabled_ == null || other.SearchResultExactCountEnabled != false) {
+            if (searchResultExactCountEnabled_ is null || other.SearchResultExactCountEnabled != false) {
               SearchResultExactCountEnabled = other.SearchResultExactCountEnabled;
             }
           }
@@ -15041,7 +15041,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             TimestampHourCycle = other.TimestampHourCycle;
           }
           if (other.happeningNowCardsDisabled_ != null) {
-            if (happeningNowCardsDisabled_ == null || other.HappeningNowCardsDisabled != false) {
+            if (happeningNowCardsDisabled_ is null || other.HappeningNowCardsDisabled != false) {
               HappeningNowCardsDisabled = other.HappeningNowCardsDisabled;
             }
           }
@@ -15078,7 +15078,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 26: {
-                if (clientThemeSettings_ == null) {
+                if (clientThemeSettings_ is null) {
                   ClientThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClientThemeSettings();
                 }
                 input.ReadMessage(ClientThemeSettings);
@@ -15090,21 +15090,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 50: {
                 string value = _single_channelListLayout_codec.Read(input);
-                if (channelListLayout_ == null || value != "") {
+                if (channelListLayout_ is null || value != "") {
                   ChannelListLayout = value;
                 }
                 break;
               }
               case 58: {
                 string value = _single_messagePreviews_codec.Read(input);
-                if (messagePreviews_ == null || value != "") {
+                if (messagePreviews_ is null || value != "") {
                   MessagePreviews = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_searchResultExactCountEnabled_codec.Read(input);
-                if (searchResultExactCountEnabled_ == null || value != false) {
+                if (searchResultExactCountEnabled_ is null || value != false) {
                   SearchResultExactCountEnabled = value;
                 }
                 break;
@@ -15115,7 +15115,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_happeningNowCardsDisabled_codec.Read(input);
-                if (happeningNowCardsDisabled_ == null || value != false) {
+                if (happeningNowCardsDisabled_ is null || value != false) {
                   HappeningNowCardsDisabled = value;
                 }
                 break;
@@ -15156,7 +15156,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 26: {
-                if (clientThemeSettings_ == null) {
+                if (clientThemeSettings_ is null) {
                   ClientThemeSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ClientThemeSettings();
                 }
                 input.ReadMessage(ClientThemeSettings);
@@ -15168,21 +15168,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 50: {
                 string value = _single_channelListLayout_codec.Read(ref input);
-                if (channelListLayout_ == null || value != "") {
+                if (channelListLayout_ is null || value != "") {
                   ChannelListLayout = value;
                 }
                 break;
               }
               case 58: {
                 string value = _single_messagePreviews_codec.Read(ref input);
-                if (messagePreviews_ == null || value != "") {
+                if (messagePreviews_ is null || value != "") {
                   MessagePreviews = value;
                 }
                 break;
               }
               case 66: {
                 bool? value = _single_searchResultExactCountEnabled_codec.Read(ref input);
-                if (searchResultExactCountEnabled_ == null || value != false) {
+                if (searchResultExactCountEnabled_ is null || value != false) {
                   SearchResultExactCountEnabled = value;
                 }
                 break;
@@ -15193,7 +15193,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 82: {
                 bool? value = _single_happeningNowCardsDisabled_codec.Read(ref input);
-                if (happeningNowCardsDisabled_ == null || value != false) {
+                if (happeningNowCardsDisabled_ is null || value != false) {
                   HappeningNowCardsDisabled = value;
                 }
                 break;
@@ -15425,22 +15425,22 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GuildFolder other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           guildIds_.Add(other.guildIds_);
           if (other.id_ != null) {
-            if (id_ == null || other.Id != 0L) {
+            if (id_ is null || other.Id != 0L) {
               Id = other.Id;
             }
           }
           if (other.name_ != null) {
-            if (name_ == null || other.Name != "") {
+            if (name_ is null || other.Name != "") {
               Name = other.Name;
             }
           }
           if (other.color_ != null) {
-            if (color_ == null || other.Color != 0UL) {
+            if (color_ is null || other.Color != 0UL) {
               Color = other.Color;
             }
           }
@@ -15466,21 +15466,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 18: {
                 long? value = _single_id_codec.Read(input);
-                if (id_ == null || value != 0L) {
+                if (id_ is null || value != 0L) {
                   Id = value;
                 }
                 break;
               }
               case 26: {
                 string value = _single_name_codec.Read(input);
-                if (name_ == null || value != "") {
+                if (name_ is null || value != "") {
                   Name = value;
                 }
                 break;
               }
               case 34: {
                 ulong? value = _single_color_codec.Read(input);
-                if (color_ == null || value != 0UL) {
+                if (color_ is null || value != 0UL) {
                   Color = value;
                 }
                 break;
@@ -15507,21 +15507,21 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 18: {
                 long? value = _single_id_codec.Read(ref input);
-                if (id_ == null || value != 0L) {
+                if (id_ is null || value != 0L) {
                   Id = value;
                 }
                 break;
               }
               case 26: {
                 string value = _single_name_codec.Read(ref input);
-                if (name_ == null || value != "") {
+                if (name_ is null || value != "") {
                   Name = value;
                 }
                 break;
               }
               case 34: {
                 ulong? value = _single_color_codec.Read(ref input);
-                if (color_ == null || value != 0UL) {
+                if (color_ is null || value != 0UL) {
                   Color = value;
                 }
                 break;
@@ -15680,7 +15680,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(GuildFolders other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           folders_.Add(other.folders_);
@@ -15957,7 +15957,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(FavoriteChannel other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Nickname.Length != 0) {
@@ -16223,7 +16223,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(Favorites other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           favoriteChannels_.MergeFrom(other.favoriteChannels_);
@@ -16231,7 +16231,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             Muted = other.Muted;
           }
           if (other.guildVisible_ != null) {
-            if (guildVisible_ == null || other.GuildVisible != false) {
+            if (guildVisible_ is null || other.GuildVisible != false) {
               GuildVisible = other.GuildVisible;
             }
           }
@@ -16260,7 +16260,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 26: {
                 bool? value = _single_guildVisible_codec.Read(input);
-                if (guildVisible_ == null || value != false) {
+                if (guildVisible_ is null || value != false) {
                   GuildVisible = value;
                 }
                 break;
@@ -16290,7 +16290,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 26: {
                 bool? value = _single_guildVisible_codec.Read(ref input);
-                if (guildVisible_ == null || value != false) {
+                if (guildVisible_ is null || value != false) {
                   GuildVisible = value;
                 }
                 break;
@@ -16519,7 +16519,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AudioContextSetting other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Muted != false) {
@@ -16750,7 +16750,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AudioSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           user_.MergeFrom(other.user_);
@@ -16947,11 +16947,11 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(CommunitiesSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.disableHomeAutoNav_ != null) {
-            if (disableHomeAutoNav_ == null || other.DisableHomeAutoNav != false) {
+            if (disableHomeAutoNav_ is null || other.DisableHomeAutoNav != false) {
               DisableHomeAutoNav = other.DisableHomeAutoNav;
             }
           }
@@ -16972,7 +16972,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_disableHomeAutoNav_codec.Read(input);
-                if (disableHomeAutoNav_ == null || value != false) {
+                if (disableHomeAutoNav_ is null || value != false) {
                   DisableHomeAutoNav = value;
                 }
                 break;
@@ -16994,7 +16994,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_disableHomeAutoNav_codec.Read(ref input);
-                if (disableHomeAutoNav_ == null || value != false) {
+                if (disableHomeAutoNav_ is null || value != false) {
                   DisableHomeAutoNav = value;
                 }
                 break;
@@ -17205,18 +17205,18 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(BroadcastSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.allowFriends_ != null) {
-            if (allowFriends_ == null || other.AllowFriends != false) {
+            if (allowFriends_ is null || other.AllowFriends != false) {
               AllowFriends = other.AllowFriends;
             }
           }
           allowedGuildIds_.Add(other.allowedGuildIds_);
           allowedUserIds_.Add(other.allowedUserIds_);
           if (other.autoBroadcast_ != null) {
-            if (autoBroadcast_ == null || other.AutoBroadcast != false) {
+            if (autoBroadcast_ is null || other.AutoBroadcast != false) {
               AutoBroadcast = other.AutoBroadcast;
             }
           }
@@ -17237,7 +17237,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowFriends_codec.Read(input);
-                if (allowFriends_ == null || value != false) {
+                if (allowFriends_ is null || value != false) {
                   AllowFriends = value;
                 }
                 break;
@@ -17254,7 +17254,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 34: {
                 bool? value = _single_autoBroadcast_codec.Read(input);
-                if (autoBroadcast_ == null || value != false) {
+                if (autoBroadcast_ is null || value != false) {
                   AutoBroadcast = value;
                 }
                 break;
@@ -17276,7 +17276,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowFriends_codec.Read(ref input);
-                if (allowFriends_ == null || value != false) {
+                if (allowFriends_ is null || value != false) {
                   AllowFriends = value;
                 }
                 break;
@@ -17293,7 +17293,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
               }
               case 34: {
                 bool? value = _single_autoBroadcast_codec.Read(ref input);
-                if (autoBroadcast_ == null || value != false) {
+                if (autoBroadcast_ is null || value != false) {
                   AutoBroadcast = value;
                 }
                 break;
@@ -17444,11 +17444,11 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ClipsSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.allowVoiceRecording_ != null) {
-            if (allowVoiceRecording_ == null || other.AllowVoiceRecording != false) {
+            if (allowVoiceRecording_ is null || other.AllowVoiceRecording != false) {
               AllowVoiceRecording = other.AllowVoiceRecording;
             }
           }
@@ -17469,7 +17469,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowVoiceRecording_codec.Read(input);
-                if (allowVoiceRecording_ == null || value != false) {
+                if (allowVoiceRecording_ is null || value != false) {
                   AllowVoiceRecording = value;
                 }
                 break;
@@ -17491,7 +17491,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 bool? value = _single_allowVoiceRecording_codec.Read(ref input);
-                if (allowVoiceRecording_ == null || value != false) {
+                if (allowVoiceRecording_ is null || value != false) {
                   AllowVoiceRecording = value;
                 }
                 break;
@@ -17642,7 +17642,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ForLaterSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.CurrentTab != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ForLaterTab.Unspecified) {
@@ -17858,7 +17858,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(SpendingLimit other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.Amount != 0UL) {
@@ -18059,11 +18059,11 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(SpendingLimitSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.oneTimePurchaseLimit_ != null) {
-            if (oneTimePurchaseLimit_ == null) {
+            if (oneTimePurchaseLimit_ is null) {
               OneTimePurchaseLimit = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimit();
             }
             OneTimePurchaseLimit.MergeFrom(other.OneTimePurchaseLimit);
@@ -18084,7 +18084,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
                 break;
               case 10: {
-                if (oneTimePurchaseLimit_ == null) {
+                if (oneTimePurchaseLimit_ is null) {
                   OneTimePurchaseLimit = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimit();
                 }
                 input.ReadMessage(OneTimePurchaseLimit);
@@ -18106,7 +18106,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
                 break;
               case 10: {
-                if (oneTimePurchaseLimit_ == null) {
+                if (oneTimePurchaseLimit_ is null) {
                   OneTimePurchaseLimit = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimit();
                 }
                 input.ReadMessage(OneTimePurchaseLimit);
@@ -18310,7 +18310,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(SafetySettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.SafetySettingsPreset != global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SafetySettingsPresetType.UnsetSafetySettingsPreset) {
@@ -18320,7 +18320,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
             IgnoreProfileSpeedbumpDisabled = other.IgnoreProfileSpeedbumpDisabled;
           }
           if (other.spendingLimitSettings_ != null) {
-            if (spendingLimitSettings_ == null) {
+            if (spendingLimitSettings_ is null) {
               SpendingLimitSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimitSettings();
             }
             SpendingLimitSettings.MergeFrom(other.SpendingLimitSettings);
@@ -18349,7 +18349,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 26: {
-                if (spendingLimitSettings_ == null) {
+                if (spendingLimitSettings_ is null) {
                   SpendingLimitSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimitSettings();
                 }
                 input.ReadMessage(SpendingLimitSettings);
@@ -18379,7 +18379,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               }
               case 26: {
-                if (spendingLimitSettings_ == null) {
+                if (spendingLimitSettings_ is null) {
                   SpendingLimitSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.SpendingLimitSettings();
                 }
                 input.ReadMessage(SpendingLimitSettings);
@@ -18531,7 +18531,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ICYMISettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.FeedGeneratedAt != 0UL) {
@@ -18721,7 +18721,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ApplicationDMSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.AllowMobilePush != false) {
@@ -18911,7 +18911,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ApplicationSharingSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.DisableApplicationActivitySharing != false) {
@@ -19127,17 +19127,17 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(ApplicationSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.appDmSettings_ != null) {
-            if (appDmSettings_ == null) {
+            if (appDmSettings_ is null) {
               AppDmSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationDMSettings();
             }
             AppDmSettings.MergeFrom(other.AppDmSettings);
           }
           if (other.appSharingSettings_ != null) {
-            if (appSharingSettings_ == null) {
+            if (appSharingSettings_ is null) {
               AppSharingSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationSharingSettings();
             }
             AppSharingSettings.MergeFrom(other.AppSharingSettings);
@@ -19158,14 +19158,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
                 break;
               case 10: {
-                if (appDmSettings_ == null) {
+                if (appDmSettings_ is null) {
                   AppDmSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationDMSettings();
                 }
                 input.ReadMessage(AppDmSettings);
                 break;
               }
               case 18: {
-                if (appSharingSettings_ == null) {
+                if (appSharingSettings_ is null) {
                   AppSharingSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationSharingSettings();
                 }
                 input.ReadMessage(AppSharingSettings);
@@ -19187,14 +19187,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
                 break;
               case 10: {
-                if (appDmSettings_ == null) {
+                if (appDmSettings_ is null) {
                   AppDmSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationDMSettings();
                 }
                 input.ReadMessage(AppDmSettings);
                 break;
               }
               case 18: {
-                if (appSharingSettings_ == null) {
+                if (appSharingSettings_ is null) {
                   AppSharingSettings = new global::DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types.ApplicationSharingSettings();
                 }
                 input.ReadMessage(AppSharingSettings);
@@ -19337,7 +19337,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AllApplicationSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           appSettings_.MergeFrom(other.appSettings_);
@@ -19525,7 +19525,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(AdsSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.AlwaysDeliver != false) {
@@ -19741,16 +19741,16 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(InAppFeedbackState other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           if (other.lastImpressionTime_ != null) {
-            if (lastImpressionTime_ == null || other.LastImpressionTime != 0UL) {
+            if (lastImpressionTime_ is null || other.LastImpressionTime != 0UL) {
               LastImpressionTime = other.LastImpressionTime;
             }
           }
           if (other.optOutExpiryTime_ != null) {
-            if (optOutExpiryTime_ == null || other.OptOutExpiryTime != 0UL) {
+            if (optOutExpiryTime_ is null || other.OptOutExpiryTime != 0UL) {
               OptOutExpiryTime = other.OptOutExpiryTime;
             }
           }
@@ -19771,14 +19771,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_lastImpressionTime_codec.Read(input);
-                if (lastImpressionTime_ == null || value != 0UL) {
+                if (lastImpressionTime_ is null || value != 0UL) {
                   LastImpressionTime = value;
                 }
                 break;
               }
               case 18: {
                 ulong? value = _single_optOutExpiryTime_codec.Read(input);
-                if (optOutExpiryTime_ == null || value != 0UL) {
+                if (optOutExpiryTime_ is null || value != 0UL) {
                   OptOutExpiryTime = value;
                 }
                 break;
@@ -19800,14 +19800,14 @@ namespace DiscordProtos.DiscordUsers.V1 {
                 break;
               case 10: {
                 ulong? value = _single_lastImpressionTime_codec.Read(ref input);
-                if (lastImpressionTime_ == null || value != 0UL) {
+                if (lastImpressionTime_ is null || value != 0UL) {
                   LastImpressionTime = value;
                 }
                 break;
               }
               case 18: {
                 ulong? value = _single_optOutExpiryTime_codec.Read(ref input);
-                if (optOutExpiryTime_ == null || value != 0UL) {
+                if (optOutExpiryTime_ is null || value != 0UL) {
                   OptOutExpiryTime = value;
                 }
                 break;
@@ -19949,7 +19949,7 @@ namespace DiscordProtos.DiscordUsers.V1 {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
         [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
         public void MergeFrom(InAppFeedbackSettings other) {
-          if (other == null) {
+          if (other is null) {
             return;
           }
           inAppFeedbackStates_.MergeFrom(other.inAppFeedbackStates_);

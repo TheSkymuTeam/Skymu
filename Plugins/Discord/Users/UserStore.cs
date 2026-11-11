@@ -26,7 +26,7 @@ namespace Discord.Users
         {
             var user = GetOrCreate(userId, displayName, username);
 
-            if (user.Avatar == null && avatarHash != null)
+            if (user.Avatar is null && avatarHash != null)
             {
                 var avatar = await HelperMethods.GetCachedAvatarAsync(userId, avatarHash, HelperMethods.DiscordChannelType.DirectMessage);
                 if (avatar != null) user.Avatar = avatar;

@@ -51,13 +51,13 @@ namespace Discord.Networking.Managers
 
         public static async Task SendPayload(string payload)
         {
-            if (Socket == null) return;
+            if (Socket is null) return;
             await Socket.SendPayload(payload);
         }
 
         public static void SubscribeMessageReceived(EventHandler<HelperClasses.DiscordMessageReceivedEventArgs> handler)
         {
-            if (Socket == null)
+            if (Socket is null)
                 return;
 
             Socket.MessageReceived -= handler;
@@ -66,7 +66,7 @@ namespace Discord.Networking.Managers
 
         public static void SubscribeVoiceServerUpdated(EventHandler<WebSocket.VoiceServerUpdateEventArgs> handler)
         {
-            if (Socket == null)
+            if (Socket is null)
                 return;
 
             Socket.VoiceServerUpdateCompleted -= handler;
@@ -75,13 +75,13 @@ namespace Discord.Networking.Managers
 
         public static void UnsubscribeVoiceServerUpdated(EventHandler<WebSocket.VoiceServerUpdateEventArgs> handler)
         {
-            if (Socket == null) return;
+            if (Socket is null) return;
             Socket.VoiceServerUpdateCompleted -= handler;
         }
 
         public static void SubscribeIncomingCall(EventHandler<JsonNode> handler)
         {
-            if (Socket == null) return;
+            if (Socket is null) return;
             Socket.IncomingCall -= handler;
             Socket.IncomingCall += handler;
         }

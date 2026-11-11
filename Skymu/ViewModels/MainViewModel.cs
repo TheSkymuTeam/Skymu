@@ -469,7 +469,7 @@ namespace Skymu.ViewModels
 
             List<ConversationItem> cached = _database?.Messages.Read(
                 SelectedConversation,
-                Settings.MsgLoadCount
+                Settings.MessagesToFetch
             );
             List<ConversationItem> items;
 
@@ -487,7 +487,7 @@ namespace Skymu.ViewModels
                 items = await Universal.Plugin.FetchMessages(
                     SelectedConversation,
                     Fetch.Newest,
-                    Settings.MsgLoadCount,
+                    Settings.MessagesToFetch,
                     null
                 );
                 _database?.Messages.Write(items, SelectedConversation);
@@ -614,7 +614,7 @@ namespace Skymu.ViewModels
             List<ConversationItem> items = await Universal.Plugin.FetchMessages(
                 conversation,
                 Fetch.NewestAfterIdentifier,
-                Settings.MsgLoadCount,
+                Settings.MessagesToFetch,
                 afterId
             );
 
@@ -715,7 +715,7 @@ namespace Skymu.ViewModels
                 {
                     int index = ActiveConversation.IndexOf(deleted_msg);
                     ActiveConversation.RemoveAt(index);
-                    if (Settings.StoreMessageHistory)
+                    if (Settings.MessageLogger)
                     {
                         deleted_msg.Text += " ==[deleted]==";
                         ActiveConversation.Insert(index, deleted_msg);
@@ -737,7 +737,7 @@ namespace Skymu.ViewModels
                 if (index != -1)
                 {
                     Message edited_msg = eE.NewItem as Message;
-                    if (!Settings.StoreMessageHistory)
+                    if (!Settings.MessageLogger)
                     {
                         ActiveConversation.RemoveAt(index);
                     }
@@ -745,7 +745,7 @@ namespace Skymu.ViewModels
                     edited_msg.Text += " ==[edited]==";
 
                     int insertIndex = Math.Min(
-                        index + (Settings.StoreMessageHistory ? 1 : 0),
+                        index + (Settings.MessageLogger ? 1 : 0),
                         ActiveConversation.Count
                     );
 
