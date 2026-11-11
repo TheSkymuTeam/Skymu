@@ -574,7 +574,7 @@ namespace Skymu
                 );
             Colorizer.LoadFromSettings();
             Migrator.Run();
-            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + Universal.BUILD_INFO.GetVersionString());
+            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + Universal.BUILD_INFO.GetVersionString().Replace(":", "--"));
             base.OnStartup(ev);
             Settings.Default.PropertyChanged += (sender, args) =>
             {
@@ -679,25 +679,51 @@ namespace Skymu
 
         public static void OpenURL(string url, bool safety_mode = false)
         {
-            if (safety_mode && !url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://") && !url.StartsWith("sftp://") && !url.StartsWith("gopher://"))
+            if (safety_mode)
             {
-               Dialog dialog = new Dialog(
-               type: WindowBase.IconType.Information,
-               content: "You've clicked on something that is hyperlinked, yet does not seem to be a webpage, Gopher site, or FTP/SFTP server.\n\nThis is most likely a custom protocol registered " +
-               "by a program you have installed, or a harmless shell command, but it could also be an attempt to trick you into running malicious code that compromises the security of your " +
-               "computer. Make sure you know what this does before running it!\n\nYou are going to execute:\n" + url,
-               header: "Execute in privileged shell?",
-               brText: Lang["sF_CONFIRM_YES"],
-               blEnabled: true,
-               blText: Lang["sF_CONFIRM_NO_BTN"]
-           );
-                dialog.BRAction = () =>
+                bool notWebpage = false;
+                if (!url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://") && !url.StartsWith("sftp://") && !url.StartsWith("gopher://")) notWebpage = true;
+                if (!notWebpage && Settings.DoNotWarnOnInlineWebLink)
                 {
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    return;ent
+                }
+                Dialog dialog = new Dialog(
+                type: notWebpage ? WindowBase.IconType.Information : WindowBase.IconType.Question,
+                content: notWebpage ?
+                "You've clicked on an inline link that does not point to a webpage, Gopher site, or FTP/SFTP server:\n" + url + "\n\nThis is most likely a harmless custom protocol registered " +
+                "by a program you have installed, but it could also be an attempt to trick you into running malicious code that compromises the security of your " +
+                "computer."
+                :
+                "You just clicked on an inline link that points to the following URL:\n" + url + "\n\nWould you still like to open it?",
+                header: notWebpage ? "Open non-Web inline link?" : "Open inline link?",
+                brText: Lang["sF_CONFIRM_NO_BTN"],
+                blEnabled: true,
+                blText: Lang["sF_CONFIRM_YES"],
+                cbEnabled: !notWebpage,
+                        onClosing: (s, e) =>
+                        {
+                            if (!notWebpage)
+                            {
+                                if (((Dialog)s).CheckBox.IsChecked == true)
+                                {
+                                    Settings.DoNotWarnOnInlineWebLink = true;
+                                }
+                                else
+                                {
+                                    Settings.DoNotWarnOnInlineWebLink = false;
+                                }
+                            }
+
+                        }
+            ); ;
+                dialog.BRAction = () =>
+                {
                     dialog.Close();
                 };
                 dialog.BLAction = () =>
                 {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                     dialog.Close();
                 };
                 dialog.ShowDialog();

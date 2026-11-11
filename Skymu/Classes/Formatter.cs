@@ -91,7 +91,7 @@ namespace Skymu.Formatting
             return hasEmojiRune;
         }
 
-        private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder() 
+        private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
             //.UseAdvancedExtensions()   // All standard + extended features (tables, footnotes, task lists, etc.)
             .UseAlertBlocks() // GitHub-style [!NOTE], [!TIP], etc.
             .UseAbbreviations() // *[HTML]: Hyper Text Markup Language
@@ -107,7 +107,7 @@ namespace Skymu.Formatting
             .UseMathematics() // $inline$ and $$block$$ math
             .UseMediaLinks() // Embed YouTube, Vimeo, etc.
             .UsePipeTables() // GitHub-style pipe tables
-            //.UseListExtras()        // (intentionally excluded)
+                             //.UseListExtras()        // (intentionally excluded)
             .UseTaskLists() // - [x] / - [ ] task checkboxes
             .UseDiagrams() // Mermaid / nomnoml diagram blocks
             .UseAutoLinks() // Auto-detect http:// and www. links
@@ -226,185 +226,185 @@ namespace Skymu.Formatting
             switch (block)
             {
                 case HeadingBlock heading:
-                {
-                    var span = new Span { FontWeight = FontWeights.Bold };
-
-                    switch (heading.Level)
                     {
-                        case 1:
-                            span.FontSize = 24;
-                            break;
-                        case 2:
-                            span.FontSize = 20;
-                            break;
-                        case 3:
-                            span.FontSize = 16;
-                            break;
-                        default:
-                            span.FontSize = 16;
-                            break;
+                        var span = new Span { FontWeight = FontWeights.Bold };
+
+                        switch (heading.Level)
+                        {
+                            case 1:
+                                span.FontSize = 24;
+                                break;
+                            case 2:
+                                span.FontSize = 20;
+                                break;
+                            case 3:
+                                span.FontSize = 16;
+                                break;
+                            default:
+                                span.FontSize = 16;
+                                break;
+                        }
+
+                        if (heading.Inline != null)
+                            ProcessInlines(span.Inlines, plugin, heading.Inline);
+
+                        inlines.Add(span);
+                        break;
                     }
-
-                    if (heading.Inline != null)
-                        ProcessInlines(span.Inlines, plugin, heading.Inline);
-
-                    inlines.Add(span);
-                    break;
-                }
 
                 case ParagraphBlock para:
-                {
-                    if (para.Inline != null)
-                        ProcessInlines(inlines, plugin, para.Inline);
+                    {
+                        if (para.Inline != null)
+                            ProcessInlines(inlines, plugin, para.Inline);
 
-                    break;
-                }
+                        break;
+                    }
 
                 case QuoteBlock quote:
-                {
-                    var stack = new StackPanel { Orientation = Orientation.Vertical };
-
-                    var border = new Border
                     {
-                        BorderBrush = Brushes.DarkGray,
-                        BorderThickness = new Thickness(2, 0, 0, 0),
-                        Padding = new Thickness(8, 0, 0, 0),
-                        Child = stack,
-                    };
+                        var stack = new StackPanel { Orientation = Orientation.Vertical };
 
-                    foreach (var child in quote)
-                    {
-                        var tb = new TextBlock
+                        var border = new Border
                         {
-                            Foreground = Brushes.Gray,
-                            TextWrapping = TextWrapping.Wrap,
+                            BorderBrush = Brushes.DarkGray,
+                            BorderThickness = new Thickness(2, 0, 0, 0),
+                            Padding = new Thickness(8, 0, 0, 0),
+                            Child = stack,
                         };
 
-                        ProcessBlock(tb.Inlines, plugin, child);
-
-                        stack.Children.Add(tb);
-                    }
-
-                    inlines.Add(new InlineUIContainer(border));
-                    break;
-                }
-
-                case ListBlock list:
-                {
-                    int index = 1;
-
-                    foreach (ListItemBlock item in list)
-                    {
-                        if (list.IsOrdered)
-                            inlines.Add(new Run($"{index}. "));
-                        else
-                            inlines.Add(new Run("• "));
-
-                        foreach (var child in item)
-                            ProcessBlock(inlines, plugin, child);
-
-                        inlines.Add(new LineBreak());
-                        index++;
-                    }
-
-                    break;
-                }
-
-                case MathBlock math:
-                {
-                    inlines.Add(
-                        new Run(math.Lines.ToString())
-                        {
-                            FontFamily = new FontFamily("Consolas"),
-                            FontSize = 12,
-                        }
-                    );
-                    break;
-                }
-
-                case FencedCodeBlock fencedBlock:
-                {
-                    var border = CreateCodeBlock(fencedBlock.Lines.ToString());
-                    inlines.Add(new InlineUIContainer(border));
-                    break;
-                }
-
-                case CodeBlock codeBlock:
-                {
-                    var border = CreateCodeBlock(codeBlock.Lines.ToString());
-                    inlines.Add(new InlineUIContainer(border));
-                    break;
-                }
-
-                case ThematicBreakBlock _:
-                {
-                    var line = new System.Windows.Shapes.Rectangle
-                    {
-                        Height = 1,
-                        Fill = Brushes.Gray,
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                    };
-
-                    inlines.Add(
-                        new InlineUIContainer(line) { BaselineAlignment = BaselineAlignment.Center }
-                    );
-
-                    break;
-                }
-
-                case MdTable table:
-                {
-                    var grid = new Grid { Margin = new Thickness(0, 4, 0, 4) };
-
-                    int columnCount = table.FirstOrDefault() is MdTableRow firstRow
-                        ? firstRow.Count
-                        : 0;
-
-                    for (int i = 0; i < columnCount; i++)
-                        grid.ColumnDefinitions.Add(
-                            new ColumnDefinition { Width = GridLength.Auto }
-                        );
-
-                    int rowIndex = 0;
-                    bool isHeaderRow = true;
-
-                    foreach (MdTableRow mdRow in table)
-                    {
-                        grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-
-                        int colIndex = 0;
-
-                        foreach (MdTableCell mdCell in mdRow)
+                        foreach (var child in quote)
                         {
                             var tb = new TextBlock
                             {
-                                Margin = new Thickness(0, 0, 30, 0),
+                                Foreground = Brushes.Gray,
                                 TextWrapping = TextWrapping.Wrap,
                             };
 
-                            foreach (var cellBlock in mdCell)
-                            {
-                                if (cellBlock is ParagraphBlock para && para.Inline != null)
-                                    ProcessInlines(tb.Inlines, plugin, para.Inline);
-                            }
+                            ProcessBlock(tb.Inlines, plugin, child);
 
-                            if (isHeaderRow)
-                                tb.FontWeight = FontWeights.Bold;
-
-                            Grid.SetRow(tb, rowIndex);
-                            Grid.SetColumn(tb, colIndex);
-
-                            grid.Children.Add(tb);
-                            colIndex++;
+                            stack.Children.Add(tb);
                         }
 
-                        isHeaderRow = false;
-                        rowIndex++;
+                        inlines.Add(new InlineUIContainer(border));
+                        break;
                     }
 
-                    inlines.Add(new InlineUIContainer(grid));
-                    break;
-                }
+                case ListBlock list:
+                    {
+                        int index = 1;
+
+                        foreach (ListItemBlock item in list)
+                        {
+                            if (list.IsOrdered)
+                                inlines.Add(new Run($"{index}. "));
+                            else
+                                inlines.Add(new Run("• "));
+
+                            foreach (var child in item)
+                                ProcessBlock(inlines, plugin, child);
+
+                            inlines.Add(new LineBreak());
+                            index++;
+                        }
+
+                        break;
+                    }
+
+                case MathBlock math:
+                    {
+                        inlines.Add(
+                            new Run(math.Lines.ToString())
+                            {
+                                FontFamily = new FontFamily("Consolas"),
+                                FontSize = 12,
+                            }
+                        );
+                        break;
+                    }
+
+                case FencedCodeBlock fencedBlock:
+                    {
+                        var border = CreateCodeBlock(fencedBlock.Lines.ToString());
+                        inlines.Add(new InlineUIContainer(border));
+                        break;
+                    }
+
+                case CodeBlock codeBlock:
+                    {
+                        var border = CreateCodeBlock(codeBlock.Lines.ToString());
+                        inlines.Add(new InlineUIContainer(border));
+                        break;
+                    }
+
+                case ThematicBreakBlock _:
+                    {
+                        var line = new System.Windows.Shapes.Rectangle
+                        {
+                            Height = 1,
+                            Fill = Brushes.Gray,
+                            HorizontalAlignment = HorizontalAlignment.Stretch,
+                        };
+
+                        inlines.Add(
+                            new InlineUIContainer(line) { BaselineAlignment = BaselineAlignment.Center }
+                        );
+
+                        break;
+                    }
+
+                case MdTable table:
+                    {
+                        var grid = new Grid { Margin = new Thickness(0, 4, 0, 4) };
+
+                        int columnCount = table.FirstOrDefault() is MdTableRow firstRow
+                            ? firstRow.Count
+                            : 0;
+
+                        for (int i = 0; i < columnCount; i++)
+                            grid.ColumnDefinitions.Add(
+                                new ColumnDefinition { Width = GridLength.Auto }
+                            );
+
+                        int rowIndex = 0;
+                        bool isHeaderRow = true;
+
+                        foreach (MdTableRow mdRow in table)
+                        {
+                            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                            int colIndex = 0;
+
+                            foreach (MdTableCell mdCell in mdRow)
+                            {
+                                var tb = new TextBlock
+                                {
+                                    Margin = new Thickness(0, 0, 30, 0),
+                                    TextWrapping = TextWrapping.Wrap,
+                                };
+
+                                foreach (var cellBlock in mdCell)
+                                {
+                                    if (cellBlock is ParagraphBlock para && para.Inline != null)
+                                        ProcessInlines(tb.Inlines, plugin, para.Inline);
+                                }
+
+                                if (isHeaderRow)
+                                    tb.FontWeight = FontWeights.Bold;
+
+                                Grid.SetRow(tb, rowIndex);
+                                Grid.SetColumn(tb, colIndex);
+
+                                grid.Children.Add(tb);
+                                colIndex++;
+                            }
+
+                            isHeaderRow = false;
+                            rowIndex++;
+                        }
+
+                        inlines.Add(new InlineUIContainer(grid));
+                        break;
+                    }
 
                 default:
                     break;
@@ -427,92 +427,92 @@ namespace Skymu.Formatting
                     break;
 
                 case EmphasisInline emphasis:
-                {
-                    var span = new Span();
-                    ProcessInlines(span.Inlines, plugin, emphasis);
-
-                    char delimiter = emphasis.DelimiterChar;
-                    int count = emphasis.DelimiterCount;
-
-                    if (delimiter == '*')
                     {
-                        if (count >= 3)
+                        var span = new Span();
+                        ProcessInlines(span.Inlines, plugin, emphasis);
+
+                        char delimiter = emphasis.DelimiterChar;
+                        int count = emphasis.DelimiterCount;
+
+                        if (delimiter == '*')
                         {
-                            span.FontWeight = FontWeights.Bold;
-                            span.FontStyle = FontStyles.Italic;
+                            if (count >= 3)
+                            {
+                                span.FontWeight = FontWeights.Bold;
+                                span.FontStyle = FontStyles.Italic;
+                            }
+                            else if (count == 2)
+                                span.FontWeight = FontWeights.Bold;
+                            else
+                                span.FontStyle = FontStyles.Italic;
                         }
-                        else if (count == 2)
-                            span.FontWeight = FontWeights.Bold;
-                        else
-                            span.FontStyle = FontStyles.Italic;
-                    }
-                    else if (delimiter == '~')
-                    {
-                        if (count == 2) //
-                            span.TextDecorations = TextDecorations.Strikethrough;
-                        else if (count == 1) //
-                            span.BaselineAlignment = BaselineAlignment.Subscript;
-                    }
-                    else if (delimiter == '^')
-                    {
-                        span.BaselineAlignment = BaselineAlignment.Superscript;
-                    }
-                    else if (delimiter == '+') // ++insert++
-                    {
-                        span.TextDecorations = TextDecorations.Underline;
-                    }
-                    else if (delimiter == '=') // ==mark==
-                    {
-                        span.Background = Brushes.Yellow;
-                    }
+                        else if (delimiter == '~')
+                        {
+                            if (count == 2) //
+                                span.TextDecorations = TextDecorations.Strikethrough;
+                            else if (count == 1) //
+                                span.BaselineAlignment = BaselineAlignment.Subscript;
+                        }
+                        else if (delimiter == '^')
+                        {
+                            span.BaselineAlignment = BaselineAlignment.Superscript;
+                        }
+                        else if (delimiter == '+') // ++insert++
+                        {
+                            span.TextDecorations = TextDecorations.Underline;
+                        }
+                        else if (delimiter == '=') // ==mark==
+                        {
+                            span.Background = Brushes.Yellow;
+                        }
 
-                    inlines.Add(span);
-                    break;
-                }
+                        inlines.Add(span);
+                        break;
+                    }
 
                 case CodeInline code:
-                {
-                    inlines.Add(
-                        new InlineUIContainer(CreateCodeBlock(code.Content, inline: true))
-                        {
-                            BaselineAlignment = BaselineAlignment.TextBottom,
-                        }
-                    );
-                    break;
-                }
+                    {
+                        inlines.Add(
+                            new InlineUIContainer(CreateCodeBlock(code.Content, inline: true))
+                            {
+                                BaselineAlignment = BaselineAlignment.TextBottom,
+                            }
+                        );
+                        break;
+                    }
 
                 case LinkInline link:
-                {
-                    string display = string.Concat(
-                        link.OfType<LiteralInline>().Select(l => l.Content.ToString())
-                    );
-                    string url = link.Url ?? string.Empty;
-                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                     {
-                        bool displayLooksLikeUrl =
-                            Uri.TryCreate(display, UriKind.Absolute, out Uri displayUri) // thanks epicness
-                            && displayUri.Host != uri.Host;
-                        string label = string.IsNullOrEmpty(display) ? url : display;
-                        var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri, ToolTip = uri };
-                        hyperlink.RequestNavigate += (s, e) =>
+                        string display = string.Concat(
+                            link.OfType<LiteralInline>().Select(l => l.Content.ToString())
+                        );
+                        string url = link.Url ?? string.Empty;
+                        if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            Universal.OpenURL(e.Uri.AbsoluteUri, true);
-                        };
-                        inlines.Add(hyperlink);
-                        if (displayLooksLikeUrl)
-                            inlines.Add(
-                                new Run($" (warning, actual destination → {url})")
-                                {
-                                    Foreground = Brushes.Red,
-                                }
-                            );
+                            bool displayLooksLikeUrl =
+                                Uri.TryCreate(display, UriKind.Absolute, out Uri displayUri) // thanks epicness
+                                && displayUri.Host != uri.Host;
+                            string label = string.IsNullOrEmpty(display) ? url : display;
+                            var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri, ToolTip = uri };
+                            hyperlink.RequestNavigate += (s, e) =>
+                            {
+                                Universal.OpenURL(e.Uri.AbsoluteUri, true);
+                            };
+                            inlines.Add(hyperlink);
+                            if (displayLooksLikeUrl)
+                                inlines.Add(
+                                    new Run($" (warning, actual destination → {url})")
+                                    {
+                                        Foreground = Brushes.Red,
+                                    }
+                                );
+                        }
+                        else
+                        {
+                            inlines.Add(new Run(url));
+                        }
+                        break;
                     }
-                    else
-                    {
-                        inlines.Add(new Run(url));
-                    }
-                    break;
-                }
 
                 case LineBreakInline lineBreak:
                     inlines.Add(new LineBreak());
@@ -523,19 +523,23 @@ namespace Skymu.Formatting
                     break;
 
                 case ContainerInline container:
-                {
-                    // generic container fallback
-                    var span = new Span();
-                    ProcessInlines(span.Inlines, plugin, container);
-                    inlines.Add(span);
-                    break;
-                }
+                    {
+                        // generic container fallback
+                        var span = new Span();
+                        ProcessInlines(span.Inlines, plugin, container);
+                        inlines.Add(span);
+                        break;
+                    }
 
                 default:
                     // skip
                     break;
             }
         }
+
+        private static readonly Regex LinkRegex = new Regex(
+    @"((?<![a-zA-Z0-9+.\-])(?:[a-zA-Z][a-zA-Z0-9+.\-]*://|(?i:mailto|skype):)[^\s]+)",
+    RegexOptions.Compiled);
 
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
         // the main method, and the span, containg formatted text, is added to the global inline list. This, and the emoji-processing function only update the inline collection, and as such, return void.
@@ -548,7 +552,6 @@ namespace Skymu.Formatting
 
             int position = 0;
 
-            string linkPattern = @"((?:https?|ftp|gopher)://[^\s]+)"; //regex for weblinks (plain URL schema only, markdown links handled by Markdig)
             char[] punctuation = new char[] { '.', ',', ';', ')', ']', '"', '\'' };
 
             while (position < text.Length)
@@ -558,17 +561,11 @@ namespace Skymu.Formatting
                 ClickableConfiguration nextClickableConfig = null;
                 int clickableStartIndex = -1;
 
-                // preparation
-
-                // find and set the next link to be parsed in the text
-                foreach (Match m in Regex.Matches(text.Substring(position), linkPattern))
+                Match m = LinkRegex.Match(text, position);
+                if (m.Success)
                 {
-                    int idx = position + m.Index;
-                    if (idx < nextIndex)
-                    {
-                        nextIndex = idx;
-                        nextLink = m;
-                    }
+                    nextIndex = m.Index;
+                    nextLink = m;
                 }
 
                 // find and set the next clickable to be parsed in the text (clickables defined in plugin)
@@ -603,7 +600,7 @@ namespace Skymu.Formatting
                 }
 
                 // if the next match is a link, process it like so
-                if (nextLink != null && nextLink.Index + position == nextIndex)
+                if (nextLink != null && nextLink.Index == nextIndex)
                 {
                     if (nextLink.Groups[1].Success)
                     {

@@ -71,9 +71,8 @@ namespace Skymu.Versioning
             string suffix = string.Empty;
             if (use_decoration)
             {
-                if (IsBeta) version += "b";
+                if (IsBeta) { version += "b"; suffix = ":" + BetaNumber; }
                 else version += "v";
-                suffix = ":" + BetaNumber;
             }
             return version + Major + "." + Minor + "." + Patch + suffix;
         }

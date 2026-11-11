@@ -34,6 +34,12 @@ namespace Skymu.Preferences
             set => WRITE("StartMinimized", value, nameof(StartMinimized), "UI/General");
         }
 
+        public static bool DoNotWarnOnInlineWebLink
+        {
+            get => SELECT("DoNotWarnOnInlineWebLink", false, "UI/General");
+            set => WRITE("DoNotWarnOnInlineWebLink", value, nameof(DoNotWarnOnInlineWebLink), "UI/General");
+        }
+
         public static bool AllowMultipleInstances
         {
             get => SELECT("AllowMultipleInstances", true, "UI/General");
@@ -316,7 +322,7 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool Anonymize
         {
-            get => SELECT("Anonymize", false, "Skymu/WebServices");
+            get => SELECT("Anonymize", true, "Skymu/WebServices");
             set => WRITE("Anonymize", value, nameof(Anonymize), "Skymu/WebServices");
         }
         /// <summary>

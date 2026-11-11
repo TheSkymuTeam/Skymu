@@ -29,8 +29,6 @@ namespace Skymu.Forms.Pages
     public partial class Updater : Page
     {
         private CancellationTokenSource _cts;
-        private const string Author = "TheSkymuTeam";
-        private const string Repo = Universal.NAME;
         private readonly string brand = Settings.BrandingName;
         private updateInfo? update_info;
         private WindowBase window;
@@ -280,7 +278,7 @@ namespace Skymu.Forms.Pages
         {
             try
             {
-                string url = $"https://api.github.com/repos/{Author}/{Repo}/releases/latest";
+                string url = $"https://api.github.com/repos/{Universal.GITHUB_OWNER}/{Universal.GITHUB_REPO}/releases/latest";
 
                 using (HttpResponseMessage response = await Universal.SkymuHttpClient.GetAsync(url))
                 {
