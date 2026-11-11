@@ -37,6 +37,7 @@ namespace Skymu.Skype7
         private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         private bool addaccount = false;
         private bool switchuser = false;
+        private AuthenticationMethod _lastAuthType = AuthenticationMethod.Password;
 
         public Login(bool switchuser = false, bool addAccount = false, Action<ICore> accountAdded = null)
         {
@@ -45,6 +46,9 @@ namespace Skymu.Skype7
             InitializeComponent();
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
+            PlainTokenBox.KeyUp += BoxKeyUp;
+            PasswordTokenBox.PasswordChanged += PasswordTokenBox_PasswordChanged;
+            PlainTokenBox.TextChanged += PlainTokenBox_TextChanged;
             this.ContentRendered += Login_ContentRendered;
 
             _viewModel = new LoginViewModel(() => new Main(), addaccount);
@@ -68,7 +72,7 @@ namespace Skymu.Skype7
             if (ProtocolComboBox.SelectedIndex == -1)
                 return;
             await _viewModel.Login(
-                UsernameBox.Text,
+                _lastAuthType == AuthenticationMethod.Token ? PasswordTokenBox.Password : UsernameBox.Text,
                 PasswordTokenBox.Password
             );
         }
@@ -121,6 +125,26 @@ namespace Skymu.Skype7
                 }
             }
 
+            bool tokenMode = listing.AuthenticationType == AuthenticationMethod.Token;
+            if (tokenMode)
+            {
+                // the token is a credential, so it is entered into the masked password box instead of the plaintext username box
+                UsernameBox.Text = "";
+                SetTokenBoxes("");
+                PasswordTokenBox.IsEnabled = true;
+                PasswordHint.Foreground = new SolidColorBrush(Colors.Gray);
+                PasswordHint.FontStyle = FontStyles.Normal;
+                PasswordHint.Text = listing.TextUsername ?? "Token";
+                UsernameHint.Foreground = new SolidColorBrush(Colors.LightGray);
+                UsernameBox.IsEnabled = false;
+                UsernameHint.FontStyle = FontStyles.Italic;
+                UsernameHint.Text = "field not required";
+            }
+            else if (_lastAuthType == AuthenticationMethod.Token)
+            {
+                SetTokenBoxes("");
+            }
+            _lastAuthType = listing.AuthenticationType;
             LoginButtonLabel.Text = buttonText;
             CheckEnableLoginButton();
         }
@@ -137,12 +161,56 @@ namespace Skymu.Skype7
             CheckEnableLoginButton();
         }
 
+        private bool _syncingBoxes;
+        private void PasswordTokenBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (_syncingBoxes)
+				return;
+            _syncingBoxes = true;
+            PlainTokenBox.Text = PasswordTokenBox.Password;
+            _syncingBoxes = false;
+        }
+
+        private void PlainTokenBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_syncingBoxes)
+				return;
+            _syncingBoxes = true;
+            PasswordTokenBox.Password = PlainTokenBox.Text;
+            _syncingBoxes = false;
+        }
+
+        private void SetTokenBoxes(string value)
+        {
+            _syncingBoxes = true;
+            PasswordTokenBox.Password = value;
+            PlainTokenBox.Text = value;
+            _syncingBoxes = false;
+        }
+
+        private void RevealPasswordToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            bool reveal = RevealPasswordToggle.IsChecked == true;
+            RevealSlash.Visibility = reveal ? Visibility.Visible : Visibility.Collapsed;
+            PlainTokenBox.Visibility = reveal ? Visibility.Visible : Visibility.Collapsed;
+            PasswordTokenBox.Visibility = reveal ? Visibility.Collapsed : Visibility.Visible;
+
+            if (reveal)
+            {
+                PlainTokenBox.Focus();
+                PlainTokenBox.CaretIndex = PlainTokenBox.Text.Length;
+            }
+            else
+                PasswordTokenBox.Focus();
+        }
+
         private void CheckEnableLoginButton()
         {
             if (
                 (!string.IsNullOrWhiteSpace(UsernameBox.Text)
                     && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
                 || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled)
+                || (_lastAuthType == AuthenticationMethod.Token && !string.IsNullOrWhiteSpace(PasswordTokenBox.Password))
             )
             {
                 if (!LoginButton.IsEnabled) { LoginButtonLabel.Opacity = 1; LoginButton.Opacity = 1; }
@@ -210,12 +278,12 @@ namespace Skymu.Skype7
             if (creds.AuthenticationType == AuthenticationMethod.QRCode) return;
             if (creds.AuthenticationType == AuthenticationMethod.Token)
             {
-                UsernameBox.Text = !String.IsNullOrEmpty(creds.PasswordOrToken) ? creds.PasswordOrToken : creds.User.Username;
+                SetTokenBoxes(!String.IsNullOrEmpty(creds.PasswordOrToken) ? creds.PasswordOrToken : creds.User.Username);
                 CheckEnableLoginButton();
                 return;
             }
             UsernameBox.Text = creds.User.Username;
-            PasswordTokenBox.Password = creds.PasswordOrToken;
+            SetTokenBoxes(creds.PasswordOrToken);
             CheckEnableLoginButton();
         }
 
