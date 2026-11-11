@@ -298,6 +298,16 @@ namespace Skymu.Preferences
 
         #endregion
 
+        #region Skymu/Updater
+
+        public static bool AllowBetaBuildUpdates
+        {
+            get => SELECT("AllowBetaBuildUpdates", true, "Skymu/Updater");
+            set => WRITE("AllowBetaBuildUpdates", value, nameof(AllowBetaBuildUpdates), "Skymu/Updater");
+        }
+
+        #endregion
+
         #region Skymu/WebServices
 
         /// <summary>

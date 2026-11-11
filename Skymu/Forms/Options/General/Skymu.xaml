@@ -449,6 +449,12 @@
                 Content="Retain original versions of edited and deleted messages"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[StoreMessageHistory], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
+            <CheckBox
+                Margin="0,5"
+                Padding="6,0"
+                Content="Inform me when a new beta update is available, in addition to new stable updates"
+                Foreground="{DynamicResource Text.VeryHighContrast}"
+                IsChecked="{Binding Path=[AllowBetaBuildUpdates], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
             <Rectangle
                 Height="1"

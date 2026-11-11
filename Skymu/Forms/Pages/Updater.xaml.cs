@@ -308,6 +308,10 @@ namespace Skymu.Forms.Pages
                          }
                         else latest_build = new BuildInfo(latestTag, "(invalid", "codename)");
 
+                        // abort: the latest build is a beta build and we have disabled updating from the beta branch
+                        if (latest_build.IsBeta && !Settings.AllowBetaBuildUpdates)
+                            return null;
+
                         // abort: the build we are updating to is not newer than the build installed
                         if (!latest_build.IsNewerThan(Universal.BUILD_INFO))
                             return null;
