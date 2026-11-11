@@ -204,7 +204,7 @@ namespace Skymu.Infrastructure.Main
                         url = Universal.EASTER_CHANTE_SKYPE; // one of the uploads called him ksi bruh are we dead ass ... french ksi wtf......
                     else
                         url = Universal.EASTER_SKYPE_SOUNDS_REMIX;
-                    Universal.OpenUrl(url);
+                    Universal.OpenURL(url);
                     break;
             }
         }

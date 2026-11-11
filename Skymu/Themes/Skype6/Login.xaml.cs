@@ -163,9 +163,9 @@ namespace Skymu.Skype6
             Universal.ShowMessage("Please restart to see the login form.", "Auto login has been disabled for all logins");
         }
         private void OnAccessibility(object sender, EventArgs e) { Universal.NotImplemented(Universal.Lang["sMAINMENU_TOOLS_ACCESSIBILITY"]); }
-        private void OnHelp(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_HELP); }
+        private void OnHelp(object sender, EventArgs e) { Universal.OpenURL(Universal.SKYMU_WEBSITE_HELP); }
         private void OnCheckUpdates(object sender, EventArgs e) { new Updater(true); }
-        private void OnPrivacy(object sender, EventArgs e) { Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY); }
+        private void OnPrivacy(object sender, EventArgs e) { Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY); }
         private void OnAbout(object sender, EventArgs e) { new About().Show(); }
         private void OnClose(object sender, EventArgs e) { if (addaccount) Close(); else Universal.Close(false); }
 
@@ -299,7 +299,7 @@ namespace Skymu.Skype6
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Universal.OpenUrl(DISCORD_SERVER_INVITE);
+            Universal.OpenURL(DISCORD_SERVER_INVITE);
             e.Handled = true;
         }
 

@@ -52,7 +52,7 @@ namespace Skymu.Forms
         private bool _is_answer;
         private bool _hangUpRequested = false;
         private ActiveCall _call;
-        private ICall _callPlugin;
+        private ICall _callPlugin = Universal.Plugin as ICall;
         private LocationChangeEventArgs location;
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;

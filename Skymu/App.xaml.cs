@@ -669,9 +669,33 @@ namespace Skymu
             }
         }
 
-        public static void OpenUrl(string url)
+        public static void OpenURL(string url, bool safety_mode = false)
         {
-            _ = Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            if (safety_mode && !url.StartsWith("http://") && !url.StartsWith("https://") && !url.StartsWith("ftp://") && !url.StartsWith("sftp://") && !url.StartsWith("gopher://"))
+            {
+               Dialog dialog = new Dialog(
+               type: WindowBase.IconType.Information,
+               content: "You've clicked on something that is hyperlinked, yet does not seem to be a webpage, Gopher site, or FTP/SFTP server.\n\nThis is most likely a custom protocol registered " +
+               "by a program you have installed, or a harmless shell command, but it could also be an attempt to trick you into running malicious code that compromises the security of your " +
+               "computer. Make sure you know what this does before running it!\n\nYou are going to execute:\n" + url,
+               header: "Execute in privileged shell?",
+               brText: Lang["sF_CONFIRM_YES"],
+               blEnabled: true,
+               blText: Lang["sF_CONFIRM_NO_BTN"]
+           );
+                dialog.BRAction = () =>
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    dialog.Close();
+                };
+                dialog.BLAction = () =>
+                {
+                    dialog.Close();
+                };
+                dialog.ShowDialog();
+            }
+            else Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+
         }
 
         private static async void Cleanup()

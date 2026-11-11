@@ -27,7 +27,7 @@ namespace Skymu.Forms.OptionPages.Advanced
             InitializeComponent();
         }
 
-        private void OURL(object sender, RequestNavigateEventArgs e) => Universal.OpenUrl(e.Uri.AbsoluteUri);
+        private void OURL(object sender, RequestNavigateEventArgs e) => Universal.OpenURL(e.Uri.AbsoluteUri);
 
         private void PluginPathBrowseClick(object sender, RoutedEventArgs e)
         {

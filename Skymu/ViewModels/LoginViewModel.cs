@@ -85,7 +85,7 @@ namespace Skymu.ViewModels
                 dlg = new Dialog(
                     WindowBase.IconType.Question,
                     "Don't want to read this? Almost all users will want to click Yes. Clicking No leads to loss of client functionality. If you are very concerned about privacy, read on. Once upon a time...\n\n" +
-                    Settings.BrandingName + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
+                    Universal.NAME + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
                         + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes', otherwise click 'Yes, but keep me anonymous.'"
                         + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
                         + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."

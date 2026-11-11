@@ -177,7 +177,7 @@ namespace Skymu.ViewModels
                 if (File.Exists(finalPath))
                     File.Delete(finalPath);
                 File.Move(tempPath, finalPath);
-                Universal.OpenUrl(finalPath);
+                Universal.OpenURL(finalPath);
 
                 _isDownloading = false;
             });

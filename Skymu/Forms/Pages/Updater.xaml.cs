@@ -138,7 +138,7 @@ namespace Skymu.Forms.Pages
             {
                 try
                 {
-                    Universal.OpenUrl(file_path);
+                    Universal.OpenURL(file_path);
                 }
                 catch (Exception ex)
                 {

@@ -886,7 +886,7 @@ namespace Skymu.Skype4
 
         private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
         {
-            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
+            Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
         }
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)

@@ -166,7 +166,7 @@ namespace Skymu.Native.Windows
         private void OnSwitchUser(object sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
         private void OnClose(object sender, EventArgs e) => Universal.Close();
         private void OnAbout(object sender, EventArgs e) => new About().Show();
-        private void OnPrivacyPolicy(object sender, EventArgs e) => Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
+        private void OnPrivacyPolicy(object sender, EventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
         private void OnOptions(object sender, EventArgs e) => new Options().Show();
         private void OnCheckUpdates(object sender, EventArgs e) => new Forms.Pages.Updater(true);
         private void OnHome(object sender, EventArgs e) => Raise(Action.Home);

@@ -496,7 +496,7 @@ namespace Skymu.Formatting
                         var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri, ToolTip = uri };
                         hyperlink.RequestNavigate += (s, e) =>
                         {
-                            Universal.OpenUrl(e.Uri.AbsoluteUri);
+                            Universal.OpenURL(e.Uri.AbsoluteUri, true);
                         };
                         inlines.Add(hyperlink);
                         if (displayLooksLikeUrl)
@@ -548,7 +548,7 @@ namespace Skymu.Formatting
 
             int position = 0;
 
-            string linkPattern = @"((?:https?|ftp|gopher)://[^\s]+)"; // Regex for weblinks (plain URL schema only, markdown links handled by Markdig)
+            string linkPattern = @"((?:https?|ftp|gopher)://[^\s]+)"; //regex for weblinks (plain URL schema only, markdown links handled by Markdig)
             char[] punctuation = new char[] { '.', ',', ';', ')', ']', '"', '\'' };
 
             while (position < text.Length)
@@ -613,7 +613,7 @@ namespace Skymu.Formatting
                             var hyperlink = new Hyperlink(new Run(url)) { NavigateUri = uri, ToolTip = uri };
                             hyperlink.RequestNavigate += (s, e) =>
                             {
-                                Universal.OpenUrl(e.Uri.AbsoluteUri);
+                                Universal.OpenURL(e.Uri.AbsoluteUri);
                             };
                             inlines.Add(hyperlink);
                         }
@@ -870,7 +870,7 @@ namespace Skymu.Formatting
                                     {
                                         hyperlink.NavigateUri = uri;
                                         hyperlink.RequestNavigate += (s, e) =>
-                                            Universal.OpenUrl(e.Uri.AbsoluteUri);
+                                            Universal.OpenURL(e.Uri.AbsoluteUri, true);
                                     }
                                     hyperlink.ToolTip = href;
                                 }

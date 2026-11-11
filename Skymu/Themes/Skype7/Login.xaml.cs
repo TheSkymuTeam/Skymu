@@ -263,13 +263,13 @@ namespace Skymu.Skype7
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Universal.OpenUrl(e.Uri.AbsoluteUri);
+            Universal.OpenURL(e.Uri.AbsoluteUri);
             e.Handled = true;
         }
 
         private void FooterLink_Click(object sender, MouseButtonEventArgs e)
         {
-            Universal.OpenUrl(DISCORD_SERVER_INVITE);
+            Universal.OpenURL(DISCORD_SERVER_INVITE);
         }
 
         // TODO: These two are not aligning with the rest of login themes? Also why have two instead of just one function (_Closing)?

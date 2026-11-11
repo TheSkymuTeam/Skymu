@@ -907,7 +907,7 @@ namespace Skymu.Skype5
 
         private void OnPrivacyPolicy(object sender, RoutedEventArgs e)
         {
-            Universal.OpenUrl(Universal.SKYMU_WEBSITE_PRIVACY);
+            Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
         }
 
         private void OnCheckUpdates(object sender, RoutedEventArgs e)
@@ -1621,7 +1621,7 @@ namespace Skymu.Skype5
 
         private void OnFeedbackClick(object sender, MouseButtonEventArgs e)
         {
-            Universal.OpenUrl(Universal.DISCORD_SERVER_INVITE);
+            Universal.OpenURL(Universal.DISCORD_SERVER_INVITE);
         }
 
         private async void HandleStatusItemClick(MenuItem item)
