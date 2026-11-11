@@ -244,7 +244,7 @@ namespace Skymu.Formatting
                         }
 
                         if (heading.Inline != null)
-                            ProcessInlines(span.Inlines, plugin, heading.Inline);
+                            ProcessInlines(span.Inlines, heading.Inline);
 
                         inlines.Add(span);
                         break;
@@ -278,7 +278,7 @@ namespace Skymu.Formatting
                                 TextWrapping = TextWrapping.Wrap,
                             };
 
-                            ProcessBlock(tb.Inlines, plugin, child);
+                            ProcessBlock(tb.Inlines, child);
 
                             stack.Children.Add(tb);
                         }
@@ -299,7 +299,7 @@ namespace Skymu.Formatting
                                 inlines.Add(new Run("• "));
 
                             foreach (var child in item)
-                                ProcessBlock(inlines, plugin, child);
+                                ProcessBlock(inlines, child);
 
                             inlines.Add(new LineBreak());
                             index++;

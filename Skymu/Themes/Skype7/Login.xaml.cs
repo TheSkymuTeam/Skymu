@@ -44,7 +44,7 @@ namespace Skymu.Skype7
             PlainTokenBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.PasswordChanged += PasswordTokenBox_PasswordChanged;
             PlainTokenBox.TextChanged += PlainTokenBox_TextChanged;
-            this.ContentRendered += Login_ContentRendered;
+            //this.ContentRendered += Login_ContentRendered;
 
             _viewModel = new LoginViewModel(() => new Main());
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;

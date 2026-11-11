@@ -303,7 +303,8 @@ namespace Skymu
                     Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0095cc"));
                     // Override Settings.ActiveTabText to white
                     Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
-                    return new Skype6.Login(switchUser, addAccount, accountAdded);
+                    new Skype6.Login().Show();
+                    break;
                 case "Skype4":
                     new Skype4.Login().Show();
                     break;
@@ -736,7 +737,7 @@ namespace Skymu
             {
                 Tray.DisposeIcon();
                 PluginManager.DisposeAll();
-                await UserServerAPI.StopPolling();
+                _ = UserServerAPI.StopPolling();
             }
             catch { } // If it doesn't work, too bad.
             if (SignedIn)
