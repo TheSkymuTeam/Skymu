@@ -1086,6 +1086,10 @@
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT], Source={StaticResource Lang}}" IsEnabled="False" />
                         <Separator />
+                        <MenuItem
+                            Click="OnAccountManager"
+                            Header="Account manager"
+                            IsEnabled="True" />
                         <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
                         <MenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
                         <MenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />

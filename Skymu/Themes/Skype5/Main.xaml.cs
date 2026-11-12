@@ -943,6 +943,8 @@ namespace Skymu.Skype5
 
         private void OnSignOut(object sender, RoutedEventArgs e) => InitiateSignOut();
 
+        private void OnAccountManager(object sender, RoutedEventArgs e) => Forms.Pages.AccountManager.Open();
+
         private void OnSwitchUser(object sender, RoutedEventArgs e) => InitiateSignOut(true);
 
         private async void OnStatus(object sender, RoutedEventArgs e)

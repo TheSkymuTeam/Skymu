@@ -53,11 +53,11 @@ namespace Skymu
 
         public const string NAME = "Skymu";
         public static readonly BuildInfo BUILD_INFO = new BuildInfo(
-            major: 0,
-            minor: 2,
-            patch: 1,
+            major: 4,
+            minor: 9,
+            patch: 0,
             major_name: "Elgon",
-            minor_name: "Ice Cream",
+            minor_name: "Jell-O",
             is_beta: false,
             beta_number: 0
             );
