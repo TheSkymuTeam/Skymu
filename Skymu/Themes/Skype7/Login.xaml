@@ -416,21 +416,12 @@
                                 Fill="{DynamicResource Accent}" />
                             <PasswordBox
                                 Name="PasswordTokenBox"
-                                Padding="-2,0,26,0"
+                                Padding="-2,0,0,0"
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 FontSize="14"
                                 Foreground="{DynamicResource Metro.Text.VeryHighContrast}" />
-                            <TextBox
-                                x:Name="PlainTokenBox"
-                                Padding="-2,0,26,0"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FontSize="14"
-                                Foreground="{DynamicResource Metro.Text.VeryHighContrast}"
-                                Visibility="Collapsed" />
                             <TextBlock
                                 x:Name="PasswordHint"
                                 VerticalAlignment="Center"
@@ -453,50 +444,6 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-
-                            <ToggleButton
-                                x:Name="RevealPasswordToggle"
-                                Width="22"
-                                Height="22"
-                                Margin="0,0,2,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                FocusVisualStyle="{x:Null}"
-                                ToolTip="Show/hide password"
-                                Checked="RevealPasswordToggle_Toggled"
-                                Unchecked="RevealPasswordToggle_Toggled">
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="ToggleButton">
-                                        <Grid Background="{TemplateBinding Background}">
-                                            <ContentPresenter
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                                <Grid
-                                    Width="18"
-                                    Height="13">
-                                    <Path
-                                        Stroke="{DynamicResource Metro.Text.VeryHighContrast}"
-                                        StrokeThickness="1.25"
-                                        Stretch="Uniform"
-                                        Data="M0.5,6 C3.4,2.1 6.2,0.8 8,0.8 C9.8,0.8 12.6,2.1 15.5,6 C12.6,9.9 9.8,11.2 8,11.2 C6.2,11.2 3.4,9.9 0.5,6 Z" />
-                                    <Ellipse
-                                        Width="3.8"
-                                        Height="3.8"
-                                        Fill="{DynamicResource Metro.Text.VeryHighContrast}" />
-                                    <Path
-                                        x:Name="RevealSlash"
-                                        Stroke="{DynamicResource Metro.Text.VeryHighContrast}"
-                                        StrokeThickness="1.3"
-                                        Stretch="Uniform"
-                                        Data="M2,11.2 L14,0.8"
-                                        Visibility="Collapsed" />
-                                </Grid>
-                            </ToggleButton>
 
                             <Grid.RenderTransform>
                                 <TranslateTransform x:Name="N5Transform" Y="156" />
