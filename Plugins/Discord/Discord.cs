@@ -56,6 +56,7 @@ namespace Discord
             {
                 return new[]
                 {
+                    new AuthTypeInfo(AuthenticationMethod.Password, "Email", null),
                     new AuthTypeInfo(AuthenticationMethod.Token, "Token"),
                     new AuthTypeInfo(AuthenticationMethod.QRCode, "Username")
                 };
@@ -65,6 +66,10 @@ namespace Discord
         // Initialize API classes and strings
         // The Discord token used by all of the Discord plugin
         private string DiscordToken;
+        // Two-factor authentication for password login
+        private string _pendingTicket;
+        private string _pendingFingerprint;
+        private string _pendingInstanceId;
         // We reuse this to avoid creating more DiscordHttpClient instances, which is quite heavy
         internal static readonly DiscordClient Client = new DiscordClient();
         private ProtoSettings proto;
@@ -117,17 +122,7 @@ namespace Discord
 
         #region Authentication and basic plugin init
 
-        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
-        {
-            if (authType == AuthenticationMethod.Token)
-                DiscordToken = username;
-            else if (authType == AuthenticationMethod.QRCode)
-                return LoginResult.TwoFARequired;
-            else
-                return LoginResult.UnsupportedAuthType;
-
-            return await StartClient();
-        }
+        // SHared auth Yggdrasil functions
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
         {
@@ -140,14 +135,38 @@ namespace Discord
             return await StartClient().ConfigureAwait(false);
         }
 
+        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        {
+            if (authType == AuthenticationMethod.Token)
+            {
+                DiscordToken = username;
+            }
+            else if (authType == AuthenticationMethod.Password)
+            {
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password))
+                {
+                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Please enter both your email and password."));
+                    return LoginResult.Failure;
+                }
+                return await PasswordLogin(username.Trim(), password).ConfigureAwait(false);
+            }
+            else if (authType == AuthenticationMethod.QRCode)
+                return LoginResult.TwoFARequired;
+            else
+                return LoginResult.UnsupportedAuthType;
+
+            return await StartClient();
+        }
 
         public Task<LoginResult> AuthenticateTwoFA(string code)
         {
+            if (!string.IsNullOrEmpty(_pendingTicket))
+                return PasswordTwoFA(code);
+
             var tcs = new TaskCompletionSource<LoginResult>();
 
             async void completedHandler(object sender, string message)
             {
-                // Unsubscribe both handlers
                 authSocket.TokenRecieved -= completedHandler;
 
                 DiscordToken = message;
@@ -160,102 +179,145 @@ namespace Discord
             return tcs.Task;
         }
 
-        #region Fluxer (unused)
+        // Password login stuff
 
-        /*
-         
-        public AuthTypeInfo[] AuthenticationTypes
+        private void ClearPending2FA()
         {
-            get
+            _pendingTicket = null;
+            _pendingFingerprint = null;
+            _pendingInstanceId = null;
+        }
+
+        //STEP ONE, POST /auth/fingerprint
+        private async Task<string> FetchFingerprint()
+        {
+            string resp = await Client.Send("auth/fingerprint", HttpMethod.Post, null, new { }).ConfigureAwait(false);
+            if (resp == null || resp.StartsWith("[API/"))
             {
-                return new[]
-                {
-                    new AuthTypeInfo(AuthenticationMethod.Password, "Email"),
-                    new AuthTypeInfo(AuthenticationMethod.Token, "Token")
-                };
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error,
+                    "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n"
+                    + resp?.Replace("[API/RequestError]", string.Empty)));
+                return null;
+            }
+
+            try
+            {
+                return JsonNode.Parse(resp)?["fingerprint"]?.GetValue<string>();
+            }
+            catch
+            {
+                return null;
             }
         }
-         
-        public async Task<LoginResult> Authenticate(SavedCredential credential)
+
+        //STEP TWO, POST /auth/login
+        private async Task<LoginResult> PasswordLogin(string email, string password)
         {
-            DialogTube?.Invoke(this, new DialogBottle(DialogType.Choice, "Fluxer support in Skymu is highly experimental. " +
-                "We make no guarantees toward any functionality in this plugin. It might not even log in.\n\nWould you still like to continue?"));
-            FluxerToken = credential.PasswordOrToken;
-            if (string.IsNullOrWhiteSpace(FluxerToken))
+            ClearPending2FA();
+
+            string fingerprint = await FetchFingerprint().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(fingerprint))
             {
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Login error: Discord did not return a login fingerprint. Please try again."));
                 return LoginResult.Failure;
             }
 
-            return await StartClient();
+            var body = new
+            {
+                login = email,
+                password = password,
+                undelete = false,
+                gift_code_sku_id = (string)null,
+                login_source = (string)null
+            };
+
+            string resp = await Client.Send("auth/login", HttpMethod.Post, null, body, null, null,
+                new Dictionary<string, string> { { "X-Fingerprint", fingerprint } }).ConfigureAwait(false);
+
+            return await HandleAuthResponse(resp, fingerprint, "Invalid email or password.").ConfigureAwait(false);
         }
 
-        public async Task<LoginResult> Authenticate(AuthenticationMethod authType, string username, string password = null)
+        //STEP THREE, POST /auth/mfa/totp
+        private async Task<LoginResult> PasswordTwoFA(string code)
         {
-            if (authType == AuthenticationMethod.Token) FluxerToken = username;
-            else if (authType == AuthenticationMethod.Password)
+            code = (code ?? string.Empty).Replace(" ", string.Empty).Trim();
+            if (code.Length == 0)
             {
-                var loginBody = new
-                {
-                    login = username,
-                    password = password
-                };
-                var loginResponse = JsonNode.Parse(await Client.Send("auth/login", HttpMethod.Post, null, loginBody)).AsObject();
-                //Console.WriteLine($"The response from the API is: {loginResponse}");
-
-                if (loginResponse.ContainsKey("token")) // Successful sign in, can continue to main client after saving token
-                {
-                    FluxerToken = loginResponse["token"].GetValue<string>();
-                }
-                else if (loginResponse.ContainsKey("ticket")) // Discord account has multi-authentication enabled, go to Dialog
-                {
-                    MFATicket = loginResponse["ticket"]?.GetValue<string>();
-                    InstanceID = loginResponse["login_instance_id"]?.GetValue<string>();
-
-                    var fingerprintResponse = JsonNode.Parse(await Client.Send("experiments?with_guild_experiments=true", HttpMethod.Get, null, null)).AsObject();
-                    if (fingerprintResponse.ContainsKey("fingerprint"))
-                    {
-                        Fingerprint = fingerprintResponse["fingerprint"]?.GetValue<string>();
-                    }
-                    return LoginResult.TwoFARequired;
-                }
-                else if (loginResponse.ContainsKey("captcha_key")) // Something has stopped us from logging in and Discord has pulled up a Captcha window
-                {
-                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Fluxer has requested that a CAPTCHA be solved to continue login. This is not currently supported, and could mean that you entered invalid login details."));
-                    return LoginResult.Failure;
-                }
-                else
-                {
-                    DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Failed to log in. Error:\n\n" + loginResponse.ToJsonString()));
-                    return LoginResult.Failure;
-                }
-            }
-            else return LoginResult.UnsupportedAuthType;
-
-            return await StartClient();
-        }
-
-        public async Task<LoginResult> AuthenticateTwoFA(string code)
-        {
-            string payload = JsonSerializer.Serialize(new { ticket = MFATicket, login_instance_id = InstanceID, code });
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("X-Super-Properties", Fingerprint);
-            JsonNode response = JsonNode.Parse(await Client.Send("auth/mfa/totp", HttpMethod.Post, null, payload, null, null, headers));
-            if (response != null && response["token"] != null)
-            {
-                FluxerToken = response["token"].GetValue<string>();
-                return await StartClient();
-            }
-            else
-            {
-                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Your MFA code is invalid, please double check that it is correct before retrying."));
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Please enter your two-factor authentication code."));
                 return LoginResult.Failure;
             }
 
-        }
-         
-        */
+            var body = new
+            {
+                code = code,
+                ticket = _pendingTicket,
+                login_source = (string)null,
+                gift_code_sku_id = (string)null,
+                login_instance_id = string.IsNullOrEmpty(_pendingInstanceId) ? null : _pendingInstanceId
+            };
 
-        #endregion
+            string resp = await Client.Send("auth/mfa/totp", HttpMethod.Post, null, body, null, null,
+                new Dictionary<string, string> { { "X-Fingerprint", _pendingFingerprint } }).ConfigureAwait(false);
+
+            return await HandleAuthResponse(resp, _pendingFingerprint, "Invalid two-factor code.").ConfigureAwait(false);
+        }
+
+        private async Task<LoginResult> HandleAuthResponse(string resp, string fingerprint, string fallbackError)
+        {
+            if (string.IsNullOrEmpty(resp) || resp.StartsWith("[API/"))
+            {
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error,
+                    "Could not communicate with Discord's servers. Check your internet connection and proxy settings.\n\n"
+                    + resp?.Replace("[API/RequestError]", string.Empty)));
+                return LoginResult.Failure;
+            }
+
+            JsonObject json;
+            try
+            {
+                json = JsonNode.Parse(resp).AsObject();
+            }
+            catch
+            {
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, "Discord returned an unexpected response:\n\n" + resp));
+                return LoginResult.Failure;
+            }
+
+            string token = json["token"]?.GetValue<string>();
+            if (!string.IsNullOrEmpty(token))
+            {
+                ClearPending2FA();
+                DiscordToken = token;
+                return await StartClient().ConfigureAwait(false);
+            }
+
+            string ticket = json["ticket"]?.GetValue<string>();
+            if (!string.IsNullOrEmpty(ticket))
+            {
+                _pendingTicket = ticket;
+                _pendingFingerprint = fingerprint;
+                _pendingInstanceId = json["login_instance_id"]?.GetValue<string>();
+                return LoginResult.TwoFARequired;
+            }
+
+            if (json["captcha_key"] != null)
+            {
+                ClearPending2FA();
+                DialogTube?.Invoke(this, new DialogBottle(DialogType.Error,
+                    "Discord is requesting a CAPTCHA for this login, which we can't solve at the moment.\n\n" +
+                    "Try to use token login instead. We are working on adding CAPTCHA."));
+                return LoginResult.Failure;
+            }
+
+            string serverMsg = json["message"]?.GetValue<string>();
+            if (string.IsNullOrEmpty(serverMsg) && json["errors"] != null)
+                serverMsg = json["errors"].ToJsonString();
+
+            DialogTube?.Invoke(this, new DialogBottle(DialogType.Error, serverMsg ?? fallbackError));
+            return LoginResult.Failure;
+        }
+
+        // QR stuff
 
         public async Task<string> GetQRCode()
         {
