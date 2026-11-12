@@ -218,12 +218,14 @@ namespace Skymu.Skype7
         {
             if (anim)
             {
+                SelectorStrip.Visibility = Visibility.Collapsed;
                 ControlsGrid.Visibility = Visibility.Collapsed;
                 Spinner.Visibility = Visibility.Visible;
 
             }
             else
             {
+                SelectorStrip.Visibility = Visibility.Visible;
                 ControlsGrid.Visibility = Visibility.Visible;
                 Spinner.Visibility = Visibility.Collapsed;
                 Header.Content = Universal.Lang["sZAPBUTTON_SIGNIN"];

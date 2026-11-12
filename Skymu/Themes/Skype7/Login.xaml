@@ -236,6 +236,7 @@
     <StackPanel Orientation="Vertical">
         <!--  selector strip  -->
         <Grid
+            x:Name="SelectorStrip"
             Grid.Row="0"
             Height="30"
             Background="{DynamicResource Accent}">
