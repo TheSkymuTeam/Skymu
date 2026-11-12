@@ -188,9 +188,6 @@ namespace Skymu.Forms.Pages
                 return;
             }
 
-            if (Universal.SignedIn && !Confirm("Switch account?", "Sign out and log in as \"" + entry.DisplayName + "\"?"))
-                return;
-
             LoginViewModel.ForcedLogin = cred;
             Window.GetWindow(this)?.Close();
 
@@ -293,7 +290,7 @@ namespace Skymu.Forms.Pages
                 text,
                 header,
                 blEnabled: true,
-                blText: Universal.Lang["SF_CONFIRM_YES"],
+                blText: Universal.Lang["sF_CONFIRM_YES"],
                 blAction: () =>
                 {
                     confirmed = true;
@@ -311,7 +308,16 @@ namespace Skymu.Forms.Pages
 
         private void ShowMessage(string text, WindowBase.IconType icon)
         {
-            Universal.ShowMessage(text, Preferences.Settings.BrandingName + "™ - Account manager", icon);
+            Universal.ShowMessage(text, "Account error", icon);
+        }
+
+        private void AddAccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            Window.GetWindow(this)?.Close();
+
+            if (Universal.SignedIn)
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true)));
         }
     }
 }

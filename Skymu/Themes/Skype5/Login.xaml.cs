@@ -147,31 +147,8 @@ namespace Skymu.Skype5
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
 
-            string L(string key) => Universal.Lang[key];
-
             MenuBarRow.Height = new GridLength(0);
-            var menuBar = new NativeMenuBar(this);
-            menuBar.Create(
-                "&" + L("sMAINMENU_SKYPE"),
-                MI(L("sMAINMENU_SKYPE_CLOSE"), OnClose)
-            );
-            menuBar.Create(
-                "&" + L("sMAINMENU_TOOLS"),
-                MI(L("sLOGIN_CHANGE_LANGUAGE"), OnChangeLanguage),
-                SEP(),
-                MI(L("sLOGIN_CONNECTION_OPTIONS"), OnConnectionOptions),
-                SEP(),
-                MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"), OnAccessibility)
-            );
-            menuBar.Create(
-                "&" + L("sMAINMENU_HELP"),
-                MI(L("sMAINMENU_HELP_HELP"), OnHelp),
-                SEP(),
-                MI(L("sMAINMENU_HELP_UPDATES"), OnCheckUpdates),
-                SEP(),
-                MI(L("sMAINMENU_HELP_PRIVACY"), OnPrivacy),
-                MI(L("sMAINMENU_HELP_ABOUT"), OnAbout)
-            );
+            new MenuBarController(this).Build();
 
             ProtocolComboBox.DisplayMemberPath = "DisplayName";
             ProtocolComboBox.SelectedValuePath = "DisplayName";

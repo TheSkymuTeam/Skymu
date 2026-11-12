@@ -106,8 +106,7 @@ namespace Stub
 
         public Task<SavedCredential> StoreCredential()
         {
-            // TODO: Fix logout return new SavedCredential(MyInformation, string.Empty, AuthenticationMethod.Token, InternalName);
-            return Task.FromResult<SavedCredential>(null);
+            return Task.FromResult(new SavedCredential(Me, "stub", AuthenticationMethod.Token, InternalName));
         }
 
         public Task<string> GetQRCode()

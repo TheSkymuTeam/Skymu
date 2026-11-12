@@ -49,7 +49,7 @@ namespace Skymu.Skype7
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private bool _userScrolledUp;
-        private MMBController _mmbController;
+        private MenuBarController _mmbController;
         private bool is_loading_conversation => vmodel?.IsLoadingConversation ?? false;
 
         public event EventHandler Ready;
@@ -190,25 +190,25 @@ namespace Skymu.Skype7
 
             SourceInitialized += (s, e) =>
             {
-                _mmbController = new MMBController(this);
+                _mmbController = new MenuBarController(this);
                 _mmbController.ActionRequested += (s2, action) =>
                 {
                     switch (action)
                     {
-                        case MMBController.Action.Home:
+                        case MenuBarController.Action.Home:
                             break; // TODO add code to transition back to Home
-                        case MMBController.Action.Contacts:
+                        case MenuBarController.Action.Contacts:
                             TabContacts_Click(null, null);
                             break;
-                        case MMBController.Action.Servers:
+                        case MenuBarController.Action.Servers:
                             TabServers_Click(null, null);
                             break;
-                        case MMBController.Action.Recents:
+                        case MenuBarController.Action.Recents:
                             TabRecent_Click(null, null);
                             break;
-                        case MMBController.Action.Call:
+                        case MenuBarController.Action.Call:
                             break; // TODO add calling to Skype7
-                        case MMBController.Action.AddContact:
+                        case MenuBarController.Action.AddContact:
                             AddContact_Click(null, null);
                             break;
                     }

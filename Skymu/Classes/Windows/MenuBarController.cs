@@ -6,14 +6,17 @@ using Yggdrasil.Enumerations;
 
 namespace Skymu.Native.Windows
 {
-    class MMBController
+    class MenuBarController
     {
         private readonly NativeMenuBar _menuBar;
         private readonly NativeSubMenu _extrasMenu;
-        public MMBController(Window window)
+        private bool login_menu;
+        public MenuBarController(Window window, bool is_login_menu = false)
         {
             _menuBar = new NativeMenuBar(window);
             _extrasMenu = new NativeSubMenu(_menuBar);
+            login_menu = is_login_menu;
+            if (login_menu) this.DisableExtras();
         }
 
         #region Constructor
@@ -27,7 +30,7 @@ namespace Skymu.Native.Windows
         private static (string, EventHandler) SEP() { return ("$", null); }
         public void Build()
         {
-            _menuBar.Create(L("sMAINMENU_SKYPE"),
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_SKYPE"),
                 MI(L("sMAINMENU_SKYPE_ONLINESTATUS"), new NativeSubMenu(_menuBar).CreateWithIcons(L("sMAINMENU_SKYPE_ONLINESTATUS"),
                     MI(L("sTRAYHINT_USER_ONLINE"), (s, e2) => OnStatus(PresenceStatus.Online), ICN(2)),
                     MI(L("sTRAYHINT_USER_AWAY"), (s, e2) => OnStatus(PresenceStatus.Away), ICN(3)),
@@ -49,7 +52,12 @@ namespace Skymu.Native.Windows
                 MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
             );
 
-            _menuBar.Create(L("sMAINMENU_CONTACTS"),
+            else if (login_menu) _menuBar.Create(L("sMAINMENU_SKYPE"),
+                MI("Account manager", (s, e2) => Forms.Pages.AccountManager.Open()),
+                MI(L("sMAINMENU_SKYPE_CLOSE"), (s, e2) => OnClose(null, null))
+            );
+
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_CONTACTS"),
                 MI(L("sMAINMENU_CONTACTS_ADD_CONTACT"), (s, e2) => OnAddContact(null, null)),
                 MI(L("sMAINMENU_CONTACTS_NEW_CONTACT")),
                 MI(L("sMAINMENU_CONTACTS_SEARCH")),
@@ -62,7 +70,7 @@ namespace Skymu.Native.Windows
                 MI(L("sBUDDYMENU_REMOVE"))
             );
 
-            _menuBar.Create(L("sMAINMENU_CONVERSATION"),
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_CONVERSATION"),
                 MI(L("sMAINMENU_CONVERSATION_PROFILE_PANEL")),
                 MI(L("sMAINMENU_CONVERSATION_ADD_TO_CONTACTS")),
                 MI(L("sMAINMENU_CONVERSATION_ADD_PEOPLE")),
@@ -80,7 +88,7 @@ namespace Skymu.Native.Windows
                 MI(L("sMAINMENU_CONVERSATION_HIDE"))
             );
 
-            _menuBar.Create(L("sMAINMENU_CALL"),
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_CALL"),
                 MI(L("sMAINMENU_CALL"), (s, e2) => OnCall(null, null)),
                 MI(L("sMAINMENU_CALL_START_VIDEO")),
                 MI(L("sMAINMENU_CALL_ANSWER")),
@@ -103,7 +111,7 @@ namespace Skymu.Native.Windows
                 MI(L("sCALL_TOOLBAR_TECHNICAL_INFO"))
             );
 
-            _menuBar.Create(L("sMAINMENU_VIEW"),
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_VIEW"),
                 MI(L("sMAINMENU_VIEW_CONTACTS"), (s, e2) => OnContacts(null, null)),
                 MI("Servers", (s, e2) => OnServers(null, null)),
                 MI(L("sMAINMENU_VIEW_CONVERSATIONS"), (s, e2) => OnRecent(null, null)),
@@ -124,7 +132,7 @@ namespace Skymu.Native.Windows
                 MI(L("sMAINMENU_SHOW_HIDDEN_CONV"))
             );
 
-            _menuBar.Create(L("sMAINMENU_TOOLS"),
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_TOOLS"),
                 MI(L("sMAINMENU_TOOLS_EXTRAS"), _extrasMenu),
                 SEP(),
                 MI(L("sMAINMENU_TOOLS_LANGUAGE")),
@@ -135,13 +143,30 @@ namespace Skymu.Native.Windows
                 MI(L("sMAINMENU_TOOLS_OPTIONS"), (s, e2) => OnOptions(null, null))
             );
 
-            _menuBar.Create(L("sMAINMENU_HELP"),
+            else if (login_menu) _menuBar.Create(L("sMAINMENU_TOOLS"),
+                MI(L("sLOGIN_CHANGE_LANGUAGE")),
+                SEP(),
+                MI(L("sLOGIN_CONNECTION_OPTIONS"), (s, e2) => OnOptions(null, null)),
+                SEP(),
+                MI(L("sMAINMENU_TOOLS_ACCESSIBILITY"))
+            );
+
+            if (!login_menu) _menuBar.Create(L("sMAINMENU_HELP"),
                 MI(L("sMAINMENU_HELP_HELP")),
                 MI(L("sMAINMENU_HELP_HEARTBEAT")),
                 SEP(),
                 MI(L("sMAINMENU_HELP_QUALITY")),
                 MI(L("sMAINMENU_HELP_UPDATES"), (s, e2) => OnCheckUpdates(null, null)),
                 MI(L("sZAPBUTTON_FEEDBACK")),
+                SEP(),
+                MI(L("sMAINMENU_HELP_ABOUT"), (s, e2) => OnAbout(null, null)),
+                MI(L("sMAINMENU_HELP_PRIVACY"), (s, e2) => OnPrivacyPolicy(null, null))
+            );
+
+            else if (login_menu) _menuBar.Create(L("sMAINMENU_HELP"),
+                MI(L("sMAINMENU_HELP_HELP")),
+                SEP(),
+                MI(L("sMAINMENU_HELP_UPDATES"), (s, e2) => OnCheckUpdates(null, null)),
                 SEP(),
                 MI(L("sMAINMENU_HELP_ABOUT"), (s, e2) => OnAbout(null, null)),
                 MI(L("sMAINMENU_HELP_PRIVACY"), (s, e2) => OnPrivacyPolicy(null, null))

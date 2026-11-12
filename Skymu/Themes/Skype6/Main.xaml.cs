@@ -65,7 +65,7 @@ namespace Skymu.Skype6
         private WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
-        private MMBController _mmbController;
+        private MenuBarController _mmbController;
 
         private enum WindowType
         {
@@ -1203,17 +1203,17 @@ namespace Skymu.Skype6
 
             SourceInitialized += (s, e) =>
             {
-                _mmbController = new MMBController(this);
+                _mmbController = new MenuBarController(this);
                 _mmbController.ActionRequested += (s2, action) =>
                 {
                     switch (action)
                     {
-                        case MMBController.Action.Home: SetWindow(WindowType.Home); break;
-                        case MMBController.Action.Contacts: _ = SelectTab(btnContacts); break;
-                        case MMBController.Action.Servers: _ = SelectTab(btnServers); break;
-                        case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
-                        case MMBController.Action.Call: CallButtonClick(null, null); break;
-                        case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                        case MenuBarController.Action.Home: SetWindow(WindowType.Home); break;
+                        case MenuBarController.Action.Contacts: _ = SelectTab(btnContacts); break;
+                        case MenuBarController.Action.Servers: _ = SelectTab(btnServers); break;
+                        case MenuBarController.Action.Recents: _ = SelectTab(btnRecents); break;
+                        case MenuBarController.Action.Call: CallButtonClick(null, null); break;
+                        case MenuBarController.Action.AddContact: AddContact_Click(null, null); break;
                     }
                 };
                 _mmbController.Build();
