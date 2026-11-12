@@ -36,7 +36,7 @@
             FontFamily="Tahoma"
             FontSize="11"
             Foreground="{DynamicResource Text.HighContrast}"
-            Text="These accounts are saved on this computer so you can sign in without entering your details again. Select an account to remove it."
+            Text="Select a saved account to log in, turn auto login on or off, adjust its login priority, or remove it. Auto login tries accounts from the top down."
             TextWrapping="Wrap" />
 
         <!--  account list  -->
