@@ -153,10 +153,10 @@ namespace Stub
             if (parent_message_identifier != null)
                 DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message references a parent."));
             TypingUsersList.Clear();
-            TypingUsersList.Add(new User("Nova", "20202", "20202"));
+            TypingUsersList.Add(new User("Among us", "20202", "20202"));
             TypingUsersList.Add(new User("omega", "20203", "20203"));
             TypingUsersList.Add(new User("patricktbp", "20204", "20204"));
-            TypingUsersList.Add(new User("Xaero", "20200", "20200"));
+            TypingUsersList.Add(new User("coni", "20200", "20200"));
             TypingUsersList.Add(new User("HUBAXE", "20205", "20205"));
 
             Task.Run(async () =>

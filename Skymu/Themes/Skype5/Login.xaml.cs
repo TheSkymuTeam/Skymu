@@ -148,7 +148,7 @@ namespace Skymu.Skype5
                 WindowState = WindowState.Minimized;
 
             MenuBarRow.Height = new GridLength(0);
-            new MenuBarController(this).Build();
+            new MenuBarController(this, true).Build();
 
             ProtocolComboBox.DisplayMemberPath = "DisplayName";
             ProtocolComboBox.SelectedValuePath = "DisplayName";
