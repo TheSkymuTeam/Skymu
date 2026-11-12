@@ -176,23 +176,29 @@ namespace Skymu.Preferences
 
         #region Skymu/Appearance
 
-        public static WindowFrame WindowFrame
+        public static WindowChrome WindowChrome
         {
-            get => SELECT("WindowFrame", WindowFrame.SkypeAero, "Skymu/Appearance"); 
+            get => SELECT("WindowChrome", WindowChrome.SkypeAero, "Skymu/Appearance"); 
             set 
             {
                 // I tried
-                if (value == WindowFrame.Native) WRITE("ChromeEnabled", false, "UI");
+                if (value == WindowChrome.Native) WRITE("ChromeEnabled", false, "UI");
                 else WRITE("ChromeEnabled", true, "UI");
                 // Normal code path
-                WRITE("WindowFrame", value, nameof(WindowFrame), "Skymu/Appearance");
+                WRITE("WindowChrome", value, nameof(WindowChrome), "Skymu/Appearance");
             }
-        } 
+        }
+
+        public static bool NativeMenuBar
+        {
+            get => SELECT("NativeMenuBar", false, "Skymu/Appearance");
+            set => WRITE("NativeMenuBar", value, nameof(NativeMenuBar), "Skymu/Appearance");
+        }
 
         public static bool RoomCallUI
         {
-            get => SELECT("RoomCallUI", false, "UI/General");
-            set => WRITE("RoomCallUI", value, nameof(RoomCallUI), "UI/General");
+            get => SELECT("RoomCallUI", false, "Skymu/Appearance");
+            set => WRITE("RoomCallUI", value, nameof(RoomCallUI), "Skymu/Appearance");
         }
 
         public static int EmojiFps

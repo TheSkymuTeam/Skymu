@@ -84,6 +84,10 @@ namespace Skymu.Forms.Pages
                 else // update is available
                 {
                     string name = update_info?.info.GetVersionString() + " " + update_info?.info.GetCodeName();
+                    if (update_info?.info.IsBeta == true)
+                    {
+                        name += "Beta " + update_info?.info.BetaNumber;
+                    }
                     window.HeaderIcon = WindowBase.IconType.PackageCheckmark;
                     window.HeaderText =
                         Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + name;

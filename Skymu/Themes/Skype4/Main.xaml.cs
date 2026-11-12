@@ -53,7 +53,7 @@ namespace Skymu.Skype4
         private MainViewModel vmodel;
 
         // Other file-level variables
-        private WindowFrame _currentFrame = (WindowFrame)Settings.WindowFrame;
+        private Enumerations.WindowChrome _currentFrame = Settings.WindowChrome;
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
@@ -73,14 +73,6 @@ namespace Skymu.Skype4
             Home,
             Chat,
         }
-
-        private enum WindowFrame
-        {
-            SkypeAero,
-            SkypeBasic,
-            Native,
-            SkypeAeroCustom,
-        };
 
         public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
             "WindowTitle",
@@ -116,7 +108,7 @@ namespace Skymu.Skype4
         private BitmapImage GenerateTitlebarButtonImage(string name)
         {
             string framedir = "Aero";
-            if (_currentFrame == WindowFrame.SkypeBasic) framedir = "Basic";
+            if (_currentFrame == Enumerations.WindowChrome.SkypeXP) framedir = "Basic";
 
             return ImageHelper.FreezeLoad(
                 $"Universal/Window Frame/{framedir}/{name}/combined.png"
@@ -221,9 +213,9 @@ namespace Skymu.Skype4
 
         public void InitializeWindowFrame()
         {
-            if (_currentFrame != WindowFrame.Native) // using Skype's custom border
+            if (_currentFrame != Enumerations.WindowChrome.Native) // using Skype's custom border
             {
-                if (!Skymu.Native.Windows.DwmHelper.IsDwmEnabled() && _currentFrame == WindowFrame.SkypeAero) _currentFrame = WindowFrame.SkypeBasic; // if no DWM, don't use broken Aero frame
+                if (!Skymu.Native.Windows.DwmHelper.IsDwmEnabled() && _currentFrame == Enumerations.WindowChrome.SkypeAero) _currentFrame = Enumerations.WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 WindowChrome chrome = new WindowChrome();
                 //chrome.UseAeroCaptionButtons = false;
@@ -231,8 +223,8 @@ namespace Skymu.Skype4
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.Visibility = Visibility.Visible;
                 if (
-                    _currentFrame == WindowFrame.SkypeAero
-                    || _currentFrame == WindowFrame.SkypeAeroCustom
+                    _currentFrame == Enumerations.WindowChrome.SkypeAero
+                    || _currentFrame == Enumerations.WindowChrome.SkypeAeroCustom
                 ) // switch configuration from Skype Basic to Aero
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
@@ -241,11 +233,11 @@ namespace Skymu.Skype4
                     // Set up the window background and margin
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
-                    if (_currentFrame == WindowFrame.SkypeAero)
+                    if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
                     {
                         this.Background = Brushes.Transparent;
                     }
-                    else if (_currentFrame == WindowFrame.SkypeAeroCustom) // TODO: finish this
+                    else if (_currentFrame == Enumerations.WindowChrome.SkypeAeroCustom) // TODO: finish this
                     {
                         var img = ImageHelper.FreezeLoad(
                             "Universal/Window Frame/Aero/aero-background.png"
@@ -342,7 +334,7 @@ namespace Skymu.Skype4
 
         private void HandleWindowButtonEnter(SliceControl button)
         {
-            if (button != null && _currentFrame != WindowFrame.SkypeBasic)
+            if (button != null && _currentFrame != Enumerations.WindowChrome.SkypeXP)
             {
                 if (button.Name == "close")
                 {
@@ -377,7 +369,7 @@ namespace Skymu.Skype4
             MainMenuBar.Background = (Brush)Application.Current.Resources["Background"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Card.Border"];
             MenuBarArea.Background = (Brush)Application.Current.Resources["Background"];
-            if (_currentFrame == WindowFrame.SkypeBasic)
+            if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Background"];
                 this.Background = (Brush)Application.Current.Resources["Background"];
@@ -405,7 +397,7 @@ namespace Skymu.Skype4
             MainMenuBar.Background = (Brush)Application.Current.Resources["Active.Menubar"];
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.Background"];
 
-            if (_currentFrame == WindowFrame.SkypeBasic)
+            if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Active.Titlebar"];
                 this.Background = (Brush)Application.Current.Resources["Active.Background"];
@@ -434,7 +426,7 @@ namespace Skymu.Skype4
             MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
 
 
-            if (_currentFrame == WindowFrame.SkypeBasic)
+            if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
                 TitleBar.Background = (Brush)Application.Current.Resources["Inactive.Titlebar"];
                 this.Background = (Brush)Application.Current.Resources["Inactive.Background"];
@@ -1475,6 +1467,39 @@ namespace Skymu.Skype4
 
             SourceInitialized += (s, e) =>
             {
+                if (_currentFrame == Enumerations.WindowChrome.Native)
+                {
+                    MenuBarArea.Visibility = Visibility.Collapsed;
+                    // For now, native window frame = native menu bar.
+                    MMBController _mmbController = new MMBController(this);
+                    _mmbController.ActionRequested += (s2, action) =>
+                    {
+                        switch (action)
+                        {
+                            case MMBController.Action.Home: SetWindow(WindowType.Home); break;
+                            case MMBController.Action.Contacts: _ = SelectTab(btnContacts); break;
+                            case MMBController.Action.Servers: _ = SelectTab(btnServers); break;
+                            case MMBController.Action.Recents: _ = SelectTab(btnRecents); break;
+                            case MMBController.Action.Call: CallButtonClick(null, null); break;
+                            case MMBController.Action.AddContact: AddContact_Click(null, null); break;
+                        }
+                    };
+                    _mmbController.Build();
+                    if (!(Universal.Plugin is IExtras ep) || ep.ExtraConfigurations.Count == 0)
+                        _mmbController.DisableExtras();
+                    else
+                    {
+                        var mitems = new (string, EventHandler)[ep.ExtraConfigurations.Count];
+                        int i = 0;
+                        foreach (var extra in ep.ExtraConfigurations)
+                        {
+                            mitems[i] = (extra.title, (ss, ee) => extra.onRun());
+                            i++;
+                        }
+                        _mmbController.RedoExtras(mitems);
+                    }
+                }
+
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
                     this.Top = Settings.Y;

@@ -62,13 +62,13 @@ namespace Skymu.Forms.OptionPages.General
 
         private void RadioSkype_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.WindowFrame = WindowFrame.SkypeAero;
+            Settings.WindowChrome = WindowChrome.SkypeAero;
             Settings.FallbackFillColors = false;
         }
 
         private void RadioClassic_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.WindowFrame = WindowFrame.Native;
+            Settings.WindowChrome = WindowChrome.Native;
             Settings.FallbackFillColors = true;
         }
 

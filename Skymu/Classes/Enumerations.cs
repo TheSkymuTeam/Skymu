@@ -13,10 +13,10 @@
 
 namespace Skymu.Enumerations
 {
-    public enum WindowFrame
+    public enum WindowChrome
     {
         SkypeAero,
-        SkypeBasic,
+        SkypeXP,
         Native,
         SkypeAeroCustom,
     };

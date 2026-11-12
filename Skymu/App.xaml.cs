@@ -53,8 +53,8 @@ namespace Skymu
 
         public const string NAME = "Skymu";
         public static readonly BuildInfo BUILD_INFO = new BuildInfo(
-            major: 4,
-            minor: 8,
+            major: 0,
+            minor: 2,
             patch: 1,
             major_name: "Elgon",
             minor_name: "Ice Cream",
@@ -584,6 +584,7 @@ namespace Skymu
                     case "Colorway":
                     case "WindowFrame":
                     case "Theme":
+                    case "NativeMenuBar":
                     case "UseSystemCulture":
                         Dialog dialog = new Dialog(
                                    type: WindowBase.IconType.Question,

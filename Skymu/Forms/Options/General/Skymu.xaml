@@ -114,7 +114,7 @@
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource Text.MediumContrast}"
-                    Text="(Requires relogin)" />
+                    Text="(Requires restart)" />
             </StackPanel>
 
 
@@ -122,25 +122,25 @@
                 <TextBlock
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
-                    Text="Window frame" />
+                    Text="Window chrome" />
                 <ComboBox
                     Width="250"
-                    SelectedValue="{Binding Path=[WindowFrame], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValue="{Binding Path=[WindowChrome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Tag">
                     <ComboBoxItem
                         Padding="6,0"
                         Content="Skype Aero"
-                        Tag="{x:Static enums:WindowFrame.SkypeAero}" />
+                        Tag="{x:Static enums:WindowChrome.SkypeAero}" />
 
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Skype Basic"
-                        Tag="{x:Static enums:WindowFrame.SkypeBasic}" />
+                        Content="Skype XP"
+                        Tag="{x:Static enums:WindowChrome.SkypeXP}" />
 
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Use the system window frame"
-                        Tag="{x:Static enums:WindowFrame.Native}" />
+                        Content="Use the system window chrome"
+                        Tag="{x:Static enums:WindowChrome.Native}" />
                 </ComboBox>
                 <TextBlock
                     Margin="8,0,0,0"
@@ -254,7 +254,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Use the 'Classic Windows' Skype main color instead of the dynamic colors"
+                Content="Use a sky-blue background color instead of the dynamic colors on Skype 4 and 5"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[FallbackFillColors], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
@@ -268,7 +268,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Use the call reconnecting sound instead of normal call out sound"
+                Content="Use the call reconnecting sound instead of the outgoing call sound when placing a call"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[CallOutToReconnectSound], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
