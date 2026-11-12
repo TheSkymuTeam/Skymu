@@ -1530,9 +1530,6 @@ namespace Skymu.Skype5
             TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
             UpdateMessageSendButtonState();
-            // seanFinx Crazy Hack
-            AddContactButton.OverlayText.TextTrimming = TextTrimming.None;
-            MakeGroupButton.OverlayText.TextTrimming = TextTrimming.None;
 
             Settings.Default.PropertyChanged += RefreshCreds;
             Universal.Lang.PropertyChanged += RefreshCreds;

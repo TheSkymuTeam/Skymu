@@ -1197,9 +1197,6 @@ namespace Skymu.Skype6
 
             TWR_ORIGINAL_MAXHEIGHT = TopbarWindowRow.MaxHeight;
             SetWindow(WindowType.Home);
-            // seanFinx Crazy Hack
-            btnContacts.OverlayText.TextTrimming = TextTrimming.None;
-            btnRecents.OverlayText.TextTrimming = TextTrimming.None;
 
             SourceInitialized += (s, e) =>
             {

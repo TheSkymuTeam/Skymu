@@ -604,7 +604,7 @@ namespace Skymu.Preferences
         {
             string value = Get(key, default_value.ToString(), path_xml);
 
-            // (omega, nilFinx) Skype's settings parser is a little weird. It counted <= 0 as false and >= 1 as true.
+            // (omega) Skype's settings parser is a little weird. It counted <= 0 as false and >= 1 as true.
             // Skymu's settings parser will reflect that even though there doesn't seem to be a use case for this.
 
             int vi;
