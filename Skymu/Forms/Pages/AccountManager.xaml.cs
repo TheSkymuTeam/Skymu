@@ -72,7 +72,7 @@ namespace Skymu.Forms.Pages
                     && Universal.Plugin?.InternalName == credential.Plugin
                     && Universal.CurrentUser?.Identifier == credential.User?.Identifier;
 
-                AutoLoginText = credential.AutoLogin ? "Auto login: #" + autoLoginRank : "Auto login: off";
+                AutoLoginText = credential.AutoLogin ? "Priority: #" + autoLoginRank : "Auto login: off";
 
                 var parts = new List<string>();
                 if (!string.IsNullOrWhiteSpace(username)) parts.Add(username);

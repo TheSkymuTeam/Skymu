@@ -35,8 +35,8 @@
             Margin="0,0,0,8"
             FontFamily="Tahoma"
             FontSize="11"
-            Foreground="{DynamicResource Text.HighContrast}"
-            Text="Select a saved account to log in, turn auto login on or off, adjust its login priority, or remove it. Auto login tries accounts from the top down."
+            Foreground="{DynamicResource Text.VeryHighContrast}"
+            Text="Select a saved account to log in, enable or disable auto-login for it, adjust its login priority, or remove it. Auto-login uses the highest priority eligible account."
             TextWrapping="Wrap" />
 
         <!--  account list  -->
@@ -85,13 +85,13 @@
                                             FontFamily="Tahoma"
                                             FontSize="12"
                                             FontWeight="Bold"
-                                            Foreground="{DynamicResource Text.HighContrast}"
+                                            Foreground="{DynamicResource Text.VeryHighContrast}"
                                             Text="{Binding DisplayName}"
                                             TextTrimming="CharacterEllipsis" />
                                         <TextBlock
                                             FontFamily="Tahoma"
                                             FontSize="11"
-                                            Foreground="{DynamicResource Text.HighContrast}"
+                                            Foreground="{DynamicResource Text.VeryHighContrast}"
                                             Opacity="0.75"
                                             Text="{Binding Details}"
                                             TextTrimming="CharacterEllipsis" />
@@ -103,7 +103,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="Tahoma"
                                         FontSize="11"
-                                        Foreground="{DynamicResource Text.HighContrast}"
+                                        Foreground="{DynamicResource Text.VeryHighContrast}"
                                         Opacity="0.75"
                                         Text="{Binding AutoLoginText}" />
                                 </Grid>
@@ -118,7 +118,7 @@
                         VerticalAlignment="Center"
                         FontFamily="Tahoma"
                         FontSize="11"
-                        Foreground="{DynamicResource Text.HighContrast}"
+                        Foreground="{DynamicResource Text.VeryHighContrast}"
                         IsHitTestVisible="False"
                         Opacity="0.75"
                         Text="No saved accounts."
@@ -139,7 +139,7 @@
                     Content="▲"
                     FontSize="9"
                     IsEnabled="False"
-                    ToolTip="Move up (tried first for auto login)" />
+                    ToolTip="Move up (tried first for auto-login)" />
                 <Button
                     x:Name="MoveDownButton"
                     Width="23"
@@ -148,7 +148,7 @@
                     Content="▼"
                     FontSize="9"
                     IsEnabled="False"
-                    ToolTip="Move down (tried later for auto login)" />
+                    ToolTip="Move down (tried later for auto-login)" />
             </StackPanel>
         </Grid>
 
