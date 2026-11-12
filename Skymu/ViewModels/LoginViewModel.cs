@@ -353,6 +353,10 @@ namespace Skymu.ViewModels
 
             if (discordListings.Count > 0)
             {
+                var discordPassword = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.Password);
+                if (discordPassword != null)
+                    return discordPassword;
+
                 var discordQr = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.QRCode);
                 if (discordQr != null)
                     return discordQr;
