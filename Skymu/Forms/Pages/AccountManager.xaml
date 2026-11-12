@@ -1,0 +1,205 @@
+<!--
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is governed
+    by the terms set out in the project license agreement.
+    If you do not comply with those terms, you may not
+    modify or distribute any original code from the project.
+    ============================================================
+    License: https://skymu.app/legal/license
+    SPDX-License-Identifier: AGPL-3.0-or-later
+    ============================================================
+-->
+<Page
+    x:Class="Skymu.Forms.Pages.AccountManager"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Accounts"
+    Width="406"
+    Height="275"
+    Background="Transparent"
+    Loaded="Page_Loaded"
+    Style="{StaticResource Page}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--  description  -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,8"
+            FontFamily="Tahoma"
+            FontSize="11"
+            Foreground="{DynamicResource Text.HighContrast}"
+            Text="These accounts are saved on this computer so you can sign in without entering your details again. Select an account to remove it."
+            TextWrapping="Wrap" />
+
+        <!--  account list  -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Grid.Column="0"
+                Background="{DynamicResource Card.Background}"
+                BorderBrush="{DynamicResource Card.Border}"
+                BorderThickness="1">
+                <Grid>
+                    <ListBox
+                        x:Name="AccountList"
+                        HorizontalContentAlignment="Stretch"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        SelectionChanged="AccountList_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="2,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  avatar (grey box shows through when there is no avatar)  -->
+                                    <Border
+                                        Grid.Column="0"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="0,0,8,0"
+                                        Background="#FFC8C8C8"
+                                        BorderBrush="{DynamicResource Card.Border}"
+                                        BorderThickness="1">
+                                        <Image Source="{Binding Avatar}" Stretch="UniformToFill" />
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock
+                                            FontFamily="Tahoma"
+                                            FontSize="12"
+                                            FontWeight="Bold"
+                                            Foreground="{DynamicResource Text.HighContrast}"
+                                            Text="{Binding DisplayName}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            FontFamily="Tahoma"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text.HighContrast}"
+                                            Opacity="0.75"
+                                            Text="{Binding Details}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="8,0,4,0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Tahoma"
+                                        FontSize="11"
+                                        Foreground="{DynamicResource Text.HighContrast}"
+                                        Opacity="0.75"
+                                        Text="{Binding AutoLoginText}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <!--  shown when there are no saved accounts  -->
+                    <TextBlock
+                        x:Name="EmptyText"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="Tahoma"
+                        FontSize="11"
+                        Foreground="{DynamicResource Text.HighContrast}"
+                        IsHitTestVisible="False"
+                        Opacity="0.75"
+                        Text="No saved accounts."
+                        Visibility="Collapsed" />
+                </Grid>
+            </Border>
+
+            <StackPanel
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center">
+                <Button
+                    x:Name="MoveUpButton"
+                    Width="23"
+                    Height="23"
+                    Margin="0,0,0,4"
+                    Click="MoveUpButton_Click"
+                    Content="▲"
+                    FontSize="9"
+                    IsEnabled="False"
+                    ToolTip="Move up (tried first for auto login)" />
+                <Button
+                    x:Name="MoveDownButton"
+                    Width="23"
+                    Height="23"
+                    Click="MoveDownButton_Click"
+                    Content="▼"
+                    FontSize="9"
+                    IsEnabled="False"
+                    ToolTip="Move down (tried later for auto login)" />
+            </StackPanel>
+        </Grid>
+
+        <!--  actions  -->
+        <StackPanel
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                x:Name="LoginButton"
+                Height="23"
+                MinWidth="73"
+                Margin="0,0,8,0"
+                Padding="12,0"
+                Click="LoginButton_Click"
+                Content="Log in"
+                FontFamily="Tahoma"
+                FontSize="11"
+                IsEnabled="False" />
+            <Button
+                x:Name="AutoLoginButton"
+                Height="23"
+                MinWidth="73"
+                Margin="0,0,8,0"
+                Padding="12,0"
+                Click="AutoLoginButton_Click"
+                Content="Disable auto login"
+                FontFamily="Tahoma"
+                FontSize="11"
+                IsEnabled="False" />
+            <Button
+                x:Name="RemoveButton"
+                Height="23"
+                MinWidth="73"
+                Margin="0,0,8,0"
+                Padding="12,0"
+                Click="RemoveButton_Click"
+                Content="Remove"
+                FontFamily="Tahoma"
+                FontSize="11"
+                IsEnabled="False" />
+            <Button
+                x:Name="RemoveAllButton"
+                Height="23"
+                MinWidth="73"
+                Padding="12,0"
+                Click="RemoveAllButton_Click"
+                Content="Remove all"
+                FontFamily="Tahoma"
+                FontSize="11" />
+        </StackPanel>
+    </Grid>
+</Page>

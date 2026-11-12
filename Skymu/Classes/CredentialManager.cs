@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -83,6 +83,7 @@ namespace Skymu.Credentials
                 new XElement("DisplayName", cred.User?.DisplayName),
                 new XElement("PasswordOrToken", encryptedToken),
                 new XElement("AuthenticationType", cred.AuthenticationType.ToString()),
+                new XElement("AutoLogin", cred.AutoLogin),
                 new XElement("Avatar", avatar)
             );
         }
@@ -134,7 +135,13 @@ namespace Skymu.Credentials
                 }
             }
 
-            return new SavedCredential(user, token, authType, (string)e.Element("Plugin"));
+            string autoStr = (string)e.Element("AutoLogin");
+            bool autoLogin = !bool.TryParse(autoStr, out bool parsed) || parsed;
+
+            return new SavedCredential(user, token, authType, (string)e.Element("Plugin"))
+            {
+                AutoLogin = autoLogin
+            };
         }
 
         private static bool Matches(XElement e, string plugin, string identifier) =>
@@ -144,13 +151,65 @@ namespace Skymu.Credentials
         {
             XDocument doc = ReadFile();
             XElement root = doc.Root;
+            XElement element = ToElement(credential);
 
-            root.Elements("Credential")
+            List<XElement> existing = root.Elements("Credential")
                 .Where(e => Matches(e, credential.Plugin, credential.User?.Identifier))
-                .Remove();
+                .ToList();
 
-            root.Add(ToElement(credential));
+            if (existing.Count > 0)
+            {
+                element.SetElementValue("AutoLogin", (string)existing[0].Element("AutoLogin") ?? "true");
+                existing[0].ReplaceWith(element);
+                foreach (XElement duplicate in existing.Skip(1))
+                    duplicate.Remove();
+            }
+            else
+            {
+                root.Add(element);
+            }
+
             WriteFile(doc);
+        }
+
+        internal static void SetAutoLogin(User user, string plugin, bool enabled)
+        {
+            XDocument doc = ReadFile();
+            XElement e = doc.Root.Elements("Credential")
+                .FirstOrDefault(x => Matches(x, plugin, user?.Identifier));
+            if (e == null)
+                return;
+
+            e.SetElementValue("AutoLogin", enabled);
+            WriteFile(doc);
+        }
+
+        internal static bool MoveUp(User user, string plugin) => Move(user, plugin, true);
+
+        internal static bool MoveDown(User user, string plugin) => Move(user, plugin, false);
+
+        private static bool Move(User user, string plugin, bool up)
+        {
+            XDocument doc = ReadFile();
+            XElement e = doc.Root.Elements("Credential")
+                .FirstOrDefault(x => Matches(x, plugin, user?.Identifier));
+            if (e == null)
+                return false;
+
+            XElement neighbour = up
+                ? e.ElementsBeforeSelf("Credential").LastOrDefault()
+                : e.ElementsAfterSelf("Credential").FirstOrDefault();
+            if (neighbour == null)
+                return false;
+
+            e.Remove();
+            if (up)
+                neighbour.AddBeforeSelf(e);
+            else
+                neighbour.AddAfterSelf(e);
+
+            WriteFile(doc);
+            return true;
         }
 
         internal static SavedCredential Get(User user, string plugin)

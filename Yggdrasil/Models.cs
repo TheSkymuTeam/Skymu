@@ -408,19 +408,22 @@ namespace Yggdrasil.Models
         public User User { get; }
         public string PasswordOrToken { get; }
         public string Plugin { get; }
+        public bool AutoLogin { get; set; }
         public AuthenticationMethod AuthenticationType { get; }
 
         public SavedCredential(
             User user,
             string password_or_token,
             AuthenticationMethod authentication_type,
-            string plugin
+            string plugin,
+            bool auto_login = true
         )
         {
             User = user;
             PasswordOrToken = password_or_token;
             AuthenticationType = authentication_type;
             Plugin = plugin;
+            AutoLogin = auto_login;
         }
     }
 

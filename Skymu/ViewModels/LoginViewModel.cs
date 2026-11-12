@@ -70,7 +70,8 @@ namespace Skymu.ViewModels
 
         bool allowAutoLogin = true;
 
-
+        internal static SavedCredential ForcedLogin { get; set; }
+        private bool _forcedLoginPending;
 
         public LoginViewModel(Func<IMainWindowHolder> createMainWindow)
         {
@@ -143,10 +144,22 @@ namespace Skymu.ViewModels
             SavedCredential[] savedCredentials = CredentialManager.GetAll();
             SavedCredentials = savedCredentials;
 
+#if DEBUG
+            allowAutoLogin = !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode;
+#endif
+
+            SavedCredential autoTarget = ForcedLogin;
+            ForcedLogin = null;
+            _forcedLoginPending = autoTarget != null;
+            if (autoTarget == null && Settings.AutoLogin && allowAutoLogin)
+            {
+                autoTarget = savedCredentials.FirstOrDefault(c =>
+                    c.AutoLogin && Universal.PluginList.Any(p => p.InternalName == c.Plugin));
+            }
+
             foreach (var plugin in Universal.PluginList)
             {
 #if DEBUG
-                allowAutoLogin = !DebugConfig.DisableAutoLogin && !DebugConfig.TestMode;
                 if (DebugConfig.TestMode && plugin.InternalName.ToLowerInvariant() == "stub")
                 {
                     PendingAutoLogin = new SavedCredential(new User("Saul Goodman", "sgoodman", "sgoodman"), "sgoodman", AuthenticationMethod.Token, plugin.InternalName.ToLowerInvariant());
@@ -155,15 +168,7 @@ namespace Skymu.ViewModels
                 }
 #endif
 
-            SavedCredential match = null;
-                foreach (SavedCredential cred in savedCredentials)
-                {
-                    if (cred.Plugin == plugin.InternalName)
-                    {
-                        match = cred;
-                        break;
-                    }
-                }
+                SavedCredential match = autoTarget != null && autoTarget.Plugin == plugin.InternalName ? autoTarget : null;
 
                 if (plugin.AuthenticationTypes.Length <= 1)
                 {
@@ -176,7 +181,7 @@ namespace Skymu.ViewModels
                         plugin.AuthenticationTypes[0].CustomTextPassword
                     );
 
-                    if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin)
+                    if (match != null && PendingAutoLogin == null)
                     {
                         PendingAutoLogin = match;
                         PendingAutoLoginListing = listing;
@@ -222,7 +227,7 @@ namespace Skymu.ViewModels
                             }
                         }
                         var listing = new PluginListing(name, pluginIndex, plugin.InternalName, ati.AuthType, ati.CustomTextUsername, ati.CustomTextPassword);
-                        if (match != null && PendingAutoLogin == null && Settings.AutoLogin && allowAutoLogin) // TODO check against authentication type too?
+                        if (match != null && PendingAutoLogin == null) // TODO check against authentication type too?
                         {
                             PendingAutoLogin = match;
                             PendingAutoLoginListing = listing;
@@ -246,6 +251,9 @@ namespace Skymu.ViewModels
 
         public void ClearPendingAutoLogin()
         {
+            if (_forcedLoginPending)
+                return;
+
             PendingAutoLogin = null;
             PendingAutoLoginListing = null;
         }
@@ -377,6 +385,7 @@ namespace Skymu.ViewModels
                 return;
             }
 
+            _forcedLoginPending = false;
             Tray.SetConnecting();
 
             LoginResult lr = await Task.Run(async () =>
