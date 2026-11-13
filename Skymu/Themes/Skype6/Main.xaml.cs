@@ -20,7 +20,7 @@ using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.ViewModels;
 using Skymu.Native.Windows;
-using Skymu.Infrastructure.Main;
+using Skymu.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

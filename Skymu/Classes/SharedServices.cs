@@ -29,7 +29,7 @@ using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 
-namespace Skymu.Infrastructure.Main
+namespace Skymu.Infrastructure
 {
     public static class SharedServices
     {

@@ -19,7 +19,7 @@
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
-using Skymu.Infrastructure.Main;
+using Skymu.Infrastructure;
 using Skymu.Forms;
 using Skymu.Helpers;
 using Skymu.Preferences;

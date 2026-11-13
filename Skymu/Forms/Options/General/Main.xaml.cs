@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Yggdrasil;
+using Skymu.Forms.Pages;
 
 namespace Skymu.Forms.OptionPages.General
 {
@@ -41,11 +42,11 @@ namespace Skymu.Forms.OptionPages.General
                                     blEnabled: true,
                                     blText: "Yes"
                                 );
-            dialog.BRAction = () =>
+            dialog.window.ButtonRightAction = () =>
             {
                 dialog.Close();
             };
-            dialog.BLAction = () =>
+            dialog.window.ButtonLeftAction = () =>
             {
                 dialog.Close();
                 Process.Start(Process.GetCurrentProcess().MainModule.FileName);

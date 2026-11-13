@@ -27,6 +27,7 @@ using System.Windows.Media;
 using Skymu.Native.Windows;
 using Skymu.Sounds;
 using System;
+using Skymu.Forms.Pages;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -292,6 +293,8 @@ namespace Skymu.ViewModels
                             " if you are using EAZY BLACK's official Skymu XP wrapper you should be (mostly) fine.";
                     else if (Universal.Platform == PlatformType.Windows2000)
                         message = Settings.BrandingName + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
+                    else if (Universal.Platform == PlatformType.WindowsNT4)
+                        message = "How did you even get this running on NT4?";
                 }
 
                 // Windows is well known for its backwards compatibility, this should never be an issue.
@@ -325,7 +328,7 @@ namespace Skymu.ViewModels
                         null,
                         new Action(() =>
                         {
-                            Settings.ShowOldDotNetWarnings = (bool)dlg.CheckBox.IsChecked;
+                            Settings.ShowOldDotNetWarnings = (bool)dlg.IsCheckBoxTicked();
                             Settings.Save();
                             dlg.Close();
                         }),
@@ -333,7 +336,7 @@ namespace Skymu.ViewModels
                         true,
                         new Action(() =>
                         {
-                            Settings.ShowOldDotNetWarnings = (bool)dlg.CheckBox.IsChecked;
+                            Settings.ShowOldDotNetWarnings = (bool)dlg.IsCheckBoxTicked();
                             Settings.Save();
                             Process.Start(new ProcessStartInfo
                             {
@@ -354,7 +357,8 @@ namespace Skymu.ViewModels
             if (PluginItems == null || PluginItems.Count == 0)
                 return null;
 
-            // to not confuse users, the vast majority of who are looking for discord
+            // to not confuse certain idiots who don't know how to use a dropdown
+            // there are more of these than you would expect
             var discordListings = PluginItems
                 .Where(p => string.Equals(p.InternalName, "discord", StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -466,10 +470,10 @@ namespace Skymu.ViewModels
                         qrImage
                     );
                     EventHandler onClosed = (s, e) => AnimationToggleRequested?.Invoke(false);
-                    qrDialog.Closed += onClosed;
+                    qrDialog.window.Closed += onClosed;
                     qrDialog.Show();
                     LoginResult qrResult = await Universal.Plugin.AuthenticateTwoFA(null);
-                    qrDialog.Closed -= onClosed;
+                    qrDialog.window.Closed -= onClosed;
                     qrDialog.Close();
                     if (qrResult == LoginResult.Success)
                     {

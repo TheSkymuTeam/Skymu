@@ -33,6 +33,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.Forms;
 using System;
+using Skymu.Forms.Pages;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

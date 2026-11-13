@@ -16,11 +16,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Preferences;
 
 namespace Skymu.Captcha
 {
-    class HCaptcha
+    class hCaptcha
     {
         private const string CaptchaHtml =
             @"

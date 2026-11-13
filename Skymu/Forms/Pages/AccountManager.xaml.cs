@@ -299,8 +299,7 @@ namespace Skymu.Forms.Pages
                 brText: Universal.Lang["sF_CONFIRM_NO_BTN"]
             );
 
-            dialog.ButtonLeft.IsDefault = false;
-            dialog.ButtonRight.IsDefault = true;
+            dialog.SetRightButtonAsDefault();
             dialog.ShowDialog();
 
             return confirmed;

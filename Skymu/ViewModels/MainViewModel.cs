@@ -959,7 +959,7 @@ namespace Skymu.ViewModels
                         cbEnabled: true,
                         onClosing: (s, e) =>
                         {
-                            if (((Dialog)s).CheckBox.IsChecked == true)
+                            if (((Dialog)s).IsCheckBoxTicked() == true)
                             {
                                 Settings.InformDND = true;
                                 Settings.Save();

@@ -19,7 +19,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using Skymu.Forms;
-using Skymu.Infrastructure.Main;
+using Skymu.Infrastructure;
 using Skymu.Forms.Pages;
 using System;
 using System.Collections.Generic;

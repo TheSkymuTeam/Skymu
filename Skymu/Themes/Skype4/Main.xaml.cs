@@ -11,7 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Infrastructure.Main;
+using Skymu.Infrastructure;
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;

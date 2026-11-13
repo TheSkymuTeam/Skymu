@@ -99,51 +99,82 @@
                 FontSize="11"
                 IsDefault="False"
                 Visibility="Collapsed" />
-            <StackPanel
-                x:Name="BottomControlsGrid"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <Button
-                    x:Name="ButtonLeft"
+            <Grid x:Name="BottomControlsGrid" Width="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="DialogTextBox"
+                    Grid.Column="0"
+                    Width="255"
                     Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
+                    Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Click="bLClick"
-                    Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
                     FontFamily="Tahoma"
                     FontSize="11"
-                    IsDefault="True"
-                    Visibility="Visible" />
-                <Button
-                    x:Name="ButtonMiddle"
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Click="bMClick"
-                    Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
-                    FontFamily="Tahoma"
-                    FontSize="11"
-                    IsDefault="False"
+                    TextAlignment="Center"
+                    TextOptions.TextHintingMode="Fixed"
+                    TextWrapping="Wrap"
                     Visibility="Collapsed" />
-                <Button
-                    x:Name="ButtonRight"
-                    Height="23"
-                    MinWidth="73"
-                    Margin="0,0,10,0"
-                    Padding="12,0"
-                    HorizontalAlignment="Right"
+                <CheckBox
+                    x:Name="DialogCheckBox"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Click="bRClick"
-                    Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
+                    Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
                     FontFamily="Tahoma"
-                    FontSize="11" />
-            </StackPanel>
+                    FontSize="11"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    Visibility="Collapsed" />
+                <StackPanel
+    HorizontalAlignment="Right"
+    Orientation="Horizontal">
+                    <Button
+        x:Name="ButtonLeft"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Center"
+        Click="bLClick"
+        Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11"
+        IsDefault="True"
+        Visibility="Visible" />
+                    <Button
+        x:Name="ButtonMiddle"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Click="bMClick"
+        Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11"
+        IsDefault="False"
+        Visibility="Collapsed" />
+                    <Button
+        x:Name="ButtonRight"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        Click="bRClick"
+        Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11" />
+                </StackPanel>
+            </Grid>
         </Grid>
 
     </Grid>

@@ -32,6 +32,7 @@ using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
+using Skymu.Forms.Pages;
 using Skymu.WebServices;
 using Skymu.Native.Windows;
 using Yggdrasil;
@@ -177,12 +178,12 @@ namespace Skymu
                                     blEnabled: true,
                                     blText: Lang["sF_CONFIRM_YES"]
                                 );
-                                dialog.BRAction = () =>
+                                dialog.window.ButtonRightAction = () =>
                                 {
                                     e.Action(false);
                                     dialog.Close();
                                 };
-                                dialog.BLAction = () =>
+                                dialog.window.ButtonLeftAction = () =>
                                 {
                                     e.Action(true);
                                     dialog.Close();
@@ -468,9 +469,9 @@ namespace Skymu
                     null,
                     donotask
                 );
-                dialog.BLAction = () =>
+                dialog.window.ButtonLeftAction = () =>
                 {
-                    if (dialog.CheckBox.IsChecked == true)
+                    if (dialog.IsCheckBoxTicked() == true)
                         Settings.QuitWithoutAsking = true;
                     Terminate();
                 };
@@ -594,11 +595,11 @@ namespace Skymu
                                    blEnabled: true,
                                    blText: Lang["sF_CONFIRM_YES"]
                                );
-                        dialog.BRAction = () =>
+                        dialog.window.ButtonRightAction = () =>
                         {
                             dialog.Close();
                         };
-                        dialog.BLAction = () =>
+                        dialog.window.ButtonLeftAction = () =>
                         {
                             Settings.Save();
                             Universal.Restart();
@@ -705,7 +706,7 @@ namespace Skymu
                         {
                             if (!notWebpage)
                             {
-                                if (((Dialog)s).CheckBox.IsChecked == true)
+                                if (((Dialog)s).IsCheckBoxTicked() == true)
                                 {
                                     Settings.ShowInlineLinkWarning = false;
                                 }
@@ -717,11 +718,11 @@ namespace Skymu
 
                         }
             ); ;
-                dialog.BRAction = () =>
+                dialog.window.ButtonRightAction = () =>
                 {
                     dialog.Close();
                 };
-                dialog.BLAction = () =>
+                dialog.window.ButtonLeftAction = () =>
                 {
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                     dialog.Close();
