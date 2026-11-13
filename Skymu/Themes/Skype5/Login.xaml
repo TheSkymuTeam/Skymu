@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Window
+<theming:LoginWindowBase
     x:Class="Skymu.Skype5.Login"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -21,6 +21,7 @@
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
+    xmlns:theming="clr-namespace:Skymu.Theming"
     xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
@@ -57,7 +58,6 @@
         <!--  placeholder for menu bar so designer donesnt mess up  -->
         <Grid Grid.Row="1">
             <Image
-                
                 Width="510"
                 Height="371"
                 Stretch="Fill" />
@@ -213,9 +213,7 @@
                         VerticalAlignment="Top"
                         Background="#FFE5F7FD"
                         CornerRadius="5">
-                        <StackPanel
-                            Margin="15,0"
-                            VerticalAlignment="Center">
+                        <StackPanel Margin="15,0" VerticalAlignment="Center">
                             <CheckBox
                                 x:Name="SaveCredentials"
                                 Height="16"
@@ -239,6 +237,6 @@
             </Grid>
         </Grid>
     </Grid>
-</Window>
+</theming:LoginWindowBase>
 
 

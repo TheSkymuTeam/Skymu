@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Window
+<theming:MainWindowBase
     x:Class="Skymu.Skype6.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -24,6 +24,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:theming="clr-namespace:Skymu.Theming"
     xmlns:uc="clr-namespace:Skymu.UserControls"
     xmlns:yggdrasil="clr-namespace:Yggdrasil.Models;assembly=Yggdrasil"
     Title="Skymu"
@@ -2093,6 +2094,6 @@
             </Border>
         </Grid>
     </Grid>
-</Window>
+</theming:MainWindowBase>
 
 
