@@ -37,6 +37,9 @@ namespace Skymu.Native.Windows
         [Description("Windows XP")]
         WindowsXP,
 
+        [Description("Windows XP x64 / Server 2003")]
+        WindowsXPNT52,
+
         [Description("Windows Vista")]
         WindowsVista,
 
@@ -55,8 +58,17 @@ namespace Skymu.Native.Windows
         [Description("Windows 11")]
         Windows11,
 
-        [Description("Future Windows")]
-        WindowsFuture,
+        [Description("Unknown Windows NT11+")]
+        WindowsNT11Plus,
+
+        [Description("Unknown Windows NT6")]
+        WindowsNT6,
+
+        [Description("Unknown Windows NT5")]
+        WindowsNT5,
+
+        [Description("Windows NT 4.x")]
+        WindowsNT4
     }
 
     class Runtime
@@ -106,7 +118,7 @@ namespace Skymu.Native.Windows
             int build = info.dwBuildNumber;
 
             if (major > 10)
-                return PlatformType.WindowsFuture;
+                return PlatformType.WindowsNT11Plus;
             else if (major == 10)
             {
                 if (build >= 22000)
@@ -123,29 +135,35 @@ namespace Skymu.Native.Windows
                     return PlatformType.Windows7;
                 if (minor == 0)
                     return PlatformType.WindowsVista;
+                return PlatformType.WindowsNT6;
             }
             else if (major == 5)
             {
-                if (minor >= 1)
+                if (minor == 2)
+                    return PlatformType.WindowsXPNT52;
+                if (minor == 1)
                     return PlatformType.WindowsXP;
                 if (minor == 0)
                     return PlatformType.Windows2000;
+                return PlatformType.WindowsNT5;
             }
+            else if (major == 4) return PlatformType.WindowsNT4;
             return PlatformType.Unknown;
         }
 
         public static int DetectNetVersion()
         {
             string description = RuntimeInformation.FrameworkDescription;
-            if (description.StartsWith(".NET "))
-            {
-                string versionPart = description.Substring(5).Split('.')[0];
-                if (int.TryParse(versionPart, out int major))
-                    return major;
-            }
+
             if (description.StartsWith(".NET Framework"))
             {
                 string versionPart = description.Substring(15).Split('.')[0];
+                if (int.TryParse(versionPart, out int major))
+                    return major;
+            }
+            else if (description.StartsWith(".NET"))
+            {
+                string versionPart = description.Substring(5).Split('.')[0];
                 if (int.TryParse(versionPart, out int major))
                     return major;
             }
