@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Bifrost copyright © OmegaAOL and EAZY BLACK, 2025-2026.
+// Bifrost copyright © OmegaAOL and EAZY BLACK, 2026.
 // For any inquiries, email hackersword666@gmail.com.
 /*==========================================================*/
 // License: https://www.apache.org/licenses/LICENSE-2.0

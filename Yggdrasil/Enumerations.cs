@@ -1,5 +1,5 @@
 ﻿/*==========================================================*/
-// Yggdrasil API copyright © OmegaAOL 2025-2026.
+// Yggdrasil API copyright © OmegaAOL 2026.
 // For any inquiries, email hackersword666@gmail.com.
 /*==========================================================*/
 // License: https://www.apache.org/licenses/LICENSE-2.0
