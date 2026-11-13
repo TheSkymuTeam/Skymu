@@ -78,7 +78,7 @@ namespace Skymu.Forms
         private void OnDecline(object sender, MouseButtonEventArgs e)
         {
             SoundManager.StopPlayback("CALL_IN");
-            _ = Universal.CallPlugin.DeclineCall(_call.ConversationId);
+            _ = Universal.CallPlugin.DeclineCall(_call.Caller);
             SoundManager.Play("HANGUP");
             Close();
         }

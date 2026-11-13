@@ -166,7 +166,7 @@ namespace Skymu.Forms
             });
 
             ActiveCall call = await Universal.CallPlugin.StartCall(
-                _conversation.Identifier,
+                _conversation,
                 is_video,
                 true
             );

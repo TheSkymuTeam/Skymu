@@ -168,29 +168,21 @@ namespace Yggdrasil.Bottles
     /// </summary>
     public class CallBottle : EventArgs
     {
-        public string ConversationId { get; }
         public CallState State { get; }
         public string FailReason { get; }
         public Conversation Caller { get; }
 
-        public CallBottle(string convo_id, CallState state)
-        {
-            ConversationId = convo_id;
-            State = state;
-        }
-
-        public CallBottle(string convo_id, CallState state, string fail_reason)
-        {
-            ConversationId = convo_id;
-            State = state;
-            FailReason = fail_reason;
-        }
-
         public CallBottle(Conversation caller, CallState state)
         {
-            ConversationId = caller.Identifier;
-            State = state;
             Caller = caller;
+            State = state;
+        }
+
+        public CallBottle(Conversation caller, CallState state, string fail_reason)
+        {
+            Caller = caller;
+            State = state;
+            FailReason = fail_reason;
         }
     }
 }

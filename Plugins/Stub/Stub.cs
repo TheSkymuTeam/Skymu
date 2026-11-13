@@ -488,7 +488,7 @@ namespace Stub
 
         // Call will be picked up as soon as something is returned
         public async Task<ActiveCall> StartCall(
-            string convo_id,
+            Conversation conversation,
             bool is_video_call,
             bool start_muted
         )
@@ -540,7 +540,7 @@ namespace Stub
 
             return new ActiveCall(
                 "STUBCALL",
-                convo_id,
+                conversation.Identifier,
                 is_video_call,
                 new User[0]
             );
@@ -555,9 +555,9 @@ namespace Stub
             return Task.FromResult(true);
         }
 
-        public async Task<ActiveCall> AnswerCall(string convo_id) => await StartCall(convo_id, false, true);
+        public async Task<ActiveCall> AnswerCall(Conversation conversation) => await StartCall(conversation, false, true);
 
-        public Task<bool> DeclineCall(string convo_id) => Task.FromResult(false);
+        public Task<bool> DeclineCall(Conversation conversation) => Task.FromResult(false);
 
         public Task<bool> SetMuted(ActiveCall call, bool muted) => Task.FromResult(false);
 

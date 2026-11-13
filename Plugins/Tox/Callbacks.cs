@@ -623,7 +623,7 @@ namespace Tox
             if ((state & Toxav_Friend_Call_State.FINISHED) != 0)
             {
                 Debug.WriteLine($"Tox: Call with {fid} ended/declined");
-                core.CSC(new CallBottle(fid.ToString(), CallState.Ended));
+                core.CSC(new CallBottle(new DirectMessage(core.friends[fid], 0, fid.ToString()), CallState.Ended));
                 core.avWaiter?.TrySetResult(false);
                 return;
             }

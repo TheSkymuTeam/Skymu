@@ -1098,17 +1098,17 @@ namespace Discord
 
         #region Calling functionality
 
-        public async Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted)
+        public async Task<ActiveCall> StartCall(Conversation conversation, bool is_video_call, bool start_muted)
         {
-            return await InitiateCall(false, convo_id, is_video_call, start_muted);
+            return await InitiateCall(false, conversation, is_video_call, start_muted);
         }
 
-        public async Task<ActiveCall> AnswerCall(string convo_id)
+        public async Task<ActiveCall> AnswerCall(Conversation conversation)
         {
-            return await InitiateCall(true, convo_id);
+            return await InitiateCall(true, conversation);
         }
 
-        public async Task<ActiveCall> InitiateCall(bool is_answering_call, string convo_id, bool is_video_call = false, bool start_muted = true)
+        public async Task<ActiveCall> InitiateCall(bool is_answering_call, Conversation conversation, bool is_video_call = false, bool start_muted = true)
         {
             var call_established = new TaskCompletionSource<bool>();
             var call_picked_up = new TaskCompletionSource<WebSocket.VoiceServerUpdateEventArgs>();
@@ -1117,9 +1117,9 @@ namespace Discord
             vsHandler = async (sender, e) =>
             {
                 WebSocketManager.UnsubscribeVoiceServerUpdated(vsHandler);
-                if (!is_answering_call) _ = Client.Send($"channels/{convo_id}/call/ring", HttpMethod.Post, DiscordToken, new { recipients = (string[])null });
+                if (!is_answering_call) _ = Client.Send($"channels/{conversation.Identifier}/call/ring", HttpMethod.Post, DiscordToken, new { recipients = (string[])null });
                 call_established.TrySetResult(true);
-                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, convo_id, start_muted);
+                CallSocket socket = new CallSocket(e.VoiceEndpoint, e.VoiceToken, e.SessionId, e.UserId, conversation.Identifier, start_muted);
                 socket.OnCallEstablished += () =>
                 {
                     Debug.WriteLine("[CALL-INIT] Event recieved, call has been picked up by the remote user. Setting result of task call_picked_up...");
@@ -1128,23 +1128,26 @@ namespace Discord
                 };
                 socket.OnHangUp += () =>
                 {
-                    CallStateChangedTube?.Invoke(this, new CallBottle(convo_id, CallState.Ended));
+                    CallStateChangedTube?.Invoke(this, new CallBottle(conversation, CallState.Ended));
                 };
                 socket.OnCallFailed += reason =>
                 {
-                    CallStateChangedTube?.Invoke(this, new CallBottle(convo_id, CallState.Failed, reason));
+                    CallStateChangedTube?.Invoke(this, new CallBottle(conversation, CallState.Failed, reason));
                 };
                 _callSocket = socket;
                 await socket.ConnectAsync();
             };
+
+            string server_id = (string)null;
+            if (conversation is ServerChannel sc) server_id = sc.ParentServerID;
 
             string voicePayloadJson = JsonSerializer.Serialize(new
             {
                 op = 4,
                 d = new
                 {
-                    guild_id = (string)null,
-                    channel_id = convo_id,
+                    guild_id = server_id,
+                    channel_id = conversation.Identifier,
                     self_mute = start_muted,
                     self_deaf = false,
                     self_video = is_video_call,
@@ -1165,7 +1168,7 @@ namespace Discord
             Debug.WriteLine("[CALL-INIT] Call initialization complete. Returning the active call.");
             return new ActiveCall(voiceEvent.SessionId, convo_id, is_video_call, new User[0]);
         }
-        public async Task<bool> DeclineCall(string convo_id)
+        public async Task<bool> DeclineCall(Conversation conversation)
         {
             await EndCall(null);
             return true;

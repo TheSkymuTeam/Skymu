@@ -160,15 +160,15 @@ namespace Yggdrasil
         /// <summary>
         ///  Start a new voice call in the specified conversation.
         /// </summary>
-        Task<ActiveCall> StartCall(string convo_id, bool is_video_call, bool start_muted);
+        Task<ActiveCall> StartCall(Conversation conversation, bool is_video_call, bool start_muted);
         /// <summary>
         ///  Answer an incoming call from the specified conversation.
         /// </summary>
-        Task<ActiveCall> AnswerCall(string convo_id);
+        Task<ActiveCall> AnswerCall(Conversation conversation);
         /// <summary>
         ///  Decline an incoming call from the specified conversation.
         /// </summary>
-        Task<bool> DeclineCall(string convo_id);
+        Task<bool> DeclineCall(Conversation conversation);
         /// <summary>
         ///  End an ongoing call from the specified conversation.
         /// </summary>

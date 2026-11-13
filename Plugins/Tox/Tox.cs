@@ -771,7 +771,7 @@ namespace Tox
                 avFinished.TrySetResult(true);
         }
 
-        public async Task<ActiveCall> StartCall(string convo_id, bool is_video, bool start_muted) => await IStartCall(convo_id, is_video, start_muted);
+        public async Task<ActiveCall> StartCall(Conversation conversation, bool is_video, bool start_muted) => await IStartCall(conversation.Identifier, is_video, start_muted);
         async Task<ActiveCall> IStartCall(string convo_id, bool is_video, bool start_muted, bool accept = false)
         {
             avACall = new CallStruct
@@ -830,14 +830,14 @@ namespace Tox
             return Task.FromResult(true);
         }
 
-        public async Task<ActiveCall> AnswerCall(string convo_id)
+        public async Task<ActiveCall> AnswerCall(Conversation conversation)
         {
-            return await IStartCall(convo_id, false, false, true);
+            return await IStartCall(conversation.Identifier, false, false, true);
         }
 
-        public Task<bool> DeclineCall(string convo_id)
+        public Task<bool> DeclineCall(Conversation conversation)
         {
-            bool suc = toxav_call_control(av, UInt32.Parse(convo_id), Toxav_Call_Control.CANCEL, out var err);
+            bool suc = toxav_call_control(av, UInt32.Parse(conversation.Identifier), Toxav_Call_Control.CANCEL, out var err);
             if (!suc)
                 ERR("An error occured when declining the call: " + err);
             return Task.FromResult(suc);
