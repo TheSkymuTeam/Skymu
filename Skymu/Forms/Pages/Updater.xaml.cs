@@ -116,7 +116,7 @@ namespace Skymu.Forms.Pages
                         Universal.Lang["sF_UPGRADE_UPTODATE"],
                         Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"],
                         Title
-                    ).ShowDialog();
+                    ).Show();
             }
         }
 
@@ -151,7 +151,7 @@ namespace Skymu.Forms.Pages
                         ex.Message,
                         "Cannot open file",
                         Title
-                    ).ShowDialog();
+                    ).Show();
                 }
                 window.Close();
                 return;

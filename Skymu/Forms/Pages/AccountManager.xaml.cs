@@ -300,7 +300,7 @@ namespace Skymu.Forms.Pages
             );
 
             dialog.SetRightButtonAsDefault();
-            dialog.ShowDialog();
+            dialog.Show();
 
             return confirmed;
         }

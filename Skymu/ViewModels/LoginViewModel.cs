@@ -125,7 +125,7 @@ namespace Skymu.ViewModels
                     }),
                     "Yes, but keep me anonymous"
                 );
-                dlg.ShowDialog();
+                dlg.Show();
             }
         }
         public void LoadPlugins()
@@ -328,7 +328,7 @@ namespace Skymu.ViewModels
                         null,
                         new Action(() =>
                         {
-                            Settings.ShowOldDotNetWarnings = (bool)dlg.IsCheckBoxTicked();
+                            Settings.ShowOldDotNetWarnings = dlg.IsCheckBoxTicked();
                             Settings.Save();
                             dlg.Close();
                         }),
@@ -336,7 +336,7 @@ namespace Skymu.ViewModels
                         true,
                         new Action(() =>
                         {
-                            Settings.ShowOldDotNetWarnings = (bool)dlg.IsCheckBoxTicked();
+                            Settings.ShowOldDotNetWarnings = dlg.IsCheckBoxTicked();
                             Settings.Save();
                             Process.Start(new ProcessStartInfo
                             {
@@ -347,7 +347,7 @@ namespace Skymu.ViewModels
                         }),
                         Universal.Lang["sSKYACCESS_DLG_BTN_YES"], false, null, null, false, null, null, true
                     );
-                    dlg.ShowDialog();
+                    dlg.Show();
                 }
             }
         }
@@ -495,8 +495,8 @@ namespace Skymu.ViewModels
                 Universal.Lang["sZAPBUTTON_SIGNIN"],
                 false, null, null, true
             );
-            if (dlg.ShowDialog() == true)
-                totp = dlg.TextBoxText;
+            if (dlg.Show() == true)
+                totp = dlg.TextBoxContent;
 
             LoginResult optResult = await Universal.Plugin.AuthenticateTwoFA(totp);
             if (optResult == LoginResult.Success)

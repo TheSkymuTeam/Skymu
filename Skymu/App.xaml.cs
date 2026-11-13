@@ -146,7 +146,7 @@ namespace Skymu
                                 Clipboard.SetText(e.CopyToClipboardText);
                                 ShowMessage("Copied to clipboard.");
                             }
-                        ).ShowDialog();
+                        ).Show();
                     }
                 )
             );
@@ -188,7 +188,7 @@ namespace Skymu
                                     e.Action(true);
                                     dialog.Close();
                                 };
-                                dialog.ShowDialog();
+                                dialog.Show();
                             }
                         )
                     );
@@ -471,11 +471,11 @@ namespace Skymu
                 );
                 dialog.window.ButtonLeftAction = () =>
                 {
-                    if (dialog.IsCheckBoxTicked() == true)
+                    if (dialog.IsCheckBoxTicked())
                         Settings.QuitWithoutAsking = true;
                     Terminate();
                 };
-                dialog.ShowDialog();
+                dialog.Show();
             }
             catch
             {
@@ -527,7 +527,7 @@ namespace Skymu
                 null,
                 null,
                 Universal.Lang["sF_CONFIRM_OK_BTN"]
-            ).ShowDialog();
+            ).Show();
         }
 
         public static void NotImplemented(string feature)
@@ -539,7 +539,7 @@ namespace Skymu
                 null,
                 null,
                 "OK"
-            ).ShowDialog();
+            ).Show();
         }
 
         private static void WriteToPipe(string data)
@@ -604,7 +604,7 @@ namespace Skymu
                             Settings.Save();
                             Universal.Restart();
                         };
-                        dialog.ShowDialog();
+                        dialog.Show();
                         break;
                 }
             };
@@ -706,7 +706,7 @@ namespace Skymu
                         {
                             if (!notWebpage)
                             {
-                                if (((Dialog)s).IsCheckBoxTicked() == true)
+                                if (((Dialog)s).IsCheckBoxTicked())
                                 {
                                     Settings.ShowInlineLinkWarning = false;
                                 }
@@ -727,7 +727,7 @@ namespace Skymu
                     Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                     dialog.Close();
                 };
-                dialog.ShowDialog();
+                dialog.Show();
             }
             else Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 

@@ -52,7 +52,7 @@ namespace Skymu.Forms.OptionPages.General
                 Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                 Application.Current.Shutdown();
             };
-            dialog.ShowDialog();
+            dialog.Show();
         }
     }
 }

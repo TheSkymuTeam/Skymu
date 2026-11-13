@@ -58,7 +58,7 @@
         <!--  placeholder for menu bar so designer donesnt mess up  -->
         <Grid Grid.Row="1">
             <Image
-                x:Name="BackgroundImg"
+                
                 Width="510"
                 Height="371"
                 Stretch="Fill" />
@@ -156,7 +156,7 @@
 
                         <!--  Password box  -->
                         <TextBlock
-                            x:Name="Password"
+                            x:Name="PasswordLabel"
                             Margin="0,0,0,4"
                             FontWeight="Normal"
                             Text="{Binding [sF_USERENTRY_LABEL_PASSWORD]}" />

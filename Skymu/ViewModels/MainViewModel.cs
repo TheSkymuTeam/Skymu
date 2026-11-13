@@ -425,10 +425,14 @@ namespace Skymu.ViewModels
 
         private async Task LoadAndCacheServers()
         {
-            List<Server> servers = await Universal.Plugin.FetchServers();
-            _database?.Servers.Write(servers); // TODO add servers to database
-            ServerList = new ObservableCollection<Server>(servers);
-            _serversLoadedSource.TrySetResult(true);
+            try
+            {
+                var servers = await Universal.Plugin.FetchServers() ?? new List<Server>();
+                _database?.Servers.Write(servers);
+                ServerList = new ObservableCollection<Server>(servers);
+            }
+            catch (Exception ex) { Universal.ExceptionHandler(ex); }
+            finally { _serversLoadedSource.TrySetResult(true); }
         }
 
         #endregion
@@ -959,13 +963,13 @@ namespace Skymu.ViewModels
                         cbEnabled: true,
                         onClosing: (s, e) =>
                         {
-                            if (((Dialog)s).IsCheckBoxTicked() == true)
+                            if (((Dialog)s).IsCheckBoxTicked())
                             {
                                 Settings.InformDND = true;
                                 Settings.Save();
                             }
                         }
-                    ).ShowDialog()
+                    ).Show()
                 );
         }
 

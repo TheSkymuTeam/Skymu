@@ -34,7 +34,6 @@ namespace Skymu.Skype6
     {
         private LoginViewModel _viewModel;
         internal bool noCloseEvent;
-        private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
         private bool switchuser = false;
 
         public Login(bool switchuser = false)
@@ -68,10 +67,10 @@ namespace Skymu.Skype6
 
         private void OnPluginSelectionUpdated(LoginViewModel.PluginListing listing)
         {
-            Password.Foreground = new SolidColorBrush(Colors.Black);
+            PasswordLabel.Foreground = new SolidColorBrush(Colors.Black);
             PasswordTokenBox.IsEnabled = true;
-            Password.FontStyle = FontStyles.Normal;
-            Password.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            PasswordLabel.FontStyle = FontStyles.Normal;
+            PasswordLabel.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
             LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             SkypeName.Foreground = new SolidColorBrush(Colors.Black);
@@ -81,10 +80,10 @@ namespace Skymu.Skype6
 
             if (listing.AuthenticationType != AuthenticationMethod.Password)
             {
-                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
+                PasswordLabel.Foreground = new SolidColorBrush(Colors.DarkGray);
                 PasswordTokenBox.IsEnabled = false;
-                Password.Text = "field not required";
-                Password.FontStyle = FontStyles.Italic;
+                PasswordLabel.Text = "field not required";
+                PasswordLabel.FontStyle = FontStyles.Italic;
 
                 switch (listing.AuthenticationType)
                 {
@@ -247,7 +246,7 @@ namespace Skymu.Skype6
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Universal.OpenURL(DISCORD_SERVER_INVITE);
+            Universal.OpenURL(Universal.DISCORD_SERVER_INVITE);
             e.Handled = true;
         }
 

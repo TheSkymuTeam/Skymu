@@ -68,10 +68,10 @@ namespace Skymu.Skype4
 
         private void OnPluginSelectionUpdated(LoginViewModel.PluginListing listing)
         {
-            Password.Foreground = new SolidColorBrush(Colors.Black);
+            PasswordLabel.Foreground = new SolidColorBrush(Colors.Black);
             PasswordTokenBox.IsEnabled = true;
-            Password.FontStyle = FontStyles.Normal;
-            Password.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+            PasswordLabel.FontStyle = FontStyles.Normal;
+            PasswordLabel.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
             LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             SkypeName.Foreground = new SolidColorBrush(Colors.Black);
@@ -81,10 +81,10 @@ namespace Skymu.Skype4
 
             if (listing.AuthenticationType != AuthenticationMethod.Password)
             {
-                Password.Foreground = new SolidColorBrush(Colors.DarkGray);
+                PasswordLabel.Foreground = new SolidColorBrush(Colors.DarkGray);
                 PasswordTokenBox.IsEnabled = false;
-                Password.Text = "field not required";
-                Password.FontStyle = FontStyles.Italic;
+                PasswordLabel.Text = "field not required";
+                PasswordLabel.FontStyle = FontStyles.Italic;
 
                 switch (listing.AuthenticationType)
                 {

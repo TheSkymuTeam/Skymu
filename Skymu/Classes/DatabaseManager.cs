@@ -153,7 +153,7 @@ SanitizeFolderName(user.Identifier)
                             }),
                             "Purge database"
                         );
-                        dlg.ShowDialog();
+                        dlg.Show();
                     }
                 }
                 catch
