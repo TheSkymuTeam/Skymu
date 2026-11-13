@@ -1164,10 +1164,10 @@ namespace Discord
                 return null;
             }
             else Debug.WriteLine("[CALL-INIT] Discord responded with CALL_UPDATE and the call has been established.");
-            if (!string.IsNullOrEmpty(server_id)) return new ActiveCall("discord-server-vc", conversation.Identifier, is_video_call, new User[0]);
+            if (!string.IsNullOrEmpty(server_id)) return new ActiveCall("discord-server-vc", conversation, is_video_call, new User[0]);
             var voiceEvent = await call_picked_up.Task;
             Debug.WriteLine("[CALL-INIT] Call initialization complete. Returning the active call.");
-            return new ActiveCall(voiceEvent.SessionId, conversation.Identifier, is_video_call, new User[0]);
+            return new ActiveCall(voiceEvent.SessionId, conversation, is_video_call, new User[0]);
         }
         public async Task<bool> DeclineCall(Conversation conversation)
         {
@@ -1177,13 +1177,15 @@ namespace Discord
         public async Task<bool> SetMuted(ActiveCall call, bool muted)
         {
             _callSocket.SetMute(muted);
+            string server_id = (string)null;
+            if (call.Conversation is ServerChannel sc) server_id = sc.ParentServerID;
             await WebSocketManager.SendPayload(JsonSerializer.Serialize(new
             {
                 op = 4,
                 d = new
                 {
-                    guild_id = (string)null,
-                    channel_id = call.ConversationId,
+                    guild_id = server_id,
+                    channel_id = call.Conversation.Identifier,
                     self_mute = muted,
                     self_deaf = false
                 }

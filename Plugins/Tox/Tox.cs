@@ -814,7 +814,7 @@ namespace Tox
             if (start_muted)
                 toxav_call_control(av, avACall.Identifier, Toxav_Call_Control.MUTE_AUDIO, out _);
 
-            return new ActiveCall($"{convo_id}_{GUID()}", convo_id, is_video, new User[0]);
+            return new ActiveCall($"{convo_id}_{GUID()}", new DirectMessage(null, 0, convo_id), is_video, new User[0]);
         }
 
         public Task<bool> EndCall(ActiveCall call)

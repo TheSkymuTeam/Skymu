@@ -151,7 +151,7 @@ namespace Skymu.Forms
             Universal.CallPlugin.CallStateChangedTube += OnCallStateChanged;
             _call = new ActiveCall(
                 "INIT",
-                _conversation.Identifier,
+                _conversation,
                 is_video,
                 new User[] { Universal.CurrentUser }
             );

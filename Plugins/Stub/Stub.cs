@@ -540,7 +540,7 @@ namespace Stub
 
             return new ActiveCall(
                 "STUBCALL",
-                conversation.Identifier,
+                conversation,
                 is_video_call,
                 new User[0]
             );

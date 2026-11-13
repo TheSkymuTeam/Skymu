@@ -546,7 +546,7 @@ namespace Yggdrasil.Models
     public class ActiveCall
     {
         public string CallId { get; }
-        public string ConversationId { get; }
+        public Conversation Conversation { get; }
         public bool IsVideo { get; }
         public CallState State { get; set; }
         public DateTime StartedAt { get; }
@@ -554,13 +554,13 @@ namespace Yggdrasil.Models
 
         public ActiveCall(
             string call_id,
-            string conversation_id,
+            Conversation conversation,
             bool is_video,
             User[] participants
         )
         {
             CallId = call_id;
-            ConversationId = conversation_id;
+            Conversation = conversation;
             IsVideo = is_video;
             StartedAt = DateTime.UtcNow;
             Participants = participants;
