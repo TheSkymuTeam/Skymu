@@ -100,14 +100,6 @@ namespace Skymu.Skype6
 
         #endregion
 
-        #region BitmapImage generators
-
-        private static BitmapImage GenerateAvatarImage(string avatar)
-        {
-            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
-        }
-
-        #endregion
 
         #region Home and Chat window switching
 
@@ -164,7 +156,7 @@ namespace Skymu.Skype6
                     else
                         HomeUnavailableFrame.Visibility = Visibility.Visible;
                     ConversationList.SelectedItem = null;
-                    ClearTreeSelection(ServersList);
+                    SharedServices.ClearTreeSelection(ServersList);
                     SelectedContact = null;
 
                     MessageWindowRow.Height = new GridLength(0);
@@ -193,16 +185,6 @@ namespace Skymu.Skype6
                         SetCallPageLocation(location);
                     break;
             }
-        }
-
-        private void ClearTreeSelection(TreeView tree)
-        {
-            if (tree.SelectedItem == null)
-                return;
-
-            TreeViewItem container = SharedServices.GetContainerFromItem(tree, tree.SelectedItem);
-            if (container != null)
-                container.IsSelected = false;
         }
 
         private void ToggleStatusBoxSelection(bool selected)
@@ -504,23 +486,6 @@ namespace Skymu.Skype6
 
         #endregion
 
-        #region User count API
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -562,7 +527,7 @@ namespace Skymu.Skype6
 
         private void StatusArea_Click(object sender, MouseButtonEventArgs e)
         {
-            OpenStatusMenu();
+            SharedServices.OpenStatusMenu(StatusArea);
         }
 
         private async void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
@@ -582,7 +547,7 @@ namespace Skymu.Skype6
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
         {
-            HandleStatusItemClick(sender as MenuItem);
+            SharedServices.HandleStatusItemClick(sender as MenuItem, StatusIcon);
         }
 
         private void Main_Closing(object sender, CancelEventArgs ev)
@@ -1167,9 +1132,7 @@ namespace Skymu.Skype6
                         vmodel.IsTypingVisible ? Visibility.Visible : Visibility.Collapsed);
             };
 
-            Universal.GroupAvatar = GenerateAvatarImage("group");
-            Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
-            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
+            SharedServices.GenerateGlobalAvatars();
 
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
@@ -1261,39 +1224,6 @@ namespace Skymu.Skype6
             }
 
             this.AllowsTransparency = false;
-        }
-
-        #endregion
-
-        #region Status change menu
-
-        private void OpenStatusMenu()
-        {
-            var menu = (ContextMenu)StatusArea.Resources["StatusMenu"];
-            menu.PlacementTarget = StatusArea;
-            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-            menu.IsOpen = true;
-        }
-
-        private async void HandleStatusItemClick(MenuItem item)
-        {
-            string name = item.Name.Substring(3);
-            var currentStatus = MainViewModel.GetStatusFromInt(StatusIcon.DefaultIndex);
-
-            if (name == "dnd")
-                vmodel.InformDND();
-
-            PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == PresenceStatus.Unknown) return;
-
-            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.SetStatus(status);
-
-            if (!await Universal.Plugin.SetConnectionStatus(status))
-            {
-                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(currentStatus);
-                Tray.SetStatus(currentStatus);
-            }
         }
 
         #endregion

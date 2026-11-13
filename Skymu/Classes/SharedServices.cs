@@ -11,10 +11,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Org.BouncyCastle.Bcpg;
 using Skymu.Emoticons;
 using Skymu.Forms;
+using Skymu.Helpers;
+using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
+using Skymu.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,9 +29,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace Skymu.Infrastructure
 {
@@ -172,6 +178,67 @@ namespace Skymu.Infrastructure
             {
                 return string.Empty;
             }
+        }
+
+        public static BitmapImage GenerateTitlebarButtonImage(string name, Enumerations.WindowChrome chrome)
+        {
+            string framedir = "Aero";
+            if (chrome == Enumerations.WindowChrome.SkypeXP) framedir = "Basic";
+
+            return ImageHelper.FreezeLoad(
+                $"Universal/Window Frame/{framedir}/{name}/combined.png"
+            );
+        }
+
+        private static BitmapImage GenerateAvatarImage(string avatar)
+        {
+            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
+        }
+
+        public static void GenerateGlobalAvatars()
+        {
+            Universal.GroupAvatar = GenerateAvatarImage("group");
+            Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
+            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
+        }
+
+        public static async void HandleStatusItemClick(MenuItem item, SliceControl statusIcon)
+        {
+            string name = item.Name.Substring(3);
+            var currentStatus = MainViewModel.GetStatusFromInt(statusIcon.DefaultIndex);
+
+            if (name == "dnd")
+                Universal.ActiveViewModel.InformDND();
+
+            PresenceStatus status = Universal.ActiveViewModel.GetConnectionStatusFromName(name);
+            if (status == PresenceStatus.Unknown) return;
+
+            statusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
+            Tray.SetStatus(status);
+
+            if (!await Universal.Plugin.SetConnectionStatus(status))
+            {
+                statusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(currentStatus);
+                Tray.SetStatus(currentStatus);
+            }
+        }
+
+        public static void OpenStatusMenu(StackPanel statusArea)
+        {
+            var menu = (ContextMenu)statusArea.Resources["StatusMenu"];
+            menu.PlacementTarget = statusArea;
+            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            menu.IsOpen = true;
+        }
+
+        public static void ClearTreeSelection(TreeView tree)
+        {
+            if (tree.SelectedItem == null)
+                return;
+
+            TreeViewItem container = SharedServices.GetContainerFromItem(tree, tree.SelectedItem);
+            if (container != null)
+                container.IsSelected = false;
         }
 
         public static void SavePositioning(Window window, ColumnDefinition sidebar)

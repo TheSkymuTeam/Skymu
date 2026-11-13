@@ -105,7 +105,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBox
-                    x:Name="DialogTextBox"
+                    x:Name="BBTextBox"
                     Grid.Column="0"
                     Width="255"
                     Height="23"
@@ -121,7 +121,7 @@
                     TextWrapping="Wrap"
                     Visibility="Collapsed" />
                 <CheckBox
-                    x:Name="DialogCheckBox"
+                    x:Name="BBCheckBox"
                     Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"

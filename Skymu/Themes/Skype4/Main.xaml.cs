@@ -104,24 +104,6 @@ namespace Skymu.Skype4
 
         #endregion
 
-        #region BitmapImage generators
-        private BitmapImage GenerateTitlebarButtonImage(string name)
-        {
-            string framedir = "Aero";
-            if (_currentFrame == Enumerations.WindowChrome.SkypeXP) framedir = "Basic";
-
-            return ImageHelper.FreezeLoad(
-                $"Universal/Window Frame/{framedir}/{name}/combined.png"
-            );
-        }
-
-        private BitmapImage GenerateAvatarImage(string avatar)
-        {
-            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
-        }
-
-        #endregion
-
         #region Home and Chat window switching
 
         private void SetWindow(WindowType type, bool force = false)
@@ -168,7 +150,7 @@ namespace Skymu.Skype4
                     MessageWindowRow.Height = new GridLength(0);
                     ConversationList.SelectedItem = null;
                     SelectedContact = null;
-                    ClearTreeSelection(ServersList);
+                    SharedServices.ClearTreeSelection(ServersList);
 
                     MessageWindowRow.Height = new GridLength(0);
 
@@ -195,16 +177,6 @@ namespace Skymu.Skype4
                         SetCallPageLocation(location);
                     break;
             }
-        }
-
-        private void ClearTreeSelection(TreeView tree)
-        {
-            if (tree.SelectedItem == null)
-                return;
-
-            TreeViewItem container = SharedServices.GetContainerFromItem(tree, tree.SelectedItem);
-            if (container != null)
-                container.IsSelected = false;
         }
 
         #endregion
@@ -276,14 +248,14 @@ namespace Skymu.Skype4
                     TitleBarIcon.Margin = new Thickness(8, 5, 0, 0);
                 }
 
-                img_maximize = GenerateTitlebarButtonImage("maximize");
-                img_restore = GenerateTitlebarButtonImage("restore");
-                img_split = GenerateTitlebarButtonImage("split");
-                img_join = GenerateTitlebarButtonImage("join");
+                img_maximize = SharedServices.GenerateTitlebarButtonImage("maximize", _currentFrame);
+                img_restore = SharedServices.GenerateTitlebarButtonImage("restore", _currentFrame);
+                img_split = SharedServices.GenerateTitlebarButtonImage("split", _currentFrame);
+                img_join = SharedServices.GenerateTitlebarButtonImage("join", _currentFrame);
 
-                close.Source = GenerateTitlebarButtonImage("close");
+                close.Source = SharedServices.GenerateTitlebarButtonImage("close", _currentFrame);
                 maximize.Source = img_maximize;
-                minimize.Source = GenerateTitlebarButtonImage("minimize");
+                minimize.Source = SharedServices.GenerateTitlebarButtonImage("minimize", _currentFrame);
                 split.Source = img_split;
             }
             else // using system native border
@@ -682,23 +654,6 @@ namespace Skymu.Skype4
 
         #endregion
 
-        #region User count API
-
-        private bool CanSetStatus()
-        {
-            int index = StatusIcon.DefaultIndex;
-            if (index == 5 || index == 2 || index == 3 || index == 19)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -755,7 +710,7 @@ namespace Skymu.Skype4
 
         private void StatusArea_Click(object sender, MouseButtonEventArgs e)
         {
-            OpenStatusMenu();
+            SharedServices.OpenStatusMenu(StatusArea);
         }
 
         private void SBNewBtn_Click(object sender, MouseButtonEventArgs e)
@@ -837,7 +792,7 @@ namespace Skymu.Skype4
 
         private void StatusMenuItemClick(object sender, RoutedEventArgs e)
         {
-            HandleStatusItemClick(sender as MenuItem);
+            SharedServices.HandleStatusItemClick(sender as MenuItem, StatusIcon);
         }
 
         private void Main_Closing(object sender, CancelEventArgs ev)
@@ -1430,9 +1385,7 @@ namespace Skymu.Skype4
 
             InitializeWindowFrame();
 
-            Universal.GroupAvatar = GenerateAvatarImage("group");
-            Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
-            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
+            SharedServices.GenerateGlobalAvatars();
 
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
@@ -1539,38 +1492,6 @@ namespace Skymu.Skype4
 
         #endregion
 
-        #region Status change menu
-
-        private void OpenStatusMenu()
-        {
-            var menu = (ContextMenu)StatusArea.Resources["StatusMenu"];
-            menu.PlacementTarget = StatusArea;
-            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
-            menu.IsOpen = true;
-        }
-
-        private async void HandleStatusItemClick(MenuItem item)
-        {
-            string name = item.Name.Substring(3);
-            var currentStatus = MainViewModel.GetStatusFromInt(StatusIcon.DefaultIndex);
-
-            if (name == "dnd")
-                vmodel.InformDND();
-
-            PresenceStatus status = vmodel.GetConnectionStatusFromName(name);
-            if (status == PresenceStatus.Unknown) return;
-
-            StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(status);
-            Tray.SetStatus(status);
-
-            if (!await Universal.Plugin.SetConnectionStatus(status))
-            {
-                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(currentStatus);
-                Tray.SetStatus(currentStatus);
-            }
-        }
-
-        #endregion
 
         private void RefreshExtras()
         {

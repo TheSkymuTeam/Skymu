@@ -61,9 +61,7 @@ namespace Skymu.Skype7
             InitializeComponent();
             Application.Current.MainWindow = this;
 
-            Universal.GroupAvatar = GenerateAvatarImage("group");
-            Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
-            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
+            SharedServices.GenerateGlobalAvatars();
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;
@@ -378,15 +376,6 @@ namespace Skymu.Skype7
                             < _conversationScrollViewer.ScrollableHeight - 10;
                 };
             }
-        }
-
-        #endregion
-
-        #region Avatar helpers
-
-        private BitmapImage GenerateAvatarImage(string avatar)
-        {
-            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
         }
 
         #endregion

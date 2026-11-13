@@ -99,14 +99,14 @@ namespace Skymu.Forms.Pages
             }
             if (cbEnabled)
             {
-                window.DialogCheckBox.Visibility = Visibility.Visible;
+                window.BBCheckBox.Visibility = Visibility.Visible;
             }
             if (enableTextBox)
             {
-                window.DialogTextBox.Visibility = Visibility.Visible;
+                window.BBTextBox.Visibility = Visibility.Visible;
                 brAction = () =>
                 {
-                    TextBoxContent = window.DialogTextBox.Text;
+                    TextBoxContent = window.BBTextBox.Text;
                     window.DialogResult = true;
                 };
                 brText = brText ?? Universal.Lang["sF_OPTIONS_BUTTON_SAVE"];
@@ -143,7 +143,7 @@ namespace Skymu.Forms.Pages
             window.ButtonMiddleAction = bmAction;
             window.ButtonLeftAction = blAction;
             if (onClosing != null)
-                window.Closing += onClosing;
+                window.Closing += (s, e) => onClosing(this, e);
             window.HeaderImage.DefaultIndex = Settings.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
             if (blText != null)
                 window.ButtonLeft.Content = blText;
@@ -179,7 +179,7 @@ namespace Skymu.Forms.Pages
         public bool IsCheckBoxTicked()
         {
             // I don't care if this should technically return a bool?, there's no situation where that would be useful.
-            return window.DialogCheckBox.IsChecked == true;
+            return window.BBCheckBox.IsChecked == true;
         }
 
         #endregion
