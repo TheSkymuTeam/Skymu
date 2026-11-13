@@ -97,7 +97,12 @@ namespace Skymu.Forms
             if (partner_avatar != null)
                 PartnerAvatar.Source = ImageHelper.GenerateFromArray(partner_avatar);
             else
-                PartnerAvatar.Source = Universal.AnonymousAvatar;
+            {
+                if (_conversation is ServerChannel channel)
+                    PartnerAvatar.Source = Universal.GroupAvatar;
+                else
+                    PartnerAvatar.Source = Universal.AnonymousAvatar;
+            }
 
             if (!Settings.Watermark) Logo.Visibility = Visibility.Hidden;
 
