@@ -574,7 +574,7 @@ namespace Tox
 
         #region Actions
 
-        public Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
+        public Task<bool> SendMessage(Conversation conversation, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
             // Shitty /me impl that JUST WORKS!!!
             var type = action ? Tox_Message_Type.ACTION : Tox_Message_Type.NORMAL;
@@ -584,7 +584,7 @@ namespace Tox
                 Conference c;
                 try
                 {
-                    c = tox.ConferenceById(FromHex(identifier, (int)Size.conferenceId * 2));
+                    c = tox.ConferenceById(FromHex(conversation.Identifier, (int)Size.conferenceId * 2));
                     if (c != null)
                     {
                         if (!c.sendMessage(type, text))
@@ -599,7 +599,7 @@ namespace Tox
                         return Task.FromResult(true);
                     }
                 } catch { }
-                var f = tox.FriendByPublicKey(FromHex(identifier, (int)Size.publicKey * 2));
+                var f = tox.FriendByPublicKey(FromHex(conversation.Identifier, (int)Size.publicKey * 2));
                 if (f == null) return Task.FromResult(false);
                 var mid = f.SendMessage(type, text);
                 if (mid == null)
@@ -628,7 +628,7 @@ namespace Tox
         }
 
         public Task<bool> EditMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId,
             string newText
         )
@@ -638,7 +638,7 @@ namespace Tox
         }
 
         public Task<bool> DeleteMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId
         )
         {

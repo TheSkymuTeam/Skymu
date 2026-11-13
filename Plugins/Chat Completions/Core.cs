@@ -227,12 +227,13 @@ namespace ChatCompletions
         }
 
         public async Task<bool> SendMessage(
-            string conversationId,
+            Conversation conversation,
             string text,
             Attachment attachment,
             string parentMessageId,
             bool action)
         {
+            string conversationId = conversation.Identifier;
             if (string.IsNullOrEmpty(text))
             {
                 DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "The plugin currently only supports text messages."));
@@ -333,13 +334,13 @@ namespace ChatCompletions
             }
         }
 
-        public Task<bool> EditMessage(string conversationId, string messageId, string newText)
+        public Task<bool> EditMessage(Conversation conversation, string messageId, string newText)
         {
             DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message editing is not supported."));
             return Task.FromResult(false);
         }
 
-        public Task<bool> DeleteMessage(string conversationId, string messageId)
+        public Task<bool> DeleteMessage(Conversation conversation, string messageId)
         {
             DialogTube?.Invoke(this, new DialogBottle(DialogType.Warning, "Message deleting is not supported."));
             return Task.FromResult(false);

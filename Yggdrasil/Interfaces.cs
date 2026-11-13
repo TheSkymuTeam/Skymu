@@ -80,15 +80,15 @@ namespace Yggdrasil
         /// <summary>
         ///  Sends a message. Returns true on success.
         /// </summary>
-        Task<bool> SendMessage(string conversation_id, string text = null, Attachment attachment = null, string parent_message_id = null, bool action = false); 
+        Task<bool> SendMessage(Conversation conversation, string text = null, Attachment attachment = null, string parent_message_id = null, bool action = false); 
         /// <summary>
         ///  Edits a message. Returns true on success.
         /// </summary>
-        Task<bool> EditMessage(string conversation_id, string message_id, string new_text); 
+        Task<bool> EditMessage(Conversation conversation, string message_id, string new_text); 
         /// <summary>
         ///  Deletes a message. Returns true on success.
         /// </summary>
-        Task<bool> DeleteMessage(string conversation_id, string message_id); 
+        Task<bool> DeleteMessage(Conversation conversation, string message_id); 
         /// <summary>
         ///  Returns a User object with information about the logged-in user.
         /// </summary>

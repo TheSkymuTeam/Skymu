@@ -541,13 +541,13 @@ namespace Matrix
         #endregion
 
         public async Task<bool> SendMessage(
-            string identifier,
+            Conversation conversation,
             string text,
             Attachment attachment = null,
             string parent_message_identifier = null,
             bool action = false) // TODO: Action messages (on this plugin that nobody cares about)
         {
-            if (string.IsNullOrEmpty(identifier))
+            if (string.IsNullOrEmpty(conversation.Identifier))
                 return false;
 
             try
@@ -558,7 +558,7 @@ namespace Matrix
                 {
                     if (attachment.Type == AttachmentType.Image)
                     {
-                        success = await SendImageMessage(identifier, attachment.File, attachment.Name ?? "image.jpg");
+                        success = await SendImageMessage(conversation.Identifier, attachment.File, attachment.Name ?? "image.jpg");
                     }
                     else
                     {
@@ -573,8 +573,8 @@ namespace Matrix
                 if (!string.IsNullOrEmpty(text))
                 {
                     success = parent_message_identifier != null
-                        ? await SendReplyMessage(identifier, text, parent_message_identifier)
-                        : await SendTextMessage(identifier, text);
+                        ? await SendReplyMessage(conversation.Identifier, text, parent_message_identifier)
+                        : await SendTextMessage(conversation.Identifier, text);
                 }
 
                 return success;
@@ -683,7 +683,7 @@ namespace Matrix
         }
 
         public Task<bool> EditMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId,
             string newText
         )
@@ -693,7 +693,7 @@ namespace Matrix
         }
 
         public Task<bool> DeleteMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId
         )
         {

@@ -775,12 +775,12 @@ namespace Discord
             }
         }
 
-        public async Task<bool> SendMessage(string identifier, string text, Attachment attachment, string parent_message_identifier, bool action)
+        public async Task<bool> SendMessage(Conversation conversation, string text, Attachment attachment, string parent_message_identifier, bool action)
         {
-            if (string.IsNullOrWhiteSpace(identifier) || (string.IsNullOrWhiteSpace(text) && attachment is null))
+            if (string.IsNullOrWhiteSpace(conversation.Identifier) || (string.IsNullOrWhiteSpace(text) && attachment is null))
                 return false;
 
-            if (!HelperMethods.TryToGetChannelId(identifier, out var channelId))
+            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId))
                 return false;
 
             // edit message typeshit
@@ -810,7 +810,7 @@ namespace Discord
                                 {
                                     // replace n call
                                     string modifiedText = msg.Text.Replace(oldText, newText);
-                                    return await EditMessage(identifier, msg.Identifier, modifiedText).ConfigureAwait(false);
+                                    return await EditMessage(conversation, msg.Identifier, modifiedText).ConfigureAwait(false);
                                 }
                             }
                         }
@@ -842,7 +842,7 @@ namespace Discord
                             if (item is Message msg && msg.Author?.Identifier == _currentUser?.Identifier)
                             {
                                 // call delete backend directly
-                                await DeleteMessage(identifier, msg.Identifier).ConfigureAwait(false);
+                                await DeleteMessage(conversation, msg.Identifier).ConfigureAwait(false);
 
                                 // better to show error than infinity stuck
                                 return false;
@@ -896,12 +896,12 @@ namespace Discord
             }
         }
 
-        public async Task<bool> EditMessage(string conversationId, string messageId, string newText)
+        public async Task<bool> EditMessage(Conversation conversation, string messageId, string newText)
         {
-            if (string.IsNullOrWhiteSpace(conversationId) || string.IsNullOrWhiteSpace(messageId) || string.IsNullOrWhiteSpace(newText))
+            if (string.IsNullOrWhiteSpace(conversation.Identifier) || string.IsNullOrWhiteSpace(messageId) || string.IsNullOrWhiteSpace(newText))
                 return false;
 
-            if (!HelperMethods.TryToGetChannelId(conversationId, out var channelId))
+            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId))
                 return false;
 
             try
@@ -928,12 +928,12 @@ namespace Discord
             }
         }
 
-        public async Task<bool> DeleteMessage(string conversationId, string messageId)
+        public async Task<bool> DeleteMessage(Conversation conversation, string messageId)
         {
-            if (string.IsNullOrWhiteSpace(conversationId) || string.IsNullOrWhiteSpace(messageId))
+            if (string.IsNullOrWhiteSpace(conversation.Identifier) || string.IsNullOrWhiteSpace(messageId))
                 return false;
 
-            if (!HelperMethods.TryToGetChannelId(conversationId, out var channelId))
+            if (!HelperMethods.TryToGetChannelId(conversation.Identifier, out var channelId))
                 return false;
 
             try

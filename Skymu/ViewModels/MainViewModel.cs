@@ -266,7 +266,7 @@ namespace Skymu.ViewModels
             if (message.Identifier.StartsWith(SKYMU_SENDING))
                 return;
 
-            bool ok = await Universal.Plugin.DeleteMessage(SelectedConversation.Identifier, message.Identifier);
+            bool ok = await Universal.Plugin.DeleteMessage(SelectedConversation, message.Identifier);
             if (!ok)
                 Universal.ShowMessage("Could not delete the message.");
         }
@@ -818,7 +818,7 @@ namespace Skymu.ViewModels
             try
             {
                 SoundManager.Play("IM_SENT");
-                sent = await Universal.Plugin.SendMessage(SelectedConversation.Identifier, text, null, null, action);
+                sent = await Universal.Plugin.SendMessage(SelectedConversation, text, null, null, action);
             }
             catch { }
 
@@ -987,7 +987,7 @@ namespace Skymu.ViewModels
 
                 byte[] data = File.ReadAllBytes(filePath);
                 Attachment file = new Attachment(data, fileName);
-                await Universal.Plugin.SendMessage(SelectedConversation.Identifier, null, file);
+                await Universal.Plugin.SendMessage(SelectedConversation, null, file);
             }
         }
 

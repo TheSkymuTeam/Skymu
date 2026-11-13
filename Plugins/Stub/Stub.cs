@@ -115,7 +115,7 @@ namespace Stub
         }
 
         public Task<bool> SendMessage(
-            string identifier,
+            Conversation conversation,
             string text,
             Attachment attachment,
             string parent_message_identifier,
@@ -163,10 +163,10 @@ namespace Stub
             {
                 await Task.Delay(3000);
                 // Make the UI recognize that the message was sent, adding the timestamp and removing the Spinner (loading wheel)
-                MessageTube?.Invoke(this, new MessageRecievedBottle(identifier,
+                MessageTube?.Invoke(this, new MessageRecievedBottle(conversation.Identifier,
                     action
-                    ? new ActionMessage(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
-                    : new Message(identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
+                    ? new ActionMessage(conversation.Identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
+                    : new Message(conversation.Identifier, Me, DateTimeOffset.UtcNow.DateTime, text)
                     , false)
                 );
             });
@@ -175,7 +175,7 @@ namespace Stub
         }
 
         public Task<bool> EditMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId,
             string newText
         )
@@ -185,7 +185,7 @@ namespace Stub
         }
 
         public Task<bool> DeleteMessage(
-            string conversationId,
+            Conversation conversation,
             string messageId
         )
         {
