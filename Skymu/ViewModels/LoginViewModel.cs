@@ -83,14 +83,14 @@ namespace Skymu.ViewModels
                 Dialog dlg = null;
                 dlg = new Dialog(
                     WindowBase.IconType.Question,
-                    "Don't want to read this? Almost all users will want to click Yes. Clicking No leads to loss of client functionality. If you are very concerned about privacy, read on. Once upon a time...\n\n" +
-                    Universal.NAME + " sends information such as your display name and username to its user count server by default. This is done to populate the user "
-                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes', otherwise click 'Yes, but keep me anonymous.'"
+                    "Don't want to read this? Almost all users will want to choose either of the Yes options. Clicking No leads to loss of client functionality. If you are very concerned about privacy, read on. Once upon a time...\n\n" +
+                    Universal.NAME + " can optionally send information such as your display name and username to its user count server. This is done to populate the user "
+                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes, and publish info', otherwise click 'Yes'."
                         + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
                         + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."
                         + " The client information we store is detailed at " + Universal.SKYMU_WEBSITE_PRIVACY + ". It's a very short privacy policy because we don't collect your personal data (that could lead to a lot of legal liabilities for us!), we're only interested in keeping our infrastructure secure and " +
                         "running. Knowing all this, do you still want to connect to Skymu web services?",
-                    "Optional privacy configurations",
+                    "Connect to Skymu Web Services?",
                     $"{Universal.NAME} web service manager",
                     new Action(() => // no
                     {
@@ -102,10 +102,10 @@ namespace Skymu.ViewModels
                     }),
                     Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
                     true,
-                    new Action(() => // yes and don't anonymize
+                    new Action(() => // yes 
                     {
                         Settings.SWSOptOutShown = true;
-                        Settings.Anonymize = false;
+                        Settings.Anonymize = true;
                         Settings.DisableSWS = false;
                         Settings.Save();
                         dlg.Close();
@@ -115,15 +115,15 @@ namespace Skymu.ViewModels
                     null,
                     null,
                     true,
-                    new Action(() => // yes and anonymize
+                    new Action(() => // yes and don't anonymize
                     {
                         Settings.SWSOptOutShown = true;
-                        Settings.Anonymize = true;
+                        Settings.Anonymize = false;
                         Settings.DisableSWS = false;
                         Settings.Save();
                         dlg.Close();
                     }),
-                    "Yes, but keep me anonymous"
+                    "Yes, and publish info"
                 );
                 dlg.Show();
             }
