@@ -83,7 +83,7 @@ namespace Skymu.ViewModels
                 Dialog dlg = null;
                 dlg = new Dialog(
                     WindowBase.IconType.Question,
-                    "Don't want to read this? Almost all users will want to choose either of the Yes options. Clicking No leads to loss of client functionality. If you are very concerned about privacy, read on. Once upon a time...\n\n" +
+                    "Don't want to read this? Almost all users will want to choose either of the Yes options. Clicking No leads to loss of client functionality. If you're interested in knowing what information is sent, read on. Once upon a time...\n\n" +
                     Universal.NAME + " can optionally send information such as your display name and username to its user count server. This is done to populate the user "
                         + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes, and publish info', otherwise click 'Yes'."
                         + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
