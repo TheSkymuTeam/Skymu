@@ -1,0 +1,175 @@
+<!--
+    ============================================================
+    Copyright © The Skymu Team and other contributors.
+    For any inquiries or concerns, email contact@skymu.app.
+    ============================================================
+    Modification or redistribution of this code is governed
+    by the terms set out in the project license agreement.
+    If you do not comply with those terms, you may not
+    modify or distribute any original code from the project.
+    ============================================================
+    License: https://skymu.app/legal/license
+    SPDX-License-Identifier: AGPL-3.0-or-later
+    ============================================================
+-->
+<Window
+    x:Class="Skymu.Forms.SkinnedWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:local="clr-namespace:Skymu"
+    Title="Skype™ - Window"
+    Width="518"
+    Height="394"
+    Background="{DynamicResource Card.Background}"
+    CanResize="False"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <converters:AssetLoader x:Key="AssetLoader" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <local:SliceControl
+            x:Name="HeaderImage"
+            Grid.RowSpan="2"
+            Width="48"
+            Margin="11,10,0,0"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            ZIndex="10"
+            DefaultIndex="0"
+            ElementCount="36"
+            HoverIndex="-1"
+            Interactive="False"
+            PressedIndex="-1"
+            SliceMode="0"
+            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Dialog/icons.png'}"
+            StackDirection="Horizontal" />
+        <!--  Top Header Section  -->
+        <Grid
+            Grid.Row="0"
+            Height="45"
+            ZIndex="0">
+            <Border
+                x:Name="GradientTop"
+                Background="{DynamicResource Strip.Background}"
+                BorderBrush="{DynamicResource Card.Border}"
+                BorderThickness="0,0,0,1" />
+            <TextBlock
+                x:Name="Header"
+                Height="23"
+                Margin="70,3,0,0"
+                FontFamily="Arial"
+                FontSize="13"
+                FontWeight="Bold"
+                Foreground="{DynamicResource Text.HighContrast}"
+                Text="Caption goes here" />
+        </Grid>
+        <ContentControl
+            x:Name="PageHost"
+            Grid.Row="1"
+            Margin="77,23,35,7" />
+
+        <!--  Bottom Button Section  -->
+        <Grid Grid.Row="2" Height="44">
+            <Border
+                x:Name="GradientBottom"
+                Background="{DynamicResource Strip.Background}"
+                BorderBrush="{DynamicResource Card.Border}"
+                BorderThickness="0,1,0,0" />
+            <Button
+                x:Name="ButtonEdgeLeft"
+                Height="23"
+                MinWidth="73"
+                Margin="10,0,0,0"
+                Padding="12,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Click="bELClick"
+                Content="Back"
+                FontFamily="Tahoma"
+                FontSize="11"
+                IsDefault="False"
+                IsVisible="False" />
+            <Grid x:Name="BottomControlsGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="BBTextBox"
+                    Grid.Column="0"
+                    Width="255"
+                    Height="23"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    IsVisible="False" />
+                <CheckBox
+                    x:Name="BBCheckBox"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
+                    FontFamily="Tahoma"
+                    FontSize="11"
+                    Foreground="{DynamicResource Text.VeryHighContrast}"
+                    IsVisible="False" />
+                <StackPanel
+    HorizontalAlignment="Right"
+    Orientation="Horizontal">
+                    <Button
+        x:Name="ButtonLeft"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Center"
+        Click="bLClick"
+        Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11"
+        IsDefault="True"
+        IsVisible="True" />
+                    <Button
+        x:Name="ButtonMiddle"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Click="bMClick"
+        Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11"
+        IsDefault="False"
+        IsVisible="False" />
+                    <Button
+        x:Name="ButtonRight"
+        Height="23"
+        MinWidth="73"
+        Margin="0,0,10,0"
+        Padding="12,0"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        Click="bRClick"
+        Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
+        FontFamily="Tahoma"
+        FontSize="11" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Window>
