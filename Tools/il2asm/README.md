@@ -17,6 +17,8 @@ C#  ──dotnet build──►  .dll  ──ilspycmd -il──►  IL text  ─
 ./test.sh                                   # differential test vs the CLR
 ./port.sh ../../Bifrost/Bifrost.csproj      # full pipeline on one project
 ./port.sh ../../Skymu/Skymu.csproj          # WPF app (see limitations)
+./nsis.sh                                   # NSIS installers -> assembly + dry run
+./php.sh                                    # PHP user server -> assembly + request matrix
 ```
 
 `test.sh` transcribes `BuildInfo` from `Skymu/Classes/Versioning.cs`, transpiles
@@ -33,8 +35,12 @@ il2asm/lower.py   stack analysis, opcode semantics, symbol table
 il2asm/emit.py    x86-64 emission
 il2asm/cli.py     driver, rodata pool, coverage report
 il2asm/split.py   splits one .S back into one module per original file
+il2asm/nsis.py    NSIS script -> x86-64 assembly
+il2asm/php.py     PHP script -> x86-64 assembly
 shim/             the runtime: object model, strings, arrays, boxing, BCL subset
-tests/            differential harness
+shim/nsis.c       dry-run runtime for translated NSIS installer commands
+shim/php.c        pv values, ordered arrays, JSON, closures and request dry run
+tests/            differential harness, NSIS dry-run and PHP request harnesses
 samples/          verbatim code extracted from the repository
 ```
 
@@ -110,6 +116,34 @@ Three tiers land in `report.json`:
 `out-native/` holds the full forced run for the whole repository, with
 `MANIFEST.md` recording per-assembly tier counts.
 
+## PHP
+
+`il2asm/php.py` is a lexer, parser and x86-64 emitter for the subset of PHP
+used by `archive/UserServer/server.php`. Like the NSIS translator it emits real
+control flow: functions become `php_Function_*`, closures `php_closure_*`,
+`if`/`foreach`/`return`/`continue` become branches, and array operations and
+builtins call `shim/php.c`.
+
+The shim models PHP values as heap `pv` cells (null, bool, int, double, string,
+ordered array, closure). Arrays are ordered hash maps with reference semantics,
+which is enough for `$sessions[$token]`, `foreach (... as &$session)` and the
+closures passed to `with_state`. `define()` is folded at translation time,
+`$_SERVER`/`$_GET` are request accessors, and `json_encode`/`json_decode` are
+implemented in the shim. Memory is never freed.
+
+`php_execute` runs one request, records the status and body in memory, and uses
+`longjmp` for `exit`. There is no interpreter and no HTTP listener; the session
+file is a process-local buffer.
+
+```sh
+./php.sh            # archive/UserServer -> UserServer, assemble, link, test
+./php.sh --check    # skip regeneration
+```
+
+The harness (`tests/php_server.c`) exercises token minting, the `/userver`
+mount prefix, `OPTIONS`, `set_status`, `count`, `list`, `search`, `ping`, the
+501 WebSocket response, 404 routing and the 400/401 error paths.
+
 ## Non-code artifacts
 
 ```sh
@@ -131,6 +165,53 @@ python3 -m il2asm.split --asm out-native/Skymu.S \
 
 The `Skymu/` tree in this repository was produced that way: 2,132 original
 files, 2,132 assembly modules.
+
+## NSIS installers
+
+NSIS is not managed code: there is no IL, and `makensis` compiles the script
+into a PE that embeds a bytecode interpreter. `il2asm.nsis` takes the direct
+route instead and turns each script statement into machine code:
+
+```
+Function / Section   ->  a native function symbol
+Call X               ->  call nsis_Function_X
+${If} / ${Else}      ->  shim_nsis_compare + jcc
+StrCpy / Pop         ->  store into an nsis_var_* cell
+SetOutPath, File,    ->  call shim_nsis_*
+WriteRegStr, ...
+```
+
+A string that mixes text and variables (`"$INSTDIR\desktop.ini"`) is composed
+at run time with `shim_nsis_concat`; an NSIS variable is a mutable string, not
+a compile-time constant.
+
+```sh
+./nsis.sh            # translate archive/NSIS -> NSIS/*.S, assemble, dry-run
+./nsis.sh --check    # assemble and dry-run the existing modules
+```
+
+Result for this repository:
+
+```
+2 scripts    120 statements lowered, 38 wizard-only, 86 directives
+11 assets     .incbin modules (icons, bitmaps, PSDs, license.txt)
+13 modules    assemble with gcc -c, 0 failures
+dry run       42 actions, install and uninstall both return 0
+```
+
+Wizard-only statements (`nsDialogs::*`, `${NSD_*}`, `GetDlgItem`, `ShowWindow`,
+`SendMessage`, `CreateFont`, `SetCtlColors`, `!insertmacro MUI_*`, `Page custom`)
+are recorded in each module's header and reported at run time through
+`shim_nsis_unimplemented`. They are the installer UI, and inventing a native
+equivalent would be a lie. Everything else executes: the install section, the
+uninstall section, the registry writes, the shortcuts and the `.onInit` branch
+that chooses `Program Files` by probing `GetSystemWow64Directory`.
+
+`shim_nsis_message_box` answers `IDYES` so the uninstall path is exercised;
+`shim_nsis_abort` returns 1, which the generated entry point honours by skipping
+the uninstall section. Nothing touches the real filesystem, registry or Start
+menu — the runtime prints what it would do. `File /r` has no payload to embed
+because `archive/Skymu/bin` is empty.
 
 ## The UI
 
