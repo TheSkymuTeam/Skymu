@@ -1,0 +1,7 @@
+build/
+samples/*/out/
+samples/*/*.il
+samples/*/obj/
+samples/*/bin/
+__pycache__/
+*.pyc
