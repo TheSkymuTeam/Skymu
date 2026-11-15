@@ -85,7 +85,7 @@ namespace Skymu.Sounds
                 path = Settings.SoundPack.ToString();
 
             var uri = new Uri(
-                $"pack://application:,,,/Sounds/{path}/{filename}",
+                $"avares://Skymu/Sounds/{path}/{filename}",
                 UriKind.Absolute
             );
 

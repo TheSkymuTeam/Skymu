@@ -28,7 +28,7 @@ namespace Skymu.Helpers
         private static readonly Dictionary<string, Bitmap> _cache = new Dictionary<string, Bitmap>();
         public static Bitmap Load(string path)
         {
-            return LoadFromPackUri($"pack://application:,,,/Skymu;component/Themes/{Universal.Theme}/Assets/{path}");
+            return LoadFromPackUri($"avares://Skymu/Themes/{Universal.Theme}/Assets/{path}");
         }
 
         public static Bitmap LoadFromPackUri(string uri)

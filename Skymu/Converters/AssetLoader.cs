@@ -30,7 +30,7 @@ namespace Skymu.Converters
                 return null;
 
             if (image_path.StartsWith("/")) image_path = image_path.Substring(1); // just in case
-            return ImageHelper.LoadFromPackUri($"pack://application:,,,/Skymu;component/Themes/{Universal.Theme}/{image_path}");
+            return ImageHelper.LoadFromPackUri($"avares://Skymu/Themes/{Universal.Theme}/{image_path}");
         }
 
         public object ConvertBack(

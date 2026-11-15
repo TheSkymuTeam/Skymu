@@ -22,7 +22,7 @@ namespace Skymu.Shaders
     {
         private static readonly PixelShader _shader = new PixelShader
         {
-            UriSource = new Uri("pack://application:,,,/Shaders/Darken.ps")
+            UriSource = new Uri("avares://Skymu/Shaders/Darken.ps")
         };
 
         public DarkenShader()
