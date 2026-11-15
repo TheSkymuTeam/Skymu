@@ -1,5 +1,5 @@
 /*==========================================================*/
-// Bifrost copyright © OmegaAOL and EAZY BLACK, 2026.
+// Bifrost copyright Â© OmegaAOL and EAZY BLACK, 2026.
 // For any inquiries, email hackersword666@gmail.com.
 /*==========================================================*/
 // License: https://www.apache.org/licenses/LICENSE-2.0
@@ -433,12 +433,57 @@ namespace OmegaAOL.Bifrost.Tls
                     }
                     catch
                     {
-                        BifrostLog.Write(string.Format("[BIFROST-TLS] Signature verification failed: {0} signed by {1}", cert.SubjectDN, issuer.SubjectDN));
+                        BifrostLog.Write(string.Format(
+                            "[BIFROST-TLS] Signature verification failed: {0} signed by {1}",
+                            cert.SubjectDN, issuer.SubjectDN
+                        ));
                         continue;
                     }
-
-                    if (WalkChainRecursive(issuer, serverChain, storeChain, trustedThumbprints, now, depth + 1, maxDepth))
+                
+                    int basicConstraints = issuer.GetBasicConstraints();
+                
+                    if (basicConstraints < 0)
+                    {
+                        BifrostLog.Write(string.Format(
+                            "[BIFROST-TLS] Rejected non-CA issuer: {0}",
+                            issuer.SubjectDN
+                        ));
+                        continue;
+                    }
+                
+                    bool[] keyUsage = issuer.GetKeyUsage();
+                
+                    if (keyUsage != null &&
+                        (keyUsage.Length <= 5 || !keyUsage[5]))
+                    {
+                        BifrostLog.Write(string.Format(
+                            "[BIFROST-TLS] Issuer lacks keyCertSign permission: {0}",
+                            issuer.SubjectDN
+                        ));
+                        continue;
+                    }
+                
+                    if (basicConstraints != int.MaxValue &&
+                        depth > basicConstraints)
+                    {
+                        BifrostLog.Write(string.Format(
+                            "[BIFROST-TLS] Issuer exceeds path length constraint: {0}",
+                            issuer.SubjectDN
+                        ));
+                        continue;
+                    }
+                
+                    if (WalkChainRecursive(
+                        issuer,
+                        serverChain,
+                        storeChain,
+                        trustedThumbprints,
+                        now,
+                        depth + 1,
+                        maxDepth))
+                    {
                         return true;
+                    }
                 }
 
                 BifrostLog.Write(string.Format("[BIFROST-TLS] No valid issuer found for: {0}", cert.SubjectDN));
