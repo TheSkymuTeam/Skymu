@@ -194,7 +194,7 @@
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
-                <Grid x:Name="GPrivacy" Visibility="Collapsed">
+                <Grid x:Name="GPrivacy" IsVisible="False">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
@@ -218,7 +218,7 @@
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
-                <Grid x:Name="GNotifications" Visibility="Collapsed">
+                <Grid x:Name="GNotifications" IsVisible="False">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
@@ -247,7 +247,7 @@
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_CALLS]}" />
-                <Grid x:Name="GCalls" Visibility="Collapsed">
+                <Grid x:Name="GCalls" IsVisible="False">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
@@ -282,7 +282,7 @@
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
-                <Grid x:Name="GChatsSMS" Visibility="Collapsed">
+                <Grid x:Name="GChatsSMS" IsVisible="False">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
@@ -311,7 +311,7 @@
                     MouseLeftButtonUp="CatSelect"
                     Style="{StaticResource SidebarHeaderStyle}"
                     Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
-                <Grid x:Name="GAdvanced" Visibility="Collapsed">
+                <Grid x:Name="GAdvanced" IsVisible="False">
                     <global:SliceControl Style="{StaticResource SidebarItemContainerStyle}" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
                         <global:SliceControl
@@ -346,7 +346,7 @@
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
                             Style="{StaticResource SidebarButtonStyle}"
                             Text="Debug"
-                            Visibility="Collapsed" />
+                            IsVisible="False" />
                     </StackPanel>
                 </Grid>
             </StackPanel>
@@ -395,7 +395,7 @@
                     <Frame
                         x:Name="PageHost"
                         Margin="5,40,5,5"
-                        NavigationUIVisibility="Hidden" />
+                        NavigationUIIsVisible="False" />
                 </Grid>
 
                 <StackPanel

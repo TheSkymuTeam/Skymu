@@ -105,7 +105,7 @@ namespace Skymu.Forms
                     PartnerAvatar.Source = Universal.AnonymousAvatar;
             }
 
-            if (!Settings.Watermark) Logo.Visibility = Visibility.Hidden;
+            if (!Settings.Watermark) Logo.IsVisible = false;
 
             _is_answer = is_answering_call;
             if (_is_answer)
@@ -198,9 +198,9 @@ namespace Skymu.Forms
 
         public void SwitchToOngoingCallUI()
         {
-            MyAvatar.Visibility = Visibility.Collapsed;
+            MyAvatar.IsVisible = false;
             MyAvatar = null;
-            ConnectionAnimation.Visibility = Visibility.Collapsed;
+            ConnectionAnimation.IsVisible = false;
             ConnectionAnimation = null;
 
             _callElapsed = TimeSpan.Zero;
@@ -328,7 +328,7 @@ namespace Skymu.Forms
             _fullscreenWindow.Content = null;
             if (_originalFrame != null)
             {
-                _originalFrame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
+                _originalFrame.NavigationUIVisibility = NavigationUIfalse;
                 _originalFrame.Content = this;
                 while (_originalFrame.NavigationService.CanGoBack)
                     _originalFrame.NavigationService.RemoveBackEntry();

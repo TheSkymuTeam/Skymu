@@ -28,8 +28,8 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string id && id == Universal.CurrentUser?.Identifier)
-                return Visibility.Collapsed;
-            return Visibility.Visible;
+                return false;
+            return true;
         }
 
         public object ConvertBack(

@@ -54,23 +54,23 @@ namespace Skymu.Skype6
             ToggleStatusBoxSelection(true);
 
             Topbar.Text = Universal.Lang["sZAPBUTTON_SKYPEHOME"];
-            ChatProfileArea.Visibility = Visibility.Collapsed;
-            MessageWindow.Visibility = Visibility.Collapsed;
+            ChatProfileArea.IsVisible = false;
+            MessageWindow.IsVisible = false;
 
             if (vmodel.UseSkypeHome)
-                browser.Visibility = Visibility.Visible;
+                browser.IsVisible = true;
             else
-                HomeUnavailableFrame.Visibility = Visibility.Visible;
+                HomeUnavailableFrame.IsVisible = true;
         }
 
         protected override void ShowChatView()
         {
             ToggleStatusBoxSelection(false);
 
-            ChatProfileArea.Visibility = Visibility.Visible;
-            MessageWindow.Visibility = Visibility.Visible;
-            browser.Visibility = Visibility.Collapsed;
-            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
+            ChatProfileArea.IsVisible = true;
+            MessageWindow.IsVisible = true;
+            browser.IsVisible = false;
+            HomeUnavailableFrame.IsVisible = false;
         }
 
         private void ToggleStatusBoxSelection(bool selected)
@@ -86,8 +86,8 @@ namespace Skymu.Skype6
         {
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"], true);
             _currentTab = tab_to_select;
-            AddContactGrid.Visibility = Visibility.Collapsed;
-            SidebarTabs.Visibility = Visibility.Visible;
+            AddContactGrid.IsVisible = false;
+            SidebarTabs.IsVisible = true;
         }
 
         private void SelectSidebarTopRowButton(SliceControl to_select)
@@ -111,7 +111,7 @@ namespace Skymu.Skype6
 
         protected override void OnSidebarResized()
         {
-            if (btnServers.Visibility == Visibility.Collapsed)
+            if (btnServers.IsVisible == false)
             {
                 btnServers.Width = 0;
                 if (SidebarColumn.ActualWidth <= 185)
@@ -184,10 +184,10 @@ namespace Skymu.Skype6
             }
             foreach (var tab in new[] { btnContacts, btnRecents, btnServers })
                 tab.SetState(ButtonVisualState.Default);
-            SidebarTabs.Visibility = Visibility.Collapsed;
-            ConversationList.Visibility = Visibility.Collapsed;
-            ServersList.Visibility = Visibility.Collapsed;
-            AddContactGrid.Visibility = Visibility.Visible;
+            SidebarTabs.IsVisible = false;
+            ConversationList.IsVisible = false;
+            ServersList.IsVisible = false;
+            AddContactGrid.IsVisible = true;
             SelectSidebarTopRowButton(AddContactButton);
             SearchBox.Focus();
         }
@@ -196,7 +196,7 @@ namespace Skymu.Skype6
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
             SetPlaceholder(SearchBox,
-                AddContactGrid.Visibility == Visibility.Visible ?
+                AddContactGrid.IsVisible == true ?
                 Universal.Lang["sADD_CONTACT_PANEL_SEARCH_HINT"] :
                 Universal.Lang["sCONTACT_QF_HINT"],
                 true
@@ -235,15 +235,15 @@ namespace Skymu.Skype6
             {
                 if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
                 {
-                    browser.Visibility = Visibility.Collapsed;
-                    HomeUnavailableFrame.Visibility = Visibility.Visible;
+                    browser.IsVisible = false;
+                    HomeUnavailableFrame.IsVisible = true;
                     HomeUnavailableFrame.Content = new HomeUnavailable();
                 }
             }
             else
             {
-                browser.Visibility = Visibility.Collapsed;
-                HomeUnavailableFrame.Visibility = Visibility.Visible;
+                browser.IsVisible = false;
+                HomeUnavailableFrame.IsVisible = true;
                 HomeUnavailableFrame.Content = new HomeUnavailable();
             }
         }

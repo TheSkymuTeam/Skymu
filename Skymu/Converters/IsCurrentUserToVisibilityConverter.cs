@@ -24,8 +24,8 @@ namespace Skymu.Converters
         {
             string identifier = value as string;
             return identifier == Universal.CurrentUser?.Identifier
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+                ? true
+                : false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -29,7 +29,7 @@ namespace Skymu.Converters
         {
             bool isPreview = value is string id && id.StartsWith("@skymu/sending");
             bool invert = parameter as string == "invert";
-            return (isPreview ^ invert) ? Visibility.Visible : Visibility.Collapsed;
+            return (isPreview ^ invert) ? true : false;
         }
 
         public object ConvertBack(

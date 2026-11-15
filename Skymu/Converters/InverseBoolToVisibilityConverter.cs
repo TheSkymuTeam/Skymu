@@ -25,7 +25,7 @@ namespace Skymu.Converters
             Type targetType,
             object parameter,
             CultureInfo culture
-        ) => (value is bool b && b) ? Visibility.Collapsed : Visibility.Visible;
+        ) => (value is bool b && b) ? false : true;
 
         public object ConvertBack(
             object value,

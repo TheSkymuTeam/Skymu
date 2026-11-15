@@ -129,12 +129,12 @@ namespace Skymu.Forms.Pages
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
             window.ButtonLeftAction = () => InitiateUpdate();
             Description.Text = Universal.Lang["sF_UPGRADE_FAILED_TEXT1"] + "\n\n" + error;
-            ProgressGrid.Visibility = Visibility.Collapsed;
+            ProgressGrid.IsVisible = false;
         }
 
         public void UpdateComplete(string file_path)
         {
-            if (window.Visibility == Visibility.Hidden)
+            if (window.IsVisible == false)
                 window.Show();
             window.HeaderText = "Download complete";
             window.ButtonLeftText = Universal.Lang["sZAPBUTTON_OPENFILE"];
@@ -177,7 +177,7 @@ namespace Skymu.Forms.Pages
             window.ButtonMiddleEnabled = false;
             Description.Text = Universal.Lang["sF_UPGRADE_DOWNLOAD_TEXT"];
             UpdateStatusText.Text = Universal.Lang["sF_UPGRADE_INIT"];
-            ProgressGrid.Visibility = Visibility.Visible;
+            ProgressGrid.IsVisible = true;
 
             window.Closing += (s, e) =>
             {
@@ -233,7 +233,7 @@ namespace Skymu.Forms.Pages
                         int read;
                         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-                        FileSize.Visibility = Visibility.Visible;
+                        FileSize.IsVisible = true;
                         FileSize.Text = Universal.Lang.Format(
                             "sF_UPGRADE_DOWNLOAD_FILESIZE",
                             (int)Math.Round(totalFileSize / 1024.0)

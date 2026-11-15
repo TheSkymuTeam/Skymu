@@ -98,7 +98,7 @@ namespace Skymu.Forms
             };
 
 #if DEBUG
-            Advanced_Debug.Visibility = Visibility.Visible;
+            Advanced_Debug.IsVisible = true;
 #endif
         }
 
@@ -113,10 +113,10 @@ namespace Skymu.Forms
                 cat.Key.DefaultIndex = 0;
                 cat.Key.HoverIndex = 1;
                 cat.Key.PressedIndex = 2;
-                cat.Value.Visibility = Visibility.Collapsed;
+                cat.Value.IsVisible = false;
             }
             sc.SetState(ButtonVisualState.Pressed);
-            catToGrid[sc].Visibility = Visibility.Visible;
+            catToGrid[sc].IsVisible = true;
             sc.DefaultIndex = 3;
             sc.HoverIndex = -1;
             sc.PressedIndex = -1;

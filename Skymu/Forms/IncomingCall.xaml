@@ -81,7 +81,7 @@
                         Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Incoming Call/round-button.png'}"
                         StackDirection="Vertical"
                         Tag="NoDrag"
-                        Visibility="Visible" />
+                        IsVisible="True" />
                     <Image
                         Width="12"
                         Height="16"

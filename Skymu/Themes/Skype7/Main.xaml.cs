@@ -98,15 +98,15 @@ namespace Skymu.Skype7
                 {
                     if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
                     {
-                        browser.Visibility = Visibility.Collapsed;
-                        HomeUnavailableFrame.Visibility = Visibility.Visible;
+                        browser.IsVisible = false;
+                        HomeUnavailableFrame.IsVisible = true;
                         HomeUnavailableFrame.Content = new HomeUnavailable();
                     }
                 }
                 else
                 {
-                    browser.Visibility = Visibility.Collapsed;
-                    HomeUnavailableFrame.Visibility = Visibility.Visible;
+                    browser.IsVisible = false;
+                    HomeUnavailableFrame.IsVisible = true;
                     HomeUnavailableFrame.Content = new HomeUnavailable();
                 }
                 Universal.ShowMessage("The Skype 7 theme is expiremental, having been partially ported from an older project (SeanKype)" +
@@ -176,9 +176,9 @@ namespace Skymu.Skype7
                     Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
                     Dispatcher.Invoke(() =>
-                        TypingIndicator.Visibility = vmodel.IsTypingVisible
-                            ? Visibility.Visible
-                            : Visibility.Collapsed
+                        TypingIndicator.IsVisible = vmodel.IsTypingVisible
+                            ? true
+                            : false
                     );
             };
 
@@ -242,7 +242,7 @@ namespace Skymu.Skype7
             };
 
             if (!Universal.Plugin.SupportsServers)
-                TabServersText.Visibility = Visibility.Collapsed;
+                TabServersText.IsVisible = false;
 
             SetActiveTab(3); // default to Home tab
         }
@@ -280,9 +280,9 @@ namespace Skymu.Skype7
             _userScrolledUp = false;
             ClearConversation();
 
-            RightColumn.Visibility = Visibility.Visible;
-            browser.Visibility = Visibility.Collapsed;
-            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
+            RightColumn.IsVisible = true;
+            browser.IsVisible = false;
+            HomeUnavailableFrame.IsVisible = false;
 
             var conv = vmodel.SelectedConversation;
             LabelUsername1.Content = conv?.DisplayName;
@@ -292,7 +292,7 @@ namespace Skymu.Skype7
             else
                 ChatHeaderAvatar.Source =
                     (conv is Group) ? Universal.GroupAvatar : Universal.AnonymousAvatar;
-            Spinner.Visibility = Visibility.Visible;
+            Spinner.IsVisible = true;
 
             await vmodel.SetConversation();
 
@@ -301,7 +301,7 @@ namespace Skymu.Skype7
 
             _grouper.Build(vmodel.SelectedConversation);
             ConversationItemsList.ItemsSource = _grouper.Grouped;
-            Spinner.Visibility = Visibility.Collapsed;
+            Spinner.IsVisible = false;
             _conversationScrollViewer?.ScrollToEnd();
         }
 
@@ -528,17 +528,17 @@ namespace Skymu.Skype7
             TabWave.Margin = new Thickness(waveLeft, 185, 0, 0);
             if (tab == 3)
             {
-                RightColumn.Visibility = Visibility.Collapsed;
+                RightColumn.IsVisible = false;
                 if (vmodel.UseSkypeHome)
-                    browser.Visibility = Visibility.Visible;
+                    browser.IsVisible = true;
                 else
-                    HomeUnavailableFrame.Visibility = Visibility.Visible;
+                    HomeUnavailableFrame.IsVisible = true;
                 ConversationList_SelectionChanged(null, null);
                 return;
             }
-            RightColumn.Visibility = Visibility.Visible;
-            browser.Visibility = Visibility.Collapsed;
-            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
+            RightColumn.IsVisible = true;
+            browser.IsVisible = false;
+            HomeUnavailableFrame.IsVisible = false;
         }
 
         private void TabContacts_Click(object sender, MouseButtonEventArgs e)

@@ -52,15 +52,15 @@ namespace Skymu.Skype5
         {
             ToggleStatusBoxSelection(true);
 
-            HomeTopbar.Visibility = Visibility.Visible;
-            ChatTopbar.Visibility = Visibility.Collapsed;
-            ChatProfileArea.Visibility = Visibility.Collapsed;
-            MessageWindow.Visibility = Visibility.Collapsed;
+            HomeTopbar.IsVisible = true;
+            ChatTopbar.IsVisible = false;
+            ChatProfileArea.IsVisible = false;
+            MessageWindow.IsVisible = false;
 
             if (vmodel.UseSkypeHome)
-                browser.Visibility = Visibility.Visible;
+                browser.IsVisible = true;
             else
-                HomeUnavailableFrame.Visibility = Visibility.Visible;
+                HomeUnavailableFrame.IsVisible = true;
             MainPageButton.SetState(ButtonVisualState.Pressed);
         }
 
@@ -68,12 +68,12 @@ namespace Skymu.Skype5
         {
             ToggleStatusBoxSelection(false);
             StatusBox.SetState(ButtonVisualState.Default);
-            HomeTopbar.Visibility = Visibility.Collapsed;
-            ChatTopbar.Visibility = Visibility.Visible;
-            ChatProfileArea.Visibility = Visibility.Visible;
-            MessageWindow.Visibility = Visibility.Visible;
-            browser.Visibility = Visibility.Collapsed;
-            HomeUnavailableFrame.Visibility = Visibility.Collapsed;
+            HomeTopbar.IsVisible = false;
+            ChatTopbar.IsVisible = true;
+            ChatProfileArea.IsVisible = true;
+            MessageWindow.IsVisible = true;
+            browser.IsVisible = false;
+            HomeUnavailableFrame.IsVisible = false;
         }
 
         private void ToggleStatusBoxSelection(bool selected)
@@ -92,7 +92,7 @@ namespace Skymu.Skype5
 
         protected override void OnSidebarResized()
         {
-            if (btnServers.Visibility == Visibility.Collapsed)
+            if (btnServers.IsVisible == false)
             {
                 if (SidebarColumn.Width.Value <= 185)
                 {
@@ -117,12 +117,12 @@ namespace Skymu.Skype5
             }
             if (SidebarColumn.Width.Value < 195)
             {
-                MakeGroupButton.OverlayText.Visibility = Visibility.Collapsed;
+                MakeGroupButton.OverlayText.IsVisible = false;
                 MakeGroupButton.TextLeftMargin = 0;
             }
             else
             {
-                MakeGroupButton.OverlayText.Visibility = Visibility.Visible;
+                MakeGroupButton.OverlayText.IsVisible = true;
                 MakeGroupButton.TextLeftMargin = 41;
             }
             if (SidebarColumn.Width.Value < 245)
@@ -151,15 +151,15 @@ namespace Skymu.Skype5
             {
                 if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
                 {
-                    browser.Visibility = Visibility.Collapsed;
-                    HomeUnavailableFrame.Visibility = Visibility.Visible;
+                    browser.IsVisible = false;
+                    HomeUnavailableFrame.IsVisible = true;
                     HomeUnavailableFrame.Content = new HomeUnavailable();
                 }
             }
             else
             {
-                browser.Visibility = Visibility.Collapsed;
-                HomeUnavailableFrame.Visibility = Visibility.Visible;
+                browser.IsVisible = false;
+                HomeUnavailableFrame.IsVisible = true;
                 HomeUnavailableFrame.Content = new HomeUnavailable();
             }
         }

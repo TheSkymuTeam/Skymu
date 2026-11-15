@@ -41,7 +41,7 @@ namespace Skymu.Forms.Pages
 
             win.ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"];
             win.ButtonLeftAction = () => win.Close();
-            win.ButtonRight.Visibility = Visibility.Collapsed;
+            win.ButtonRight.IsVisible = false;
 
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.ShowDialog(AHelpers.GetMainWindow());
@@ -146,7 +146,7 @@ namespace Skymu.Forms.Pages
             }
 
             bool empty = AccountList.Items.Count == 0;
-            EmptyText.Visibility = empty ? Visibility.Visible : Visibility.Collapsed;
+            EmptyText.IsVisible = empty ? true : false;
             RemoveAllButton.IsEnabled = !empty;
             UpdateButtons();
         }

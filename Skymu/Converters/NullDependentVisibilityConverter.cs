@@ -26,13 +26,13 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string s && String.IsNullOrEmpty(s))
-                return Visibility.Collapsed;
+                return false;
             else if (value is Attachment[] && ConversionHelpers.RetrieveImageAttachment(value) == null)
-                return Visibility.Collapsed;
+                return false;
             else if (value == null)
-                return Visibility.Collapsed;
+                return false;
             else
-                return Visibility.Visible;
+                return true;
         }
 
         public object ConvertBack(

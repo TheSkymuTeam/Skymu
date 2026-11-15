@@ -127,7 +127,7 @@
                             IsHitTestVisible="False"
                             Opacity="0.75"
                             Text="No saved accounts."
-                            Visibility="Collapsed" />
+                            IsVisible="False" />
                     </Grid>
                 </Border>
                 <!--  actions  -->

@@ -86,14 +86,14 @@ namespace Skymu.Forms.Pages
             UserDetailsInput.IsReadOnly = false;
             UserFindBtn.Content = Universal.Lang["sF_ADDFRIEND_FIND_BTN"];
             UserFindBtn.Tag = null;
-            BottomField.Visibility = Visibility.Visible;
-            FindPBar.Visibility = Visibility.Collapsed;
+            BottomField.IsVisible = true;
+            FindPBar.IsVisible = false;
             FindPBar.IsIndeterminate = false;
         }
 
         void FindFriend(object o, RoutedEventArgs e)
         {
-            ErrorField.Visibility = Visibility.Collapsed;
+            ErrorField.IsVisible = false;
             if ((string)UserFindBtn.Tag == TAG_STOP)
             {
                 cts.Cancel();
@@ -104,9 +104,9 @@ namespace Skymu.Forms.Pages
             UserDetailsInput.IsReadOnly = true;
             UserFindBtn.Content = Universal.Lang["sF_ADDFRIEND_STOP_BTN"];
             UserFindBtn.Tag = TAG_STOP;
-            BottomField.Visibility = Visibility.Collapsed;
-            UserListView.Visibility = Visibility.Collapsed;
-            FindPBar.Visibility = Visibility.Visible;
+            BottomField.IsVisible = false;
+            UserListView.IsVisible = false;
+            FindPBar.IsVisible = true;
             FindPBar.IsIndeterminate = true;
             window.ButtonLeft.IsEnabled = false;
             cts = new CancellationTokenSource();
@@ -115,7 +115,7 @@ namespace Skymu.Forms.Pages
 
         async Task IFindFriend(string query)
         {
-            SelectContactHint.Visibility = Visibility.Collapsed;
+            SelectContactHint.IsVisible = false;
             Metadata[] result = Array.Empty<Metadata>();
             findTask = Task.Run(async () => result = await lmg.FindNewContact(query), cts.Token);
             try
@@ -126,7 +126,7 @@ namespace Skymu.Forms.Pages
             catch (Exception)
             {
                 StopSearch();
-                ErrorField.Visibility = Visibility.Visible;
+                ErrorField.IsVisible = true;
                 findTask.Dispose();
                 throw;
             }
@@ -135,15 +135,15 @@ namespace Skymu.Forms.Pages
             StopSearch();
             if (result.Length == 0)
             {
-                ErrorField.Visibility = Visibility.Visible;
+                ErrorField.IsVisible = true;
                 ErrorText.Text = Universal.Lang["sF_ADDFRIEND_LABEL4"].Replace("%s", query);
                 return;
             }
             FoundList.Clear();
             foreach (var item in result)
                 FoundList.Add(item);
-            SelectContactHint.Visibility = Visibility.Visible;
-            UserListView.Visibility = Visibility.Visible;
+            SelectContactHint.IsVisible = true;
+            UserListView.IsVisible = true;
         }
 
         private void UserListView_Selected(object sender, SelectionChangedEventArgs e) => window.ButtonLeft.IsEnabled = e.AddedItems.Count >= 1;
@@ -192,7 +192,7 @@ namespace Skymu.Forms.Pages
             }
             MainTabControl.SelectedIndex = 2;
             window.ButtonEdgeLeftEnabled = false;
-            window.ButtonLeft.Visibility = Visibility.Collapsed; // seanFinx Crazy Hack V2
+            window.ButtonLeft.IsVisible = false; // seanFinx Crazy Hack V2
         }
 
         private void OnTextInput(object o, TextChangedEventArgs e)

@@ -976,7 +976,7 @@
                         x:Name="TitleMain"
                         Foreground="{DynamicResource Text.HighContrast}"
                         Style="{StaticResource TitlebarTextStyle}"
-                        Visibility="Visible" />
+                        IsVisible="True" />
                 </Grid>
             </StackPanel>
         </Grid>
@@ -1591,8 +1591,8 @@
                                             Background="{DynamicResource Card.Background}"
                                             BorderThickness="0"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                            ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                            Visibility="Collapsed">
+                                            ScrollViewer.VerticalScrollBarIsVisible="True"
+                                            IsVisible="False">
                                             <TreeView.ItemContainerStyle>
                                                 <Style TargetType="TreeViewItem">
                                                     <Setter Property="IsExpanded" Value="False" />
@@ -1607,7 +1607,7 @@
                                                                         <ContentPresenter x:Name="PART_Header" ContentSource="Header" />
                                                                     </Border>
 
-                                                                    <ItemsPresenter x:Name="ItemsHost" Visibility="Collapsed" />
+                                                                    <ItemsPresenter x:Name="ItemsHost" IsVisible="False" />
                                                                 </StackPanel>
 
                                                                 <ControlTemplate.Triggers>
@@ -1724,7 +1724,7 @@
                             <ContentControl
                                 x:Name="SelectedItemHolder"
                                 Grid.Row="0"
-                                Visibility="Collapsed" />
+                                IsVisible="False" />
                             <Rectangle
                                 x:Name="SkypeSplitter"
                                 Grid.Column="1"
@@ -1750,7 +1750,7 @@
                                 <Grid
                                     x:Name="ChatTopbar"
                                     Grid.Row="0"
-                                    Visibility="Visible">
+                                    IsVisible="True">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -1804,7 +1804,7 @@
                                 <Grid
                                     x:Name="HomeTopbar"
                                     Grid.Row="0"
-                                    Visibility="Collapsed">
+                                    IsVisible="False">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
@@ -1915,12 +1915,12 @@
                                         <WebBrowser
                                             x:Name="browser"
                                             Grid.Row="1"
-                                            Visibility="Collapsed" />
+                                            IsVisible="False" />
                                         <Frame
                                             x:Name="HomeUnavailableFrame"
                                             Grid.Row="1"
-                                            Visibility="Collapsed" />
-                                        <ContentControl x:Name="FillMessagePanelHost" Visibility="Collapsed" />
+                                            IsVisible="False" />
+                                        <ContentControl x:Name="FillMessagePanelHost" IsVisible="False" />
                                         <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                             <ContentControl.Resources>
                                                 <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
@@ -1980,7 +1980,7 @@
                                                                 Margin="0,0,0,15"
                                                                 HorizontalAlignment="Left"
                                                                 Orientation="Horizontal"
-                                                                Visibility="Collapsed">
+                                                                IsVisible="False">
                                                                 <Image
                                                                     Width="16"
                                                                     Height="16"
@@ -2319,7 +2319,7 @@
                                             RenderOptions.BitmapScalingMode="HighQuality"
                                             RenderTransformOrigin="0.5,0.5"
                                             Source="Assets/Universal/Animations/spinner.png"
-                                            Visibility="Visible">
+                                            IsVisible="True">
                                             <Image.RenderTransform>
                                                 <TransformGroup>
                                                     <ScaleTransform />
@@ -2441,7 +2441,7 @@
                                                                 MaxWidth="257"
                                                                 MaxHeight="278"
                                                                 HorizontalScrollBarVisibility="Disabled"
-                                                                VerticalScrollBarVisibility="Visible">
+                                                                VerticalScrollBarIsVisible="True">
                                                                 <ScrollViewer.Resources>
                                                                     <Style TargetType="ScrollBar">
                                                                         <Setter Property="Width" Value="8" />
@@ -2484,7 +2484,7 @@
                                                         Margin="0,0,7,0"
                                                         HorizontalAlignment="Right"
                                                         Orientation="Horizontal"
-                                                        Visibility="Collapsed">
+                                                        IsVisible="False">
                                                         <global:SliceControl
                                                             x:Name="TypingIndicatorIcon"
                                                             Width="23"

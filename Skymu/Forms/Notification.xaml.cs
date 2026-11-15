@@ -86,7 +86,7 @@ namespace Skymu.Forms
 
                 notif._closeTimer.Tick += (s, ev) =>
                 {
-                    if (notif.close.Visibility == Visibility.Visible)
+                    if (notif.close.IsVisible == true)
                     {
                         notif._closeTimer.Stop();
                         notif._closeTimer.Start();
@@ -261,12 +261,12 @@ namespace Skymu.Forms
 
         private void Window_MouseEnter(object sender, MouseEventArgs e)
         {
-            close.Visibility = Visibility.Visible;
+            close.IsVisible = true;
         }
 
         private void Window_MouseLeave(object sender, MouseEventArgs e)
         {
-            close.Visibility = Visibility.Hidden;
+            close.IsVisible = false;
         }
 
         private void CloseButton_Click(object sender, MouseButtonEventArgs e)

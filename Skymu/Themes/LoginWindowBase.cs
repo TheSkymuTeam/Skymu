@@ -234,14 +234,14 @@ namespace Skymu.Theming
         {
             if (anim)
             {
-                LoginControls.Visibility = Visibility.Collapsed;
-                Spinner.Visibility = Visibility.Visible;
+                LoginControls.IsVisible = false;
+                Spinner.IsVisible = true;
                 header.Text = Universal.Lang["sSTATUSTEXT_PROFILE_LOGGING_IN"];
             }
             else
             {
-                LoginControls.Visibility = Visibility.Visible;
-                Spinner.Visibility = Visibility.Collapsed;
+                LoginControls.IsVisible = true;
+                Spinner.IsVisible = false;
                 header.Text = Universal.Lang["sF_LOGIN_WELCOME"];
             }
         }

@@ -70,7 +70,7 @@
                 RenderOptions.BitmapScalingMode="HighQuality"
                 RenderTransformOrigin="0.50785,0.5001"
                 Source="Assets/Universal/Animations/spinner.png"
-                Visibility="Collapsed">
+                IsVisible="False">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform />

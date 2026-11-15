@@ -37,15 +37,15 @@ namespace Skymu.Skype4
 
         protected override void ShowHomeView()
         {
-            Home.Visibility = Visibility.Visible;
-            ChatArea.Visibility = Visibility.Collapsed;
+            Home.IsVisible = true;
+            ChatArea.IsVisible = false;
         }
 
         protected override void ShowChatView()
         {
             StatusHeader.SetState(ButtonVisualState.Default);
-            Home.Visibility = Visibility.Collapsed;
-            ChatArea.Visibility = Visibility.Visible;
+            Home.IsVisible = false;
+            ChatArea.IsVisible = true;
         }
 
         #endregion
@@ -54,7 +54,7 @@ namespace Skymu.Skype4
 
         protected override void OnTabSelecting(SliceControl tab_to_select)
         {
-            ConversationsHint.Visibility = Visibility.Collapsed;
+            ConversationsHint.IsVisible = false;
         }
 
         protected override void OnTabSelected(SliceControl tab_to_select)
@@ -73,7 +73,7 @@ namespace Skymu.Skype4
                     SplashHeader.Text = "Conversations";
                     SplashDescription.Text = "Choose a conversation to pick up again.";
                     if (Settings.InboxNoticeShown != true)
-                        ConversationsHint.Visibility = Visibility.Visible;
+                        ConversationsHint.IsVisible = true;
                     break;
             }
         }
@@ -114,7 +114,7 @@ namespace Skymu.Skype4
 
         private void CloseConversationHint(object sender, MouseButtonEventArgs e)
         {
-            ConversationsHint.Visibility = Visibility.Collapsed;
+            ConversationsHint.IsVisible = false;
             Settings.InboxNoticeShown = true;
             Settings.Save();
         }

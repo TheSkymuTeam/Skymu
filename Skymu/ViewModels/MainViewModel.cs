@@ -1168,7 +1168,7 @@ namespace Skymu.ViewModels
             if (IsCallActive)
             {
                 await HandleCallToggle();
-                CallDropdown.Visibility = Visibility.Visible;
+                CallDropdown.IsVisible = true;
                 CallButton.TextLeftMargin = 26;
                 CallButton.RightWidth = 4;
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
@@ -1184,7 +1184,7 @@ namespace Skymu.ViewModels
                 await vmodel.HandleCallToggle();
                 CallButton.IsEnabled = true;
                 CallButton.Text = Universal.Lang["sZAP_ACTIONBUTTON_HANGUP"];
-                CallDropdown.Visibility = Visibility.Collapsed;
+                CallDropdown.IsVisible = false;
                 CallButton.TextLeftMargin = 30;
                 CallButton.RightWidth = 23;
             }

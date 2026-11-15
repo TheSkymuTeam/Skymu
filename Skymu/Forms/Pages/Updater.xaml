@@ -46,7 +46,7 @@
             Width="370"
             Margin="0,30,0,0"
             HorizontalAlignment="Left"
-            Visibility="Collapsed">
+            IsVisible="False">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -72,7 +72,7 @@
                 FontFamily="Tahoma"
                 FontSize="11"
                 Text="File size 3233.5 KB"
-                Visibility="Collapsed" />
+                IsVisible="False" />
         </Grid>
     </StackPanel>
 

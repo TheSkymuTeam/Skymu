@@ -74,7 +74,7 @@
                 SliceMode="0"
                 Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Notifications/close.png'}"
                 StackDirection="Vertical"
-                Visibility="Hidden" />
+                IsVisible="False" />
             <Border Grid.Row="1" Padding="8,7">
                 <StackPanel x:Name="MessagesContainer" Orientation="Vertical" />
             </Border>

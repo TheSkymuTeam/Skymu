@@ -40,7 +40,7 @@ namespace Skymu.WebServices
 
         public static async Task<bool> Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
         {
-            browser.Visibility = Visibility.Collapsed;
+            browser.IsVisible = false;
             _browser = browser;
             _user = user;
             _contacts = contacts;
@@ -117,7 +117,7 @@ namespace Skymu.WebServices
             System.Windows.Navigation.NavigationEventArgs e
         )
         {
-            _browser.Visibility = Visibility.Visible;
+            _browser.IsVisible = true;
             (_browser.ObjectForScripting as SkypeExternalObject)
                 ?.GetAPI()
                 ?.FireShowingChanged(true);

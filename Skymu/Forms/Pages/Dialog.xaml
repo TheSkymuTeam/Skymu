@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Dialog">
     <Grid>
-        <ContentControl x:Name="BodyCC" Visibility="Collapsed" />
+        <ContentControl x:Name="BodyCC" IsVisible="False" />
         <ScrollViewer
                 x:Name="tb"
                 Width="260"

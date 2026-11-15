@@ -191,7 +191,7 @@ namespace Skymu.Theming
         private void SetCallDropdownVisibility(Visibility visibility)
         {
             if (CallDropdown != null)
-                CallDropdown.Visibility = visibility;
+                CallDropdown.IsVisible = visibility;
         }
 
         protected void SetWindow(WindowType type, bool force = false)
@@ -199,31 +199,31 @@ namespace Skymu.Theming
             CallButton.UpdateLayout();
             if (vmodel.SelectedConversation is Group)
             {
-                VideoCallButton.Visibility = Visibility.Visible;
-                CallButton.Visibility = Visibility.Visible;
-                SetCallDropdownVisibility(Visibility.Visible);
+                VideoCallButton.IsVisible = true;
+                CallButton.IsVisible = true;
+                SetCallDropdownVisibility(true);
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALLGROUP"];
             }
             else if (vmodel.SelectedConversation is ServerChannel s)
             {
-                VideoCallButton.Visibility = Visibility.Collapsed;
+                VideoCallButton.IsVisible = false;
                 if (s.ChannelType == ChannelType.Voice)
                 {
-                    CallButton.Visibility = Visibility.Visible;
-                    SetCallDropdownVisibility(Visibility.Visible);
+                    CallButton.IsVisible = true;
+                    SetCallDropdownVisibility(true);
                     CallButton.Text = "Join voice channel";
                 }
                 else
                 {
-                    CallButton.Visibility = Visibility.Collapsed;
-                    SetCallDropdownVisibility(Visibility.Collapsed);
+                    CallButton.IsVisible = false;
+                    SetCallDropdownVisibility(false);
                 }
             }
             else
             {
-                VideoCallButton.Visibility = Visibility.Visible;
-                CallButton.Visibility = Visibility.Visible;
-                SetCallDropdownVisibility(Visibility.Visible);
+                VideoCallButton.IsVisible = true;
+                CallButton.IsVisible = true;
+                SetCallDropdownVisibility(true);
                 CallButton.Text = Universal.Lang["sZAPBUTTON_CALL"];
             }
 
@@ -244,7 +244,7 @@ namespace Skymu.Theming
 
                     MessageWindowRow.Height = new GridLength(0);
 
-                    ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                    ChatTopBarSplitter.IsVisible = false;
                     ChatTopbarSplitterRow.MaxHeight = 0;
                     TWR_ORIGINAL_HEIGHT = TopbarWindowRow.Height.Value;
                     TopbarWindowRow.Height = new GridLength(1, GridUnitType.Star);
@@ -257,7 +257,7 @@ namespace Skymu.Theming
 
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
 
-                    ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    ChatTopBarSplitter.IsVisible = true;
                     ChatTopbarSplitterRow.MaxHeight = CTR_ORIGINAL_MAXHEIGHT;
                     TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
                     TopbarWindowRow.MaxHeight = screen == null ? TWR_ORIGINAL_MAXHEIGHT : ChatArea.ActualHeight * 0.7;
@@ -285,7 +285,7 @@ namespace Skymu.Theming
                 //chrome.UseAeroCaptionButtons = false;
                 System.Windows.Shell.WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
-                TitleMain.Visibility = Visibility.Visible;
+                TitleMain.IsVisible = true;
                 if (
                     _currentFrame == Enumerations.WindowChrome.SkypeAero
                     || _currentFrame == Enumerations.WindowChrome.SkypeAeroCustom
@@ -353,7 +353,7 @@ namespace Skymu.Theming
             else // using system native border
             {
                 WindowStyle = WindowStyle.SingleBorderWindow;
-                TitleBar.Visibility = Visibility.Collapsed;
+                TitleBar.IsVisible = false;
                 WindowArea.Margin = new Thickness(0);
             }
         }
@@ -535,7 +535,7 @@ namespace Skymu.Theming
         {
             if (_currentFrame == Enumerations.WindowChrome.Native)
             {
-                MenuBarArea.Visibility = Visibility.Collapsed;
+                MenuBarArea.IsVisible = false;
                 // For now, native window frame = native menu bar.
                 BuildMenuBarController();
             }
@@ -629,7 +629,7 @@ namespace Skymu.Theming
 
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
             {
-                if (ConversationList.Visibility == Visibility.Visible
+                if (ConversationList.IsVisible == true
                 && ConversationList.ItemTemplateSelector
                     is CompactRecentsTemplateSelector
             )
@@ -672,9 +672,9 @@ namespace Skymu.Theming
                     Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
                     Dispatcher.Invoke(() =>
-                        TypingIndicator.Visibility = vmodel.IsTypingVisible
-                            ? Visibility.Visible
-                            : Visibility.Collapsed
+                        TypingIndicator.IsVisible = vmodel.IsTypingVisible
+                            ? true
+                            : false
                     );
             };
 
@@ -700,7 +700,7 @@ namespace Skymu.Theming
 
             if (!Universal.Plugin.SupportsServers)
             {
-                btnServers.Visibility = Visibility.Collapsed;
+                btnServers.IsVisible = false;
                 ServersColumn.Width = new GridLength(0);
                 OnServersUnsupported();
             }
@@ -791,13 +791,13 @@ namespace Skymu.Theming
             OnTabSelecting(tab_to_select);
             if (tab_to_select.Name == "btnServers")
             {
-                ConversationList.Visibility = Visibility.Collapsed;
-                ServersList.Visibility = Visibility.Visible;
+                ConversationList.IsVisible = false;
+                ServersList.IsVisible = true;
             }
             else
             {
-                ConversationList.Visibility = Visibility.Visible;
-                ServersList.Visibility = Visibility.Collapsed;
+                ConversationList.IsVisible = true;
+                ServersList.IsVisible = false;
                 ConversationList.ItemsSource = null;
             }
 
@@ -1641,8 +1641,8 @@ namespace Skymu.Theming
                     FillWindowHost.Content = null;
                 if (FillMessagePanelHost.Content == frame)
                     FillMessagePanelHost.Content = null;
-                ChatProfileArea.Visibility = Visibility.Visible;
-                FillMessagePanelHost.Visibility = Visibility.Collapsed;
+                ChatProfileArea.IsVisible = true;
+                FillMessagePanelHost.IsVisible = false;
                 TopbarWindowRow.MinHeight = TWR_ORIGINAL_MINHEIGHT;
                 TopbarWindowRow.MaxHeight = TWR_ORIGINAL_MAXHEIGHT_CALLS;
                 TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
@@ -1651,8 +1651,8 @@ namespace Skymu.Theming
                 {
                     screen.HangUpRequested -= OnHangUp;
                     screen.LocationChangeRequested -= OnLocationChanged;
-                    screen.Visibility = Visibility.Collapsed;
-                    frame.Visibility = Visibility.Collapsed;
+                    screen.IsVisible = false;
+                    frame.IsVisible = false;
                     screen = null;
                     frame.Content = null;
                     frame = null;
@@ -1664,11 +1664,11 @@ namespace Skymu.Theming
             {
                 this.location = location;
                 // Disable it here (bugfix)
-                ChatProfileArea.Visibility = Visibility.Collapsed;
+                ChatProfileArea.IsVisible = false;
                 // Show ContentArea here, as it is visible in all cases except with both sidebar and chat hidden
-                ContentArea.Visibility = Visibility.Visible;
+                ContentArea.IsVisible = true;
                 // Same for this, but with chat hidden only now
-                ChatTopBarSplitter.Visibility = Visibility.Collapsed;
+                ChatTopBarSplitter.IsVisible = false;
                 ChatTopbarSplitterRow.MaxHeight = 0;
 
                 if (storeChatStatus)
@@ -1694,7 +1694,7 @@ namespace Skymu.Theming
                     TopbarWindowRow.Height = new GridLength(TWR_HEIGHT_CALLS_CHAT);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
                     TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
-                    ChatTopBarSplitter.Visibility = Visibility.Visible;
+                    ChatTopBarSplitter.IsVisible = true;
                     ChatTopbarSplitterRow.MaxHeight = int.MaxValue;
                 }
                 // Show everything
@@ -1702,14 +1702,14 @@ namespace Skymu.Theming
                 {
                     TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    FillMessagePanelHost.Visibility = Visibility.Visible;
+                    FillMessagePanelHost.IsVisible = true;
                     FillMessagePanelHost.Content = frame;
                     return;
                 }
                 // Show nothing
                 if (!location.SidebarToggle && !location.ChatToggle)
                 {
-                    ContentArea.Visibility = Visibility.Collapsed;
+                    ContentArea.IsVisible = false;
                     FillWindowHost.Content = frame;
                     return;
                 }
@@ -1730,7 +1730,7 @@ namespace Skymu.Theming
                     TopbarWindowRow.MaxHeight = Double.PositiveInfinity;
                 }
                 // We fill the message panel in sidebar or chat shown cases
-                FillMessagePanelHost.Visibility = Visibility.Visible;
+                FillMessagePanelHost.IsVisible = true;
                 FillMessagePanelHost.Content = frame;
             }
         }
@@ -1758,7 +1758,7 @@ namespace Skymu.Theming
             );
             SetPlaceholder(MessageTextBox, PlaceholderTextMTB, true);
             if (SendMsgButton != null) SendMsgButton.IsEnabled = CheckIfMessageSendable(MessageTextBox);
-            Spinner.Visibility = Visibility.Visible;
+            Spinner.IsVisible = true;
 
             await vmodel.SetConversation();
 
@@ -1766,7 +1766,7 @@ namespace Skymu.Theming
                 return;
 
             ConversationItemsList.ItemsSource = vmodel.ActiveConversation;
-            Spinner.Visibility = Visibility.Collapsed;
+            Spinner.IsVisible = false;
             _conversationScrollViewer?.ScrollToEnd();
             UpdateMessageSendButtonState();
         }

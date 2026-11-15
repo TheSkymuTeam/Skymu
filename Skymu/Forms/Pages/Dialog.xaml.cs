@@ -68,14 +68,14 @@ namespace Skymu.Forms.Pages
             };
 
             // the left button is disabled by default
-            window.ButtonLeft.Visibility = Visibility.Collapsed;
+            window.ButtonLeft.IsVisible = false;
 
             // if there's an image, we don't want to show the scrollviewer and have it overlap
             if (img != null)
             {
-                tb.Visibility = Visibility.Collapsed;
+                tb.IsVisible = false;
                 BodyCC.Content = img;
-                BodyCC.Visibility = Visibility.Visible;
+                BodyCC.IsVisible = true;
             }
 
             // custom dimensions for the dialog. TODO do we even need ths anymore? I don't think so, but leaving it in for now.
@@ -92,20 +92,20 @@ namespace Skymu.Forms.Pages
             if (blAction == null)
                 blAction = () => window.Close();
             if (bmEnabled)
-                window.ButtonMiddle.Visibility = Visibility.Visible;
+                window.ButtonMiddle.IsVisible = true;
             if (blEnabled)
             {
-                window.ButtonLeft.Visibility = Visibility.Visible;
+                window.ButtonLeft.IsVisible = true;
                 window.ButtonLeft.IsDefault = true;
                 window.ButtonRight.IsDefault = false;
             }
             if (cbEnabled)
             {
-                window.BBCheckBox.Visibility = Visibility.Visible;
+                window.BBCheckBox.IsVisible = true;
             }
             if (enableTextBox)
             {
-                window.BBTextBox.Visibility = Visibility.Visible;
+                window.BBTextBox.IsVisible = true;
                 brAction = () =>
                 {
                     TextBoxContent = window.BBTextBox.Text;
