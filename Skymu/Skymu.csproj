@@ -1,59 +1,28 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!-- Main thingy -->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
-		<IsWebBootstrapper>false</IsWebBootstrapper>
-		<PublishUrl>publish\</PublishUrl>
-		<Install>true</Install>
-		<InstallFrom>Disk</InstallFrom>
-		<UpdateEnabled>false</UpdateEnabled>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<IntermediateOutputPath>obj\$(TargetFramework)\$(Configuration)\</IntermediateOutputPath>
-		<UpdateMode>Foreground</UpdateMode>
-		<UpdateInterval>7</UpdateInterval>
-		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
-		<UpdatePeriodically>false</UpdatePeriodically>
-		<UpdateRequired>false</UpdateRequired>
 		<RollForward>LatestMajor</RollForward>
-		<MapFileExtensions>true</MapFileExtensions>
-		<ApplicationRevision>0</ApplicationRevision>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
-		<UseApplicationTrust>false</UseApplicationTrust>
-		<BootstrapperEnabled>true</BootstrapperEnabled>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
-		<StartupObject />
 		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
-		<LangVersion>7.3</LangVersion>
-		<SubsystemVersion>5.00</SubsystemVersion>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
 	</PropertyGroup>
 
 	<!-- Assembly information -->
 	<PropertyGroup>
 		<AssemblyTitle>Skymu</AssemblyTitle>
-		<Description>Skymu</Description>
+		<Description>Skymu Avalonia desktop client</Description>
 		<FileDescription>Skymu</FileDescription>
 		<Company>The Skymu Team</Company>
 		<Product>Skymu</Product>
-	</PropertyGroup>
-
-	<!-- Target framework selection (DO NOT CHANGE! REPORT ISSUES WITH THIS TO ME (OMEGA) INSTEAD) -->
-	<PropertyGroup Condition="'$(NETCoreSdkVersion)' != '' And $([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '5.0'))">
-		<TargetFrameworks>net461;net5.0-windows</TargetFrameworks>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(NETCoreSdkVersion)' == '' Or $([MSBuild]::VersionLessThan('$(NETCoreSdkVersion)', '5.0'))">
-		<TargetFrameworks>net461</TargetFrameworks>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Legacy\$(Configuration)\</OutputPath>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Skymu.Core\$(Configuration)\</OutputPath>
 	</PropertyGroup>
 
 	<!-- Build configurations -->
@@ -67,40 +36,18 @@
 	</PropertyGroup>
 
 	<!-- Some functions to deal with this building hell -->
-	<Target Name="MoveNetStandardLibraries" AfterTargets="Build" Condition="'$(TargetFramework)' == 'net461'">
-		<ItemGroup>
-			<NetStandardAssemblies Include="$(OutDir)System.*.dll" />
-			<NetStandardAssemblies Include="$(OutDir)netstandard.dll" />
-			<NetStandardAssemblies Include="$(OutDir)Microsoft.Bcl.AsyncInterfaces.dll" />
-		</ItemGroup>
-		<ItemGroup>
-			<NetStandardAssemblies Remove="@(NetStandardAssemblies)" Condition="!Exists('%(FullPath)')" />
-		</ItemGroup>
-		<MakeDir Directories="$(OutDir)netstandard2.0" Condition="@(NetStandardAssemblies-&gt;Count()) &gt; 0" />
-		<Move SourceFiles="@(NetStandardAssemblies)" DestinationFolder="$(OutDir)netstandard2.0" OverwriteReadOnlyFiles="true" Condition="@(NetStandardAssemblies-&gt;Count()) &gt; 0" />
-	</Target>
-
-	<Target Name="CopyPluginsSkymuLegacy" AfterTargets="Build" Condition="'$(TargetFramework)' == 'net461'">
+	<Target Name="CopyPlugins" AfterTargets="Build">
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<MakeDir Directories="bin\Skymu.Legacy\$(Configuration)\Plugins\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Legacy\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
-
-	<Target Name="CopyPluginsSkymuCore" AfterTargets="Build" Condition="'$(TargetFramework)' == 'net5.0-windows'">
-		<ItemGroup>
-			<PluginFiles Include="..\Plugins\bin\**\*.*" />
-		</ItemGroup>
-		<MakeDir Directories="bin\Skymu.Core\$(Configuration)\Plugins\" />
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'bin\Skymu.Core\$(Configuration)\Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->
 	<ItemGroup>
 		<!-- Skype4 -->
 		<Resource Include="Themes\Skype4\Assets\**\*" />
-		
+
 		<!-- Skype5 -->
 		<Resource Include="Themes\Skype5\Assets\**\*" />
 
@@ -136,7 +83,7 @@
 		<Content Include="Languages\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		
+
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Remove="Properties\**" />
@@ -150,52 +97,11 @@
 		<PackageReference Include="NAudio.Core" Version="2.3.0" />
 		<PackageReference Include="NAudio.WinMM" Version="2.3.0" />
 		<PackageReference Include="QRCoder" Version="1.8.0" />
-		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
 		<PackageReference Include="System.Text.Json" Version="10.0.9" />
-		<PackageReference Include="System.Threading.Channels" Version="5.0.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-		<Reference Include="PresentationFramework.Aero">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Aero2">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.AeroLite">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Classic">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Luna">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="PresentationFramework.Royale">
-			<Private>True</Private>
-		</Reference>
-		<Reference Include="System.Security" />
-		<Reference Include="System.Web" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<AppDesigner Include="Properties\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-			<Visible>False</Visible>
-			<ProductName>.NET Framework 4.6.1</ProductName>
-			<Install>true</Install>
-		</BootstrapperPackage>
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Yggdrasil\Yggdrasil.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Page Include="App.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -224,16 +130,16 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Include="Colorways\uwpdark.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Generator>MSBuild:Compile</Generator>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Shaders\Darken.ps" />
-	  <None Remove="Shaders\DarkenLighten.ps" />
-	  <Resource Include="Shaders\Darken.ps" />
-	  <Resource Include="Shaders\DarkenLighten.ps" />
+		<None Remove="Shaders\Darken.ps" />
+		<None Remove="Shaders\DarkenLighten.ps" />
+		<Resource Include="Shaders\Darken.ps" />
+		<Resource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
 </Project>

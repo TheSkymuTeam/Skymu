@@ -1,8 +1,7 @@
-!define SOURCE_DIR_CORE "..\Skymu\bin\Skymu.Core\Release"
-!define SOURCE_DIR_LEGACY "..\Skymu\bin\Skymu.Legacy\Release"
+!define SOURCE_DIR_CORE "..\Skymu\bin\Release"
 !define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
-!define PRODUCT_WEB_SITE "https://skymu.app"
+!define PRODUCT_WEB_SITE "https://www.skymu.app"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Skymu.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -20,13 +19,6 @@ RequestExecutionLevel admin
 !define MUI_HEADERIMAGE_BITMAP_STRETCH "AspectFitHeight"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "column-beta.bmp"
 
-Var VersionRadio_Modern
-Var VersionRadio_Legacy
-Var IsModern
-Var IsLegacy
-Var ModernDesc
-Var LegacyDesc
-
 Function HideHeaderText
     GetDlgItem $0 $HWNDPARENT 1037
     ShowWindow $0 ${SW_HIDE}
@@ -38,48 +30,10 @@ Function KillSkymuProcesses
     nsExec::ExecToLog 'taskkill /F /IM Skymu.exe'
 FunctionEnd
 
-Function VersionSelectPage
-    Call HideHeaderText
-    nsDialogs::Create 1018
-    Pop $0
-
-    ${NSD_CreateLabel} 0 0 100% 20u "Please select the version of Skymu to install."
-    Pop $0
-
-    ; --- Modern ---
-    ${NSD_CreateRadioButton} 0 25u 100% 12u "Skymu"
-    Pop $VersionRadio_Modern
-    ${NSD_Check} $VersionRadio_Modern
-
-    ${NSD_CreateLabel} 10u 38u 90% 20u "For Windows 7 (Service Pack 1) and newer. Uses the latest installed .NET version."
-    Pop $ModernDesc
-    SetCtlColors $ModernDesc 0x808080 transparent
-
-    ; --- Legacy ---
-    ${NSD_CreateRadioButton} 0 60u 100% 12u "Skymu Legacy"
-    Pop $VersionRadio_Legacy
-
-    ${NSD_CreateLabel} 10u 73u 90% 20u "For older operating systems like Windows XP and Vista. Uses .NET Framework 4.6.1."
-    Pop $LegacyDesc
-    SetCtlColors $LegacyDesc 0x808080 transparent
-	
-	CreateFont $1 "Segoe UI" 8 400 /ITALIC
-SendMessage $ModernDesc ${WM_SETFONT} $1 1
-SendMessage $LegacyDesc ${WM_SETFONT} $1 1
-
-    nsDialogs::Show
-FunctionEnd
-
-Function VersionSelectLeave
-    ${NSD_GetState} $VersionRadio_Modern $IsModern
-    ${NSD_GetState} $VersionRadio_Legacy $IsLegacy
-FunctionEnd
-
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW HideHeaderText
 !insertmacro MUI_PAGE_WELCOME
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW HideHeaderText
 !insertmacro MUI_PAGE_LICENSE "license.txt"
-Page custom VersionSelectPage VersionSelectLeave
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW HideHeaderText
 !insertmacro MUI_PAGE_DIRECTORY
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW HideHeaderText
@@ -109,11 +63,7 @@ Section "Install"
 	RMDir /r "$INSTDIR"
     SetOutPath "$INSTDIR"
     SetOverwrite on
-    ${If} $IsLegacy == ${BST_CHECKED}
-    File /r "${SOURCE_DIR_LEGACY}\*"
-${Else}
     File /r "${SOURCE_DIR_CORE}\*"
-${EndIf}
 
     WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Skymu.exe"
     WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconIndex" "-911"
