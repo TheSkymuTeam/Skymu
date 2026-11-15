@@ -14,13 +14,12 @@
 -->
 <UserControl
     x:Class="Skymu.SliceControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:global="clr-namespace:Skymu"
     x:Name="Root"
     Background="Transparent"
-    RenderOptions.BitmapScalingMode="NearestNeighbor"
-    SnapsToDevicePixels="True"
+    RenderOptions.BitmapInterpolationMode="None"
     UseLayoutRounding="True">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -38,17 +37,17 @@
             x:Name="TopLeftSlice"
             Grid.Row="0"
             Grid.Column="0"
-            Visibility="Collapsed" />
+            IsVisible="False" />
         <Rectangle
             x:Name="TopMidSlice"
             Grid.Row="0"
             Grid.Column="1"
-            Visibility="Collapsed" />
+            IsVisible="False" />
         <Rectangle
             x:Name="TopRightSlice"
             Grid.Row="0"
             Grid.Column="2"
-            Visibility="Collapsed" />
+            IsVisible="False" />
 
         <Rectangle
             x:Name="LeftSlice"
@@ -89,17 +88,17 @@
             x:Name="BotLeftSlice"
             Grid.Row="2"
             Grid.Column="0"
-            Visibility="Collapsed" />
+            IsVisible="False" />
         <Rectangle
             x:Name="BotMidSlice"
             Grid.Row="2"
             Grid.Column="1"
-            Visibility="Collapsed" />
+            IsVisible="False" />
         <Rectangle
             x:Name="BotRightSlice"
             Grid.Row="2"
             Grid.Column="2"
-            Visibility="Collapsed" />
+            IsVisible="False" />
 
         <Image
             x:Name="OverlayImage"
@@ -112,7 +111,6 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsHitTestVisible="False"
-            SnapsToDevicePixels="True"
             Source="{Binding IconSource, RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
             UseLayoutRounding="True" />
 
@@ -124,7 +122,7 @@
             Grid.ColumnSpan="3"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
-            Panel.ZIndex="10"
+            ZIndex="10"
             IsHitTestVisible="False"
             TextTrimming="CharacterEllipsis" />
     </Grid>
