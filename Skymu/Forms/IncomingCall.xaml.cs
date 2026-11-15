@@ -68,19 +68,22 @@ namespace Skymu.Forms
             Close();
         }
 
-        private void OnDrag(object sender, PointerEventArgs e)
+        private void OnDrag(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
 
-            var source = e.OriginalSource as DependencyObject;
+            var source = e.Source as Control;
+
             while (source != null)
             {
-                if (source is FrameworkElement fe && (string)fe.Tag == "NoDrag")
+                if (source.Tag is string tag && tag == "NoDrag")
                     return;
-                source = VisualTreeHelper.GetParent(source);
+
+                source = source.Parent as Control;
             }
-            DragMove();
+
+            BeginMoveDrag(e);
         }
 
         private void OnDecline(object sender, PointerReleasedEventArgs e)

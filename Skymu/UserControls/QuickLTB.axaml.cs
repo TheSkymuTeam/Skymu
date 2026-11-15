@@ -14,12 +14,12 @@
 using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Data.Converters;
-using System.Windows.Markup;
+using Avalonia.Metadata;
 
 namespace Skymu.UserControls
 {
-    [ContentProperty(nameof(Bindings))]
     public partial class QuickLTB : UserControl
     {
         public string Key
@@ -27,16 +27,17 @@ namespace Skymu.UserControls
             get { return (string)GetValue(KeyProperty); }
             set { SetValue(KeyProperty, value); }
         }
-        public static readonly DependencyProperty KeyProperty =
-            DependencyProperty.Register(
-               nameof(Key),
-               typeof(string),
-               typeof(QuickLTB),
-               new PropertyMetadata("", OnKeyChange)
-           );
+        public static readonly StyledProperty<string> KeyProperty =
+            AvaloniaProperty.Register<QuickLTB, string>(nameof(Key), "");
 
-        public ObservableCollection<BindingBase> Bindings { get; } =
-            new ObservableCollection<BindingBase>();
+        [Content]
+        public ObservableCollection<IBinding> Bindings { get; } =
+            new ObservableCollection<IBinding>();
+
+        static QuickLTB()
+        {
+            KeyProperty.Changed.AddClassHandler<QuickLTB>(OnKeyChange);
+        }
 
         public QuickLTB()
         {
@@ -45,7 +46,7 @@ namespace Skymu.UserControls
             Bindings.CollectionChanged += (_, __) => UpdateBinding();
         }
 
-        public static void OnKeyChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static void OnKeyChange(AvaloniaObject d, AvaloniaPropertyChangedEventArgs e)
         {
             if (d is QuickLTB qltb)
                 qltb.UpdateBinding();
@@ -53,18 +54,18 @@ namespace Skymu.UserControls
 
         private void UpdateBinding()
         {
-            var converter = (IMultiValueConverter)FindResource("SkyLangParseConverter");
+            var converter = (IMultiValueConverter)this.FindResource("SkyLangParseConverter");
             var multiBinding = new MultiBinding
-            { 
-               Converter = converter,
-               ConverterParameter = Key
+            {
+                Converter = converter,
+                ConverterParameter = Key
             };
 
             if (Bindings != null)
                 foreach (var binding in Bindings)
                     multiBinding.Bindings.Add(binding);
 
-            ContentCtrl.SetBinding(ContentProperty, multiBinding);
+            ContentCtrl.Bind(ContentProperty, multiBinding);
         }
     }
 }

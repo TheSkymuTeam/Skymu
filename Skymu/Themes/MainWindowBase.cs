@@ -7,16 +7,22 @@
 // If you do not comply with those terms, you may not
 // modify or distribute any original code from the project.
 /*==========================================================*/
-// License: https://skymu.app/legal/license
+// License: https://skymu.app/license
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Templates;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
@@ -38,11 +44,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
-using System.Windows.Documents;
-using Avalonia.Input;
-using Avalonia.Media.Effects;
-using System.Windows.Shell;
 using Yggdrasil;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
@@ -52,7 +53,7 @@ namespace Skymu.Theming
     public abstract partial class MainWindowBase : Window, IMainWindowHolder
     {
         #region Parts
-        private T Part<T>(string name) where T : class => (T)FindName(name);
+        private T Part<T>(string name) where T : class => (T)NameScope.GetNameScope(this)?.Find(name);
 
         private global::Skymu.SliceControl btnContacts => Part<global::Skymu.SliceControl>(nameof(btnContacts));
         private global::Skymu.SliceControl btnRecents => Part<global::Skymu.SliceControl>(nameof(btnRecents));
@@ -86,10 +87,10 @@ namespace Skymu.Theming
         private global::Avalonia.Controls.ContentControl ChatProfileArea => Part<global::Avalonia.Controls.ContentControl>(nameof(ChatProfileArea));
         private global::Avalonia.Controls.ContentControl FillMessagePanelHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillMessagePanelHost));
         private global::Avalonia.Controls.ContentControl FillWindowHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillWindowHost));
-        private global::System.Windows.Shapes.Rectangle ChatTopBarSplitter => Part<global::System.Windows.Shapes.Rectangle>(nameof(ChatTopBarSplitter));
-        private global::System.Windows.Shapes.Rectangle ContentBgTop => Part<global::System.Windows.Shapes.Rectangle>(nameof(ContentBgTop));
-        private global::System.Windows.Shapes.Rectangle ContentBgBottom => Part<global::System.Windows.Shapes.Rectangle>(nameof(ContentBgBottom));
-        private global::System.Windows.Shapes.Rectangle MainMenuBarDivider => Part<global::System.Windows.Shapes.Rectangle>(nameof(MainMenuBarDivider));
+        private global::Avalonia.Controls.Shapes.Rectangle ChatTopBarSplitter => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ChatTopBarSplitter));
+        private global::Avalonia.Controls.Shapes.Rectangle ContentBgTop => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ContentBgTop));
+        private global::Avalonia.Controls.Shapes.Rectangle ContentBgBottom => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ContentBgBottom));
+        private global::Avalonia.Controls.Shapes.Rectangle MainMenuBarDivider => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(MainMenuBarDivider));
         private global::Avalonia.Controls.ListBox ConversationItemsList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationItemsList));
         private global::Avalonia.Controls.ListBox ConversationList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationList));
         private global::Avalonia.Controls.TreeView ServersList => Part<global::Avalonia.Controls.TreeView>(nameof(ServersList));
@@ -102,7 +103,7 @@ namespace Skymu.Theming
         private global::Avalonia.Controls.MenuItem MenubarStatusHolder => Part<global::Avalonia.Controls.MenuItem>(nameof(MenubarStatusHolder));
         private global::Avalonia.Controls.MenuItem ExtrasMenu => Part<global::Avalonia.Controls.MenuItem>(nameof(ExtrasMenu));
         private global::Avalonia.Controls.MenuItem GetExtrasMenuItem => Part<global::Avalonia.Controls.MenuItem>(nameof(GetExtrasMenuItem));
-        private global::Avalonia.Controls.RichTextBox MessageTextBox => Part<global::Avalonia.Controls.RichTextBox>(nameof(MessageTextBox));
+        private global::Avalonia.Controls.TextBox MessageTextBox => Part<global::Avalonia.Controls.TextBox>(nameof(MessageTextBox));
         private global::Avalonia.Controls.Border MessageWindow => Part<global::Avalonia.Controls.Border>(nameof(MessageWindow));
         private global::Avalonia.Controls.TextBox SearchBox => Part<global::Avalonia.Controls.TextBox>(nameof(SearchBox));
         private global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));
@@ -112,7 +113,7 @@ namespace Skymu.Theming
         private global::Avalonia.Controls.TextBlock TitleShadow2 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow2));
         private global::Avalonia.Controls.TextBlock TitleShadow3 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow3));
         private global::Avalonia.Controls.TextBlock TypingIndicatorText => Part<global::Avalonia.Controls.TextBlock>(nameof(TypingIndicatorText));
-        private global::System.Windows.FrameworkElement ProfileGrid => Part<global::System.Windows.FrameworkElement>(nameof(ProfileGrid));
+        private global::Avalonia.Controls.Control ProfileGrid => Part<global::Avalonia.Controls.Control>(nameof(ProfileGrid));
         #endregion
 
         #region Variables
@@ -131,6 +132,8 @@ namespace Skymu.Theming
             img_split,
             img_join;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
+        private IDataTemplate _defaultConversationTemplate;
+        private readonly List<Control> _chromeClickable = new List<Control>();
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
         protected WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
@@ -143,18 +146,18 @@ namespace Skymu.Theming
             Chat,
         }
 
-        public static readonly DependencyProperty WindowTitleProperty = DependencyProperty.Register(
-            "WindowTitle",
-            typeof(string),
-            typeof(MainWindowBase),
-            new PropertyMetadata(
-                null,
+        public static readonly StyledProperty<string> WindowTitleProperty =
+            AvaloniaProperty.Register<MainWindowBase, string>("WindowTitle");
+
+        static MainWindowBase()
+        {
+            WindowTitleProperty.Changed.AddClassHandler<MainWindowBase>(
                 (d, e) =>
                 {
-                    ((MainWindowBase)d).Title = (string)e.NewValue;
+                    d.Title = (string)e.NewValue;
                 }
-            )
-        );
+            );
+        }
 
         public string WindowTitle
         {
@@ -188,10 +191,10 @@ namespace Skymu.Theming
 
         #region Home and Chat window switching
 
-        private void SetCallDropdownVisibility(Visibility visibility)
+        private void SetCallDropdownVisibility(bool visible)
         {
             if (CallDropdown != null)
-                CallDropdown.IsVisible = visibility;
+                CallDropdown.IsVisible = visible;
         }
 
         protected void SetWindow(WindowType type, bool force = false)
@@ -275,15 +278,30 @@ namespace Skymu.Theming
 
         protected virtual string AeroTitleFont => "Segoe UI";
 
+        private IBrush GetBrush(string key)
+        {
+            Application.Current.TryGetResource(key, ActualThemeVariant, out var resource);
+            return (IBrush)resource;
+        }
+
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            base.OnPropertyChanged(change);
+            if (change.Property == WindowStateProperty)
+                Window_StateChanged(this, EventArgs.Empty);
+        }
+
         public void InitializeWindowFrame()
         {
             if (_currentFrame != Enumerations.WindowChrome.Native) // using Skype's custom border
             {
                 if (!Skymu.Native.Windows.DwmHelper.IsDwmEnabled() && _currentFrame == Enumerations.WindowChrome.SkypeAero) _currentFrame = Enumerations.WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
-                System.Windows.Shell.WindowChrome chrome = new System.Windows.Shell.WindowChrome();
                 //chrome.UseAeroCaptionButtons = false;
-                System.Windows.Shell.WindowChrome.SetWindowChrome(this, chrome); // WindowChrome configuration ensures that system frame is not drawn
+                ExtendClientAreaToDecorationsHint = true;
+                ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
+                ExtendClientAreaTitleBarHeightHint = -1; // WindowChrome configuration ensures that system frame is not drawn
+                TitleBar.PointerPressed += TitleBar_PointerPressed;
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.IsVisible = true;
                 if (
@@ -293,7 +311,6 @@ namespace Skymu.Theming
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
                     OriginalWindowAreaMargin = AeroThickness;
-                    chrome.GlassFrameThickness = AeroThickness;
                     // Set up the window background and margin
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
@@ -308,35 +325,34 @@ namespace Skymu.Theming
                         );
                         this.Background = new ImageBrush
                         {
-                            ImageSource = img,
+                            Source = img,
                             Stretch = Stretch.None,
                             TileMode = TileMode.None,
-                            ViewportUnits = BrushMappingMode.Absolute,
-                            Viewport = new Rect(0, 0, img.Size.Width, img.Size.Height),
+                            DestinationRect = new RelativeRect(0, 0, img.Size.Width, img.Size.Height, RelativeUnit.Absolute),
                         };
                     }
 
                     // Titlebar font styling
                     TitleMain.FontFamily = new FontFamily(AeroTitleFont);
-                    TitleMain.FontWeight = FontWeights.Normal;
+                    TitleMain.FontWeight = FontWeight.Normal;
                     TitleMain.FontSize = 12;
                     TitleMain.Foreground = Brushes.Black;
 
                     // Titlebar drop shadow (Imitates the Aero glow effect)
                     TitleMain.Effect = new DropShadowEffect
                     {
-                        ShadowDepth = 0,
-                        Direction = 330,
+                        OffsetX = 0,
+                        OffsetY = 0,
                         Color = Colors.White,
                         Opacity = 1,
                         BlurRadius = 20,
                     };
 
-                    Style aeroStyle = (Style)FindResource("TitlebarTextStyleAero");
-                    TitleMain.Style = aeroStyle;
-                    TitleShadow.Style = aeroStyle;
-                    TitleShadow2.Style = aeroStyle;
-                    TitleShadow3.Style = aeroStyle;
+                    ControlTheme aeroStyle = (ControlTheme)this.FindResource("TitlebarTextStyleAero");
+                    TitleMain.Theme = aeroStyle;
+                    TitleShadow.Theme = aeroStyle;
+                    TitleShadow2.Theme = aeroStyle;
+                    TitleShadow3.Theme = aeroStyle;
                     TitleBarIcon.Margin = new Thickness(8, 5, 0, 0);
                 }
 
@@ -352,7 +368,7 @@ namespace Skymu.Theming
             }
             else // using system native border
             {
-                WindowStyle = WindowStyle.SingleBorderWindow;
+                SystemDecorations = SystemDecorations.Full;
                 TitleBar.IsVisible = false;
                 WindowArea.Margin = new Thickness(0);
             }
@@ -360,11 +376,13 @@ namespace Skymu.Theming
 
         private DropShadowEffect CreateDropShadow(string color)
         {
+            Application.Current.TryGetResource(color, ActualThemeVariant, out var resource);
             return new DropShadowEffect()
             {
-                Color = (Color)Application.Current.Resources[color],
+                Color = (Color)resource,
                 BlurRadius = 15,
-                ShadowDepth = 0,
+                OffsetX = 0,
+                OffsetY = 0,
                 Opacity = 1,
             };
         }
@@ -372,7 +390,24 @@ namespace Skymu.Theming
         private void SetClickable(params IInputElement[] buttons)
         {
             foreach (var b in buttons)
-                System.Windows.Shell.WindowChrome.SetIsHitTestVisibleInChrome(b, true);
+                if (b is Control c)
+                    _chromeClickable.Add(c);
+        }
+
+        private void TitleBar_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
+
+            if (e.Source is Visual source)
+                foreach (var c in _chromeClickable)
+                    if (ReferenceEquals(c, source) || c.IsVisualAncestorOf(source))
+                        return;
+
+            if (e.ClickCount == 2)
+                WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            else
+                BeginMoveDrag(e);
         }
 
         private void HandleWindowStateChanged()
@@ -428,15 +463,15 @@ namespace Skymu.Theming
 
         private void FillSolid()
         {
-            ContentBgTop.Fill = (Brush)Application.Current.Resources["Background"];
-            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Background"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Background"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Card.Border"];
-            MenuBarArea.Background = (Brush)Application.Current.Resources["Background"];
+            ContentBgTop.Fill = GetBrush("Background");
+            ContentBgBottom.Fill = GetBrush("Background");
+            MainMenuBar.Background = GetBrush("Background");
+            MainMenuBarDivider.Fill = GetBrush("Card.Border");
+            MenuBarArea.Background = GetBrush("Background");
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
-                TitleBar.Background = (Brush)Application.Current.Resources["Background"];
-                this.Background = (Brush)Application.Current.Resources["Background"];
+                TitleBar.Background = GetBrush("Background");
+                this.Background = GetBrush("Background");
             }
         }
 
@@ -459,15 +494,15 @@ namespace Skymu.Theming
                 return;
             }
 
-            ContentBgTop.Fill = (Brush)Application.Current.Resources["Active.Window"];
-            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Active.Background"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Active.Menubar"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Active.Background"];
+            ContentBgTop.Fill = GetBrush("Active.Window");
+            ContentBgBottom.Fill = GetBrush("Active.Background");
+            MainMenuBar.Background = GetBrush("Active.Menubar");
+            MainMenuBarDivider.Fill = GetBrush("Active.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
-                TitleBar.Background = (Brush)Application.Current.Resources["Active.Titlebar"];
-                this.Background = (Brush)Application.Current.Resources["Active.Background"];
+                TitleBar.Background = GetBrush("Active.Titlebar");
+                this.Background = GetBrush("Active.Background");
             }
         }
 
@@ -490,15 +525,15 @@ namespace Skymu.Theming
                 return;
             }
 
-            ContentBgTop.Fill = (Brush)Application.Current.Resources["Inactive.Window"];
-            ContentBgBottom.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
-            MainMenuBar.Background = (Brush)Application.Current.Resources["Inactive.Menubar"];
-            MainMenuBarDivider.Fill = (Brush)Application.Current.Resources["Inactive.Background"];
+            ContentBgTop.Fill = GetBrush("Inactive.Window");
+            ContentBgBottom.Fill = GetBrush("Inactive.Background");
+            MainMenuBar.Background = GetBrush("Inactive.Menubar");
+            MainMenuBarDivider.Fill = GetBrush("Inactive.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
-                TitleBar.Background = (Brush)Application.Current.Resources["Inactive.Titlebar"];
-                this.Background = (Brush)Application.Current.Resources["Inactive.Background"];
+                TitleBar.Background = GetBrush("Inactive.Titlebar");
+                this.Background = GetBrush("Inactive.Background");
             }
         }
 
@@ -630,7 +665,7 @@ namespace Skymu.Theming
             vmodel.CompactRecentsRefreshRequested += (s, e) =>
             {
                 if (ConversationList.IsVisible == true
-                && ConversationList.ItemTemplateSelector
+                && ConversationList.ItemTemplate
                     is CompactRecentsTemplateSelector
             )
                 {
@@ -686,6 +721,8 @@ namespace Skymu.Theming
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
 
+            MessageTextBox.AddHandler(KeyDownEvent, MessageTextBox_PreviewKeyDown, RoutingStrategies.Tunnel);
+
             this.PointerReleased += MouseRelease;
             this.SizeChanged += Main_SizeChanged;
             buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
@@ -694,6 +731,7 @@ namespace Skymu.Theming
                 { btnServers, ServersColumn },
                 { btnRecents, RecentsColumn },
             };
+            _defaultConversationTemplate = ConversationList.ItemTemplate;
             _ = SelectTab(btnRecents);
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
@@ -716,14 +754,13 @@ namespace Skymu.Theming
             Universal.Lang.PropertyChanged += RefreshCreds;
             RefreshCreds();
 
-            SourceInitialized += (s, e) =>
+            Opened += (s, e) =>
             {
                 InitializeMenuBar();
 
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
-                    this.Top = Settings.Y;
-                    this.Left = Settings.X;
+                    this.Position = new PixelPoint((int)Settings.X, (int)Settings.Y);
                     this.Width = Settings.Width;
                     this.Height = Settings.Height;
                     this.WindowState = Settings.Maximized ? WindowState.Maximized : this.WindowState;
@@ -731,8 +768,6 @@ namespace Skymu.Theming
                 }
                 OnSidebarResized();
             };
-
-            this.AllowsTransparency = false;
         }
 
         #endregion
@@ -776,13 +811,13 @@ namespace Skymu.Theming
             var grouped = CompactRecentsHelper.GroupByDate(vmodel.ConversationList);
             var selector = new CompactRecentsTemplateSelector
             {
-                DateHeaderTemplate = (DataTemplate)FindResource("DateHeaderTemplate"),
-                CompactDirectMessageTemplate = (DataTemplate)FindResource(
+                DateHeaderTemplate = (IDataTemplate)this.FindResource("DateHeaderTemplate"),
+                CompactDirectMessageTemplate = (IDataTemplate)this.FindResource(
                     "CompactDirectMessageTemplate"
                 ),
-                CompactGroupTemplate = (DataTemplate)FindResource("CompactGroupTemplate"),
+                CompactGroupTemplate = (IDataTemplate)this.FindResource("CompactGroupTemplate"),
             };
-            ConversationList.ItemTemplateSelector = selector;
+            ConversationList.ItemTemplate = selector;
             ConversationList.ItemsSource = grouped;
         }
 
@@ -827,7 +862,7 @@ namespace Skymu.Theming
                     ServersList.ItemsSource = await vmodel.GetServerList();
                     break;
                 case "btnContacts":
-                    ConversationList.ItemTemplateSelector = null;
+                    ConversationList.ItemTemplate = _defaultConversationTemplate;
                     ConversationList.ItemsSource = vmodel.ContactList;
                     break;
                 case "btnRecents":
@@ -873,14 +908,14 @@ namespace Skymu.Theming
         private bool SkypeSplitterIsDragging = false;
         private bool ChatTopBarSplitterIsDragging = false;
         private Point dragStart;
-        private UIElement capturedElement = null;
+        private Control capturedElement = null;
 
-        protected void SkypeSplitter_PointerMoved(object sender, MouseEventArgs e)
+        protected void SkypeSplitter_PointerMoved(object sender, PointerEventArgs e)
         {
             if (SkypeSplitterIsDragging)
             {
                 Point current = e.GetPosition(this);
-                Vector delta = current - dragStart;
+                var delta = current - dragStart;
                 ColumnDefinition sidebarCol = ContentArea.ColumnDefinitions[0];
                 double max = sidebarCol.MaxWidth;
                 double min = sidebarCol.MinWidth;
@@ -898,28 +933,28 @@ namespace Skymu.Theming
             }
         }
 
-        protected void SkypeSplitter_Press(object sender, PointerEventArgs e)
+        protected void SkypeSplitter_Press(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
             MouseRelease(null, null); // Release previous element first. Potentially avoids weird behavior on touch screen, etc.
             SkypeSplitterIsDragging = true;
             dragStart = e.GetPosition(this);
-            capturedElement = sender as UIElement;
+            capturedElement = sender as Control;
 
             if (capturedElement != null)
             {
-                capturedElement.CaptureMouse();
+                e.Pointer.Capture(capturedElement);
                 e.Handled = true;
             }
         }
 
-        protected void ChatTopBarSplitter_PointerMoved(object sender, MouseEventArgs e)
+        protected void ChatTopBarSplitter_PointerMoved(object sender, PointerEventArgs e)
         {
             if (ChatTopBarSplitterIsDragging)
             {
                 Point current = e.GetPosition(this);
-                Vector delta = current - dragStart;
+                var delta = current - dragStart;
                 RowDefinition row = ChatArea.RowDefinitions[1];
                 double max = row.MaxHeight;
                 double min = row.MinHeight;
@@ -938,25 +973,25 @@ namespace Skymu.Theming
             }
         }
 
-        protected void ChatTopBarSplitter_Press(object sender, PointerEventArgs e)
+        protected void ChatTopBarSplitter_Press(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
             MouseRelease(null, null);
             ChatTopBarSplitterIsDragging = true;
             dragStart = e.GetPosition(this);
-            capturedElement = sender as UIElement;
+            capturedElement = sender as Control;
 
             if (capturedElement != null)
             {
-                capturedElement.CaptureMouse();
+                e.Pointer.Capture(capturedElement);
                 e.Handled = true;
             }
         }
 
         private void MouseRelease(object sender, PointerReleasedEventArgs e)
         {
-            if (e.InitialPressMouseButton != MouseButton.Left)
+            if (e != null && e.InitialPressMouseButton != MouseButton.Left)
                 return;
 
             if (SkypeSplitterIsDragging || ChatTopBarSplitterIsDragging)
@@ -964,9 +999,9 @@ namespace Skymu.Theming
                 SkypeSplitterIsDragging = false;
                 ChatTopBarSplitterIsDragging = false;
 
-                if (capturedElement != null && capturedElement.IsMouseCaptured)
+                if (capturedElement != null && e != null && e.Pointer.Captured == capturedElement)
                 {
-                    capturedElement.ReleaseMouseCapture();
+                    e.Pointer.Capture(null);
                 }
                 capturedElement = null;
                 if (e != null)
@@ -980,9 +1015,9 @@ namespace Skymu.Theming
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SidebarColumn.MaxWidth = this.ActualWidth / 2;
+            SidebarColumn.MaxWidth = this.Bounds.Width / 2;
             if (screen != null && location.ChatToggle)
-                TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
+                TopbarWindowRow.MaxHeight = ChatArea.Bounds.Height * 0.7;
             UpdateMessageSendButtonState();
         }
 
@@ -990,7 +1025,7 @@ namespace Skymu.Theming
         {
             // TODO: Don't rely on this. Rely on chat width. Also use Width, not ActualWidth. Maybe this is why the thing is laggy?
             MessageWindow.UpdateLayout();
-            if (MessageWindow.ActualWidth <= 720 && MessageWindow.ActualWidth != 0)
+            if (MessageWindow.Bounds.Width <= 720 && MessageWindow.Bounds.Width != 0)
             {
                 SendMsgButton.Text = "";
                 SendMsgButton.Source = sendBtnSmall;
@@ -1055,12 +1090,12 @@ namespace Skymu.Theming
             HandleWindowButtonClick(sender as SliceControl);
         }
 
-        protected void TitleButton_PointerExited(object sender, MouseEventArgs e)
+        protected void TitleButton_PointerExited(object sender, PointerEventArgs e)
         {
             HandleWindowButtonLeave(sender as SliceControl);
         }
 
-        protected void TitleButton_PointerEntered(object sender, MouseEventArgs e)
+        protected void TitleButton_PointerEntered(object sender, PointerEventArgs e)
         {
             HandleWindowButtonEnter(sender as SliceControl);
         }
@@ -1080,7 +1115,7 @@ namespace Skymu.Theming
             HandleWindowDeactivated();
         }
 
-        protected async void TitleBarIcon_PointerPressed(object sender, PointerEventArgs e)
+        protected async void TitleBarIcon_PointerPressed(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
@@ -1092,7 +1127,7 @@ namespace Skymu.Theming
             HandleStatusItemClick(sender as MenuItem, StatusIcon);
         }
 
-        protected void Main_Closing(object sender, CancelEventArgs ev)
+        protected void Main_Closing(object sender, WindowClosingEventArgs ev)
         {
             if (!noCloseEvent)
                 Universal.Hide(ev);
@@ -1179,25 +1214,25 @@ namespace Skymu.Theming
             HandleConversationItems();
         }
 
-        protected void SearchBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        protected void SearchBox_Focused(object sender, GotFocusEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
             RemovePlaceholder(SearchBox);
         }
 
-        protected virtual void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        protected virtual void SearchBox_Unfocused(object sender, RoutedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
-        protected void MessageTextBox_Focused(object sender, KeyboardFocusChangedEventArgs e)
+        protected void MessageTextBox_Focused(object sender, GotFocusEventArgs e)
         {
             RemovePlaceholder(MessageTextBox);
             if (SendMsgButton != null) SendMsgButton.IsEnabled = CheckIfMessageSendable(MessageTextBox);
         }
 
-        protected void MessageTextBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        protected void MessageTextBox_Unfocused(object sender, RoutedEventArgs e)
         {
             CheckIfMTBUnfocused(true);
         }
@@ -1206,16 +1241,16 @@ namespace Skymu.Theming
         {
             if (e.Key != Key.Enter)
                 return;
-            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                 return;
 
             e.Handled = true;
             await SendMessage();
         }
 
-        protected void WindowArea_PointerPressed(object sender, PointerEventArgs e)
+        protected void WindowArea_PointerPressed(object sender, PointerPressedEventArgs e)
         {
-            Keyboard.ClearFocus();
+            FocusManager?.ClearFocus();
         }
 
         protected void MessageTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -1256,23 +1291,6 @@ namespace Skymu.Theming
         #region Ported from SharedServices.cs
 
         private const string TAG_PLACEHOLDER = "PLACEHOLDER";
-        internal void SetPlaceholder(RichTextBox rtb, string text, bool force = false)
-        {
-            if (rtb.Tag as string == TAG_PLACEHOLDER && !force)
-                return;
-
-            var flowDoc = rtb.Document;
-            flowDoc.Blocks.Clear();
-
-            var para = new Paragraph(new Run(text))
-            {
-                Margin = new Thickness(0),
-                Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"],
-            };
-
-            flowDoc.Blocks.Add(para);
-            rtb.Tag = TAG_PLACEHOLDER;
-        }
 
         internal void SetPlaceholder(TextBox tb, string text, bool force = false)
         {
@@ -1282,20 +1300,9 @@ namespace Skymu.Theming
             if (!force && !string.IsNullOrEmpty(tb.Text))
                 return;
 
-            tb.Text = text;
-            tb.Foreground = (SolidColorBrush)Application.Current.Resources["Text.LowContrast"];
             tb.Tag = TAG_PLACEHOLDER;
-        }
-
-        private void RemovePlaceholder(RichTextBox rtb)
-        {
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
-            {
-                var flowDoc = rtb.Document;
-                flowDoc.Blocks.Clear();
-                flowDoc.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
-                rtb.Tag = null;
-            }
+            tb.Text = text;
+            tb.Foreground = GetBrush("Text.LowContrast");
         }
 
         private void RemovePlaceholder(TextBox tb)
@@ -1308,23 +1315,18 @@ namespace Skymu.Theming
             }
         }
 
-        private bool HasAnyContent(RichTextBox rtb)
+        private bool HasAnyContent(TextBox tb)
         {
-            if (rtb?.Document == null)
+            if (tb == null)
                 return false;
 
-            if (rtb.Tag as string == TAG_PLACEHOLDER)
+            if (tb.Tag as string == TAG_PLACEHOLDER)
                 return false;
 
-            string text = new TextRange(
-                rtb.Document.ContentStart,
-                rtb.Document.ContentEnd
-            ).Text;
-
-            return !string.IsNullOrWhiteSpace(text);
+            return !string.IsNullOrWhiteSpace(tb.Text);
         }
 
-        private bool CheckIfMessageSendable(RichTextBox mtb)
+        private bool CheckIfMessageSendable(TextBox mtb)
         {
             if (mtb is null || mtb.Tag as string == TAG_PLACEHOLDER)
             {
@@ -1333,52 +1335,12 @@ namespace Skymu.Theming
             return HasAnyContent(mtb);
         }
 
-        private string ExtractText(RichTextBox mtb)
+        private string ExtractText(TextBox mtb)
         {
-            var sb = new StringBuilder();
-            var flow_document = mtb.Document;
+            if (mtb.Tag as string == TAG_PLACEHOLDER)
+                return string.Empty;
 
-            bool first_paragraph = true;
-
-            foreach (var block in flow_document.Blocks)
-            {
-                if (block is Paragraph paragraph)
-                {
-                    if (!first_paragraph)
-                        sb.Append(Environment.NewLine);
-
-                    first_paragraph = false;
-
-                    foreach (var inline in paragraph.Inlines)
-                    {
-                        if (inline is Run run)
-                        {
-                            sb.Append(run.Text);
-                        }
-                        else if (inline is LineBreak)
-                        {
-                            sb.Append(Environment.NewLine);
-                        }
-                        else if (inline is InlineUIContainer container)
-                        {
-                            if (container.Tag is string emojiFilename)
-                            {
-                                var emojiKey = EmojiDictionary
-                                    .Map.FirstOrDefault(kvp => kvp.Value == emojiFilename)
-                                    .Key;
-
-                                if (!string.IsNullOrEmpty(emojiKey))
-                                {
-                                    string unicode_emoji = SharedServices.ConvertHexKeyToUnicode(emojiKey);
-                                    sb.Append(unicode_emoji);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return sb.ToString();
+            return mtb.Text ?? string.Empty;
         }
 
         private Bitmap GenerateTitlebarButtonImage(string name, Enumerations.WindowChrome chrome)
@@ -1415,9 +1377,8 @@ namespace Skymu.Theming
         private void OpenStatusMenu(StackPanel statusArea)
         {
             var menu = (ContextMenu)statusArea.Resources["StatusMenu"];
-            menu.PlacementTarget = statusArea;
-            menu.Placement = Avalonia.Controls.Primitives.PlacementMode.Bottom;
-            menu.IsOpen = true;
+            menu.Placement = PlacementMode.Bottom;
+            menu.Open(statusArea);
         }
 
         private void ClearTreeSelection(TreeView tree)
@@ -1435,8 +1396,8 @@ namespace Skymu.Theming
             if (!Settings.SaveWindowPosition) return;
 
             Settings.ConvListWidth = sidebar.ActualWidth;
-            Settings.X = window.Left;
-            Settings.Y = window.Top;
+            Settings.X = window.Position.X;
+            Settings.Y = window.Position.Y;
             Settings.Height = window.Height;
             Settings.Width = window.Width;
             Settings.Maximized = window.WindowState == WindowState.Maximized;
@@ -1506,7 +1467,7 @@ namespace Skymu.Theming
             Universal.ShowMessage(
                 "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
                 "Failed to set connection status",
-				SkinnedWindow.IconType.Error
+                SkinnedWindow.IconType.Error
             );
         }
 
@@ -1516,7 +1477,7 @@ namespace Skymu.Theming
                 return null;
 
             TreeViewItem container =
-                parent.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                parent.ContainerFromItem(item) as TreeViewItem;
 
             if (container != null)
                 return container;
@@ -1524,7 +1485,7 @@ namespace Skymu.Theming
             foreach (object child in parent.Items)
             {
                 TreeViewItem parentContainer =
-                    parent.ItemContainerGenerator.ContainerFromItem(child) as TreeViewItem;
+                    parent.ContainerFromItem(child) as TreeViewItem;
 
                 TreeViewItem result = GetContainerFromItem(parentContainer, item);
                 if (result != null)
@@ -1547,9 +1508,9 @@ namespace Skymu.Theming
             {
                 var item = new MenuItem()
                 {
-                    Header = extra.title,
-                    ToolTip = extra.description
+                    Header = extra.title
                 };
+                ToolTip.SetTip(item, extra.description);
                 item.Click += (_, __) => extra.onRun();
                 items.Add(item);
             }
@@ -1570,8 +1531,7 @@ namespace Skymu.Theming
 
             string message_body = message ?? ExtractText(MessageTextBox);
 
-            MessageTextBox.Document.Blocks.Clear();
-            MessageTextBox.Document.Blocks.Add(new Paragraph { Margin = new Thickness(0) });
+            MessageTextBox.Text = string.Empty;
             CheckIfMTBUnfocused();
 
             await vmodel.SendMessage(message_body);
@@ -1579,7 +1539,7 @@ namespace Skymu.Theming
 
         private void CheckIfMTBUnfocused(bool force = false)
         {
-            if (!MessageTextBox.IsKeyboardFocused || force)
+            if (!MessageTextBox.IsFocused || force)
             {
                 if (!HasAnyContent(MessageTextBox))
                 {
@@ -1593,7 +1553,7 @@ namespace Skymu.Theming
 
         #region Calls
 
-        private Frame frame;
+        private ContentControl frame;
         private CallScreen screen;
         private CallScreen.LocationChangeEventArgs location;
         protected CallScreen.LocationChangeEventArgs initial_location =
@@ -1625,15 +1585,15 @@ namespace Skymu.Theming
                 CBR_ORIGINAL_HEIGHT = ChatButtonRow.Height.Value;
             SIDEBAR_ORIGINAL_WIDTH = SidebarColumn.Width.Value;
             TopbarWindowRow.MinHeight = 250;
-            TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
-            TopbarWindowRow.Height = new GridLength(ChatArea.ActualHeight * 0.7); // TODO: Retain this across reboots and sessions
+            TopbarWindowRow.MaxHeight = ChatArea.Bounds.Height * 0.7;
+            TopbarWindowRow.Height = new GridLength(ChatArea.Bounds.Height * 0.7); // TODO: Retain this across reboots and sessions
             ChatButtonRow.Height = new GridLength(0);
 
             screen = new CallScreen(conversation, initial_location, is_answering_call);
             screen.HangUpRequested += OnHangUp;
             screen.LocationChangeRequested += OnLocationChanged;
-            frame = new Frame();
-            frame.Navigate(screen);
+            frame = new ContentControl();
+            frame.Content = screen;
             SetCallPageLocation(initial_location);
 
             await screen.StartCall(false);
@@ -1717,10 +1677,10 @@ namespace Skymu.Theming
                 if (location.ChatToggle)
                 {
                     if (TWR_HEIGHT_CALLS_CHAT == default)
-                        TWR_HEIGHT_CALLS_CHAT = ChatArea.ActualHeight * 0.7;
+                        TWR_HEIGHT_CALLS_CHAT = ChatArea.Bounds.Height * 0.7;
                     TopbarWindowRow.Height = new GridLength(TWR_HEIGHT_CALLS_CHAT);
                     MessageWindowRow.Height = new GridLength(1, GridUnitType.Star);
-                    TopbarWindowRow.MaxHeight = ChatArea.ActualHeight * 0.7;
+                    TopbarWindowRow.MaxHeight = ChatArea.Bounds.Height * 0.7;
                     ChatTopBarSplitter.IsVisible = true;
                     ChatTopbarSplitterRow.MaxHeight = int.MaxValue;
                 }
@@ -1800,22 +1760,20 @@ namespace Skymu.Theming
 
         private void HandleConversationItems()
         {
-            ConversationItemsList.ApplyTemplate();
             if (_conversationScrollViewer != null)
                 _conversationScrollViewer.ScrollChanged -= ConversationScrollChanged;
 
             _conversationScrollViewer =
-                ConversationItemsList.Template.FindName("ScrollViewer", ConversationItemsList)
-                as ScrollViewer;
+                ConversationItemsList.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
             _conversationScrollViewer.ScrollChanged += ConversationScrollChanged;
         }
 
         private void ConversationScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (e.ExtentHeightChange == 0)
+            if (e.ExtentDelta.Y == 0)
                 _userScrolledUp =
-                    _conversationScrollViewer.VerticalOffset
-                    < _conversationScrollViewer.ScrollableHeight - 10;
+                    _conversationScrollViewer.Offset.Y
+                    < _conversationScrollViewer.Extent.Height - _conversationScrollViewer.Viewport.Height - 10;
         }
 
         #endregion
@@ -1832,9 +1790,9 @@ namespace Skymu.Theming
                     Height = 28,
                     Margin = new Thickness(1),
                     Background = Brushes.Transparent,
-                    Cursor = Cursors.Hand,
-                    ToolTip = SharedServices.ConvertHexKeyToUnicode(emojiKey),
+                    Cursor = new Cursor(StandardCursorType.Hand),
                 };
+                ToolTip.SetTip(border, SharedServices.ConvertHexKeyToUnicode(emojiKey));
                 try
                 {
                     var sliceControl = Formatter.MakeEmoji(emojiFilename);
@@ -1877,23 +1835,18 @@ namespace Skymu.Theming
             RemovePlaceholder(MessageTextBox);
 
             string emojiFilename = sliceControlInside.Tag as string;
-            var sliceControl = Formatter.MakeEmoji(emojiFilename);
+            var emojiKey = EmojiDictionary
+                .Map.FirstOrDefault(kvp => kvp.Value == emojiFilename)
+                .Key;
+            if (string.IsNullOrEmpty(emojiKey)) return;
 
-            if (!MessageTextBox.Selection.IsEmpty)
-                MessageTextBox.Selection.Text = string.Empty;
+            int start = Math.Min(MessageTextBox.SelectionStart, MessageTextBox.SelectionEnd);
+            int length = Math.Abs(MessageTextBox.SelectionEnd - MessageTextBox.SelectionStart);
+            string text = MessageTextBox.Text ?? string.Empty;
+            string insert = SharedServices.ConvertHexKeyToUnicode(emojiKey) + " ";
 
-            TextPointer caret = MessageTextBox.CaretPosition;
-            if (!caret.IsAtInsertionPosition)
-                caret = caret.GetInsertionPosition(LogicalDirection.Forward);
-
-            var container = new InlineUIContainer(sliceControl, caret)
-            {
-                BaselineAlignment = BaselineAlignment.Center,
-                Tag = emojiFilename,
-            };
-            var spaceRun = new Run(" ");
-            container.SiblingInlines.InsertAfter(container, spaceRun);
-            MessageTextBox.CaretPosition = spaceRun.ElementEnd;
+            MessageTextBox.Text = text.Remove(start, length).Insert(start, insert);
+            MessageTextBox.CaretIndex = start + insert.Length;
             MessageTextBox.Focus();
             if (SendMsgButton != null) SendMsgButton.IsEnabled = CheckIfMessageSendable(MessageTextBox);
         }
@@ -1904,6 +1857,7 @@ namespace Skymu.Theming
 
         private void RefreshExtras()
         {
+            ExtrasMenu.ItemsSource = null;
             ExtrasMenu.Items.Clear();
             ExtrasMenu.ItemsSource = GetExtras(GetExtrasMenuItem);
         }
