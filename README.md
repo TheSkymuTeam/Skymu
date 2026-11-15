@@ -14,11 +14,7 @@ Skymu is a modern multi-platform IM client that looks like classic versions of S
 ![Client, calling](Images/skymu-v0.4-call.png) 
 
 # Build Guide
-For this guide, you will need Git for Windows, Visual Studio 2019 (or newer) and NSIS 3 (or newer). Support will not be provided if older build tools are used. 
-
-* [Download Git for Windows](https://git-scm.com/install/windows) and install. For the default editor, we recommend you select Notepad (or Notepad++, etc. if you have it) instead of Vim, unless of course you feel like dedicating a few days to learning how to use Vim. Stick with the default options for the other things the installer asks you.
-* [Download Visual Studio 2026](https://aka.ms/vs/18/Stable/vs_community.exe) (recommended) or [download Visual Studio 2019](https://aka.ms/vs/16/release/vs_community.exe). Select the ".NET desktop development" workload in the installer.
-* [Download NSIS](https://sourceforge.net/projects/nsis/files/latest/download)
+For this guide, you will need a pc
 
 A plugin development guide is available on the website: https://www.skymu.app/wiki/yggdrasil
 
@@ -53,7 +49,7 @@ If you are encountering conflicts after making your changes, click "Rebuild Solu
 <img width="351" height="96" alt="image" src="https://github.com/user-attachments/assets/a3dc5ce0-c6aa-4454-ac6d-b04f790d3335" />
 
 ## Installer
-Select the "Release" configuration in the action bar and build Skymu in Visual Studio.
+Select the "Release" configuration in the action bar and build Skymu in something idk
 
 <img width="207" height="137" alt="image" src="https://github.com/user-attachments/assets/c42e4a0c-9341-4e9c-900c-1c07a18df647" />
 
