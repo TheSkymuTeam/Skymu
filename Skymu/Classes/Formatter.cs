@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -19,10 +19,11 @@ using System.Text.RegularExpressions;
 using Avalonia;
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
 using Avalonia.Controls; // Standard Textblock with unicode emoji in tahoma
-using System.Windows.Documents;
+using Avalonia.Controls.Documents;
 using Avalonia.Media;
-using Avalonia.Media.Effects;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
+using Avalonia.Layout;
 using System.Xml.Linq;
 using Markdig;
 using Markdig.Extensions.Mathematics;
@@ -37,7 +38,8 @@ using MarkdigInline = Markdig.Syntax.Inlines.Inline;
 using MdTable = Markdig.Extensions.Tables.Table;
 using MdTableCell = Markdig.Extensions.Tables.TableCell;
 using MdTableRow = Markdig.Extensions.Tables.TableRow;
-using WpfInline = System.Windows.Documents.Inline;
+using WpfInline = Avalonia.Controls.Documents.Inline;
+using static QRCoder.PayloadGenerator;
 
 namespace Skymu.Formatting
 {
@@ -126,8 +128,10 @@ namespace Skymu.Formatting
                 return textBlock;
             }
 
-            if (style != null)
-                textBlock.Style = style;
+            if (style != null) {
+                textBlock.Styles.Clear();
+                textBlock.Styles.Add(style);
+            }
 
             // parse the input into a Markdig AST and walk it to produce WPF inlines
             // then add all the emoji-fied, linked, and markdown'ed inlines to the textblock
@@ -183,19 +187,19 @@ namespace Skymu.Formatting
                 CornerRadius = new CornerRadius(0),
                 VerticalAlignment = VerticalAlignment.Center,
 
-                Background = new LinearGradientBrush(
-                    ((SolidColorBrush)BrushesStatic.CodeBackgroundTop).Color,
-                    ((SolidColorBrush)BrushesStatic.CodeBackgroundBottom).Color,
-                    new Point(0, 0),
-                    new Point(0, 1)
-                ),
+                Background = new LinearGradientBrush { StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative), EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
+                GradientStops = new GradientStops {
+                                        new GradientStop(((SolidColorBrush)BrushesStatic.CodeBackgroundTop).Color, 0),
+                                        new GradientStop(((SolidColorBrush)BrushesStatic.CodeBackgroundBottom).Color, 1)
+                                    }
+                }, // TODO : Relative points ? WTF Idk what it mean, please see if it's correct . -SK
 
                 Effect = new DropShadowEffect
                 {
                     Color = Colors.Gray,
                     BlurRadius = 3.5,
-                    ShadowDepth = 0.5,
-                    Direction = 270,
+                    OffsetX = 0,
+                    OffsetY = 0.5,
                     Opacity = 0.5,
                 },
 
@@ -211,7 +215,8 @@ namespace Skymu.Formatting
                     {
                         Color = Colors.Black,
                         BlurRadius = 2,
-                        ShadowDepth = 0.5,
+                        OffsetX = 0,
+                        OffsetY = 0.5,
                         Opacity = 0.15,
                     },
                 },
@@ -225,7 +230,7 @@ namespace Skymu.Formatting
             {
                 case HeadingBlock heading:
                     {
-                        var span = new Span { FontWeight = FontWeights.Bold };
+                        var span = new Span { FontWeight = FontWeight.Bold };
 
                         switch (heading.Level)
                         {
@@ -336,7 +341,7 @@ namespace Skymu.Formatting
 
                 case ThematicBreakBlock _:
                     {
-                        var line = new System.Windows.Shapes.Rectangle
+                        var line = new Avalonia.Controls.Shapes.Rectangle
                         {
                             Height = 1,
                             Fill = Brushes.Gray,
@@ -387,7 +392,7 @@ namespace Skymu.Formatting
                             }
 
                                 if (isHeaderRow)
-                                    tb.FontWeight = FontWeights.Bold;
+                                    tb.FontWeight = FontWeight.Bold;
 
                                 Grid.SetRow(tb, rowIndex);
                                 Grid.SetColumn(tb, colIndex);
@@ -436,11 +441,11 @@ namespace Skymu.Formatting
                         {
                             if (count >= 3)
                             {
-                                span.FontWeight = FontWeights.Bold;
+                                span.FontWeight = FontWeight.Bold;
                                 span.FontStyle = FontStyle.Italic;
                             }
                             else if (count == 2)
-                                span.FontWeight = FontWeights.Bold;
+                                span.FontWeight = FontWeight.Bold;
                             else
                                 span.FontStyle = FontStyle.Italic;
                         }
@@ -491,10 +496,10 @@ namespace Skymu.Formatting
                                 Uri.TryCreate(display, UriKind.Absolute, out Uri displayUri) // thanks epicness
                                 && displayUri.Host != uri.Host;
                             string label = string.IsNullOrEmpty(display) ? url : display;
-                            var hyperlink = new Hyperlink(new Run(label)) { NavigateUri = uri, ToolTip = uri };
-                            hyperlink.RequestNavigate += (s, e) =>
+                            var hyperlink = new HyperlinkButton() { Content = uri }; // TODO : Find a way to add ", ToolTip = uri" back in there . -SK
+                            hyperlink.Click += (s, e) =>
                             {
-                                Universal.OpenURL(e.Uri.AbsoluteUri, true);
+                                Universal.OpenURL(uri.AbsoluteUri, true);
                             };
                             inlines.Add(hyperlink);
                             if (displayLooksLikeUrl)
@@ -603,12 +608,13 @@ namespace Skymu.Formatting
                         string url = nextLink.Groups[1].Value.TrimEnd(punctuation); // Standard links
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            var hyperlink = new Hyperlink(new Run(url)) { NavigateUri = uri, ToolTip = uri };
-                            hyperlink.RequestNavigate += (s, e) =>
+                            var hyperlink = new HyperlinkButton() { Content = uri }; // TODO : Do tooltip stuff, adding uri as tooltip if Avalonia don't do it itself, check the rest plz . -SK
+                            hyperlink.Click += (s, e) =>
                             {
-                                Universal.OpenURL(e.Uri.AbsoluteUri);
+                                Universal.OpenURL(uri.AbsoluteUri);
                             };
-                            inlines.Add(hyperlink);
+                            // inlines.Add(hyperlink); // TODO : Check please, i will do turbo carabistouilles là to make this work, let's pray Shrek so it work . -SK
+                            inlines.Add(new InlineUIContainer(hyperlink)); // Uhhhh, let's hope it will work .
                         }
                         else
                         {
@@ -655,9 +661,9 @@ namespace Skymu.Formatting
                         end = text.Length;
                     }
 
-                    var hyperlink = new Hyperlink(new Run(clickableText));
+                    var hyperlink = new HyperlinkButton() { Content = clickableText };
                     // TODO: handle clickable type actions if needed
-                    inlines.Add(hyperlink);
+                    inlines.Add(new InlineUIContainer(hyperlink)); // TODO : Check this thingy to see if it show correctly . -SK
 
                     position = end;
                     continue;
@@ -698,7 +704,7 @@ namespace Skymu.Formatting
                 AnimationFps = Settings.EmojiFps,
             };
 
-            RenderOptions.SetBitmapScalingMode(sliceControl, BitmapScalingMode.NearestNeighbor);
+            RenderOptions.SetBitmapInterpolationMode(sliceControl, BitmapInterpolationMode.None);
             RenderOptions.SetEdgeMode(sliceControl, EdgeMode.Aliased);
             return sliceControl;
         }
@@ -818,7 +824,7 @@ namespace Skymu.Formatting
                         {
                             case "b":
                             case "center": // This is bad - but since a center is only used with `<center>text</center>`, nothing surrounding it, it works. Devs, please remember to center it.
-                                span = new Span { FontWeight = FontWeights.Bold };
+                                span = new Span { FontWeight = FontWeight.Bold };
                                 ProcessLangNode(elem.Value, span.Inlines, args, ref argi);
                                 inlines.Add(span);
                                 break;
@@ -831,7 +837,7 @@ namespace Skymu.Formatting
                                 inlines.Add(span);
                                 break;
                             case "a":
-                                var hyperlink = new Hyperlink(new Run(elem.Value));
+                                var hyperlink = new HyperlinkButton() { Content = elem.Value };
                                 var href = elem.Attribute("href")?.Value;
                                 if (href != null)
                                 {
@@ -862,10 +868,10 @@ namespace Skymu.Formatting
                                     else if (Uri.TryCreate(href, UriKind.Absolute, out Uri uri))
                                     {
                                         hyperlink.NavigateUri = uri;
-                                        hyperlink.RequestNavigate += (s, e) =>
-                                            Universal.OpenURL(e.Uri.AbsoluteUri, true);
+                                        hyperlink.Click += (s, e) =>
+                                            Universal.OpenURL(uri.AbsoluteUri, true);
                                     }
-                                    hyperlink.ToolTip = href;
+                                    // hyperlink.ToolTip = href; // TODO : Same tooltip thingy as the other ... -SK
                                 }
                                 else
                                 {
@@ -873,7 +879,7 @@ namespace Skymu.Formatting
                                     if (name != null)
                                     {
                                         var uri = $"{Universal.NAME.ToLowerInvariant()}:#{name}";
-                                        hyperlink.ToolTip = uri;
+                                        // hyperlink.ToolTip = uri; // TODO : Same tooltip thingy as the other ... -SK
                                         hyperlink.Click += (s, e) => Universal.URIHandler(uri);
                                     }
                                 }
