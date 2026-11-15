@@ -6,8 +6,7 @@
       xmlns:local="clr-namespace:Skymu.Forms.Pages"
       mc:Ignorable="d" 
       Classes="Page"
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Dialog">
+      d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <ContentControl x:Name="BodyCC" IsVisible="False" />
         <ScrollViewer

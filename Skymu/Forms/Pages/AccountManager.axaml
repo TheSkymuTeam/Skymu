@@ -16,7 +16,6 @@
     x:Class="Skymu.Forms.Pages.AccountManager"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Accounts"
     Width="500"
     Height="275"
     Background="Transparent"

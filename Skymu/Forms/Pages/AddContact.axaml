@@ -23,7 +23,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:Skymu.UserControls"
-    Title="Add a contact"
     d:Background="#FFFFFF"
     FontFamily="Tahoma"
     Foreground="{DynamicResource Text.VeryHighContrast}"
@@ -71,7 +70,7 @@
                     TextSize="11" />
             </StackPanel>
         </DataTemplate>
-    </Page.Resources>
+    </UserControl.Resources>
     <TabControl
         x:Name="MainTabControl"
         Width="650"

@@ -34,7 +34,7 @@
 
     <UserControl.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
-    </Page.Resources>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>

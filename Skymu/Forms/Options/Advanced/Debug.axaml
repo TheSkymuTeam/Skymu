@@ -33,7 +33,7 @@
 
     <UserControl.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
-    </Page.Resources>
+    </UserControl.Resources>
 
     <Grid Margin="15,20,15,35">
         <Grid.RowDefinitions>

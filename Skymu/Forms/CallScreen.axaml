@@ -44,7 +44,7 @@
             <Setter Property="HoverTransition" Value="True" />
             <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
         </Style>
-    </Page.Resources>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

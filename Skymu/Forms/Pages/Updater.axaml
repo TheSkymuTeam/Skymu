@@ -19,13 +19,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Skymu.Forms.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Updater"
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
     Classes="Page">
-
-
     <StackPanel
         Height="210"
         VerticalAlignment="Top"

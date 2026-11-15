@@ -38,7 +38,7 @@
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
-    </Page.Resources>
+    </UserControl.Resources>
 
     <ScrollViewer Margin="10">
         <StackPanel Orientation="Vertical">

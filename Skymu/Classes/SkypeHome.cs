@@ -28,6 +28,7 @@ using System.Web;
 using Skymu.Forms;
 using Avalonia;
 using Avalonia.Threading;
+using Avalonia.Controls;
 using Yggdrasil.Models;
 
 namespace Skymu.WebServices
@@ -38,7 +39,7 @@ namespace Skymu.WebServices
         private static User _user;
         private static List<DirectMessage> _contacts;
 
-        public static async Task<bool> Generate(WebBrowser browser, User user, List<DirectMessage> contacts)
+        public static async Task<bool> Generate(NativeWebView browser, User user, List<DirectMessage> contacts)
         {
             browser.IsVisible = false;
             _browser = browser;
