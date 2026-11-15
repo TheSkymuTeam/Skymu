@@ -13,7 +13,7 @@
 
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using Yggdrasil;
 using Skymu.Forms.Pages;
 
@@ -35,7 +35,7 @@ namespace Skymu.Forms.OptionPages.General
                 return;
 
             Dialog dialog = new Dialog(
-                                    type: WindowBase.IconType.Question,
+                                    type: SkinnedWindow.IconType.Question,
                                     content: "Changing this option requires restarting Skymu to apply properly.",
                                     header: "Would you like to restart Skymu?",
                                     brText: "No",

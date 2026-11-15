@@ -14,7 +14,7 @@
 using Skymu.Preferences;
 using System.ComponentModel;
 using System.Text.Json;
-using System.Windows.Controls;
+using Avalonia.Controls;
 
 namespace Skymu.Forms
 {

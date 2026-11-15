@@ -135,7 +135,7 @@ SanitizeFolderName(user.Identifier)
                     {
                         Dialog dlg = null;
                         dlg = new Dialog(
-                            WindowBase.IconType.Question,
+                            SkinnedWindow.IconType.Question,
                             $"{Universal.NAME} found a database associated with this user account, but it was made by a newer version of the database manager (v{LastUsedVersion}) " +
                             $"than the existing one (v{Version}).\n\nWould you like to delete the database and start fresh, or download the latest version of {Universal.NAME}?",
                             "Purge database?",

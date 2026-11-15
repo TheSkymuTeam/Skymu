@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Skymu.Forms;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Threading;
 using Yggdrasil.Models;
 
 namespace Skymu.WebServices
@@ -82,7 +82,7 @@ namespace Skymu.WebServices
                 // C:\path\to\Home\index.html
                 Debug.WriteLine($"[SKYPE-HOME] Navigating to local path: {home_index}");
                 _browser.Navigate(new Uri(home_index));
-            } 
+            }
 
             return true; // home has been generated
         }
@@ -361,12 +361,11 @@ namespace Skymu.WebServices
                     ads = "[]";
                 }
 
-                Application.Current.Dispatcher.BeginInvoke(
-                    new Action(() =>
-                    {
-                        Home.InvokeEval(
-                            $"window.OnAdsLoaded({JsonSerializer.Serialize(ads)});");
-                    }));
+                Dispatcher.UIThread.Post(() =>
+                {
+                    Home.InvokeEval(
+                    $"window.OnAdsLoaded({JsonSerializer.Serialize(ads)});");
+                });
             });
         }
     }

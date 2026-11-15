@@ -19,7 +19,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Documents;
 using Yggdrasil;
 using Yggdrasil.Models;
@@ -38,7 +38,7 @@ namespace Skymu.Forms.Pages
         // event PropertyChangedEventHandler PropertyChanged; // seems to be unused?
         public ObservableCollection<Metadata> FoundList { get; private set; } =
             new ObservableCollection<Metadata>() { new User("Walter White", "w.white", "3621", "Cooking") };
-        WindowBase window;
+        SkinnedWindow window;
 
         public AddContact()
         {
@@ -51,7 +51,7 @@ namespace Skymu.Forms.Pages
         public void ShowWindow()
         {
             lmg = Universal.Plugin as IListManagement;
-            window = new WindowBase(this)
+            window = new SkinnedWindow(this)
             {
                 MinWidth = 653,
                 MinHeight = 515,
@@ -60,7 +60,7 @@ namespace Skymu.Forms.Pages
                 ResizeMode = ResizeMode.CanResize,
                 SizeToContent = SizeToContent.Manual,
                 Title = Settings.BrandingName + "™ - " + Universal.Lang["sADDADDAFRIEND_SCR1_CAPTION"],
-                HeaderIcon = WindowBase.IconType.ContactAdd,
+                HeaderIcon = SkinnedWindow.IconType.ContactAdd,
                 HeaderText = Universal.Lang["sADDADDAFRIEND_SCR1_HEADER"],
                 ButtonLeftText = Universal.Lang["sZAPBUTTON_ADDCONTACT"],
                 ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"],

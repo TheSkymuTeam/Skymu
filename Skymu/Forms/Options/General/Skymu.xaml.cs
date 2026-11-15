@@ -14,7 +14,7 @@
 using Skymu.Enumerations;
 using Skymu.Preferences;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using OmegaAOL.Bifrost.Tls;
 
 namespace Skymu.Forms.OptionPages.General

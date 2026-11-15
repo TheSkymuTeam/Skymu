@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Threading;
 using Skymu.Forms;
 using Skymu.Helpers;
 using Skymu.Sounds;
@@ -21,7 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Yggdrasil;
 using Yggdrasil.Models;
 
@@ -276,7 +277,7 @@ namespace Skymu.Skype6
             {
                 Universal.CallPlugin.IncomingCallTube += (sender, e) =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         IncomingCall ic = new IncomingCall(e);
                         EventHandler handler = null;

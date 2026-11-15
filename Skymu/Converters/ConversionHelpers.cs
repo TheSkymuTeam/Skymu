@@ -14,11 +14,11 @@
 using Skymu.Helpers;
 using Skymu.Preferences;
 using System;
-using System.Windows.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using System.Windows;
-using System.Windows.Media;
+using Avalonia.Media;
 using System.ComponentModel;
 
 namespace Skymu.Converters

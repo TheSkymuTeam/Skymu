@@ -15,8 +15,8 @@ using Skymu.Helpers;
 using System;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Yggdrasil.Models;
 
 namespace Skymu.Infrastructure

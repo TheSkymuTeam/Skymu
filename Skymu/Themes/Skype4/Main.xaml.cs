@@ -11,12 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Threading;
 using Skymu.Forms;
 using Skymu.Preferences;
 using Skymu.Theming;
 using System;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Input;
 
 namespace Skymu.Skype4
@@ -148,7 +149,7 @@ namespace Skymu.Skype4
             {
                 Universal.CallPlugin.IncomingCallTube += (sender, e) =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         IncomingCall ic = new IncomingCall(e);
                         EventHandler handler = null;

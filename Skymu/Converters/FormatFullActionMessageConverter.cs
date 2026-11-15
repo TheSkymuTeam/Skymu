@@ -15,10 +15,10 @@ using Skymu.Formatting;
 using System;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia.Media;
 using Yggdrasil.Models;
 
 namespace Skymu.Converters

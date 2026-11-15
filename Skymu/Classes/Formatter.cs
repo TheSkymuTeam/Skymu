@@ -18,11 +18,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
-using System.Windows.Controls; // Standard Textblock with unicode emoji in tahoma
+using Avalonia.Controls; // Standard Textblock with unicode emoji in tahoma
 using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
+using Avalonia.Media.Imaging;
 using System.Xml.Linq;
 using Markdig;
 using Markdig.Extensions.Mathematics;

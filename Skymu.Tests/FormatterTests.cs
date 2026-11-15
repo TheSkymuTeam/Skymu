@@ -19,9 +19,9 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Documents;
-using System.Windows.Media;
+using Avalonia.Media;
 using Skymu.Formatting;
 using Xunit;
 

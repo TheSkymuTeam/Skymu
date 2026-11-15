@@ -8,7 +8,7 @@ using Avalonia.Threading;
 
 namespace Skymu.Avalonia
 {
-    internal static class AvaloniaHelpers
+    internal static class AHelpers
     {
         static IClassicDesktopStyleApplicationLifetime Desktop =>
             Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;

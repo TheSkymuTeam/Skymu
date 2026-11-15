@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Data;
 
 namespace Fluent.Controls

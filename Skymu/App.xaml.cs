@@ -38,8 +38,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using System.Windows.Threading;
 using Yggdrasil;
 using Yggdrasil.Bottles;
@@ -129,7 +129,7 @@ namespace Skymu
             object sender,
             DialogBottle e,
             string prefix,
-            WindowBase.IconType itype
+            SkinnedWindow.IconType itype
         )
         {
             Dispatcher.UIThread.Post(() =>
@@ -143,7 +143,7 @@ namespace Skymu
                     blText: "Copy to clipboard",
                     blAction: async () =>
                     {
-                        await AvaloniaHelpers.SetClipboardText(e.CopyToClipboardText);
+                        await AHelpers.SetClipboardText(e.CopyToClipboardText);
                         ShowMessage("Copied to clipboard.");
                     }
                 ).Show();
@@ -155,13 +155,13 @@ namespace Skymu
             switch (e.Type)
             {
                 case DialogType.Warning:
-                    PluginPopup(sender, e, "Warning from plugin ", WindowBase.IconType.Information);
+                    PluginPopup(sender, e, "Warning from plugin ", SkinnedWindow.IconType.Information);
                     break;
                 case DialogType.Error:
-                    PluginPopup(sender, e, "Error in plugin ", WindowBase.IconType.Error);
+                    PluginPopup(sender, e, "Error in plugin ", SkinnedWindow.IconType.Error);
                     break;
                 case DialogType.Information:
-                    PluginPopup(sender, e, "Message from plugin ", WindowBase.IconType.Information);
+                    PluginPopup(sender, e, "Message from plugin ", SkinnedWindow.IconType.Information);
                     break;
                 case DialogType.Choice:
                     Current.Dispatcher.BeginInvoke(
@@ -169,7 +169,7 @@ namespace Skymu
                             delegate
                             {
                                 Dialog dialog = new Dialog(
-                                    type: WindowBase.IconType.Information,
+                                    type: SkinnedWindow.IconType.Information,
                                     content: e.Message,
                                     header: ((ICore)sender).Name + " requests your choice",
                                     brText: Lang["sF_CONFIRM_NO_BTN"],
@@ -450,7 +450,7 @@ namespace Skymu
             {
                 string brand = Settings.BrandingName;
                 Dialog dialog = new Dialog(
-                    WindowBase.IconType.Question,
+                    SkinnedWindow.IconType.Question,
                     Lang["sQUIT_PROMPT"],
                     Lang["sQUIT_PROMPT_CAP"],
                     Lang["sQUIT_PROMPT_TITLE"],
@@ -498,9 +498,9 @@ namespace Skymu
         {
             string brand = Settings.BrandingName;
             Forms.Pages.ErrorWindow page = new Forms.Pages.ErrorWindow(ex.ToString());
-            WindowBase frame = new WindowBase(page)
+            SkinnedWindow frame = new SkinnedWindow(page)
             {
-                HeaderIcon = WindowBase.IconType.Crash,
+                HeaderIcon = SkinnedWindow.IconType.Crash,
                 HeaderText = "That wasn't supposed to happen...",
                 Title = brand + " Error"
             };
@@ -514,7 +514,7 @@ namespace Skymu
         public static void ShowMessage(
             string content,
             string title = null,
-            WindowBase.IconType icon = WindowBase.IconType.Information
+            SkinnedWindow.IconType icon = SkinnedWindow.IconType.Information
         )
         {
             if (title is null) title = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
@@ -531,7 +531,7 @@ namespace Skymu
         public static void NotImplemented(string feature)
         {
             new Dialog(
-                WindowBase.IconType.Information,
+                SkinnedWindow.IconType.Information,
                 feature + " hasn't been added to " + Settings.BrandingName + " yet.",
                 "Feature not implemented",
                 null,
@@ -586,7 +586,7 @@ namespace Skymu
                     case "NativeMenuBar":
                     case "UseSystemCulture":
                         Dialog dialog = new Dialog(
-                                   type: WindowBase.IconType.Question,
+                                   type: SkinnedWindow.IconType.Question,
                                    content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
                                    header: "Restart " + Settings.BrandingName + "?",
                                    brText: Lang["sF_CONFIRM_NO_BTN"],
@@ -688,7 +688,7 @@ namespace Skymu
                     return;
                 }
                 Dialog dialog = new Dialog(
-                type: notWebpage ? WindowBase.IconType.Information : WindowBase.IconType.Question,
+                type: notWebpage ? SkinnedWindow.IconType.Information : SkinnedWindow.IconType.Question,
                 content: notWebpage ?
                 "You've clicked on an inline link that does not point to a webpage, Gopher site, or FTP/SFTP server:\n" + url + "\n\nThis is most likely a harmless custom protocol registered " +
                 "by a program you have installed, but it could also be an attempt to trick you into running malicious code that compromises the security of your " +

@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using Skymu.Avalonia;
 
 namespace Skymu.Forms.Pages
@@ -17,7 +17,7 @@ namespace Skymu.Forms.Pages
 
         public async void CopyToClipboard()
         {
-            await AvaloniaHelpers.SetClipboardText(DetailsBox.Text);
+            await AHelpers.SetClipboardText(DetailsBox.Text);
         }
     }
 }

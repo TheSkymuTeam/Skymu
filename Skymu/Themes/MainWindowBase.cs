@@ -30,13 +30,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Documents;
 using Skymu.WebServices;
 using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia.Media;
 using System.Windows.Media.Effects;
-using System.Windows.Media.Imaging;
+using Avalonia.Media.Imaging;
 using System.Windows.Shell;
 using Skymu.Native.Windows;
 using Skymu.Sounds;
@@ -1477,7 +1477,7 @@ namespace Skymu.Theming
             Universal.ShowMessage(
                 "Couldn't find the MenuItem that equals to sender from MenuStatusHolder.Items",
                 "Failed to set connection status",
-                WindowBase.IconType.Error
+				SkinnedWindow.IconType.Error
             );
         }
 

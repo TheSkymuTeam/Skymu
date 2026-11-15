@@ -13,7 +13,7 @@
 
 using System;
 using System.Windows;
-using System.Windows.Media;
+using Avalonia.Media;
 using System.Windows.Media.Effects;
 
 namespace Skymu.Shaders

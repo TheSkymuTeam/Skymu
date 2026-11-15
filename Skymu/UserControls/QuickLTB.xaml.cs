@@ -13,7 +13,7 @@
 
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
 

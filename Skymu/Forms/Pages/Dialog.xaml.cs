@@ -15,7 +15,7 @@ using Skymu.Preferences;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 
 namespace Skymu.Forms.Pages
 {
@@ -26,12 +26,12 @@ namespace Skymu.Forms.Pages
     public partial class Dialog : Page
     {
         // The frame window
-        public WindowBase window;
+        public SkinnedWindow window;
         public string TextBoxContent { get; private set; }
 
         #region Constructor
         public Dialog(
-    WindowBase.IconType type,
+    SkinnedWindow.IconType type,
     string content,
     string header,
     string title = null,
@@ -53,7 +53,7 @@ namespace Skymu.Forms.Pages
             InitializeComponent();
 
             // create the window and size it to match a Skype dialog
-            window = new WindowBase(this)
+            window = new SkinnedWindow(this)
             {
                 MaxHeight = 800,
                 MinHeight = 225,
@@ -117,19 +117,19 @@ namespace Skymu.Forms.Pages
                 switch (type)
                 {
                     default: // All dialogs without a specified or preset title will be "Skype - Information"
-                    case WindowBase.IconType.Information:
+                    case SkinnedWindow.IconType.Information:
                         caption = Universal.Lang["sF_INFORM_DEFAULT_CAPTION"];
                         break;
-                    case WindowBase.IconType.Error:
+                    case SkinnedWindow.IconType.Error:
                         caption = Universal.Lang["sLANGUAGE_ERROR_CAP"];
                         break;
-                    case WindowBase.IconType.Question:
+                    case SkinnedWindow.IconType.Question:
                         caption = Universal.Lang["sF_CONFIRM_DEFAULT_CAPTION"];
                         break;
-                    case WindowBase.IconType.Facebook:
+                    case SkinnedWindow.IconType.Facebook:
                         caption = Universal.Lang["sFLAMINGO_CAPTION"];
                         break;
-                    case WindowBase.IconType.GroupVideoCall:
+                    case SkinnedWindow.IconType.GroupVideoCall:
                         caption = Universal.Lang["sPREM_VIDEO_WEB_WINDOW_CAPTION"];
                         break;
                 }
@@ -144,7 +144,7 @@ namespace Skymu.Forms.Pages
             window.ButtonLeftAction = blAction;
             if (onClosing != null)
                 window.Closing += (s, e) => onClosing(this, e);
-            window.HeaderImage.DefaultIndex = Settings.NikoIcons ? (int)WindowBase.IconType.Niko : (int)type;
+            window.HeaderImage.DefaultIndex = Settings.NikoIcons ? (int)SkinnedWindow.IconType.Niko : (int)type;
             if (blText != null)
                 window.ButtonLeft.Content = blText;
             if (bmText != null)

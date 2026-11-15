@@ -14,12 +14,12 @@
 using Skymu.Preferences;
 using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
+using Avalonia.Controls;
+using Avalonia.Media;
 
 namespace Skymu.Forms
 {
-    public partial class WindowBase : Window
+    public partial class SkinnedWindow : Window
     {
         private Action BELAction;
         private Action BLAction;
@@ -66,7 +66,7 @@ namespace Skymu.Forms
             KentuckyFriedCrosstalk
         }
 
-        public WindowBase(Page page)
+        public SkinnedWindow(Page page)
         {
             InitializeComponent();
             if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6")

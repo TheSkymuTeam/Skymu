@@ -21,7 +21,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using static System.String;
 
 namespace Skymu.Forms.Pages
@@ -31,7 +31,7 @@ namespace Skymu.Forms.Pages
         private CancellationTokenSource _cts;
         private readonly string brand = Settings.BrandingName;
         private updateInfo? update_info;
-        private WindowBase window;
+        private SkinnedWindow window;
 
         internal struct updateInfo
         {
@@ -48,7 +48,7 @@ namespace Skymu.Forms.Pages
             UpdateHandler(manual);
         }
 
-        public async void UpdateHandler(bool manual, WindowBase exwin = null)
+        public async void UpdateHandler(bool manual, SkinnedWindow exwin = null)
         {
             if (!Settings.CheckUpdates) return;
 
@@ -59,7 +59,7 @@ namespace Skymu.Forms.Pages
                 if (exwin != null)
                     window = exwin;
                 else
-                    window = new WindowBase(this);
+                    window = new SkinnedWindow(this);
                 window.Width = 518;
                 window.Height = 394;
                 window.SizeToContent = SizeToContent.Manual;
@@ -73,7 +73,7 @@ namespace Skymu.Forms.Pages
                         window.Close();
                         return;
                     }
-                    window.HeaderIcon = WindowBase.IconType.PackageWarning;
+                    window.HeaderIcon = SkinnedWindow.IconType.PackageWarning;
                     window.HeaderText = Universal.Lang["sF_UPGRADE_CHECK_FAILED_HEADER"];
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
                     window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
@@ -88,7 +88,7 @@ namespace Skymu.Forms.Pages
                     {
                         name += "Beta " + update_info?.info.BetaNumber;
                     }
-                    window.HeaderIcon = WindowBase.IconType.PackageCheckmark;
+                    window.HeaderIcon = SkinnedWindow.IconType.PackageCheckmark;
                     window.HeaderText =
                         Universal.Lang["sF_UPGRADE_FRM_CAPTION"] + " available: " + name;
                     window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_DOWNLOAD"];
@@ -112,7 +112,7 @@ namespace Skymu.Forms.Pages
             {
                 if (manual)
                     new Dialog(
-                        WindowBase.IconType.PackageCheckmark,
+                        SkinnedWindow.IconType.PackageCheckmark,
                         Universal.Lang["sF_UPGRADE_UPTODATE"],
                         Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"],
                         Title
@@ -122,7 +122,7 @@ namespace Skymu.Forms.Pages
 
         public void UpdateError(string error)
         {
-            window.HeaderIcon = WindowBase.IconType.PackageWarning;
+            window.HeaderIcon = SkinnedWindow.IconType.PackageWarning;
             window.HeaderText = Universal.Lang["sF_UPGRADE_FAILED_CAPTION"];
             window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_RETRY"];
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];
@@ -147,7 +147,7 @@ namespace Skymu.Forms.Pages
                 catch (Exception ex)
                 {
                     new Dialog(
-                        WindowBase.IconType.PackageWarning,
+                        SkinnedWindow.IconType.PackageWarning,
                         ex.Message,
                         "Cannot open file",
                         Title
@@ -168,7 +168,7 @@ namespace Skymu.Forms.Pages
 
         public async void InitiateUpdate()
         {
-            window.HeaderIcon = WindowBase.IconType.PackageStar;
+            window.HeaderIcon = SkinnedWindow.IconType.PackageStar;
             window.HeaderText = Universal.Lang["sF_UPGRADE_DOWNLOAD_CAPTION"];
             window.ButtonLeftText = Universal.Lang["sF_UPGRADE_BTN_HIDE"];
             window.ButtonRightText = Universal.Lang["sF_UPGRADE_BTN_CANCEL"];

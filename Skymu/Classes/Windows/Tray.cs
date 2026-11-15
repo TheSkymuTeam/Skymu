@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Threading;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;
@@ -135,7 +136,7 @@ namespace Skymu.Native.Windows
             switch (id)
             {
                 case MENU_SHOWFRIENDS:
-                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         foreach (Window w in System.Windows.Application.Current.Windows)
                         {

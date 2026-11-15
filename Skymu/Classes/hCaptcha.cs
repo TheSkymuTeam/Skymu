@@ -14,7 +14,7 @@
 using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Preferences;
@@ -90,7 +90,7 @@ namespace Skymu.Captcha
             }
 
             Dialog captchaDialog = new Dialog(
-                WindowBase.IconType.Picture,
+				SkinnedWindow.IconType.Picture,
                 null,
                 "Human verification is required",
                 Settings.BrandingName + " - CAPTCHA",

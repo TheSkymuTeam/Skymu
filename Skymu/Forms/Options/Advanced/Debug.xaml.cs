@@ -15,7 +15,7 @@ using Skymu.Preferences;
 using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Navigation;
 
 namespace Skymu.Forms.OptionPages.Advanced

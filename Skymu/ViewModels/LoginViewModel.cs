@@ -17,15 +17,14 @@ using QRCoder;
 using Skymu.Credentials;
 using Skymu.Helpers;
 using Skymu.Plugins;
-using System.Windows.Media.Imaging;
 using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System.Threading;
-using System.Windows.Controls;
-using System.Windows.Media;
 using Skymu.Native.Windows;
 using Skymu.Sounds;
+using Avalonia.Media.Imaging;
+using Avalonia.Controls;
 using System;
 using Skymu.Forms.Pages;
 using System.Collections.ObjectModel;
@@ -82,7 +81,7 @@ namespace Skymu.ViewModels
             {
                 Dialog dlg = null;
                 dlg = new Dialog(
-                    WindowBase.IconType.Question,
+                    SkinnedWindow.IconType.Question,
                     "Don't want to read this? Almost all users will want to choose either of the Yes options. Clicking No leads to loss of client functionality. If you're interested in knowing what information is sent, read on. Once upon a time...\n\n" +
                     Universal.NAME + " can optionally send information such as your display name and username to its user count server. This is done to populate the user "
                         + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes, and publish info', otherwise click 'Yes'."
@@ -320,7 +319,7 @@ namespace Skymu.ViewModels
                 {
                     Dialog dlg = null;
                     dlg = new Dialog(
-                        WindowBase.IconType.Question,
+                        SkinnedWindow.IconType.Question,
                         Settings.BrandingName + $" has detected that you have an older version of .NET installed ({netVersion}) than the latest supported for your platform. " +
                         $"It is recommended that you download the latest .NET Desktop Runtime for performance improvements, reduction in memory usage, " +
                         $"and critical security fixes.",
@@ -460,7 +459,7 @@ namespace Skymu.ViewModels
                     qrImage.Width = 250;
                     qrImage.Height = 250;
                     Dialog qrDialog = new Dialog(
-                        WindowBase.IconType.ContactRequest,
+                        SkinnedWindow.IconType.ContactRequest,
                         null,
                         "Scan code to authenticate",
                         Settings.BrandingName + " - Login",
@@ -487,7 +486,7 @@ namespace Skymu.ViewModels
             }
 
             var dlg = new Dialog(
-                WindowBase.IconType.ContactRequest,
+                SkinnedWindow.IconType.ContactRequest,
                 Universal.Plugin.Name + " has requested that you provide a 2FA code to log in. Please enter it below.",
                 "Two-factor authentication required",
                 Settings.BrandingName + " - Login",

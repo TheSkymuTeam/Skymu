@@ -11,21 +11,23 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using Skymu.Avalonia;
 using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
-using Skymu.Avalonia;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
+using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.WebServices;
-using Skymu.Native.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,9 +38,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
@@ -279,7 +279,7 @@ namespace Skymu.ViewModels
 
         public async void CopyMessage(Message message)
         {
-            if (!string.IsNullOrEmpty(message?.Text)) await AvaloniaHelpers.SetClipboardText(message.Text);
+            if (!string.IsNullOrEmpty(message?.Text)) await AHelpers.SetClipboardText(message.Text);
         }
 
         public async Task ReplyToMessage(Message message)
@@ -387,7 +387,7 @@ namespace Skymu.ViewModels
             {
                 if (e is ListItemUpdatedBottle ubot)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         switch (ubot.List)
                         {
@@ -398,11 +398,11 @@ namespace Skymu.ViewModels
                                 ConversationList.Add(ubot.Item as Conversation);
                                 break;
                         }
-                    }));
+                    });
                 }
                 else if (e is ListItemRemovedBottle rbot)
                 {
-                    Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         switch (rbot.List)
                         {
@@ -417,7 +417,7 @@ namespace Skymu.ViewModels
                                     ConversationList.Remove(toRemoveConv);
                                 break;
                         }
-                    }));
+                    });
                 }
             };
 
@@ -563,12 +563,10 @@ namespace Skymu.ViewModels
                         if (match != null)
                         {
                             _pendingPreviewMessages.Remove(match.Identifier);
-                            Application.Current.Dispatcher.BeginInvoke(
-                                new Action(() =>
-                                {
-                                    ActiveConversation.Remove(match);
-                                })
-                            );
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                ActiveConversation.Remove(match);
+                            });
                         }
                     }
 
@@ -592,7 +590,7 @@ namespace Skymu.ViewModels
                         && !_synchronizing
                     )
                     {
-                        
+
                     }
                 }
 
@@ -828,11 +826,10 @@ namespace Skymu.ViewModels
                 if (_pendingPreviewMessages.TryGetValue(tempId, out var pending))
                 {
                     _pendingPreviewMessages.Remove(tempId);
-                    _ = Application.Current.Dispatcher.BeginInvoke(
-                        new Action(() =>
-                        {
-                            ActiveConversation.Remove(pending);
-                        })
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        ActiveConversation.Remove(pending);
+                    }
                     );
                 }
                 Universal.ShowMessage("Error sending message.");
@@ -954,9 +951,9 @@ namespace Skymu.ViewModels
         public void InformDND()
         {
             if (Settings.InformDND != true)
-                Application.Current.Dispatcher.Invoke(() =>
+                Dispatcher.UIThread.Post(() =>
                     new Dialog(
-                        WindowBase.IconType.Information,
+                        SkinnedWindow.IconType.Information,
                         Universal.Lang["sINFORM_DND"],
                         Universal.Lang["sINFORM_DND_CAP"],
                         Universal.Lang["sINFORM_DND_TITLE"],
@@ -976,20 +973,30 @@ namespace Skymu.ViewModels
 
         public async Task SendFile()
         {
-            var dlg = new OpenFileDialog
+            var window = AHelpers.MainWindow;
+            if (window == null) return;
+
+            var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
                 Title = Universal.Lang.Format("sF_MULTICHAT_SENDFILE_MULTI_CAPTION", SelectedConversation.DisplayName),
-                CheckFileExists = true
-            };
-            if (dlg.ShowDialog() == true)
-            {
-                string filePath = dlg.FileName;
-                string fileName = Path.GetFileName(filePath);
+                AllowMultiple = false
+            });
 
-                byte[] data = File.ReadAllBytes(filePath);
-                Attachment file = new Attachment(data, fileName);
-                await Universal.Plugin.SendMessage(SelectedConversation, null, file);
+            if (files.Count == 0) return;
+
+            var picked = files[0];
+            string fileName = picked.Name;
+
+            byte[] data;
+            using (var stream = await picked.OpenReadAsync())
+            using (var ms = new MemoryStream())
+            {
+                await stream.CopyToAsync(ms);
+                data = ms.ToArray();
             }
+
+            Attachment file = new Attachment(data, fileName);
+            await Universal.Plugin.SendMessage(SelectedConversation, null, file);
         }
 
         public DateTime lastTypingActivity = DateTime.MinValue;
@@ -1019,12 +1026,11 @@ namespace Skymu.ViewModels
             int count = Universal.Plugin.TypingUsersList.Count;
             if (count <= 0)
             {
-                Application.Current?.Dispatcher.BeginInvoke(
-                    new Action(() =>
-                    {
-                        IsTypingVisible = false;
-                        TypingText = string.Empty;
-                    })
+                Dispatcher.UIThread.Post(() =>
+                {
+                    IsTypingVisible = false;
+                    TypingText = string.Empty;
+                }
                 );
                 return;
             }
@@ -1045,12 +1051,11 @@ namespace Skymu.ViewModels
                     text = "Multiple people are typing...";
                     break;
             }
-            Application.Current?.Dispatcher.BeginInvoke(
-                new Action(() =>
+            Dispatcher.UIThread.Post(() =>
                 {
                     TypingText = text;
                     IsTypingVisible = true;
-                })
+                }
             );
         }
 
@@ -1153,7 +1158,7 @@ namespace Skymu.ViewModels
                 || (c is ServerChannel sc && sc.ChannelType == ChannelType.Voice);
 
             if (!e)
-                Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", WindowBase.IconType.GroupCall);
+                Universal.ShowMessage("The conversation you are trying to call is of an ineligible type.", "Cannot start call", SkinnedWindow.IconType.GroupCall);
             return e;
         }
 
@@ -1170,9 +1175,9 @@ namespace Skymu.ViewModels
             }
             else
             {
-                WindowBase callwin = new WindowBase(new CallScreen());
+                SkinnedWindow callwin = new SkinnedWindow(new CallScreen());
                 callwin.HeaderText = "DU DU DUN. DU DU DOO";
-                callwin.HeaderIcon = WindowBase.IconType.SkypeOut;
+                callwin.HeaderIcon = SkinnedWindow.IconType.SkypeOut;
                 callwin.Show();
                 CallButton.IsEnabled = false;
                 CallButton.Text = Universal.Lang["sPARTICIPANT_ACTIVE_PHONE"];
@@ -1230,51 +1235,6 @@ namespace Skymu.ViewModels
                     break;
             }
             return status;
-        }
-
-        // https://stackoverflow.com/a/1759923
-        public static T FindChild<T>(DependencyObject parent, string childName)
-        where T : DependencyObject
-        {
-            // Confirm parent and childName are valid. 
-            if (parent == null) return null;
-
-            T foundChild = null;
-
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                // If the child is not of the request child type child
-                T childType = child as T;
-                if (childType == null)
-                {
-                    // recursively drill down the tree
-                    foundChild = FindChild<T>(child, childName);
-
-                    // If the child is found, break so we do not overwrite the found child. 
-                    if (foundChild != null) break;
-                }
-                else if (!string.IsNullOrEmpty(childName))
-                {
-                    var frameworkElement = child as FrameworkElement;
-                    // If the child's name is set for search
-                    if (frameworkElement != null && frameworkElement.Name == childName)
-                    {
-                        // if the child's name is of the request name
-                        foundChild = (T)child;
-                        break;
-                    }
-                }
-                else
-                {
-                    // child element found.
-                    foundChild = (T)child;
-                    break;
-                }
-            }
-
-            return foundChild;
         }
     }
 }

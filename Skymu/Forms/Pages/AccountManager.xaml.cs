@@ -11,18 +11,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Threading;
+using Skymu.Credentials;
+using Skymu.Forms;
+using Skymu.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using Skymu.Forms;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Skymu.Credentials;
-using Skymu.ViewModels;
+using Avalonia.Controls;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
@@ -31,10 +32,10 @@ namespace Skymu.Forms.Pages
     {
         public static void Open()
         {
-            var win = new WindowBase(new AccountManager());
+            var win = new SkinnedWindow(new AccountManager());
             win.Title = Preferences.Settings.BrandingName + "™ - Accounts";
             win.HeaderText = "Manage saved accounts";
-            win.HeaderIcon = WindowBase.IconType.ContactRequest;
+            win.HeaderIcon = SkinnedWindow.IconType.ContactRequest;
 
             win.ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"];
             win.ButtonLeftAction = () => win.Close();
@@ -140,7 +141,7 @@ namespace Skymu.Forms.Pages
             catch (Exception ex)
             {
                 AccountList.ItemsSource = null;
-                ShowMessage("Could not load saved accounts.\n\n" + ex.Message, WindowBase.IconType.Error);
+                ShowMessage("Could not load saved accounts.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
             }
 
             bool empty = AccountList.Items.Count == 0;
@@ -178,13 +179,13 @@ namespace Skymu.Forms.Pages
 
             if (string.IsNullOrEmpty(cred.PasswordOrToken))
             {
-                ShowMessage("The saved login for this account can't be read. Remove it and sign in again.", WindowBase.IconType.Error);
+                ShowMessage("The saved login for this account can't be read. Remove it and sign in again.", SkinnedWindow.IconType.Error);
                 return;
             }
 
             if (Universal.PluginList == null || !Universal.PluginList.Any(p => p.InternalName == cred.Plugin))
             {
-                ShowMessage("The plugin for this account isn't installed.", WindowBase.IconType.Error);
+                ShowMessage("The plugin for this account isn't installed.", SkinnedWindow.IconType.Error);
                 return;
             }
 
@@ -192,8 +193,8 @@ namespace Skymu.Forms.Pages
             Window.GetWindow(this)?.Close();
 
             if (Universal.SignedIn)
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true)));
+                Dispatcher.UIThread.Post(() =>
+                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true));
         }
 
         private void AutoLoginButton_Click(object sender, RoutedEventArgs e)
@@ -207,7 +208,7 @@ namespace Skymu.Forms.Pages
             }
             catch (Exception ex)
             {
-                ShowMessage("Could not change the auto login setting.\n\n" + ex.Message, WindowBase.IconType.Error);
+                ShowMessage("Could not change the auto login setting.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
             }
 
             Reload();
@@ -237,7 +238,7 @@ namespace Skymu.Forms.Pages
             }
             catch (Exception ex)
             {
-                ShowMessage("Could not change the account order.\n\n" + ex.Message, WindowBase.IconType.Error);
+                ShowMessage("Could not change the account order.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
             }
 
             Reload();
@@ -257,7 +258,7 @@ namespace Skymu.Forms.Pages
             }
             catch (Exception ex)
             {
-                ShowMessage("Could not remove the account.\n\n" + ex.Message, WindowBase.IconType.Error);
+                ShowMessage("Could not remove the account.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
             }
 
             Reload();
@@ -274,7 +275,7 @@ namespace Skymu.Forms.Pages
             }
             catch (Exception ex)
             {
-                ShowMessage("Could not remove the accounts.\n\n" + ex.Message, WindowBase.IconType.Error);
+                ShowMessage("Could not remove the accounts.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
             }
 
             Reload();
@@ -286,7 +287,7 @@ namespace Skymu.Forms.Pages
             Dialog dialog = null;
 
             dialog = new Dialog(
-                WindowBase.IconType.Question,
+                SkinnedWindow.IconType.Question,
                 text,
                 header,
                 blEnabled: true,
@@ -305,7 +306,7 @@ namespace Skymu.Forms.Pages
             return confirmed;
         }
 
-        private void ShowMessage(string text, WindowBase.IconType icon)
+        private void ShowMessage(string text, SkinnedWindow.IconType icon)
         {
             Universal.ShowMessage(text, "Account error", icon);
         }
@@ -315,8 +316,8 @@ namespace Skymu.Forms.Pages
             Window.GetWindow(this)?.Close();
 
             if (Universal.SignedIn)
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true)));
+                Dispatcher.UIThread.Post(() =>
+                    Universal.ActiveViewModel.InitiateSignOut(switchuser: true));
         }
     }
 }

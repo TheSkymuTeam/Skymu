@@ -16,9 +16,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
+using Avalonia.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using Avalonia.Media;
 using System.Windows.Navigation;
 
 namespace Skymu.Forms
