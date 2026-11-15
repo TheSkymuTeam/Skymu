@@ -18,7 +18,7 @@
 using System;
 using System.Linq;
 using System.Threading;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using System.Windows.Documents;
 using Avalonia.Media;

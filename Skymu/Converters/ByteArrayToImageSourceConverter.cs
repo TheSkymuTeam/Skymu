@@ -15,7 +15,7 @@ using Org.BouncyCastle.Bcpg.Sig;
 using Skymu.Helpers;
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 
 namespace Skymu.Converters
 {

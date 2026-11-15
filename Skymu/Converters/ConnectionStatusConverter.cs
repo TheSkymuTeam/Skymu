@@ -14,7 +14,7 @@
 using Skymu.ViewModels;
 using System;
 using System.Globalization;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Converters

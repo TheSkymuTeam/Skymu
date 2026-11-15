@@ -16,9 +16,9 @@ using Skymu.Forms;
 using Skymu.Preferences;
 using Skymu.Theming;
 using System;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Input;
+using Avalonia.Input;
 
 namespace Skymu.Skype4
 {

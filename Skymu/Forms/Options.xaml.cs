@@ -15,9 +15,9 @@ using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Input;
+using Avalonia.Input;
 using Avalonia.Media;
 using System.Windows.Navigation;
 

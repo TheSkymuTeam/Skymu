@@ -28,7 +28,7 @@ using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
+using Avalonia;
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;

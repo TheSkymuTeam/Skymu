@@ -19,8 +19,8 @@ using Skymu.WebServices;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 

@@ -14,7 +14,7 @@
 using Skymu.Preferences;
 using System;
 using System.IO;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using System.Windows.Navigation;
 

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Skymu.AvaloniaHelpers;
 

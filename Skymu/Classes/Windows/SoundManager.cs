@@ -20,7 +20,7 @@ using Avalonia.Platform;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia;
 
 // TODO(omega): This native code should be migrated to some sort of NET Core / NET Standard compatible
 // solution. That's why the namespace isn't currently Skymu.Native.Windows.xxx. It's on WinMM purely

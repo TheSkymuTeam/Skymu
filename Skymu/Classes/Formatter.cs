@@ -16,12 +16,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
+using Avalonia;
 // using Emoji.Wpf; // Color Emoji Textblock. CAUSES PERFORMANCE DELAYS, DO NOT USE
 using Avalonia.Controls; // Standard Textblock with unicode emoji in tahoma
 using System.Windows.Documents;
 using Avalonia.Media;
-using System.Windows.Media.Effects;
+using Avalonia.Media.Effects;
 using Avalonia.Media.Imaging;
 using System.Xml.Linq;
 using Markdig;

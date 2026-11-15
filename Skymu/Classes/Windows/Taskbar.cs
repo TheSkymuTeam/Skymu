@@ -13,7 +13,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 
 namespace Skymu.Native.Windows

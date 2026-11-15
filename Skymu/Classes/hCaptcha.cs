@@ -13,7 +13,7 @@
 
 using System;
 using System.IO;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using Skymu.Forms;
 using Skymu.Forms.Pages;

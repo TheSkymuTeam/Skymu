@@ -12,7 +12,7 @@
 /*==========================================================*/
 
 using System.Diagnostics;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using Yggdrasil;
 using Skymu.Forms.Pages;

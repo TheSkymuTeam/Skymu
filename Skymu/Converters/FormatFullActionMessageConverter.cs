@@ -14,9 +14,9 @@
 using Skymu.Formatting;
 using System;
 using System.Globalization;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Data;
+using Avalonia.Data.Converters;
 using System.Windows.Documents;
 using Avalonia.Media;
 using Yggdrasil.Models;

@@ -17,7 +17,7 @@ using System;
 using Avalonia.Media.Imaging;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using System.Windows;
+using Avalonia;
 using Avalonia.Media;
 using System.ComponentModel;
 

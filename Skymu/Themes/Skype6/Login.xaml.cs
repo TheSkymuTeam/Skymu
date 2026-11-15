@@ -12,7 +12,7 @@
 /*==========================================================*/
 
 using Skymu.ViewModels;
-using System.Windows;
+using Avalonia;
 using Skymu.Theming;
 
 namespace Skymu.Skype6

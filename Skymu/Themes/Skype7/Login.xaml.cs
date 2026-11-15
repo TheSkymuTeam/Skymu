@@ -15,14 +15,14 @@ using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
-using System.Windows;
+using Avalonia;
 using Skymu.Sounds;
 using Avalonia.Controls;
 using Avalonia.Media;
 using System.Windows.Navigation;
 using Yggdrasil.Enumerations;
 using Skymu.Native.Windows;
-using System.Windows.Input;
+using Avalonia.Input;
 using Yggdrasil.Models;
 
 namespace Skymu.Skype7

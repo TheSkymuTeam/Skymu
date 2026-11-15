@@ -22,7 +22,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia;
 using static System.String;
 
 namespace Skymu.Forms.Pages

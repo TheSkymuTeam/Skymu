@@ -21,7 +21,7 @@ using Avalonia.Animation;
 using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
-using System.Windows.Input;
+using Avalonia.Input;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;

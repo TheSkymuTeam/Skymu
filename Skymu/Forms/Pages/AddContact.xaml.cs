@@ -18,7 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using System.Windows.Documents;
 using Avalonia.Interactivity;

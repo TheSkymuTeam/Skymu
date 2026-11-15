@@ -17,7 +17,7 @@ using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
-using System.Windows;
+using Avalonia;
 
 namespace Skymu.Forms.Pages
 {

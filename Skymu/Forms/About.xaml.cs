@@ -11,7 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using System.Windows;
+using Avalonia;
 
 namespace Skymu.Forms
 {

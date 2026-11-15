@@ -26,7 +26,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Skymu.Forms;
-using System.Windows;
+using Avalonia;
 using Avalonia.Threading;
 using Yggdrasil.Models;
 

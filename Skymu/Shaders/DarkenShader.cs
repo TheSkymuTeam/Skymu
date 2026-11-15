@@ -12,9 +12,9 @@
 /*==========================================================*/
 
 using System;
-using System.Windows;
+using Avalonia;
 using Avalonia.Media;
-using System.Windows.Media.Effects;
+using Avalonia.Media.Effects;
 
 namespace Skymu.Shaders
 {

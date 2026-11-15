@@ -13,7 +13,7 @@
 
 using Skymu.Enumerations;
 using Skymu.Preferences;
-using System.Windows;
+using Avalonia;
 using Avalonia.Controls;
 using OmegaAOL.Bifrost.Tls;
 

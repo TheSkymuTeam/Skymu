@@ -13,10 +13,10 @@
 
 using Skymu.Helpers;
 using System;
-using System.Windows;
-using System.Windows.Input;
+using Avalonia;
+using Avalonia.Input;
 using Avalonia.Media;
-using System.Windows.Media.Animation;
+using Avalonia.Media.Animation;
 using Yggdrasil.Models;
 using Yggdrasil.Bottles;
 using Skymu.Sounds;

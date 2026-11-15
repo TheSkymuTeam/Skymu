@@ -12,8 +12,8 @@
 /*==========================================================*/
 
 using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+using Avalonia;
+using Avalonia.Data.Converters;
 using System;
 
 namespace Skymu.Converters
