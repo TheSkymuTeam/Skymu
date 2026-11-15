@@ -11,6 +11,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using Skymu.Credentials;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
@@ -20,16 +26,11 @@ using Skymu.Sounds;
 using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
-using System.Windows;
-using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using System.Windows.Navigation;
-using Avalonia.Threading;
-using Yggdrasil.Models;
-using Yggdrasil.Enumerations;
-using Skymu.Credentials;
 using System.Linq;
+using System.Windows;
+using System.Windows.Navigation;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Theming
 {
@@ -48,6 +49,7 @@ namespace Skymu.Theming
 
         protected void InitializeLoginWindow(LoginViewModel viewModel)
         {
+            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.MouseLeftButtonUp += buttonLaunch;

@@ -16,30 +16,31 @@
 // "SeanKype" project, being (slowly & slighly) reworked by HUBAXE.
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Formatting;
-using Skymu.Infrastructure;
 using Skymu.Forms;
 using Skymu.Helpers;
+using Skymu.Infrastructure;
+using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.ViewModels;
-using Skymu.Native.Windows;
 using Skymu.WebServices;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using System.Windows;
-using Avalonia.Controls;
 using System.Windows.Input;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Yggdrasil;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Skype7
 {
@@ -60,7 +61,7 @@ namespace Skymu.Skype7
             noCloseEvent = false;
 
             InitializeComponent();
-            Application.Current.MainWindow = this;
+            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
 
             SharedServices.GenerateGlobalAvatars();
 

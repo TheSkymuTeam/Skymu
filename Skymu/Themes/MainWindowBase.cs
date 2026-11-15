@@ -11,16 +11,25 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using Skymu.Converters;
-using Skymu.Enumerations;
 using Skymu.Emoticons;
+using Skymu.Enumerations;
 using Skymu.Formatting;
-using Skymu.Helpers;
-using Skymu.Preferences;
-using Skymu.ViewModels;
 using Skymu.Forms;
-using Skymu.Infrastructure;
 using Skymu.Forms.Pages;
+using Skymu.Helpers;
+using Skymu.Infrastructure;
+using Skymu.Native.Windows;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using Skymu.ViewModels;
+using Skymu.WebServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,21 +39,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Avalonia.Controls;
 using System.Windows.Documents;
-using Skymu.WebServices;
-using Avalonia.Interactivity;
 using System.Windows.Input;
-using Avalonia.Media;
 using System.Windows.Media.Effects;
-using Avalonia.Media.Imaging;
 using System.Windows.Shell;
-using Skymu.Native.Windows;
-using Skymu.Sounds;
-using Avalonia.Threading;
 using Yggdrasil;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Theming
 {
@@ -575,7 +576,7 @@ namespace Skymu.Theming
         {
             noCloseEvent = false;
 
-            Application.Current.MainWindow = this;
+            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;

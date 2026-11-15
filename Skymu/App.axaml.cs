@@ -14,6 +14,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
@@ -42,11 +43,9 @@ using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
@@ -266,26 +265,74 @@ namespace Skymu
             };
         }
 
-        public static string GetCultureCode(string displayName)
-        {
-            try
-            {
-                return CultureInfo
-                        .GetCultures(CultureTypes.AllCultures)
-                        .FirstOrDefault(c =>
-                            c.NativeName.StartsWith(displayName)
-                            || c.DisplayName.StartsWith(displayName)
-                            || c.EnglishName.StartsWith(displayName)
-                        )
-                        ?.Name
-                    ?? "en-US";
-            }
-            catch { }
-            return "en-US";
-        }
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
-        private void App_Startup(object sender, StartupEventArgs e)
+        public override void OnFrameworkInitializationCompleted()
         {
+            ApplyAvaloniaTheme(Settings.AvaloniaTheme);
+            var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+            if (desktop != null)
+            {
+                desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                desktop.Exit += (s, e) =>
+                {
+                    try
+                    {
+                        Tray.DisposeIcon();
+                        PluginManager.DisposeAll();
+                        _ = UserServerAPI.StopPolling();
+                    }
+                    catch { } // If it doesn't work, too bad.
+                    if (SignedIn)
+                    {
+                        PluginManager.DisposeAll();
+                        SoundManager.PlaySynchronous("LOGOUT");
+                    }
+                };
+            }
+            Dispatcher.UIThread.UnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AutoLaunch.Get(); // XXX to initialize the setting just in case
+            if (!Colorizer.Scan())
+                Universal.ExceptionHandler(
+                    new Exception("Could not find any compatible colorways in directory /Colorways.")
+                );
+            Colorizer.LoadFromSettings();
+            Migrator.Run();
+            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + Universal.BUILD_INFO.GetVersionString().Replace(":", "--"));
+            Settings.Default.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case "AvaloniaTheme":
+                        ApplyAvaloniaTheme(Settings.AvaloniaTheme);
+                        break;
+                    case "Colorway":
+                    case "WindowFrame":
+                    case "Theme":
+                    case "NativeMenuBar":
+                    case "UseSystemCulture":
+                        Dialog dialog = new Dialog(
+                                   type: SkinnedWindow.IconType.Question,
+                                   content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
+                                   header: "Restart " + Settings.BrandingName + "?",
+                                   brText: Lang["sF_CONFIRM_NO_BTN"],
+                                   blEnabled: true,
+                                   blText: Lang["sF_CONFIRM_YES"]
+                               );
+                        dialog.window.ButtonRightAction = () =>
+                        {
+                            dialog.Close();
+                        };
+                        dialog.window.ButtonLeftAction = () =>
+                        {
+                            Settings.Save();
+                            Universal.Restart();
+                        };
+                        dialog.Show();
+                        break;
+                }
+            };
             if (!Settings.UseSystemCulture)
                 CultureInfo.CurrentCulture = new CultureInfo(
                     GetCultureCode(Settings.Language),
@@ -336,12 +383,12 @@ namespace Skymu
                     string msg = reader.ReadLine();
 
                     if (msg == "WINDOW_ACTIVATE")
-                        Dispatcher.Invoke(() =>
+                        Dispatcher.UIThread.Invoke(() =>
                         {
-                            if (MainWindow.WindowState == WindowState.Minimized)
-                                MainWindow.WindowState = WindowState.Normal;
-                            MainWindow.Show();
-                            MainWindow.Activate();
+                            if (((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.WindowState == WindowState.Minimized)
+                                ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow.WindowState = WindowState.Normal;
+                            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.Show();
+                            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.Activate();
                         });
                     else if (msg.StartsWith("URI:"))
                     {
@@ -354,6 +401,25 @@ namespace Skymu
                     pipe.Dispose();
                 }
             });
+            base.OnFrameworkInitializationCompleted();
+        }
+
+        public static string GetCultureCode(string displayName)
+        {
+            try
+            {
+                return CultureInfo
+                        .GetCultures(CultureTypes.AllCultures)
+                        .FirstOrDefault(c =>
+                            c.NativeName.StartsWith(displayName)
+                            || c.DisplayName.StartsWith(displayName)
+                            || c.EnglishName.StartsWith(displayName)
+                        )
+                        ?.Name
+                    ?? "en-US";
+            }
+            catch { }
+            return "en-US";
         }
 
         public static void URIHandler(string uri)
@@ -571,55 +637,6 @@ namespace Skymu
             catch { }
         }
 
-        protected override void OnStartup(StartupEventArgs ev)
-        {
-            Dispatcher.UIThread.UnhandledException += App_DispatcherUnhandledException;
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            ApplyAvaloniaTheme(Settings.AvaloniaTheme);
-            AutoLaunch.Get(); // XXX to initialize the setting just in case
-            if (!Colorizer.Scan())
-                Universal.ExceptionHandler(
-                    new Exception("Could not find any compatible colorways in directory /Colorways.")
-                );
-            Colorizer.LoadFromSettings();
-            Migrator.Run();
-            SkymuHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"{NAME}Client-" + Universal.BUILD_INFO.GetVersionString().Replace(":", "--"));
-            base.OnStartup(ev);
-            Settings.Default.PropertyChanged += (sender, args) =>
-            {
-                switch (args.PropertyName)
-                {
-                    case "AvaloniaTheme":
-                        ApplyAvaloniaTheme(Settings.AvaloniaTheme);
-                        break;
-                    case "Colorway":
-                    case "WindowFrame":
-                    case "Theme":
-                    case "NativeMenuBar":
-                    case "UseSystemCulture":
-                        Dialog dialog = new Dialog(
-                                   type: SkinnedWindow.IconType.Question,
-                                   content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
-                                   header: "Restart " + Settings.BrandingName + "?",
-                                   brText: Lang["sF_CONFIRM_NO_BTN"],
-                                   blEnabled: true,
-                                   blText: Lang["sF_CONFIRM_YES"]
-                               );
-                        dialog.window.ButtonRightAction = () =>
-                        {
-                            dialog.Close();
-                        };
-                        dialog.window.ButtonLeftAction = () =>
-                        {
-                            Settings.Save();
-                            Universal.Restart();
-                        };
-                        dialog.Show();
-                        break;
-                }
-            };
-        }
-
         private void ApplyAvaloniaTheme(string themeName)
         {
             if (string.IsNullOrEmpty(themeName))
@@ -715,23 +732,6 @@ namespace Skymu
             }
             else Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
-        }
-
-        protected override void OnExit(ExitEventArgs ev)
-        {
-            try
-            {
-                Tray.DisposeIcon();
-                PluginManager.DisposeAll();
-                _ = UserServerAPI.StopPolling();
-            }
-            catch { } // If it doesn't work, too bad.
-            if (SignedIn)
-            {
-                PluginManager.DisposeAll();
-                SoundManager.PlaySynchronous("LOGOUT");
-            }
-            base.OnExit(ev);
         }
     }
 }
