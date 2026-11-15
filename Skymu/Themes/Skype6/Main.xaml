@@ -827,7 +827,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid x:Name="WindowArea" MouseDown="WindowArea_MouseDown">
+    <Grid x:Name="WindowArea" PointerPressed="WindowArea_PointerPressed">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -1375,7 +1375,7 @@
                                                 DefaultIndex="1"
                                                 ElementCount="5"
                                                 HoverIndex="1"
-                                                MouseUp="AddContact_Close"
+                                                PointerReleased="AddContact_Close"
                                                 PressedIndex="2"
                                                 SliceMode="0"
                                                 Source="Assets/Universal/Main/add-contact-close.png"
@@ -1410,7 +1410,7 @@
                             BorderThickness="0,0,1,0"
                             Cursor="SizeWE"
                             MouseLeftButtonDown="SkypeSplitter_Press"
-                            MouseMove="SkypeSplitter_MouseMove" />
+                            PointerMoved="SkypeSplitter_PointerMoved" />
                         <Grid
                             x:Name="ChatArea"
                             Grid.Column="2"
@@ -1753,7 +1753,7 @@
                                 Cursor="SizeNS"
                                 Fill="Transparent"
                                 MouseLeftButtonDown="ChatTopBarSplitter_Press"
-                                MouseMove="ChatTopBarSplitter_MouseMove" />
+                                PointerMoved="ChatTopBarSplitter_PointerMoved" />
                             <Border
                                 x:Name="MessageWindow"
                                 Grid.Row="3"

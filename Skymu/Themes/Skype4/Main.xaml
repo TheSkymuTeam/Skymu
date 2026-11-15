@@ -871,32 +871,32 @@
                 <global:SliceControl
                     x:Name="split"
                     Width="26"
-                    MouseEnter="TitleButton_MouseEnter"
-                    MouseLeave="TitleButton_MouseLeave"
+                    PointerEntered="TitleButton_PointerEntered"
+                    PointerExited="TitleButton_PointerExited"
                     MouseLeftButtonUp="TitleButton_Click"
                     Source="Assets/Universal/Window Frame/Basic/split/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="minimize"
                     Width="24"
-                    MouseEnter="TitleButton_MouseEnter"
-                    MouseLeave="TitleButton_MouseLeave"
+                    PointerEntered="TitleButton_PointerEntered"
+                    PointerExited="TitleButton_PointerExited"
                     MouseLeftButtonUp="TitleButton_Click"
                     Source="Assets/Universal/Window Frame/Basic/minimize/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="maximize"
                     Width="24"
-                    MouseEnter="TitleButton_MouseEnter"
-                    MouseLeave="TitleButton_MouseLeave"
+                    PointerEntered="TitleButton_PointerEntered"
+                    PointerExited="TitleButton_PointerExited"
                     MouseLeftButtonUp="TitleButton_Click"
                     Source="Assets/Universal/Window Frame/Basic/maximize/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
                 <global:SliceControl
                     x:Name="close"
                     Width="42"
-                    MouseEnter="TitleButton_MouseEnter"
-                    MouseLeave="TitleButton_MouseLeave"
+                    PointerEntered="TitleButton_PointerEntered"
+                    PointerExited="TitleButton_PointerExited"
                     MouseLeftButtonUp="TitleButton_Click"
                     Source="Assets/Universal/Window Frame/Basic/close/combined.png"
                     Style="{StaticResource WindowButtonStyle}" />
@@ -909,7 +909,7 @@
                     x:Name="TitleBarIcon"
                     Margin="8,0,0,0"
                     VerticalAlignment="Center"
-                    MouseLeftButtonDown="TitleBarIcon_MouseDown"
+                    MouseLeftButtonDown="TitleBarIcon_PointerPressed"
                     Source="Assets/Universal/Branding/logo-window-frame.png"
                     Style="{StaticResource LongIconStyle}" />
                 <Grid Margin="6,0">
@@ -948,7 +948,7 @@
         <Grid
             x:Name="WindowArea"
             Margin="2,25,2,2"
-            MouseDown="WindowArea_MouseDown">
+            PointerPressed="WindowArea_PointerPressed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -1906,7 +1906,7 @@
                                 Cursor="SizeWE"
                                 Fill="Transparent"
                                 MouseLeftButtonDown="SkypeSplitter_Press"
-                                MouseMove="SkypeSplitter_MouseMove" />
+                                PointerMoved="SkypeSplitter_PointerMoved" />
                             <!--  Home  -->
                             <Grid
                                 x:Name="Home"
@@ -2332,7 +2332,7 @@
                                     Cursor="SizeNS"
                                     Fill="Transparent"
                                     MouseLeftButtonDown="ChatTopBarSplitter_Press"
-                                    MouseMove="ChatTopBarSplitter_MouseMove" />
+                                    PointerMoved="ChatTopBarSplitter_PointerMoved" />
                                 <Border
                                     x:Name="MessageWindow"
                                     Grid.Row="3"

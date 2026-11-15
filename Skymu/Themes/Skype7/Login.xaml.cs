@@ -256,7 +256,7 @@ namespace Skymu.Skype7
                 Application.Current.Shutdown();
         }
 
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Window_PointerPressed(object sender, MouseButtonEventArgs e)
         {
             MainGrid.Focus();
         }

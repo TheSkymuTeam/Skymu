@@ -875,7 +875,7 @@ namespace Skymu.Theming
         private Point dragStart;
         private UIElement capturedElement = null;
 
-        protected void SkypeSplitter_MouseMove(object sender, MouseEventArgs e)
+        protected void SkypeSplitter_PointerMoved(object sender, MouseEventArgs e)
         {
             if (SkypeSplitterIsDragging)
             {
@@ -912,7 +912,7 @@ namespace Skymu.Theming
             }
         }
 
-        protected void ChatTopBarSplitter_MouseMove(object sender, MouseEventArgs e)
+        protected void ChatTopBarSplitter_PointerMoved(object sender, MouseEventArgs e)
         {
             if (ChatTopBarSplitterIsDragging)
             {
@@ -1038,12 +1038,12 @@ namespace Skymu.Theming
             HandleWindowButtonClick(sender as SliceControl);
         }
 
-        protected void TitleButton_MouseLeave(object sender, MouseEventArgs e)
+        protected void TitleButton_PointerExited(object sender, MouseEventArgs e)
         {
             HandleWindowButtonLeave(sender as SliceControl);
         }
 
-        protected void TitleButton_MouseEnter(object sender, MouseEventArgs e)
+        protected void TitleButton_PointerEntered(object sender, MouseEventArgs e)
         {
             HandleWindowButtonEnter(sender as SliceControl);
         }
@@ -1063,7 +1063,7 @@ namespace Skymu.Theming
             HandleWindowDeactivated();
         }
 
-        protected async void TitleBarIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        protected async void TitleBarIcon_PointerPressed(object sender, MouseButtonEventArgs e)
         {
             await EasterEgg(Egg.SkypeMemeVideo);
         }
@@ -1192,7 +1192,7 @@ namespace Skymu.Theming
             await SendMessage();
         }
 
-        protected void WindowArea_MouseDown(object sender, MouseButtonEventArgs e)
+        protected void WindowArea_PointerPressed(object sender, MouseButtonEventArgs e)
         {
             Keyboard.ClearFocus();
         }
@@ -1814,11 +1814,11 @@ namespace Skymu.Theming
                     sliceControl.Tag = emojiFilename;
                     border.Child = sliceControl;
                     border.MouseLeftButtonUp += EmojiBox_Click;
-                    border.MouseEnter += (s, ev) =>
+                    border.PointerEntered += (s, ev) =>
                         ((Border)s).Background = new SolidColorBrush(
                             Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
                         );
-                    border.MouseLeave += (s, ev) => ((Border)s).Background = Brushes.Transparent;
+                    border.PointerExited += (s, ev) => ((Border)s).Background = Brushes.Transparent;
                     EmojiWrapPanel.Children.Add(border);
                 }
                 catch (Exception ex)

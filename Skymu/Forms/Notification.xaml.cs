@@ -259,12 +259,12 @@ namespace Skymu.Forms
             this.Top = workingArea.Bottom - this.ActualHeight - 1;
         }
 
-        private void Window_MouseEnter(object sender, MouseEventArgs e)
+        private void Window_PointerEntered(object sender, MouseEventArgs e)
         {
             close.IsVisible = true;
         }
 
-        private void Window_MouseLeave(object sender, MouseEventArgs e)
+        private void Window_PointerExited(object sender, MouseEventArgs e)
         {
             close.IsVisible = false;
         }

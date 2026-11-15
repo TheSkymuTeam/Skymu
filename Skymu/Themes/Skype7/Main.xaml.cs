@@ -403,11 +403,11 @@ namespace Skymu.Skype7
                     sc.Tag = emojiFilename;
                     border.Child = sc;
                     border.MouseLeftButtonUp += EmojiBox_Click;
-                    border.MouseEnter += (s, ev) =>
+                    border.PointerEntered += (s, ev) =>
                         ((Border)s).Background = new SolidColorBrush(
                             Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
                         );
-                    border.MouseLeave += (s, ev) => ((Border)s).Background = Brushes.Transparent;
+                    border.PointerExited += (s, ev) => ((Border)s).Background = Brushes.Transparent;
                     EmojiWrapPanel.Children.Add(border);
                 }
                 catch (Exception ex)

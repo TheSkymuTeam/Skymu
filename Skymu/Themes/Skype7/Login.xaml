@@ -22,7 +22,7 @@
     Title="Skype"
     DataContext="{StaticResource Lang}"
     Loaded="Login_Loaded"
-    MouseDown="Window_MouseDown"
+    PointerPressed="Window_PointerPressed"
     ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterScreen"
