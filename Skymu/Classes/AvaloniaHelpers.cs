@@ -13,13 +13,25 @@ namespace Skymu.AvaloniaHelpers
 
         public static async Task SetClipboardText(string text)
         {
-            if (((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.Clipboard is { } clipboard)
+            if (GetMainWindow()?.Clipboard is { } clipboard)
                 await clipboard.SetTextAsync(text);
         }
 
         public static void ShutdownApp()
         {
             ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).Shutdown();
+        }
+
+        public static Window GetMainWindow()
+        {
+            return ((IClassicDesktopStyleApplicationLifetime)
+                Application.Current.ApplicationLifetime).MainWindow;
+        }
+
+        public static void SetMainWindow(Window window)
+        {
+            ((IClassicDesktopStyleApplicationLifetime)
+                Application.Current.ApplicationLifetime).MainWindow = window;
         }
     }
 

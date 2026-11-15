@@ -973,7 +973,7 @@ namespace Skymu.ViewModels
 
         public async Task SendFile()
         {
-            var window = AHelpers.MainWindow;
+            var window = AHelpers.GetMainWindow();
             if (window == null) return;
 
             var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions

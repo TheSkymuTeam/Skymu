@@ -61,7 +61,7 @@ namespace Skymu.Skype7
             noCloseEvent = false;
 
             InitializeComponent();
-            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
+            AvaloniaHelpers.AHelpers.SetMainWindow(this);
 
             SharedServices.GenerateGlobalAvatars();
 

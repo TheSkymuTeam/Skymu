@@ -11,17 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
+using Skymu.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using Skymu.Versioning;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Avalonia.Controls;
 using static System.String;
 
 namespace Skymu.Forms.Pages
@@ -106,7 +107,7 @@ namespace Skymu.Forms.Pages
                     }
                 }
 
-                window.ShowDialog(); // show window as dialog
+                window.ShowDialog(AHelpers.GetMainWindow()); // show window as dialog
             } // not up to date, must show window
             else // up to date, show dialog
             {

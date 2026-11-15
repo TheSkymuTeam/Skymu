@@ -385,10 +385,10 @@ namespace Skymu
                     if (msg == "WINDOW_ACTIVATE")
                         Dispatcher.UIThread.Invoke(() =>
                         {
-                            if (((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.WindowState == WindowState.Minimized)
-                                ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow.WindowState = WindowState.Normal;
-                            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.Show();
-                            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow?.Activate();
+                            if (AHelpers.GetMainWindow()?.WindowState == WindowState.Minimized)
+                                AHelpers.GetMainWindow().WindowState = WindowState.Normal;
+                            AHelpers.GetMainWindow()?.Show();
+                            AHelpers.GetMainWindow()?.Activate();
                         });
                     else if (msg.StartsWith("URI:"))
                     {
@@ -586,7 +586,7 @@ namespace Skymu
             frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
             frame.ButtonLeftAction = () => page.CopyToClipboard();
             frame.ButtonLeftText = "Copy to clipboard";
-            frame.ShowDialog();
+            frame.ShowDialog(AHelpers.GetMainWindow());
         }
 
         public static void ShowMessage(

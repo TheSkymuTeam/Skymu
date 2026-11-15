@@ -16,6 +16,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Skymu.AvaloniaHelpers;
 using Skymu.Credentials;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
@@ -49,7 +50,7 @@ namespace Skymu.Theming
 
         protected void InitializeLoginWindow(LoginViewModel viewModel)
         {
-            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
+            AHelpers.SetMainWindow(this);
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.MouseLeftButtonUp += buttonLaunch;

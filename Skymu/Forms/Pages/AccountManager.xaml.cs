@@ -25,6 +25,7 @@ using Avalonia.Interactivity;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Skymu.AvaloniaHelpers;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
@@ -42,9 +43,8 @@ namespace Skymu.Forms.Pages
             win.ButtonLeftAction = () => win.Close();
             win.ButtonRight.Visibility = Visibility.Collapsed;
 
-            win.Owner = Application.Current.MainWindow;
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            win.ShowDialog();
+            win.ShowDialog(AHelpers.GetMainWindow());
         }
 
         private sealed class AccountEntry

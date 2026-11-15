@@ -31,6 +31,7 @@ using Avalonia.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Skymu.Helpers;
+using Skymu.AvaloniaHelpers;
 
 namespace Skymu.Forms
 {
@@ -128,7 +129,7 @@ namespace Skymu.Forms
                 };
 
                 _activeNotification.Show();
-                Taskbar.Flash(Application.Current.MainWindow);
+                Taskbar.Flash(AHelpers.GetMainWindow());
             }
 
             _activeNotification.AddMessage((Message)e.Item, e);

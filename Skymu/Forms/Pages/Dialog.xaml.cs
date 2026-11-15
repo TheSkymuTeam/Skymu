@@ -11,12 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using Avalonia.Controls;
-using Avalonia;
 
 namespace Skymu.Forms.Pages
 {
@@ -168,7 +169,7 @@ namespace Skymu.Forms.Pages
 
         public bool? Show()
         {
-            return window.ShowDialog();
+            return window.ShowDialog(AHelpers.GetMainWindow());
         }
 
         public void SetRightButtonAsDefault()

@@ -576,7 +576,7 @@ namespace Skymu.Theming
         {
             noCloseEvent = false;
 
-            ((IClassicDesktopStyleApplicationLifetime)Universal.Current.ApplicationLifetime).MainWindow = this;
+            AvaloniaHelpers.AHelpers.SetMainWindow(this);
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;
