@@ -16,6 +16,7 @@ using Skymu.Preferences;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Avalonia.Platform;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,18 +91,16 @@ namespace Skymu.Sounds
 
             try
             {
-                var sri = Application.GetResourceStream(uri);
-
-                if (sri?.Stream != null)
+                using (var stream = AssetLoader.Open(uri))
+                using (var ms = new MemoryStream())
                 {
-                    using (var ms = new MemoryStream())
-                    {
-                        sri.Stream.CopyTo(ms);
-                        cached_sounds[Path.GetFileNameWithoutExtension(filename)] = new CachedSound(ms.ToArray());
-                    }
+                    stream.CopyTo(ms);
 
-                    return;
+                    cached_sounds[Path.GetFileNameWithoutExtension(filename)] =
+                        new CachedSound(ms.ToArray());
                 }
+
+                return;
             }
             catch
             {

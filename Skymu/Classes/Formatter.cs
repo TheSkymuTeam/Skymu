@@ -896,7 +896,7 @@ namespace Skymu.Formatting
                                     try
                                     {
                                         span.Foreground = new SolidColorBrush(
-                                            (Color)ColorConverter.ConvertFromString(color)
+                                            Color.Parse(color)
                                         );
                                     }
                                     catch { }

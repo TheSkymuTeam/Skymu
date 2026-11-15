@@ -16,7 +16,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
-using Skymu.Avalonia;
+using Skymu.AvaloniaHelpers;
 using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;

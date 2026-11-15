@@ -1,7 +1,7 @@
 using Skymu.Forms;
 using System;
 using System.Linq;
-using System.Windows;
+using Avalonia.Controls;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Native.Windows

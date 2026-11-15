@@ -11,13 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
+using Avalonia.Themes.Simple;
 using Avalonia.Threading;
+using Classic.Avalonia.Theme;
 using OmegaAOL.Bifrost.Http;
-using Skymu.Avalonia;
-using Avalonia;
+using Skymu.AvaloniaHelpers;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
@@ -34,9 +39,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
-using Avalonia.Themes.Fluent;
-using Avalonia.Themes.Simple;
-using Classic.Avalonia.Theme;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -105,7 +107,7 @@ namespace Skymu
         public static bool SignedIn = false;
         public static readonly string Theme = Settings.Theme;
         public static PlatformType Platform = Runtime.DetectOS();
-        public static string PlatformStr = Runtime.DetectOS().ToDisplayString();
+        public static string PlatformStr = Runtime.DetectOS().ToString();
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
         public static Bitmap AnonymousAvatar;
@@ -249,7 +251,7 @@ namespace Skymu
                     {
                         try
                         {
-                            Application.Current.Shutdown();
+                            AHelpers.ShutdownApp();
                         }
                         catch
                         {
@@ -298,7 +300,7 @@ namespace Skymu
                 case "Skype6":
                     // TODO: Make a better fix
                     // Override Settings.ActiveTab on default colorway with the proper color (#0095cc)
-                    Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#0095cc"));
+                    Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush(Color.Parse("#0095cc"));
                     // Override Settings.ActiveTabText to white
                     Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
                     new Skype6.Login().Show();
@@ -386,7 +388,7 @@ namespace Skymu
                                 break;
                             }
                     if (found != null)
-                        Current.Dispatcher.Invoke(() => ActiveViewModel.SelectConversation(found));
+                        Dispatcher.UIThread.Invoke(() => ActiveViewModel.SelectConversation(found));
                 }
             }
         }
@@ -441,8 +443,10 @@ namespace Skymu
                 {
                     ev.Cancel = true;
                 }
-                foreach (Window window in Application.Current.Windows.OfType<Window>().ToList())
+                foreach (Window window in ((IClassicDesktopStyleApplicationLifetime)Current.ApplicationLifetime).Windows.ToList())
+                {
                     window.Hide();
+                }
             }
             catch
             {
@@ -498,7 +502,7 @@ namespace Skymu
             catch { } // in case app is already too dead to clear icon by the time this is called
             finally
             {
-                Application.Current.Shutdown();
+                AHelpers.ShutdownApp();
             }
         }
 
@@ -569,7 +573,7 @@ namespace Skymu
 
         protected override void OnStartup(StartupEventArgs ev)
         {
-            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+            Dispatcher.UIThread.UnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             ApplyAvaloniaTheme(Settings.AvaloniaTheme);
             AutoLaunch.Get(); // XXX to initialize the setting just in case

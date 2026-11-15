@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 
-namespace Skymu.Avalonia
+namespace Skymu.AvaloniaHelpers
 {
     internal static class AHelpers
     {
@@ -20,6 +20,11 @@ namespace Skymu.Avalonia
         {
             if (MainWindow?.Clipboard is { } clipboard)
                 await clipboard.SetTextAsync(text);
+        }
+
+        public static void ShutdownApp()
+        {
+            ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).Shutdown();
         }
     }
 

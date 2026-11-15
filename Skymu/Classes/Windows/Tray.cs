@@ -11,6 +11,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using Skymu.Preferences;
 using Skymu.ViewModels;
@@ -18,8 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Forms;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Native.Windows
@@ -51,6 +51,77 @@ namespace Skymu.Native.Windows
         [DllImport("user32.dll")] static extern bool SetMenuItemInfo(IntPtr hMenu, uint uItem, bool fByPosition, ref MENUITEMINFO lpmii);
         [DllImport("gdi32.dll")] static extern bool DeleteObject(IntPtr hObject);
 
+        [DllImport("user32.dll")] static extern bool GetCursorPos(out POINT lpPoint);
+        [DllImport("user32.dll")] static extern bool DestroyWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", EntryPoint = "DefWindowProcW")]
+        static extern IntPtr DefWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "RegisterClassExW", CharSet = CharSet.Unicode)]
+        static extern ushort RegisterClassEx(ref WNDCLASSEX lpwcx);
+
+        [DllImport("user32.dll", EntryPoint = "CreateWindowExW", CharSet = CharSet.Unicode)]
+        static extern IntPtr CreateWindowEx(
+            uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
+            int x, int y, int nWidth, int nHeight,
+            IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+
+        [DllImport("user32.dll", EntryPoint = "RegisterWindowMessageW", CharSet = CharSet.Unicode)]
+        static extern uint RegisterWindowMessage(string lpString);
+
+        [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", CharSet = CharSet.Unicode)]
+        static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", CharSet = CharSet.Unicode)]
+        static extern bool Shell_NotifyIcon(uint dwMessage, ref NOTIFYICONDATA lpData);
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        struct WNDCLASSEX
+        {
+            public uint cbSize;
+            public uint style;
+            public IntPtr lpfnWndProc;
+            public int cbClsExtra;
+            public int cbWndExtra;
+            public IntPtr hInstance;
+            public IntPtr hIcon;
+            public IntPtr hCursor;
+            public IntPtr hbrBackground;
+            public string lpszMenuName;
+            public string lpszClassName;
+            public IntPtr hIconSm;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        struct NOTIFYICONDATA
+        {
+            public uint cbSize;
+            public IntPtr hWnd;
+            public uint uID;
+            public uint uFlags;
+            public uint uCallbackMessage;
+            public IntPtr hIcon;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szTip;
+            public uint dwState;
+            public uint dwStateMask;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string szInfo;
+            public uint uTimeoutOrVersion;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string szInfoTitle;
+            public uint dwInfoFlags;
+            public Guid guidItem;
+            public IntPtr hBalloonIcon;
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         struct MENUITEMINFO
         {
@@ -76,6 +147,14 @@ namespace Skymu.Native.Windows
         const uint TPM_RIGHTBUTTON = 0x0002;
         const uint MIIM_BITMAP = 0x00000080;
 
+        const uint NIM_ADD = 0x00000000;
+        const uint NIM_MODIFY = 0x00000001;
+        const uint NIM_DELETE = 0x00000002;
+        const uint NIF_MESSAGE = 0x00000001;
+        const uint NIF_ICON = 0x00000002;
+        const uint NIF_TIP = 0x00000004;
+        const uint WM_TRAYICON = 0x8001;
+
         const uint MENU_SHOWFRIENDS = 1001;
         const uint MENU_LOGIN = 1002;
         const uint MENU_QUIT = 1003;
@@ -88,46 +167,102 @@ namespace Skymu.Native.Windows
 
         #endregion
 
-        private static NotifyIcon _icon;
+        private static Icon _icon;
+        private static string _iconText;
+        private static bool _iconAdded;
+        private static uint _taskbarCreatedMessage;
         private static MessageWindow _msgWindow;
         private static bool _isSignedIn;
         private static readonly List<IntPtr> _menuBitmaps = new List<IntPtr>();
 
         static Tray()
         {
+            _taskbarCreatedMessage = RegisterWindowMessage("TaskbarCreated");
             _msgWindow = new MessageWindow();
             _isSignedIn = false;
 
-            _icon = new NotifyIcon
-            {
-                Icon = LoadIcon(PresenceStatus.Offline),
-                Text = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})",
-                Visible = true
-            };
-
-            _icon.MouseClick += (s, e) =>
-            {
-                if (e.Button == MouseButtons.Left)
-                    HandleMenuCommand(MENU_SHOWFRIENDS);
-                else if (e.Button == MouseButtons.Right)
-                    ShowContextMenu();
-            };
+            _icon = LoadIcon(PresenceStatus.Offline);
+            _iconText = $"{Settings.BrandingName} ({Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"]})";
+            _iconAdded = NotifyIconCommand(NIM_ADD);
         }
 
-        private class MessageWindow : NativeWindow
+        private static bool NotifyIconCommand(uint command)
+        {
+            if (_msgWindow == null)
+                return false;
+
+            var data = new NOTIFYICONDATA
+            {
+                cbSize = (uint)Marshal.SizeOf<NOTIFYICONDATA>(),
+                hWnd = _msgWindow.Handle,
+                uID = 1,
+                uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP,
+                uCallbackMessage = WM_TRAYICON,
+                hIcon = _icon != null ? _icon.Handle : IntPtr.Zero,
+                szTip = _iconText
+            };
+            return Shell_NotifyIcon(command, ref data);
+        }
+
+        private class MessageWindow
         {
             const int WM_COMMAND = 0x0111;
+            const uint WM_LBUTTONUP = 0x0202;
+            const uint WM_RBUTTONUP = 0x0205;
+
+            private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+            private static readonly WndProcDelegate _wndProc = WndProc;
+
+            public IntPtr Handle { get; private set; }
 
             public MessageWindow()
             {
-                CreateHandle(new CreateParams { Parent = new IntPtr(-3) }); // HWND_MESSAGE
+                string className = Universal.NAME + "TrayMessageWindow";
+                IntPtr hInstance = GetModuleHandle(null);
+
+                var wc = new WNDCLASSEX
+                {
+                    cbSize = (uint)Marshal.SizeOf<WNDCLASSEX>(),
+                    lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProc),
+                    hInstance = hInstance,
+                    lpszClassName = className
+                };
+                RegisterClassEx(ref wc);
+
+                Handle = CreateWindowEx(
+                    0, className, null, 0,
+                    0, 0, 0, 0,
+                    new IntPtr(-3), // HWND_MESSAGE
+                    IntPtr.Zero, hInstance, IntPtr.Zero
+                );
             }
 
-            protected override void WndProc(ref Message m)
+            public void DestroyHandle()
             {
-                if (m.Msg == WM_COMMAND)
-                    HandleMenuCommand((uint)(m.WParam.ToInt32() & 0xFFFF));
-                base.WndProc(ref m);
+                if (Handle != IntPtr.Zero)
+                    DestroyWindow(Handle);
+                Handle = IntPtr.Zero;
+            }
+
+            private static IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+            {
+                if (msg == WM_COMMAND)
+                {
+                    HandleMenuCommand((uint)(wParam.ToInt32() & 0xFFFF));
+                }
+                else if (msg == WM_TRAYICON)
+                {
+                    uint mouseMsg = (uint)(lParam.ToInt64() & 0xFFFF);
+                    if (mouseMsg == WM_LBUTTONUP)
+                        HandleMenuCommand(MENU_SHOWFRIENDS);
+                    else if (mouseMsg == WM_RBUTTONUP)
+                        ShowContextMenu();
+                }
+                else if (msg == _taskbarCreatedMessage)
+                {
+                    _iconAdded = NotifyIconCommand(NIM_ADD);
+                }
+                return DefWindowProc(hWnd, msg, wParam, lParam);
             }
         }
 
@@ -138,7 +273,11 @@ namespace Skymu.Native.Windows
                 case MENU_SHOWFRIENDS:
                     Dispatcher.UIThread.Post(() =>
                     {
-                        foreach (Window w in System.Windows.Application.Current.Windows)
+                        var lifetime = Avalonia.Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                        if (lifetime == null)
+                            return;
+
+                        foreach (Window w in lifetime.Windows)
                         {
                             if (w.IsInitialized)
                             {
@@ -208,14 +347,14 @@ namespace Skymu.Native.Windows
 
         private static IntPtr BuildLoggedInMenu() // menu to show when logged in
         {
-            ClearMenuBitmaps(); 
+            ClearMenuBitmaps();
             IntPtr hStatus = CreatePopupMenu();
 
             void AddStatusItem(uint menuId, PresenceStatus status, string langKey)
             {
                 AppendMenu(hStatus, MF_STRING, (UIntPtr)menuId, Universal.Lang[langKey]);
 
-                IntPtr hBmp = IconHelper.LoadHBitmapFromSheet(MainViewModel.GetIntFromStatus(status), $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
+                IntPtr hBmp = IconHelper.LoadHBitmapFromSheet(MainViewModel.GetIntFromStatus(status), $"avares://Skymu/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
                 if (hBmp != IntPtr.Zero)
                 {
                     SetMenuItemBitmap(hStatus, menuId, hBmp);
@@ -242,7 +381,7 @@ namespace Skymu.Native.Windows
 
         private static void ShowContextMenu()
         {
-            var pos = Cursor.Position;
+            GetCursorPos(out POINT pos);
             IntPtr hMenu = _isSignedIn ? BuildLoggedInMenu() : BuildLoggedOutMenu();
 
             SetForegroundWindow(_msgWindow.Handle);
@@ -267,10 +406,10 @@ namespace Skymu.Native.Windows
         public static void DisposeIcon()
         {
             ClearMenuBitmaps(); // free any bitmaps still allocated from the last menu
-            if (_icon != null)
+            if (_iconAdded)
             {
-                _icon.Visible = false;
-                _icon.Dispose();
+                NotifyIconCommand(NIM_DELETE);
+                _iconAdded = false;
                 _icon = null;
             }
             _msgWindow?.DestroyHandle();
@@ -279,14 +418,15 @@ namespace Skymu.Native.Windows
 
         private static Icon LoadIcon(PresenceStatus status)
         {
-            return IconHelper.LoadIconFromSheet(MainViewModel.GetIntFromStatus(status), $"pack://application:,,,/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
+            return IconHelper.LoadIconFromSheet(MainViewModel.GetIntFromStatus(status), $"avares://Skymu/Themes/{Preferences.Settings.Theme}/Assets/Universal/Icon/skype-status.png");
         }
 
         private static void SetStatusInternal(string statusText, PresenceStatus status, bool isSignedIn)
         {
             _isSignedIn = isSignedIn;
-            _icon.Icon = LoadIcon(status);
-            _icon.Text = $"{Settings.BrandingName} ({statusText})";
+            _icon = LoadIcon(status);
+            _iconText = $"{Settings.BrandingName} ({statusText})";
+            NotifyIconCommand(NIM_MODIFY);
         }
 
         public static void SetStatus(PresenceStatus status)

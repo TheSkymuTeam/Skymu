@@ -22,7 +22,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using OmegaAOL.Bifrost.Http;
 using OmegaAOL.Bifrost.WebSockets;
-using System.Windows.Documents;
 
 namespace Skymu.WebServices
 {

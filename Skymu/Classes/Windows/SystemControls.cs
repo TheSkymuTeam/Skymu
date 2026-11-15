@@ -14,8 +14,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Platform;
+using Avalonia.Win32;
+using Avalonia.Win32.Interop;
 
 namespace Skymu.Native.Windows
 {
@@ -42,9 +45,10 @@ namespace Skymu.Native.Windows
 
         public NativeMenuBar(Window window)
         {
-            hwnd = new WindowInteropHelper(window).Handle;
-            HwndSource source = HwndSource.FromHwnd(hwnd);
-            source.AddHook(WndProc);
+            var handle = window.TryGetPlatformHandle();
+
+            hwnd = handle.Handle;
+            // source.AddHook(WndProc);
             hMenu = CreateMenu();
             SetMenu(hwnd, hMenu);
         }

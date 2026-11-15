@@ -14,7 +14,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Interop;
+using Avalonia.Controls;
 
 namespace Skymu.Native.Windows
 {
@@ -46,14 +46,17 @@ namespace Skymu.Native.Windows
             if (window == null)
                 return;
 
-            WindowInteropHelper wih = new WindowInteropHelper(window);
+            var handle = window.TryGetPlatformHandle();
+
+            if (handle == null)
+                return;
 
             FLASHWINFO fw = new FLASHWINFO
             {
                 cbSize = (uint)Marshal.SizeOf(typeof(FLASHWINFO)),
-                hwnd = wih.Handle,
-                dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG, // flash until focused
-                uCount = uint.MaxValue, // repeat indefinitely
+                hwnd = handle.Handle,
+                dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG,
+                uCount = uint.MaxValue,
                 dwTimeout = 0,
             };
 

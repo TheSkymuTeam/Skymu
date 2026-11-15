@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Avalonia.Controls;
-using Skymu.Avalonia;
+using Skymu.AvaloniaHelpers;
 
 namespace Skymu.Forms.Pages
 {
