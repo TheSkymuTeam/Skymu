@@ -679,7 +679,7 @@ namespace Skymu.Formatting
 
         internal static SliceControl MakeEmoji(string emojiName)
         {
-            BitmapImage sourceImg = ImageHelper.FreezeLoadFromPackUri(
+            Bitmap sourceImg = ImageHelper.LoadFromPackUri(
                 $"pack://application:,,,/Emoji/{emojiName}/views/default_20_anim/index.png"
             );
             var sliceControl = new SliceControl

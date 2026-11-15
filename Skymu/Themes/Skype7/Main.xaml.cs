@@ -30,6 +30,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using Avalonia.Interactivity;
 using System.Threading.Tasks;
 using System.Windows;
 using Avalonia.Controls;
@@ -165,7 +166,7 @@ namespace Skymu.Skype7
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>

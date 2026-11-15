@@ -27,7 +27,7 @@ using Avalonia.Media;
 using Skymu.Native.Windows;
 using System.Windows.Media.Animation;
 using Avalonia.Media.Imaging;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Skymu.Helpers;
@@ -40,7 +40,7 @@ namespace Skymu.Forms
         private DispatcherTimer _closeTimer;
         private const int MaxMessages = 5;
         private const string SHARED_PHOTO = "shared a photo";
-        private BitmapImage blue_background = null;
+        private Bitmap blue_background = null;
 
         public Notification(MessageRecievedBottle e, int durationSeconds = 5)
         {
@@ -69,7 +69,7 @@ namespace Skymu.Forms
                 {
                     if (blue_background == null)
                     {
-                        blue_background = ImageHelper.FreezeLoad(
+                        blue_background = ImageHelper.Load(
                             "Themeable/Notifications/bubble-blue.png"
                         );
                     }
@@ -184,7 +184,7 @@ namespace Skymu.Forms
 
             SliceControl statusIcon = new SliceControl
             {
-                Source = Helpers.ImageHelper.FreezeLoad("Universal/Icon/skype-status.png"),
+                Source = Helpers.ImageHelper.Load("Universal/Icon/skype-status.png"),
                 ElementCount = 22,
                 StackDirection = SpriteStackDirection.Horizontal,
                 DefaultIndex = isGroupChat

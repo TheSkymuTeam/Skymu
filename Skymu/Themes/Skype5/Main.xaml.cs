@@ -30,16 +30,16 @@ namespace Skymu.Skype5
     {
         #region Variables
 
-        private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad(
+        private readonly Bitmap contactsBtnImage = ImageHelper.Load(
             "Themeable/Main/contacts.png"
         );
-        private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad(
+        private readonly Bitmap recentsBtnImage = ImageHelper.Load(
             "Themeable/Main/recents.png"
         );
-        private readonly BitmapImage contactsBtnImageEmpty = ImageHelper.FreezeLoad(
+        private readonly Bitmap contactsBtnImageEmpty = ImageHelper.Load(
             "Themeable/Main/contacts-empty.png"
         );
-        private readonly BitmapImage recentsBtnImageEmpty = ImageHelper.FreezeLoad(
+        private readonly Bitmap recentsBtnImageEmpty = ImageHelper.Load(
             "Themeable/Main/recents-empty.png"
         );
 

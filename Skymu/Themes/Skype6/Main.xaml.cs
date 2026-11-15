@@ -40,9 +40,9 @@ namespace Skymu.Skype6
 
         private SliceControl _currentTab;
 
-        private readonly BitmapImage contactsBtnImage = ImageHelper.FreezeLoad("Themeable/Main/contacts.png");
-        private readonly BitmapImage recentsBtnImage = ImageHelper.FreezeLoad("Themeable/Main/recents.png");
-        private readonly BitmapImage sidebarBtnEmpty = ImageHelper.FreezeLoad("Themeable/Main/empty.png");
+        private readonly Bitmap contactsBtnImage = ImageHelper.Load("Themeable/Main/contacts.png");
+        private readonly Bitmap recentsBtnImage = ImageHelper.Load("Themeable/Main/recents.png");
+        private readonly Bitmap sidebarBtnEmpty = ImageHelper.Load("Themeable/Main/empty.png");
 
         #endregion
 

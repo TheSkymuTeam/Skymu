@@ -11,81 +11,101 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Preferences;
+using Avalonia;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Windows;
-using Avalonia.Media.Imaging;
+using System.Runtime.InteropServices;
 
 namespace Skymu.Helpers
 {
     class ImageHelper
 
     {
-        private static readonly Dictionary<string, BitmapImage> _cache = new Dictionary<string, BitmapImage>();
-        public static BitmapImage FreezeLoad(string path)
+        private static readonly Dictionary<string, Bitmap> _cache = new Dictionary<string, Bitmap>();
+        public static Bitmap Load(string path)
         {
-            return FreezeLoadFromPackUri($"pack://application:,,,/Skymu;component/Themes/{Universal.Theme}/Assets/{path}");
+            return LoadFromPackUri($"pack://application:,,,/Skymu;component/Themes/{Universal.Theme}/Assets/{path}");
         }
 
-        public static BitmapImage FreezeLoadFromPackUri(string uri)
+        public static Bitmap LoadFromPackUri(string uri)
         {
             if (_cache.TryGetValue(uri, out var cached))
                 return cached;
 
-            BitmapImage img = new BitmapImage();
-            img.BeginInit();
-            img.UriSource = new Uri(uri, UriKind.RelativeOrAbsolute);
-            img.CacheOption = BitmapCacheOption.OnLoad;
-            img.EndInit();
-            img.Freeze();
+            Bitmap img;
+
+            using (var stream = AssetLoader.Open(new Uri(uri)))
+            {
+                img = new Bitmap(stream);
+            }
 
             _cache[uri] = img;
             return img;
         }
 
-        public static BitmapImage GenerateFromArray(byte[] data)
+        public static Bitmap GenerateFromArray(byte[] data)
         {
-            BitmapImage img = new BitmapImage();
             using (var stream = new MemoryStream(data))
             {
-                img.BeginInit();
-                img.CacheOption = BitmapCacheOption.OnLoad;
-                img.StreamSource = stream;
-                img.EndInit();
+                return new Bitmap(stream);
             }
-            img.Freeze();
-            return img;
         }
 
-        public static BitmapSource Darken(BitmapSource source)
+        public static Bitmap Darken(Bitmap source)
         {
             if (source == null)
                 return null;
 
-            var wb = new WriteableBitmap(source);
+            var wb = new WriteableBitmap(
+                source.PixelSize,
+                source.Dpi,
+                source.Format,
+                source.AlphaFormat);
 
-            int stride = wb.PixelWidth * (wb.Format.BitsPerPixel / 8);
-            byte[] pixels = new byte[wb.PixelHeight * stride];
+            int stride = source.PixelSize.Width * 4;
+            byte[] pixels = new byte[source.PixelSize.Height * stride];
 
-            wb.CopyPixels(pixels, stride, 0);
+            var handle = System.Runtime.InteropServices.GCHandle.Alloc(
+                pixels, System.Runtime.InteropServices.GCHandleType.Pinned);
 
-            for (int i = 0; i < pixels.Length; i++)
+            try
             {
-                pixels[i] = (byte)(255 - pixels[i]);
+                source.CopyPixels(
+                    new PixelRect(source.PixelSize),
+                    handle.AddrOfPinnedObject(),
+                    pixels.Length,
+                    stride);
+            }
+            finally
+            {
+                handle.Free();
             }
 
-            wb.WritePixels(
-                new Int32Rect(0, 0, wb.PixelWidth, wb.PixelHeight),
-                pixels,
-                stride,
-                0);
+            for (int i = 0; i < pixels.Length; i += 4)
+            {
+                pixels[i] = (byte)(255 - pixels[i]);
+                pixels[i + 1] = (byte)(255 - pixels[i + 1]);
+                pixels[i + 2] = (byte)(255 - pixels[i + 2]);
+            }
+
+            using (var fb = wb.Lock())
+            {
+                for (int y = 0; y < source.PixelSize.Height; y++)
+                {
+                    System.Runtime.InteropServices.Marshal.Copy(
+                        pixels,
+                        y * stride,
+                        fb.Address + y * fb.RowBytes,
+                        stride);
+                }
+            }
 
             return wb;
         }
-
         public static string ResolveExtension(byte[] bytes, string existingName)
         {
             string ext = Path.GetExtension(existingName)?.ToLowerInvariant();
@@ -123,21 +143,6 @@ namespace Skymu.Helpers
             }
 
             return existingName; // couldn't find proper extension, just save without an extension
-        }
-
-        public static Bitmap WpfToGdiBitmap(BitmapImage bitmapImage)
-        {
-            using (MemoryStream outStream = new MemoryStream())
-            {
-                BitmapEncoder enc = new PngBitmapEncoder();
-
-                enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-                enc.Save(outStream);
-                outStream.Position = 0;
-
-                Bitmap bitmap = new Bitmap(outStream);
-                return new Bitmap(bitmap);
-            }
         }
     }
 }

@@ -23,9 +23,9 @@ namespace Skymu.Infrastructure
 {
     public static class SharedServices
     {
-        private static BitmapImage GenerateAvatarImage(string avatar)
+        private static Bitmap GenerateAvatarImage(string avatar)
         {
-            return ImageHelper.FreezeLoad("Themeable/Profile Pictures/" + avatar + ".png");
+            return ImageHelper.Load("Themeable/Profile Pictures/" + avatar + ".png");
         }
 
         public static void GenerateGlobalAvatars()

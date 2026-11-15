@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Avalonia.Controls;
 using System.Windows.Documents;
+using Avalonia.Interactivity;
 using Yggdrasil;
 using Yggdrasil.Models;
 

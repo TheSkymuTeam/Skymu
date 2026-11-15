@@ -25,7 +25,7 @@ using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using Skymu.Credentials;

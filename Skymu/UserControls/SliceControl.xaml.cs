@@ -22,7 +22,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using Avalonia.Media.Imaging;
 using System.Windows.Shapes;
-using System.Windows.Threading;
+using Avalonia.Threading;
 
 namespace Skymu
 {

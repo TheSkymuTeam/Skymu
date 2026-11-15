@@ -11,6 +11,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.Styling;
+using Avalonia;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
@@ -103,18 +108,24 @@ namespace Skymu.Theming
 
         private static void LoadFromPath(string absolutePath)
         {
-            var new_colorway = new ResourceDictionary
+            ResourceDictionary new_colorway;
+
+            using (var stream = File.OpenRead(absolutePath))
             {
-                Source = new Uri(absolutePath, UriKind.Absolute)
-            };
+                new_colorway = (ResourceDictionary)AvaloniaRuntimeXamlLoader.Load(
+                    stream,
+                    typeof(Universal).Assembly);
+            }
 
             var appResources = Application.Current.Resources;
+
             if (_currentColorway != null)
                 appResources.MergedDictionaries.Remove(_currentColorway);
 
             (string, bool) information = ReadColorwayInfo(absolutePath);
             Universal.IsDarkTheme = information.Item2;
-            if (Settings.PresentationFramework.StartsWith("Fluent")) // dynamic theme switching
+
+            if (Settings.PresentationFramework.StartsWith("Fluent"))
             {
                 if (Universal.IsDarkTheme && Settings.PresentationFramework == "Fluent.Light")
                     Settings.PresentationFramework = "Fluent.Dark";
@@ -128,8 +139,9 @@ namespace Skymu.Theming
             Debug.WriteLine($"[COLORWAY-MANAGER] Loaded: {absolutePath}");
             Debug.WriteLine($"[COLORWAY-MANAGER] Colorway theme: {(information.Item2 ? "Dark" : "Light")}");
             Debug.WriteLine($"[COLORWAY-MANAGER] MergedDictionaries count: {Application.Current.Resources.MergedDictionaries.Count}");
+
             foreach (var dict in Application.Current.Resources.MergedDictionaries)
-                Debug.WriteLine("[COLORWAY-MANAGER] MergedDictionary: " + dict.Source);
+                Debug.WriteLine("[COLORWAY-MANAGER] MergedDictionary: " + dict);
         }
 
         private static (string name, bool isDarkTheme) ReadColorwayInfo(string xamlPath)

@@ -16,6 +16,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using Avalonia.Controls;
+using Avalonia;
 
 namespace Skymu.Forms.Pages
 {
@@ -41,7 +42,7 @@ namespace Skymu.Forms.Pages
     Action blAction = null,
     string blText = null,
     bool enableTextBox = false,
-    FrameworkElement img = null,
+    Image img = null,
     Size? customDimensions = null,
     bool bmEnabled = false,
     Action bmAction = null,

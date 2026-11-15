@@ -16,6 +16,7 @@ using System;
 using System.Windows;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Interactivity;
 
 namespace Skymu.Forms
 {

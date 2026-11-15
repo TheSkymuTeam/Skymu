@@ -33,6 +33,7 @@ using System.Windows;
 using Avalonia.Controls;
 using System.Windows.Documents;
 using Skymu.WebServices;
+using Avalonia.Interactivity;
 using System.Windows.Input;
 using Avalonia.Media;
 using System.Windows.Media.Effects;
@@ -40,7 +41,7 @@ using Avalonia.Media.Imaging;
 using System.Windows.Shell;
 using Skymu.Native.Windows;
 using Skymu.Sounds;
-using System.Windows.Threading;
+using Avalonia.Threading;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
@@ -124,7 +125,7 @@ namespace Skymu.Theming
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
         private bool _userScrolledUp = false;
-        private BitmapImage img_maximize,
+        private Bitmap img_maximize,
             img_restore,
             img_split,
             img_join;
@@ -160,10 +161,10 @@ namespace Skymu.Theming
             set { SetValue(WindowTitleProperty, value); }
         }
 
-        private readonly BitmapImage sendBtnSmall = ImageHelper.FreezeLoad(
+        private readonly Bitmap sendBtnSmall = ImageHelper.Load(
             "Universal/Main/msg-send-button.png"
         );
-        private readonly BitmapImage sendBtnFull = ImageHelper.FreezeLoad(
+        private readonly Bitmap sendBtnFull = ImageHelper.Load(
             "Universal/Main/msg-send-button-full.png"
         );
 
@@ -301,7 +302,7 @@ namespace Skymu.Theming
                     }
                     else if (_currentFrame == Enumerations.WindowChrome.SkypeAeroCustom) // TODO: finish this
                     {
-                        var img = ImageHelper.FreezeLoad(
+                        var img = ImageHelper.Load(
                             "Universal/Window Frame/Aero/aero-background.png"
                         );
                         this.Background = new ImageBrush
@@ -661,7 +662,7 @@ namespace Skymu.Theming
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.FreezeLoad(uri));
+                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
@@ -1352,12 +1353,12 @@ namespace Skymu.Theming
             return sb.ToString();
         }
 
-        private BitmapImage GenerateTitlebarButtonImage(string name, Enumerations.WindowChrome chrome)
+        private Bitmap GenerateTitlebarButtonImage(string name, Enumerations.WindowChrome chrome)
         {
             string framedir = "Aero";
             if (chrome == Enumerations.WindowChrome.SkypeXP) framedir = "Basic";
 
-            return ImageHelper.FreezeLoad(
+            return ImageHelper.Load(
                 $"Universal/Window Frame/{framedir}/{name}/combined.png"
             );
         }

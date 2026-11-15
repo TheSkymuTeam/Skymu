@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Avalonia.Interactivity;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -92,7 +93,7 @@ namespace Skymu.Forms.Pages
 
                 try
                 {
-                    var image = new BitmapImage();
+                    var image = new Bitmap();
                     using (var ms = new MemoryStream(data))
                     {
                         image.BeginInit();
