@@ -11,46 +11,50 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
+using Skymu.AvaloniaHelpers;
 using Skymu.Credentials;
 using Skymu.Forms;
+using Skymu.Helpers;
 using Skymu.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Avalonia;
-using Avalonia.Interactivity;
-using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Skymu.AvaloniaHelpers;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
 {
     public partial class AccountManager : UserControl
     {
+        public SkinnedWindow win;
         public static void Open()
         {
-            var win = new SkinnedWindow(new AccountManager());
-            win.Title = Preferences.Settings.BrandingName + "™ - Accounts";
-            win.HeaderText = "Manage saved accounts";
-            win.HeaderIcon = SkinnedWindow.IconType.ContactRequest;
+            AccountManager mgr = new AccountManager();
+            mgr.win = new SkinnedWindow(mgr);
+            mgr.win.Title = Preferences.Settings.BrandingName + "™ - Accounts";
+            mgr.win.HeaderText = "Manage saved accounts";
+            mgr.win.HeaderIcon = SkinnedWindow.IconType.ContactRequest;
 
-            win.ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"];
-            win.ButtonLeftAction = () => win.Close();
-            win.ButtonRight.IsVisible = false;
+            mgr.win.ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"];
+            mgr.win.ButtonLeftAction = () => mgr.win.Close();
+            mgr.win.ButtonRight.IsVisible = false;
 
-            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            win.ShowDialog(AHelpers.GetMainWindow());
+            mgr.win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            mgr.win.ShowDialog(AHelpers.GetMainWindow());
         }
 
         private sealed class AccountEntry
         {
             public SavedCredential Credential { get; }
-            public ImageSource Avatar { get; }
+            public Bitmap Avatar { get; }
             public string DisplayName { get; }
             public string Details { get; }
             public string AutoLoginText { get; }
@@ -83,31 +87,7 @@ namespace Skymu.Forms.Pages
                 if (IsCurrent) parts.Add("Signed in");
                 Details = string.Join("  •  ", parts);
 
-                Avatar = ToImage(user?.Avatar);
-            }
-
-            private static ImageSource ToImage(byte[] data)
-            {
-                if (data == null || data.Length == 0)
-                    return null;
-
-                try
-                {
-                    var image = new Bitmap();
-                    using (var ms = new MemoryStream(data))
-                    {
-                        image.BeginInit();
-                        image.CacheOption = BitmapCacheOption.OnLoad;
-                        image.StreamSource = ms;
-                        image.EndInit();
-                    }
-                    image.Freeze();
-                    return image;
-                }
-                catch
-                {
-                    return null;
-                }
+                Avatar = ImageHelper.GenerateFromArray(user?.Avatar);
             }
         }
 
@@ -191,7 +171,7 @@ namespace Skymu.Forms.Pages
             }
 
             LoginViewModel.ForcedLogin = cred;
-            Window.GetWindow(this)?.Close();
+            win.Close();
 
             if (Universal.SignedIn)
                 Dispatcher.UIThread.Post(() =>
@@ -314,7 +294,7 @@ namespace Skymu.Forms.Pages
 
         private void AddAccountButton_Click(object sender, RoutedEventArgs e)
         {
-            Window.GetWindow(this)?.Close();
+            win.Close();
 
             if (Universal.SignedIn)
                 Dispatcher.UIThread.Post(() =>
