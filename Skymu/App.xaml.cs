@@ -11,38 +11,40 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.IO.Pipes;
-using System.ComponentModel;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
+using Avalonia.Threading;
+using OmegaAOL.Bifrost.Http;
+using Skymu.Avalonia;
 using Skymu.Forms;
+using Skymu.Forms.Pages;
 using Skymu.Migration;
+using Skymu.Native.Windows;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Skymu.Theming;
-using Skymu.Forms.Pages;
-using Skymu.WebServices;
-using Skymu.Native.Windows;
-using Yggdrasil;
-using Yggdrasil.Models;
-using Yggdrasil.Enumerations;
 using Skymu.Versioning;
-using Yggdrasil.Bottles;
-using OmegaAOL.Bifrost.Http;
+using Skymu.WebServices;
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.IO.Pipes;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+using Yggdrasil;
+using Yggdrasil.Bottles;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu
 {
@@ -130,26 +132,22 @@ namespace Skymu
             WindowBase.IconType itype
         )
         {
-            Current.Dispatcher.BeginInvoke(
-                new Action(
-                    delegate
+            Dispatcher.UIThread.Post(() =>
+            {
+                var core = (ICore)sender;
+                new Dialog(
+                    itype,
+                    e.Message,
+                    prefix + core.Name,
+                    blEnabled: !string.IsNullOrEmpty(e.CopyToClipboardText),
+                    blText: "Copy to clipboard",
+                    blAction: async () =>
                     {
-                        var core = (ICore)sender;
-                        new Dialog(
-                            itype,
-                            e.Message,
-                            prefix + core.Name,
-                            blEnabled: !string.IsNullOrEmpty(e.CopyToClipboardText),
-                            blText: "Copy to clipboard",
-                            blAction: () =>
-                            {
-                                Clipboard.SetText(e.CopyToClipboardText);
-                                ShowMessage("Copied to clipboard.");
-                            }
-                        ).Show();
+                        await AvaloniaHelpers.SetClipboardText(e.CopyToClipboardText);
+                        ShowMessage("Copied to clipboard.");
                     }
-                )
-            );
+                ).Show();
+            });
         }
 
         public static void PluginDialogHandler(object sender, DialogBottle e)

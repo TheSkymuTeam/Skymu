@@ -18,6 +18,7 @@ using Skymu.Credentials;
 using Skymu.Databases;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
+using Skymu.Avalonia;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
@@ -276,9 +277,9 @@ namespace Skymu.ViewModels
             Universal.NotImplemented("Editing messages from the context menu");
         }
 
-        public void CopyMessage(Message message)
+        public async void CopyMessage(Message message)
         {
-            if (!string.IsNullOrEmpty(message?.Text)) Clipboard.SetText(message.Text);
+            if (!string.IsNullOrEmpty(message?.Text)) await AvaloniaHelpers.SetClipboardText(message.Text);
         }
 
         public async Task ReplyToMessage(Message message)
