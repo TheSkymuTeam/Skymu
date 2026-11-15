@@ -82,8 +82,10 @@ namespace Skymu.Skype4
 
         #region Event handlers
 
-        private void SBNewBtn_Click(object sender, MouseButtonEventArgs e)
+        private void SBNewBtn_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             var menu = (ContextMenu)SBNewBtn.Resources["Menu"];
             menu.PlacementTarget = SBNewBtn;
             menu.Placement = Avalonia.Controls.Primitives.PlacementMode.Bottom;
@@ -107,19 +109,28 @@ namespace Skymu.Skype4
             }
         }
 
-        private async void OnContactsLink(object sender, MouseButtonEventArgs e)
+        private async void OnContactsLink(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             await SelectTab(btnContacts);
         }
 
-        private void CloseConversationHint(object sender, MouseButtonEventArgs e)
+        private void CloseConversationHint(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             ConversationsHint.IsVisible = false;
             Settings.InboxNoticeShown = true;
             Settings.Save();
         }
 
-        private void Directory_Click(object sender, MouseButtonEventArgs e) => Universal.NotImplemented("Directory");
+        private void Directory_Click(object sender, PointerReleasedEventArgs e)
+        {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
+            Universal.NotImplemented("Directory");
+        }
 
         #endregion
 

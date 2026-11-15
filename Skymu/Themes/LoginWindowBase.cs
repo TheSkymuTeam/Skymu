@@ -29,9 +29,10 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using Avalonia;
-using System.Windows.Navigation;
+using Avalonia.Interactivity;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+using Avalonia.Input;
 
 namespace Skymu.Theming
 {
@@ -53,8 +54,8 @@ namespace Skymu.Theming
             AHelpers.SetMainWindow(this);
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
-            LoginButton.MouseLeftButtonUp += buttonLaunch;
-            this.ContentRendered += Login_ContentRendered;
+            LoginButton.PointerReleased += buttonLaunch;
+            this.Opened += Login_Opened;
 
             _viewModel = viewModel;
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
@@ -66,8 +67,10 @@ namespace Skymu.Theming
             Tray.SetStatus(PresenceStatus.Offline);
         }
 
-        private async void buttonLaunch(object state, RoutedEventArgs e)
+        private async void buttonLaunch(object state, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             if (ProtocolComboBox.SelectedIndex == -1) return;
             await _viewModel.Login(
                 UsernameBox.Text,
@@ -79,13 +82,13 @@ namespace Skymu.Theming
         {
             PasswordLabel.Foreground = new SolidColorBrush(Colors.Black);
             PasswordTokenBox.IsEnabled = true;
-            PasswordLabel.FontStyle = FontStyles.Normal;
+            PasswordLabel.FontStyle = FontStyle.Normal;
             PasswordLabel.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
             LoginButton.Text = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             SkypeName.Foreground = new SolidColorBrush(Colors.Black);
             UsernameBox.IsEnabled = true;
-            SkypeName.FontStyle = FontStyles.Normal;
+            SkypeName.FontStyle = FontStyle.Normal;
             SkypeName.Text = listing.TextUsername ?? SkypeName.Text;
 
             if (listing.AuthenticationType != AuthenticationMethod.Password)
@@ -93,7 +96,7 @@ namespace Skymu.Theming
                 PasswordLabel.Foreground = new SolidColorBrush(Colors.DarkGray);
                 PasswordTokenBox.IsEnabled = false;
                 PasswordLabel.Text = "field not required";
-                PasswordLabel.FontStyle = FontStyles.Italic;
+                PasswordLabel.FontStyle = FontStyle.Italic;
 
                 switch (listing.AuthenticationType)
                 {
@@ -101,7 +104,7 @@ namespace Skymu.Theming
                         LoginButton.Text = "Scan QR code";
                         SkypeName.Foreground = new SolidColorBrush(Colors.DarkGray);
                         UsernameBox.IsEnabled = false;
-                        SkypeName.FontStyle = FontStyles.Italic;
+                        SkypeName.FontStyle = FontStyle.Italic;
                         SkypeName.Text = "field not required";
                         break;
                     case AuthenticationMethod.Passwordless:
@@ -222,7 +225,7 @@ namespace Skymu.Theming
                 _viewModel.HandleProtocolSelected(listing);
         }
 
-        private async void Login_ContentRendered(object sender, EventArgs e)
+        private async void Login_Opened(object sender, EventArgs e)
         {
             if (!switchuser)
                 await _viewModel.TryAutoLogin();
@@ -271,7 +274,7 @@ namespace Skymu.Theming
         private global::Avalonia.Controls.Grid LoginControls => Part<global::Avalonia.Controls.Grid>(nameof(LoginControls));
         private global::Avalonia.Controls.RowDefinition MenuBarRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(MenuBarRow));
         private global::Avalonia.Controls.TextBlock PasswordLabel => Part<global::Avalonia.Controls.TextBlock>(nameof(PasswordLabel));
-        private global::Avalonia.Controls.PasswordBox PasswordTokenBox => Part<global::Avalonia.Controls.PasswordBox>(nameof(PasswordTokenBox));
+        private global::Avalonia.Controls.TextBox PasswordTokenBox => Part<global::Avalonia.Controls.TextBox>(nameof(PasswordTokenBox));
         private global::Avalonia.Controls.ComboBox ProtocolComboBox => Part<global::Avalonia.Controls.ComboBox>(nameof(ProtocolComboBox));
         private global::Avalonia.Controls.TextBlock SkypeName => Part<global::Avalonia.Controls.TextBlock>(nameof(SkypeName));
         private global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));

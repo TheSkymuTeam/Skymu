@@ -66,14 +66,14 @@ namespace Skymu.Skype7
         {
             PasswordHint.Foreground = new SolidColorBrush(Colors.Gray);
             PasswordTokenBox.IsEnabled = true;
-            PasswordHint.FontStyle = FontStyles.Normal;
+            PasswordHint.FontStyle = FontStyle.Normal;
             PasswordHint.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
 
             string buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
 
             UsernameHint.Foreground = new SolidColorBrush(Colors.Gray);
             UsernameBox.IsEnabled = true;
-            UsernameHint.FontStyle = FontStyles.Normal;
+            UsernameHint.FontStyle = FontStyle.Normal;
             UsernameHint.Text = listing.TextUsername ?? UsernameHint.Text;
             if (Universal.Plugin is null) { // TODO : Too busy to fix that properly, Universal.Plugin seems to be always null, please fix it if possible . - Sean Kévin
                 SubHeader.Content = $"";
@@ -87,7 +87,7 @@ namespace Skymu.Skype7
                 PasswordHint.Foreground = new SolidColorBrush(Colors.LightGray);
                 PasswordTokenBox.IsEnabled = false;
                 PasswordHint.Text = "field not required";
-                PasswordHint.FontStyle = FontStyles.Italic;
+                PasswordHint.FontStyle = FontStyle.Italic;
 
                 switch (listing.AuthenticationType)
                 {
@@ -95,7 +95,7 @@ namespace Skymu.Skype7
                         buttonText = "Scan QR code";
                         UsernameHint.Foreground = new SolidColorBrush(Colors.LightGray);
                         UsernameBox.IsEnabled = false;
-                        UsernameHint.FontStyle = FontStyles.Italic;
+                        UsernameHint.FontStyle = FontStyle.Italic;
                         UsernameHint.Text = "field not required";
                         break;
                     case AuthenticationMethod.Passwordless:
@@ -238,7 +238,7 @@ namespace Skymu.Skype7
             e.Handled = true;
         }
 
-        private void FooterLink_Click(object sender, MouseButtonEventArgs e)
+        private void FooterLink_Click(object sender, PointerEventArgs e)
         {
             Universal.OpenURL(DISCORD_SERVER_INVITE);
         }
@@ -256,7 +256,7 @@ namespace Skymu.Skype7
                 Application.Current.Shutdown();
         }
 
-        private void Window_PointerPressed(object sender, MouseButtonEventArgs e)
+        private void Window_PointerPressed(object sender, PointerEventArgs e)
         {
             MainGrid.Focus();
         }

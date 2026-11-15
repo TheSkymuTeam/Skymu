@@ -938,7 +938,7 @@
                         Margin="15,15,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        MouseLeftButtonUp="TabHome_Click"
+                        PointerReleased="TabHome_Click"
                         Source="{DynamicResource HomeDrawingImage}" />
                     <Image
                         Width="12"
@@ -946,7 +946,7 @@
                         Margin="176,15,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        MouseLeftButtonUp="AddContact_Click"
+                        PointerReleased="AddContact_Click"
                         Source="{DynamicResource PlusDrawingImage}" />
                     <TextBlock
                         x:Name="TabContactsText"
@@ -959,7 +959,7 @@
                         Cursor="Hand"
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource Metro.Text.HighContrast}"
-                        MouseLeftButtonUp="TabContacts_Click"
+                        PointerReleased="TabContacts_Click"
                         Text="{Binding [sZAPBUTTON_CONTACTS], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Left"
                         TextWrapping="NoWrap">
@@ -987,7 +987,7 @@
                         Cursor="Hand"
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource Metro.Text.HighContrast}"
-                        MouseLeftButtonUp="TabRecent_Click"
+                        PointerReleased="TabRecent_Click"
                         Text="{Binding [sRECENTS_TAB_TEXT], Source='{StaticResource Lang}', Converter={StaticResource ToUpperConverter}}"
                         TextAlignment="Center"
                         TextWrapping="NoWrap">
@@ -1012,7 +1012,7 @@
                         Cursor="Hand"
                         FontFamily="Segoe UI Historic"
                         Foreground="{DynamicResource Metro.Text.HighContrast}"
-                        MouseLeftButtonUp="TabServers_Click"
+                        PointerReleased="TabServers_Click"
                         Text="SERVERS"
                         TextAlignment="Left"
                         TextTrimming="CharacterEllipsis"
@@ -1317,7 +1317,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Cursor="Hand"
-                    MouseLeftButtonUp="EmojiButton_Click"
+                    PointerReleased="EmojiButton_Click"
                     RenderOptions.BitmapScalingMode="HighQuality"
                     Source="Assets/Themeable/Main/emoji.png"
                     ToolTip="Emoji" />
@@ -1356,7 +1356,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
                     Cursor="Hand"
-                    MouseLeftButtonUp="SendButton_Click">
+                    PointerReleased="SendButton_Click">
                     <Ellipse.Fill>
                         <VisualBrush>
                             <VisualBrush.Visual>

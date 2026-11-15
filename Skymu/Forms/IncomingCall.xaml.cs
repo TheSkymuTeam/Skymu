@@ -19,6 +19,7 @@ using Avalonia.Media;
 using Avalonia.Media.Animation;
 using Yggdrasil.Models;
 using Yggdrasil.Bottles;
+using Avalonia.Controls;
 using Skymu.Sounds;
 
 namespace Skymu.Forms
@@ -50,21 +51,28 @@ namespace Skymu.Forms
             CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", _call.Caller.DisplayName);
         }
 
-        private void OnClose(object sender, MouseButtonEventArgs e)
+        private void OnClose(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             SoundManager.StopPlayback("CALL_IN");
             Close();
         }
 
-        private void OnAnswer(object sender, MouseButtonEventArgs e)
+        private void OnAnswer(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             Answered?.Invoke(this, new EventArgs());
             SoundManager.StopPlayback("CALL_IN");
             Close();
         }
 
-        private void OnDrag(object sender, MouseButtonEventArgs e)
+        private void OnDrag(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
+
             var source = e.OriginalSource as DependencyObject;
             while (source != null)
             {
@@ -75,8 +83,10 @@ namespace Skymu.Forms
             DragMove();
         }
 
-        private void OnDecline(object sender, MouseButtonEventArgs e)
+        private void OnDecline(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             SoundManager.StopPlayback("CALL_IN");
             _ = Universal.CallPlugin.DeclineCall(_call.Caller);
             SoundManager.Play("HANGUP");

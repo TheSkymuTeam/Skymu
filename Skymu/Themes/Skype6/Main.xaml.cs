@@ -145,14 +145,14 @@ namespace Skymu.Skype6
 
         #region Event handlers
 
-        private void HomeButton_Click(object sender, MouseButtonEventArgs e)
+        private void HomeButton_Click(object sender, PointerEventArgs e)
         {
             _ = SelectTab(_currentTab);
             SetWindow(WindowType.Home);
             SelectSidebarTopRowButton(HomeButton);
         }
 
-        private async void AddContact_Close(object sender, MouseButtonEventArgs e)
+        private async void AddContact_Close(object sender, PointerEventArgs e)
         {
             await SelectTab(_currentTab);
             if (current_window == WindowType.Home)
@@ -173,7 +173,7 @@ namespace Skymu.Skype6
             }
         }
 
-        protected override void AddContact_Click(object sender, MouseButtonEventArgs e)
+        protected override void AddContact_Click(object sender, PointerEventArgs e)
         {
             if (!(Universal.Plugin is IListManagement))
             {
@@ -203,7 +203,7 @@ namespace Skymu.Skype6
             );
         }
 
-        protected override void CallPhones_Click(object sender, MouseButtonEventArgs e)
+        protected override void CallPhones_Click(object sender, PointerEventArgs e)
         {
             SoundManager.Play("CALL_ERROR1");
             Universal.ShowMessage(VONAGE, VONAGE_CAPTION);

@@ -88,7 +88,7 @@ namespace Skymu.Skype7
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() =>
+                        Dispatcher.UIThread.Invoke(() =>
                             _currentStatusIndex = MainViewModel.GetIntFromStatus(
                                 Universal.CurrentUser.ConnectionStatus
                             )
@@ -118,7 +118,7 @@ namespace Skymu.Skype7
 
             vmodel.UserCountUpdated += text =>
             {
-                Dispatcher.Invoke(() => GlobalUserCount.Text = text);
+                Dispatcher.UIThread.Invoke(() => GlobalUserCount.Text = text);
             };
 
             vmodel.SignOutRequested += (s, e) =>
@@ -167,15 +167,15 @@ namespace Skymu.Skype7
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
+                Dispatcher.UIThread.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MainViewModel.TypingText))
-                    Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
+                    Dispatcher.UIThread.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                         TypingIndicator.IsVisible = vmodel.IsTypingVisible
                             ? true
                             : false
@@ -333,9 +333,11 @@ namespace Skymu.Skype7
                 HandleConversationSelection(((ListBox)sender).SelectedItem);
         }
 
-        private async void SendButton_Click(object sender, MouseButtonEventArgs e)
+        private async void SendButton_Click(object sender, PointerReleasedEventArgs e)
         {
-            await SendMessage();
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			await SendMessage();
         }
 
         private async void TextBoxMessage_KeyDown(object sender, KeyEventArgs e)
@@ -402,7 +404,7 @@ namespace Skymu.Skype7
                     var sc = Formatter.MakeEmoji(emojiFilename);
                     sc.Tag = emojiFilename;
                     border.Child = sc;
-                    border.MouseLeftButtonUp += EmojiBox_Click;
+                    border.PointerReleased += EmojiBox_Click;
                     border.PointerEntered += (s, ev) =>
                         ((Border)s).Background = new SolidColorBrush(
                             Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
@@ -417,9 +419,11 @@ namespace Skymu.Skype7
             }
         }
 
-        private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
+        private void EmojiBox_Click(object sender, PointerReleasedEventArgs e)
         {
-            var sc = (sender as Border)?.Child as SliceControl;
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			var sc = (sender as Border)?.Child as SliceControl;
             if (sc == null)
                 return;
 
@@ -437,16 +441,18 @@ namespace Skymu.Skype7
             TextBoxMessage.Focus();
         }
 
-        private void EmojiButton_Click(object sender, MouseButtonEventArgs e)
+        private void EmojiButton_Click(object sender, PointerReleasedEventArgs e)
         {
-            EmojiFlyout.IsOpen = true;
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			EmojiFlyout.IsOpen = true;
         }
 
         #endregion
 
         #region Speed test
 
-        private async void WifiButton_Click(object sender, MouseButtonEventArgs e)
+        private async void WifiButton_Click(object sender, PointerEventArgs e)
         {
             await vmodel.RunSpeedTest();
         }
@@ -541,33 +547,43 @@ namespace Skymu.Skype7
             HomeUnavailableFrame.IsVisible = false;
         }
 
-        private void TabContacts_Click(object sender, MouseButtonEventArgs e)
+        private void TabContacts_Click(object sender, PointerReleasedEventArgs e)
         {
-            SetActiveTab(0);
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			SetActiveTab(0);
             ConversationList.ItemsSource = vmodel.ContactList;
         }
 
-        private void TabRecent_Click(object sender, MouseButtonEventArgs e)
+        private void TabRecent_Click(object sender, PointerReleasedEventArgs e)
         {
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
             SetActiveTab(1);
             ConversationList.ItemsSource = vmodel.ConversationList;
         }
 
-        private async void TabServers_Click(object sender, MouseButtonEventArgs e)
+        private async void TabServers_Click(object sender, PointerReleasedEventArgs e)
         {
-            SetActiveTab(2);
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			SetActiveTab(2);
             ConversationList.ItemsSource = await vmodel.GetServerList();
         }
 
-        private void TabHome_Click(object sender, MouseButtonEventArgs e)
+        private void TabHome_Click(object sender, PointerReleasedEventArgs e)
         {
-            SetActiveTab(3);
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			SetActiveTab(3);
         }
 
-        private void AddContact_Click(object sender, MouseButtonEventArgs e)
+        private void AddContact_Click(object sender, PointerReleasedEventArgs e)
         {
-            // TODO add Skype 7's integrated add contact flow instead of using this
-            vmodel.ShowAddContactWindow();
+			if (e.InitialPressMouseButton != MouseButton.Left)
+				return;
+			// TODO add Skype 7's integrated add contact flow instead of using this
+			vmodel.ShowAddContactWindow();
         }
 
         #endregion

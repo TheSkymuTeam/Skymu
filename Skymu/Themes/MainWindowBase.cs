@@ -260,7 +260,7 @@ namespace Skymu.Theming
                     ChatTopBarSplitter.IsVisible = true;
                     ChatTopbarSplitterRow.MaxHeight = CTR_ORIGINAL_MAXHEIGHT;
                     TopbarWindowRow.Height = new GridLength(TWR_ORIGINAL_HEIGHT);
-                    TopbarWindowRow.MaxHeight = screen == null ? TWR_ORIGINAL_MAXHEIGHT : ChatArea.ActualHeight * 0.7;
+                    TopbarWindowRow.MaxHeight = screen == null ? TWR_ORIGINAL_MAXHEIGHT : ChatArea.Height * 0.7;
                     if (location != null)
                         SetCallPageLocation(location);
                     break;
@@ -598,7 +598,7 @@ namespace Skymu.Theming
                 Universal.CurrentUser.PropertyChanged += (ss, ee) =>
                 {
                     if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                        Dispatcher.UIThread.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
                 };
                 if (ExtrasMenu != null && Universal.Plugin is IExtras iep)
                 {
@@ -611,7 +611,7 @@ namespace Skymu.Theming
 
             vmodel.UserCountUpdated += text =>
             {
-                Dispatcher.Invoke(() => OnUserCountUpdated(text));
+                Dispatcher.UIThread.Invoke(() => OnUserCountUpdated(text));
             };
 
             vmodel.SignOutRequested += (s, e) =>
@@ -663,15 +663,15 @@ namespace Skymu.Theming
 
             vmodel.SpeedTestIconUpdated += uri =>
             {
-                Dispatcher.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
+                Dispatcher.UIThread.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
             };
 
             vmodel.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(MainViewModel.TypingText))
-                    Dispatcher.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
+                    Dispatcher.UIThread.Invoke(() => TypingIndicatorText.Text = vmodel.TypingText);
                 else if (e.PropertyName == nameof(MainViewModel.IsTypingVisible))
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                         TypingIndicator.IsVisible = vmodel.IsTypingVisible
                             ? true
                             : false
@@ -686,7 +686,7 @@ namespace Skymu.Theming
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
 
-            this.MouseLeftButtonUp += MouseRelease;
+            this.PointerReleased += MouseRelease;
             this.SizeChanged += Main_SizeChanged;
             buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
             {
@@ -898,8 +898,10 @@ namespace Skymu.Theming
             }
         }
 
-        protected void SkypeSplitter_Press(object sender, MouseButtonEventArgs e)
+        protected void SkypeSplitter_Press(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             MouseRelease(null, null); // Release previous element first. Potentially avoids weird behavior on touch screen, etc.
             SkypeSplitterIsDragging = true;
             dragStart = e.GetPosition(this);
@@ -936,8 +938,10 @@ namespace Skymu.Theming
             }
         }
 
-        protected void ChatTopBarSplitter_Press(object sender, MouseButtonEventArgs e)
+        protected void ChatTopBarSplitter_Press(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             MouseRelease(null, null);
             ChatTopBarSplitterIsDragging = true;
             dragStart = e.GetPosition(this);
@@ -950,8 +954,11 @@ namespace Skymu.Theming
             }
         }
 
-        private void MouseRelease(object sender, MouseButtonEventArgs e)
+        private void MouseRelease(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
+
             if (SkypeSplitterIsDragging || ChatTopBarSplitterIsDragging)
             {
                 SkypeSplitterIsDragging = false;
@@ -995,8 +1002,10 @@ namespace Skymu.Theming
             }
         }
 
-        protected async void ServerListItem_Clicked(object sender, MouseButtonEventArgs e)
+        protected async void ServerListItem_Clicked(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             var item = (TreeViewItem)sender;
             var data = item.DataContext;
 
@@ -1005,8 +1014,10 @@ namespace Skymu.Theming
             await HandleServerItemSelection(data);
         }
 
-        protected void ConversationList_ItemClicked(object sender, MouseButtonEventArgs e)
+        protected void ConversationList_ItemClicked(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             var selected = ((ListBox)sender).SelectedItem;
             if (selected is Metadata selectedMetadata)
                 SelectedContact = selectedMetadata;
@@ -1018,23 +1029,29 @@ namespace Skymu.Theming
             HandleConversationSelection(selected);
         }
 
-        protected void Chat_Close(object sender, MouseButtonEventArgs e)
+        protected void Chat_Close(object sender, PointerEventArgs e)
         {
             SetWindow(WindowType.Home);
         }
 
-        protected void StatusArea_Click(object sender, MouseButtonEventArgs e)
+        protected void StatusArea_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             OpenStatusMenu(StatusArea);
         }
 
-        protected async void SidebarTab_BtnDown(object sender, MouseButtonEventArgs e)
+        protected async void SidebarTab_BtnDown(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             await SelectTab(sender as SliceControl);
         }
 
-        protected void TitleButton_Click(object sender, MouseButtonEventArgs e)
+        protected void TitleButton_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             HandleWindowButtonClick(sender as SliceControl);
         }
 
@@ -1063,8 +1080,10 @@ namespace Skymu.Theming
             HandleWindowDeactivated();
         }
 
-        protected async void TitleBarIcon_PointerPressed(object sender, MouseButtonEventArgs e)
+        protected async void TitleBarIcon_PointerPressed(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             await EasterEgg(Egg.SkypeMemeVideo);
         }
 
@@ -1136,19 +1155,21 @@ namespace Skymu.Theming
             await SetStatusFromMenuItems(sender, MenubarStatusHolder.Items);
         }
 
-        protected void MakeGroup_Click(object sender, MouseButtonEventArgs e) { }
+        protected void MakeGroup_Click(object sender, PointerEventArgs e) { }
 
-        protected virtual void AddContact_Click(object sender, MouseButtonEventArgs e)
+        protected virtual void AddContact_Click(object sender, PointerEventArgs e)
         {
             vmodel.ShowAddContactWindow();
         }
 
-        protected async void OnMsgSendClickButton(object sender, MouseButtonEventArgs e)
+        protected async void OnMsgSendClickButton(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             await SendMessage();
         }
 
-        protected async void WifiButton_Click(object sender, MouseButtonEventArgs e)
+        protected async void WifiButton_Click(object sender, PointerEventArgs e)
         {
             await vmodel.RunSpeedTest();
         }
@@ -1192,7 +1213,7 @@ namespace Skymu.Theming
             await SendMessage();
         }
 
-        protected void WindowArea_PointerPressed(object sender, MouseButtonEventArgs e)
+        protected void WindowArea_PointerPressed(object sender, PointerEventArgs e)
         {
             Keyboard.ClearFocus();
         }
@@ -1204,23 +1225,29 @@ namespace Skymu.Theming
                 vmodel.lastTypingActivity = DateTime.UtcNow;
         }
 
-        protected virtual void CallPhones_Click(object sender, MouseButtonEventArgs e)
+        protected virtual void CallPhones_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             vmodel.ShowCallPhones();
         }
 
-        protected async void AddButtonClick(object sender, MouseButtonEventArgs e)
+        protected async void AddButtonClick(object sender, PointerEventArgs e)
         {
             await vmodel.SendFile();
         }
 
-        protected void CallButtonClick(object sender, MouseButtonEventArgs e)
+        protected void CallButtonClick(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             InitiateCall(vmodel.SelectedConversation);
         }
 
-        protected void EmojiButton_Click(object sender, MouseButtonEventArgs e)
+        protected void EmojiButton_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             EmojiFlyout.IsOpen = true;
         }
 
@@ -1813,7 +1840,7 @@ namespace Skymu.Theming
                     var sliceControl = Formatter.MakeEmoji(emojiFilename);
                     sliceControl.Tag = emojiFilename;
                     border.Child = sliceControl;
-                    border.MouseLeftButtonUp += EmojiBox_Click;
+                    border.PointerReleased += EmojiBox_Click;
                     border.PointerEntered += (s, ev) =>
                         ((Border)s).Background = new SolidColorBrush(
                             Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF)
@@ -1839,8 +1866,10 @@ namespace Skymu.Theming
             }
         }
 
-        private void EmojiBox_Click(object sender, MouseButtonEventArgs e)
+        private void EmojiBox_Click(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             var border = sender as Border;
             if (!(border?.Child is SliceControl sliceControlInside)) return;
 

@@ -12,6 +12,7 @@
 /*==========================================================*/
 
 using Avalonia;
+using Avalonia.Controls;
 
 namespace Skymu.Forms
 {

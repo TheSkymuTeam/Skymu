@@ -236,15 +236,17 @@ namespace Skymu.Forms
         {
             if (e.State == CallState.Ended)
             {
-                Dispatcher.Invoke(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
                     OnHangUp(null, null);
                 });
             }
         }
 
-        private async void OnMuteToggled(object sender, MouseButtonEventArgs e)
+        private async void OnMuteToggled(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             isMuted = !isMuted;
             if (isMuted)
                 MuteButton.Source = muted;
@@ -253,8 +255,10 @@ namespace Skymu.Forms
             await Universal.CallPlugin.SetMuted(_call, isMuted);
         }
 
-        private void OnSidebarToggled(object sender, MouseButtonEventArgs e)
+        private void OnSidebarToggled(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             location.SidebarToggle = !location.SidebarToggle;
             SetButtonSource(SidebarButton, location.SidebarToggle);
             if (isFullscreen)
@@ -263,8 +267,10 @@ namespace Skymu.Forms
                 LocationChangeRequested(this, location);
         }
 
-        private void OnChatToggled(object sender, MouseButtonEventArgs e)
+        private void OnChatToggled(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             location.ChatToggle = !location.ChatToggle;
             SetButtonSource(ChatButton, location.ChatToggle);
             if (isFullscreen)
@@ -275,8 +281,10 @@ namespace Skymu.Forms
 
         private Window _fullscreenWindow;
 
-        private void OnFullscreenToggled(object sender, MouseButtonEventArgs e)
+        private void OnFullscreenToggled(object sender, PointerEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             isFullscreen = !isFullscreen;
             SetButtonSource(FullscreenButton, isFullscreen);
 
@@ -365,8 +373,10 @@ namespace Skymu.Forms
             }
         }
 
-        private void OnHangUp(object sender, MouseButtonEventArgs e)
+        private void OnHangUp(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             _hangUpRequested = true;
             _ringCts?.Cancel();
             SoundManager.StopPlayback("CALL_OUT");

@@ -415,8 +415,9 @@
                                 Height="0.5"
                                 VerticalAlignment="Bottom"
                                 Fill="{DynamicResource Accent}" />
-                            <PasswordBox
+                            <TextBox
                                 Name="PasswordTokenBox"
+                                PasswordChar="●"
                                 Padding="-2,0,0,0"
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
@@ -460,7 +461,7 @@
                             Background="{DynamicResource Metro.Text.Highlight}"
                             CornerRadius="21,21,21,21"
                             Cursor="Hand"
-                            MouseLeftButtonUp="LoginButton_Click"
+                            PointerReleased="LoginButton_Click"
                             Opacity="0">
                             <TextBlock
                                 x:Name="LoginButtonLabel"

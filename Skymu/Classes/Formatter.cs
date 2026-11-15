@@ -437,12 +437,12 @@ namespace Skymu.Formatting
                             if (count >= 3)
                             {
                                 span.FontWeight = FontWeights.Bold;
-                                span.FontStyle = FontStyles.Italic;
+                                span.FontStyle = FontStyle.Italic;
                             }
                             else if (count == 2)
                                 span.FontWeight = FontWeights.Bold;
                             else
-                                span.FontStyle = FontStyles.Italic;
+                                span.FontStyle = FontStyle.Italic;
                         }
                         else if (delimiter == '~')
                         {

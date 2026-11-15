@@ -69,7 +69,7 @@
                 DefaultIndex="2"
                 ElementCount="5"
                 HoverIndex="1"
-                MouseLeftButtonDown="CloseButton_Click"
+                PointerPressed="CloseButton_Click"
                 PressedIndex="0"
                 SliceMode="0"
                 Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Notifications/close.png'}"

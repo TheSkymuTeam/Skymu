@@ -886,7 +886,7 @@
                                             Margin="9,0,0,0"
                                             HorizontalAlignment="Left"
                                             IsHitTestVisible="True"
-                                            MouseLeftButtonUp="StatusArea_Click"
+                                            PointerReleased="StatusArea_Click"
                                             Orientation="Horizontal">
                                             <StackPanel.Resources>
                                                 <ContextMenu x:Key="StatusMenu">
@@ -1036,7 +1036,7 @@
                                         ElementCount="5"
                                         HoverIndex="1"
                                         IsRadioButton="True"
-                                        MouseLeftButtonUp="HomeButton_Click"
+                                        PointerReleased="HomeButton_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Main/home.png"
@@ -1048,7 +1048,7 @@
                                         DefaultIndex="0"
                                         ElementCount="5"
                                         HoverIndex="1"
-                                        MouseLeftButtonUp="CallPhones_Click"
+                                        PointerReleased="CallPhones_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Main/calls.png"
@@ -1073,7 +1073,7 @@
                                         ElementCount="5"
                                         HoverIndex="1"
                                         IsRadioButton="True"
-                                        MouseLeftButtonUp="AddContact_Click"
+                                        PointerReleased="AddContact_Click"
                                         PressedIndex="2"
                                         SliceMode="0"
                                         Source="Assets/Themeable/Main/add-contact.png"
@@ -1124,7 +1124,7 @@
                                             HoverIndex="-1"
                                             IsRadioButton="True"
                                             LeftWidth="25"
-                                            MouseLeftButtonUp="SidebarTab_BtnDown"
+                                            PointerReleased="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
                                             Source="Assets/Themeable/Main/contacts.png"
@@ -1145,7 +1145,7 @@
                                             HoverIndex="-1"
                                             IsRadioButton="True"
                                             LeftWidth="25"
-                                            MouseLeftButtonUp="SidebarTab_BtnDown"
+                                            PointerReleased="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
                                             Source="Assets/Themeable/Main/servers.png"
@@ -1167,7 +1167,7 @@
                                             HoverIndex="-1"
                                             IsRadioButton="True"
                                             LeftWidth="25"
-                                            MouseLeftButtonUp="SidebarTab_BtnDown"
+                                            PointerReleased="SidebarTab_BtnDown"
                                             PressedIndex="2"
                                             RightWidth="2"
                                             Source="Assets/Themeable/Main/recents.png"
@@ -1200,7 +1200,7 @@
                                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                                             x:Name="ConversationList"
                                             BorderThickness="0"
-                                            PreviewMouseLeftButtonUp="ConversationList_ItemClicked"
+                                            PreviewPointerReleased="ConversationList_ItemClicked"
                                             ScrollViewer.CanContentScroll="True"
                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                             Style="{StaticResource NoInsetListBox}"
@@ -1254,7 +1254,7 @@
                                                     <Setter Property="IsExpanded" Value="False" />
                                                     <Setter Property="Padding" Value="0" />
                                                     <Setter Property="BorderThickness" Value="0" />
-                                                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ServerListItem_Clicked" />
+                                                    <EventSetter Event="PreviewPointerReleased" Handler="ServerListItem_Clicked" />
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="TreeViewItem">
@@ -1409,7 +1409,7 @@
                             BorderBrush="{DynamicResource Metro.Border}"
                             BorderThickness="0,0,1,0"
                             Cursor="SizeWE"
-                            MouseLeftButtonDown="SkypeSplitter_Press"
+                            PointerPressed="SkypeSplitter_Press"
                             PointerMoved="SkypeSplitter_PointerMoved" />
                         <Grid
                             x:Name="ChatArea"
@@ -1752,7 +1752,7 @@
                                 Grid.Row="2"
                                 Cursor="SizeNS"
                                 Fill="Transparent"
-                                MouseLeftButtonDown="ChatTopBarSplitter_Press"
+                                PointerPressed="ChatTopBarSplitter_Press"
                                 PointerMoved="ChatTopBarSplitter_PointerMoved" />
                             <Border
                                 x:Name="MessageWindow"
@@ -1800,7 +1800,7 @@
                                             ElementCount="5"
                                             HoverIndex="1"
                                             LeftWidth="23"
-                                            MouseLeftButtonUp="CallButtonClick"
+                                            PointerReleased="CallButtonClick"
                                             PressedIndex="2"
                                             RightWidth="4"
                                             Source="Assets/Universal/Main/btn_call_left.png"
@@ -1828,7 +1828,7 @@
                                             DefaultIndex="0"
                                             ElementCount="5"
                                             HoverIndex="1"
-                                            MouseLeftButtonUp="AddButtonClick"
+                                            PointerReleased="AddButtonClick"
                                             PressedIndex="2"
                                             SliceMode="0"
                                             Source="Assets/Themeable/Main/add.png"
@@ -1974,7 +1974,7 @@
                                                         DefaultIndex="0"
                                                         ElementCount="5"
                                                         HoverIndex="1"
-                                                        MouseLeftButtonUp="EmojiButton_Click"
+                                                        PointerReleased="EmojiButton_Click"
                                                         PressedIndex="2"
                                                         SliceMode="0"
                                                         Source="Assets/Themeable/Main/emoji.png"
@@ -2074,7 +2074,7 @@
                                             HoverIndex="1"
                                             IsEnabled="False"
                                             LeftWidth="22"
-                                            MouseLeftButtonUp="OnMsgSendClickButton"
+                                            PointerReleased="OnMsgSendClickButton"
                                             PressedIndex="2"
                                             RightWidth="22"
                                             Source="Assets/Universal/Main/msg-send-button-full.png"

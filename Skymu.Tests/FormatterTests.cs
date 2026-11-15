@@ -165,7 +165,7 @@ namespace Skymu.Tests
             {
                 var tb = Formatter.Parse("*italic text*");
                 var spans = tb.Inlines.OfType<Span>();
-                Assert.True(spans.Any(s => s.FontStyle == FontStyles.Italic),
+                Assert.True(spans.Any(s => s.FontStyle == FontStyle.Italic),
                     "Expected at least one italic Span.");
             });
         }
@@ -216,7 +216,7 @@ namespace Skymu.Tests
                 Assert.True(
                     spans.Any(s =>
                         s.FontWeight == FontWeights.Bold &&
-                        s.FontStyle == FontStyles.Italic),
+                        s.FontStyle == FontStyle.Italic),
                     "Expected at least one Span that is both bold and italic.");
             });
         }

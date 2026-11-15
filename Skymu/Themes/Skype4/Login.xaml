@@ -160,8 +160,9 @@
                             Margin="0,0,0,4"
                             FontWeight="Normal"
                             Text="{Binding [sF_USERENTRY_LABEL_PASSWORD]}" />
-                        <PasswordBox
+                        <TextBox
                             x:Name="PasswordTokenBox"
+                            PasswordChar="●"
                             Width="240"
                             Height="21"
                             Margin="0,0,0,7" />

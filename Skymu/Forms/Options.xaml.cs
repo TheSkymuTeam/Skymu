@@ -102,8 +102,10 @@ namespace Skymu.Forms
 #endif
         }
 
-        private void CatSelect(object sender, MouseButtonEventArgs e)
+        private void CatSelect(object sender, PointerReleasedEventArgs e)
         {
+            if (e.InitialPressMouseButton != MouseButton.Left)
+                return;
             var sc = (SliceControl)sender;
             foreach (var cat in catToGrid)
             {
@@ -124,8 +126,10 @@ namespace Skymu.Forms
             TabSelect((catToGrid[sc].Children[1] as StackPanel).Children[0], null);
         }
 
-        private void TabSelect(object sender, MouseButtonEventArgs e)
+        private void TabSelect(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             var sc = (SliceControl)sender;
             // In case the inner slice is clicked, we want to get the parent SliceControl, which is the actual tab.
             if (((SliceControl)sc.Template.FindName("InnerSlice", sc)) == null)

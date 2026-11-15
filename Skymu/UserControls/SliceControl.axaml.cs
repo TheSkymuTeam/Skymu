@@ -77,7 +77,7 @@ namespace Skymu
 		private const double PressedDefaultOffsetY = 1.0;
 		private bool holding_down = false;
 
-		public SliceControl()
+        public SliceControl()
 		{
 			InitializeComponent();
 			Universal.ThemeChanged += OnThemeChanged;
@@ -138,7 +138,7 @@ namespace Skymu
 				if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
 					return;
 
-				if (!IsEnabled)
+                if (!IsEnabled)
 					return;
 
 				if (IsRadioButton && _visualState == ButtonVisualState.Pressed)
@@ -154,7 +154,7 @@ namespace Skymu
 				if (e.InitialPressMouseButton != MouseButton.Left)
 					return;
 
-				if (!IsEnabled)
+                if (!IsEnabled)
 					return;
 
 				holding_down = false;

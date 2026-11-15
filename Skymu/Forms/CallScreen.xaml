@@ -177,13 +177,13 @@
                 Orientation="Horizontal">
                 <global:SliceControl
                     x:Name="SidebarButton"
-                    MouseLeftButtonUp="OnSidebarToggled"
+                    PointerReleased="OnSidebarToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_sidebar_expand.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="ChatButton"
                     Margin="8,0,0,0"
-                    MouseLeftButtonUp="OnChatToggled"
+                    PointerReleased="OnChatToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_chat_inactive.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
@@ -195,7 +195,7 @@
                 <global:SliceControl
                     x:Name="MuteButton"
                     Margin="4,0"
-                    MouseLeftButtonUp="OnMuteToggled"
+                    PointerReleased="OnMuteToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_mic_off.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
@@ -208,7 +208,7 @@
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
-                    MouseLeftButtonUp="OnHangUp"
+                    PointerReleased="OnHangUp"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_hangup.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>
@@ -224,7 +224,7 @@
                     Style="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="FullscreenButton"
-                    MouseLeftButtonUp="OnFullscreenToggled"
+                    PointerReleased="OnFullscreenToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_screen_expand.png'}"
                     Style="{StaticResource ActionButtonStyle}" />
             </StackPanel>

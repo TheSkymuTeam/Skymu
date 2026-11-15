@@ -269,14 +269,16 @@ namespace Skymu.Forms
             close.IsVisible = false;
         }
 
-        private void CloseButton_Click(object sender, MouseButtonEventArgs e)
+        private void CloseButton_Click(object sender, PointerEventArgs e)
         {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                return;
             Close();
         }
 
         private void Window_MouseRightButtonDown(
             object sender,
-            MouseButtonEventArgs e
+            PointerEventArgs e
         )
         {
             Close();

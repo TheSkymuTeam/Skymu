@@ -127,7 +127,7 @@ namespace Skymu.WebServices
             if (_contacts != null)
             {
                 var contacts = _contacts;
-                _browser.Dispatcher.Invoke(() =>
+                _browser.Dispatcher.UIThread.Invoke(() =>
                 {
                     foreach (var dm in contacts)
                         InjectAvatar(dm.Partner.Username, dm.Partner.Avatar);
