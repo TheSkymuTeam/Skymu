@@ -85,7 +85,7 @@ namespace Skymu.Forms.OptionPages.General
             if (openFileDialog.ShowDialog() == true)
             {
                 Settings.CertPath = openFileDialog.FileName;
-                var expression = SC_CertPathBox.GetBindingExpression(System.Windows.Controls.TextBox.TextProperty);
+                var expression = SC_CertPathBox.GetBindingExpression(Avalonia.Controls.TextBox.TextProperty);
                 expression?.UpdateTarget();
             }
         }

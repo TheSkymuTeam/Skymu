@@ -68,50 +68,50 @@ namespace Skymu.Theming
         private global::Skymu.SliceControl minimize => Part<global::Skymu.SliceControl>(nameof(minimize));
         private global::Skymu.SliceControl maximize => Part<global::Skymu.SliceControl>(nameof(maximize));
         private global::Skymu.SliceControl split => Part<global::Skymu.SliceControl>(nameof(split));
-        private global::System.Windows.Controls.Grid ChatArea => Part<global::System.Windows.Controls.Grid>(nameof(ChatArea));
-        private global::System.Windows.Controls.Grid ContentArea => Part<global::System.Windows.Controls.Grid>(nameof(ContentArea));
-        private global::System.Windows.Controls.Grid WindowArea => Part<global::System.Windows.Controls.Grid>(nameof(WindowArea));
-        private global::System.Windows.Controls.Grid FrameArea => Part<global::System.Windows.Controls.Grid>(nameof(FrameArea));
-        private global::System.Windows.Controls.Grid TitleBar => Part<global::System.Windows.Controls.Grid>(nameof(TitleBar));
-        private global::System.Windows.Controls.RowDefinition ChatButtonRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(ChatButtonRow));
-        private global::System.Windows.Controls.RowDefinition ChatTopBarRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(ChatTopBarRow));
-        private global::System.Windows.Controls.RowDefinition ChatTopbarSplitterRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(ChatTopbarSplitterRow));
-        private global::System.Windows.Controls.RowDefinition MessageWindowRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(MessageWindowRow));
-        private global::System.Windows.Controls.RowDefinition TopbarWindowRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(TopbarWindowRow));
-        private global::System.Windows.Controls.ColumnDefinition ContactsColumn => Part<global::System.Windows.Controls.ColumnDefinition>(nameof(ContactsColumn));
-        private global::System.Windows.Controls.ColumnDefinition RecentsColumn => Part<global::System.Windows.Controls.ColumnDefinition>(nameof(RecentsColumn));
-        private global::System.Windows.Controls.ColumnDefinition ServersColumn => Part<global::System.Windows.Controls.ColumnDefinition>(nameof(ServersColumn));
-        private global::System.Windows.Controls.ColumnDefinition SidebarColumn => Part<global::System.Windows.Controls.ColumnDefinition>(nameof(SidebarColumn));
-        private global::System.Windows.Controls.ColumnDefinition SkypeSplitterColumn => Part<global::System.Windows.Controls.ColumnDefinition>(nameof(SkypeSplitterColumn));
-        private global::System.Windows.Controls.ContentControl ChatProfileArea => Part<global::System.Windows.Controls.ContentControl>(nameof(ChatProfileArea));
-        private global::System.Windows.Controls.ContentControl FillMessagePanelHost => Part<global::System.Windows.Controls.ContentControl>(nameof(FillMessagePanelHost));
-        private global::System.Windows.Controls.ContentControl FillWindowHost => Part<global::System.Windows.Controls.ContentControl>(nameof(FillWindowHost));
+        private global::Avalonia.Controls.Grid ChatArea => Part<global::Avalonia.Controls.Grid>(nameof(ChatArea));
+        private global::Avalonia.Controls.Grid ContentArea => Part<global::Avalonia.Controls.Grid>(nameof(ContentArea));
+        private global::Avalonia.Controls.Grid WindowArea => Part<global::Avalonia.Controls.Grid>(nameof(WindowArea));
+        private global::Avalonia.Controls.Grid FrameArea => Part<global::Avalonia.Controls.Grid>(nameof(FrameArea));
+        private global::Avalonia.Controls.Grid TitleBar => Part<global::Avalonia.Controls.Grid>(nameof(TitleBar));
+        private global::Avalonia.Controls.RowDefinition ChatButtonRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatButtonRow));
+        private global::Avalonia.Controls.RowDefinition ChatTopBarRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatTopBarRow));
+        private global::Avalonia.Controls.RowDefinition ChatTopbarSplitterRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatTopbarSplitterRow));
+        private global::Avalonia.Controls.RowDefinition MessageWindowRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(MessageWindowRow));
+        private global::Avalonia.Controls.RowDefinition TopbarWindowRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(TopbarWindowRow));
+        private global::Avalonia.Controls.ColumnDefinition ContactsColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(ContactsColumn));
+        private global::Avalonia.Controls.ColumnDefinition RecentsColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(RecentsColumn));
+        private global::Avalonia.Controls.ColumnDefinition ServersColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(ServersColumn));
+        private global::Avalonia.Controls.ColumnDefinition SidebarColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(SidebarColumn));
+        private global::Avalonia.Controls.ColumnDefinition SkypeSplitterColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(SkypeSplitterColumn));
+        private global::Avalonia.Controls.ContentControl ChatProfileArea => Part<global::Avalonia.Controls.ContentControl>(nameof(ChatProfileArea));
+        private global::Avalonia.Controls.ContentControl FillMessagePanelHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillMessagePanelHost));
+        private global::Avalonia.Controls.ContentControl FillWindowHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillWindowHost));
         private global::System.Windows.Shapes.Rectangle ChatTopBarSplitter => Part<global::System.Windows.Shapes.Rectangle>(nameof(ChatTopBarSplitter));
         private global::System.Windows.Shapes.Rectangle ContentBgTop => Part<global::System.Windows.Shapes.Rectangle>(nameof(ContentBgTop));
         private global::System.Windows.Shapes.Rectangle ContentBgBottom => Part<global::System.Windows.Shapes.Rectangle>(nameof(ContentBgBottom));
         private global::System.Windows.Shapes.Rectangle MainMenuBarDivider => Part<global::System.Windows.Shapes.Rectangle>(nameof(MainMenuBarDivider));
-        private global::System.Windows.Controls.ListBox ConversationItemsList => Part<global::System.Windows.Controls.ListBox>(nameof(ConversationItemsList));
-        private global::System.Windows.Controls.ListBox ConversationList => Part<global::System.Windows.Controls.ListBox>(nameof(ConversationList));
-        private global::System.Windows.Controls.TreeView ServersList => Part<global::System.Windows.Controls.TreeView>(nameof(ServersList));
-        private global::System.Windows.Controls.Primitives.Popup EmojiFlyout => Part<global::System.Windows.Controls.Primitives.Popup>(nameof(EmojiFlyout));
-        private global::System.Windows.Controls.WrapPanel EmojiWrapPanel => Part<global::System.Windows.Controls.WrapPanel>(nameof(EmojiWrapPanel));
-        private global::System.Windows.Controls.StackPanel MenuBarArea => Part<global::System.Windows.Controls.StackPanel>(nameof(MenuBarArea));
-        private global::System.Windows.Controls.StackPanel StatusArea => Part<global::System.Windows.Controls.StackPanel>(nameof(StatusArea));
-        private global::System.Windows.Controls.StackPanel TypingIndicator => Part<global::System.Windows.Controls.StackPanel>(nameof(TypingIndicator));
-        private global::System.Windows.Controls.Menu MainMenuBar => Part<global::System.Windows.Controls.Menu>(nameof(MainMenuBar));
-        private global::System.Windows.Controls.MenuItem MenubarStatusHolder => Part<global::System.Windows.Controls.MenuItem>(nameof(MenubarStatusHolder));
-        private global::System.Windows.Controls.MenuItem ExtrasMenu => Part<global::System.Windows.Controls.MenuItem>(nameof(ExtrasMenu));
-        private global::System.Windows.Controls.MenuItem GetExtrasMenuItem => Part<global::System.Windows.Controls.MenuItem>(nameof(GetExtrasMenuItem));
-        private global::System.Windows.Controls.RichTextBox MessageTextBox => Part<global::System.Windows.Controls.RichTextBox>(nameof(MessageTextBox));
-        private global::System.Windows.Controls.Border MessageWindow => Part<global::System.Windows.Controls.Border>(nameof(MessageWindow));
-        private global::System.Windows.Controls.TextBox SearchBox => Part<global::System.Windows.Controls.TextBox>(nameof(SearchBox));
-        private global::System.Windows.Controls.Image Spinner => Part<global::System.Windows.Controls.Image>(nameof(Spinner));
-        private global::System.Windows.Controls.Image TitleBarIcon => Part<global::System.Windows.Controls.Image>(nameof(TitleBarIcon));
-        private global::System.Windows.Controls.TextBlock TitleMain => Part<global::System.Windows.Controls.TextBlock>(nameof(TitleMain));
-        private global::System.Windows.Controls.TextBlock TitleShadow => Part<global::System.Windows.Controls.TextBlock>(nameof(TitleShadow));
-        private global::System.Windows.Controls.TextBlock TitleShadow2 => Part<global::System.Windows.Controls.TextBlock>(nameof(TitleShadow2));
-        private global::System.Windows.Controls.TextBlock TitleShadow3 => Part<global::System.Windows.Controls.TextBlock>(nameof(TitleShadow3));
-        private global::System.Windows.Controls.TextBlock TypingIndicatorText => Part<global::System.Windows.Controls.TextBlock>(nameof(TypingIndicatorText));
+        private global::Avalonia.Controls.ListBox ConversationItemsList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationItemsList));
+        private global::Avalonia.Controls.ListBox ConversationList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationList));
+        private global::Avalonia.Controls.TreeView ServersList => Part<global::Avalonia.Controls.TreeView>(nameof(ServersList));
+        private global::Avalonia.Controls.Primitives.Popup EmojiFlyout => Part<global::Avalonia.Controls.Primitives.Popup>(nameof(EmojiFlyout));
+        private global::Avalonia.Controls.WrapPanel EmojiWrapPanel => Part<global::Avalonia.Controls.WrapPanel>(nameof(EmojiWrapPanel));
+        private global::Avalonia.Controls.StackPanel MenuBarArea => Part<global::Avalonia.Controls.StackPanel>(nameof(MenuBarArea));
+        private global::Avalonia.Controls.StackPanel StatusArea => Part<global::Avalonia.Controls.StackPanel>(nameof(StatusArea));
+        private global::Avalonia.Controls.StackPanel TypingIndicator => Part<global::Avalonia.Controls.StackPanel>(nameof(TypingIndicator));
+        private global::Avalonia.Controls.Menu MainMenuBar => Part<global::Avalonia.Controls.Menu>(nameof(MainMenuBar));
+        private global::Avalonia.Controls.MenuItem MenubarStatusHolder => Part<global::Avalonia.Controls.MenuItem>(nameof(MenubarStatusHolder));
+        private global::Avalonia.Controls.MenuItem ExtrasMenu => Part<global::Avalonia.Controls.MenuItem>(nameof(ExtrasMenu));
+        private global::Avalonia.Controls.MenuItem GetExtrasMenuItem => Part<global::Avalonia.Controls.MenuItem>(nameof(GetExtrasMenuItem));
+        private global::Avalonia.Controls.RichTextBox MessageTextBox => Part<global::Avalonia.Controls.RichTextBox>(nameof(MessageTextBox));
+        private global::Avalonia.Controls.Border MessageWindow => Part<global::Avalonia.Controls.Border>(nameof(MessageWindow));
+        private global::Avalonia.Controls.TextBox SearchBox => Part<global::Avalonia.Controls.TextBox>(nameof(SearchBox));
+        private global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));
+        private global::Avalonia.Controls.Image TitleBarIcon => Part<global::Avalonia.Controls.Image>(nameof(TitleBarIcon));
+        private global::Avalonia.Controls.TextBlock TitleMain => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleMain));
+        private global::Avalonia.Controls.TextBlock TitleShadow => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow));
+        private global::Avalonia.Controls.TextBlock TitleShadow2 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow2));
+        private global::Avalonia.Controls.TextBlock TitleShadow3 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow3));
+        private global::Avalonia.Controls.TextBlock TypingIndicatorText => Part<global::Avalonia.Controls.TextBlock>(nameof(TypingIndicatorText));
         private global::System.Windows.FrameworkElement ProfileGrid => Part<global::System.Windows.FrameworkElement>(nameof(ProfileGrid));
         #endregion
 
@@ -312,7 +312,7 @@ namespace Skymu.Theming
                             Stretch = Stretch.None,
                             TileMode = TileMode.None,
                             ViewportUnits = BrushMappingMode.Absolute,
-                            Viewport = new Rect(0, 0, img.Width, img.Height),
+                            Viewport = new Rect(0, 0, img.Size.Width, img.Size.Height),
                         };
                     }
 
@@ -1389,7 +1389,7 @@ namespace Skymu.Theming
         {
             var menu = (ContextMenu)statusArea.Resources["StatusMenu"];
             menu.PlacementTarget = statusArea;
-            menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+            menu.Placement = Avalonia.Controls.Primitives.PlacementMode.Bottom;
             menu.IsOpen = true;
         }
 

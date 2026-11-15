@@ -267,15 +267,15 @@ namespace Skymu.Theming
 
         private T Part<T>(string name) where T : class => (T)FindName(name);
 
-        private global::System.Windows.Controls.TextBlock header => Part<global::System.Windows.Controls.TextBlock>(nameof(header));
-        private global::System.Windows.Controls.Grid LoginControls => Part<global::System.Windows.Controls.Grid>(nameof(LoginControls));
-        private global::System.Windows.Controls.RowDefinition MenuBarRow => Part<global::System.Windows.Controls.RowDefinition>(nameof(MenuBarRow));
-        private global::System.Windows.Controls.TextBlock PasswordLabel => Part<global::System.Windows.Controls.TextBlock>(nameof(PasswordLabel));
-        private global::System.Windows.Controls.PasswordBox PasswordTokenBox => Part<global::System.Windows.Controls.PasswordBox>(nameof(PasswordTokenBox));
-        private global::System.Windows.Controls.ComboBox ProtocolComboBox => Part<global::System.Windows.Controls.ComboBox>(nameof(ProtocolComboBox));
-        private global::System.Windows.Controls.TextBlock SkypeName => Part<global::System.Windows.Controls.TextBlock>(nameof(SkypeName));
-        private global::System.Windows.Controls.Image Spinner => Part<global::System.Windows.Controls.Image>(nameof(Spinner));
-        private global::System.Windows.Controls.TextBox UsernameBox => Part<global::System.Windows.Controls.TextBox>(nameof(UsernameBox));
+        private global::Avalonia.Controls.TextBlock header => Part<global::Avalonia.Controls.TextBlock>(nameof(header));
+        private global::Avalonia.Controls.Grid LoginControls => Part<global::Avalonia.Controls.Grid>(nameof(LoginControls));
+        private global::Avalonia.Controls.RowDefinition MenuBarRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(MenuBarRow));
+        private global::Avalonia.Controls.TextBlock PasswordLabel => Part<global::Avalonia.Controls.TextBlock>(nameof(PasswordLabel));
+        private global::Avalonia.Controls.PasswordBox PasswordTokenBox => Part<global::Avalonia.Controls.PasswordBox>(nameof(PasswordTokenBox));
+        private global::Avalonia.Controls.ComboBox ProtocolComboBox => Part<global::Avalonia.Controls.ComboBox>(nameof(ProtocolComboBox));
+        private global::Avalonia.Controls.TextBlock SkypeName => Part<global::Avalonia.Controls.TextBlock>(nameof(SkypeName));
+        private global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));
+        private global::Avalonia.Controls.TextBox UsernameBox => Part<global::Avalonia.Controls.TextBox>(nameof(UsernameBox));
         private global::Skymu.SliceControl LoginButton => Part<global::Skymu.SliceControl>(nameof(LoginButton));
 
         #endregion

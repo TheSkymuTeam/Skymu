@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media;
 using Avalonia.Threading;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace Skymu.AvaloniaHelpers
 {
@@ -32,6 +34,20 @@ namespace Skymu.AvaloniaHelpers
         {
             ((IClassicDesktopStyleApplicationLifetime)
                 Application.Current.ApplicationLifetime).MainWindow = window;
+        }
+
+        public static void UpdateTextRendering()
+        {
+            var resources = Application.Current.Resources;
+
+            if (Skymu.Preferences.Settings  .UseClearType)
+            {
+                resources["AppTextRenderingMode"] = TextRenderingMode.SubpixelAntialias;
+            }
+            else
+            {
+                resources["AppTextRenderingMode"] = TextRenderingMode.Antialias;
+            }
         }
     }
 

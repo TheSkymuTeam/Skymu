@@ -1,97 +1,75 @@
 ﻿<!--
-    ============================================================
-    Copyright © The Skymu Team and other contributors.
-    For any inquiries or concerns, email contact@skymu.app.
-    ============================================================
-    Modification or redistribution of this code is governed
-    by the terms set out in the project license agreement.
-    If you do not comply with those terms, you may not
-    modify or distribute any original code from the project.
-    ============================================================
-    License: https://skymu.app/legal/license
-    SPDX-License-Identifier: AGPL-3.0-or-later
-    ============================================================
+============================================================
+Copyright © The Skymu Team and other contributors.
+For any inquiries or concerns, email contact@skymu.app.
+============================================================
+Modification or redistribution of this code is governed
+by the terms set out in the project license agreement.
+If you do not comply with those terms, you may not
+modify or distribute any original code from the project.
+============================================================
+License: https://skymu.app/legal/license
+SPDX-License-Identifier: AGPL-3.0-or-later
+============================================================
 -->
 <Application
-    x:Class="Skymu.Universal"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Skymu"
-    xmlns:preferences="clr-namespace:Skymu.Preferences">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://Skymu/UIComponents/MessageContextMenu.axaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            <local:LanguageManager x:Key="Lang" />
-            <Style
-                x:Key="Window"
-                BasedOn="{StaticResource {x:Type Window}}"
-                TargetType="{x:Type Window}">
-                <Setter Property="UseLayoutRounding" Value="True" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Setter Property="TextOptions.TextRenderingMode" Value="Grayscale" />
-                <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
-                <Setter Property="TextOptions.TextHintingMode" Value="Auto" />
-                <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Source={x:Static preferences:Settings.Default}, Path=[UseClearType]}" Value="True">
-                        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-                        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-                        <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-            <Style
-                x:Key="Page"
-                BasedOn="{StaticResource {x:Type Page}}"
-                TargetType="{x:Type Page}">
-                <Setter Property="UseLayoutRounding" Value="True" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Setter Property="TextOptions.TextRenderingMode" Value="Grayscale" />
-                <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
-                <Setter Property="TextOptions.TextHintingMode" Value="Auto" />
-                <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
-                <Style.Triggers>
-                    <DataTrigger Binding="{Binding Source={x:Static preferences:Settings.Default}, Path=[UseClearType]}" Value="True">
-                        <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
-                        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
-                        <Setter Property="TextOptions.TextHintingMode" Value="Fixed" />
-                    </DataTrigger>
-                </Style.Triggers>
-            </Style>
-            <Style TargetType="Hyperlink">
-                <!--  This fixes the red hyperlink hover color  -->
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="{DynamicResource Accent}" />
-                    </Trigger>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="TextDecorations" Value="Underline" />
-                    </Trigger>
-                </Style.Triggers>
-                <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-                <Setter Property="TextDecorations" Value="{x:Null}" />
-            </Style>
-            <Style TargetType="{x:Type ContextMenu}">
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Margin" Value="0" />
-            </Style>
-            <Style TargetType="Image">
-                <Setter Property="UseLayoutRounding" Value="True" />
-                <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
-            </Style>
-            <Style TargetType="ListBox">
-                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
-                <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
-            </Style>
-            <Style TargetType="ListView">
-                <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-                <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
-                <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
-            </Style>
-        </ResourceDictionary>
-    </Application.Resources>
+x:Class="Skymu.Universal"
+xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:local="clr-namespace:Skymu"
+xmlns:preferences="clr-namespace:Skymu.Preferences">
+	<Application.Styles>
+		<Style Selector="Window">
+			<Setter Property="UseLayoutRounding" Value="True" />
+			<Setter Property="TextOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
+			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />
+			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+		</Style>
+		<Style Selector="Page">
+			<Setter Property="UseLayoutRounding" Value="True" />
+			<Setter Property="TextOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
+			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />
+			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+		</Style>
+	</Application.Styles>
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://Skymu/UIComponents/MessageContextMenu.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+			<local:LanguageManager x:Key="Lang" />
+			<Style TargetType="Hyperlink">
+				<!--  This fixes the red hyperlink hover color  -->
+				<Style.Triggers>
+					<Trigger Property="IsMouseOver" Value="True">
+						<Setter Property="Foreground" Value="{DynamicResource Accent}" />
+					</Trigger>
+					<Trigger Property="IsMouseOver" Value="True">
+						<Setter Property="TextDecorations" Value="Underline" />
+					</Trigger>
+				</Style.Triggers>
+				<Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
+				<Setter Property="TextDecorations" Value="{x:Null}" />
+			</Style>
+			<Style TargetType="{x:Type ContextMenu}">
+				<Setter Property="Padding" Value="0" />
+				<Setter Property="Margin" Value="0" />
+			</Style>
+			<Style TargetType="Image">
+				<Setter Property="UseLayoutRounding" Value="True" />
+				<Setter Property="SnapsToDevicePixels" Value="True" />
+				<Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+			</Style>
+			<Style TargetType="ListBox">
+				<Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+				<Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
+				<Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
+			</Style>
+			<Style TargetType="ListView">
+				<Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+				<Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
+				<Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
+			</Style>
+		</ResourceDictionary>
+	</Application.Resources>
 </Application>

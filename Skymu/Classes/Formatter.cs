@@ -689,7 +689,7 @@ namespace Skymu.Formatting
                 Width = 22, // 2px padding to fix image render clip bug
                 Height = 20,
                 Tag = emojiName,
-                ElementCount = sourceImg.PixelHeight / 20,
+                ElementCount = sourceImg.PixelSize.Height / 20,
                 StackDirection = SpriteStackDirection.Vertical,
                 DefaultIndex = 0,
                 SliceMode = 0,
