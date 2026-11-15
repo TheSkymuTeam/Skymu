@@ -11,14 +11,16 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using OmegaAOL.Bifrost.Tls;
 using Skymu.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
-using OmegaAOL.Bifrost.Tls;
 
 namespace Skymu.Preferences
 {
@@ -213,18 +215,18 @@ namespace Skymu.Preferences
             set => WRITE("Colorway", value, nameof(Colorway), "Skymu/Appearance");
         }
 
-        public static string PresentationFramework
+        public static string AvaloniaTheme
         {
-            get => SELECT("PresentationFramework", "Aero.NormalColor", "Skymu/Appearance");
+            get => SELECT("AvaloniaTheme", "Classic.Avalonia", "Skymu/Appearance");
             set
             {
-                string framework = value;
-                if (value == "Fluent.Dynamic")
+                string theme = value;
+                if (value == "Avalonia.Fluent.Dynamic")
                 {
-                    if (Universal.IsDarkTheme) framework = "Fluent.Dark";
-                    else framework = "Fluent.Light";
+                    if (Universal.IsDarkTheme) theme = "Avalonia.Fluent.Dark";
+                    else theme = "Avalonia.Fluent.Light";
                 }
-                WRITE("PresentationFramework", framework, nameof(PresentationFramework), "Skymu/Appearance");
+                WRITE("AvaloniaTheme", theme, nameof(AvaloniaTheme), "Skymu/Appearance");
             }
         }
 
@@ -529,14 +531,8 @@ namespace Skymu.Preferences
                     }
                 }
                 catch { }
-
-                System.Windows.MessageBox.Show(
-                    $"{Universal.NAME} has discovered that your configuration file is corrupt or from an incompatible version of the application. " +
-                    "It has been reset and your settings have been wiped.",
-                    "Configuration file reset",
-                    System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Information
-                );
+                
+                Universal.ConfigResetOnStartup = true;
                 File.Delete(FilePath);
             }
 

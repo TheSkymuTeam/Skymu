@@ -11,9 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using OmegaAOL.Bifrost.Http;
 using Skymu.Avalonia;
+using Avalonia;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
@@ -30,6 +34,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Pipes;
+using Avalonia.Themes.Fluent;
+using Avalonia.Themes.Simple;
+using Classic.Avalonia.Theme;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -38,9 +45,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
@@ -109,6 +113,7 @@ namespace Skymu
         public static Bitmap UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
         private static Mutex mutex;
+        internal static bool ConfigResetOnStartup = false;
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
         public static event Action ThemeChanged;
@@ -164,31 +169,29 @@ namespace Skymu
                     PluginPopup(sender, e, "Message from plugin ", SkinnedWindow.IconType.Information);
                     break;
                 case DialogType.Choice:
-                    Current.Dispatcher.BeginInvoke(
-                        new Action(
-                            delegate
-                            {
-                                Dialog dialog = new Dialog(
-                                    type: SkinnedWindow.IconType.Information,
-                                    content: e.Message,
-                                    header: ((ICore)sender).Name + " requests your choice",
-                                    brText: Lang["sF_CONFIRM_NO_BTN"],
-                                    blEnabled: true,
-                                    blText: Lang["sF_CONFIRM_YES"]
-                                );
-                                dialog.window.ButtonRightAction = () =>
-                                {
-                                    e.Action(false);
-                                    dialog.Close();
-                                };
-                                dialog.window.ButtonLeftAction = () =>
-                                {
-                                    e.Action(true);
-                                    dialog.Close();
-                                };
-                                dialog.Show();
-                            }
-                        )
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        Dialog dialog = new Dialog(
+                            type: SkinnedWindow.IconType.Information,
+                            content: e.Message,
+                            header: ((ICore)sender).Name + " requests your choice",
+                            brText: Lang["sF_CONFIRM_NO_BTN"],
+                            blEnabled: true,
+                            blText: Lang["sF_CONFIRM_YES"]
+                        );
+                        dialog.window.ButtonRightAction = () =>
+                        {
+                            e.Action(false);
+                            dialog.Close();
+                        };
+                        dialog.window.ButtonLeftAction = () =>
+                        {
+                            e.Action(true);
+                            dialog.Close();
+                        };
+                        dialog.Show();
+                    }
+
                     );
                     break;
             }
@@ -196,14 +199,10 @@ namespace Skymu
 
         public static void PluginNotificationHandler(object sender, MessageBottle e)
         {
-            Current.Dispatcher.BeginInvoke(
-                new Action(
-                    delegate
-                    {
-                        ActiveViewModel?.HandleIncoming(e);
-                    }
-                )
-            );
+            Dispatcher.UIThread.Post(() =>
+            {
+                ActiveViewModel?.HandleIncoming(e);
+            });
         }
 
         static Universal()
@@ -233,7 +232,7 @@ namespace Skymu
                             }
                         }
                         WriteToPipe("WINDOW_ACTIVATE");
-                        System.Windows.MessageBox.Show(
+                        ShowMessage(
                             $"{NAME} is already running.\n\nYou can configure {NAME} to allow running multiple instances at the same time in the Options menu."
                         );
                         Terminate();
@@ -311,6 +310,15 @@ namespace Skymu
                 default:
                     new Skype5.Login().Show();
                     break;
+            }
+
+            if (ConfigResetOnStartup)
+            {
+                ShowMessage(
+                    $"{Universal.NAME} has discovered that your configuration file is corrupt or from an incompatible version of the application. " +
+                    "It has been reset and your settings have been wiped.",
+                    "Configuration file reset"
+                );
             }
 
             Task.Run(() =>
@@ -563,7 +571,7 @@ namespace Skymu
         {
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            ApplyPresentationFramework(Settings.PresentationFramework);
+            ApplyAvaloniaTheme(Settings.AvaloniaTheme);
             AutoLaunch.Get(); // XXX to initialize the setting just in case
             if (!Colorizer.Scan())
                 Universal.ExceptionHandler(
@@ -577,8 +585,8 @@ namespace Skymu
             {
                 switch (args.PropertyName)
                 {
-                    case "PresentationFramework":
-                        ApplyPresentationFramework(Settings.PresentationFramework);
+                    case "AvaloniaTheme":
+                        ApplyAvaloniaTheme(Settings.AvaloniaTheme);
                         break;
                     case "Colorway":
                     case "WindowFrame":
@@ -608,71 +616,45 @@ namespace Skymu
             };
         }
 
-        private void ApplyPresentationFramework(string frameworkName)
+        private void ApplyAvaloniaTheme(string themeName)
         {
-            if (string.IsNullOrEmpty(frameworkName))
-                frameworkName = "Aero.NormalColor";
+            if (string.IsNullOrEmpty(themeName))
+                themeName = "Classic.Avalonia";
 
-            ResourceDictionary theme;
+            IStyle theme;
+            ThemeVariant variant = ThemeVariant.Default;
 
-            if (frameworkName.StartsWith("Fluent"))
+            if (themeName.Contains("Fluent"))
             {
-                var themeFileName = frameworkName.Split('.')[1]; // "Light", "Dark", "HC"
-                var themeUri = new Uri(
-                    $"pack://application:,,,/Presentation/Fluent/Themes/Fluent.{themeFileName}.xaml",
-                    UriKind.Absolute
-                );
-                theme = new ResourceDictionary { Source = themeUri };
-            }
-            else
-            {
-                string assemblyName = "";
-                switch (frameworkName)
+                theme = new FluentTheme();
+                var parts = themeName.Split('.'); // "Fluent", "Fluent.Light", "Fluent.Dark"
+                if (parts.Length > 1)
                 {
-                    case "Classic":
-                        assemblyName = "PresentationFramework.Classic";
-                        break;
-                    default:
-                        if (frameworkName.StartsWith("Luna"))
-                            assemblyName = "PresentationFramework.Luna";
-                        else if (frameworkName.StartsWith("Royale"))
-                            assemblyName = "PresentationFramework.Royale";
-                        else if (frameworkName.StartsWith("Aero2"))
-                            assemblyName = "PresentationFramework.Aero2";
-                        else if (frameworkName.StartsWith("AeroLite"))
-                            assemblyName = "PresentationFramework.AeroLite";
-                        else if (frameworkName.StartsWith("Aero"))
-                            assemblyName = "PresentationFramework.Aero";
-                        else if (frameworkName.StartsWith("Classic"))
-                            assemblyName = "PresentationFramework.Classic";
-                        break;
+                    switch (parts[1])
+                    {
+                        case "Light":
+                            variant = ThemeVariant.Light;
+                            break;
+                        case "Dark":
+                            variant = ThemeVariant.Dark;
+                            break;
+                    }
                 }
-
-                var themeUri = new Uri(
-                    $"/{assemblyName};component/themes/{frameworkName}.xaml",
-                    UriKind.Relative
-                );
-                theme = new ResourceDictionary { Source = themeUri };
             }
+            else if (themeName.Contains("Classic")) theme = new ClassicTheme();
+            else theme = new SimpleTheme();
 
             try
             {
-                var customResources = new ResourceDictionary();
-                foreach (var key in Resources.Keys)
-                {
-                    if (key.ToString() != string.Empty)
-                        customResources[key] = Resources[key];
-                }
+                foreach (var existing in Styles.Where(s => s is FluentTheme || s is SimpleTheme).ToList())
+                    Styles.Remove(existing);
 
-                Resources.MergedDictionaries.Clear();
-                Resources.MergedDictionaries.Add(theme);
-
-                foreach (var key in customResources.Keys)
-                    Resources[key] = customResources[key];
+                Styles.Insert(0, theme);
+                RequestedThemeVariant = variant;
             }
             catch (Exception ex)
             {
-                Universal.ShowMessage($"Failed to apply presentation framework: {ex.Message}");
+                Universal.ShowMessage($"Failed to apply Avalonia theme: {ex.Message}");
             }
         }
 

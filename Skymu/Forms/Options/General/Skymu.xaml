@@ -206,48 +206,20 @@
                     Text="Base theme (scrollbar, buttons, etc)" />
                 <ComboBox
                     Width="250"
-                    SelectedValue="{Binding Path=[PresentationFramework], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+                    SelectedValue="{Binding Path=[AvaloniaTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
                     SelectedValuePath="Tag">
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Windows Classic"
-                        Tag="Classic" />
+                        Content="Avalonia Windows Classic"
+                        Tag="Classic.Avalonia" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Windows XP (Blue)"
-                        Tag="Luna.NormalColor" />
+                        Content="Avalonia Fluent"
+                        Tag="Avalonia.Fluent.Dynamic" />
                     <ComboBoxItem
                         Padding="6,0"
-                        Content="Windows XP (Olive Green)"
-                        Tag="Luna.Homestead" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows XP (Silver)"
-                        Tag="Luna.Metallic" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows XP Royale"
-                        Tag="Royale.NormalColor" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows Vista / 7"
-                        Tag="Aero.NormalColor" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows 8"
-                        Tag="Aero2.NormalColor" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows 8 Basic"
-                        Tag="AeroLite.NormalColor" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows 11 Dynamic (experimental)"
-                        Tag="Fluent.Dynamic" />
-                    <ComboBoxItem
-                        Padding="6,0"
-                        Content="Windows 11 High Contrast (experimental)"
-                        Tag="Fluent.HC" />
+                        Content="Avalonia Simple"
+                        Tag="Avalonia.Simple" />
                 </ComboBox>
             </StackPanel>
 

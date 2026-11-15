@@ -125,12 +125,12 @@ namespace Skymu.Theming
             (string, bool) information = ReadColorwayInfo(absolutePath);
             Universal.IsDarkTheme = information.Item2;
 
-            if (Settings.PresentationFramework.StartsWith("Fluent"))
+            if (Settings.AvaloniaTheme.StartsWith("Fluent"))
             {
-                if (Universal.IsDarkTheme && Settings.PresentationFramework == "Fluent.Light")
-                    Settings.PresentationFramework = "Fluent.Dark";
-                else if (!Universal.IsDarkTheme && Settings.PresentationFramework == "Fluent.Dark")
-                    Settings.PresentationFramework = "Fluent.Light";
+                if (Universal.IsDarkTheme && Settings.AvaloniaTheme == "Fluent.Light")
+                    Settings.AvaloniaTheme = "Fluent.Dark";
+                else if (!Universal.IsDarkTheme && Settings.AvaloniaTheme == "Fluent.Dark")
+                    Settings.AvaloniaTheme = "Fluent.Light";
             }
 
             appResources.MergedDictionaries.Add(new_colorway);
