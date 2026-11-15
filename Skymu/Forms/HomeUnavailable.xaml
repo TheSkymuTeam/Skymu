@@ -20,7 +20,7 @@
     evaluation on the future direction of Skype Home.
 -->
 
-<Page
+<UserControl
     x:Class="Skymu.Forms.HomeUnavailable"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -32,7 +32,7 @@
     d:DesignWidth="692.735"
     mc:Ignorable="d">
 
-    <Page.Resources>
+    <UserControl.Resources>
         <converters:AssetLoader x:Key="AssetLoader" />
     </Page.Resources>
 
@@ -114,4 +114,4 @@
             VerticalAlignment="Bottom"
             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Home/footer.png'}" />
     </Grid>
-</Page>
+</UserControl>

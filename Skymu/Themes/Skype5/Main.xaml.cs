@@ -20,7 +20,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Input;
+using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 

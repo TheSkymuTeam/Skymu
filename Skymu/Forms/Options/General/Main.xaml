@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.OptionPages.General.Main"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -31,7 +31,7 @@
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Style="{StaticResource Page}"
+    Classes="Page"
     mc:Ignorable="d">
 
     <ScrollViewer Margin="10">
@@ -102,4 +102,4 @@ IsEnabled="False"/>
 
         </StackPanel>
     </ScrollViewer>
-</Page>
+</UserControl>

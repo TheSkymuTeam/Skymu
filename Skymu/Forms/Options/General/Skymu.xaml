@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.OptionPages.General.Skymu"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -29,12 +29,12 @@
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Style="{StaticResource Page}"
+    Classes="Page"
     mc:Ignorable="d">
     <!--  Commented out as the page is a scrolling thing  -->
     <!--  Re-add to Page when the view becomes small enough to not require a ScrollViewer  -->
     <!--  d:Height="505"  -->
-    <Page.Resources>
+    <UserControl.Resources>
         <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
         <converters:BoolInverterConverter x:Key="BoolInverterConverter" />
         <converters:StringToIntegerConverter x:Key="StringToIntegerConverter" />
@@ -661,4 +661,4 @@
 
         </StackPanel>
     </ScrollViewer>
-</Page>
+</UserControl>

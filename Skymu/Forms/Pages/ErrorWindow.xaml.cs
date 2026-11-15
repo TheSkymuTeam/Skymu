@@ -7,11 +7,11 @@ namespace Skymu.Forms.Pages
     /// <summary>
     /// Interaction logic for ErrorWindow.xaml
     /// </summary>
-    public partial class ErrorWindow : Page
+    public partial class ErrorWindow : UserControl
     {
-        public ErrorWindow(string text)
+        public ErrorWindow() { InitializeComponent(); }   
+        public ErrorWindow(string text) : this()
         {
-            InitializeComponent();
             DetailsBox.Text = text;
         }
 

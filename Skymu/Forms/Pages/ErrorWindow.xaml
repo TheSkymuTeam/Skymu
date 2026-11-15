@@ -12,21 +12,17 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.Pages.ErrorWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Skymu.Forms.Pages"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
-    Title="Error Window"
     Width="400"
     Height="400"
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Style="{StaticResource Page}">
+    Classes="Page">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -59,4 +55,4 @@
                 TextWrapping="Wrap" />
         </ScrollViewer>
     </Grid>
-</Page>
+</UserControl>

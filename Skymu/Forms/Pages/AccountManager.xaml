@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.Pages.AccountManager"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -21,7 +21,7 @@
     Height="275"
     Background="Transparent"
     Loaded="Page_Loaded"
-    Style="{StaticResource Page}">
+    Classes="Page">
     <Grid Margin="0,0,0,8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -218,4 +218,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</Page>
+</UserControl>

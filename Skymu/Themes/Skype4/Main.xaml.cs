@@ -18,7 +18,7 @@ using Skymu.Theming;
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
+using System.Windows.Input;
 
 namespace Skymu.Skype4
 {

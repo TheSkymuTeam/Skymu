@@ -16,7 +16,7 @@ using Skymu.Formatting;
 using Skymu.Preferences;
 using Skymu.ViewModels;
 using System;
-using Avalonia.Input;
+using System.Windows.Input;
 using System.Diagnostics;
 using Skymu.Sounds;
 using System.Linq;

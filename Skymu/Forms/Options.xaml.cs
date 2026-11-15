@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
+using System.Windows.Input;
 using Avalonia.Media;
 using System.Windows.Navigation;
 
@@ -26,7 +26,7 @@ namespace Skymu.Forms
     public partial class Options : Window
     {
         readonly Dictionary<SliceControl, Grid> catToGrid;
-        readonly Dictionary<SliceControl, Func<Page>> tabDispenser;
+        readonly Dictionary<SliceControl, Func<UserControl>> tabDispenser;
         readonly Dictionary<SliceControl, string> tabToText;
 
         public Options()
@@ -47,7 +47,7 @@ namespace Skymu.Forms
                 { HChatsSMS, GChatsSMS },
                 { HAdvanced, GAdvanced },
             };
-            tabDispenser = new Dictionary<SliceControl, Func<Page>>
+            tabDispenser = new Dictionary<SliceControl, Func<UserControl>>
             {
                 { General_Skymu, () => new OptionPages.General.Skymu() },
                 { Advanced_Debug, () => new OptionPages.Advanced.Debug() },

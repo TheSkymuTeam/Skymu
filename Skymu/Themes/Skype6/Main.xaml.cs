@@ -21,7 +21,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Input;
+using System.Windows.Input;
 using Avalonia.Media.Imaging;
 using Yggdrasil;
 using Yggdrasil.Models;

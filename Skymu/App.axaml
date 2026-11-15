@@ -25,7 +25,7 @@ xmlns:preferences="clr-namespace:Skymu.Preferences">
 			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
 		</Style>
-		<Style Selector="Page">
+		<Style Selector="UserControl.Page">
 			<Setter Property="UseLayoutRounding" Value="True" />
 			<Setter Property="TextOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
 			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />

@@ -299,7 +299,7 @@ namespace Skymu.Theming
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 //chrome.UseAeroCaptionButtons = false;
                 ExtendClientAreaToDecorationsHint = true;
-                ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.NoChrome;
+                ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
                 ExtendClientAreaTitleBarHeightHint = -1; // WindowChrome configuration ensures that system frame is not drawn
                 TitleBar.PointerPressed += TitleBar_PointerPressed;
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
@@ -418,8 +418,11 @@ namespace Skymu.Theming
                 {
                     maximize.Source = img_restore;
                     FrameArea.Margin = new Thickness(0, 5, 0, 0);
-                    Thickness ReducedWinAreaMargin = OriginalWindowAreaMargin;
-                    ReducedWinAreaMargin.Top -= 4;
+                    Thickness ReducedWinAreaMargin = new Thickness(
+    OriginalWindowAreaMargin.Left,
+    OriginalWindowAreaMargin.Top - 4,
+    OriginalWindowAreaMargin.Right,
+    OriginalWindowAreaMargin.Bottom);
                     WindowArea.Margin = ReducedWinAreaMargin;
                 }
                 else

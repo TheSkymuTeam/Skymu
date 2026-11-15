@@ -11,12 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using Avalonia.Media.Imaging;
 using Skymu.Helpers;
 using System;
 using System.Text;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Media.Imaging;
 using Yggdrasil.Models;
 
 namespace Skymu.Infrastructure
@@ -51,21 +52,27 @@ namespace Skymu.Infrastructure
         }
     }
 
-    public class CompactRecentsTemplateSelector : DataTemplateSelector
+    public class CompactRecentsTemplateSelector : IDataTemplate
     {
-        public DataTemplate DateHeaderTemplate { get; set; }
-        public DataTemplate CompactDirectMessageTemplate { get; set; }
-        public DataTemplate CompactGroupTemplate { get; set; }
+        public IDataTemplate DateHeaderTemplate { get; set; }
+        public IDataTemplate CompactDirectMessageTemplate { get; set; }
+        public IDataTemplate CompactGroupTemplate { get; set; }
 
-        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        public bool Match(object data) =>
+            data is DateHeaderItem || data is DirectMessage || data is Group;
+
+        public Control Build(object data)
         {
-            if (item is DateHeaderItem)
-                return DateHeaderTemplate;
-            else if (item is DirectMessage)
-                return CompactDirectMessageTemplate;
-            else if (item is Group)
-                return CompactGroupTemplate;
-            return base.SelectTemplate(item, container);
+            IDataTemplate template = null;
+
+            if (data is DateHeaderItem)
+                template = DateHeaderTemplate;
+            else if (data is DirectMessage)
+                template = CompactDirectMessageTemplate;
+            else if (data is Group)
+                template = CompactGroupTemplate;
+
+            return template?.Build(data);
         }
     }
 }

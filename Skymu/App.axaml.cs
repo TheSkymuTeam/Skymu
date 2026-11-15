@@ -342,7 +342,14 @@ namespace Skymu
             switch (Theme)
             {
                 case "Skype7":
-                    new Skype7.Login().Show();
+                    // new Skype7.Login().Show();
+                    Settings.Theme = "Skype6";
+                    // TODO: Make a better fix
+                    // Override Settings.ActiveTab on default colorway with the proper color (#0095cc)
+                    Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush(Color.Parse("#0095cc"));
+                    // Override Settings.ActiveTabText to white
+                    Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
+                    new Skype6.Login().Show();
                     break;
                 case "Skype6":
                     // TODO: Make a better fix

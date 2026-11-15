@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.Pages.AddContact"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,9 +27,9 @@
     d:Background="#FFFFFF"
     FontFamily="Tahoma"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Style="{StaticResource Page}"
+    Classes="Page"
     mc:Ignorable="d">
-    <Page.Resources>
+    <UserControl.Resources>
         <Style TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
         </Style>
@@ -432,4 +432,4 @@
             </Grid>
         </TabItem>
     </TabControl>
-</Page>
+</UserControl>

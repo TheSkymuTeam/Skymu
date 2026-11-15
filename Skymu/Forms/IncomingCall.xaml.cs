@@ -14,7 +14,7 @@
 using Skymu.Helpers;
 using System;
 using Avalonia;
-using Avalonia.Input;
+using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Media.Animation;
 using Yggdrasil.Models;

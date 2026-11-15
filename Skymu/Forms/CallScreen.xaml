@@ -12,7 +12,7 @@
     SPDX-License-Identifier: AGPL-3.0-or-later
     ============================================================
 -->
-<Page
+<UserControl
     x:Class="Skymu.Forms.CallScreen"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -29,9 +29,9 @@
     FontFamily="Arial"
     FontSize="15.5"
     SizeChanged="Resized"
-    Style="{StaticResource Page}"
+    Classes="Page"
     mc:Ignorable="d">
-    <Page.Resources>
+    <UserControl.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />
         <Style x:Key="ActionButtonStyle" TargetType="global:SliceControl">
@@ -230,4 +230,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</Page>
+</UserControl>

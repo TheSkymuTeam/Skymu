@@ -30,7 +30,7 @@ using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
 {
-    public partial class AccountManager : Page
+    public partial class AccountManager : UserControl
     {
         public static void Open()
         {

@@ -21,7 +21,7 @@ using Avalonia.Interactivity;
 using Yggdrasil.Bottles;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
+using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using System.Windows.Navigation;

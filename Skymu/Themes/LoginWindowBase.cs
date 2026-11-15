@@ -19,6 +19,7 @@ using Avalonia.Threading;
 using Skymu.AvaloniaHelpers;
 using Skymu.Credentials;
 using Skymu.Forms;
+using Avalonia.Input;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Native.Windows;
@@ -32,7 +33,7 @@ using Avalonia;
 using Avalonia.Interactivity;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
-using Avalonia.Input;
+using System.Windows.Input;
 
 namespace Skymu.Theming
 {
@@ -74,7 +75,7 @@ namespace Skymu.Theming
             if (ProtocolComboBox.SelectedIndex == -1) return;
             await _viewModel.Login(
                 UsernameBox.Text,
-                PasswordTokenBox.Password
+                PasswordTokenBox.Text
             );
         }
 
@@ -137,7 +138,7 @@ namespace Skymu.Theming
         private void CheckEnableLoginButton()
         {
             bool enabled = (!string.IsNullOrWhiteSpace(UsernameBox.Text)
-                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Password) || !PasswordTokenBox.IsEnabled))
+                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Text) || !PasswordTokenBox.IsEnabled))
                 || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled);
             LoginButton.IsEnabled = enabled;
             OnLoginButtonUpdated(enabled);
@@ -207,7 +208,7 @@ namespace Skymu.Theming
                 return;
             }
             UsernameBox.Text = creds.User.Username;
-            PasswordTokenBox.Password = creds.PasswordOrToken;
+            PasswordTokenBox.Text = creds.PasswordOrToken;
             CheckEnableLoginButton();
         }
 
@@ -268,7 +269,7 @@ namespace Skymu.Theming
 
         #region Parts
 
-        private T Part<T>(string name) where T : class => (T)FindName(name);
+        private T Part<T>(string name) where T : class => (T)NameScope.GetNameScope(this)?.Find(name);
 
         private global::Avalonia.Controls.TextBlock header => Part<global::Avalonia.Controls.TextBlock>(nameof(header));
         private global::Avalonia.Controls.Grid LoginControls => Part<global::Avalonia.Controls.Grid>(nameof(LoginControls));
