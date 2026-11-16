@@ -12,12 +12,13 @@
 /*==========================================================*/
 
 using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
-using Avalonia;
+using System.Threading.Tasks;
 
 namespace Skymu.Forms.Pages
 {
@@ -109,7 +110,7 @@ namespace Skymu.Forms.Pages
                 brAction = () =>
                 {
                     TextBoxContent = window.BBTextBox.Text;
-                    window.DialogResult = true;
+                    window.Close(true);
                 };
                 brText = brText ?? Universal.Lang["sF_OPTIONS_BUTTON_SAVE"];
             }
@@ -169,7 +170,9 @@ namespace Skymu.Forms.Pages
 
         public bool? Show()
         {
-            return window.ShowDialog(AHelpers.GetMainWindow());
+            return window.ShowDialog<bool?>(AHelpers.GetMainWindow())
+                         .GetAwaiter()
+                         .GetResult(); // genuinely FUCK async dialogs
         }
 
         public void SetRightButtonAsDefault()
