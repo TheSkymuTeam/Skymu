@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Input;
+using Avalonia.Input;
 using Avalonia.Media;
 using System.Windows.Navigation;
 
