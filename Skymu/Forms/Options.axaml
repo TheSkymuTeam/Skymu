@@ -30,7 +30,7 @@
     DataContext="{StaticResource Lang}"
     FontFamily="Tahoma"
     FontSize="11"
-    ResizeMode="CanMinimize"
+    CanMinimize="True"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

@@ -25,7 +25,7 @@ namespace Skymu.Forms.Pages
     // This is a generic dialog page that can be used for various purposes.
     // This was previously its own form, but now it is a page that can be used in a Skymu window.
 
-    public partial class Dialog : Page
+    public partial class Dialog : UserControl
     {
         // The frame window
         public SkinnedWindow window;
@@ -61,7 +61,7 @@ namespace Skymu.Forms.Pages
                 MinHeight = 225,
                 Width = 373,
                 Height = 539,
-                ResizeMode = ResizeMode.NoResize,
+                CanResize = false,
                 SizeToContent = SizeToContent.Height,
                 ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"],
                 ButtonRightText = Universal.Lang["sF_CONFIRM_OK_BTN"]

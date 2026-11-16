@@ -27,7 +27,7 @@ using Yggdrasil.Models;
 
 namespace Skymu.Forms.Pages
 {
-    public partial class AddContact : Page
+    public partial class AddContact : UserControl
     {
         const string TAG_STOP = "STOPSEARCH";
 
@@ -58,7 +58,7 @@ namespace Skymu.Forms.Pages
                 MinHeight = 515,
                 Width = 653,
                 Height = 549, // Yup, MinHeight is smaller somehow.
-                ResizeMode = ResizeMode.CanResize,
+                CanResize = true,
                 SizeToContent = SizeToContent.Manual,
                 Title = Settings.BrandingName + "™ - " + Universal.Lang["sADDADDAFRIEND_SCR1_CAPTION"],
                 HeaderIcon = SkinnedWindow.IconType.ContactAdd,

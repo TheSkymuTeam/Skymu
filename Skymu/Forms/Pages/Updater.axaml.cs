@@ -27,7 +27,7 @@ using static System.String;
 
 namespace Skymu.Forms.Pages
 {
-    public partial class Updater : Page
+    public partial class Updater : UserControl
     {
         private CancellationTokenSource _cts;
         private readonly string brand = Settings.BrandingName;

@@ -31,7 +31,7 @@
     FontFamily="Tahoma"
     FontSize="11"
     Loaded="Login_Loaded"
-    ResizeMode="NoResize"
+    CanResize="False"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

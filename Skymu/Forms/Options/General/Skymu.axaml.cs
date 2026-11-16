@@ -19,7 +19,7 @@ using OmegaAOL.Bifrost.Tls;
 
 namespace Skymu.Forms.OptionPages.General
 {
-    public partial class Skymu : Page
+    public partial class Skymu : UserControl
     {
         public Skymu()
         {

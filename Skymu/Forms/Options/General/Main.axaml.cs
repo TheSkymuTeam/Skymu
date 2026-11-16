@@ -19,7 +19,7 @@ using Skymu.Forms.Pages;
 
 namespace Skymu.Forms.OptionPages.General
 {
-    public partial class Main : Page
+    public partial class Main : UserControl
     {
         public Main()
         {

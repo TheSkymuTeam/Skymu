@@ -18,7 +18,7 @@ using Avalonia.Controls;
 
 namespace Skymu.Forms
 {
-    public partial class HomeUnavailable : Page
+    public partial class HomeUnavailable : UserControl
     {
         public HomeUnavailable()
         {

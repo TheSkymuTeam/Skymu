@@ -33,7 +33,7 @@
     SizeToContent="Height"
     Style="{StaticResource Window}"
     Topmost="True"
-    WindowStyle="None">
+    SystemDecorations="None">
     <Window.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />

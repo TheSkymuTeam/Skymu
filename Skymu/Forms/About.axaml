@@ -28,7 +28,7 @@
     AllowsTransparency="True"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
+    SystemDecorations="None"
     mc:Ignorable="d">
     <Window.Resources>
 

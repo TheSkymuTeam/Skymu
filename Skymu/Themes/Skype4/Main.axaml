@@ -36,11 +36,11 @@
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    ResizeMode="CanResize"
+    CanResize="True"
     StateChanged="Window_StateChanged"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
+    SystemDecorations="None"
     mc:Ignorable="d">
     <Window.Resources>
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">

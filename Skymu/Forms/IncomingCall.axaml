@@ -26,14 +26,14 @@
     FontFamily="Tahoma"
     FontSize="11"
     PointerPressed="OnDrag"
-    ResizeMode="NoResize"
+    CanResize="False"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
     Style="{StaticResource Window}"
     Topmost="True"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None">
+    SystemDecorations="None">
     <Window.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />

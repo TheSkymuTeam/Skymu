@@ -39,10 +39,10 @@
     Deactivated="Window_Deactivated"
     FontFamily="Tahoma"
     FontSize="11"
-    ResizeMode="CanResize"
+    CanResize="True"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="SingleBorderWindow"
+    SystemDecorations="Full"
     mc:Ignorable="d">
     <Window.Resources>
         <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">

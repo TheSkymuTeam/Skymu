@@ -20,7 +20,7 @@ using System.Windows.Navigation;
 
 namespace Skymu.Forms.OptionPages.Advanced
 {
-    public partial class Debug : Page
+    public partial class Debug : UserControl
     {
         public Debug()
         {

@@ -15,7 +15,7 @@ using Avalonia.Controls;
 
 namespace Skymu.Forms.OptionPages
 {
-    public partial class Placeholder : Page
+    public partial class Placeholder : UserControl
     {
         public Placeholder()
         {

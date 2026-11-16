@@ -21,17 +21,17 @@ using Avalonia.Interactivity;
 using Yggdrasil.Bottles;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using System.Windows.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using System.Windows.Navigation;
 using Avalonia.Threading;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Forms
 {
-    public partial class CallScreen : Page
+    public partial class CallScreen : UserControl
     {
         private Bitmap pill,
             rectangle,
@@ -281,7 +281,7 @@ namespace Skymu.Forms
 
         private Window _fullscreenWindow;
 
-        private void OnFullscreenToggled(object sender, PointerEventArgs e)
+        private void OnFullscreenToggled(object sender, PointerReleasedEventArgs e)
         {
             if (e.InitialPressMouseButton != MouseButton.Left)
                 return;
@@ -307,9 +307,9 @@ namespace Skymu.Forms
 
             _fullscreenWindow = new Window
             {
-                WindowStyle = WindowStyle.None,
+                SystemDecorations = SystemDecorations.None,
                 WindowState = WindowState.Maximized,
-                ResizeMode = ResizeMode.NoResize,
+                CanResize = false,
                 Content = this
             };
 
