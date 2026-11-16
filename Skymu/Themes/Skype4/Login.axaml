@@ -31,7 +31,7 @@
     FontFamily="Tahoma"
     FontSize="11"
     Loaded="Login_Loaded"
-    CanResize="False"
+    ResizeMode="NoResize"
     Style="{StaticResource Window}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -172,8 +172,7 @@
                             Margin="0,0,0,0"
                             FontWeight="Normal">
                             <Hyperlink
-                                NavigateUri="#"
-                                RequestNavigate="Hyperlink_RequestNavigate"
+                                Click="Hyperlink_Click"
                                 Style="{StaticResource HoverUnderlineHyperlink}">
                                 <Run Text="Unable to login? Ask for help here!" />
                             </Hyperlink>

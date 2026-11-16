@@ -250,7 +250,7 @@ namespace Skymu.Theming
             }
         }
 
-        protected void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        protected void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             Universal.OpenURL(Universal.DISCORD_SERVER_INVITE);
             e.Handled = true;

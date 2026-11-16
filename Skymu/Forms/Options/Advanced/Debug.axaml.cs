@@ -17,6 +17,7 @@ using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using System.Windows.Navigation;
+using Avalonia.Interactivity;
 
 namespace Skymu.Forms.OptionPages.Advanced
 {
@@ -27,7 +28,7 @@ namespace Skymu.Forms.OptionPages.Advanced
             InitializeComponent();
         }
 
-        private void OURL(object sender, RequestNavigateEventArgs e) => Universal.OpenURL(e.Uri.AbsoluteUri);
+        private void OPEN_PR_URL(object sender, RoutedEventArgs e) => Universal.OpenURL(Universal.GITHUB_PULLS_URL);
 
         private void PluginPathBrowseClick(object sender, RoutedEventArgs e)
         {
