@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 
 namespace Skymu.Skype5

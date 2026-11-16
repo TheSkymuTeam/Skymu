@@ -20,6 +20,7 @@ using Skymu.WebServices;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Layout;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;

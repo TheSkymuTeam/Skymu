@@ -15,6 +15,7 @@ using Skymu.Helpers;
 using Skymu.Sounds;
 using Skymu.Preferences;
 using System;
+using Avalonia.Layout;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Interactivity;

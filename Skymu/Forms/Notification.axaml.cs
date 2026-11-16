@@ -28,6 +28,7 @@ using Skymu.Helpers;
 using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
+using Avalonia.Layout;
 using Skymu.ViewModels;
 using System;
 using System.Diagnostics;
@@ -272,9 +273,12 @@ namespace Skymu.Forms
 
         private void PositionNotification()
         {
-            var workingArea = SystemParameters.WorkArea;
-            this.Left = workingArea.Right - this.Bounds.Width - 5;
-            this.Top = workingArea.Bottom - this.Bounds.Height - 1;
+            var screen = Screens.ScreenFromWindow(this);
+            var workingArea = screen.WorkingArea;
+
+            this.Position = new PixelPoint(
+                workingArea.Right - (int)this.Bounds.Width - 5,
+                workingArea.Bottom - (int)this.Bounds.Height - 1);
         }
 
         private void Window_PointerEntered(object sender, PointerEventArgs e)
