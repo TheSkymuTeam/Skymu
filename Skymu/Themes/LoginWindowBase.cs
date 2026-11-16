@@ -11,15 +11,20 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Templates;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Skymu.AvaloniaHelpers;
 using Skymu.Credentials;
 using Skymu.Forms;
-using Avalonia.Input;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
 using Skymu.Native.Windows;
@@ -29,8 +34,6 @@ using Skymu.ViewModels;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using Avalonia;
-using Avalonia.Interactivity;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 
@@ -64,6 +67,7 @@ namespace Skymu.Theming
             _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
             _viewModel.MainWindowReady += OnMainWindowReady;
 
+            StartSpinnerAnimation();
             SoundManager.Init();
             Tray.SetStatus(PresenceStatus.Offline);
         }
@@ -130,7 +134,7 @@ namespace Skymu.Theming
             Close();
         }
 
-        private void BoxKeyUp(object sender, RoutedEventArgs e)
+        private void BoxKeyUp(object sender, KeyEventArgs e)
         {
             CheckEnableLoginButton();
         }
@@ -163,9 +167,8 @@ namespace Skymu.Theming
 
             MenuBarRow.Height = new GridLength(0);
             new MenuBarController(this, true).Build();
-
-            ProtocolComboBox.DisplayMemberPath = "DisplayName";
-            ProtocolComboBox.SelectedValuePath = "DisplayName";
+            ProtocolComboBox.ItemTemplate = new FuncDataTemplate<LoginViewModel.PluginListing>((item, _) =>
+                new TextBlock { Text = item?.DisplayName });
             _viewModel.LoadPlugins();
 
             foreach (var item in _viewModel.PluginItems)
@@ -194,6 +197,25 @@ namespace Skymu.Theming
                 ProtocolComboBox.SelectedItem = preferred;
             else
                 ProtocolComboBox.SelectedIndex = 0;
+        }
+
+        private void StartSpinnerAnimation()
+        {
+            if (Spinner == null) return;
+            var transform = new RotateTransform();
+            Spinner.RenderTransform = transform;
+            Spinner.RenderTransformOrigin = RelativePoint.Center;
+            var animation = new Animation
+            {
+                Duration = TimeSpan.FromSeconds(2.133333),
+                IterationCount = IterationCount.Infinite,
+                Children =
+        {
+            new KeyFrame { Cue = new Cue(0.0), Setters = { new Setter(RotateTransform.AngleProperty, 0.0) } },
+            new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
+        },
+            };
+            _ = animation.RunAsync(transform);
         }
 
         private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
@@ -261,7 +283,7 @@ namespace Skymu.Theming
             base.OnClosed(e);
         }
 
-        protected void Login_Closing(object sender, CancelEventArgs ev)
+        protected void Login_Closing(object sender, WindowClosingEventArgs ev)
         {
             if (!noCloseEvent)
                 Universal.Hide(ev);

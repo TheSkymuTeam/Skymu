@@ -36,17 +36,15 @@
     
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-    <Window.Resources>
-        <Style x:Key="HoverUnderlineHyperlink" TargetType="{x:Type Hyperlink}">
-            <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-            <Setter Property="TextDecorations" Value="{x:Null}" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="TextDecorations" Value="Underline" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
+<Window.Styles>
+    <Style Selector="HyperlinkButton">
+        <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
+        <Setter Property="TextDecorations" Value="{x:Null}" />
+    </Style>
+    <Style Selector="HyperlinkButton:pointerover">
+        <Setter Property="TextDecorations" Value="Underline" />
+    </Style>
+</Window.Styles>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -76,29 +74,6 @@
                 RenderTransformOrigin="0.50785,0.5001"
                 Source="Assets/Universal/Animations/spinner.png"
                 IsVisible="False">
-                <Image.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform x:Name="SpinnerRotate" Angle="0" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Image.RenderTransform>
-                <Image.Triggers>
-                    <EventTrigger RoutedEvent="Loaded">
-                        <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
-                                <DoubleAnimation
-                                    RepeatBehavior="Forever"
-                                    Storyboard.TargetName="SpinnerRotate"
-                                    Storyboard.TargetProperty="Angle"
-                                    From="0"
-                                    To="360"
-                                    Duration="0:0:2.133333" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Image.Triggers>
             </Image>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -171,19 +146,13 @@
                             Width="240"
                             Height="21"
                             Margin="0,0,0,7" />
-                        <TextBlock
-                            x:Name="ForgotPasswordLink"
-                            Height="28"
-                            Margin="0,0,0,0"
-                            FontWeight="Normal"
-                            Foreground="{DynamicResource Text.Hyperlink}">
-                            <Hyperlink
-                                NavigateUri="#"
-                                RequestNavigate="Hyperlink_RequestNavigate"
-                                Style="{StaticResource HoverUnderlineHyperlink}">
-                                <Run Text="Unable to login? Ask for help here!" />
-                            </Hyperlink>
-                        </TextBlock>
+<HyperlinkButton
+    x:Name="ForgotPasswordLink"
+    Height="28"
+    Margin="0,0,0,0"
+    FontWeight="Normal"
+    Content="Unable to login? Ask for help here!"
+    Click="Hyperlink_Click" />
 
                         <!--  Sign-in button  -->
 

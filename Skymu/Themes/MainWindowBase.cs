@@ -12,6 +12,7 @@
 /*==========================================================*/
 
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
@@ -55,6 +56,7 @@ namespace Skymu.Theming
         #region Parts
         internal T Part<T>(string name) where T : class => (T)NameScope.GetNameScope(this)?.Find(name);
 
+        internal global::Avalonia.Controls.ContentControl HomeFrame => Part<global::Avalonia.Controls.ContentControl>(nameof(HomeFrame));
         internal global::Skymu.SliceControl btnContacts => Part<global::Skymu.SliceControl>(nameof(btnContacts));
         internal global::Skymu.SliceControl btnRecents => Part<global::Skymu.SliceControl>(nameof(btnRecents));
         internal global::Skymu.SliceControl btnServers => Part<global::Skymu.SliceControl>(nameof(btnServers));
@@ -699,6 +701,15 @@ namespace Skymu.Theming
                 _ = SetConversation();
             };
 
+            ConversationList.ContainerPrepared += (s, e) =>
+            {
+                if (e.Container is ListBoxItem item && item.DataContext is DateHeaderItem)
+                {
+                    item.IsEnabled = false;
+                    item.Focusable = false;
+                }
+            };
+
             vmodel.SpeedTestIconUpdated += uri =>
             {
                 Dispatcher.UIThread.Invoke(() => WifiButton.Source = ImageHelper.Load(uri));
@@ -727,6 +738,16 @@ namespace Skymu.Theming
             MessageTextBox.AddHandler(KeyDownEvent, MessageTextBox_PreviewKeyDown, RoutingStrategies.Tunnel);
 
             this.PointerReleased += MouseRelease;
+            ServersList.AddHandler(
+    PointerReleasedEvent,
+    (object s, PointerReleasedEventArgs e) =>
+    {
+        if (e.InitialPressMouseButton != MouseButton.Left) return;
+        if (e.Source is TreeViewItem item)
+            _ = HandleServerItemSelectionPublic(item.DataContext);
+    },
+    RoutingStrategies.Bubble
+);
             this.SizeChanged += Main_SizeChanged;
             buttonToColumn = new Dictionary<SliceControl, ColumnDefinition>
             {
@@ -734,6 +755,7 @@ namespace Skymu.Theming
                 { btnServers, ServersColumn },
                 { btnRecents, RecentsColumn },
             };
+            StartSpinnerAnimation();
             _defaultConversationTemplate = ConversationList.ItemTemplate;
             _ = SelectTab(btnRecents);
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
@@ -773,6 +795,28 @@ namespace Skymu.Theming
             };
         }
 
+        private void StartSpinnerAnimation()
+        {
+            if (Spinner == null) return;
+            var transform = new RotateTransform();
+            Spinner.RenderTransform = transform;
+            Spinner.RenderTransformOrigin = RelativePoint.Center;
+            var animation = new Animation
+            {
+                Duration = TimeSpan.FromSeconds(2.133333),
+                IterationCount = IterationCount.Infinite,
+                Children =
+        {
+            new KeyFrame { Cue = new Cue(0.0), Setters = { new Setter(RotateTransform.AngleProperty, 0.0) } },
+            new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
+        },
+            };
+            _ = animation.RunAsync(transform);
+        }
+
+
+        private Task HandleServerItemSelectionPublic(object data) => HandleServerItemSelection(data);
+
         #endregion
 
         protected virtual void OnTabSelecting(SliceControl tab_to_select) { }
@@ -795,7 +839,7 @@ namespace Skymu.Theming
             await SetConversation();
         }
 
-        private async Task HandleServerItemSelection(object value)
+        internal async Task HandleServerItemSelection(object value)
         {
             if (value is CategoryHeaderItem)
                 return;

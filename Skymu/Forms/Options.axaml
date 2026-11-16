@@ -394,7 +394,7 @@
                             Foreground="{DynamicResource Text.HighContrast}"
                             Text="Modify the way Skymu looks, feels, and behaves" />
                     </StackPanel>
-                    <Frame
+                    <ContentControl
                         x:Name="PageHost"
                         Margin="5,40,5,5"
                         NavigationUIIsVisible="False" />

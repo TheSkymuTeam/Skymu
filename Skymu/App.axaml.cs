@@ -507,7 +507,7 @@ namespace Skymu
             }
         }
 
-        public static void Hide(CancelEventArgs ev = null)
+        public static void Hide(WindowClosingEventArgs ev = null)
         {
             try
             {

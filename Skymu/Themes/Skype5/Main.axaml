@@ -28,11 +28,11 @@ Width="1448"
 Height="856"
 MinWidth="584"
 MinHeight="450"
-Activated="Window_Activated"
+
 
 Background="{DynamicResource Active.Background}"
 Closing="Main_Closing"
-Deactivated="Window_Deactivated"
+
 FontFamily="Tahoma"
 FontSize="11"
 Foreground="{DynamicResource Text.VeryHighContrast}"
@@ -57,16 +57,12 @@ mc:Ignorable="d">
 			<Setter Property="HoverIndex" Value="1" />
 			<Setter Property="PressedIndex" Value="2" />
 		</Style>
-		<Style Selector="global|SliceControl.addButtonHover">
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="TextColor" Value="#0099ff" />
-				</Trigger>
-				<Trigger Property="IsMouseOver" Value="False">
-					<Setter Property="TextColor" Value="{DynamicResource Text.HighContrast}" />
-				</Trigger>
-			</Style.Triggers>
-		</Style>
+<Style Selector="global|SliceControl.addButtonHover">
+    <Setter Property="TextColor" Value="{DynamicResource Text.HighContrast}" />
+</Style>
+<Style Selector="global|SliceControl.addButtonHover:pointerover">
+    <Setter Property="TextColor" Value="#0099ff" />
+</Style>
 	</Window.Styles>
 	<Window.Resources>
 		<ControlTheme x:Key="NoInsetListBox" TargetType="ListBox">
@@ -81,7 +77,7 @@ mc:Ignorable="d">
 						Padding="0"
 						VerticalContentAlignment="Bottom"
 						Background="{DynamicResource Card.Background}"
-						CanContentScroll="True"
+						
 						Focusable="false">
 							<ItemsPresenter />
 						</ScrollViewer>
@@ -142,6 +138,13 @@ mc:Ignorable="d">
 			<Setter Property="Foreground" Value="{DynamicResource Text.LowContrast}" />
 			<Setter Property="TextTrimming" Value="CharacterEllipsis" />
 		</ControlTheme>
+		<ImageBrush x:Key="SBrush"
+    Source="Assets/Themeable/Main/selection-background.png"
+    Stretch="Fill" />
+<converters:BoolToBrushConverter x:Key="SelectedToSelectionBrush"
+    TrueBrush="{StaticResource SBrush}"
+    FalseBrush="{x:Null}" />
+		<converters:BoolToDoubleConverter x:Key="BoolToAngle" TrueValue="90" FalseValue="0" />
 		<converters:ByteArrayToImageSourceConverter x:Key="AvatarConverter" />
 		<converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
 		<converters:SenderToColorConverter x:Key="SenderToColorConverter" />
@@ -161,7 +164,12 @@ mc:Ignorable="d">
 		<converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
 		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
 		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
-
+		<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhite"
+    TrueBrush="White"
+    FalseBrush="{DynamicResource Text.VeryHighContrast}" />
+<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhiteFromLow"
+    TrueBrush="White"
+    FalseBrush="{DynamicResource Text.LowContrast}" />
 
 		<!--  User template  -->
 		<DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
@@ -225,6 +233,7 @@ mc:Ignorable="d">
 				Grid.Column="2"
 				Margin="10,0,0,0"
 				Theme="{StaticResource ContactUsernameStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource SelectedToWhite}}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
@@ -232,14 +241,9 @@ mc:Ignorable="d">
 				Grid.Column="2"
 				Margin="10,1,0,0"
 				Theme="{StaticResource ContactStatusStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource SelectedToWhiteFromLow}}"
 				Text="{Binding Partner.Status, TargetNullValue=''}" />
 			</Grid>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-					<Setter TargetName="usernameText" Property="Foreground" Value="White" />
-					<Setter TargetName="statusText" Property="Foreground" Value="White" />
-				</DataTrigger>
-			</DataTemplate.Triggers>
 		</DataTemplate>
 		<!--  Group template  -->
 		<DataTemplate DataType="{x:Type yggdrasil:Group}">
@@ -303,6 +307,7 @@ mc:Ignorable="d">
 				Grid.Column="2"
 				Margin="10,0,0,0"
 				Theme="{StaticResource ContactUsernameStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource SelectedToWhite}}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
@@ -310,14 +315,9 @@ mc:Ignorable="d">
 				Grid.Column="2"
 				Margin="10,1,0,0"
 				Theme="{StaticResource ContactStatusStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={StaticResource SelectedToWhiteFromLow}}"
 				Text="{Binding Members.Length, StringFormat={}{0} members}" />
 			</Grid>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-					<Setter TargetName="usernameText" Property="Foreground" Value="White" />
-					<Setter TargetName="statusText" Property="Foreground" Value="White" />
-				</DataTrigger>
-			</DataTemplate.Triggers>
 		</DataTemplate>
 		<!--  Server template  -->
 		<HierarchicalDataTemplate DataType="{x:Type yggdrasil:Server}" ItemsSource="{Binding GroupedChannels}">
@@ -365,13 +365,9 @@ mc:Ignorable="d">
 									VerticalAlignment="Center"
 									Foreground="{DynamicResource Text.VeryHighContrast}"
 									Theme="{StaticResource ContactStatusStyle}"
+									Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
 									Text="{Binding DisplayName}" />
 								</Grid>
-								<DataTemplate.Triggers>
-									<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-										<Setter TargetName="channelText" Property="Foreground" Value="White" />
-									</DataTrigger>
-								</DataTemplate.Triggers>
 							</DataTemplate>
 						</ContentControl.Resources>
 					</ContentControl>
@@ -422,6 +418,7 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="10,0,0,0"
 				Theme="{StaticResource ContactUsernameStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
@@ -429,6 +426,7 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="10,1,0,0"
 				Theme="{StaticResource ContactStatusStyle}"
+				Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhiteFromLow}}"
 				Text="{Binding MemberCount, StringFormat={}{0} members}" />
 				<ToggleButton
 				Grid.RowSpan="3"
@@ -446,36 +444,23 @@ mc:Ignorable="d">
 								Width="12"
 								Height="12"
 								Source="Assets/Universal/Main/collapse-toggle-background.png" />
-								<Image
-								x:Name="ToggleImage"
-								Width="12"
-								Height="12"
-								RenderTransformOrigin="0.5,0.5"
-								Source="Assets/Universal/Main/collapse-toggle-arrow.png">
-									<Image.RenderTransform>
-										<RotateTransform Angle="0" />
-									</Image.RenderTransform>
-								</Image>
+<Image
+    x:Name="ToggleImage"
+    Width="12"
+    Height="12"
+    RenderTransformOrigin="0.5,0.5"
+    Source="Assets/Universal/Main/collapse-toggle-arrow.png">
+    <Image.RenderTransform>
+        <RotateTransform Angle="{Binding IsChecked,
+            RelativeSource={RelativeSource AncestorType=ToggleButton},
+            Converter={StaticResource BoolToAngle}}" />
+    </Image.RenderTransform>
+</Image>
 							</Grid>
-							<ControlTemplate.Triggers>
-								<Trigger Property="IsChecked" Value="True">
-									<Setter TargetName="ToggleImage" Property="RenderTransform">
-										<Setter.Value>
-											<RotateTransform Angle="90" />
-										</Setter.Value>
-									</Setter>
-								</Trigger>
-							</ControlTemplate.Triggers>
 						</ControlTemplate>
 					</ToggleButton.Template>
 				</ToggleButton>
 			</Grid>
-			<HierarchicalDataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-					<Setter TargetName="usernameText" Property="Foreground" Value="White" />
-					<Setter TargetName="statusText" Property="Foreground" Value="White" />
-				</DataTrigger>
-			</HierarchicalDataTemplate.Triggers>
 		</HierarchicalDataTemplate>
 		<!--  CONTACT ITEM TEMPLATE END  -->
 		<!--  COMPACT RECENTS TEMPLATES START  -->
@@ -524,11 +509,6 @@ mc:Ignorable="d">
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
 			</Grid>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-					<Setter TargetName="compactName" Property="Foreground" Value="White" />
-				</DataTrigger>
-			</DataTemplate.Triggers>
 		</DataTemplate>
 		<DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type yggdrasil:Group}">
 			<Grid Height="22" Margin="8,1">
@@ -560,11 +540,7 @@ mc:Ignorable="d">
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
 			</Grid>
-			<DataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-					<Setter TargetName="compactGroupName" Property="Foreground" Value="White" />
-				</DataTrigger>
-			</DataTemplate.Triggers>
+
 		</DataTemplate>
 		<!--  COMPACT RECENTS TEMPLATES END  -->
 		<!--  CONVERSATION ITEM TEMPLATES START  -->
@@ -1551,7 +1527,7 @@ mc:Ignorable="d">
 										Grid.Row="2"
 										BorderThickness="0"
 										PreviewPointerReleased="ConversationList_ItemClicked"
-										ScrollViewer.CanContentScroll="True"
+										
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										Theme="{StaticResource NoInsetListBox}">
 											<ListBox.ItemsPanel>
@@ -1568,23 +1544,13 @@ mc:Ignorable="d">
 													<Setter Property="Template">
 														<Setter.Value>
 															<ControlTemplate TargetType="ListBoxItem">
-																<Border x:Name="ItemBorder" Background="Transparent">
-																	<ContentPresenter />
-																</Border>
-																<ControlTemplate.Triggers>
-																	<Trigger Property="IsSelected" Value="True">
-																		<Setter TargetName="ItemBorder" Property="Background">
-																			<Setter.Value>
-																				<ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
-																			</Setter.Value>
-																		</Setter>
-																	</Trigger>
-																	<DataTrigger Binding="{Binding}" Value="{x:Type global:DateHeaderItem}">
-																		<Setter Property="Focusable" Value="False" />
-																		<Setter Property="IsEnabled" Value="False" />
-																	</DataTrigger>
-																</ControlTemplate.Triggers>
-															</ControlTemplate>
+    <Border x:Name="ItemBorder"
+        Background="{Binding IsSelected,
+            RelativeSource={RelativeSource TemplatedParent},
+            Converter={StaticResource SelectedToSelectionBrush}}">
+        <ContentPresenter />
+    </Border>
+</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>
@@ -1603,36 +1569,22 @@ mc:Ignorable="d">
 													<Setter Property="IsExpanded" Value="False" />
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="BorderThickness" Value="0" />
-													<EventSetter Event="PreviewPointerReleased" Handler="ServerListItem_Clicked" />
+													
 													<Setter Property="Template">
 														<Setter.Value>
 															<ControlTemplate TargetType="TreeViewItem">
-																<StackPanel>
-																	<Border x:Name="ItemBorder" Background="Transparent">
-																		<ContentPresenter x:Name="PART_Header" ContentSource="Header" />
-																	</Border>
-
-																	<ItemsPresenter x:Name="ItemsHost" IsVisible="False" />
-																</StackPanel>
-
-																<ControlTemplate.Triggers>
-
-																	<!--  EXPANSION CONTROL  -->
-																	<Trigger Property="IsExpanded" Value="True">
-																		<Setter TargetName="ItemsHost" Property="IsVisible" Value="True" />
-																	</Trigger>
-
-																	<!--  Selection  -->
-																	<Trigger Property="IsSelected" Value="True">
-																		<Setter TargetName="ItemBorder" Property="Background">
-																			<Setter.Value>
-																				<ImageBrush ImageSource="Assets/Themeable/Main/selection-background.png" Stretch="Fill" />
-																			</Setter.Value>
-																		</Setter>
-																	</Trigger>
-
-																</ControlTemplate.Triggers>
-															</ControlTemplate>
+    <StackPanel>
+        <Border x:Name="ItemBorder"
+            Background="{Binding IsSelected,
+                RelativeSource={RelativeSource TemplatedParent},
+                Converter={StaticResource SelectedToSelectionBrush}}">
+            <ContentPresenter x:Name="PART_Header" ContentSource="Header" />
+        </Border>
+        <ItemsPresenter x:Name="ItemsHost"
+            IsVisible="{Binding IsExpanded,
+                RelativeSource={RelativeSource TemplatedParent}}" />
+    </StackPanel>
+</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>
@@ -1917,7 +1869,7 @@ mc:Ignorable="d">
 								BorderThickness="1,0,1,1"
 								CornerRadius="0,0,4,4">
 									<Grid>
-										<Frame
+										<ContentControl
 										x:Name="HomeFrame"
 										Grid.Row="1"/>
 										<ContentControl x:Name="FillMessagePanelHost" IsVisible="False" />
@@ -2320,29 +2272,6 @@ mc:Ignorable="d">
 										RenderTransformOrigin="0.5,0.5"
 										Source="Assets/Universal/Animations/spinner.png"
 										IsVisible="True">
-											<Image.RenderTransform>
-												<TransformGroup>
-													<ScaleTransform />
-													<SkewTransform />
-													<RotateTransform x:Name="SpinnerRotate" Angle="0" />
-													<TranslateTransform />
-												</TransformGroup>
-											</Image.RenderTransform>
-											<Image.Triggers>
-												<EventTrigger RoutedEvent="Loaded">
-													<BeginStoryboard>
-														<Storyboard RepeatBehavior="Forever">
-															<DoubleAnimation
-															RepeatBehavior="Forever"
-															Storyboard.TargetName="SpinnerRotate"
-															Storyboard.TargetProperty="Angle"
-															From="0"
-															To="360"
-															Duration="0:0:2.133333" />
-														</Storyboard>
-													</BeginStoryboard>
-												</EventTrigger>
-											</Image.Triggers>
 										</Image>
 										<ListBox
 										x:Name="ConversationItemsList"
@@ -2355,7 +2284,7 @@ mc:Ignorable="d">
 										Theme="{StaticResource NoInsetListBox}"
 										VirtualizingPanel.IsVirtualizing="True"
 										VirtualizingPanel.ScrollUnit="Pixel"
-										VirtualizingPanel.VirtualizationMode="Standard"
+										VirtualizingPanel.VirtualizationMode="Simple"
 										mc:Ignorable="d">
 											<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
@@ -2478,29 +2407,22 @@ mc:Ignorable="d">
 													</StackPanel>
 												</Grid>
 												<!--  Message box typing area  -->
-												<RichTextBox
-												x:Name="MessageTextBox"
-												MinHeight="35"
-												MaxHeight="{Binding Bounds.Height, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
-												Padding="2,3"
-												AcceptsReturn="True"
-												Background="Transparent"
-												BorderThickness="0"
-												FontFamily="Tahoma"
-												FontSize="11"
-												GotFocus="MessageTextBox_Focused"
-												LostFocus="MessageTextBox_Unfocused"
-												PreviewKeyDown="MessageTextBox_PreviewKeyDown"
-
-												TextChanged="MessageTextBox_TextChanged"
-												UseLayoutRounding="True"
-												VerticalScrollBarVisibility="Auto">
-													<RichTextBox.Document>
-														<FlowDocument>
-															<Paragraph Margin="0" />
-														</FlowDocument>
-													</RichTextBox.Document>
-												</RichTextBox>
+<TextBox
+    x:Name="MessageTextBox"
+    MinHeight="35"
+    MaxHeight="{Binding Bounds.Height, ElementName=MessageWindow, Converter={StaticResource HalfValueConverter}}"
+    Padding="2,3"
+    AcceptsReturn="True"
+    Background="Transparent"
+    BorderThickness="0"
+    FontFamily="Tahoma"
+    FontSize="11"
+    GotFocus="MessageTextBox_Focused"
+    LostFocus="MessageTextBox_Unfocused"
+    TextChanged="MessageTextBox_TextChanged"
+    UseLayoutRounding="True"
+    ScrollViewer.VerticalScrollBarVisibility="Auto"
+    TextWrapping="Wrap" />
 											</StackPanel>
 											<global:SliceControl
 											x:Name="SendMsgButton"
