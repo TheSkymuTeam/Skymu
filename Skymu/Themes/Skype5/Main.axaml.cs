@@ -24,6 +24,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
+using Avalonia.Controls;
 
 namespace Skymu.Skype5
 {
@@ -57,11 +58,7 @@ namespace Skymu.Skype5
             ChatTopbar.IsVisible = false;
             ChatProfileArea.IsVisible = false;
             MessageWindow.IsVisible = false;
-
-            if (vmodel.UseSkypeHome)
-                browser.IsVisible = true;
-            else
-                HomeFrame.IsVisible = true;
+            HomeFrame.IsVisible = true;
             MainPageButton.SetState(ButtonVisualState.Pressed);
         }
 
@@ -73,7 +70,6 @@ namespace Skymu.Skype5
             ChatTopbar.IsVisible = true;
             ChatProfileArea.IsVisible = true;
             MessageWindow.IsVisible = true;
-            browser.IsVisible = false;
             HomeFrame.IsVisible = false;
         }
 

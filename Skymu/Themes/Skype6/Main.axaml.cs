@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Layout;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Yggdrasil;
@@ -58,10 +59,7 @@ namespace Skymu.Skype6
             ChatProfileArea.IsVisible = false;
             MessageWindow.IsVisible = false;
 
-            if (vmodel.UseSkypeHome)
-                browser.IsVisible = true;
-            else
-                HomeFrame.IsVisible = true;
+             HomeFrame.IsVisible = true;
         }
 
         protected override void ShowChatView()
@@ -70,7 +68,6 @@ namespace Skymu.Skype6
 
             ChatProfileArea.IsVisible = true;
             MessageWindow.IsVisible = true;
-            browser.IsVisible = false;
             HomeFrame.IsVisible = false;
         }
 

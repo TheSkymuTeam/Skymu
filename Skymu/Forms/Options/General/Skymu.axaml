@@ -264,7 +264,7 @@
                         Grid.Column="1"
                         Margin="5,1,10,0"
                         VerticalAlignment="Center">
-                        <TextBlock Text="Use WPF's default grayscale font rendering" />
+                        <TextBlock Text="Use Avalonia's default font rendering" />
                     </StackPanel>
                 </Grid>
 
@@ -286,7 +286,7 @@
                         Grid.Column="1"
                         Margin="5,1,10,0"
                         VerticalAlignment="Center">
-                        <TextBlock Text="Use accurate ClearType font rendering " />
+                        <TextBlock Text="Use accurate ClearType-like font rendering " />
                     </StackPanel>
                 </Grid>
 
