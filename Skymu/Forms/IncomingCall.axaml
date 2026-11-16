@@ -21,7 +21,7 @@
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Incoming Call"
     Width="385"
-    AllowsTransparency="True"
+    TransparencyLevelHint="Transparent"
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"

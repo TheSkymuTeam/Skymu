@@ -33,7 +33,7 @@
     MinWidth="600"
     MinHeight="450"
     Activated="Window_Activated"
-    AllowsTransparency="False"
+    
     Background="{DynamicResource Metro.Background}"
     Closing="Main_Closing"
     Deactivated="Window_Deactivated"
@@ -1095,8 +1095,8 @@
                                         Cursor="IBeam"
                                         FontFamily="Tahoma"
                                         FontSize="11"
-                                        GotKeyboardFocus="SearchBox_Focused"
-                                        LostKeyboardFocus="SearchBox_Unfocused" />
+                                        GotFocus="SearchBox_Focused"
+                                        LostFocus="SearchBox_Unfocused" />
                                 </Grid>
                                 <!--  Sidebar tabs  -->
                                 <Border BorderBrush="{DynamicResource Card.Border}" BorderThickness="1,1,1,0">
@@ -1968,7 +1968,7 @@
                                                         Themeable="True" />
                                                     <Popup
                                                         x:Name="EmojiFlyout"
-                                                        AllowsTransparency="True"
+                                                        TransparencyLevelHint="Transparent"
                                                         HorizontalOffset="-20"
                                                         Placement="Top"
                                                         PlacementTarget="{Binding ElementName=EmojiButton}"
@@ -2004,8 +2004,8 @@
                                                         BorderThickness="0"
                                                         FontFamily="Tahoma"
                                                         FontSize="11"
-                                                        GotKeyboardFocus="MessageTextBox_Focused"
-                                                        LostKeyboardFocus="MessageTextBox_Unfocused"
+                                                        GotFocus="MessageTextBox_Focused"
+                                                        LostFocus="MessageTextBox_Unfocused"
                                                         PreviewKeyDown="MessageTextBox_PreviewKeyDown"
                                                         
                                                         TextChanged="MessageTextBox_TextChanged"

@@ -141,7 +141,7 @@ namespace Skymu.Skype5
             StatusBox.Text = name;
         }
 
-        private void OnFeedbackClick(object sender, PointerEventArgs e)
+        private void OnFeedbackClick(object sender, PointerReleasedEventArgs e)
         {
             Universal.OpenURL(Universal.DISCORD_SERVER_INVITE);
         }

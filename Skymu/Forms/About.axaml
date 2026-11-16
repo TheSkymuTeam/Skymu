@@ -25,7 +25,7 @@
     Title="About"
     Width="501"
     Height="454"
-    AllowsTransparency="True"
+    TransparencyLevelHint="Transparent"
     
     WindowStartupLocation="CenterScreen"
     SystemDecorations="None"

@@ -29,7 +29,7 @@ Height="856"
 MinWidth="584"
 MinHeight="450"
 Activated="Window_Activated"
-AllowsTransparency="False"
+
 Background="{DynamicResource Active.Background}"
 Closing="Main_Closing"
 Deactivated="Window_Deactivated"
@@ -1540,8 +1540,8 @@ mc:Ignorable="d">
 										Cursor="IBeam"
 										FontFamily="Tahoma"
 										FontSize="11"
-										GotKeyboardFocus="SearchBox_Focused"
-										LostKeyboardFocus="SearchBox_Unfocused" />
+										GotFocus="SearchBox_Focused"
+										LostFocus="SearchBox_Unfocused" />
 										<Rectangle
 										Grid.Row="1"
 										Height="1"
@@ -2426,7 +2426,7 @@ mc:Ignorable="d">
 													</StackPanel>
 													<Popup
 													x:Name="EmojiFlyout"
-													AllowsTransparency="True"
+													TransparencyLevelHint="Transparent"
 													HorizontalOffset="-20"
 													Placement="Top"
 													PlacementTarget="{Binding ElementName=EmojiButton}"
@@ -2488,8 +2488,8 @@ mc:Ignorable="d">
 												BorderThickness="0"
 												FontFamily="Tahoma"
 												FontSize="11"
-												GotKeyboardFocus="MessageTextBox_Focused"
-												LostKeyboardFocus="MessageTextBox_Unfocused"
+												GotFocus="MessageTextBox_Focused"
+												LostFocus="MessageTextBox_Unfocused"
 												PreviewKeyDown="MessageTextBox_PreviewKeyDown"
 
 												TextChanged="MessageTextBox_TextChanged"

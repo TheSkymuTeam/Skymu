@@ -21,7 +21,7 @@
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Notification"
     Width="240"
-    AllowsTransparency="True"
+    TransparencyLevelHint="Transparent"
     Background="Transparent"
     FontFamily="Tahoma"
     FontSize="11"

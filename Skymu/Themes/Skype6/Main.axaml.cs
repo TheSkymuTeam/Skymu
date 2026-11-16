@@ -174,7 +174,7 @@ namespace Skymu.Skype6
             }
         }
 
-        protected override void AddContact_Click(object sender, PointerEventArgs e)
+        protected override void AddContact_Click(object sender, PointerReleasedEventArgs e)
         {
             if (!(Universal.Plugin is IListManagement))
             {

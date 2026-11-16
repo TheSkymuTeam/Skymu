@@ -1067,7 +1067,7 @@ namespace Skymu.Theming
             HandleConversationSelection(selected);
         }
 
-        protected void Chat_Close(object sender, PointerEventArgs e)
+        protected void Chat_Close(object sender, PointerReleasedEventArgs e)
         {
             SetWindow(WindowType.Home);
         }
@@ -1193,9 +1193,9 @@ namespace Skymu.Theming
             await SetStatusFromMenuItems(sender, MenubarStatusHolder.Items);
         }
 
-        protected void MakeGroup_Click(object sender, PointerEventArgs e) { }
+        protected void MakeGroup_Click(object sender, PointerReleasedEventArgs e) { }
 
-        protected virtual void AddContact_Click(object sender, PointerEventArgs e)
+        protected virtual void AddContact_Click(object sender, PointerReleasedEventArgs e)
         {
             vmodel.ShowAddContactWindow();
         }
@@ -1270,7 +1270,7 @@ namespace Skymu.Theming
             vmodel.ShowCallPhones();
         }
 
-        protected async void AddButtonClick(object sender, PointerEventArgs e)
+        protected async void AddButtonClick(object sender, PointerReleasedEventArgs e)
         {
             await vmodel.SendFile();
         }
