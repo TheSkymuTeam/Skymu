@@ -13,10 +13,10 @@ namespace Skymu.Converters
         public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
             if (parameter is string lanp)
-                return Formatter.ProcessLangText(Universal.Lang[lanp], values);
+                return Formatter.ProcessLangText(Universal.Lang[lanp], values.ToArray());
 
-            if (values.Length == 0 || !(values[0] is string lang))
-                return DependencyProperty.UnsetValue;
+            if (values.Count == 0 || !(values[0] is string lang))
+                return AvaloniaProperty.UnsetValue;
 
             return Formatter.ProcessLangText(Universal.Lang[lang], values.Skip(1).ToArray());
         }

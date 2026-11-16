@@ -116,7 +116,7 @@ namespace Skymu.Forms.Pages
                         SkinnedWindow.IconType.PackageCheckmark,
                         Universal.Lang["sF_UPGRADE_UPTODATE"],
                         Universal.Lang["sF_UPGRADE_UPTODATE_CAPTION"],
-                        Title
+                        "Updater"
                     ).Show();
             }
         }
@@ -151,7 +151,7 @@ namespace Skymu.Forms.Pages
                         SkinnedWindow.IconType.PackageWarning,
                         ex.Message,
                         "Cannot open file",
-                        Title
+                        "Updater"
                     ).Show();
                 }
                 window.Close();

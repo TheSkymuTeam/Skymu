@@ -44,7 +44,7 @@ namespace Skymu.Forms.Pages
     Action blAction = null,
     string blText = null,
     bool enableTextBox = false,
-    Image img = null,
+    Control control = null,
     Size? customDimensions = null,
     bool bmEnabled = false,
     Action bmAction = null,
@@ -72,10 +72,10 @@ namespace Skymu.Forms.Pages
             window.ButtonLeft.IsVisible = false;
 
             // if there's an image, we don't want to show the scrollviewer and have it overlap
-            if (img != null)
+            if (control != null)
             {
                 tb.IsVisible = false;
-                BodyCC.Content = img;
+                BodyCC.Content = control;
                 BodyCC.IsVisible = true;
             }
 

@@ -11,15 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using System.Linq;
+using Avalonia.Controls.Templates;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Media;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Media;
-using Avalonia.Interactivity;
 
 
 namespace Skymu.Forms
@@ -87,7 +90,7 @@ namespace Skymu.Forms
                 },
             };
 
-            SourceInitialized += (s, e) =>
+            Opened += (s, e) =>
             {
                 foreach (var cat in catToGrid)
                 {
@@ -127,27 +130,33 @@ namespace Skymu.Forms
             TabSelect((catToGrid[sc].Children[1] as StackPanel).Children[0], null);
         }
 
+        private static SliceControl GetInnerSlice(SliceControl owner) =>
+    owner.GetTemplateChildren().OfType<SliceControl>()
+         .FirstOrDefault(c => c.Name == "InnerSlice");
+
         private void TabSelect(object sender, PointerEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
+
             var sc = (SliceControl)sender;
-            // In case the inner slice is clicked, we want to get the parent SliceControl, which is the actual tab.
-            if (((SliceControl)sc.Template.FindName("InnerSlice", sc)) == null)
+
+
+            if (GetInnerSlice(sc) == null)
                 sc = sc.Tag as SliceControl;
-            foreach (SliceControl tab in (sc.Parent as StackPanel).Children)
+
+            if (sc == null || !(sc.Parent is StackPanel panel))
+                return;
+
+            foreach (SliceControl tab in panel.Children.OfType<SliceControl>())
             {
                 if (ReferenceEquals(tab, sc))
                     continue;
                 tab.SetState(ButtonVisualState.Default);
-                ((SliceControl)tab.Template.FindName("InnerSlice", tab)).SetState(
-                    ButtonVisualState.Default
-                );
+                GetInnerSlice(tab)?.SetState(ButtonVisualState.Default);
             }
             sc.SetState(ButtonVisualState.Pressed);
-            ((SliceControl)sc.Template.FindName("InnerSlice", sc)).SetState(
-                ButtonVisualState.Pressed
-            );
+            GetInnerSlice(sc)?.SetState(ButtonVisualState.Pressed);
 
             for (int once = 1; once == 1; once++)
             {
@@ -171,6 +180,7 @@ namespace Skymu.Forms
                 CTabTitle.Text = title.Substring(3, i - 3);
                 CTabDescription.Text = title.Substring(i + 4);
             }
+
             if (!tabDispenser.TryGetValue(sc, out var pfact))
             {
                 pfact = () => new OptionPages.Placeholder();
@@ -179,7 +189,6 @@ namespace Skymu.Forms
                 );
             }
             var page = pfact();
-            JournalEntry.SetKeepAlive(page, false);
             PageHost.Content = page;
         }
 

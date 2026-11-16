@@ -50,7 +50,7 @@ namespace Skymu.Forms.OptionPages.General
             {
                 dialog.Close();
                 Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                Application.Current.Shutdown();
+                Universal.Terminate();
             };
             dialog.Show();
         }

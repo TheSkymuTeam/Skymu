@@ -32,21 +32,22 @@ namespace Skymu.Converters
         {
             var msg = value as Message;
             if (msg == null)
-                return DependencyProperty.UnsetValue;
+                return AvaloniaProperty.UnsetValue;
 
             var tb = Formatter.Parse(msg.Text, false, ViewerStyle);
 
-            tb.Inlines.InsertBefore(tb.Inlines.FirstInline, new InlineUIContainer()
+            tb.Inlines.Insert(0, new InlineUIContainer()
             {
                 Child = new Border()
                 {
                     Width = 4
                 }
             });
-            tb.Inlines.InsertBefore(tb.Inlines.FirstInline, new Run()
+            tb.Inlines.Insert(0, new Run()
             {
                 Text = msg.Author.DisplayName,
-                Foreground = (SolidColorBrush)new SenderToColorConverter().Convert(new object[] { msg.Author.Identifier, msg.IsForwarded }, null, null, null)
+                Foreground = (SolidColorBrush)new SenderToColorConverter().Convert(
+                    new object[] { msg.Author.Identifier, msg.IsForwarded }, null, null, null)
             });
 
             return tb;

@@ -11,12 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
+using OmegaAOL.Bifrost.Tls;
 using Skymu.Enumerations;
 using Skymu.Preferences;
-using Avalonia;
-using Avalonia.Interactivity;
-using Avalonia.Controls;
-using OmegaAOL.Bifrost.Tls;
 
 namespace Skymu.Forms.OptionPages.General
 {
@@ -73,22 +74,34 @@ namespace Skymu.Forms.OptionPages.General
             Settings.FallbackFillColors = true;
         }
 
-#endregion
+        #endregion
 
-        private void CertBrowseButtonClick(object sender, RoutedEventArgs e)
+        private async void CertBrowseButtonClick(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "PEM certificates (*.pem)|*.pem|All files (*.*)|*.*",
-                Title = "Select cacert.pem"
-            };
+            var top = TopLevel.GetTopLevel(this);
+            if (top == null)
+                return;
 
-            if (openFileDialog.ShowDialog() == true)
+            var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Settings.CertPath = openFileDialog.FileName;
-                var expression = SC_CertPathBox.GetBindingExpression(Avalonia.Controls.TextBox.TextProperty);
-                expression?.UpdateTarget();
-            }
+                Title = "Select cacert.pem",
+                AllowMultiple = false,
+                FileTypeFilter = new[]
+                {
+            new FilePickerFileType("PEM certificates") { Patterns = new[] { "*.pem" } },
+            FilePickerFileTypes.All
+        }
+            });
+
+            if (files.Count == 0)
+                return;
+
+            string path = files[0].TryGetLocalPath();
+            if (path == null)
+                return;
+
+            Settings.CertPath = path;
+            SC_CertPathBox.Text = path;
         }
     }
 }

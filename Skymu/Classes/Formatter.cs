@@ -115,7 +115,7 @@ namespace Skymu.Formatting
             .UseGenericAttributes() // {#id .class key=value}
             .Build();
 
-        public static TextBlock Parse(string input, bool doNotFormat = false, Style style = null) // The main function. You put text in, completely formatted textblock comes out. Ta da!!!!
+        public static TextBlock Parse(string input, bool doNotFormat = false, ControlTheme theme = null) // The main function. You put text in, completely formatted textblock comes out. Ta da!!!!
         {
             var textBlock = new TextBlock
             {
@@ -128,9 +128,9 @@ namespace Skymu.Formatting
                 return textBlock;
             }
 
-            if (style != null) {
+            if (theme != null) {
                 textBlock.Styles.Clear();
-                textBlock.Styles.Add(style);
+                textBlock.Styles.Add(theme);
             }
 
             // parse the input into a Markdig AST and walk it to produce Avalonia inlines

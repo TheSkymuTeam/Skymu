@@ -11,12 +11,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
+using Avalonia.Controls;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using Avalonia;
 
 namespace Skymu
 {
@@ -43,7 +44,7 @@ namespace Skymu
 
         public LanguageManager()
         {
-             if (!DebugConfig.LocalizeDesigner && DesignerProperties.GetIsInDesignMode(new DependencyObject())) return; // no localization in designer unless overridden
+             if (!DebugConfig.LocalizeDesigner && Design.IsDesignMode) return; // no localization in designer unless overridden
 
             string lang = Settings.Language ?? "English";
             if (!Scan())

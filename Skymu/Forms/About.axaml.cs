@@ -13,6 +13,7 @@
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace Skymu.Forms
 {
@@ -23,7 +24,7 @@ namespace Skymu.Forms
         {
             InitializeComponent();
             BuildVersion.Text = Universal.BUILD_INFO.GetVersionString() + " " + Universal.BUILD_INFO.GetCodeName();
-            PreviewPointerPressed += (_, __) => RequestClose();
+            AddHandler(PointerPressedEvent, (_, __) => RequestClose(), RoutingStrategies.Tunnel);
             Deactivated += (_, __) => RequestClose();
         }
 

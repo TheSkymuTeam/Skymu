@@ -34,9 +34,9 @@ namespace Skymu.Forms.OptionPages.Advanced
             var startPath = Path.GetDirectoryName(
                 Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
 
-            var startFolder = await StorageProvider.TryGetFolderFromPathAsync(startPath);
+            var startFolder = await TopLevel.GetTopLevel(this).StorageProvider.TryGetFolderFromPathAsync(startPath);
 
-            var folders = await StorageProvider.OpenFolderPickerAsync(
+            var folders = await TopLevel.GetTopLevel(this).StorageProvider.OpenFolderPickerAsync(
                 new FolderPickerOpenOptions
                 {
                     Title = "Select the plugin folder",

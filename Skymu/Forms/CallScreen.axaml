@@ -34,7 +34,7 @@
     <UserControl.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />
-        <Style x:Key="ActionButtonStyle" TargetType="global:SliceControl">
+        <ControlTheme x:Key="ActionButtonStyle" TargetType="global:SliceControl">
             <Setter Property="StackDirection" Value="Vertical" />
             <Setter Property="ElementCount" Value="5" />
             <Setter Property="SliceMode" Value="0" />
@@ -43,7 +43,7 @@
             <Setter Property="PressedIndex" Value="2" />
             <Setter Property="HoverTransition" Value="True" />
             <Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
-        </Style>
+        </ControlTheme>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -179,13 +179,13 @@
                     x:Name="SidebarButton"
                     PointerReleased="OnSidebarToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_sidebar_expand.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="ChatButton"
                     Margin="8,0,0,0"
                     PointerReleased="OnChatToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_chat_inactive.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
             </StackPanel>
             <StackPanel
                 Grid.Column="1"
@@ -197,20 +197,20 @@
                     Margin="4,0"
                     PointerReleased="OnMuteToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_mic_off.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_dialpad.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_add.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     Margin="4,0"
                     PointerReleased="OnHangUp"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_hangup.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
             </StackPanel>
             <StackPanel
                 Grid.Column="2"
@@ -221,12 +221,12 @@
                 <global:SliceControl
                     Margin="0,0,8,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_connection_4.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
                 <global:SliceControl
                     x:Name="FullscreenButton"
                     PointerReleased="OnFullscreenToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_screen_expand.png'}"
-                    Style="{StaticResource ActionButtonStyle}" />
+                    Theme="{StaticResource ActionButtonStyle}" />
             </StackPanel>
         </Grid>
     </Grid>

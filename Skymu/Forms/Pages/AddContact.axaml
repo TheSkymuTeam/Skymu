@@ -29,9 +29,6 @@
     
     mc:Ignorable="d">
     <UserControl.Resources>
-        <Style TargetType="{x:Type GridViewColumnHeader}">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-        </Style>
         <converters:ByteArrayToImageSourceConverter x:Key="AvatarConverter" />
         <converters:NullDependentVisibilityConverter x:Key="NullDependentVisibilityConverter" />
         <converters:SkyLangParseConverter x:Key="SkyLangParseConverter" />
@@ -262,26 +259,26 @@
                             TextSize="11" />
                     </StackPanel>
                     <!--  TOOD: Accuracy  -->
-                    <ListView
-                        x:Name="UserListView"
-                        Grid.Row="5"
-                        Grid.ColumnSpan="2"
-                        SelectionChanged="UserListView_Selected"
-                        SelectionMode="Single"
-                        IsVisible="False">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn
-                                    Width="150"
-                                    DisplayMemberBinding="{Binding DisplayName}"
-                                    Header="{Binding Path='[sF_SEARCH_FIELD_FULLNAME]', Source={StaticResource Lang}}" />
-                                <GridViewColumn
-                                    Width="100"
-                                    DisplayMemberBinding="{Binding Username}"
-                                    Header="{Binding Path='[sF_SEARCH_FIELD_USERNAME]', Source={StaticResource Lang}}" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                    <Grid x:Name="UserListPanel" Grid.Row="4" Grid.ColumnSpan="2" IsVisible="False"
+      RowDefinitions="Auto,*">
+    <Grid Grid.Row="0" ColumnDefinitions="150,100" Margin="4,0,0,2">
+        <TextBlock Grid.Column="0" FontWeight="Bold"
+                   Text="{Binding Path='[sF_SEARCH_FIELD_FULLNAME]', Source={StaticResource Lang}}" />
+        <TextBlock Grid.Column="1" FontWeight="Bold"
+                   Text="{Binding Path='[sF_SEARCH_FIELD_USERNAME]', Source={StaticResource Lang}}" />
+    </Grid>
+    <ListBox x:Name="UserListView" Grid.Row="1" SelectionMode="Single"
+             SelectionChanged="UserListView_Selected">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Grid ColumnDefinitions="150,100">
+                    <TextBlock Grid.Column="0" Text="{Binding DisplayName}" />
+                    <TextBlock Grid.Column="1" Text="{Binding Username}" />
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
+</Grid>
                 </Grid>
                 <ContentPresenter
                     x:Name="BottomField"

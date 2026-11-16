@@ -29,7 +29,7 @@ namespace Skymu.Converters
         {
             var text = value as string;
             if (text == null)
-                return DependencyProperty.UnsetValue;
+                return AvaloniaProperty.UnsetValue;
 
             return Formatter.Parse(text, false, ViewerStyle);
         }

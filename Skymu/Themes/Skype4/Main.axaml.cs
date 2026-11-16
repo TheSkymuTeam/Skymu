@@ -89,8 +89,8 @@ namespace Skymu.Skype4
                 return;
             var menu = (ContextMenu)SBNewBtn.Resources["Menu"];
             menu.PlacementTarget = SBNewBtn;
-            menu.Placement = Avalonia.Controls.Primitives.PlacementMode.Bottom;
-            menu.IsOpen = true;
+            menu.Placement = PlacementMode.Bottom;
+            menu.Open();
         }
 
         private void NewMenuItemClick(object sender, RoutedEventArgs e)

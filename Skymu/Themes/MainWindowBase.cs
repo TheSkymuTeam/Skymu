@@ -115,6 +115,7 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.TextBlock TitleShadow3 => Part<global::Avalonia.Controls.TextBlock>(nameof(TitleShadow3));
         protected global::Avalonia.Controls.TextBlock TypingIndicatorText => Part<global::Avalonia.Controls.TextBlock>(nameof(TypingIndicatorText));
         protected global::Avalonia.Controls.Control ProfileGrid => Part<global::Avalonia.Controls.Control>(nameof(ProfileGrid));
+        protected Image TitleBarIcon => Part<Image>(nameof(TitleBarIcon));
         #endregion
 
         #region Variables

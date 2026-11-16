@@ -16,6 +16,7 @@ using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Skymu.Forms;
+using Avalonia.Layout;
 using Skymu.Forms.Pages;
 using Skymu.Preferences;
 
@@ -57,13 +58,15 @@ namespace Skymu.Captcha
 
         public static void ShowPrompt(string siteKey, string rqData)
         {
-            WebBrowser webBrowser = new WebBrowser
+            // TODO replace with Avalonia NativeWebView instead of WPF IE WebBrowser
+
+            /* WebBrowser webBrowser = new WebBrowser
             {
                 Width = 302,
                 Height = 76,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-            };
+            }; 
 
             Border paddingWrapper = new Border
             {
@@ -104,6 +107,8 @@ namespace Skymu.Captcha
             );
 
             captchaDialog.Show();
+
+            */
         }
     }
 }

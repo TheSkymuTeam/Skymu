@@ -11,23 +11,24 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Helpers;
-using Skymu.Sounds;
-using Skymu.Preferences;
-using System;
-using Avalonia.Layout;
-using System.Threading;
-using System.Threading.Tasks;
-using Avalonia.Interactivity;
-using Yggdrasil.Bottles;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using Yggdrasil.Models;
+using Avalonia.VisualTree;
+using Skymu.Helpers;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Forms
 {
@@ -58,6 +59,7 @@ namespace Skymu.Forms
         private ContentControl _originalFrame;
         private Conversation _conversation;
 
+        private RowDefinition floor => NameScope.GetNameScope(this)?.Find<RowDefinition>("floor");
         public CallScreen(
             Conversation conversation,
             CallScreen.LocationChangeEventArgs initial_location,
@@ -298,17 +300,14 @@ namespace Skymu.Forms
         {
             _originalFrame = GetFrameParent();
 
+            // Detach from the old host first: a control can't have two parents.
             if (_originalFrame != null)
-            {
-                while (_originalFrame.NavigationService.CanGoBack)
-                    _originalFrame.NavigationService.RemoveBackEntry();
                 _originalFrame.Content = null;
-            }
 
             _fullscreenWindow = new Window
             {
                 SystemDecorations = SystemDecorations.None,
-                WindowState = WindowState.Maximized,
+                WindowState = WindowState.FullScreen,
                 CanResize = false,
                 Content = this
             };
@@ -316,13 +315,8 @@ namespace Skymu.Forms
             _fullscreenWindow.Closed += (s, e) =>
             {
                 if (isFullscreen)
-                {
                     ExitFullscreen();
-                }
             };
-
-            if (_originalFrame != null)
-                _originalFrame.Content = null;
 
             SetButtonSource(FullscreenButton, isFullscreen);
             _fullscreenWindow.Show();
@@ -335,24 +329,20 @@ namespace Skymu.Forms
 
             _fullscreenWindow.Content = null;
             if (_originalFrame != null)
-            {
-                _originalFrame.NavigationUIVisibility = NavigationUIfalse;
                 _originalFrame.Content = this;
-                while (_originalFrame.NavigationService.CanGoBack)
-                    _originalFrame.NavigationService.RemoveBackEntry();
-            }
+
             _fullscreenWindow?.Close();
             _fullscreenWindow = null;
         }
 
         private ContentControl GetFrameParent()
         {
-            DependencyObject parent = VisualTreeHelper.GetParent(this);
+            Visual parent = this.GetVisualParent();
             while (parent != null)
             {
                 if (parent is ContentControl frame)
                     return frame;
-                parent = VisualTreeHelper.GetParent(parent);
+                parent = parent.GetVisualParent();
             }
             return null;
         }

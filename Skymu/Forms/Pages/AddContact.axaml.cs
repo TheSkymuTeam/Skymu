@@ -105,7 +105,7 @@ namespace Skymu.Forms.Pages
             UserFindBtn.Content = Universal.Lang["sF_ADDFRIEND_STOP_BTN"];
             UserFindBtn.Tag = TAG_STOP;
             BottomField.IsVisible = false;
-            UserListView.IsVisible = false;
+            UserListPanel.IsVisible = false;
             FindPBar.IsVisible = true;
             FindPBar.IsIndeterminate = true;
             window.ButtonLeft.IsEnabled = false;
@@ -143,7 +143,7 @@ namespace Skymu.Forms.Pages
             foreach (var item in result)
                 FoundList.Add(item);
             SelectContactHint.IsVisible = true;
-            UserListView.IsVisible = true;
+            UserListPanel.IsVisible = true;
         }
 
         private void UserListView_Selected(object sender, SelectionChangedEventArgs e) => window.ButtonLeft.IsEnabled = e.AddedItems.Count >= 1;
@@ -185,9 +185,7 @@ namespace Skymu.Forms.Pages
             }
             if (!suc)
             {
-                if (exed)
-                    // TODO: "Something went wrong" text. I need references...
-                // TODO: Failed to add handling. Refernce please...
+                // TODO: failure handling
                 return;
             }
             MainTabControl.SelectedIndex = 2;
