@@ -129,8 +129,8 @@ namespace Skymu.Forms
             screen_expand = ImageHelper.Load(prefix + "Call Screen/btn_screen_expand.png");
 
 
-            isPillMode = !(this.ActualWidth >= 1025.0);
-            isLogoBig = !(this.ActualWidth >= 700 && this.ActualHeight >= 700);
+            isPillMode = !(this.Bounds.Width >= 1025.0);
+            isLogoBig = !(this.Bounds.Width >= 700 && this.Bounds.Height >= 700);
             Resized(null, null);
             location = initial_location;
 
@@ -399,7 +399,7 @@ namespace Skymu.Forms
 
         private void Resized(object sender, RoutedEventArgs e)
         {
-            bool newPillMode = this.ActualWidth >= 1025.0;
+            bool newPillMode = this.Bounds.Width >= 1025.0;
             if (newPillMode != isPillMode)
             {
                 if (newPillMode) // pill
@@ -422,7 +422,7 @@ namespace Skymu.Forms
                 isPillMode = newPillMode;
             }
 
-            bool newLogoBig = this.ActualWidth >= 700 && this.ActualHeight >= 700;
+            bool newLogoBig = this.Bounds.Width >= 700 && this.Bounds.Height >= 700;
             if (newLogoBig != isLogoBig)
             {
                 if (newLogoBig) // big logo

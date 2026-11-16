@@ -255,16 +255,16 @@ namespace Skymu.Forms
         private void PositionNotification()
         {
             var workingArea = SystemParameters.WorkArea;
-            this.Left = workingArea.Right - this.ActualWidth - 5;
-            this.Top = workingArea.Bottom - this.ActualHeight - 1;
+            this.Left = workingArea.Right - this.Bounds.Width - 5;
+            this.Top = workingArea.Bottom - this.Bounds.Height - 1;
         }
 
-        private void Window_PointerEntered(object sender, MouseEventArgs e)
+        private void Window_PointerEntered(object sender, PointerEventArgs e)
         {
             close.IsVisible = true;
         }
 
-        private void Window_PointerExited(object sender, MouseEventArgs e)
+        private void Window_PointerExited(object sender, PointerEventArgs e)
         {
             close.IsVisible = false;
         }
