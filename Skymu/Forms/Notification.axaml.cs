@@ -11,27 +11,30 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Converters;
-using Skymu.Formatting;
-using Skymu.Preferences;
-using Skymu.ViewModels;
-using System;
-using Avalonia.Input;
-using System.Diagnostics;
-using Skymu.Sounds;
-using System.Linq;
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
 using Avalonia.Controls;
-using Yggdrasil.Bottles;
+using Avalonia.Input;
 using Avalonia.Media;
-using Skymu.Native.Windows;
 using Avalonia.Media.Animation;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 using Avalonia.Threading;
-using Yggdrasil.Models;
-using Yggdrasil.Enumerations;
-using Skymu.Helpers;
 using Skymu.AvaloniaHelpers;
+using Skymu.Converters;
+using Skymu.Formatting;
+using Skymu.Helpers;
+using Skymu.Native.Windows;
+using Skymu.Preferences;
+using Skymu.Sounds;
+using Skymu.ViewModels;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using Yggdrasil.Bottles;
+using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
 
 namespace Skymu.Forms
 {
@@ -84,9 +87,9 @@ namespace Skymu.Forms
                     Interval = TimeSpan.FromSeconds(durationSeconds),
                 };
 
-                notif._closeTimer.Tick += (s, ev) =>
+                notif._closeTimer.Tick += async (s, ev) =>
                 {
-                    if (notif.close.IsVisible == true)
+                    if (notif.close.IsVisible)
                     {
                         notif._closeTimer.Stop();
                         notif._closeTimer.Start();
@@ -95,23 +98,38 @@ namespace Skymu.Forms
 
                     notif._closeTimer.Stop();
 
-                    var fadeOut = new DoubleAnimation
+                    var fadeOut = new Animation
                     {
-                        From = notif.Opacity,
-                        To = 0,
                         Duration = TimeSpan.FromMilliseconds(250),
-                        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+                        Easing = new QuadraticEaseOut(),
+                        FillMode = FillMode.Forward,
+                        Children =
+        {
+            new KeyFrame
+            {
+                Cue = new Cue(0d),
+                Setters =
+                {
+                    new Setter(Visual.OpacityProperty, notif.Opacity)
+                }
+            },
+            new KeyFrame
+            {
+                Cue = new Cue(1d),
+                Setters =
+                {
+                    new Setter(Visual.OpacityProperty, 0d)
+                }
+            }
+        }
                     };
 
-                    fadeOut.Completed += (_, __) =>
-                    {
-                        notif.Close();
+                    await fadeOut.RunAsync(notif);
 
-                        if (_activeNotification == notif)
-                            _activeNotification = null;
-                    };
+                    notif.Close();
 
-                    notif.BeginAnimation(Window.OpacityProperty, fadeOut);
+                    if (_activeNotification == notif)
+                        _activeNotification = null;
                 };
 
                 notif.Loaded += (s, ev) =>

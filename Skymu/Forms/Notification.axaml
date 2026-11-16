@@ -31,7 +31,7 @@
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"
-    Style="{StaticResource Window}"
+    
     Topmost="True"
     SystemDecorations="None">
     <Window.Resources>

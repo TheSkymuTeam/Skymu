@@ -26,7 +26,7 @@
     Width="501"
     Height="454"
     AllowsTransparency="True"
-    Style="{StaticResource Window}"
+    
     WindowStartupLocation="CenterScreen"
     SystemDecorations="None"
     mc:Ignorable="d">

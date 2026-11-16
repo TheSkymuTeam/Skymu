@@ -20,7 +20,7 @@
     Height="275"
     Background="Transparent"
     Loaded="Page_Loaded"
-    Classes="Page">
+    >
     <Grid Margin="0,0,0,8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

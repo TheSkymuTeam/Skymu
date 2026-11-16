@@ -38,7 +38,7 @@ FontSize="11"
 Foreground="{DynamicResource Text.VeryHighContrast}"
 CanResize="True"
 StateChanged="Window_StateChanged"
-Style="{StaticResource Window}"
+
 WindowStartupLocation="CenterScreen"
 SystemDecorations="None"
 mc:Ignorable="d">
@@ -49,7 +49,7 @@ mc:Ignorable="d">
 			<Setter Property="Height" Value="18" />
 			<Setter Property="Margin" Value="-1,0,0,0" />
 			<Setter Property="HoverTransition" Value="True" />
-			<Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+			<Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
 			<Setter Property="SliceMode" Value="0" />
 			<Setter Property="ElementCount" Value="4" />
 			<Setter Property="StackDirection" Value="Vertical" />
@@ -69,6 +69,26 @@ mc:Ignorable="d">
 		</Style>
 	</Window.Styles>
 	<Window.Resources>
+		<ControlTheme x:Key="NoInsetListBox" TargetType="ListBox">
+			<Setter Property="BorderThickness" Value="0" />
+			<Setter Property="Padding" Value="0" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="ListBox">
+						<ScrollViewer
+						x:Name="ScrollViewer"
+						Margin="0"
+						Padding="0"
+						VerticalContentAlignment="Bottom"
+						Background="{DynamicResource Card.Background}"
+						CanContentScroll="True"
+						Focusable="false">
+							<ItemsPresenter />
+						</ScrollViewer>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</ControlTheme>
 		<ControlTheme x:Key="TextBlockViewerStyle" TargetType="TextBlock">
 			<Setter Property="HorizontalAlignment" Value="Left" />
 			<Setter Property="VerticalAlignment" Value="Top" />
@@ -79,9 +99,9 @@ mc:Ignorable="d">
 			<Setter Property="Focusable" Value="True" />
 			<Setter Property="TextWrapping" Value="Wrap" />
 		</ControlTheme>
-				<ControlTheme x:Key="TitlebarTextStyle" TargetType="TextBlock">
+		<ControlTheme x:Key="TitlebarTextStyle" TargetType="TextBlock">
 			<Setter Property="Margin" Value="0,0,0,0" />
-			<Setter Property="Visibility" Value="Collapsed" />
+			<Setter Property="IsVisible" Value="False" />
 			<Setter Property="VerticalAlignment" Value="Center" />
 			<Setter Property="Panel.ZIndex" Value="2" />
 			<Setter Property="FontFamily" Value="Arial" />
@@ -94,7 +114,7 @@ mc:Ignorable="d">
 		BasedOn="{StaticResource TitlebarTextStyle}"
 		TargetType="TextBlock">
 			<Setter Property="Margin" Value="0,4,0,0" />
-			<Setter Property="Visibility" Value="Visible" />
+			<Setter Property="IsVisible" Value="True" />
 			<Setter Property="FontFamily" Value="Segoe UI" />
 			<Setter Property="FontSize" Value="12" />
 			<Setter Property="FontWeight" Value="Normal" />
@@ -102,7 +122,7 @@ mc:Ignorable="d">
 		<ControlTheme x:Key="LongIconStyle" TargetType="Image">
 			<Setter Property="HorizontalAlignment" Value="Left" />
 			<Setter Property="VerticalAlignment" Value="Center" />
-			<Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+			<Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
 			<Setter Property="Height" Value="16" />
 			<Setter Property="Width" Value="36" />
 		</ControlTheme>
@@ -139,8 +159,8 @@ mc:Ignorable="d">
 		<converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
 		<converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
 		<converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
-		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
-		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
 
 
 		<!--  User template  -->
@@ -169,11 +189,11 @@ mc:Ignorable="d">
 							<DropShadowEffect
 							BlurRadius="2"
 							OffsetX="0" OffsetY="1"
-							ShadowDepth="1"
+
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -204,14 +224,14 @@ mc:Ignorable="d">
 				Grid.Row="1"
 				Grid.Column="2"
 				Margin="10,0,0,0"
-				Style="{StaticResource ContactUsernameStyle}"
+				Theme="{StaticResource ContactUsernameStyle}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
 				Grid.Row="2"
 				Grid.Column="2"
 				Margin="10,1,0,0"
-				Style="{StaticResource ContactStatusStyle}"
+				Theme="{StaticResource ContactStatusStyle}"
 				Text="{Binding Partner.Status, TargetNullValue=''}" />
 			</Grid>
 			<DataTemplate.Triggers>
@@ -247,11 +267,11 @@ mc:Ignorable="d">
 							<DropShadowEffect
 							BlurRadius="2"
 							OffsetX="0" OffsetY="1"
-							ShadowDepth="1"
+
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -282,14 +302,14 @@ mc:Ignorable="d">
 				Grid.Row="1"
 				Grid.Column="2"
 				Margin="10,0,0,0"
-				Style="{StaticResource ContactUsernameStyle}"
+				Theme="{StaticResource ContactUsernameStyle}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
 				Grid.Row="2"
 				Grid.Column="2"
 				Margin="10,1,0,0"
-				Style="{StaticResource ContactStatusStyle}"
+				Theme="{StaticResource ContactStatusStyle}"
 				Text="{Binding Members.Length, StringFormat={}{0} members}" />
 			</Grid>
 			<DataTemplate.Triggers>
@@ -344,7 +364,7 @@ mc:Ignorable="d">
 									Margin="10,0,0,0"
 									VerticalAlignment="Center"
 									Foreground="{DynamicResource Text.VeryHighContrast}"
-									Style="{StaticResource ContactStatusStyle}"
+									Theme="{StaticResource ContactStatusStyle}"
 									Text="{Binding DisplayName}" />
 								</Grid>
 								<DataTemplate.Triggers>
@@ -380,11 +400,11 @@ mc:Ignorable="d">
 							<DropShadowEffect
 							BlurRadius="2"
 							OffsetX="0" OffsetY="1"
-							ShadowDepth="1"
+
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill">
+							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -401,14 +421,14 @@ mc:Ignorable="d">
 				Grid.Row="1"
 				Grid.Column="1"
 				Margin="10,0,0,0"
-				Style="{StaticResource ContactUsernameStyle}"
+				Theme="{StaticResource ContactUsernameStyle}"
 				Text="{Binding DisplayName}" />
 				<TextBlock
 				x:Name="statusText"
 				Grid.Row="2"
 				Grid.Column="1"
 				Margin="10,1,0,0"
-				Style="{StaticResource ContactStatusStyle}"
+				Theme="{StaticResource ContactStatusStyle}"
 				Text="{Binding MemberCount, StringFormat={}{0} members}" />
 				<ToggleButton
 				Grid.RowSpan="3"
@@ -572,7 +592,7 @@ mc:Ignorable="d">
 					Grid.Row="0"
 					Grid.Column="1"
 					Margin="0,0,20,2"
-					Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
@@ -582,7 +602,7 @@ mc:Ignorable="d">
 						Width="12"
 						Margin="0,0,6,0"
 						VerticalAlignment="Center"
-						SnapsToDevicePixels="True"
+
 						Source="Assets/Themeable/Main/reply-arrow.png" />
 						<TextBlock
 						Grid.Column="1"
@@ -606,17 +626,17 @@ mc:Ignorable="d">
 					Grid.Column="1"
 					Margin="0,0,20,0"
 					Orientation="Vertical">
-						<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+						<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
 						<Image
 						MaxWidth="300"
 						MaxHeight="300"
 						Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
 						HorizontalAlignment="Left"
 						Cursor="Hand"
-						RenderOptions.BitmapScalingMode="HighQuality"
+						RenderOptions.BitmapInterpolationMode="HighQuality"
 						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
 						Stretch="Uniform"
-						Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
 							<Image.InputBindings>
 								<MouseBinding
 								Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -636,7 +656,7 @@ mc:Ignorable="d">
 						FontSize="11"
 						Foreground="{DynamicResource Text.LowContrast}"
 						Text="{Binding Time, StringFormat=h:mm tt}"
-						Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
 						<global:SliceControl
 						Width="10"
 						Height="10"
@@ -647,7 +667,7 @@ mc:Ignorable="d">
 						SliceMode="0"
 						Source="Assets/Universal/Main/loading.png"
 						StackDirection="Vertical"
-						Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
 					</Grid>
 				</Grid>
 			</Grid>
@@ -693,13 +713,13 @@ mc:Ignorable="d">
 							Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=EditMessageCommand}"
 							CommandParameter="{Binding}"
 							Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-							Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+							IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
 							<!--  Delete  -->
 							<MenuItem
 							Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=DeleteMessageCommand}"
 							CommandParameter="{Binding}"
 							Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-							Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+							IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
 							<!--  Move bookmark  -->
 							<MenuItem
 							Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=MoveBookmarkCommand}"
@@ -743,7 +763,7 @@ mc:Ignorable="d">
 					Grid.Row="0"
 					Grid.Column="1"
 					Margin="0,0,20,2"
-					Visibility="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
@@ -753,7 +773,7 @@ mc:Ignorable="d">
 						Width="12"
 						Margin="0,0,6,0"
 						VerticalAlignment="Center"
-						SnapsToDevicePixels="True"
+
 						Source="Assets/Themeable/Main/reply-arrow.png" />
 						<TextBlock
 						Grid.Column="1"
@@ -777,17 +797,17 @@ mc:Ignorable="d">
 					Grid.Column="1"
 					Margin="0,0,20,0"
 					Orientation="Vertical">
-						<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" Visibility="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+						<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
 						<Image
 						MaxWidth="300"
 						MaxHeight="300"
 						Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
 						HorizontalAlignment="Left"
 						Cursor="Hand"
-						RenderOptions.BitmapScalingMode="HighQuality"
+						RenderOptions.BitmapInterpolationMode="HighQuality"
 						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
 						Stretch="Uniform"
-						Visibility="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
 							<Image.InputBindings>
 								<MouseBinding
 								Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -807,7 +827,7 @@ mc:Ignorable="d">
 						FontSize="11"
 						Foreground="{DynamicResource Text.LowContrast}"
 						Text="{Binding Time, StringFormat=h:mm tt}"
-						Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
 						<global:SliceControl
 						Width="10"
 						Height="10"
@@ -818,7 +838,7 @@ mc:Ignorable="d">
 						SliceMode="0"
 						Source="Assets/Universal/Main/loading.png"
 						StackDirection="Vertical"
-						Visibility="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
+						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
 					</Grid>
 				</Grid>
 			</Grid>
@@ -872,26 +892,6 @@ mc:Ignorable="d">
 			</Grid>
 		</DataTemplate>
 		<!--  CONVERSATION ITEM TEMPLATE END  -->
-		<Style x:Key="NoInsetListBox" TargetType="ListBox">
-			<Setter Property="BorderThickness" Value="0" />
-			<Setter Property="Padding" Value="0" />
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="ListBox">
-						<ScrollViewer
-						x:Name="ScrollViewer"
-						Margin="0"
-						Padding="0"
-						VerticalContentAlignment="Bottom"
-						Background="{DynamicResource Card.Background}"
-						CanContentScroll="True"
-						Focusable="false">
-							<ItemsPresenter />
-						</ScrollViewer>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
 	</Window.Resources>
 	<Grid x:Name="FrameArea">
 		<Grid
@@ -951,36 +951,36 @@ mc:Ignorable="d">
 				VerticalAlignment="Center"
 				PointerPressed="TitleBarIcon_PointerPressed"
 				Source="Assets/Universal/Branding/logo-window-frame.png"
-				Style="{StaticResource LongIconStyle}" />
+				Theme="{StaticResource LongIconStyle}" />
 				<Grid Margin="6,0">
 					<TextBlock
 					x:Name="TitleShadow"
 					Foreground="White"
-					Style="{StaticResource TitlebarTextStyle}">
+					Theme="{StaticResource TitlebarTextStyle}">
 						<TextBlock.Effect>
-							<BlurEffect KernelType="Gaussian" Radius="15.0" />
+							<BlurEffect  Radius="15.0" />
 						</TextBlock.Effect>
 					</TextBlock>
 					<TextBlock
 					x:Name="TitleShadow2"
 					Foreground="White"
-					Style="{StaticResource TitlebarTextStyle}">
+					Theme="{StaticResource TitlebarTextStyle}">
 						<TextBlock.Effect>
-							<BlurEffect KernelType="Gaussian" Radius="20.0" />
+							<BlurEffect  Radius="20.0" />
 						</TextBlock.Effect>
 					</TextBlock>
 					<TextBlock
 					x:Name="TitleShadow3"
 					Foreground="White"
-					Style="{StaticResource TitlebarTextStyle}">
+					Theme="{StaticResource TitlebarTextStyle}">
 						<TextBlock.Effect>
-							<BlurEffect KernelType="Gaussian" Radius="17.0" />
+							<BlurEffect  Radius="17.0" />
 						</TextBlock.Effect>
 					</TextBlock>
 					<TextBlock
 					x:Name="TitleMain"
 					Foreground="{DynamicResource Text.HighContrast}"
-					Style="{StaticResource TitlebarTextStyle}"
+					Theme="{StaticResource TitlebarTextStyle}"
 					IsVisible="True" />
 				</Grid>
 			</StackPanel>
@@ -1553,7 +1553,7 @@ mc:Ignorable="d">
 										PreviewPointerReleased="ConversationList_ItemClicked"
 										ScrollViewer.CanContentScroll="True"
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-										Style="{StaticResource NoInsetListBox}">
+										Theme="{StaticResource NoInsetListBox}">
 											<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
 													<VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
@@ -1596,7 +1596,7 @@ mc:Ignorable="d">
 										Background="{DynamicResource Card.Background}"
 										BorderThickness="0"
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-										ScrollViewer.VerticalScrollBarIsVisible="True"
+										ScrollViewer.VerticalScrollBarVisibility="Visible"
 										IsVisible="False">
 											<TreeView.ItemContainerStyle>
 												<Style TargetType="TreeViewItem">
@@ -1619,7 +1619,7 @@ mc:Ignorable="d">
 
 																	<!--  EXPANSION CONTROL  -->
 																	<Trigger Property="IsExpanded" Value="True">
-																		<Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+																		<Setter TargetName="ItemsHost" Property="IsVisible" Value="True" />
 																	</Trigger>
 
 																	<!--  Selection  -->
@@ -1780,7 +1780,7 @@ mc:Ignorable="d">
 									<global:SliceControl
 									x:Name="ChatCloseButton"
 									Grid.Column="1"
-									Width="Auto"
+									Width="NaN"
 									HorizontalAlignment="Stretch"
 									DefaultIndex="0"
 									ElementCount="5"
@@ -1936,7 +1936,7 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapScalingMode="HighQuality"
+														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -1948,7 +1948,7 @@ mc:Ignorable="d">
 																<DropShadowEffect
 																BlurRadius="4"
 																OffsetX="0" OffsetY="1"
-																ShadowDepth="1"
+
 																Color="{DynamicResource Avatar.Shadow}" />
 															</Image.Effect>
 														</Image>
@@ -1962,7 +1962,7 @@ mc:Ignorable="d">
 															Margin="0,0,0,15"
 															HorizontalAlignment="Left"
 															Orientation="Horizontal"
-															Visibility="{Binding Partner.Status, Converter={StaticResource NullDependentVisibilityConverter}}">
+															IsVisible="{Binding Partner.Status, Converter={StaticResource NullDependentVisibilityConverter}}">
 																<Image
 																Width="16"
 																Height="16"
@@ -2062,7 +2062,7 @@ mc:Ignorable="d">
 																	<Image
 																	Width="85"
 																	Margin="0,3,0,0"
-																	RenderOptions.BitmapScalingMode="HighQuality"
+																	RenderOptions.BitmapInterpolationMode="HighQuality"
 																	Stretch="UniformToFill">
 																		<Image.Source>
 																			<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2074,7 +2074,7 @@ mc:Ignorable="d">
 																			<DropShadowEffect
 																			BlurRadius="4"
 																			OffsetX="0" OffsetY="1"
-																			ShadowDepth="1"
+
 																			Color="{DynamicResource Avatar.Shadow}" />
 																		</Image.Effect>
 																	</Image>
@@ -2096,7 +2096,7 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapScalingMode="HighQuality"
+														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2108,7 +2108,7 @@ mc:Ignorable="d">
 																<DropShadowEffect
 																BlurRadius="4"
 																OffsetX="0" OffsetY="1"
-																ShadowDepth="1"
+
 																Color="{DynamicResource Avatar.Shadow}" />
 															</Image.Effect>
 														</Image>
@@ -2154,7 +2154,7 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapScalingMode="HighQuality"
+														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2166,7 +2166,7 @@ mc:Ignorable="d">
 																<DropShadowEffect
 																BlurRadius="4"
 																OffsetX="0" OffsetY="1"
-																ShadowDepth="1"
+
 																Color="{DynamicResource Avatar.Shadow}" />
 															</Image.Effect>
 														</Image>
@@ -2232,7 +2232,7 @@ mc:Ignorable="d">
 										Orientation="Horizontal">
 											<global:SliceControl
 											x:Name="VideoCallButton"
-											Width="Auto"
+											Width="NaN"
 											Margin="0,0,10,0"
 											Command="{Binding DataContext.VideoCallCommand, RelativeSource={RelativeSource AncestorType=Window}}"
 											DefaultIndex="0"
@@ -2254,7 +2254,7 @@ mc:Ignorable="d">
 											<!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
 											<global:SliceControl
 											x:Name="CallButton"
-											Width="Auto"
+											Width="NaN"
 											DefaultIndex="0"
 											ElementCount="5"
 											HoverIndex="1"
@@ -2316,7 +2316,7 @@ mc:Ignorable="d">
 										Grid.Row="2"
 										Width="90"
 										Height="90"
-										RenderOptions.BitmapScalingMode="HighQuality"
+										RenderOptions.BitmapInterpolationMode="HighQuality"
 										RenderTransformOrigin="0.5,0.5"
 										Source="Assets/Universal/Animations/spinner.png"
 										IsVisible="True">
@@ -2352,7 +2352,7 @@ mc:Ignorable="d">
 										BorderThickness="0"
 										Loaded="ConversationItemsList_Loaded"
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-										Style="{StaticResource NoInsetListBox}"
+										Theme="{StaticResource NoInsetListBox}"
 										VirtualizingPanel.IsVirtualizing="True"
 										VirtualizingPanel.ScrollUnit="Pixel"
 										VirtualizingPanel.VirtualizationMode="Standard"
@@ -2441,40 +2441,13 @@ mc:Ignorable="d">
 															MaxWidth="257"
 															MaxHeight="278"
 															HorizontalScrollBarVisibility="Disabled"
-															VerticalScrollBarIsVisible="True">
-																<ScrollViewer.Resources>
-																	<Style TargetType="ScrollBar">
+															VerticalScrollBarVisibility="Visible">
+																<ScrollViewer.Styles>
+																	<Style Selector="ScrollBar">
 																		<Setter Property="Width" Value="8" />
 																		<Setter Property="Background" Value="Transparent" />
-																		<Setter Property="Template">
-																			<Setter.Value>
-																				<ControlTemplate TargetType="ScrollBar">
-																					<Grid
-																					Width="8"
-																					HorizontalAlignment="Right"
-																					Background="Transparent">
-																						<Track Name="PART_Track" IsDirectionReversed="True">
-																							<Track.Thumb>
-																								<Thumb Width="6" HorizontalAlignment="Center">
-																									<Thumb.Template>
-																										<ControlTemplate TargetType="Thumb">
-																											<Border
-																											Width="6"
-																											HorizontalAlignment="Center"
-																											Background="White"
-																											CornerRadius="3"
-																											Opacity="0.9" />
-																										</ControlTemplate>
-																									</Thumb.Template>
-																								</Thumb>
-																							</Track.Thumb>
-																						</Track>
-																					</Grid>
-																				</ControlTemplate>
-																			</Setter.Value>
-																		</Setter>
 																	</Style>
-																</ScrollViewer.Resources>
+																</ScrollViewer.Styles>
 																<WrapPanel x:Name="EmojiWrapPanel" Orientation="Horizontal" />
 															</ScrollViewer>
 														</Border>
@@ -2518,7 +2491,7 @@ mc:Ignorable="d">
 												GotKeyboardFocus="MessageTextBox_Focused"
 												LostKeyboardFocus="MessageTextBox_Unfocused"
 												PreviewKeyDown="MessageTextBox_PreviewKeyDown"
-												SnapsToDevicePixels="True"
+
 												TextChanged="MessageTextBox_TextChanged"
 												UseLayoutRounding="True"
 												VerticalScrollBarVisibility="Auto">
@@ -2532,7 +2505,7 @@ mc:Ignorable="d">
 											<global:SliceControl
 											x:Name="SendMsgButton"
 											Grid.Column="2"
-											Width="Auto"
+											Width="NaN"
 											Margin="8,0,0,0"
 											HorizontalAlignment="Left"
 											VerticalAlignment="Top"

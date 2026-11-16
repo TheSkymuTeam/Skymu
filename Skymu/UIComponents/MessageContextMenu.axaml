@@ -39,13 +39,13 @@
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=EditMessageCommand}"
             CommandParameter="{Binding}"
             Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-            Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+            IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
         <!--  Delete  -->
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=DeleteMessageCommand}"
             CommandParameter="{Binding}"
             Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-            Visibility="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
+            IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
         <!--  Move bookmark  -->
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=MoveBookmarkCommand}"

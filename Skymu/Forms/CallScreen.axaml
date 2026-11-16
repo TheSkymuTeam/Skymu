@@ -29,7 +29,7 @@
     FontFamily="Arial"
     FontSize="15.5"
     SizeChanged="Resized"
-    Classes="Page"
+    
     mc:Ignorable="d">
     <UserControl.Resources>
 
@@ -42,7 +42,7 @@
             <Setter Property="HoverIndex" Value="3" />
             <Setter Property="PressedIndex" Value="2" />
             <Setter Property="HoverTransition" Value="True" />
-            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
+            <Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -109,7 +109,7 @@
                 <Image
                     x:Name="PartnerAvatar"
                     Height="160"
-                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.BitmapInterpolationMode="HighQuality"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/saul.png'}" />
                 <TextBlock
                     x:Name="PartnerDisplayName"
@@ -139,7 +139,7 @@
                 <Image
                     x:Name="MyAvatar"
                     Height="160"
-                    RenderOptions.BitmapScalingMode="HighQuality"
+                    RenderOptions.BitmapInterpolationMode="HighQuality"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/waltuh.png'}" />
             </StackPanel>
         </Grid>

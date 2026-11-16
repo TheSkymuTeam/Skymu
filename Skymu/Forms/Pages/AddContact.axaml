@@ -26,7 +26,7 @@
     d:Background="#FFFFFF"
     FontFamily="Tahoma"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Classes="Page"
+    
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="{x:Type GridViewColumnHeader}">
@@ -90,8 +90,8 @@
                 </Grid.RowDefinitions>
                 <Grid
                     Grid.Row="0"
-                    Width="Auto"
-                    Height="Auto"
+                    Width="NaN"
+                    Height="NaN"
                     Margin="0,10,0,0"
                     HorizontalAlignment="Left"
                     IsVisible="True">
@@ -167,7 +167,7 @@
                     <ProgressBar
                         x:Name="FindPBar"
                         Grid.Row="3"
-                        Width="Auto"
+                        Width="NaN"
                         Height="10"
                         HorizontalAlignment="Stretch"
                         IsVisible="False" />
@@ -185,8 +185,8 @@
                         x:Name="ErrorField"
                         Grid.Row="4"
                         Grid.ColumnSpan="2"
-                        Width="Auto"
-                        Height="Auto"
+                        Width="NaN"
+                        Height="NaN"
                         Margin="0,35,0,0"
                         Orientation="Vertical"
                         IsVisible="False">
@@ -340,7 +340,7 @@
                                 Margin="4,4,5,9"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                RenderOptions.BitmapScalingMode="HighQuality"
+                                RenderOptions.BitmapInterpolationMode="HighQuality"
                                 Stretch="UniformToFill">
                                 <Image.Source>
                                     <MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -352,7 +352,7 @@
                                     <DropShadowEffect
                                         BlurRadius="4"
                                         OffsetX="0" OffsetY="1"
-                                        ShadowDepth="1"
+                                        
                                         Color="{DynamicResource Avatar.Shadow}" />
                                 </Image.Effect>
                             </Image>
@@ -373,7 +373,7 @@
                                     Margin="0,0,0,15"
                                     HorizontalAlignment="Left"
                                     Orientation="Horizontal"
-                                    Visibility="{Binding Status, Converter={StaticResource NullDependentVisibilityConverter}}">
+                                    IsVisible="{Binding Status, Converter={StaticResource NullDependentVisibilityConverter}}">
                                     <Image
                                         Width="16"
                                         Height="16"

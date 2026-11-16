@@ -28,7 +28,7 @@
     FontFamily="Tahoma"
     FontSize="11"
     Foreground="{DynamicResource Text.VeryHighContrast}"
-    Classes="Page"
+    
     mc:Ignorable="d">
 
     <UserControl.Resources>
