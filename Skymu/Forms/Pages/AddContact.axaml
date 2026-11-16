@@ -351,7 +351,7 @@
                                 <Image.Effect>
                                     <DropShadowEffect
                                         BlurRadius="4"
-                                        Direction="270"
+                                        OffsetX="0" OffsetY="1"
                                         ShadowDepth="1"
                                         Color="{DynamicResource Avatar.Shadow}" />
                                 </Image.Effect>

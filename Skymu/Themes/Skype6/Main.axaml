@@ -45,16 +45,41 @@
     SystemDecorations="Full"
     mc:Ignorable="d">
     <Window.Resources>
-        <Style x:Key="TextBlockViewerStyle" TargetType="TextBlock">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontFamily" Value="Tahoma" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
-            <Setter Property="Focusable" Value="True" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
+    <ControlTheme x:Key="TextBlockViewerStyle" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontFamily" Value="Tahoma" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="LongIconStyle" TargetType="Image">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Width" Value="36" />
+    </ControlTheme>
+
+    <!--  CONTACT ITEM TEMPLATE START  -->
+    <!--  shared style for both targeted templates  -->
+    <ControlTheme x:Key="ContactUsernameStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontFamily" Value="Tahoma" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="ContactStatusStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontFamily" Value="Tahoma" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Text.LowContrast}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </ControlTheme>
         <converters:ByteArrayToImageSourceConverter x:Key="AvatarConverter" />
         <converters:MsgByteArrayToImageConverter x:Key="MsgByteArrayToImageConverter" />
         <converters:SenderToColorConverter x:Key="SenderToColorConverter" />
@@ -73,42 +98,6 @@
         <converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
         <converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
         <converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
-        <Style x:Key="WindowButtonStyle" TargetType="global:SliceControl">
-            <Setter Property="HorizontalAlignment" Value="Right" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Height" Value="18" />
-            <Setter Property="Margin" Value="-1,0,0,0" />
-            <Setter Property="HoverTransition" Value="False" />
-            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
-            <Setter Property="SliceMode" Value="0" />
-            <Setter Property="ElementCount" Value="4" />
-            <Setter Property="StackDirection" Value="Vertical" />
-            <Setter Property="DefaultIndex" Value="0" />
-            <Setter Property="HoverIndex" Value="2" />
-            <Setter Property="PressedIndex" Value="3" />
-        </Style>
-        <Style x:Key="LongIconStyle" TargetType="Image">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="RenderOptions.BitmapScalingMode" Value="NearestNeighbor" />
-            <Setter Property="Height" Value="16" />
-            <Setter Property="Width" Value="36" />
-        </Style>
-        <!--  CONTACT ITEM TEMPLATE START  -->
-        <!--  shared style for both targeted templates  -->
-        <Style x:Key="ContactUsernameStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontFamily" Value="Tahoma" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-            <Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
-        </Style>
-        <Style x:Key="ContactStatusStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontFamily" Value="Tahoma" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{DynamicResource Text.LowContrast}" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        </Style>
         <!--  User template  -->
         <DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
             <Grid Height="32" Margin="2,4,0,4">
@@ -134,7 +123,7 @@
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
-                                Direction="270"
+                                OffsetX="0" OffsetY="1"
                                 Opacity="0.50"
                                 ShadowDepth="1"
                                 Color="{DynamicResource Avatar.Shadow}" />
@@ -213,7 +202,7 @@
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
-                                Direction="270"
+                                OffsetX="0" OffsetY="1"
                                 Opacity="0.50"
                                 ShadowDepth="1"
                                 Color="{DynamicResource Avatar.Shadow}" />
@@ -347,7 +336,7 @@
                         <Border.Effect>
                             <DropShadowEffect
                                 BlurRadius="2"
-                                Direction="270"
+                                OffsetX="0" OffsetY="1"
                                 ShadowDepth="1"
                                 Color="{DynamicResource Avatar.Shadow}" />
                         </Border.Effect>
@@ -1487,7 +1476,7 @@
                                                     <Image.Effect>
                                                         <DropShadowEffect
                                                             BlurRadius="4"
-                                                            Direction="270"
+                                                            OffsetX="0" OffsetY="1"
                                                             ShadowDepth="1"
                                                             Color="{DynamicResource Avatar.Shadow}" />
                                                     </Image.Effect>
@@ -1612,7 +1601,7 @@
                                                                 <Image.Effect>
                                                                     <DropShadowEffect
                                                                         BlurRadius="4"
-                                                                        Direction="270"
+                                                                        OffsetX="0" OffsetY="1"
                                                                         ShadowDepth="1"
                                                                         Color="{DynamicResource Avatar.Shadow}" />
                                                                 </Image.Effect>
@@ -1646,7 +1635,7 @@
                                                     <Image.Effect>
                                                         <DropShadowEffect
                                                             BlurRadius="4"
-                                                            Direction="270"
+                                                            OffsetX="0" OffsetY="1"
                                                             ShadowDepth="1"
                                                             Color="{DynamicResource Avatar.Shadow}" />
                                                     </Image.Effect>
@@ -1704,7 +1693,7 @@
                                                     <Image.Effect>
                                                         <DropShadowEffect
                                                             BlurRadius="4"
-                                                            Direction="270"
+                                                            OffsetX="0" OffsetY="1"
                                                             ShadowDepth="1"
                                                             Color="{DynamicResource Avatar.Shadow}" />
                                                     </Image.Effect>

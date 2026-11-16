@@ -11,16 +11,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Helpers;
-using System;
 using Avalonia;
+using Avalonia.Animation;
+using Avalonia.Animation.Easings;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Media.Animation;
-using Yggdrasil.Models;
-using Yggdrasil.Bottles;
-using Avalonia.Controls;
+using Avalonia.Styling;
+using Skymu.Helpers;
 using Skymu.Sounds;
+using System;
+using Yggdrasil.Bottles;
+using Yggdrasil.Models;
 
 namespace Skymu.Forms
 {
@@ -33,16 +35,19 @@ namespace Skymu.Forms
         {
             InitializeComponent();
             _call = e;
-            var animation = new DoubleAnimation
+            var animation = new Animation
             {
-                From = 1,
-                To = 0.7,
                 Duration = TimeSpan.FromSeconds(1.5),
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever,
-                EasingFunction = new SineEase { EasingMode = EasingMode.EaseInOut },
+                IterationCount = IterationCount.Infinite,
+                PlaybackDirection = PlaybackDirection.Alternate,
+                Easing = new SineEaseInOut(),
+                Children =
+        {
+            new KeyFrame { Cue = new Cue(0.0), Setters = { new Setter(OpacityProperty, 1.0) } },
+            new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(OpacityProperty, 0.7) } },
+        },
             };
-            BeginAnimation(OpacityProperty, animation);
+            _ = animation.RunAsync(this);
             SoundManager.PlayLoop("CALL_IN");
             if (_call.Caller.Avatar != null)
                 CallerAvatar.Source = ImageHelper.GenerateFromArray(_call.Caller.Avatar);
