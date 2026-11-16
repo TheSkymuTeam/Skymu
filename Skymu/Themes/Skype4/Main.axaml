@@ -688,13 +688,13 @@ mc:Ignorable="d">
 								<Binding Path="IsForwarded" />
 							</MultiBinding>
 						</TextBlock.Text>
-						<TextBlock.Visibility>
+						<TextBlock.IsVisible>
 							<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
 								<Binding Path="PreviousMessageIdentifier" />
 								<Binding Path="Author.Identifier" />
 								<Binding Path="PreviousMessageIsAction" />
 							</MultiBinding>
-						</TextBlock.Visibility>
+						</TextBlock.IsVisible>
 					</TextBlock>
 					<!--  Center area  -->
 					<!--  Reply header  -->
@@ -2469,7 +2469,7 @@ mc:Ignorable="d">
 													HorizontalOffset="-20"
 													Placement="Top"
 													PlacementTarget="{Binding ElementName=EmojiButton}"
-													StaysOpen="False">
+													IsLightDismissEnabled="True">
 														<Border
 														Padding="2"
 														Background="{DynamicResource EmojiFlyout.Background}"
