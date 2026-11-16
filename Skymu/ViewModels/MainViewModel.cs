@@ -56,7 +56,7 @@ namespace Skymu.ViewModels
         // is added and obviously we'll have multiple conversations loaded at the same time then
         public ObservableCollection<ConversationItem> ActiveConversation { get; }
 
-        // OC's for the three types of lists shown in the UI that can be bound to in WPF
+        // OC's for the three types of lists shown in the UI that can be bound to in Avalonia
         public ObservableCollection<DirectMessage> ContactList;
         public ObservableCollection<Server> ServerList;
         public ObservableCollection<Conversation> ConversationList;

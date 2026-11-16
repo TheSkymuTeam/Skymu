@@ -38,7 +38,7 @@ using MarkdigInline = Markdig.Syntax.Inlines.Inline;
 using MdTable = Markdig.Extensions.Tables.Table;
 using MdTableCell = Markdig.Extensions.Tables.TableCell;
 using MdTableRow = Markdig.Extensions.Tables.TableRow;
-using WpfInline = Avalonia.Controls.Documents.Inline;
+using AvaloniaInline = Avalonia.Controls.Documents.Inline;
 using static QRCoder.PayloadGenerator;
 
 namespace Skymu.Formatting
@@ -133,7 +133,7 @@ namespace Skymu.Formatting
                 textBlock.Styles.Add(style);
             }
 
-            // parse the input into a Markdig AST and walk it to produce WPF inlines
+            // parse the input into a Markdig AST and walk it to produce Avalonia inlines
             // then add all the emoji-fied, linked, and markdown'ed inlines to the textblock
             var document = Markdown.Parse(input, _pipeline);
             ProcessMarkdigBlocks(textBlock.Inlines, document, input);
@@ -223,7 +223,7 @@ namespace Skymu.Formatting
             };
         }
 
-        // converts a Markdig block node to WPF inlines for insertion
+        // converts a Markdig block node to Avalonia inlines for insertion
         private static void ProcessBlock(InlineCollection inlines, MarkdigBlock block)
         {
             switch (block)
@@ -420,7 +420,7 @@ namespace Skymu.Formatting
                 ProcessInline(inlines, node);
         }
 
-        // converts a Markdig inline node to WPF inlines
+        // converts a Markdig inline node to Avalonia inlines
         private static void ProcessInline(InlineCollection inlines, MarkdigInline node)
         {
             switch (node)
@@ -546,7 +546,7 @@ namespace Skymu.Formatting
 
         // This function takes the source text and the inlines of the newly-created Span, and adds links,  ClickableItems, and animated emoticons to them. (After that, the text formatting is applied in
         // the main method, and the span, containg formatted text, is added to the global inline list. This, and the emoji-processing function only update the inline collection, and as such, return void.
-        private static void AddTextOrLinkOrClickable(IList<WpfInline> inlines, string text)
+        private static void AddTextOrLinkOrClickable(IList<AvaloniaInline> inlines, string text)
         {
             if (string.IsNullOrEmpty(text))
                 return;
@@ -677,7 +677,7 @@ namespace Skymu.Formatting
 
         private static void AddTextOrLinkOrClickable(InlineCollection inlines, string text)
         {
-            var temp = new List<WpfInline>();
+            var temp = new List<AvaloniaInline>();
             AddTextOrLinkOrClickable(temp, text);
             foreach (var il in temp)
                 inlines.Add(il);
@@ -709,7 +709,7 @@ namespace Skymu.Formatting
             return sliceControl;
         }
 
-        private static void ProcessTextWithEmoji(IList<WpfInline> inlines, string text) // This function replaces Unicode emojis in the text with sexy inline animated emoticons.
+        private static void ProcessTextWithEmoji(IList<AvaloniaInline> inlines, string text) // This function replaces Unicode emojis in the text with sexy inline animated emoticons.
         {
             StringInfo info = new StringInfo(text);
             int loopCount = info.LengthInTextElements;
