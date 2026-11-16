@@ -11,13 +11,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using Skymu.Preferences;
 using System;
 using System.IO;
-using Avalonia;
-using Avalonia.Controls;
-using System.Windows.Navigation;
-using Avalonia.Interactivity;
 
 namespace Skymu.Forms.OptionPages.Advanced
 {
@@ -30,22 +29,26 @@ namespace Skymu.Forms.OptionPages.Advanced
 
         private void OPEN_PR_URL(object sender, RoutedEventArgs e) => Universal.OpenURL(Universal.GITHUB_PULLS_URL);
 
-        private void PluginPathBrowseClick(object sender, RoutedEventArgs e)
+        private async void PluginPathBrowseClick(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new System.Windows.Forms.FolderBrowserDialog()
-            {
-                Description = "Select the plugin folder",
-                SelectedPath = Path.GetDirectoryName(Path.GetFullPath(Environment.GetCommandLineArgs()[0]))
-            };
+            var startPath = Path.GetDirectoryName(
+                Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
 
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var startFolder = await StorageProvider.TryGetFolderFromPathAsync(startPath);
+
+            var folders = await StorageProvider.OpenFolderPickerAsync(
+                new FolderPickerOpenOptions
+                {
+                    Title = "Select the plugin folder",
+                    AllowMultiple = false,
+                    SuggestedStartLocation = startFolder
+                });
+                
+            if (folders.Count > 0)
             {
-                Settings.CustomPluginPath = openFileDialog.SelectedPath;
-                PluginPathBox.GetBindingExpression(TextBox.TextProperty)
-                    ?.UpdateTarget();
+                Settings.CustomPluginPath = folders[0].Path.LocalPath;
+                PluginPathBox.Text = Settings.CustomPluginPath;
             }
-
-            openFileDialog.Dispose();
         }
     }
 }

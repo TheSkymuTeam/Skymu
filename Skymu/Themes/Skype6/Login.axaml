@@ -22,7 +22,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:theming="clr-namespace:Skymu.Theming"
-    xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+    
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
