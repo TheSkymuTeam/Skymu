@@ -14,20 +14,18 @@
 -->
 
 <!--
-    There is currently no use case for this page, as Skype Home is bundled
-    locally with Skymu. However, it may be of use in the future (e.g. if it
-    stops being bundled) so the page will be kept for now pending further
-    evaluation on the future direction of Skype Home.
+    TODO convert this to native Skype Home recreation. We don't need to keep an unavailable page
+    as it's always going to be available, it's part of the app.
 -->
 
 <UserControl
-    x:Class="Skymu.Forms.HomeUnavailable"
+    x:Class="Skymu.Forms.Home"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="HomeUnavailable"
+    Title="Home"
     d:DesignHeight="504.143"
     d:DesignWidth="692.735"
     mc:Ignorable="d">

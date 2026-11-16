@@ -148,4 +148,10 @@
 		<Resource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Forms\Home.axaml.cs">
+	    <DependentUpon>Home.axaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
 </Project>

@@ -60,7 +60,7 @@ namespace Skymu.Skype5
             if (vmodel.UseSkypeHome)
                 browser.IsVisible = true;
             else
-                HomeUnavailableFrame.IsVisible = true;
+                HomeFrame.IsVisible = true;
             MainPageButton.SetState(ButtonVisualState.Pressed);
         }
 
@@ -73,7 +73,7 @@ namespace Skymu.Skype5
             ChatProfileArea.IsVisible = true;
             MessageWindow.IsVisible = true;
             browser.IsVisible = false;
-            HomeUnavailableFrame.IsVisible = false;
+            HomeFrame.IsVisible = false;
         }
 
         private void ToggleStatusBoxSelection(bool selected)
@@ -147,8 +147,7 @@ namespace Skymu.Skype5
 
         protected override async Task GenerateHome()
         {
-            // no more Skype Home (for now at least) so show the "Home Unavailable" page 
-            HomeUnavailableFrame.Content = new HomeUnavailable();
+            HomeFrame.Content = new Home();
         }
 
         protected override void OnUserCountUpdated(string text)

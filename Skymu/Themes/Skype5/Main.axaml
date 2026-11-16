@@ -1913,7 +1913,7 @@
                                     CornerRadius="0,0,4,4">
                                     <Grid>
                                         <Frame
-                                            x:Name="HomeUnavailableFrame"
+                                            x:Name="HomeFrame"
                                             Grid.Row="1"/>
                                         <ContentControl x:Name="FillMessagePanelHost" IsVisible="False" />
                                         <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">

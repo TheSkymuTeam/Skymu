@@ -22,9 +22,9 @@ using System.Text.Json;
 
 namespace Skymu.Forms
 {
-    public partial class HomeUnavailable : UserControl
+    public partial class Home : UserControl
     {
-        public HomeUnavailable()
+        public Home()
         {
             InitializeComponent();
             Universal.Lang.PropertyChanged += RefreshText;
