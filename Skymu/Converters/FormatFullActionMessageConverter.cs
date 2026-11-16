@@ -17,7 +17,7 @@ using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
-using System.Windows.Documents;
+using Avalonia.Controls.Documents;
 using Avalonia.Media;
 using Yggdrasil.Models;
 

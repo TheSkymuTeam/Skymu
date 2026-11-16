@@ -20,7 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Documents;
+using Avalonia.Controls.Documents;
 using Avalonia.Interactivity;
 using Yggdrasil;
 using Yggdrasil.Models;

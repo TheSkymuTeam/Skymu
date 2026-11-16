@@ -20,7 +20,7 @@ using System.Linq;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
-using System.Windows.Documents;
+using Avalonia.Controls.Documents;
 using Avalonia.Media;
 using Skymu.Formatting;
 using Xunit;
