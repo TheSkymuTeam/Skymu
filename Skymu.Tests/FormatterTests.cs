@@ -153,7 +153,7 @@ namespace Skymu.Tests
             {
                 var tb = Formatter.Parse("**bold text**");
                 var spans = tb.Inlines.OfType<Span>();
-                Assert.True(spans.Any(s => s.FontWeight == FontWeights.Bold),
+                Assert.True(spans.Any(s => s.FontWeight == FontWeight.Bold),
                     "Expected at least one bold Span.");
             });
         }
@@ -215,7 +215,7 @@ namespace Skymu.Tests
                 var spans = tb.Inlines.OfType<Span>();
                 Assert.True(
                     spans.Any(s =>
-                        s.FontWeight == FontWeights.Bold &&
+                        s.FontWeight == FontWeight.Bold &&
                         s.FontStyle == FontStyle.Italic),
                     "Expected at least one Span that is both bold and italic.");
             });
@@ -383,7 +383,7 @@ namespace Skymu.Tests
             {
                 var tb = Formatter.ProcessLangText("<b>bold</b>", Array.Empty<object>());
                 var spans = tb.Inlines.OfType<Span>();
-                Assert.True(spans.Any(s => s.FontWeight == FontWeights.Bold),
+                Assert.True(spans.Any(s => s.FontWeight == FontWeight.Bold),
                     "Expected a bold Span from <b> tag.");
             });
         }

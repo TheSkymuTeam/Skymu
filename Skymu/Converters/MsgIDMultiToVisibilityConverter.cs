@@ -11,23 +11,24 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using System;
-using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Skymu.Converters
 {
     public class MsgIDMultiToVisibilityConverter : IMultiValueConverter
     {
         public object Convert(
-            object[] values,
+            IList<object?> values,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture
         )
         {
-            if (values.Length < 2)
+            if (values.Count < 2)
                 return false;
 
             // if PreviousMessageIsAction is true, the visibility is always Visible

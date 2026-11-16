@@ -13,6 +13,7 @@
 
 using System;
 using System.Globalization;
+using Avalonia.Data;
 using Avalonia;
 using Avalonia.Data.Converters;
 
@@ -33,6 +34,6 @@ namespace Skymu.Converters
             Type targetType,
             object parameter,
             CultureInfo culture
-        ) => Binding.DoNothing;
+        ) => BindingOperations.DoNothing;
     }
 }

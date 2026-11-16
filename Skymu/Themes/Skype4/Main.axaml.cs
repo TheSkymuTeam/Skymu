@@ -17,6 +17,7 @@ using Skymu.Preferences;
 using Skymu.Theming;
 using System;
 using Avalonia;
+using Avalonia.Interactivity;
 using Avalonia.Controls;
 using Avalonia.Input;
 

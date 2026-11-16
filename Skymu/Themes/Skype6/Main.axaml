@@ -324,7 +324,7 @@
                                         Grid.Column="1"
                                         Margin="10,0,0,0"
                                         VerticalAlignment="Center"
-                                        Foreground="{DynamicResource Text.VeryHighContrast}"
+                                       
                                         Theme="{StaticResource ContactStatusStyle}"
                                         Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
                                         Text="{Binding DisplayName}" />
@@ -1165,8 +1165,7 @@
                                     <!--  Contacts/recents/servers list  -->
                                     <Grid x:Name="ContactsArea" Grid.Row="0">
                                         <ListBox
-                                            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                      
                                             x:Name="ConversationList"
                                             BorderThickness="0"
                                             PreviewPointerReleased="ConversationList_ItemClicked"
@@ -1266,8 +1265,7 @@
                                             </Grid>
 
                                             <ListBox
-                                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                                               
                                                 x:Name="AddUserList"
                                                 BorderThickness="0"
                                                 

@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using Yggdrasil.Enumerations;
-
+using Avalonia.Data;
 
 
 namespace Skymu.Converters
@@ -65,7 +65,7 @@ namespace Skymu.Converters
             CultureInfo culture
         )
         {
-            return Binding.DoNothing;
+            return BindingOperations.DoNothing;
         }
     }
 }

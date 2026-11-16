@@ -362,7 +362,7 @@ mc:Ignorable="d">
 									Grid.Column="1"
 									Margin="10,0,0,0"
 									VerticalAlignment="Center"
-									Foreground="{DynamicResource Text.VeryHighContrast}"
+									
 									Theme="{StaticResource ContactStatusStyle}"
 									Foreground="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=TreeViewItem}, Converter={StaticResource SelectedToWhite}}"
 									Text="{Binding DisplayName}" />

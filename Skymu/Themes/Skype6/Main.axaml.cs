@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Layout;
+using Avalonia.Interactivity;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -190,7 +191,7 @@ namespace Skymu.Skype6
             SearchBox.Focus();
         }
 
-        protected override void SearchBox_Unfocused(object sender, KeyboardFocusChangedEventArgs e)
+        protected override void SearchBox_Unfocused(object sender, RoutedEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Default);
             SetPlaceholder(SearchBox,
@@ -201,7 +202,7 @@ namespace Skymu.Skype6
             );
         }
 
-        protected override void CallPhones_Click(object sender, PointerEventArgs e)
+        protected override void CallPhones_Click(object sender, PointerReleasedEventArgs e)
         {
             SoundManager.Play("CALL_ERROR1");
             Universal.ShowMessage(VONAGE, VONAGE_CAPTION);

@@ -19,13 +19,14 @@ using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Controls.Documents;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Yggdrasil.Models;
 
 namespace Skymu.Converters
 {
     public sealed class FormatFullActionMessageConverter : IValueConverter
     {
-        public Style ViewerStyle { get; set; }
+        public ControlTheme ViewerStyle { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

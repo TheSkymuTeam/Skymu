@@ -11,6 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia.Data;
 using Skymu.ViewModels;
 using System;
 using System.Globalization;
@@ -37,7 +38,7 @@ namespace Skymu.Converters
             CultureInfo culture
         )
         {
-            return Binding.DoNothing;
+            return BindingOperations.DoNothing;
         }
     }
 }

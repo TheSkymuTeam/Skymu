@@ -55,7 +55,7 @@ namespace Skymu.Forms
         private LocationChangeEventArgs location;
         private DispatcherTimer _callTimer;
         private TimeSpan _callElapsed;
-        private Frame _originalFrame;
+        private ContentControl _originalFrame;
         private Conversation _conversation;
 
         public CallScreen(
@@ -345,12 +345,12 @@ namespace Skymu.Forms
             _fullscreenWindow = null;
         }
 
-        private Frame GetFrameParent()
+        private ContentControl GetFrameParent()
         {
             DependencyObject parent = VisualTreeHelper.GetParent(this);
             while (parent != null)
             {
-                if (parent is Frame frame)
+                if (parent is ContentControl frame)
                     return frame;
                 parent = VisualTreeHelper.GetParent(parent);
             }

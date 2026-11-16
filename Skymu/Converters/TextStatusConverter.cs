@@ -13,9 +13,10 @@
 
 
 
-using System;
-using System.Globalization;
 using Avalonia.Data.Converters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 
 
@@ -25,9 +26,9 @@ namespace Skymu.Converters
     public class TextStatusConverter : IMultiValueConverter
     {
         public object Convert(
-            object[] values,
+            IList<object?> values,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture
         )
         {

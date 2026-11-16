@@ -14,15 +14,16 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using Avalonia.Data;
 
 namespace Skymu.Converters
 {
     public class BoolInverterConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is bool b ? !b : Binding.DoNothing;
+            => value is bool b ? !b : BindingOperations.DoNothing;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            => value is bool b ? !b : Binding.DoNothing;
+            => value is bool b ? !b : BindingOperations.DoNothing;
     }
 }

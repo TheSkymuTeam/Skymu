@@ -15,16 +15,18 @@ using Org.BouncyCastle.Bcpg.Sig;
 using Skymu.Helpers;
 using System;
 using System.Globalization;
+using System.Collections.Generic;
 using Avalonia.Data.Converters;
+using Avalonia.Data;
 
 namespace Skymu.Converters
 {
     public class ByteArrayToImageSourceConverter : IMultiValueConverter
     {
         public object Convert(
-            object[] values,
+            IList<object?> values,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture
         )
         {
@@ -51,7 +53,7 @@ namespace Skymu.Converters
             CultureInfo culture
         )
         {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
+            return new object[] { BindingOperations.DoNothing, BindingOperations.DoNothing };
         }
     }
 }

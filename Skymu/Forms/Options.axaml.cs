@@ -20,7 +20,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Interactivity;
-using System.Windows.Navigation;
+
 
 namespace Skymu.Forms
 {
@@ -180,7 +180,7 @@ namespace Skymu.Forms
             }
             var page = pfact();
             JournalEntry.SetKeepAlive(page, false);
-            PageHost.Navigate(page);
+            PageHost.Content = page;
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)

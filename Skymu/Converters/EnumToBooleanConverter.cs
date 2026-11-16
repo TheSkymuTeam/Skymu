@@ -13,6 +13,7 @@
 
 using System;
 using Avalonia.Data.Converters;
+using Avalonia.Data;
 
 namespace Skymu.Converters
 {
@@ -26,7 +27,7 @@ namespace Skymu.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null || parameter == null) return Binding.DoNothing;
+            if (value == null || parameter == null) return BindingOperations.DoNothing;
             if ((bool)value)
             {
                 var param = parameter.ToString();
@@ -37,7 +38,7 @@ namespace Skymu.Converters
                 }
                 throw new ArgumentException($"targetType {targetType} is not an enum. Use x:Static or ensure binding targets an enum property.");
             }
-            return Binding.DoNothing;
+            return BindingOperations.DoNothing;
         }
     }
 }

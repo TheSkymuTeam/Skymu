@@ -14,6 +14,7 @@
 using Skymu.Enumerations;
 using Skymu.Preferences;
 using Avalonia;
+using Avalonia.Interactivity;
 using Avalonia.Controls;
 using OmegaAOL.Bifrost.Tls;
 

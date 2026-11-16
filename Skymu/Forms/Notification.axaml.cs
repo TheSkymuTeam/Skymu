@@ -17,7 +17,6 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Media.Animation;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -223,7 +222,7 @@ namespace Skymu.Forms
 
             TextBlock titleText = new TextBlock
             {
-                FontWeight = FontWeights.Normal,
+                FontWeight = FontWeight.Normal,
                 Foreground = Brushes.Black,
                 VerticalAlignment = VerticalAlignment.Center,
             };

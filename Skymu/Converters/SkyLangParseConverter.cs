@@ -3,13 +3,14 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Avalonia;
+using System.Collections.Generic;
 using Avalonia.Data.Converters;
 
 namespace Skymu.Converters
 {
     public sealed class SkyLangParseConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)
         {
             if (parameter is string lanp)
                 return Formatter.ProcessLangText(Universal.Lang[lanp], values);

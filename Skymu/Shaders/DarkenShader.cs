@@ -14,9 +14,16 @@
 using System;
 using Avalonia;
 using Avalonia.Media;
-using Avalonia.Media.Effects;
+using Avalonia.Media.Imaging;
 
 namespace Skymu.Shaders
+{
+    public class DarkenShader
+    {
+    }
+}
+
+/*namespace Skymu.Shaders
 {
     public class DarkenShader : ShaderEffect
     {
@@ -55,4 +62,4 @@ namespace Skymu.Shaders
             set => SetValue(IntensityProperty, value);
         }
     }
-}
+}*/

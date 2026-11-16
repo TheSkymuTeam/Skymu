@@ -11,18 +11,19 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using System;
-using System.Globalization;
 using Avalonia.Data.Converters;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Skymu.Converters
 {
     public class ForwardedMessageStatusConverter : IMultiValueConverter
     {
         public object Convert(
-            object[] values,
+            IList<object?> values,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture
         )
         {

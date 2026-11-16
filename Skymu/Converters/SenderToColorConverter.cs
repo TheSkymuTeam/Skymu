@@ -12,11 +12,12 @@
 /*==========================================================*/
 
 
-using System;
-using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Skymu.Converters
 {
@@ -24,9 +25,9 @@ namespace Skymu.Converters
     public class SenderToColorConverter : IMultiValueConverter
     {
         public object Convert(
-            object[] values,
+            IList<object?> values,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture
         )
         {
@@ -38,14 +39,14 @@ namespace Skymu.Converters
                 return (SolidColorBrush)Application.Current.Resources["Message.Author.Other"];
         }
 
-        public object[] ConvertBack(
+        public object ConvertBack(
             object value,
             Type[] targetTypes,
             object parameter,
             CultureInfo culture
         )
         {
-            return new object[] { Binding.DoNothing, Binding.DoNothing };
+            throw new NotSupportedException();
         }
     }
 }
