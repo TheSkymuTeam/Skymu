@@ -1457,14 +1457,9 @@
                             </Border>
 
                             <Grid Grid.Row="1">
-                                <WebBrowser
-                                    x:Name="browser"
-                                    Grid.Row="1"
-                                    IsVisible="False" />
                                 <Frame
                                     x:Name="HomeUnavailableFrame"
-                                    Grid.Row="1"
-                                    IsVisible="False" />
+                                    Grid.Row="1" />
                                 <ContentControl x:Name="FillMessagePanelHost" IsVisible="False" />
                                 <ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
                                     <ContentControl.Resources>

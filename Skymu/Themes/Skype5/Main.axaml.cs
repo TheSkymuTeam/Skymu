@@ -147,21 +147,8 @@ namespace Skymu.Skype5
 
         protected override async Task GenerateHome()
         {
-            if (vmodel.UseSkypeHome)
-            {
-                if (!await Home.Generate(browser, Universal.CurrentUser, vmodel.ContactList.ToList()))
-                {
-                    browser.IsVisible = false;
-                    HomeUnavailableFrame.IsVisible = true;
-                    HomeUnavailableFrame.Content = new HomeUnavailable();
-                }
-            }
-            else
-            {
-                browser.IsVisible = false;
-                HomeUnavailableFrame.IsVisible = true;
-                HomeUnavailableFrame.Content = new HomeUnavailable();
-            }
+            // no more Skype Home (for now at least) so show the "Home Unavailable" page 
+            HomeUnavailableFrame.Content = new HomeUnavailable();
         }
 
         protected override void OnUserCountUpdated(string text)

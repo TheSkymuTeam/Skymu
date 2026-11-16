@@ -398,12 +398,6 @@ namespace Skymu.Preferences
             get => SELECT("SWSOptOutShown", false, "Skymu/WebServices");
             set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/WebServices");
         }
-
-        public static bool EnableSkypeHome
-        {
-            get => SELECT("EnableSkypeHome", true, "Skymu/WebServices");
-            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "Skymu/WebServices");
-        }
         public static bool EnableAdBlock
         {
             get => SELECT("EnableAdBlock", false, "Skymu/WebServices");

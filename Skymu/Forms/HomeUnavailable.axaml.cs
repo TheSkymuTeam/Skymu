@@ -11,10 +11,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Skymu.Preferences;
-using System.ComponentModel;
-using System.Text.Json;
 using Avalonia.Controls;
+using Skymu.Preferences;
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace Skymu.Forms
 {
@@ -27,9 +31,41 @@ namespace Skymu.Forms
             RefreshText(null, null);
         }
 
+        public static JsonElement? GetLanguage()
+        {
+            string json = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Languages", "home-unavailable.json"));
+
+            string cultureName = "en-US";
+            try
+            {
+                cultureName = CultureInfo.GetCultures(CultureTypes.AllCultures)
+                    .FirstOrDefault(c =>
+                        c.NativeName.StartsWith(Settings.Language) ||
+                        c.DisplayName.StartsWith(Settings.Language) ||
+                        c.EnglishName.StartsWith(Settings.Language)
+                    )?.Name ?? "en-US";
+            }
+            catch { }
+
+            string langChunk = cultureName.Split('-')[0];
+
+            JsonDocument doc = JsonDocument.Parse(json);
+
+            if (doc.RootElement.TryGetProperty(langChunk, out JsonElement lang))
+            {
+                return lang;
+            }
+            else if (doc.RootElement.TryGetProperty("en", out JsonElement fallbackLang))
+            {
+                return fallbackLang;
+            }
+
+            return null;
+        }
+
         private void RefreshText(object sender, PropertyChangedEventArgs e)
         {
-            var el = WebServices.Home.GetLanguage();
+            var el = GetLanguage();
             if (el == null) return;
             var lang = (JsonElement)el;
             NoHomeHead.Text = lang.GetProperty("header").GetString().Replace("Skype", Settings.BrandingName);
