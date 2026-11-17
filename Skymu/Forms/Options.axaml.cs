@@ -134,7 +134,7 @@ namespace Skymu.Forms
     owner.GetTemplateChildren().OfType<SliceControl>()
          .FirstOrDefault(c => c.Name == "InnerSlice");
 
-        private void TabSelect(object sender, PointerEventArgs e)
+        private void TabSelect(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;

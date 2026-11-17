@@ -76,16 +76,6 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.Grid WindowArea => Part<global::Avalonia.Controls.Grid>(nameof(WindowArea));
         protected global::Avalonia.Controls.Grid FrameArea => Part<global::Avalonia.Controls.Grid>(nameof(FrameArea));
         protected global::Avalonia.Controls.Grid TitleBar => Part<global::Avalonia.Controls.Grid>(nameof(TitleBar));
-        protected global::Avalonia.Controls.RowDefinition ChatButtonRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatButtonRow));
-        protected global::Avalonia.Controls.RowDefinition ChatTopBarRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatTopBarRow));
-        protected global::Avalonia.Controls.RowDefinition ChatTopbarSplitterRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(ChatTopbarSplitterRow));
-        protected global::Avalonia.Controls.RowDefinition MessageWindowRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(MessageWindowRow));
-        protected global::Avalonia.Controls.RowDefinition TopbarWindowRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(TopbarWindowRow));
-        protected global::Avalonia.Controls.ColumnDefinition ContactsColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(ContactsColumn));
-        protected global::Avalonia.Controls.ColumnDefinition RecentsColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(RecentsColumn));
-        protected global::Avalonia.Controls.ColumnDefinition ServersColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(ServersColumn));
-        protected global::Avalonia.Controls.ColumnDefinition SidebarColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(SidebarColumn));
-        protected global::Avalonia.Controls.ColumnDefinition SkypeSplitterColumn => Part<global::Avalonia.Controls.ColumnDefinition>(nameof(SkypeSplitterColumn));
         protected global::Avalonia.Controls.ContentControl ChatProfileArea => Part<global::Avalonia.Controls.ContentControl>(nameof(ChatProfileArea));
         protected global::Avalonia.Controls.ContentControl FillMessagePanelHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillMessagePanelHost));
         protected global::Avalonia.Controls.ContentControl FillWindowHost => Part<global::Avalonia.Controls.ContentControl>(nameof(FillWindowHost));
@@ -116,6 +106,17 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.TextBlock TypingIndicatorText => Part<global::Avalonia.Controls.TextBlock>(nameof(TypingIndicatorText));
         protected global::Avalonia.Controls.Control ProfileGrid => Part<global::Avalonia.Controls.Control>(nameof(ProfileGrid));
         protected Image TitleBarIcon => Part<Image>(nameof(TitleBarIcon));
+
+        protected RowDefinition ChatTopBarRow => ChatArea.RowDefinitions[0];
+        protected RowDefinition TopbarWindowRow => ChatArea.RowDefinitions[1];
+        protected RowDefinition ChatTopbarSplitterRow => ChatArea.RowDefinitions[2];
+        protected RowDefinition MessageWindowRow => ChatArea.RowDefinitions[3];
+        protected RowDefinition ChatButtonRow => ((Grid)MessageWindow.Child).RowDefinitions[0];
+        protected ColumnDefinition SidebarColumn => ContentArea.ColumnDefinitions[0];
+        protected ColumnDefinition SkypeSplitterColumn => ContentArea.ColumnDefinitions[1];
+        protected ColumnDefinition ContactsColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[0];
+        protected ColumnDefinition ServersColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[1];
+        protected ColumnDefinition RecentsColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[2];
         #endregion
 
         #region Variables
@@ -828,6 +829,14 @@ namespace Skymu.Theming
         internal async Task InitSidebar() => await vmodel.InitSidebar();
 
         public Task BeginLoading() => vmodel.InitSidebar();
+
+        protected void OpenImage_Click(object sender, PointerReleasedEventArgs e)
+        {
+            if (e.InitialPressMouseButton != MouseButton.Left) return;
+            var message = (sender as Image)?.DataContext as Message;
+            if (message != null)
+                Universal.ActiveViewModel.OpenImageCommand.Execute(message.Attachments);
+        }
 
         private async void HandleConversationSelection(object selected_item)
         {

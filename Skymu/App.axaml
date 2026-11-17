@@ -21,15 +21,29 @@ xmlns:preferences="clr-namespace:Skymu.Preferences">
 	<Application.Styles>
 		<Style Selector="Window">
 			<Setter Property="UseLayoutRounding" Value="True" />
-			<Setter Property="TextOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
-			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />
+			<Setter Property="RenderOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
+			<Setter Property="RenderOptions.BaselinePixelAlignment" Value="Aligned" />
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
 		</Style>
 		<Style Selector="UserControl">
 			<Setter Property="UseLayoutRounding" Value="True" />
-			<Setter Property="TextOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
-			<Setter Property="TextOptions.BaselinePixelAlignment" Value="Aligned" />
+			<Setter Property="RenderOptions.TextRenderingMode" Value="{DynamicResource AppTextRenderingMode}" />
+			<Setter Property="RenderOptions.BaselinePixelAlignment" Value="Aligned" />
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+		</Style>
+		<!--  This fixes the red hyperlink hover color  -->
+		<Style Selector="HyperlinkButton">
+			<Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
+		</Style>
+		<Style Selector="HyperlinkButton:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Foreground" Value="{DynamicResource Accent}" />
+		</Style>
+		<Style Selector="ContextMenu">
+			<Setter Property="Padding" Value="0" />
+			<Setter Property="Margin" Value="0" />
+		</Style>
+		<Style Selector="Image">
+			<Setter Property="UseLayoutRounding" Value="True" />
 		</Style>
 	</Application.Styles>
 	<Application.Resources>
@@ -38,38 +52,6 @@ xmlns:preferences="clr-namespace:Skymu.Preferences">
 				<ResourceInclude Source="avares://Skymu/UIComponents/MessageContextMenu.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 			<local:LanguageManager x:Key="Lang" />
-			<Style TargetType="Hyperlink">
-				<!--  This fixes the red hyperlink hover color  -->
-				<Style.Triggers>
-					<Trigger Property="IsMouseOver" Value="True">
-						<Setter Property="Foreground" Value="{DynamicResource Accent}" />
-					</Trigger>
-					<Trigger Property="IsMouseOver" Value="True">
-						<Setter Property="TextDecorations" Value="Underline" />
-					</Trigger>
-				</Style.Triggers>
-				<Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-				<Setter Property="TextDecorations" Value="{x:Null}" />
-			</Style>
-			<Style TargetType="{x:Type ContextMenu}">
-				<Setter Property="Padding" Value="0" />
-				<Setter Property="Margin" Value="0" />
-			</Style>
-			<Style TargetType="Image">
-				<Setter Property="UseLayoutRounding" Value="True" />
-				<Setter Property="SnapsToDevicePixels" Value="True" />
-				<Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
-			</Style>
-			<Style TargetType="ListBox">
-				<Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-				<Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
-				<Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
-			</Style>
-			<Style TargetType="ListView">
-				<Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-				<Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
-				<Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="True" />
-			</Style>
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

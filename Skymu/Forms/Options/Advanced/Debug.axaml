@@ -85,7 +85,7 @@
             <StackPanel Orientation="Horizontal">
                 <Image Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/connection.png}" />
                 <TextBlock Margin="15,0,0,0" VerticalAlignment="Center">
-                    <Hyperlink Click="OPEN_PR_URL">Contribute to Skymu</Hyperlink>
+                    <HyperlinkButton Content="Contribute to Skymu" Click="OPEN_PR_URL"/>
                 </TextBlock>
             </StackPanel>
         </StackPanel>

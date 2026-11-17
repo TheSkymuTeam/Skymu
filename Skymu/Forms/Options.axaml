@@ -396,8 +396,7 @@
                     </StackPanel>
                     <ContentControl
                         x:Name="PageHost"
-                        Margin="5,40,5,5"
-                        NavigationUIIsVisible="False" />
+                        Margin="5,40,5,5" />
                 </Grid>
 
                 <StackPanel

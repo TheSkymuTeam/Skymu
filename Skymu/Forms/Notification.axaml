@@ -27,7 +27,7 @@
     FontSize="11"
     PointerEntered="Window_PointerEntered"
     PointerExited="Window_PointerExited"
-    MouseRightButtonDown="Window_MouseRightButtonDown"
+    PointerPressed="Window_PointerPressed"
     ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="Height"

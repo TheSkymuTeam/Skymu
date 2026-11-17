@@ -40,7 +40,7 @@ namespace Skymu.AvaloniaHelpers
         {
             var resources = Application.Current.Resources;
 
-            if (Skymu.Preferences.Settings  .UseClearType)
+            if (Skymu.Preferences.Settings.UseClearType)
             {
                 resources["AppTextRenderingMode"] = TextRenderingMode.SubpixelAntialias;
             }

@@ -144,14 +144,14 @@ namespace Skymu.Skype6
 
         #region Event handlers
 
-        private void HomeButton_Click(object sender, PointerEventArgs e)
+        private void HomeButton_Click(object sender, PointerReleasedEventArgs e)
         {
             _ = SelectTab(_currentTab);
             SetWindow(WindowType.Home);
             SelectSidebarTopRowButton(HomeButton);
         }
 
-        private async void AddContact_Close(object sender, PointerEventArgs e)
+        private async void AddContact_Close(object sender, PointerReleasedEventArgs e)
         {
             await SelectTab(_currentTab);
             if (current_window == WindowType.Home)

@@ -78,13 +78,18 @@ IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences
                     Padding="0,0,10,0"
                     VerticalAlignment="Center"
                     Text="{Binding [sF_USERINFO_LABEL_LANGUAGE]}" />
-                            <ComboBox
-                    Width="250"
-                    DisplayMemberPath="Key"
-                    ItemsSource="{Binding Languages}"
-                    SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
-                    SelectedValuePath="Key"
-                                SelectionChanged="OnLanguageSelectionChanged"/>
+<ComboBox
+    Width="250"
+    ItemsSource="{Binding Languages}"
+    SelectedValue="{Binding Path=[Language], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
+    SelectedValueBinding="{Binding Key}"
+    SelectionChanged="OnLanguageSelectionChanged">
+    <ComboBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding Key}" />
+        </DataTemplate>
+    </ComboBox.ItemTemplate>
+</ComboBox>
             </StackPanel>
 
             <Separator Margin="2,2,5,2" Foreground="{DynamicResource Separator}" />

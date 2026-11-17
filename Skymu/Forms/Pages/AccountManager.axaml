@@ -204,7 +204,7 @@
                     Content="▲"
                     FontSize="9"
                     IsEnabled="False"
-                    ToolTip="Move up (tried first for auto-login)" />
+                    ToolTip.Tip="Move up (tried first for auto-login)" />
                 <Button
                     x:Name="MoveDownButton"
                     Width="23"
@@ -213,7 +213,7 @@
                     Content="▼"
                     FontSize="9"
                     IsEnabled="False"
-                    ToolTip="Move down (tried later for auto-login)" />
+                    ToolTip.Tip="Move down (tried later for auto-login)" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -167,10 +167,93 @@ mc:Ignorable="d">
 		<converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
 		<converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
 		<converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
-		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
-		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 
-		<!--  User template  -->
+		
+		<!--  COMPACT RECENTS TEMPLATES START  -->
+		<DataTemplate x:Key="DateHeaderTemplate" DataType="{x:Type global:DateHeaderItem}">
+			<Border
+			Height="20"
+			Margin="0"
+			Padding="8,0"
+			Background="{DynamicResource Sidebar.Header}">
+				<TextBlock
+				Margin="2,0,0,1"
+				VerticalAlignment="Center"
+				FontFamily="Tahoma"
+				FontSize="11"
+				Foreground="{DynamicResource Text.VeryHighContrast}"
+				Text="{Binding DateText}" />
+			</Border>
+		</DataTemplate>
+		<DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type yggdrasil:DirectMessage}">
+			<Grid Height="22" Margin="8,1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="18" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<global:SliceControl
+				Grid.Column="0"
+				Width="14"
+				Height="14"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				DefaultIndex="{Binding Partner.ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="Assets/Universal/Icon/skype-status-small.png"
+				StackDirection="Horizontal" />
+				<TextBlock
+				x:Name="compactName"
+				Grid.Column="1"
+				Margin="6,0,0,0"
+				VerticalAlignment="Center"
+				FontFamily="Tahoma"
+				FontSize="11"
+				Foreground="{DynamicResource Text.VeryHighContrast}"
+				Text="{Binding DisplayName}"
+				TextTrimming="CharacterEllipsis" />
+			</Grid>
+		</DataTemplate>
+		<DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type yggdrasil:Group}">
+			<Grid Height="22" Margin="8,1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="18" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<global:SliceControl
+				Grid.Column="0"
+				Width="14"
+				Height="14"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				DefaultIndex="21"
+				ElementCount="22"
+				HoverIndex="-1"
+				PressedIndex="-1"
+				SliceMode="0"
+				Source="Assets/Universal/Icon/skype-status-small.png"
+				StackDirection="Horizontal" />
+				<TextBlock
+				x:Name="compactGroupName"
+				Grid.Column="1"
+				Margin="6,0,0,0"
+				VerticalAlignment="Center"
+				FontFamily="Tahoma"
+				FontSize="11"
+				Foreground="{DynamicResource Text.VeryHighContrast}"
+				Text="{Binding DisplayName}"
+				TextTrimming="CharacterEllipsis" />
+			</Grid>
+		</DataTemplate>
+		<!--  COMPACT RECENTS TEMPLATES END  -->
+		
+	</Window.Resources>
+	<Window.DataTemplates>
+				<!--  User template  -->
 		<DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
 			<Grid Height="32" Margin="2,4,0,4">
 				<Grid.RowDefinitions>
@@ -319,12 +402,7 @@ mc:Ignorable="d">
 			</Grid>
 		</DataTemplate>
 		<!--  Server template  -->
-		<HierarchicalDataTemplate DataType="{x:Type yggdrasil:Server}" ItemsSource="{Binding GroupedChannels}">
-			<HierarchicalDataTemplate.ItemTemplate>
-				<DataTemplate>
-					<ContentControl Content="{Binding}">
-						<ContentControl.Resources>
-							<DataTemplate DataType="{x:Type global:CategoryHeaderItem}">
+		<DataTemplate DataType="{x:Type global:CategoryHeaderItem}">
 								<Border
 								Height="20"
 								Margin="0"
@@ -368,10 +446,8 @@ mc:Ignorable="d">
 									Text="{Binding DisplayName}" />
 								</Grid>
 							</DataTemplate>
-						</ContentControl.Resources>
-					</ContentControl>
-				</DataTemplate>
-			</HierarchicalDataTemplate.ItemTemplate>
+		<TreeDataTemplate DataType="{x:Type yggdrasil:Server}" ItemsSource="{Binding GroupedChannels}">
+
 			<Grid Height="32" Margin="2,4,0,4">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="2" />
@@ -460,378 +536,289 @@ mc:Ignorable="d">
 					</ToggleButton.Template>
 				</ToggleButton>
 			</Grid>
-		</HierarchicalDataTemplate>
+		</TreeDataTemplate>
 		<!--  CONTACT ITEM TEMPLATE END  -->
-		<!--  COMPACT RECENTS TEMPLATES START  -->
-		<DataTemplate x:Key="DateHeaderTemplate" DataType="{x:Type global:DateHeaderItem}">
-			<Border
-			Height="20"
-			Margin="0"
-			Padding="8,0"
-			Background="{DynamicResource Sidebar.Header}">
-				<TextBlock
-				Margin="2,0,0,1"
-				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
-				Foreground="{DynamicResource Text.VeryHighContrast}"
-				Text="{Binding DateText}" />
-			</Border>
-		</DataTemplate>
-		<DataTemplate x:Key="CompactDirectMessageTemplate" DataType="{x:Type yggdrasil:DirectMessage}">
-			<Grid Height="22" Margin="8,1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="18" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<global:SliceControl
-				Grid.Column="0"
-				Width="14"
-				Height="14"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Center"
-				DefaultIndex="{Binding Partner.ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
-				ElementCount="22"
-				HoverIndex="-1"
-				PressedIndex="-1"
-				SliceMode="0"
-				Source="Assets/Universal/Icon/skype-status-small.png"
-				StackDirection="Horizontal" />
-				<TextBlock
-				x:Name="compactName"
-				Grid.Column="1"
-				Margin="6,0,0,0"
-				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
-				Foreground="{DynamicResource Text.VeryHighContrast}"
-				Text="{Binding DisplayName}"
-				TextTrimming="CharacterEllipsis" />
-			</Grid>
-		</DataTemplate>
-		<DataTemplate x:Key="CompactGroupTemplate" DataType="{x:Type yggdrasil:Group}">
-			<Grid Height="22" Margin="8,1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="18" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<global:SliceControl
-				Grid.Column="0"
-				Width="14"
-				Height="14"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Center"
-				DefaultIndex="21"
-				ElementCount="22"
-				HoverIndex="-1"
-				PressedIndex="-1"
-				SliceMode="0"
-				Source="Assets/Universal/Icon/skype-status-small.png"
-				StackDirection="Horizontal" />
-				<TextBlock
-				x:Name="compactGroupName"
-				Grid.Column="1"
-				Margin="6,0,0,0"
-				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
-				Foreground="{DynamicResource Text.VeryHighContrast}"
-				Text="{Binding DisplayName}"
-				TextTrimming="CharacterEllipsis" />
-			</Grid>
-		</DataTemplate>
-		<!--  COMPACT RECENTS TEMPLATES END  -->
 		<!--  CONVERSATION ITEM TEMPLATES START  -->
-		<!--  MessageItem Template  -->
-		<DataTemplate DataType="{x:Type yggdrasil:ActionMessage}">
-			<Grid HorizontalAlignment="Stretch">
-				<Grid
-				x:Name="ConversationGrid"
-				MaxWidth="626"
-				Margin="0,10,65,0"
-				HorizontalAlignment="Stretch">
-					<!--  148 + 428 + 50  -->
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="148" />
-						<ColumnDefinition Width="*" MaxWidth="428" />
-						<ColumnDefinition Width="50" />
-					</Grid.ColumnDefinitions>
-					<!--  Center area  -->
-					<!--  Reply header  -->
-					<Grid
-					Grid.Row="0"
-					Grid.Column="1"
-					Margin="0,0,20,2"
-					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Image
-						Grid.Column="0"
-						Width="12"
-						Margin="0,0,6,0"
-						VerticalAlignment="Center"
-
-						Source="Assets/Themeable/Main/reply-arrow.png" />
-						<TextBlock
-						Grid.Column="1"
-						FontFamily="Tahoma"
-						FontSize="11"
-						Foreground="{DynamicResource Text.LowContrast}"
-						LineHeight="1"
-						TextTrimming="CharacterEllipsis"
-						TextWrapping="NoWrap">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-									<Binding Path="ParentMessage.Author.DisplayName" />
-									<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</Grid>
-					<!--  Message body + attachment  -->
-					<StackPanel
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,0,20,0"
-					Orientation="Vertical">
-						<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
-						<Image
-						MaxWidth="300"
-						MaxHeight="300"
-						Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
-						HorizontalAlignment="Left"
-						Cursor="Hand"
-						RenderOptions.BitmapInterpolationMode="HighQuality"
-						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
-						Stretch="Uniform"
-						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
-							<Image.InputBindings>
-								<MouseBinding
-								Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-								CommandParameter="{Binding Attachments}"
-								MouseAction="LeftClick" />
-							</Image.InputBindings>
-						</Image>
-					</StackPanel>
-					<!--  Timestamp  -->
-					<Grid
-					Grid.Row="1"
-					Grid.Column="2"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Top">
-						<TextBlock
-						FontFamily="Tahoma"
-						FontSize="11"
-						Foreground="{DynamicResource Text.LowContrast}"
-						Text="{Binding Time, StringFormat=h:mm tt}"
-						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-						<global:SliceControl
-						Width="10"
-						Height="10"
-						AnimationFps="60"
-						DefaultIndex="0"
-						ElementCount="72"
-						IsAnimation="True"
-						SliceMode="0"
-						Source="Assets/Universal/Main/loading.png"
-						StackDirection="Vertical"
-						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
-					</Grid>
-				</Grid>
-			</Grid>
-		</DataTemplate>
-		<DataTemplate DataType="{x:Type yggdrasil:Message}">
+<!--  MessageItem Template  -->
+<DataTemplate DataType="{x:Type yggdrasil:ActionMessage}">
+	<Grid HorizontalAlignment="Stretch">
+		<Grid
+		x:Name="ConversationGrid"
+		MaxWidth="626"
+		Margin="0,10,65,0"
+		HorizontalAlignment="Stretch">
+			<!--  148 + 428 + 50  -->
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="148" />
+				<ColumnDefinition Width="*" MaxWidth="428" />
+				<ColumnDefinition Width="50" />
+			</Grid.ColumnDefinitions>
+			<!--  Center area  -->
+			<!--  Reply header  -->
 			<Grid
-			HorizontalAlignment="Stretch"
-			ContextMenu="{DynamicResource MessageContextMenu}"
-			Tag="{DynamicResource Lang}">
-				<Grid
-				x:Name="ConversationGrid"
-				MaxWidth="626"
-				Margin="0,10,65,0"
-				HorizontalAlignment="Stretch">
-					<!--  148 + 428 + 50  -->
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="148" />
-						<ColumnDefinition Width="*" MaxWidth="428" />
-						<ColumnDefinition Width="50" />
-					</Grid.ColumnDefinitions>
-					<!--  Sender name  -->
-					<TextBlock
-					Grid.Row="1"
-					Grid.Column="0"
-					Margin="0,0,16,0"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Top"
-					FontFamily="Tahoma"
-					FontSize="11"
-					TextTrimming="CharacterEllipsis">
-						<TextBlock.Foreground>
-							<MultiBinding Converter="{StaticResource SenderToColorConverter}">
-								<Binding Path="Author.Identifier" />
-								<Binding Path="IsForwarded" />
-							</MultiBinding>
-						</TextBlock.Foreground>
-						<TextBlock.Text>
-							<MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
-								<Binding Path="Author.DisplayName" />
-								<Binding Path="IsForwarded" />
-							</MultiBinding>
-						</TextBlock.Text>
-						<TextBlock.IsVisible>
-							<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
-								<Binding Path="PreviousMessageIdentifier" />
-								<Binding Path="Author.Identifier" />
-								<Binding Path="PreviousMessageIsAction" />
-							</MultiBinding>
-						</TextBlock.IsVisible>
-					</TextBlock>
-					<!--  Center area  -->
-					<!--  Reply header  -->
-					<Grid
-					Grid.Row="0"
-					Grid.Column="1"
-					Margin="0,0,20,2"
-					IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Image
-						Grid.Column="0"
-						Width="12"
-						Margin="0,0,6,0"
-						VerticalAlignment="Center"
+			Grid.Row="0"
+			Grid.Column="1"
+			Margin="0,0,20,2"
+			IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Image
+				Grid.Column="0"
+				Width="12"
+				Margin="0,0,6,0"
+				VerticalAlignment="Center"
 
-						Source="Assets/Themeable/Main/reply-arrow.png" />
-						<TextBlock
-						Grid.Column="1"
-						FontFamily="Tahoma"
-						FontSize="11"
-						Foreground="{DynamicResource Text.LowContrast}"
-						LineHeight="1"
-						TextTrimming="CharacterEllipsis"
-						TextWrapping="NoWrap">
-							<TextBlock.Text>
-								<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
-									<Binding Path="ParentMessage.Author.DisplayName" />
-									<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
-								</MultiBinding>
-							</TextBlock.Text>
-						</TextBlock>
-					</Grid>
-					<!--  Message body + attachment  -->
-					<StackPanel
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,0,20,0"
-					Orientation="Vertical">
-						<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
-						<Image
-						MaxWidth="300"
-						MaxHeight="300"
-						Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
-						HorizontalAlignment="Left"
-						Cursor="Hand"
-						RenderOptions.BitmapInterpolationMode="HighQuality"
-						Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
-						Stretch="Uniform"
-						IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
-							<Image.InputBindings>
-								<MouseBinding
-								Command="{Binding DataContext.OpenImageCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-								CommandParameter="{Binding Attachments}"
-								MouseAction="LeftClick" />
-							</Image.InputBindings>
-						</Image>
-					</StackPanel>
-					<!--  Timestamp  -->
-					<Grid
-					Grid.Row="1"
-					Grid.Column="2"
-					HorizontalAlignment="Left"
-					VerticalAlignment="Top">
-						<TextBlock
-						FontFamily="Tahoma"
-						FontSize="11"
-						Foreground="{DynamicResource Text.LowContrast}"
-						Text="{Binding Time, StringFormat=h:mm tt}"
-						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-						<global:SliceControl
-						Width="10"
-						Height="10"
-						AnimationFps="60"
-						DefaultIndex="0"
-						ElementCount="72"
-						IsAnimation="True"
-						SliceMode="0"
-						Source="Assets/Universal/Main/loading.png"
-						StackDirection="Vertical"
-						IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
-					</Grid>
-				</Grid>
-			</Grid>
-		</DataTemplate>
-		<!--  CallStartedItem Template  -->
-		<DataTemplate DataType="{x:Type yggdrasil:CallStartedNotice}">
-			<Grid Margin="0,9.5,0,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="114" />
-					<ColumnDefinition Width="430" />
-					<ColumnDefinition Width="80" />
-				</Grid.ColumnDefinitions>
+				Source="Assets/Themeable/Main/reply-arrow.png" />
 				<TextBlock
 				Grid.Column="1"
 				FontFamily="Tahoma"
 				FontSize="11"
 				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
-				<TextBlock
-				Grid.Column="2"
+				LineHeight="1"
+				TextTrimming="CharacterEllipsis"
+				TextWrapping="NoWrap">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+							<Binding Path="ParentMessage.Author.DisplayName" />
+							<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</Grid>
+			<!--  Message body + attachment  -->
+			<StackPanel
+			Grid.Row="1"
+			Grid.Column="1"
+			Margin="0,0,20,0"
+			Orientation="Vertical">
+				<ContentControl Content="{Binding Converter={StaticResource FormatFullActionMessageConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+				<Image
+				MaxWidth="300"
+				MaxHeight="300"
+				Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
 				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
+				Cursor="Hand"
+				RenderOptions.BitmapInterpolationMode="HighQuality"
+				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
+				Stretch="Uniform"
+				PointerReleased="OpenImage_Click"
+				IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+				</Image>
+			</StackPanel>
+			<!--  Timestamp  -->
+			<Grid
+			Grid.Row="1"
+			Grid.Column="2"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top">
+				<TextBlock
 				FontFamily="Tahoma"
 				FontSize="11"
 				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding Time, StringFormat=h:mm tt}" />
+				Text="{Binding Time, StringFormat=h:mm tt}"
+				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+				<global:SliceControl
+				Width="10"
+				Height="10"
+				AnimationFps="60"
+				DefaultIndex="0"
+				ElementCount="72"
+				IsAnimation="True"
+				SliceMode="0"
+				Source="Assets/Universal/Main/loading.png"
+				StackDirection="Vertical"
+				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
 			</Grid>
-		</DataTemplate>
-		<!--  CallEndedItem Template  -->
-		<DataTemplate DataType="{x:Type yggdrasil:CallEndedNotice}">
-			<Grid Margin="0,9.5,0,0">
+		</Grid>
+	</Grid>
+</DataTemplate>
+<DataTemplate DataType="{x:Type yggdrasil:Message}">
+	<Grid
+	HorizontalAlignment="Stretch"
+	ContextMenu="{DynamicResource MessageContextMenu}"
+	Tag="{DynamicResource Lang}">
+		<Grid
+		x:Name="ConversationGrid"
+		MaxWidth="626"
+		Margin="0,10,65,0"
+		HorizontalAlignment="Stretch">
+			<!--  148 + 428 + 50  -->
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="148" />
+				<ColumnDefinition Width="*" MaxWidth="428" />
+				<ColumnDefinition Width="50" />
+			</Grid.ColumnDefinitions>
+			<!--  Sender name  -->
+			<TextBlock
+			Grid.Row="1"
+			Grid.Column="0"
+			Margin="0,0,16,0"
+			HorizontalAlignment="Right"
+			VerticalAlignment="Top"
+			FontFamily="Tahoma"
+			FontSize="11"
+			TextTrimming="CharacterEllipsis">
+				<TextBlock.Foreground>
+					<MultiBinding Converter="{StaticResource SenderToColorConverter}">
+						<Binding Path="Author.Identifier" />
+						<Binding Path="IsForwarded" />
+					</MultiBinding>
+				</TextBlock.Foreground>
+				<TextBlock.Text>
+					<MultiBinding Converter="{StaticResource ForwardedMessageStatusConverter}">
+						<Binding Path="Author.DisplayName" />
+						<Binding Path="IsForwarded" />
+					</MultiBinding>
+				</TextBlock.Text>
+				<TextBlock.IsVisible>
+					<MultiBinding Converter="{StaticResource IDToVisibilityConverter}">
+						<Binding Path="PreviousMessageIdentifier" />
+						<Binding Path="Author.Identifier" />
+						<Binding Path="PreviousMessageIsAction" />
+					</MultiBinding>
+				</TextBlock.IsVisible>
+			</TextBlock>
+			<!--  Center area  -->
+			<!--  Reply header  -->
+			<Grid
+			Grid.Row="0"
+			Grid.Column="1"
+			Margin="0,0,20,2"
+			IsVisible="{Binding ParentMessage, Converter={StaticResource NullDependentVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="114" />
-					<ColumnDefinition Width="430" />
-					<ColumnDefinition Width="80" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
+				<Image
+				Grid.Column="0"
+				Width="12"
+				Margin="0,0,6,0"
+				VerticalAlignment="Center"
+
+				Source="Assets/Themeable/Main/reply-arrow.png" />
 				<TextBlock
 				Grid.Column="1"
 				FontFamily="Tahoma"
 				FontSize="11"
 				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
-				<TextBlock
-				Grid.Column="2"
+				LineHeight="1"
+				TextTrimming="CharacterEllipsis"
+				TextWrapping="NoWrap">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="Replying to {0} - &quot;{1}&quot;">
+							<Binding Path="ParentMessage.Author.DisplayName" />
+							<Binding Converter="{StaticResource ReplyBodyConverter}" Path="ParentMessage.Text" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
+			</Grid>
+			<!--  Message body + attachment  -->
+			<StackPanel
+			Grid.Row="1"
+			Grid.Column="1"
+			Margin="0,0,20,0"
+			Orientation="Vertical">
+				<ContentControl Content="{Binding Text, Converter={StaticResource FormatFullTextConverter}}" IsVisible="{Binding Text, Converter={StaticResource NullDependentVisibilityConverter}}" />
+				<Image
+				MaxWidth="300"
+				MaxHeight="300"
+				Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
 				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
+				Cursor="Hand"
+				RenderOptions.BitmapInterpolationMode="HighQuality"
+				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
+				Stretch="Uniform"
+				PointerReleased="OpenImage_Click"
+				IsVisible="{Binding Attachments, Converter={StaticResource NullDependentVisibilityConverter}}">
+				</Image>
+			</StackPanel>
+			<!--  Timestamp  -->
+			<Grid
+			Grid.Row="1"
+			Grid.Column="2"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top">
+				<TextBlock
 				FontFamily="Tahoma"
 				FontSize="11"
 				Foreground="{DynamicResource Text.LowContrast}"
-				Text="{Binding Time, StringFormat=h:mm tt}" />
+				Text="{Binding Time, StringFormat=h:mm tt}"
+				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
+				<global:SliceControl
+				Width="10"
+				Height="10"
+				AnimationFps="60"
+				DefaultIndex="0"
+				ElementCount="72"
+				IsAnimation="True"
+				SliceMode="0"
+				Source="Assets/Universal/Main/loading.png"
+				StackDirection="Vertical"
+				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}}" />
 			</Grid>
-		</DataTemplate>
-		<!--  CONVERSATION ITEM TEMPLATE END  -->
-	</Window.Resources>
+		</Grid>
+	</Grid>
+</DataTemplate>
+<!--  CallStartedItem Template  -->
+<DataTemplate DataType="{x:Type yggdrasil:CallStartedNotice}">
+	<Grid Margin="0,9.5,0,0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="114" />
+			<ColumnDefinition Width="430" />
+			<ColumnDefinition Width="80" />
+		</Grid.ColumnDefinitions>
+		<TextBlock
+		Grid.Column="1"
+		FontFamily="Tahoma"
+		FontSize="11"
+		Foreground="{DynamicResource Text.LowContrast}"
+		Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
+		<TextBlock
+		Grid.Column="2"
+		HorizontalAlignment="Left"
+		VerticalAlignment="Top"
+		FontFamily="Tahoma"
+		FontSize="11"
+		Foreground="{DynamicResource Text.LowContrast}"
+		Text="{Binding Time, StringFormat=h:mm tt}" />
+	</Grid>
+</DataTemplate>
+<!--  CallEndedItem Template  -->
+<DataTemplate DataType="{x:Type yggdrasil:CallEndedNotice}">
+	<Grid Margin="0,9.5,0,0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="114" />
+			<ColumnDefinition Width="430" />
+			<ColumnDefinition Width="80" />
+		</Grid.ColumnDefinitions>
+		<TextBlock
+		Grid.Column="1"
+		FontFamily="Tahoma"
+		FontSize="11"
+		Foreground="{DynamicResource Text.LowContrast}"
+		Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
+		<TextBlock
+		Grid.Column="2"
+		HorizontalAlignment="Left"
+		VerticalAlignment="Top"
+		FontFamily="Tahoma"
+		FontSize="11"
+		Foreground="{DynamicResource Text.LowContrast}"
+		Text="{Binding Time, StringFormat=h:mm tt}" />
+	</Grid>
+</DataTemplate>
+<!--  CONVERSATION ITEM TEMPLATE END  -->
+	</Window.DataTemplates>
 	<Grid x:Name="FrameArea">
 		<Grid
 		x:Name="TitleBar"
@@ -1162,10 +1149,10 @@ mc:Ignorable="d">
 						<Grid x:Name="ContentArea">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition
-								x:Name="SidebarColumn"
+								
 								Width="300"
 								MinWidth="160" />
-								<ColumnDefinition x:Name="SkypeSplitterColumn" Width="4" />
+								<ColumnDefinition  Width="4" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 							<Grid x:Name="Sidebar" Grid.Column="0">
@@ -1564,9 +1551,9 @@ mc:Ignorable="d">
 									</Grid>
 									<Grid x:Name="SidebarTabs" Margin="0,4,0,0">
 										<Grid.ColumnDefinitions>
-											<ColumnDefinition x:Name="ContactsColumn" Width="Auto" />
-											<ColumnDefinition x:Name="ServersColumn" Width="Auto" />
-											<ColumnDefinition x:Name="RecentsColumn" Width="*" />
+											<ColumnDefinition  Width="Auto" />
+											<ColumnDefinition  Width="Auto" />
+											<ColumnDefinition  Width="*" />
 										</Grid.ColumnDefinitions>
 										<global:SliceControl
 										x:Name="btnContacts"
@@ -1654,8 +1641,8 @@ mc:Ignorable="d">
 													<VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
 												</ItemsPanelTemplate>
 											</ListBox.ItemsPanel>
-											<ListBox.ItemContainerStyle>
-												<Style TargetType="ListBoxItem">
+											<ListBox.Styles>
+												<Style Selector="ListBoxItem">
 													<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="Focusable" Value="True" />
@@ -1673,7 +1660,7 @@ mc:Ignorable="d">
 														</Setter.Value>
 													</Setter>
 												</Style>
-											</ListBox.ItemContainerStyle>
+											</ListBox.Styles>
 										</ListBox>
 										<TreeView
 										x:Name="ServersList"
@@ -1682,8 +1669,8 @@ mc:Ignorable="d">
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										ScrollViewer.VerticalScrollBarVisibility="Visible"
 										IsVisible="False">
-											<TreeView.ItemContainerStyle>
-												<Style TargetType="TreeViewItem">
+											<TreeView.Styles>
+												<Style Selector="TreeViewItem">
 													<Setter Property="IsExpanded" Value="False" />
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="BorderThickness" Value="0" />
@@ -1706,7 +1693,7 @@ mc:Ignorable="d">
 														</Setter.Value>
 													</Setter>
 												</Style>
-											</TreeView.ItemContainerStyle>
+											</TreeView.Styles>
 										</TreeView>
 										<Grid x:Name="ConversationsHint">
 											<Grid.RowDefinitions>
@@ -1743,10 +1730,15 @@ mc:Ignorable="d">
 													TextAlignment="Center"
 													TextWrapping="Wrap">
 														<!--  Sorry non-word wrap users. This had to be done to avoid a gap.  -->
-														<Run Text="It's easy to start a conversation. Go to your " /><Run
-														Foreground="{DynamicResource Text.Hyperlink}"
-														PointerReleased="OnContactsLink"
-														Text="Contacts" /><Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
+														<Run Text="It's easy to start a conversation. Go to your " />
+														<InlineUIContainer>
+    <TextBlock
+        Cursor="Hand"
+        Foreground="{DynamicResource Text.Hyperlink}"
+        PointerReleased="OnContactsLink"
+        Text="Contacts" />
+</InlineUIContainer>
+														<Run Text=", click on someone, then click on one of the buttons to call, video call or send them a message." />
 													</TextBlock>
 													<Grid Margin="0,8,0,12" HorizontalAlignment="Center">
 														<Grid.ColumnDefinitions>
@@ -1928,13 +1920,13 @@ mc:Ignorable="d">
 							DataContext="{Binding SelectedItem, ElementName=ConversationList}">
 
 								<Grid.RowDefinitions>
-									<RowDefinition x:Name="ChatTopBarRow" Height="24" />
+									<RowDefinition  Height="24" />
 									<RowDefinition
-									x:Name="TopbarWindowRow"
+									
 									MinHeight="108"
 									MaxHeight="172" />
-									<RowDefinition x:Name="ChatTopbarSplitterRow" Height="4" />
-									<RowDefinition x:Name="MessageWindowRow" Height="*" />
+									<RowDefinition  Height="4" />
+									<RowDefinition  Height="*" />
 								</Grid.RowDefinitions>
 								<Grid x:Name="ChatTopbar" Grid.Row="0">
 
@@ -2297,7 +2289,7 @@ mc:Ignorable="d">
 								CornerRadius="0,4,4,4">
 									<Grid>
 										<Grid.RowDefinitions>
-											<RowDefinition x:Name="ChatButtonRow" Height="34" />
+											<RowDefinition  Height="34" />
 											<RowDefinition Height="1" />
 											<RowDefinition Height="*" />
 											<RowDefinition Height="20" />
@@ -2401,8 +2393,8 @@ mc:Ignorable="d">
 													<VirtualizingStackPanel />
 												</ItemsPanelTemplate>
 											</ListBox.ItemsPanel>
-											<ListBox.ItemContainerStyle>
-												<Style TargetType="ListBoxItem">
+											<ListBox.Styles>
+												<Style Selector="ListBoxItem">
 													<Setter Property="HorizontalAlignment" Value="Stretch" />
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="Template">
@@ -2415,7 +2407,7 @@ mc:Ignorable="d">
 														</Setter.Value>
 													</Setter>
 												</Style>
-											</ListBox.ItemContainerStyle>
+											</ListBox.Styles>
 										</ListBox>
 										<Grid
 										Grid.Row="4"

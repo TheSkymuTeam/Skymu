@@ -295,7 +295,7 @@ namespace Skymu.Theming
 
         protected global::Avalonia.Controls.TextBlock header => Part<global::Avalonia.Controls.TextBlock>(nameof(header));
         protected global::Avalonia.Controls.Grid LoginControls => Part<global::Avalonia.Controls.Grid>(nameof(LoginControls));
-        protected global::Avalonia.Controls.RowDefinition MenuBarRow => Part<global::Avalonia.Controls.RowDefinition>(nameof(MenuBarRow));
+        private RowDefinition MenuBarRow => ((Grid)Content).RowDefinitions[0];
         protected global::Avalonia.Controls.TextBlock PasswordLabel => Part<global::Avalonia.Controls.TextBlock>(nameof(PasswordLabel));
         protected global::Avalonia.Controls.TextBox PasswordTokenBox => Part<global::Avalonia.Controls.TextBox>(nameof(PasswordTokenBox));
         protected global::Avalonia.Controls.ComboBox ProtocolComboBox => Part<global::Avalonia.Controls.ComboBox>(nameof(ProtocolComboBox));

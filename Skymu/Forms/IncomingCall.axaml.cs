@@ -56,7 +56,7 @@ namespace Skymu.Forms
             CallerName.Text = Universal.Lang.Format("sCALLNOTIF_TITLE", _call.Caller.DisplayName);
         }
 
-        private void OnClose(object sender, PointerEventArgs e)
+        private void OnClose(object sender, PointerPressedEventArgs e)
         {
             if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;

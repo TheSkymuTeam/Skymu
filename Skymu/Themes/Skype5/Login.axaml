@@ -49,7 +49,7 @@
     </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="MenuBarRow" Height="20" />
+            <RowDefinition  Height="20" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Rectangle Grid.Row="0" Fill="{DynamicResource Accent}" />

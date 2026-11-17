@@ -20,7 +20,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:global="clr-namespace:Skymu"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="CallScreen"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     d:DesignHeight="720"
@@ -86,12 +85,11 @@
             <Rectangle Grid.RowSpan="3">
                 <Rectangle.Fill>
                     <ImageBrush
-                        ImageSource="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/noise.png'}"
+                        Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/noise.png'}"
                         Opacity="0.05"
                         Stretch="None"
                         TileMode="Tile"
-                        Viewport="0,0,32,32"
-                        ViewportUnits="Absolute" />
+                        DestinationRect="0,0,32,32" />
                 </Rectangle.Fill>
             </Rectangle>
         </Grid>
