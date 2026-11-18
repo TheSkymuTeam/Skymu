@@ -17,8 +17,8 @@
                 VerticalScrollBarVisibility="Auto">
             <TextBlock
                     Name="Description"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     LineHeight="16"
                     Text="Message goes here"

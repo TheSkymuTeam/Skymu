@@ -115,7 +115,7 @@
                     TextAlignment="Center" />
                 <TextBlock
                     x:Name="CallStatus"
-                    FontSize="11"
+                    
                     Foreground="White"
                     Text="calling"
                     TextAlignment="Center" />

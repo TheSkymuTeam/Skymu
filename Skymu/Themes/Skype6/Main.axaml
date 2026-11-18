@@ -35,8 +35,8 @@
     
     Background="{DynamicResource Metro.Background}"
     Closing="Main_Closing"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     CanResize="True"
     
     WindowStartupLocation="CenterScreen"
@@ -140,8 +140,8 @@
                 <TextBlock
                     Margin="2,0,0,1"
                     VerticalAlignment="Center"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     Text="{Binding DateText}" />
             </Border>
@@ -170,8 +170,8 @@
                     Grid.Column="1"
                     Margin="6,0,0,0"
                     VerticalAlignment="Center"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
@@ -201,8 +201,8 @@
                     Grid.Column="1"
                     Margin="6,0,0,0"
                     VerticalAlignment="Center"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     Text="{Binding DisplayName}"
                     TextTrimming="CharacterEllipsis" />
@@ -372,8 +372,8 @@
                                     <TextBlock
                                         Margin="2,0,0,1"
                                         VerticalAlignment="Center"
-                                        FontFamily="Tahoma"
-                                        FontSize="11"
+                                        
+                                        
                                         Foreground="{DynamicResource Text.VeryHighContrast}"
                                         Text="{Binding CategoryName}" />
                                 </Border>
@@ -539,8 +539,8 @@
                      Source="Assets/Themeable/Main/reply-arrow.png" />
                  <TextBlock
                      Grid.Column="1"
-                     FontFamily="Tahoma"
-                     FontSize="11"
+                     
+                     
                      Foreground="{DynamicResource Text.LowContrast}"
                      LineHeight="1"
                      TextTrimming="CharacterEllipsis"
@@ -579,8 +579,8 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top">
                  <TextBlock
-                     FontFamily="Tahoma"
-                     FontSize="11"
+                     
+                     
                      Foreground="{DynamicResource Text.LowContrast}"
                      Text="{Binding Time, StringFormat=h:mm tt}"
                      IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
@@ -626,8 +626,8 @@
                  Margin="0,0,16,0"
                  HorizontalAlignment="Right"
                  VerticalAlignment="Top"
-                 FontFamily="Tahoma"
-                 FontSize="11"
+                 
+                 
                  TextTrimming="CharacterEllipsis">
                  <TextBlock.Foreground>
                      <MultiBinding Converter="{StaticResource SenderToColorConverter}">
@@ -669,8 +669,8 @@
                      Source="Assets/Themeable/Main/reply-arrow.png" />
                  <TextBlock
                      Grid.Column="1"
-                     FontFamily="Tahoma"
-                     FontSize="11"
+                     
+                     
                      Foreground="{DynamicResource Text.LowContrast}"
                      LineHeight="1"
                      TextTrimming="CharacterEllipsis"
@@ -709,8 +709,8 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top">
                  <TextBlock
-                     FontFamily="Tahoma"
-                     FontSize="11"
+                     
+                     
                      Foreground="{DynamicResource Text.LowContrast}"
                      Text="{Binding Time, StringFormat=h:mm tt}"
                      IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
@@ -739,16 +739,16 @@
          </Grid.ColumnDefinitions>
          <TextBlock
              Grid.Column="1"
-             FontFamily="Tahoma"
-             FontSize="11"
+             
+             
              Foreground="{DynamicResource Text.LowContrast}"
              Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
          <TextBlock
              Grid.Column="2"
              HorizontalAlignment="Left"
              VerticalAlignment="Top"
-             FontFamily="Tahoma"
-             FontSize="11"
+             
+             
              Foreground="{DynamicResource Text.LowContrast}"
              Text="{Binding Time, StringFormat=h:mm tt}" />
      </Grid>
@@ -763,16 +763,16 @@
          </Grid.ColumnDefinitions>
          <TextBlock
              Grid.Column="1"
-             FontFamily="Tahoma"
-             FontSize="11"
+             
+             
              Foreground="{DynamicResource Text.LowContrast}"
              Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
          <TextBlock
              Grid.Column="2"
              HorizontalAlignment="Left"
              VerticalAlignment="Top"
-             FontFamily="Tahoma"
-             FontSize="11"
+             
+             
              Foreground="{DynamicResource Text.LowContrast}"
              Text="{Binding Time, StringFormat=h:mm tt}" />
      </Grid>
@@ -793,8 +793,8 @@
 				x:Name="MainMenuBar"
 				Height="20"
 				Background="{DynamicResource Active.Menubar}"
-				FontFamily="Tahoma"
-				FontSize="11">
+				
+				>
 					<MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
 						<MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
 							<MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}">
@@ -1266,8 +1266,8 @@
                                         Background="Transparent"
                                         BorderThickness="0"
                                         Cursor="IBeam"
-                                        FontFamily="Tahoma"
-                                        FontSize="11"
+                                        
+                                        
                                         GotFocus="SearchBox_Focused"
                                         LostFocus="SearchBox_Unfocused" />
                                 </Grid>
@@ -1451,8 +1451,8 @@
                                                         Key="sADD_CONTACT_PANEL_MESSAGE"
                                                         x:Name="AddContactHint"
                                                         Margin="25,15,25,0"
-                                                        FontFamily="Tahoma"
-                                                        FontSize="11"
+                                                        
+                                                        
                                                         Foreground="#333333"
                                                         TextBlock.TextAlignment="Center" />
                                                     <TextBlock HorizontalAlignment="Center" Text="WARNING: NOT IMPLEMENTED" />
@@ -1636,8 +1636,8 @@
                                                             Source="Assets/Universal/Main/mood.png" />
                                                         <TextBlock
                                                             Margin="9,0,0,0"
-                                                            FontFamily="Tahoma"
-                                                            FontSize="11"
+                                                            
+                                                            
                                                             Text="{Binding Partner.Status, TargetNullValue=''}"
                                                             TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
@@ -1654,8 +1654,8 @@
                                                             Source="Assets/Universal/Main/clock.png" />
                                                         <TextBlock
                                                             Margin="9,0,0,0"
-                                                            FontFamily="Tahoma"
-                                                            FontSize="11"
+                                                            
+                                                            
                                                             Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
                                                             TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
@@ -1675,8 +1675,8 @@
                                                             StackDirection="Horizontal" />
                                                         <TextBlock
                                                             Margin="11,0,0,0"
-                                                            FontFamily="Tahoma"
-                                                            FontSize="11"
+                                                            
+                                                            
                                                             Text="{Binding Partner.ConnectionStatus, Converter={StaticResource StatIntToText}}"
                                                             TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
@@ -1718,8 +1718,8 @@
                                                                     MaxWidth="100"
                                                                     Margin="5,0,0,1"
                                                                     VerticalAlignment="Center"
-                                                                    FontFamily="Tahoma"
-                                                                    FontSize="11"
+                                                                    
+                                                                    
                                                                     Text="{Binding DisplayName}"
                                                                     TextTrimming="CharacterEllipsis"
                                                                     TextWrapping="NoWrap" />
@@ -1797,8 +1797,8 @@
                                                             StackDirection="Horizontal" />
                                                         <TextBlock
                                                             Margin="11,0,0,0"
-                                                            FontFamily="Tahoma"
-                                                            FontSize="11"
+                                                            
+                                                            
                                                             Text="{Binding Channels.Count, StringFormat='{}Server - {0} channels'}"
                                                             TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
@@ -1854,8 +1854,8 @@
                                                             StackDirection="Horizontal" />
                                                         <TextBlock
                                                             Margin="11,0,0,0"
-                                                            FontFamily="Tahoma"
-                                                            FontSize="11"
+                                                            
+                                                            
                                                             Text="Server channel"
                                                             TextTrimming="CharacterEllipsis" />
                                                     </StackPanel>
@@ -2107,8 +2107,8 @@
     AcceptsReturn="True"
     Background="Transparent"
     BorderThickness="0"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     GotFocus="MessageTextBox_Focused"
     LostFocus="MessageTextBox_Unfocused"
     TextChanged="MessageTextBox_TextChanged"

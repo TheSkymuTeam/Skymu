@@ -28,8 +28,8 @@
     VerticalAlignment="Top"
     Background="#d4e2f2"
     DataContext="{StaticResource Lang}"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     CanMinimize="True"
     
     WindowStartupLocation="CenterScreen"
@@ -381,16 +381,16 @@
                         Orientation="Horizontal">
                         <TextBlock
                             x:Name="CTabTitle"
-                            FontFamily="Tahoma"
-                            FontSize="11"
+                            
+                            
                             FontWeight="Bold"
                             Foreground="{DynamicResource Text.HighContrast}"
                             Text="Skymu Customization:" />
                         <TextBlock
                             x:Name="CTabDescription"
                             Margin="7,0"
-                            FontFamily="Tahoma"
-                            FontSize="11"
+                            
+                            
                             Foreground="{DynamicResource Text.HighContrast}"
                             Text="Modify the way Skymu looks, feels, and behaves" />
                     </StackPanel>
@@ -413,7 +413,7 @@
                         Padding="12,0"
                         Click="SaveButtonClick"
                         Content="{Binding [sF_OPTIONS_BUTTON_SAVE]}"
-                        FontSize="11" />
+                         />
                     <Button
                         Height="23"
                         MinWidth="73"
@@ -421,7 +421,7 @@
                         Padding="12,0"
                         Click="RestartButtonClick"
                         Content="Save and restart"
-                        FontSize="11" />
+                         />
                     <Button
                         Height="23"
                         MinWidth="73"
@@ -429,14 +429,14 @@
                         Padding="12,0"
                         Click="ResetButtonClick"
                         Content="{Binding [sF_OPTIONS_BTN_RESET]}"
-                        FontSize="11" />
+                         />
                     <Button
                         Height="23"
                         MinWidth="73"
                         Padding="12,0"
                         Click="CancelButtonClick"
                         Content="{Binding [sF_OPTIONS_BUTTON_CANCEL]}"
-                        FontSize="11" />
+                         />
                 </StackPanel>
 
             </Grid>

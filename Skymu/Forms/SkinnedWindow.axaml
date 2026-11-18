@@ -93,8 +93,8 @@
                 VerticalAlignment="Center"
                 Click="bELClick"
                 Content="Back"
-                FontFamily="Tahoma"
-                FontSize="11"
+                
+                
                 IsDefault="False"
                 IsVisible="False" />
             <Grid x:Name="BottomControlsGrid">
@@ -110,8 +110,8 @@
                     Margin="15,0,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     TextAlignment="Center"
                     TextWrapping="Wrap"
                     IsVisible="False" />
@@ -121,8 +121,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Content="{Binding [sF_CONFIRM_CBNOMORE], Source={StaticResource Lang}}"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     IsVisible="False" />
                 <StackPanel
@@ -138,8 +138,8 @@
         VerticalAlignment="Center"
         Click="bLClick"
         Content="{Binding [sF_CONFIRM_OK_BTN], Source={StaticResource Lang}}"
-        FontFamily="Tahoma"
-        FontSize="11"
+        
+        
         IsDefault="True"
         IsVisible="True" />
                     <Button
@@ -152,8 +152,8 @@
         VerticalAlignment="Center"
         Click="bMClick"
         Content="{Binding [sZAPBUTTON_DUMMYMIDDLE], Source={StaticResource Lang}}"
-        FontFamily="Tahoma"
-        FontSize="11"
+        
+        
         IsDefault="False"
         IsVisible="False" />
                     <Button
@@ -166,8 +166,8 @@
         VerticalAlignment="Center"
         Click="bRClick"
         Content="{Binding [sZAPBUTTON_CANCEL], Source={StaticResource Lang}}"
-        FontFamily="Tahoma"
-        FontSize="11" />
+        
+         />
                 </StackPanel>
             </Grid>
         </Grid>

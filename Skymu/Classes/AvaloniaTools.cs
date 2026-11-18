@@ -2,10 +2,15 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using Avalonia.Platform;
+using Avalonia.Skia;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static QRCoder.PayloadGenerator.SwissQrCode;
 
@@ -99,5 +104,4 @@ namespace Skymu.AvaloniaHelpers
                 ApplyTextRenderingToTree(child, mode);
         }
     }
-
 }

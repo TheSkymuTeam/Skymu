@@ -23,10 +23,14 @@ xmlns:preferences="clr-namespace:Skymu.Preferences">
 		<Style Selector="Window">
 			<Setter Property="UseLayoutRounding" Value="True" />
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+						<Setter Property="FontFamily" Value="Tahoma" />
+			<Setter Property="FontSize" Value="11" />
 		</Style>
 		<Style Selector="UserControl">
 			<Setter Property="UseLayoutRounding" Value="True" />
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
+			<Setter Property="FontFamily" Value="Tahoma" />
+			<Setter Property="FontSize" Value="11" />
 		</Style>
 		<!--  This fixes the red hyperlink hover color  -->
 		<Style Selector="HyperlinkButton">

@@ -19,8 +19,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Skymu.Forms.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     Foreground="{DynamicResource Text.VeryHighContrast}"
     >
     <StackPanel
@@ -52,8 +52,8 @@
             <TextBlock
                 Name="UpdateStatusText"
                 Grid.Row="0"
-                FontFamily="Tahoma"
-                FontSize="11"
+                
+                
                 Text="Update progress goes here" />
             <ProgressBar
                 x:Name="ProgBar"
@@ -66,8 +66,8 @@
                 Grid.Row="2"
                 Margin="0,4,0,0"
                 HorizontalAlignment="Right"
-                FontFamily="Tahoma"
-                FontSize="11"
+                
+                
                 Text="File size 3233.5 KB"
                 IsVisible="False" />
         </Grid>

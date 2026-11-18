@@ -19,8 +19,8 @@
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Width="400"
     Height="400"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     Foreground="{DynamicResource Text.VeryHighContrast}"
     >
     <Grid>
@@ -47,8 +47,8 @@
                 Padding="5"
                 Background="Transparent"
                 BorderThickness="0"
-                FontFamily="Tahoma"
-                FontSize="11"
+                
+                
                 Foreground="#888888"
                 IsReadOnly="True"
                 Text="Error details go here"

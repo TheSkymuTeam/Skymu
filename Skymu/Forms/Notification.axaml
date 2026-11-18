@@ -23,8 +23,8 @@
     Width="240"
     TransparencyLevelHint="Transparent"
     Background="Transparent"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     PointerEntered="Window_PointerEntered"
     PointerExited="Window_PointerExited"
     PointerPressed="Window_PointerPressed"

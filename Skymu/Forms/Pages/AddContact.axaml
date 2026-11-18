@@ -24,7 +24,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:uc="clr-namespace:Skymu.UserControls"
     d:Background="#FFFFFF"
-    FontFamily="Tahoma"
+    
     Foreground="{DynamicResource Text.VeryHighContrast}"
     
     mc:Ignorable="d">
@@ -39,8 +39,8 @@
             <StackPanel Margin="0,0,0,30" Orientation="Vertical">
                 <uc:QuickLTB
                     Key="sAC_MORE_CAPTION"
-                    FontFamily="Tahoma"
-                    FontSize="11" />
+                    
+                     />
                 <Separator Margin="0,10,0,8" />
                 <global:SliceControl
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/plus.png'}"
@@ -109,8 +109,8 @@
                         Grid.Row="0"
                         Grid.ColumnSpan="2"
                         Margin="0,0,0,10"
-                        FontFamily="Tahoma"
-                        FontSize="11"
+                        
+                        
                         FontWeight="Bold"
                         Foreground="{DynamicResource Text.VeryHighContrast}"
                         Text="{Binding Path='[sADDADDAFRIEND_SCR1_CAPTION]', Source={StaticResource Lang}}" />
@@ -119,8 +119,8 @@
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
                         Margin="0,0,0,18"
-                        FontFamily="Tahoma"
-                        FontSize="11"
+                        
+                        
                         Foreground="{DynamicResource Text.VeryHighContrast}" />
                     <Grid
                         Grid.Row="1"
@@ -135,8 +135,8 @@
                             x:Name="UserDetailsInput"
                             Grid.Column="0"
                             Height="20"
-                            FontFamily="Tahoma"
-                            FontSize="11"
+                            
+                            
                             Text="Sensei Wu" />
                         <Button
                             x:Name="UserFindBtn"
@@ -145,8 +145,8 @@
                             Margin="8,0,0,0"
                             Click="FindFriend"
                             Content="{Binding Path='[sF_ADDFRIEND_FIND_BTN]', Source={StaticResource Lang}}"
-                            FontFamily="Tahoma"
-                            FontSize="11"
+                            
+                            
                             IsDefault="True"
                             IsEnabled="False" />
                     </Grid>
@@ -155,8 +155,8 @@
                         Grid.RowSpan="2"
                         Grid.ColumnSpan="2"
                         Margin="0,15,0,26"
-                        FontFamily="Tahoma"
-                        FontSize="11"
+                        
+                        
                         Foreground="{DynamicResource Text.VeryHighContrast}"
                         Text="{Binding Path='[sF_SEARCH_MANDALAY_LB_INTRO]', Source={StaticResource Lang}}"
                         TextWrapping="Wrap" />
@@ -173,8 +173,8 @@
                         x:Name="SelectContactHint"
                         Grid.Row="3"
                         Margin="0,15,0,26"
-                        FontFamily="Tahoma"
-                        FontSize="11"
+                        
+                        
                         Foreground="{DynamicResource Text.VeryHighContrast}"
                         IsVisible="False" />
 
@@ -301,8 +301,8 @@
                     Key="sAC_ADD_CONFIRM_CAPTION"
                     Grid.Row="0"
                     Margin="0,0,0,10"
-                    FontFamily="Tahoma"
-                    FontSize="11"
+                    
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}">
                     <uc:QuickLTB.Bindings>
                         <Binding Path="DisplayName" />
@@ -314,7 +314,7 @@
                     x:Name="ContactMessage"
                     Grid.Row="1"
                     Width="250"
-                    FontFamily="Tahoma"
+                    
                     Foreground="{DynamicResource Text.VeryHighContrast}"
                     Text="Hello, Skymu user here!" />
                 <!--  Details of found contact  -->
@@ -362,8 +362,8 @@
                                 <!--  Display name  -->
                                 <TextBlock
                                     Margin="9,0,0,0"
-                                    FontFamily="Tahoma"
-                                    FontSize="11"
+                                    
+                                    
                                     Text="{Binding DisplayName, TargetNullValue='Unnamed'}"
                                     TextTrimming="CharacterEllipsis" />
                                 <!--  Text status row ("I'm bored", etc)  -->
@@ -378,8 +378,8 @@
                                         Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Main/mood.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
-                                        FontFamily="Tahoma"
-                                        FontSize="11"
+                                        
+                                        
                                         Text="{Binding Status, TargetNullValue=''}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
@@ -396,8 +396,8 @@
                                         Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Main/clock.png'}" />
                                     <TextBlock
                                         Margin="9,0,0,0"
-                                        FontFamily="Tahoma"
-                                        FontSize="11"
+                                        
+                                        
                                         Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
@@ -417,8 +417,8 @@
                                         StackDirection="Horizontal" />
                                     <TextBlock
                                         Margin="11,0,0,0"
-                                        FontFamily="Tahoma"
-                                        FontSize="11"
+                                        
+                                        
                                         Text="{Binding ConnectionStatus, Converter={StaticResource StatIntToText}}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>

@@ -28,8 +28,8 @@
     d:Height="505"
     d:Width="514"
     DataContext="{StaticResource Lang}"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     Foreground="{DynamicResource Text.VeryHighContrast}"
     
     mc:Ignorable="d">

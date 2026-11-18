@@ -63,8 +63,8 @@
             Width="390"
             Margin="0,23,10,0"
             HorizontalAlignment="Center"
-            FontFamily="Tahoma"
-            FontSize="11"
+            
+            
             Foreground="#363636"
             LineHeight="16"
             Text="Open-source software under the AGPL v3: https://skymu.app/legal/license&#x0a;You can find our repository over at GitHub or on our website - skymu.app/repo.&#x0a;Skymu is not associated with Skype or Microsoft. However, Skymu contains assets created by Skype Limited and employed under fair use."
@@ -74,8 +74,8 @@
             Width="390"
             Margin="0,10,10,0"
             HorizontalAlignment="Center"
-            FontFamily="Tahoma"
-            FontSize="11"
+            
+            
             Foreground="#363636"
             LineHeight="16"
             Text="Skymu is an advanced, multiprotocol instant messaging client that faithfully recreates the user interface and experience of several older Skype versions.&#x0a;As far as we know, no comparable piece of software exists."
@@ -85,8 +85,8 @@
             Width="390"
             Margin="0,10,10,0"
             HorizontalAlignment="Center"
-            FontFamily="Tahoma"
-            FontSize="11"
+            
+            
             Foreground="#888888"
             LineHeight="16"
             TextAlignment="Center"

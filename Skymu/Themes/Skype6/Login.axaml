@@ -29,8 +29,8 @@
     Background="{DynamicResource Accent}"
     Closing="Login_Closing"
     DataContext="{StaticResource Lang}"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     Loaded="Login_Loaded"
     CanResize="False"
     
@@ -195,8 +195,8 @@
                                 Margin="0,0,0,5"
                                 Padding="5,0,0,0"
                                 Content="{Binding [sF_USERENTRY_CB_STOREPASSWORD]}"
-                                FontFamily="Tahoma"
-                                FontSize="11"
+                                
+                                
                                 Foreground="{DynamicResource Text.VeryLowContrast}"
                                 IsChecked="{Binding Path=[SaveCredentials], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                             <CheckBox
@@ -204,8 +204,8 @@
                                 Height="16"
                                 Padding="5,0,0,0"
                                 Content="{Binding [sF_USERENTRY_CB_START_SKYPE]}"
-                                FontFamily="Tahoma"
-                                FontSize="11"
+                                
+                                
                                 Foreground="{DynamicResource Text.VeryLowContrast}"
                                 IsChecked="{Binding Path=[AutoLaunch], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
                         </StackPanel>

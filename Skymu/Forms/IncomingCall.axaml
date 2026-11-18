@@ -23,8 +23,8 @@
     Width="385"
     TransparencyLevelHint="Transparent"
     Background="Transparent"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     PointerPressed="OnDrag"
     CanResize="False"
     ShowActivated="False"

@@ -25,8 +25,8 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     DataContext="{StaticResource Lang}"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     Foreground="{DynamicResource Text.VeryHighContrast}"
     
     mc:Ignorable="d">

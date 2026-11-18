@@ -33,8 +33,8 @@ MinHeight="450"
 Background="{DynamicResource Active.Background}"
 Closing="Main_Closing"
 
-FontFamily="Tahoma"
-FontSize="11"
+
+
 Foreground="{DynamicResource Text.VeryHighContrast}"
 CanResize="True"
 
@@ -177,8 +177,8 @@ mc:Ignorable="d">
 				<TextBlock
 				Margin="2,0,0,1"
 				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DateText}" />
 			</Border>
@@ -207,8 +207,8 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="6,0,0,0"
 				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
@@ -238,8 +238,8 @@ mc:Ignorable="d">
 				Grid.Column="1"
 				Margin="6,0,0,0"
 				VerticalAlignment="Center"
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.VeryHighContrast}"
 				Text="{Binding DisplayName}"
 				TextTrimming="CharacterEllipsis" />
@@ -409,8 +409,8 @@ mc:Ignorable="d">
 									<TextBlock
 									Margin="2,0,0,1"
 									VerticalAlignment="Center"
-									FontFamily="Tahoma"
-									FontSize="11"
+									
+									
 									Foreground="{DynamicResource Text.VeryHighContrast}"
 									Text="{Binding CategoryName}" />
 								</Border>
@@ -574,8 +574,8 @@ mc:Ignorable="d">
 				Source="Assets/Themeable/Main/reply-arrow.png" />
 				<TextBlock
 				Grid.Column="1"
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.LowContrast}"
 				LineHeight="1"
 				TextTrimming="CharacterEllipsis"
@@ -614,8 +614,8 @@ mc:Ignorable="d">
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top">
 				<TextBlock
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.LowContrast}"
 				Text="{Binding Time, StringFormat=h:mm tt}"
 				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
@@ -696,8 +696,8 @@ mc:Ignorable="d">
 			Margin="0,0,16,0"
 			HorizontalAlignment="Right"
 			VerticalAlignment="Top"
-			FontFamily="Tahoma"
-			FontSize="11"
+			
+			
 			TextTrimming="CharacterEllipsis">
 				<TextBlock.Foreground>
 					<MultiBinding Converter="{StaticResource SenderToColorConverter}">
@@ -739,8 +739,8 @@ mc:Ignorable="d">
 				Source="Assets/Themeable/Main/reply-arrow.png" />
 				<TextBlock
 				Grid.Column="1"
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.LowContrast}"
 				LineHeight="1"
 				TextTrimming="CharacterEllipsis"
@@ -779,8 +779,8 @@ mc:Ignorable="d">
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top">
 				<TextBlock
-				FontFamily="Tahoma"
-				FontSize="11"
+				
+				
 				Foreground="{DynamicResource Text.LowContrast}"
 				Text="{Binding Time, StringFormat=h:mm tt}"
 				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
@@ -809,16 +809,16 @@ mc:Ignorable="d">
 		</Grid.ColumnDefinitions>
 		<TextBlock
 		Grid.Column="1"
-		FontFamily="Tahoma"
-		FontSize="11"
+		
+		
 		Foreground="{DynamicResource Text.LowContrast}"
 		Text="{Binding StartedBy, StringFormat='Call started by: {0}'}" />
 		<TextBlock
 		Grid.Column="2"
 		HorizontalAlignment="Left"
 		VerticalAlignment="Top"
-		FontFamily="Tahoma"
-		FontSize="11"
+		
+		
 		Foreground="{DynamicResource Text.LowContrast}"
 		Text="{Binding Time, StringFormat=h:mm tt}" />
 	</Grid>
@@ -833,16 +833,16 @@ mc:Ignorable="d">
 		</Grid.ColumnDefinitions>
 		<TextBlock
 		Grid.Column="1"
-		FontFamily="Tahoma"
-		FontSize="11"
+		
+		
 		Foreground="{DynamicResource Text.LowContrast}"
 		Text="{Binding Duration, StringFormat='Call ended, duration: {0}'}" />
 		<TextBlock
 		Grid.Column="2"
 		HorizontalAlignment="Left"
 		VerticalAlignment="Top"
-		FontFamily="Tahoma"
-		FontSize="11"
+		
+		
 		Foreground="{DynamicResource Text.LowContrast}"
 		Text="{Binding Time, StringFormat=h:mm tt}" />
 	</Grid>
@@ -957,8 +957,8 @@ mc:Ignorable="d">
 				x:Name="MainMenuBar"
 				Height="20"
 				Background="{DynamicResource Active.Menubar}"
-				FontFamily="Tahoma"
-				FontSize="11">
+				
+				>
 					<MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
 						<MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
 							<MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}">
@@ -1494,8 +1494,8 @@ mc:Ignorable="d">
 										Background="Transparent"
 										BorderThickness="0"
 										Cursor="IBeam"
-										FontFamily="Tahoma"
-										FontSize="11"
+										
+										
 										GotFocus="SearchBox_Focused"
 										LostFocus="SearchBox_Unfocused" />
 										<Rectangle
@@ -1900,8 +1900,8 @@ mc:Ignorable="d">
 																Source="Assets/Universal/Main/mood.png" />
 																<TextBlock
 																Margin="9,0,0,0"
-																FontFamily="Tahoma"
-																FontSize="11"
+																
+																
 																Text="{Binding Partner.Status, TargetNullValue=''}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1918,8 +1918,8 @@ mc:Ignorable="d">
 																Source="Assets/Universal/Main/clock.png" />
 																<TextBlock
 																Margin="9,0,0,0"
-																FontFamily="Tahoma"
-																FontSize="11"
+																
+																
 																Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat={}{0:h:mm tt}}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1939,8 +1939,8 @@ mc:Ignorable="d">
 																StackDirection="Horizontal" />
 																<TextBlock
 																Margin="11,0,0,0"
-																FontFamily="Tahoma"
-																FontSize="11"
+																
+																
 																Text="{Binding Partner.ConnectionStatus, Converter={StaticResource StatIntToText}}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -1982,8 +1982,8 @@ mc:Ignorable="d">
 																		MaxWidth="100"
 																		Margin="5,0,0,1"
 																		VerticalAlignment="Center"
-																		FontFamily="Tahoma"
-																		FontSize="11"
+																		
+																		
 																		Foreground="{DynamicResource Text.VeryHighContrast}"
 																		Text="{Binding DisplayName}"
 																		TextTrimming="CharacterEllipsis"
@@ -2062,8 +2062,8 @@ mc:Ignorable="d">
 																StackDirection="Horizontal" />
 																<TextBlock
 																Margin="11,0,0,0"
-																FontFamily="Tahoma"
-																FontSize="11"
+																
+																
 																Text="{Binding Channels.Count, StringFormat='{}Server - {0} channels'}"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -2119,8 +2119,8 @@ mc:Ignorable="d">
 																StackDirection="Horizontal" />
 																<TextBlock
 																Margin="11,0,0,0"
-																FontFamily="Tahoma"
-																FontSize="11"
+																
+																
 																Text="Server channel"
 																TextTrimming="CharacterEllipsis" />
 															</StackPanel>
@@ -2386,8 +2386,8 @@ mc:Ignorable="d">
     AcceptsReturn="True"
     Background="Transparent"
     BorderThickness="0"
-    FontFamily="Tahoma"
-    FontSize="11"
+    
+    
     GotFocus="MessageTextBox_Focused"
     LostFocus="MessageTextBox_Unfocused"
     TextChanged="MessageTextBox_TextChanged"
