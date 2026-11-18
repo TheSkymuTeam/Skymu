@@ -107,16 +107,17 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.Control ProfileGrid => Part<global::Avalonia.Controls.Control>(nameof(ProfileGrid));
         protected Image TitleBarIcon => Part<Image>(nameof(TitleBarIcon));
 
-        protected RowDefinition ChatTopBarRow => ChatArea.RowDefinitions[0];
-        protected RowDefinition TopbarWindowRow => ChatArea.RowDefinitions[1];
-        protected RowDefinition ChatTopbarSplitterRow => ChatArea.RowDefinitions[2];
-        protected RowDefinition MessageWindowRow => ChatArea.RowDefinitions[3];
-        protected RowDefinition ChatButtonRow => ((Grid)MessageWindow.Child).RowDefinitions[0];
-        protected ColumnDefinition SidebarColumn => ContentArea.ColumnDefinitions[0];
-        protected ColumnDefinition SkypeSplitterColumn => ContentArea.ColumnDefinitions[1];
-        protected ColumnDefinition ContactsColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[0];
-        protected ColumnDefinition ServersColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[1];
-        protected ColumnDefinition RecentsColumn => ((Grid)btnContacts.Parent).ColumnDefinitions[2];
+        protected global::Avalonia.Controls.Grid SidebarTabs => Part<global::Avalonia.Controls.Grid>(nameof(SidebarTabs));
+        protected RowDefinition ChatTopBarRow => ChatArea?.RowDefinitions[0];
+        protected RowDefinition TopbarWindowRow => ChatArea?.RowDefinitions[1];
+        protected RowDefinition ChatTopbarSplitterRow => ChatArea?.RowDefinitions[2];
+        protected RowDefinition MessageWindowRow => ChatArea?.RowDefinitions[3];
+        protected RowDefinition ChatButtonRow => ((Grid)MessageWindow?.Child)?.RowDefinitions[0];
+        protected ColumnDefinition SidebarColumn => ContentArea?.ColumnDefinitions[0];
+        protected ColumnDefinition SkypeSplitterColumn => ContentArea?.ColumnDefinitions[1];
+        protected ColumnDefinition ContactsColumn => SidebarTabs?.ColumnDefinitions[0];
+        protected ColumnDefinition ServersColumn => SidebarTabs?.ColumnDefinitions[1];
+        protected ColumnDefinition RecentsColumn => SidebarTabs?.ColumnDefinitions[2];
         #endregion
 
         #region Variables
@@ -129,13 +130,13 @@ namespace Skymu.Theming
         private Thickness OriginalWindowAreaMargin;
         private bool noCloseEvent;
         private ScrollViewer _conversationScrollViewer;
+        private int _conversationScrollResolveAttempts;
         private bool _userScrolledUp = false;
         private Bitmap img_maximize,
             img_restore,
             img_split,
             img_join;
         private Dictionary<SliceControl, ColumnDefinition> buttonToColumn;
-        private IDataTemplate _defaultConversationTemplate;
         private readonly List<Control> _chromeClickable = new List<Control>();
         private bool IsLoadingConversation => vmodel?.IsLoadingConversation ?? false;
         protected WindowType current_window = WindowType.Chat;
@@ -200,7 +201,7 @@ namespace Skymu.Theming
                 CallDropdown.IsVisible = visible;
         }
 
-        protected void SetWindow(WindowType type, bool force = false)
+        protected virtual void SetWindow(WindowType type, bool force = false)
         {
             CallButton.UpdateLayout();
             if (vmodel.SelectedConversation is Group)
@@ -574,12 +575,11 @@ namespace Skymu.Theming
 
         protected virtual void InitializeMenuBar()
         {
+            if (MenuBarArea != null)
+                MenuBarArea.IsVisible = _currentFrame != Enumerations.WindowChrome.Native;
+
             if (_currentFrame == Enumerations.WindowChrome.Native)
-            {
-                MenuBarArea.IsVisible = false;
-                // For now, native window frame = native menu bar.
                 BuildMenuBarController();
-            }
         }
 
         protected void BuildMenuBarController()
@@ -617,6 +617,9 @@ namespace Skymu.Theming
         {
             noCloseEvent = false;
 
+            if (Settings.Theme == "Skype7")
+                _currentFrame = Enumerations.WindowChrome.Native;
+
             AvaloniaHelpers.AHelpers.SetMainWindow(this);
 
             vmodel = new MainViewModel();
@@ -624,30 +627,54 @@ namespace Skymu.Theming
 
             vmodel.Ready += async (s, e) =>
             {
-                ShowOwnName(Universal.CurrentUser.DisplayName);
-                StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
-                    Universal.CurrentUser.ConnectionStatus
-                );
-                if (ProfileGrid != null)
-                    ProfileGrid.DataContext = Universal.CurrentUser;
-                ConfigureCompactRecentsList();
-                await GenerateHome();
-                WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
-                this.Title = WindowTitle;
-                if (Settings.CheckSpeedOnStartup)
-                    vmodel.RunSpeedTestCommand.Execute(null);
-                Universal.CurrentUser.PropertyChanged += (ss, ee) =>
+                try
                 {
-                    if (ee.PropertyName == nameof(User.ConnectionStatus))
-                        Dispatcher.UIThread.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
-                };
-                if (ExtrasMenu != null && Universal.Plugin is IExtras iep)
-                {
-                    iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
-                    RefreshExtras();
+                    ShowOwnName(Universal.CurrentUser.DisplayName);
+                    if (StatusIcon != null)
+                        StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(
+                            Universal.CurrentUser.ConnectionStatus
+                        );
+                    if (ProfileGrid != null)
+                        ProfileGrid.DataContext = Universal.CurrentUser;
+                    await RefreshSidebarAfterDataLoad();
+                    try
+                    {
+                        await GenerateHome();
+                    }
+                    catch (Exception homeEx)
+                    {
+                        Debug.WriteLine("[Skymu] GenerateHome failed: " + homeEx);
+                    }
+                    SetWindow(WindowType.Home);
+                    WindowTitle = Settings.BrandingName + "™ - " + Universal.CurrentUser.Username;
+                    this.Title = WindowTitle;
+                    if (Settings.CheckSpeedOnStartup)
+                        vmodel.RunSpeedTestCommand.Execute(null);
+                    Universal.CurrentUser.PropertyChanged += (ss, ee) =>
+                    {
+                        if (ee.PropertyName == nameof(User.ConnectionStatus) && StatusIcon != null)
+                            Dispatcher.UIThread.Invoke(() => StatusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(Universal.CurrentUser.ConnectionStatus));
+                    };
+                    if (ExtrasMenu != null && Universal.Plugin is IExtras iep)
+                    {
+                        iep.ExtraConfigurations.CollectionChanged += (ss, ee) => RefreshExtras();
+                        RefreshExtras();
+                    }
+                    Main_SizeChanged(null, null);
+                    if (Dispatcher.UIThread.CheckAccess())
+                        Ready?.Invoke(this, EventArgs.Empty);
+                    else
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                            Ready?.Invoke(this, EventArgs.Empty));
                 }
-                Main_SizeChanged(null, null);
-                Ready?.Invoke(this, EventArgs.Empty);
+                catch (Exception ex)
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        Universal.RequestLoginSpinnerOff?.Invoke();
+                        Universal.ExceptionHandler(ex);
+                    });
+                }
             };
 
             vmodel.UserCountUpdated += text =>
@@ -757,7 +784,6 @@ namespace Skymu.Theming
                 { btnRecents, RecentsColumn },
             };
             StartSpinnerAnimation();
-            _defaultConversationTemplate = ConversationList.ItemTemplate;
             _ = SelectTab(btnRecents);
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
             InitializeEmojiPicker();
@@ -783,6 +809,7 @@ namespace Skymu.Theming
             Opened += (s, e) =>
             {
                 InitializeMenuBar();
+                AvaloniaHelpers.AHelpers.ApplyTextRenderingToTree(this);
 
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {
@@ -812,7 +839,7 @@ namespace Skymu.Theming
             new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
         },
             };
-            _ = animation.RunAsync(transform);
+            _ = animation.RunAsync(Spinner);
         }
 
 
@@ -860,6 +887,31 @@ namespace Skymu.Theming
                 vmodel.SelectedConversation = channel;
                 await SetConversation();
             }
+        }
+
+        private async Task RefreshSidebarAfterDataLoad()
+        {
+            int contacts = vmodel.ContactList?.Count ?? 0;
+            int recents = vmodel.ConversationList?.Count ?? 0;
+            var line = $"[Skymu.Sidebar] After InitSidebar: contacts={contacts} conversations={recents}";
+            Debug.WriteLine(line);
+            Trace.WriteLine(line);
+
+            SliceControl pick = btnRecents;
+            if (recents > 0 && btnRecents != null)
+                pick = btnRecents;
+            else if (contacts > 0 && btnContacts != null)
+                pick = btnContacts;
+            else if (btnRecents != null)
+                pick = btnRecents;
+
+            if (pick != null)
+                await SelectTab(pick);
+
+            line =
+                $"[Skymu.Sidebar] Tab={pick?.Name} ItemsSourceCount={(ConversationList.ItemsSource as System.Collections.ICollection)?.Count ?? ConversationList.ItemCount} Visible={ConversationList.IsVisible} ItemTemplate={ConversationList.ItemTemplate?.GetType().Name ?? "implicit"}";
+            Debug.WriteLine(line);
+            Trace.WriteLine(line);
         }
 
         private void ConfigureCompactRecentsList()
@@ -918,8 +970,14 @@ namespace Skymu.Theming
                     ServersList.ItemsSource = await vmodel.GetServerList();
                     break;
                 case "btnContacts":
-                    ConversationList.ItemTemplate = _defaultConversationTemplate;
+                    // WPF: ItemTemplateSelector = null ? Window.DataTemplates render DirectMessage/Group rows.
+                    ConversationList.ClearValue(ListBox.ItemTemplateProperty);
                     ConversationList.ItemsSource = vmodel.ContactList;
+                    {
+                        var msg = $"[Skymu.Sidebar] Contacts bound: {vmodel.ContactList?.Count ?? 0}";
+                        Debug.WriteLine(msg);
+                        Trace.WriteLine(msg);
+                    }
                     break;
                 case "btnRecents":
                     ConfigureCompactRecentsList();
@@ -1270,7 +1328,7 @@ namespace Skymu.Theming
             HandleConversationItems();
         }
 
-        protected void SearchBox_Focused(object sender, GotFocusEventArgs e)
+        protected virtual void SearchBox_Focused(object sender, GotFocusEventArgs e)
         {
             PseudoSearchBox.SetState(ButtonVisualState.Pressed);
             RemovePlaceholder(SearchBox);
@@ -1282,16 +1340,20 @@ namespace Skymu.Theming
             SetPlaceholder(SearchBox, Universal.Lang["sCONTACT_QF_HINT"]);
         }
 
-        protected void MessageTextBox_Focused(object sender, GotFocusEventArgs e)
+        protected virtual void MessageTextBox_Focused(object sender, GotFocusEventArgs e)
         {
             RemovePlaceholder(MessageTextBox);
             if (SendMsgButton != null) SendMsgButton.IsEnabled = CheckIfMessageSendable(MessageTextBox);
         }
 
-        protected void MessageTextBox_Unfocused(object sender, RoutedEventArgs e)
+        protected virtual void MessageTextBox_Unfocused(object sender, RoutedEventArgs e)
         {
             CheckIfMTBUnfocused(true);
         }
+
+        protected virtual void OnComposerTextChanged(bool canSend) { }
+
+        protected virtual void OnConversationItemsBound() { }
 
         protected async void MessageTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -1314,6 +1376,7 @@ namespace Skymu.Theming
             if (SendMsgButton != null) SendMsgButton.IsEnabled = CheckIfMessageSendable(MessageTextBox);
             if (HasAnyContent(MessageTextBox))
                 vmodel.lastTypingActivity = DateTime.UtcNow;
+            OnComposerTextChanged(CheckIfMessageSendable(MessageTextBox));
         }
 
         protected virtual void CallPhones_Click(object sender, PointerReleasedEventArgs e)
@@ -1816,20 +1879,36 @@ namespace Skymu.Theming
 
         private void HandleConversationItems()
         {
+            if (ConversationItemsList == null)
+                return;
+
             if (_conversationScrollViewer != null)
                 _conversationScrollViewer.ScrollChanged -= ConversationScrollChanged;
 
+            ConversationItemsList.ApplyTemplate();
             _conversationScrollViewer =
                 ConversationItemsList.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+
+            if (_conversationScrollViewer == null)
+            {
+                if (_conversationScrollResolveAttempts++ < 8)
+                    Dispatcher.UIThread.Post(HandleConversationItems, DispatcherPriority.Loaded);
+                return;
+            }
+
+            _conversationScrollResolveAttempts = 0;
             _conversationScrollViewer.ScrollChanged += ConversationScrollChanged;
+            OnConversationItemsBound();
         }
 
         private void ConversationScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (e.ExtentDelta.Y == 0)
-                _userScrolledUp =
-                    _conversationScrollViewer.Offset.Y
-                    < _conversationScrollViewer.Extent.Height - _conversationScrollViewer.Viewport.Height - 10;
+            if (_conversationScrollViewer == null || e.ExtentDelta.Y != 0)
+                return;
+
+            _userScrolledUp =
+                _conversationScrollViewer.Offset.Y
+                < _conversationScrollViewer.Extent.Height - _conversationScrollViewer.Viewport.Height - 10;
         }
 
         #endregion

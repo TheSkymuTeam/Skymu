@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 ============================================================
 Copyright © The Skymu Team and other contributors.
 For any inquiries or concerns, email contact@skymu.app.
@@ -37,7 +37,6 @@ FontFamily="Tahoma"
 FontSize="11"
 Foreground="{DynamicResource Text.VeryHighContrast}"
 CanResize="True"
-StateChanged="Window_StateChanged"
 
 WindowStartupLocation="CenterScreen"
 SystemDecorations="None"
@@ -48,9 +47,7 @@ mc:Ignorable="d">
 			<Setter Property="VerticalAlignment" Value="Top" />
 			<Setter Property="Height" Value="18" />
 			<Setter Property="Margin" Value="-1,0,0,0" />
-			<Setter Property="HoverTransition" Value="True" />
-			<Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
-			<Setter Property="SliceMode" Value="0" />
+			<Setter Property="HoverTransition" Value="True" />			<Setter Property="SliceMode" Value="0" />
 			<Setter Property="ElementCount" Value="4" />
 			<Setter Property="StackDirection" Value="Vertical" />
 			<Setter Property="DefaultIndex" Value="0" />
@@ -117,9 +114,7 @@ mc:Ignorable="d">
 		</ControlTheme>
 		<ControlTheme x:Key="LongIconStyle" TargetType="Image">
 			<Setter Property="HorizontalAlignment" Value="Left" />
-			<Setter Property="VerticalAlignment" Value="Center" />
-			<Setter Property="RenderOptions.BitmapInterpolationMode" Value="None" />
-			<Setter Property="Height" Value="16" />
+			<Setter Property="VerticalAlignment" Value="Center" />			<Setter Property="Height" Value="16" />
 			<Setter Property="Width" Value="36" />
 		</ControlTheme>
 
@@ -162,14 +157,14 @@ mc:Ignorable="d">
 		<converters:MsgIDMultiToVisibilityConverter x:Key="IDToVisibilityConverter" />
 		<converters:PreviewVisibilityConverter x:Key="PreviewVisibilityConverter" />
 		<converters:CompactConversationTypeConverter x:Key="CompactConversationTypeConverter" />
-		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
-		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerTheme="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullTextConverter x:Key="FormatFullTextConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
+		<converters:FormatFullActionMessageConverter x:Key="FormatFullActionMessageConverter" ViewerStyle="{StaticResource TextBlockViewerStyle}" />
 		<converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhite"
     TrueBrush="White"
-    FalseBrush="{DynamicResource Text.VeryHighContrast}" />
+    FalseBrushResourceKey="Text.VeryHighContrast" />
 <converters:BoolToWhiteForegroundConverter x:Key="SelectedToWhiteFromLow"
     TrueBrush="White"
-    FalseBrush="{DynamicResource Text.LowContrast}" />
+    FalseBrushResourceKey="Text.LowContrast" />
 
 
 		<!--  COMPACT RECENTS TEMPLATES START  -->
@@ -286,7 +281,7 @@ mc:Ignorable="d">
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
+							<Image Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -360,7 +355,7 @@ mc:Ignorable="d">
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
+							<Image Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -477,7 +472,7 @@ mc:Ignorable="d">
 							Color="{DynamicResource Avatar.Shadow}" />
 						</Border.Effect>
 						<Grid>
-							<Image RenderOptions.BitmapInterpolationMode="HighQuality" Stretch="UniformToFill">
+							<Image Stretch="UniformToFill">
 								<Image.Source>
 									<MultiBinding Converter="{StaticResource AvatarConverter}">
 										<Binding Path="Avatar" />
@@ -606,7 +601,6 @@ mc:Ignorable="d">
 				Margin="{Binding Converter={StaticResource NullDependentMarginConverter}}"
 				HorizontalAlignment="Left"
 				Cursor="Hand"
-				RenderOptions.BitmapInterpolationMode="HighQuality"
 				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
 				Stretch="Uniform"
 				PointerReleased="OpenImage_Click"
@@ -772,7 +766,6 @@ mc:Ignorable="d">
 				Margin="{Binding Text, Converter={StaticResource NullDependentMarginConverter}}"
 				HorizontalAlignment="Left"
 				Cursor="Hand"
-				RenderOptions.BitmapInterpolationMode="HighQuality"
 				Source="{Binding Attachments, Converter={StaticResource MsgByteArrayToImageConverter}}"
 				Stretch="Uniform"
 				PointerReleased="OpenImage_Click"
@@ -1513,13 +1506,13 @@ mc:Ignorable="d">
 										x:Name="ConversationList"
 										Grid.Row="2"
 										BorderThickness="0"
-										PreviewPointerReleased="ConversationList_ItemClicked"
+										PointerReleased="ConversationList_ItemClicked"
 										
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										Theme="{StaticResource NoInsetListBox}">
 											<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
-													<VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
+													<VirtualizingStackPanel />
 												</ItemsPanelTemplate>
 											</ListBox.ItemsPanel>
 											<ListBox.Styles>
@@ -1565,7 +1558,7 @@ mc:Ignorable="d">
             Background="{Binding IsSelected,
                 RelativeSource={RelativeSource TemplatedParent},
                 Converter={StaticResource SelectedToSelectionBrush}}">
-            <ContentPresenter x:Name="PART_Header" ContentSource="Header" />
+            <ContentPresenter x:Name="PART_Header" />
         </Border>
         <ItemsPresenter x:Name="ItemsHost"
             IsVisible="{Binding IsExpanded,
@@ -1672,7 +1665,7 @@ mc:Ignorable="d">
 							<Rectangle
 							x:Name="SkypeSplitter"
 							Grid.Column="1"
-							Cursor="SizeWE"
+							Cursor="SizeWestEast"
 							Fill="Transparent"
 							PointerPressed="SkypeSplitter_Press"
 							PointerMoved="SkypeSplitter_PointerMoved" />
@@ -1861,7 +1854,7 @@ mc:Ignorable="d">
 										Grid.Row="1"/>
 										<ContentControl x:Name="FillMessagePanelHost" IsVisible="False" />
 										<ContentControl x:Name="ChatProfileArea" Content="{Binding DataContext, ElementName=ChatArea}">
-											<ContentControl.Resources>
+											<ContentControl.DataTemplates>
 												<DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
 													<Grid>
 														<Grid.ColumnDefinitions>
@@ -1875,7 +1868,6 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2001,7 +1993,6 @@ mc:Ignorable="d">
 																	<Image
 																	Width="85"
 																	Margin="0,3,0,0"
-																	RenderOptions.BitmapInterpolationMode="HighQuality"
 																	Stretch="UniformToFill">
 																		<Image.Source>
 																			<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2035,7 +2026,6 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2093,7 +2083,6 @@ mc:Ignorable="d">
 														Margin="4,4,5,9"
 														HorizontalAlignment="Left"
 														VerticalAlignment="Top"
-														RenderOptions.BitmapInterpolationMode="HighQuality"
 														Stretch="UniformToFill">
 															<Image.Source>
 																<MultiBinding Converter="{StaticResource AvatarConverter}">
@@ -2138,14 +2127,14 @@ mc:Ignorable="d">
 														</StackPanel>
 													</Grid>
 												</DataTemplate>
-											</ContentControl.Resources>
+											</ContentControl.DataTemplates>
 										</ContentControl>
 									</Grid>
 								</Border>
 								<Rectangle
 								x:Name="ChatTopBarSplitter"
 								Grid.Row="2"
-								Cursor="SizeNS"
+								Cursor="SizeNorthSouth"
 								Fill="Transparent"
 								PointerPressed="ChatTopBarSplitter_Press"
 								PointerMoved="ChatTopBarSplitter_PointerMoved" />
@@ -2255,7 +2244,6 @@ mc:Ignorable="d">
 										Grid.Row="2"
 										Width="90"
 										Height="90"
-										RenderOptions.BitmapInterpolationMode="HighQuality"
 										RenderTransformOrigin="0.5,0.5"
 										Source="Assets/Universal/Animations/spinner.png"
 										IsVisible="True">
@@ -2268,11 +2256,7 @@ mc:Ignorable="d">
 										BorderThickness="0"
 										Loaded="ConversationItemsList_Loaded"
 										ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-										Theme="{StaticResource NoInsetListBox}"
-										VirtualizingPanel.IsVirtualizing="True"
-										VirtualizingPanel.ScrollUnit="Pixel"
-										VirtualizingPanel.VirtualizationMode="Simple"
-										mc:Ignorable="d">
+										Theme="{StaticResource NoInsetListBox}"										mc:Ignorable="d">
 											<ListBox.ItemsPanel>
 												<ItemsPanelTemplate>
 													<VirtualizingStackPanel />
@@ -2342,7 +2326,7 @@ mc:Ignorable="d">
 													</StackPanel>
 													<Popup
 													x:Name="EmojiFlyout"
-													TransparencyLevelHint="Transparent"
+													
 													HorizontalOffset="-20"
 													Placement="Top"
 													PlacementTarget="{Binding ElementName=EmojiButton}"

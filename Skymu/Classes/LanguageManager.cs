@@ -17,6 +17,7 @@ using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace Skymu
@@ -49,7 +50,9 @@ namespace Skymu
             string lang = Settings.Language ?? "English";
             if (!Scan())
             {
-                Universal.ExceptionHandler(new Exception("Could not find any compatible files in directory /languages."));
+                Debug.WriteLine(
+                    "[LanguageManager] No *.lang files in \"languages\" under: "
+                        + AppDomain.CurrentDomain.BaseDirectory);
             }
 
             /*  omega: we are not doing this yet, it's very hacky, for now use the 5.10 langs as the base
@@ -66,7 +69,7 @@ namespace Skymu
 
             if (!Load(llist.TryGetValue(lang, out var path) ? path : string.Empty))
             {
-                Universal.ExceptionHandler(new Exception("Could not load language \"" + lang + "\"."));
+                Debug.WriteLine("[LanguageManager] Could not load language \"" + lang + "\".");
             }
 
             Settings.Default.PropertyChanged += Settings_PropertyChanged;

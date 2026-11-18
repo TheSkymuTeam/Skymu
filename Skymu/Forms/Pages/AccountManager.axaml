@@ -58,7 +58,6 @@
                     <Grid>
                         <ListBox
                             x:Name="AccountList"
-                            HorizontalContentAlignment="Stretch"
                             Background="Transparent"
                             BorderThickness="0"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"

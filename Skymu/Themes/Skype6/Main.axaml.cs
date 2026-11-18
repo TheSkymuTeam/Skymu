@@ -243,11 +243,6 @@ namespace Skymu.Skype6
             SidebarTabs.ColumnDefinitions[0].MinWidth = 93;
         }
 
-        protected override void InitializeMenuBar()
-        {
-            BuildMenuBarController();
-        }
-
         protected override void ShowLogin(bool switchuser)
         {
             new Login(switchuser).Show();

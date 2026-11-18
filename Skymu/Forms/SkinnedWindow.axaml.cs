@@ -151,10 +151,29 @@ namespace Skymu.Forms
             set => BRAction = value;
         }
 
-        private void bELClick(object sender, RoutedEventArgs e) { BELAction.Invoke(); }
-        private void bLClick(object sender, RoutedEventArgs e) { BLAction.Invoke(); }
-        private void bMClick(object sender, RoutedEventArgs e) { BMAction.Invoke(); }
-        private void bRClick(object sender, RoutedEventArgs e) { BRAction.Invoke(); }
+        private void bELClick(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            BELAction?.Invoke();
+        }
+
+        private void bLClick(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            BLAction?.Invoke();
+        }
+
+        private void bMClick(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            BMAction?.Invoke();
+        }
+
+        private void bRClick(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            BRAction?.Invoke();
+        }
 
         protected override void OnOpened(EventArgs e)
         {

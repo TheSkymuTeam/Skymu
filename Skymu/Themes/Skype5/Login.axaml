@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -38,14 +38,10 @@
 <Window.Styles>
     <Style Selector="HyperlinkButton">
         <Setter Property="Foreground" Value="{DynamicResource Text.Hyperlink}" />
-        <Setter Property="TextDecorations" Value="{x:Null}" />
-    </Style>
-    <Style Selector="HyperlinkButton:pointerover">
-        <Setter Property="TextDecorations" Value="Underline" />
     </Style>
 </Window.Styles>
     <Window.Background>
-        <ImageBrush Source="Assets/Themeable/backgrounds/login.png" Stretch="Fill" />
+        <ImageBrush Source="Assets/Themeable/Backgrounds/login.png" Stretch="Fill" />
     </Window.Background>
     <Grid>
         <Grid.RowDefinitions>
@@ -64,7 +60,6 @@
                 Width="128"
                 Height="128"
                 Margin="0,0,0,48"
-                RenderOptions.BitmapInterpolationMode="HighQuality"
                 RenderTransformOrigin="0.50785,0.5001"
                 Source="Assets/Universal/Animations/spinner.png"
                 IsVisible="False">

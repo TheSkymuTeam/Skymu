@@ -42,6 +42,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             ZIndex="10"
+            IsHitTestVisible="False"
             DefaultIndex="0"
             ElementCount="36"
             HoverIndex="-1"
@@ -76,7 +77,7 @@
             Margin="77,23,35,7" />
 
         <!--  Bottom Button Section  -->
-        <Grid Grid.Row="2" Height="44">
+        <Grid Grid.Row="2" Height="44" ZIndex="20">
             <Border
                 x:Name="GradientBottom"
                 Background="{DynamicResource Strip.Background}"

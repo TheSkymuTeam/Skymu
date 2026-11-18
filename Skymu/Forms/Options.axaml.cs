@@ -136,7 +136,7 @@ namespace Skymu.Forms
 
         private void TabSelect(object sender, PointerPressedEventArgs e)
         {
-            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            if (e != null && !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 return;
 
             var sc = (SliceControl)sender;

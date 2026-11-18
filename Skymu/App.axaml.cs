@@ -112,8 +112,12 @@ namespace Skymu
         public static Bitmap GroupAvatar;
         public static Bitmap UnknownAvatar;
         public static ViewModels.MainViewModel ActiveViewModel;
+        /// <summary>Registered by the login window so startup failures can return to the login form.</summary>
+        public static Action RequestLoginSpinnerOff;
         private static Mutex mutex;
         internal static bool ConfigResetOnStartup = false;
+        /// <summary>Suppress restart prompts while colorways / migrator touch settings at startup.</summary>
+        internal static bool SuppressSettingsRestartPrompt = true;
         public static LanguageManager Lang => (LanguageManager)Current.Resources["Lang"];
 
         public static event Action ThemeChanged;
@@ -268,6 +272,7 @@ namespace Skymu
 
         public override void OnFrameworkInitializationCompleted()
         {
+            AHelpers.UpdateTextRendering();
             ApplyAvaloniaTheme(Settings.AvaloniaTheme);
             var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             if (desktop != null)
@@ -309,8 +314,13 @@ namespace Skymu
                     case "Colorway":
                     case "WindowFrame":
                     case "Theme":
+                    case "UseClearType":
+                        AHelpers.UpdateTextRendering();
+                        break;
                     case "NativeMenuBar":
                     case "UseSystemCulture":
+                        if (SuppressSettingsRestartPrompt)
+                            break;
                         Dialog dialog = new Dialog(
                                    type: SkinnedWindow.IconType.Question,
                                    content: "You need to restart " + Settings.BrandingName + " to fully apply this change. Would you like to save your settings and restart?",
@@ -341,14 +351,9 @@ namespace Skymu
             switch (Theme)
             {
                 case "Skype7":
-                    // new Skype7.Login().Show();
-                    Settings.Theme = "Skype6";
-                    // TODO: Make a better fix
-                    // Override Settings.ActiveTab on default colorway with the proper color (#0095cc)
                     Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush(Color.Parse("#0095cc"));
-                    // Override Settings.ActiveTabText to white
                     Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
-                    new Skype6.Login().Show();
+                    new Skype7.Login().Show();
                     break;
                 case "Skype6":
                     // TODO: Make a better fix
@@ -366,6 +371,8 @@ namespace Skymu
                     new Skype5.Login().Show();
                     break;
             }
+
+            SuppressSettingsRestartPrompt = false;
 
             if (ConfigResetOnStartup)
             {
@@ -484,6 +491,7 @@ namespace Skymu
             DispatcherUnhandledExceptionEventArgs ev
         )
         {
+            Debug.WriteLine("[Skymu] Unhandled UI exception: " + ev.Exception);
             ExceptionHandler(ev.Exception);
             ev.Handled = true;
         }
@@ -589,10 +597,17 @@ namespace Skymu
                 Title = brand + " Error"
             };
             frame.ButtonRightAction = () => frame.Close();
-            frame.ButtonRightText = Universal.Lang["sZAPBUTTON_CLOSE"];
+            try
+            {
+                frame.ButtonRightText = Universal.Lang?["sZAPBUTTON_CLOSE"] ?? "Close";
+            }
+            catch
+            {
+                frame.ButtonRightText = "Close";
+            }
             frame.ButtonLeftAction = () => page.CopyToClipboard();
             frame.ButtonLeftText = "Copy to clipboard";
-            frame.ShowDialog(AHelpers.GetMainWindow());
+            AHelpers.PresentSkinnedWindow(frame);
         }
 
         public static void ShowMessage(

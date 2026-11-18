@@ -63,15 +63,29 @@ namespace Skymu.Tests
         private static string FlattenInlines(InlineCollection inlines)
             => string.Concat(inlines.OfType<Run>().Select(r => r.Text));
 
-        private static bool HasNestedHyperlink(InlineCollection inlines)
+        private static bool HasHyperlinkButton(InlineCollection inlines)
         {
             foreach (var inline in inlines)
             {
-                if (inline is Hyperlink) return true;
-                if (inline is Span span && HasNestedHyperlink(span.Inlines))
-                    return true;
+                if (inline is InlineUIContainer ui && ui.Child is HyperlinkButton) return true;
+                if (inline is Span span && HasHyperlinkButton(span.Inlines)) return true;
             }
             return false;
+        }
+
+        private static System.Collections.Generic.IEnumerable<HyperlinkButton> GetHyperlinkButtons(
+            InlineCollection inlines)
+        {
+            foreach (var inline in inlines)
+            {
+                if (inline is InlineUIContainer ui && ui.Child is HyperlinkButton nested)
+                    yield return nested;
+                if (inline is Span span)
+                {
+                    foreach (var child in GetHyperlinkButtons(span.Inlines))
+                        yield return child;
+                }
+            }
         }
 
         // -------------------------------------------------------
@@ -274,8 +288,8 @@ namespace Skymu.Tests
             {
                 var tb = Formatter.Parse("https://skymu.app");
                 Assert.True(
-                    tb.Inlines.OfType<Hyperlink>().Any() || HasNestedHyperlink(tb.Inlines),
-                    "Expected at least one Hyperlink for a bare URL.");
+                    HasHyperlinkButton(tb.Inlines),
+                    "Expected at least one HyperlinkButton for a bare URL.");
             });
         }
 
@@ -285,10 +299,11 @@ namespace Skymu.Tests
             RunSta(() =>
             {
                 var tb = Formatter.Parse("[Skymu](https://skymu.app)");
-                var links = tb.Inlines.OfType<Hyperlink>().ToList();
+                var links = GetHyperlinkButtons(tb.Inlines).ToList();
                 Assert.True(
-                    links.Any(h => h.NavigateUri?.Host == "skymu.app"),
-                    "Expected a Hyperlink whose NavigateUri.Host is 'skymu.app'.");
+                    links.Any(h => (h.Content?.ToString() ?? h.NavigateUri?.Host ?? "")
+                        .Contains("skymu.app", StringComparison.OrdinalIgnoreCase)),
+                    "Expected a HyperlinkButton referencing skymu.app.");
             });
         }
 
@@ -395,8 +410,8 @@ namespace Skymu.Tests
             {
                 var tb = Formatter.ProcessLangText(
                     "<a href=\"https://skymu.app\">click</a>", Array.Empty<object>());
-                Assert.True(tb.Inlines.OfType<Hyperlink>().Any(),
-                    "Expected a Hyperlink from <a> tag.");
+                Assert.True(HasHyperlinkButton(tb.Inlines),
+                    "Expected a HyperlinkButton from <a> tag.");
             });
         }
 

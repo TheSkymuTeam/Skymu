@@ -59,7 +59,6 @@ namespace Skymu.Theming
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.PointerReleased += buttonLaunch;
-            this.Opened += Login_Opened;
 
             _viewModel = viewModel;
             _viewModel.AnimationToggleRequested += LoginToggleAnimation;
@@ -160,7 +159,7 @@ namespace Skymu.Theming
         private static (string, EventHandler) MI(string label, EventHandler handler) { return (label, handler); }
         private static (string, EventHandler) SEP() { return ("$", null); }
 
-        protected void Login_Loaded(object sender, RoutedEventArgs e)
+        protected async void Login_Loaded(object sender, RoutedEventArgs e)
         {
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
@@ -188,6 +187,12 @@ namespace Skymu.Theming
                 ProtocolSelectionChanged(null, null);
                 SetProtocolSelection(pal, pa);
             }
+
+            // WPF used ContentRendered so plugins were loaded before auto-login; Opened can fire too early in Avalonia.
+            if (!switchuser)
+                await _viewModel.TryAutoLogin();
+            if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
+                SelectDefaultProtocol();
         }
 
         private void SelectDefaultProtocol()
@@ -215,7 +220,7 @@ namespace Skymu.Theming
             new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
         },
             };
-            _ = animation.RunAsync(transform);
+            _ = animation.RunAsync(Spinner);
         }
 
         private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
@@ -246,14 +251,6 @@ namespace Skymu.Theming
             }
             if (listing != null)
                 _viewModel.HandleProtocolSelected(listing);
-        }
-
-        private async void Login_Opened(object sender, EventArgs e)
-        {
-            if (!switchuser)
-                await _viewModel.TryAutoLogin();
-            if (_viewModel.PendingAutoLogin != null && ProtocolComboBox.SelectedIndex == -1)
-                SelectDefaultProtocol();
         }
 
         private void LoginToggleAnimation(bool anim)

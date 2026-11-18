@@ -30,6 +30,7 @@ namespace Skymu.Native.Windows
         private static (string, EventHandler) SEP() { return ("$", null); }
         public void Build()
         {
+            _menuBar.EnsureAttached();
             if (!login_menu) _menuBar.Create(L("sMAINMENU_SKYPE"),
                 MI(L("sMAINMENU_SKYPE_ONLINESTATUS"), new NativeSubMenu(_menuBar).CreateWithIcons(L("sMAINMENU_SKYPE_ONLINESTATUS"),
                     MI(L("sTRAYHINT_USER_ONLINE"), (s, e2) => OnStatus(PresenceStatus.Online), ICN(2)),

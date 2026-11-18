@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -19,7 +19,6 @@
     xmlns:global="clr-namespace:Skymu"
     x:Name="Root"
     Background="Transparent"
-    RenderOptions.BitmapInterpolationMode="None"
     UseLayoutRounding="True">
     <Grid>
         <Grid.ColumnDefinitions>

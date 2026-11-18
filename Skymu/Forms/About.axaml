@@ -35,7 +35,7 @@
         <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Window.Background>
-        <ImageBrush Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/backgrounds/about.png'}" Stretch="Uniform" />
+        <ImageBrush Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Backgrounds/about.png'}" Stretch="Uniform" />
     </Window.Background>
     <StackPanel>
         <Image

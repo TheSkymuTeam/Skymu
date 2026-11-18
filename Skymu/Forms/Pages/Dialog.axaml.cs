@@ -12,8 +12,9 @@
 /*==========================================================*/
 
 using Avalonia;
-using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using System.Linq;
 using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using System;
@@ -168,11 +169,27 @@ namespace Skymu.Forms.Pages
         // confusingly named, maybe, but we don't want to be able to show a non-blocking Dialog
         // no need to have a separate ShowDialog stub, since bool? Show() already calls it
 
+        /// <summary>Non-blocking show (restart prompts, OK dialogs). Do not sync-block on ShowDialog — that freezes Avalonia input.</summary>
         public bool? Show()
         {
-            return window.ShowDialog<bool?>(AHelpers.GetMainWindow())
-                         .GetAwaiter()
-                         .GetResult(); // genuinely FUCK async dialogs
+            AHelpers.PresentSkinnedWindow(window);
+            return null;
+        }
+
+        public async Task<bool?> ShowAsync()
+        {
+            var owner = AHelpers.GetMainWindow();
+            if (owner == null
+                && Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                owner = desktop.Windows.FirstOrDefault(w => w.IsVisible && !ReferenceEquals(w, window));
+            }
+
+            if (owner != null && owner.IsEnabled && !ReferenceEquals(owner, window))
+                return await window.ShowDialog<bool?>(owner);
+
+            AHelpers.PresentSkinnedWindow(window);
+            return null;
         }
 
         public void SetRightButtonAsDefault()

@@ -4,12 +4,13 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0-windows</TargetFramework>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<RollForward>LatestMajor</RollForward>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
-		<Win32Resource>Icons\SKYPE5.res</Win32Resource>
+		<ApplicationIcon>Icons\skype.ico</ApplicationIcon>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 	</PropertyGroup>
@@ -43,16 +44,11 @@
 
 	<!-- Resource Handling -->
 	<ItemGroup>
-		<!-- Skype4 -->
-		<Resource Include="Themes\Skype4\Assets\**\*" />
-
-		<!-- Skype5 -->
-		<Resource Include="Themes\Skype5\Assets\**\*" />
-
-		<!-- Skype6 -->
-		<Resource Include="Themes\Skype6\Assets\**\*" />
-
-		<!-- Skype7 -->
+		<!-- Theme assets (embedded for avares:// URIs in XAML) -->
+		<AvaloniaResource Include="Themes\Skype4\Assets\**\*" Link="Themes\Skype4\Assets\%(RecursiveDir)%(Filename)%(Extension)" />
+		<AvaloniaResource Include="Themes\Skype5\Assets\**\*" Link="Themes\Skype5\Assets\%(RecursiveDir)%(Filename)%(Extension)" />
+		<AvaloniaResource Include="Themes\Skype6\Assets\**\*" Link="Themes\Skype6\Assets\%(RecursiveDir)%(Filename)%(Extension)" />
+		<AvaloniaResource Include="Themes\Skype7\Assets\**\*" Link="Themes\Skype7\Assets\%(RecursiveDir)%(Filename)%(Extension)" />
 
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
@@ -111,34 +107,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Colorways\newdiscord.xaml">
-			<Generator>MSBuild:Compile</Generator>
+		<Content Include="Colorways\**\*.axaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\discord.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\purple.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\red.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\pink.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\default.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Include="Colorways\uwpdark.xaml">
-			<Generator>MSBuild:Compile</Generator>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>

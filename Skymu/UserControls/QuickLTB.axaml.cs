@@ -30,7 +30,6 @@ namespace Skymu.UserControls
         public static readonly StyledProperty<string> KeyProperty =
             AvaloniaProperty.Register<QuickLTB, string>(nameof(Key), "");
 
-        [Content]
         public ObservableCollection<IBinding> Bindings { get; } =
             new ObservableCollection<IBinding>();
 

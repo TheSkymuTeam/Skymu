@@ -1049,10 +1049,10 @@ namespace Skymu.ViewModels
                     break;
             }
             Dispatcher.UIThread.Post(() =>
-                {
-                    TypingText = text;
-                    IsTypingVisible = true;
-                }
+            {
+                TypingText = text;
+                IsTypingVisible = true;
+            }
             );
         }
 

@@ -1,0 +1,301 @@
+/*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is governed
+// by the terms set out in the project license agreement.
+// If you do not comply with those terms, you may not
+// modify or distribute any original code from the project.
+/*==========================================================*/
+// License: https://skymu.app/legal/license
+// SPDX-License-Identifier: AGPL-3.0-or-later
+/*==========================================================*/
+
+using Skymu.AvaloniaHelpers;
+using Skymu.Preferences;
+using Skymu.ViewModels;
+using System;
+using System.ComponentModel;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using Avalonia.Animation;
+using Avalonia.Styling;
+using Skymu.Sounds;
+
+
+
+using Yggdrasil.Enumerations;
+using Skymu.Native.Windows;
+
+using Yggdrasil.Models;
+
+namespace Skymu.Skype7
+{
+    public partial class Login : Window
+    {
+        private LoginViewModel _viewModel;
+        internal bool noCloseEvent;
+        private const string DISCORD_SERVER_INVITE = "https://discord.gg/PcfsGyz2";
+        private bool switchuser = false;
+
+        public Login(bool switchuser = false)
+        {
+            this.switchuser = switchuser;
+            InitializeComponent();
+            Opened += (_, __) => AHelpers.SetMainWindow(this);
+            StartSpinnerAnimation();
+            UsernameBox.KeyUp += BoxKeyUp;
+            PasswordTokenBox.KeyUp += BoxKeyUp;
+            //this.ContentRendered += Login_ContentRendered;
+
+            _viewModel = new LoginViewModel(() => new Main());
+            _viewModel.AnimationToggleRequested += LoginToggleAnimation;
+            _viewModel.HeaderTextRequested += text => Header.Content = text;
+            _viewModel.PluginSelectionUpdated += OnPluginSelectionUpdated;
+            _viewModel.MainWindowReady += OnMainWindowReady;
+
+            SoundManager.Init();
+            Tray.SetStatus(PresenceStatus.Offline);
+        }
+
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProtocolComboBox.SelectedIndex == -1)
+                return;
+            await _viewModel.Login(
+                UsernameBox.Text,
+                PasswordTokenBox.Text
+            );
+        }
+
+        private void OnPluginSelectionUpdated(LoginViewModel.PluginListing listing)
+        {
+            PasswordHint.Foreground = new SolidColorBrush(Colors.Gray);
+            PasswordTokenBox.IsEnabled = true;
+            PasswordHint.FontStyle = FontStyle.Normal;
+            PasswordHint.Text = listing.TextPassword ?? Universal.Lang["sF_USERENTRY_LABEL_PASSWORD"];
+
+            string buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
+
+            UsernameHint.Foreground = new SolidColorBrush(Colors.Gray);
+            UsernameBox.IsEnabled = true;
+            UsernameHint.FontStyle = FontStyle.Normal;
+            UsernameHint.Text = listing.TextUsername ?? UsernameHint.Text;
+            if (Universal.Plugin is null) { // TODO : Too busy to fix that properly, Universal.Plugin seems to be always null, please fix it if possible . - Sean Kévin
+                SubHeader.Content = $"";
+            } else {
+                SubHeader.Content = $"with {Universal.Plugin.Name} account";
+            }
+                
+
+            if (listing.AuthenticationType != AuthenticationMethod.Password)
+            {
+                PasswordHint.Foreground = new SolidColorBrush(Colors.LightGray);
+                PasswordTokenBox.IsEnabled = false;
+                PasswordHint.Text = "field not required";
+                PasswordHint.FontStyle = FontStyle.Italic;
+
+                switch (listing.AuthenticationType)
+                {
+                    case AuthenticationMethod.QRCode:
+                        buttonText = "Scan QR code";
+                        UsernameHint.Foreground = new SolidColorBrush(Colors.LightGray);
+                        UsernameBox.IsEnabled = false;
+                        UsernameHint.FontStyle = FontStyle.Italic;
+                        UsernameHint.Text = "field not required";
+                        break;
+                    case AuthenticationMethod.Passwordless:
+                        buttonText = "Send code";
+                        break;
+                    case AuthenticationMethod.External:
+                        buttonText = "External login";
+                        break;
+                    default:
+                        buttonText = Universal.Lang["sZAPBUTTON_SIGNIN"];
+                        break;
+                }
+            }
+
+            LoginButtonLabel.Text = buttonText;
+            CheckEnableLoginButton();
+        }
+
+        private void OnMainWindowReady(IMainWindowHolder mainWindow)
+        {
+            _viewModel.RunPostLogin(mainWindow);
+            noCloseEvent = true;
+            Close();
+        }
+
+        private void BoxKeyUp(object sender, RoutedEventArgs e)
+        {
+            CheckEnableLoginButton();
+        }
+
+        private void CheckEnableLoginButton()
+        {
+            if (
+                (!string.IsNullOrWhiteSpace(UsernameBox.Text)
+                    && (!string.IsNullOrWhiteSpace(PasswordTokenBox.Text) || !PasswordTokenBox.IsEnabled))
+                || (!PasswordTokenBox.IsEnabled && !UsernameBox.IsEnabled)
+            )
+            {
+                if (!LoginButton.IsEnabled) { LoginButtonLabel.Opacity = 1; LoginButton.Opacity = 1; }
+                LoginButton.IsEnabled = true;
+            }
+            else
+            {
+                LoginButton.IsEnabled = false;
+                LoginButton.Opacity = 0.4;
+                LoginButtonLabel.Opacity = 0.4;
+            }
+        }
+
+        private void StartSpinnerAnimation()
+        {
+            if (Spinner == null) return;
+            var transform = new RotateTransform();
+            Spinner.RenderTransform = transform;
+            Spinner.RenderTransformOrigin = RelativePoint.Center;
+            var animation = new Animation
+            {
+                Duration = TimeSpan.FromSeconds(2.133333),
+                IterationCount = IterationCount.Infinite,
+                Children =
+                {
+                    new KeyFrame { Cue = new Cue(0.0), Setters = { new Setter(RotateTransform.AngleProperty, 0.0) } },
+                    new KeyFrame { Cue = new Cue(1.0), Setters = { new Setter(RotateTransform.AngleProperty, 360.0) } },
+                },
+            };
+            _ = animation.RunAsync(Spinner);
+        }
+
+        private async void Login_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Settings.StartMinimized)
+                WindowState = WindowState.Minimized;
+
+            _viewModel.LoadPlugins();
+
+            foreach (var item in _viewModel.PluginItems)
+                ProtocolComboBox.Items.Add(item);
+
+            if (_viewModel.PendingAutoLogin != null)
+            {
+                var pal = _viewModel.PendingAutoLoginListing;
+                var pa = _viewModel.PendingAutoLogin;
+                ProtocolComboBox.SelectedItem = pal;
+                ProtocolSelectionChanged(null, null);
+                SetProtocolSelection(pal, pa);
+            }
+
+            if (_viewModel.PendingAutoLogin != null && !switchuser)
+            {
+                LoginToggleAnimation(true);
+                await _viewModel.TryAutoLogin();
+            }
+            else
+                SelectDefaultProtocol();
+        }
+
+        private void SelectDefaultProtocol()
+        {
+            var preferred = _viewModel.GetPreferredDefaultListing();
+            if (preferred != null)
+                ProtocolComboBox.SelectedItem = preferred;
+            else
+                ProtocolComboBox.SelectedIndex = 0;
+        }
+
+        private void SetProtocolSelection(LoginViewModel.PluginListing listing, SavedCredential creds)
+        {
+            _viewModel.HandleProtocolSelected(listing);
+            OnPluginSelectionUpdated(listing);
+            if (creds.AuthenticationType == AuthenticationMethod.QRCode) return;
+            if (creds.AuthenticationType == AuthenticationMethod.Token)
+            {
+                UsernameBox.Text = !String.IsNullOrEmpty(creds.PasswordOrToken) ? creds.PasswordOrToken : creds.User.Username;
+                CheckEnableLoginButton();
+                return;
+            }
+            UsernameBox.Text = creds.User.Username;
+            PasswordTokenBox.Text = creds.PasswordOrToken;
+            CheckEnableLoginButton();
+        }
+
+        private void ProtocolSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listing = (LoginViewModel.PluginListing)ProtocolComboBox.SelectedItem;
+            foreach (var cred in _viewModel.SavedCredentials)
+            {
+                if (cred.Plugin.ToLowerInvariant() == listing.InternalName.ToLowerInvariant())
+                {
+                    SetProtocolSelection(listing, cred);
+                }
+            }
+            if (listing != null)
+                _viewModel.HandleProtocolSelected(listing);
+        }
+
+        private void LoginToggleAnimation(bool anim)
+        {
+            if (anim)
+            {
+                SelectorStrip.IsVisible = false;
+                ControlsGrid.IsVisible = false;
+                Spinner.IsVisible = true;
+
+            }
+            else
+            {
+                SelectorStrip.IsVisible = true;
+                ControlsGrid.IsVisible = true;
+                Spinner.IsVisible = false;
+                Header.Content = Universal.Lang["sZAPBUTTON_SIGNIN"];
+            }
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            Universal.OpenURL(((HyperlinkButton)sender).NavigateUri?.ToString() ?? "");
+            e.Handled = true;
+        }
+
+        private void FooterLink_Click(object sender, RoutedEventArgs e)
+        {
+            Universal.OpenURL(DISCORD_SERVER_INVITE);
+            e.Handled = true;
+        }
+
+        private void Login_Closing(object sender, WindowClosingEventArgs e)
+        {
+            if (!noCloseEvent)
+                Universal.Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (!noCloseEvent)
+                Universal.Close();
+        }
+
+        private void Window_MouseDown(object sender, PointerReleasedEventArgs e)
+        {
+            MainGrid.Focus();
+        }
+
+        private void Grid_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+    }
+}

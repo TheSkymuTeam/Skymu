@@ -59,7 +59,7 @@ namespace Skymu.Forms
         private ContentControl _originalFrame;
         private Conversation _conversation;
 
-        private RowDefinition floor => NameScope.GetNameScope(this)?.Find<RowDefinition>("floor");
+        private RowDefinition _floorRow;
         public CallScreen(
             Conversation conversation,
             CallScreen.LocationChangeEventArgs initial_location,
@@ -67,6 +67,7 @@ namespace Skymu.Forms
         )
         {
             InitializeComponent();
+            _floorRow = CallLayoutGrid.RowDefinitions[2];
             _conversation = conversation;
             byte[] partner_avatar;
 
@@ -139,7 +140,7 @@ namespace Skymu.Forms
             if (Settings.RoomCallUI)
             {
                 bottom_gradient.Opacity = 0.6;
-                floor.Height = new GridLength(110);
+                _floorRow.Height = new GridLength(110);
             }
 
             SetButtonSource(SidebarButton, location.SidebarToggle);

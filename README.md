@@ -1,6 +1,3 @@
-# IMPORTANT : Avalonia port is in progress, please use latest releases and do not build from source right now unless you have time to finish the port yourself !
-If you want to help porting stuff, feel free to contribute.
-
 ![Skymu Logo](Images/logo.png) 
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/TheSkymuTeam/Skymu/total)

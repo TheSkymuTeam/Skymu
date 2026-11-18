@@ -403,6 +403,11 @@ namespace Skymu.Preferences
             get => SELECT("EnableAdBlock", false, "Skymu/WebServices");
             set => WRITE("EnableAdBlock", value, nameof(EnableAdBlock), "Skymu/WebServices");
         }
+        public static bool EnableSkypeHome
+        {
+            get => SELECT("EnableSkypeHome", true, "Skymu/WebServices");
+            set => WRITE("EnableSkypeHome", value, nameof(EnableSkypeHome), "Skymu/WebServices");
+        }
 
         #endregion
 

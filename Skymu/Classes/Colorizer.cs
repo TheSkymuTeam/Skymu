@@ -19,6 +19,7 @@ using Avalonia;
 using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -43,7 +44,7 @@ namespace Skymu.Theming
 
             _colorwayList.Clear();
 
-            foreach (string file in Directory.GetFiles(dir, "*.xaml"))
+            foreach (string file in Directory.GetFiles(dir, "*.axaml", SearchOption.TopDirectoryOnly))
             {
                 (string, bool) information = ReadColorwayInfo(file);
                 if (!string.IsNullOrWhiteSpace(information.Item1))

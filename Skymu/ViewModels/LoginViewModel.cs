@@ -34,6 +34,7 @@ using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using System.IO;
+using Avalonia.Threading;
 
 namespace Skymu.ViewModels
 {
@@ -77,6 +78,11 @@ namespace Skymu.ViewModels
         {
             _createMainWindow = createMainWindow;
             _pluginItems = new ObservableCollection<PluginListing>();
+            Universal.RequestLoginSpinnerOff = () =>
+            {
+                AnimationToggleRequested?.Invoke(false);
+                HeaderTextRequested?.Invoke(Universal.Lang["sF_LOGIN_WELCOME"]);
+            };
             if (!Settings.SWSOptOutShown)
             {
                 Dialog dlg = null;
@@ -379,6 +385,36 @@ namespace Skymu.ViewModels
         }
 
 
+        private static async Task WithTimeout(Task task, TimeSpan timeout, string message)
+        {
+            var winner = await Task.WhenAny(task, Task.Delay(timeout));
+            if (winner != task)
+                throw new TimeoutException(message);
+            await task;
+        }
+
+        private static async Task<T> WithTimeout<T>(Task<T> task, TimeSpan timeout, string message)
+        {
+            var winner = await Task.WhenAny(task, Task.Delay(timeout));
+            if (winner != task)
+                throw new TimeoutException(message);
+            return await task;
+        }
+
+        private void ResetLoginUi(string header = null)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                Tray.SetStatus(PresenceStatus.Offline);
+                AnimationToggleRequested?.Invoke(false);
+                if (header != null)
+                    HeaderTextRequested?.Invoke(header);
+            });
+        }
+
+        private void SetLoginHeader(string text) =>
+            Dispatcher.UIThread.Post(() => HeaderTextRequested?.Invoke(text));
+
         public async Task TryAutoLogin()
         {
 
@@ -388,56 +424,97 @@ namespace Skymu.ViewModels
                 return;
             }
 
+            if (Universal.Plugin == null)
+            {
+                ResetLoginUi(Universal.Lang["sF_LOGIN_WELCOME"]);
+                return;
+            }
+
             _forcedLoginPending = false;
             Tray.SetConnecting();
 
-            LoginResult lr = await Task.Run(async () =>
-                await Universal.Plugin.Authenticate(PendingAutoLogin)
-            );
+            try
+            {
+                LoginResult lr = await WithTimeout(
+                    Task.Run(async () =>
+                        await Universal.Plugin.Authenticate(PendingAutoLogin).ConfigureAwait(false)),
+                    TimeSpan.FromSeconds(45),
+                    "Sign-in timed out. The service may be down or your saved credentials may be stale."
+                );
 
-            if (lr == LoginResult.Success)
-            {
-                await InitiateMain();
+                if (lr == LoginResult.Success)
+                {
+                    await InitiateMain();
+                }
+                else
+                {
+                    PendingAutoLogin = null;
+                    _selectedListing = PendingAutoLoginListing;
+                    PluginSelectionUpdated?.Invoke(PendingAutoLoginListing);
+                    ResetLoginUi(lr == LoginResult.Failure
+                        ? Universal.Lang["sF_USERENTRY_ERROR_1101"]
+                        : Universal.Lang["sF_LOGIN_WELCOME"]);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Tray.SetStatus(PresenceStatus.Offline);
                 PendingAutoLogin = null;
-                _selectedListing = PendingAutoLoginListing;
-                PluginSelectionUpdated?.Invoke(PendingAutoLoginListing);
-                AnimationToggleRequested?.Invoke(false);
-                if (lr == LoginResult.Failure)
-                    HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
+                ResetLoginUi(Universal.Lang["sF_LOGIN_WELCOME"]);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (ex is TimeoutException)
+                        Universal.ShowMessage(ex.Message, "Sign-in timed out");
+                    else
+                        Universal.ExceptionHandler(ex);
+                });
             }
         }
 
         public async Task Login(string username, string password)
         {
             if (_selectedListing == null) return;
+            if (Universal.Plugin == null) return;
             AnimationToggleRequested?.Invoke(true);
             Tray.SetConnecting();
 
-            var result = await Universal.Plugin.Authenticate(
-                _selectedListing.AuthenticationType,
-                username,
-                password
-            );
-
-            if (result == LoginResult.Success)
+            try
             {
-                await InitiateMain();
-                return;
-            }
+                var result = await WithTimeout(
+                    Task.Run(async () =>
+                        await Universal.Plugin.Authenticate(
+                            _selectedListing.AuthenticationType,
+                            username,
+                            password
+                        ).ConfigureAwait(false)),
+                    TimeSpan.FromSeconds(45),
+                    "Sign-in timed out. Check your network or try again."
+                );
 
-            if (result == LoginResult.TwoFARequired)
+                if (result == LoginResult.Success)
+                {
+                    await InitiateMain();
+                    return;
+                }
+
+                if (result == LoginResult.TwoFARequired)
+                {
+                    await Handle2FA();
+                    return;
+                }
+
+                ResetLoginUi(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
+            }
+            catch (Exception ex)
             {
-                await Handle2FA();
-                return;
+                ResetLoginUi(Universal.Lang["sF_LOGIN_WELCOME"]);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (ex is TimeoutException)
+                        Universal.ShowMessage(ex.Message, "Sign-in timed out");
+                    else
+                        Universal.ExceptionHandler(ex);
+                });
             }
-
-            Tray.SetStatus(PresenceStatus.Offline);
-            AnimationToggleRequested?.Invoke(false);
-            HeaderTextRequested?.Invoke(Universal.Lang["sF_USERENTRY_ERROR_1101"]);
         }
 
         private async Task Handle2FA()
@@ -494,7 +571,7 @@ namespace Skymu.ViewModels
                 Universal.Lang["sZAPBUTTON_SIGNIN"],
                 false, null, null, true
             );
-            if (dlg.Show() == true)
+            if (await dlg.ShowAsync() == true)
                 totp = dlg.TextBoxContent;
 
             LoginResult optResult = await Universal.Plugin.AuthenticateTwoFA(totp);
@@ -513,16 +590,60 @@ namespace Skymu.ViewModels
             Debug.WriteLine($"[SKYMU] Login success. Initiating main window...");
             if (Settings.SaveCredentials)
             {
-                SavedCredential cred = await Universal.Plugin.StoreCredential();
+                SavedCredential cred = await Task.Run(async () =>
+                    await Universal.Plugin.StoreCredential().ConfigureAwait(false));
                 if (cred != null)
                     CredentialManager.Save(cred);
             }
 
-            HeaderTextRequested?.Invoke("Loading user data");
+            SetLoginHeader("Loading user data");
 
-            IMainWindowHolder mainWindow = _createMainWindow();
-            mainWindow.Ready += (s, e) => MainWindowReady?.Invoke(mainWindow);
-            _ = mainWindow.BeginLoading();
+            IMainWindowHolder mainWindow = null;
+            var readyTcs = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+            void AttachMainWindow()
+            {
+                mainWindow = _createMainWindow();
+                EventHandler onReady = null;
+                onReady = (s, e) =>
+                {
+                    mainWindow.Ready -= onReady;
+                    readyTcs.TrySetResult(true);
+                    MainWindowReady?.Invoke(mainWindow);
+                };
+                mainWindow.Ready += onReady;
+                _ = mainWindow.BeginLoading();
+            }
+
+            if (Dispatcher.UIThread.CheckAccess())
+                AttachMainWindow();
+            else
+                await Dispatcher.UIThread.InvokeAsync(AttachMainWindow);
+
+            try
+            {
+                await WithTimeout(
+                    readyTcs.Task,
+                    TimeSpan.FromSeconds(90),
+                    "Loading the main window timed out."
+                );
+            }
+            catch (Exception ex)
+            {
+                PendingAutoLogin = null;
+                ResetLoginUi(Universal.Lang["sF_LOGIN_WELCOME"]);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (ex is TimeoutException)
+                        Universal.ShowMessage(
+                            ex.Message
+                                + " Try the Stub plugin to verify the client, or pick a different account in the protocol list.",
+                            "Loading timed out");
+                    else
+                        Universal.ExceptionHandler(ex);
+                });
+            }
         }
 
         public class PluginListing

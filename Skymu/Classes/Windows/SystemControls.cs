@@ -14,11 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
-using Avalonia.Win32;
-using Avalonia.Win32.Interop;
+using Avalonia.Threading;
 
 namespace Skymu.Native.Windows
 {
@@ -32,7 +30,15 @@ namespace Skymu.Native.Windows
         static extern bool AppendMenu(IntPtr hMenu, uint uFlags, UIntPtr uIDNewItem, string lpNewItem);
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         static extern IntPtr SetMenu(IntPtr hWnd, IntPtr hMenu);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        static extern IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+        [DllImport("user32.dll")]
+        static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
+        const int GWLP_WNDPROC = -4;
+        const uint WM_COMMAND = 0x0111;
         const uint MF_STRING = 0x0000;
         const uint MF_GRAYED = 0x0001;
         const uint MF_POPUP = 0x0010;
@@ -40,21 +46,75 @@ namespace Skymu.Native.Windows
 
         IntPtr hwnd;
         IntPtr hMenu;
+        IntPtr _originalWndProc;
         internal int nextId = 1;
         internal readonly Dictionary<int, EventHandler> callbacks = new Dictionary<int, EventHandler>();
+        private readonly Window _window;
+        private readonly WndProcDelegate _wndProcDelegate;
+
+        private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        private static IntPtr AssignWndProc(IntPtr hWnd, IntPtr proc) =>
+            IntPtr.Size == 8
+                ? SetWindowLongPtr64(hWnd, GWLP_WNDPROC, proc)
+                : SetWindowLong32(hWnd, GWLP_WNDPROC, proc);
 
         public NativeMenuBar(Window window)
         {
-            var handle = window.TryGetPlatformHandle();
+            _window = window;
+            _wndProcDelegate = SubclassWndProc;
+            window.Opened += (_, __) => Dispatcher.UIThread.Post(TryAttach);
+            TryAttach();
+        }
+
+        internal bool IsAttached => hMenu != IntPtr.Zero;
+
+        internal void EnsureAttached() => TryAttach();
+
+        private void TryAttach()
+        {
+            if (!OperatingSystem.IsWindows())
+                return;
+
+            if (hwnd != IntPtr.Zero && hMenu != IntPtr.Zero)
+                return;
+
+            var handle = _window.TryGetPlatformHandle();
+            if (handle == null || handle.Handle == IntPtr.Zero)
+                return;
 
             hwnd = handle.Handle;
-            // source.AddHook(WndProc);
-            hMenu = CreateMenu();
-            SetMenu(hwnd, hMenu);
+            if (_originalWndProc == IntPtr.Zero)
+                _originalWndProc = AssignWndProc(hwnd, Marshal.GetFunctionPointerForDelegate(_wndProcDelegate));
+
+            if (hMenu == IntPtr.Zero)
+            {
+                hMenu = CreateMenu();
+                SetMenu(hwnd, hMenu);
+            }
+        }
+
+        private IntPtr SubclassWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+        {
+            if (msg == WM_COMMAND)
+            {
+                int id = wParam.ToInt32() & 0xFFFF;
+                if (callbacks.TryGetValue(id, out EventHandler handler))
+                    Dispatcher.UIThread.Post(() => handler?.Invoke(this, EventArgs.Empty));
+            }
+
+            if (_originalWndProc != IntPtr.Zero)
+                return CallWindowProc(_originalWndProc, hWnd, msg, wParam, lParam);
+
+            return IntPtr.Zero;
         }
 
         public void Create(string title, params (string label, object child)[] items)
         {
+            TryAttach();
+            if (hMenu == IntPtr.Zero)
+                return;
+
             IntPtr menu = CreatePopupMenu();
             foreach (var (label, child) in items)
             {
@@ -84,21 +144,6 @@ namespace Skymu.Native.Windows
                 }
             }
             AppendMenu(hMenu, MF_POPUP, unchecked((UIntPtr)(ulong)menu.ToInt64()), title);
-        }
-
-        IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            const int WM_COMMAND = 0x0111;
-            if (msg == WM_COMMAND)
-            {
-                int id = wParam.ToInt32() & 0xFFFF;
-                if (callbacks.TryGetValue(id, out EventHandler handler))
-                {
-                    handler?.Invoke(this, EventArgs.Empty);
-                    handled = true;
-                }
-            }
-            return IntPtr.Zero;
         }
     }
 

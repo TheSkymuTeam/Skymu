@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -103,7 +103,6 @@
                     Height="70"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    RenderOptions.BitmapInterpolationMode="HighQuality"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Themeable/Profile Pictures/man.png'}" />
                 <Grid Grid.Column="1" Margin="10,0,0,0">
                     <TextBlock

@@ -1,0 +1,35 @@
+<Window
+    x:Class="Skymu.Skype7.GroupProfileWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Group profile"
+    Width="682"
+    Height="348"
+    WindowStartupLocation="CenterOwner"
+    Background="White"
+    FontFamily="Segoe UI">
+    <Grid>
+        <Border Width="220" Height="216" Margin="27,18,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#ABD4E3">
+            <Image Width="150" Height="150" Source="Assets/Themeable/Profile Pictures/group.png" Stretch="Uniform" />
+        </Border>
+        <TextBlock Margin="28,242,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="Hand" FontSize="12" Foreground="#0095CC" PointerReleased="WorkInProgress_Click" Text="Change picture" />
+
+        <Image Width="14" Height="13" Margin="271,28,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Source="Assets/Classic/icon-star.png" Stretch="None" />
+        <TextBlock x:Name="TitleText" Margin="295,22,40,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="18" Foreground="#2B2B30" Text="A group chat" />
+        <Button Width="16" Height="16" Margin="0,26,24,0" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderThickness="0" Click="WorkInProgress_Click" ToolTip.Tip="Leave conversation">
+            <Path Stroke="#6E6E73" StrokeThickness="1.1" Data="M1,3 H7 V1 M10,4 H5 M10,4 L7,1 M10,4 L7,7" Stretch="Fill" Width="14" Height="12" />
+        </Button>
+
+        <TextBlock x:Name="CountText" Margin="295,52,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#6E6E73" Text="2 participants" />
+        <TextBlock Margin="295,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#6E6E73" Text="Administrators:" />
+        <Ellipse Width="10" Height="10" Margin="295,102,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Fill="#82BB05" />
+        <TextBlock x:Name="AdminText" Margin="312,98,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#2B2B30" Text="skypetest" />
+
+        <TextBlock Margin="295,128,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#6E6E73" Text="Conversation notifications" />
+        <CheckBox Margin="295,148,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#2B2B30" IsChecked="True" Content="Notify me when something new happens" />
+
+        <TextBlock Margin="295,178,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#6E6E73" Text="Administrator settings" />
+        <CheckBox Margin="295,198,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#2B2B30" Content="Make chat history available to everyone" Click="WorkInProgress_Click" />
+        <CheckBox Margin="295,220,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" Foreground="#2B2B30" Content="Make a link for anyone to join" Click="WorkInProgress_Click" />
+    </Grid>
+</Window>

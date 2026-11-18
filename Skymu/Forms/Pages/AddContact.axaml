@@ -1,4 +1,4 @@
-﻿<!--
+<!--
     ============================================================
     Copyright © The Skymu Team and other contributors.
     For any inquiries or concerns, email contact@skymu.app.
@@ -304,7 +304,9 @@
                     FontFamily="Tahoma"
                     FontSize="11"
                     Foreground="{DynamicResource Text.VeryHighContrast}">
-                    <Binding Path="DisplayName" />
+                    <uc:QuickLTB.Bindings>
+                        <Binding Path="DisplayName" />
+                    </uc:QuickLTB.Bindings>
                 </uc:QuickLTB>
 
                 <!--  Temp  -->
@@ -337,7 +339,6 @@
                                 Margin="4,4,5,9"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
-                                RenderOptions.BitmapInterpolationMode="HighQuality"
                                 Stretch="UniformToFill">
                                 <Image.Source>
                                     <MultiBinding Converter="{StaticResource AvatarConverter}">
