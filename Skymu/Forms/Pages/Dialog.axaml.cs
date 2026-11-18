@@ -59,12 +59,11 @@ namespace Skymu.Forms.Pages
             // create the window and size it to match a Skype dialog
             window = new SkinnedWindow(this)
             {
+                Width = 367, // always 367, since the dialog is designed to be a fixed width
                 MaxHeight = 800,
-                MinHeight = 225,
-                Width = 373,
-                Height = 539,
-                CanResize = false,
-                SizeToContent = SizeToContent.Height,
+                MinHeight = 197,
+                Height = 197, // override skinnedwindow
+                SizeToContent = SizeToContent.Height, // override skinnedwindow
                 ButtonLeftText = Universal.Lang["sZAPBUTTON_CLOSE"],
                 ButtonRightText = Universal.Lang["sF_CONFIRM_OK_BTN"]
             };

@@ -78,7 +78,7 @@ namespace Skymu.Skype5
             StatusBox.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
             StatusBox.TextColor = selected
                 ? Brushes.White
-                : (SolidColorBrush)Application.Current.Resources["Text.HighContrast"];
+                : (SolidColorBrush)Application.Current.FindResource("Text.HighContrast");
             SBHomeButton.SetState(selected ? ButtonVisualState.Pressed : ButtonVisualState.Default);
         }
 

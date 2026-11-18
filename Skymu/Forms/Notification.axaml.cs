@@ -252,7 +252,7 @@ namespace Skymu.Forms
                 : body ?? "(no message)";
 
             messageText = Formatter.Parse(raw);
-            messageText.Foreground = (SolidColorBrush)Application.Current.Resources["Text.MediumContrast"];
+            messageText.Foreground = (SolidColorBrush)Application.Current.FindResource("Text.MediumContrast");
             messageText.FontSize = 11;
             messageText.Margin = new Thickness(0, 1, 0, 6);
             Grid.SetRow(messageText, 1);

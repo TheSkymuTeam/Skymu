@@ -23,26 +23,26 @@
     <sys:Int32 x:Key="Colorway.Version">1</sys:Int32>
     <sys:Boolean x:Key="Colorway.IsDarkTheme">true</sys:Boolean>
 
-    <LinearGradientBrush x:Key="Active.Titlebar" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Active.Titlebar" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0.0" Color="#FF4E5D94" />
         <GradientStop Offset="0.0634" Color="#FF5865A8" />
         <GradientStop Offset="0.0667" Color="#FF4E5D94" />
         <GradientStop Offset="1.0" Color="#FF3B4A7A" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="Active.Window" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Active.Window" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0.0" Color="#FF36393F" />
         <GradientStop Offset="1.0" Color="#FF2F3136" />
     </LinearGradientBrush>
     <SolidColorBrush x:Key="Active.Menubar" Color="#FF2F3136" />
     <SolidColorBrush x:Key="Active.Background" Color="#FF2F3136" />
 
-    <LinearGradientBrush x:Key="Inactive.Titlebar" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Inactive.Titlebar" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0.0" Color="#FF292B2F" />
         <GradientStop Offset="0.0634" Color="#FF2F3136" />
         <GradientStop Offset="0.0667" Color="#FF292B2F" />
         <GradientStop Offset="1.0" Color="#FF202225" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="Inactive.Window" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Inactive.Window" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0.0" Color="#FF2F3136" />
         <GradientStop Offset="1.0" Color="#FF292B2F" />
     </LinearGradientBrush>
@@ -103,7 +103,7 @@
     <SolidColorBrush x:Key="Settings.ActiveTab" Color="#85c0fc" />
     <SolidColorBrush x:Key="Settings.ActiveTabText" Color="#FFB9BBBE" />
 
-    <LinearGradientBrush x:Key="Strip.Background" StartPoint="0,0" EndPoint="0,1">
+    <LinearGradientBrush x:Key="Strip.Background" StartPoint="0%,0%" EndPoint="0%,100%">
         <GradientStop Offset="0" Color="#33343b" />
         <GradientStop Offset="1" Color="#25292e" />
     </LinearGradientBrush>

@@ -1853,7 +1853,7 @@ mc:Ignorable="d">
 							IsVisible="False">
 								<Rectangle>
 									<Rectangle.Fill>
-										<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+										<LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
 											<GradientStop Offset="0.0" Color="#e8f0f9" />
 											<GradientStop Offset="1.0" Color="#b4cff1" />
 										</LinearGradientBrush>

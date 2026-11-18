@@ -19,6 +19,7 @@ using Avalonia.Data;
 using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using Avalonia.Controls;
 
 namespace Skymu.Converters
 {
@@ -28,8 +29,8 @@ namespace Skymu.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string id && id == Universal.CurrentUser?.Identifier)
-                return (SolidColorBrush)Application.Current.Resources["Metro.Bubble"];
-            return (SolidColorBrush)Application.Current.Resources["Metro.Bubble.Tinted"];
+                return (SolidColorBrush)Application.Current.FindResource("Metro.Bubble");
+            return (SolidColorBrush)Application.Current.FindResource("Metro.Bubble.Tinted");
         }
 
         public object ConvertBack(

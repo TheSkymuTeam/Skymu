@@ -74,7 +74,7 @@
         <ContentControl
             x:Name="PageHost"
             Grid.Row="1"
-            Margin="77,23,35,7" />
+            Margin="77,17,35,7" />
 
         <!--  Bottom Button Section  -->
         <Grid Grid.Row="2" Height="44" ZIndex="20">

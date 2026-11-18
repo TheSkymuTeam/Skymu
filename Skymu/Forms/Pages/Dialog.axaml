@@ -13,7 +13,6 @@
                 x:Name="tb"
                 Width="260"
                 MaxHeight="600"
-                Margin="0,-6,0,0"
                 HorizontalAlignment="Left"
                 VerticalScrollBarVisibility="Auto">
             <TextBlock

@@ -217,7 +217,7 @@ namespace Skymu.Preferences
 
         public static string AvaloniaTheme
         {
-            get => SELECT("AvaloniaTheme", "Classic.Avalonia", "Skymu/Appearance");
+            get => SELECT("AvaloniaTheme", "AeroAvalonia", "Skymu/Appearance");
             set
             {
                 string theme = value;

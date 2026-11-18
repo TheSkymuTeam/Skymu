@@ -40,7 +40,7 @@ namespace Skymu.Forms
             string background_color;
             if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6") background_color = "Metro.Background";
             else background_color = "Background";
-            Background = (SolidColorBrush)Application.Current.Resources[background_color];
+            Background = (SolidColorBrush)Application.Current.FindResource(background_color);
 
             catToGrid = new Dictionary<SliceControl, Grid>
             {

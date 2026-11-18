@@ -13,6 +13,7 @@
 
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using System;
@@ -32,11 +33,11 @@ namespace Skymu.Converters
         )
         {
             if (values[0] is string identifier && identifier == Universal.CurrentUser?.Identifier)
-                return (SolidColorBrush)Application.Current.Resources["Message.Author.Me"];
+                return (SolidColorBrush)Application.Current.FindResource("Message.Author.Me");
             else if (values[1] is bool isForwarded && isForwarded)
-                return (SolidColorBrush)Application.Current.Resources["Message.Author.Forward"];
+                return (SolidColorBrush)Application.Current.FindResource("Message.Author.Forward");
             else
-                return (SolidColorBrush)Application.Current.Resources["Message.Author.Other"];
+                return (SolidColorBrush)Application.Current.FindResource("Message.Author.Other");
         }
 
         public object ConvertBack(

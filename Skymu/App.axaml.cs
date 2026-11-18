@@ -25,6 +25,7 @@ using Classic.Avalonia.Theme;
 using OmegaAOL.Bifrost.Http;
 using Skymu.AvaloniaHelpers;
 using Skymu.Forms;
+using AeroAvalonia;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
 using Skymu.Native.Windows;
@@ -353,7 +354,7 @@ namespace Skymu
                 case "Skype7":
                     Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush(Color.Parse("#0095cc"));
                     Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
-                    new Skype7.Login().Show();
+                    new Skype6.Login().Show();
                     break;
                 case "Skype6":
                     // TODO: Make a better fix
@@ -661,7 +662,7 @@ namespace Skymu
         private void ApplyAvaloniaTheme(string themeName)
         {
             if (string.IsNullOrEmpty(themeName))
-                themeName = "Classic.Avalonia";
+                themeName = "AeroAvalonia";
 
             IStyle theme;
             ThemeVariant variant = ThemeVariant.Default;
@@ -684,6 +685,7 @@ namespace Skymu
                 }
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
+            else if (themeName.Contains("Aero")) theme = new AeroTheme();
             else theme = new SimpleTheme();
 
             try
