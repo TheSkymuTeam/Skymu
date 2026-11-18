@@ -809,7 +809,6 @@ namespace Skymu.Theming
             Opened += (s, e) =>
             {
                 InitializeMenuBar();
-                AvaloniaHelpers.AHelpers.ApplyTextRenderingToTree(this);
 
                 if (Settings.SaveWindowPosition && Settings.Width >= 0.0)
                 {

@@ -74,34 +74,5 @@ namespace Skymu.AvaloniaHelpers
                 },
                 DispatcherPriority.Input);
         }
-
-        public static TextRenderingMode CurrentTextRenderingMode =>
-            Skymu.Preferences.Settings.UseClearType
-                ? TextRenderingMode.SubpixelAntialias
-                : TextRenderingMode.Antialias;
-
-        public static void UpdateTextRendering()
-        {
-            if (Application.Current == null)
-                return;
-
-            var mode = CurrentTextRenderingMode;
-            Application.Current.Resources["AppTextRenderingMode"] = mode;
-
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                foreach (var window in desktop.Windows)
-                    ApplyTextRenderingToTree(window, mode);
-            }
-        }
-
-        public static void ApplyTextRenderingToTree(Visual root, TextRenderingMode? mode = null)
-        {
-            mode ??= CurrentTextRenderingMode;
-            if (root is Control control)
-                RenderOptions.SetTextRenderingMode(control, mode.Value);
-            foreach (var child in root.GetVisualChildren())
-                ApplyTextRenderingToTree(child, mode);
-        }
     }
 }

@@ -273,7 +273,6 @@ namespace Skymu
 
         public override void OnFrameworkInitializationCompleted()
         {
-            AHelpers.UpdateTextRendering();
             ApplyAvaloniaTheme(Settings.AvaloniaTheme);
             var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             if (desktop != null)
@@ -315,9 +314,6 @@ namespace Skymu
                     case "Colorway":
                     case "WindowFrame":
                     case "Theme":
-                    case "UseClearType":
-                        AHelpers.UpdateTextRendering();
-                        break;
                     case "NativeMenuBar":
                     case "UseSystemCulture":
                         if (SuppressSettingsRestartPrompt)

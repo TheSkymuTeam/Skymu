@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using HarmonyLib;
 using System;
 
 namespace Skymu
@@ -15,6 +16,7 @@ namespace Skymu
         public static AppBuilder BuildAvaloniaApp() =>
             AppBuilder.Configure<Universal>()
                 .UsePlatformDetect()
+                .AfterSetup(_ => GdiAdvancePatch.Install(new Harmony("skymu.gdi.advances")))
                 .LogToTrace();
     }
 }

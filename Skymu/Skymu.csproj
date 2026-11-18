@@ -3,10 +3,9 @@
 	<!-- Main thingy -->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<RollForward>LatestMajor</RollForward>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>

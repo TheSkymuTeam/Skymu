@@ -20,14 +20,10 @@ xmlns:local="clr-namespace:Skymu"
 xmlns:media="using:Avalonia.Media"
 xmlns:preferences="clr-namespace:Skymu.Preferences">
 	<Application.Styles>
-		<Style Selector="Window">
+		<Style Selector="Window, UserControl, Popup, ToolTip, Button">
 			<Setter Property="UseLayoutRounding" Value="True" />
-			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
-						<Setter Property="FontFamily" Value="Tahoma" />
-			<Setter Property="FontSize" Value="11" />
 		</Style>
-		<Style Selector="UserControl">
-			<Setter Property="UseLayoutRounding" Value="True" />
+		<Style Selector="Window, UserControl, Button">
 			<Setter Property="Foreground" Value="{DynamicResource Text.VeryHighContrast}" />
 			<Setter Property="FontFamily" Value="Tahoma" />
 			<Setter Property="FontSize" Value="11" />

@@ -258,54 +258,6 @@
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[CallOutToReconnectSound], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
-            <StackPanel Margin="0,5,0,10" Grid.IsSharedSizeScope="True">
-
-                <Grid Margin="0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="FontRadioCol" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="FontLabelCol" />
-                    </Grid.ColumnDefinitions>
-
-                    <RadioButton
-                        x:Name="UseDefaultFontRenderingRadio"
-                        Grid.Column="0"
-                        Margin="0,3,0,0"
-                        VerticalAlignment="Top"
-                        Checked="UseDefaultFontRenderingRadio_Checked"
-                        GroupName="FontRenderingModeGroup" />
-
-                    <StackPanel
-                        Grid.Column="1"
-                        Margin="5,1,10,0"
-                        VerticalAlignment="Center">
-                        <TextBlock Text="Use grayscale antialaising" />
-                    </StackPanel>
-                </Grid>
-
-                <Grid Margin="0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="FontRadioCol" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="FontLabelCol" />
-                    </Grid.ColumnDefinitions>
-
-                    <RadioButton
-                        x:Name="UseClearTypeRadio"
-                        Grid.Column="0"
-                        Margin="0,3,0,0"
-                        VerticalAlignment="Top"
-                        Checked="UseClearTypeRadio_Checked"
-                        GroupName="FontRenderingModeGroup" />
-
-                    <StackPanel
-                        Grid.Column="1"
-                        Margin="5,1,10,0"
-                        VerticalAlignment="Center">
-                        <TextBlock Text="Use accurate LCD subpixel antialaising" />
-                    </StackPanel>
-                </Grid>
-
-            </StackPanel>
-
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
