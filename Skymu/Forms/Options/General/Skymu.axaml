@@ -220,8 +220,16 @@
     SelectedValueBinding="{Binding Tag}">
                 <ComboBoxItem
         Padding="6,0"
-        Content="Draw native-styled controls from .msstyles"
+        Content="Draw native-styled controls (recommended)"
         Tag="Native" />
+        <ComboBoxItem
+        Padding="6,0"
+        Content="Avalonia Fluent"
+        Tag="Avalonia.Fluent.Dynamic" />
+    <ComboBoxItem
+        Padding="6,0"
+        Content="Avalonia Simple"
+        Tag="Avalonia.Simple" />
             <ComboBoxItem
         Padding="6,0"
         Content="AeroAvalonia"
@@ -230,14 +238,6 @@
         Padding="6,0"
         Content="Classic.Avalonia"
         Tag="Classic.Avalonia" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Avalonia Fluent"
-        Tag="Avalonia.Fluent.Dynamic" />
-    <ComboBoxItem
-        Padding="6,0"
-        Content="Avalonia Simple"
-        Tag="Avalonia.Simple" />
 </ComboBox>
             </StackPanel>
 

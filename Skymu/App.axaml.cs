@@ -682,7 +682,7 @@ namespace Skymu
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
             else if (themeName.Contains("Aero")) theme = new AeroTheme();
-            else if (themeName.Contains("Native")) theme = Skymu.AvaloniaNativeTheme.NativeTheme.Generate();
+            else if (themeName.Contains("Native")) theme = Skymu.AvaloniaNativeTheme.NativeTheme.Generate(); // TODO gate this to Windows only! Or port NativeTheme to MacOS and GTK...
             else theme = new SimpleTheme();
 
             

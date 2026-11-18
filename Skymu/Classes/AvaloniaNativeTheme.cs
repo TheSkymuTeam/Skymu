@@ -11,7 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-// SO FAR COVERED : Button, CheckBox, RadioButton, TextBox, ProgressBar, ScrollBar
+// SO FAR COVERED : Button, CheckBox, RadioButton, TextBox, ProgressBar, ScrollBar, ComboBox (+ComboBoxItem), TabControl (top placement only), Slider
 // Everything else falls through to SimpleTheme, not PIK la ...
 // TODO(omega, patrick, hubaxe): Finish all the controls .
 
@@ -32,7 +32,7 @@ using Avalonia.Styling;
 using Avalonia.Themes.Simple;
 using Avalonia.VisualTree;
 
-namespace Skymu.AvaloniaNativeTheme 
+namespace Skymu.AvaloniaNativeTheme
 {
     public enum NativePartKind
     {
@@ -52,6 +52,15 @@ namespace Skymu.AvaloniaNativeTheme
         ScrollTrackUpperV,
         ScrollTrackLowerH,
         ScrollTrackUpperH,
+        ComboBorder,
+        ComboReadOnly,
+        ComboDropButton,
+        TabItem,
+        TabPane,
+        SliderTrackH,
+        SliderTrackV,
+        SliderThumbH,
+        SliderThumbV,
     }
 
     public static class NativeTheme
@@ -109,6 +118,10 @@ namespace Skymu.AvaloniaNativeTheme
             int hArrowW = Win32.Metric(21); // SM_CXHSCROLL (arrow width)
             int vThumbMin = Win32.Metric(9);  // SM_CYVTHUMB
             int hThumbMin = Win32.Metric(10); // SM_CXHTHUMB
+            string frame = Hex(6);          // COLOR_WINDOWFRAME
+            int comboBtnW = vW;             // dropdown button is as wide as a scrollbar
+            var sliderThumbH = NativeRenderer.PartSize("TRACKBAR", 3, 1, 96); // TKP_THUMB
+            var sliderThumbV = NativeRenderer.PartSize("TRACKBAR", 6, 1, 96); // TKP_THUMBVERT
 
             return @"<Styles xmlns=""https://github.com/avaloniaui""
         xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
@@ -121,8 +134,8 @@ namespace Skymu.AvaloniaNativeTheme
         <Setter Property=""Foreground"" Value=""" + (btnText) + @"""/>
         <Setter Property=""Background"" Value=""Transparent""/>
         <Setter Property=""Padding"" Value=""8,2""/>
-        <Setter Property=""MinWidth"" Value=""75""/>
-        <Setter Property=""MinHeight"" Value=""23""/>
+        <Setter Property=""MinWidth"" Value=""77""/>
+        <Setter Property=""MinHeight"" Value=""25""/>
         <Setter Property=""HorizontalContentAlignment"" Value=""Center""/>
         <Setter Property=""VerticalContentAlignment"" Value=""Center""/>
         <Setter Property=""Template"">
@@ -349,6 +362,198 @@ namespace Skymu.AvaloniaNativeTheme
         </Style>
       </ControlTheme>
 
+      <!-- ===================== ComboBox ===================== -->
+      <ControlTheme x:Key=""{x:Type ComboBox}"" TargetType=""ComboBox"">
+        <Setter Property=""Foreground"" Value=""" + (windowText) + @"""/>
+        <Setter Property=""Background"" Value=""" + (window) + @"""/>
+        <Setter Property=""Padding"" Value=""4,1,0,1""/>
+        <Setter Property=""MinHeight"" Value=""21""/>
+        <Setter Property=""MaxDropDownHeight"" Value=""200""/>
+        <Setter Property=""HorizontalContentAlignment"" Value=""Left""/>
+        <Setter Property=""VerticalContentAlignment"" Value=""Center""/>
+        <Setter Property=""ItemsPanel"">
+          <ItemsPanelTemplate><VirtualizingStackPanel/></ItemsPanelTemplate>
+        </Setter>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Panel>
+              <n:ThemePart Kind=""ComboReadOnly""/>
+              <Grid ColumnDefinitions=""*,Auto"">
+                <ContentControl Grid.Column=""0""
+                                Content=""{TemplateBinding SelectionBoxItem}""
+                                ContentTemplate=""{TemplateBinding ItemTemplate}""
+                                Foreground=""{TemplateBinding Foreground}""
+                                Margin=""{TemplateBinding Padding}""
+                                HorizontalAlignment=""{TemplateBinding HorizontalContentAlignment}""
+                                VerticalAlignment=""{TemplateBinding VerticalContentAlignment}""/>
+                <n:ThemePart Grid.Column=""1"" Kind=""ComboDropButton"" Width=""" + (N(comboBtnW)) + @"""/>
+              </Grid>
+              <Popup Name=""PART_Popup""
+                     IsOpen=""{TemplateBinding IsDropDownOpen, Mode=TwoWay}""
+                     MinWidth=""{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}""
+                     MaxHeight=""{TemplateBinding MaxDropDownHeight}""
+                     IsLightDismissEnabled=""True"">
+                <Border Background=""" + (window) + @""" BorderBrush=""" + (frame) + @""" BorderThickness=""1"">
+                  <ScrollViewer HorizontalScrollBarVisibility=""Disabled"">
+                    <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""/>
+                  </ScrollViewer>
+                </Border>
+              </Popup>
+            </Panel>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector=""^:disabled"">
+          <Setter Property=""Foreground"" Value=""" + (gray) + @"""/>
+        </Style>
+      </ControlTheme>
+
+      <ControlTheme x:Key=""{x:Type ComboBoxItem}"" TargetType=""ComboBoxItem"">
+        <Setter Property=""Foreground"" Value=""" + (windowText) + @"""/>
+        <Setter Property=""Background"" Value=""Transparent""/>
+        <Setter Property=""Padding"" Value=""3,2""/>
+        <Setter Property=""HorizontalContentAlignment"" Value=""Stretch""/>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <ContentPresenter Name=""PART_ContentPresenter""
+                              Background=""{TemplateBinding Background}""
+                              Foreground=""{TemplateBinding Foreground}""
+                              Content=""{TemplateBinding Content}""
+                              ContentTemplate=""{TemplateBinding ContentTemplate}""
+                              Padding=""{TemplateBinding Padding}""
+                              HorizontalContentAlignment=""{TemplateBinding HorizontalContentAlignment}""
+                              VerticalContentAlignment=""{TemplateBinding VerticalContentAlignment}""/>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector=""^:pointerover /template/ ContentPresenter#PART_ContentPresenter"">
+          <Setter Property=""Background"" Value=""" + (highlight) + @"""/>
+          <Setter Property=""Foreground"" Value=""" + (highlightText) + @"""/>
+        </Style>
+        <Style Selector=""^:selected /template/ ContentPresenter#PART_ContentPresenter"">
+          <Setter Property=""Background"" Value=""" + (highlight) + @"""/>
+          <Setter Property=""Foreground"" Value=""" + (highlightText) + @"""/>
+        </Style>
+        <Style Selector=""^:disabled"">
+          <Setter Property=""Foreground"" Value=""" + (gray) + @"""/>
+        </Style>
+      </ControlTheme>
+
+      <!-- ===================== TabControl (top placement only) ===================== -->
+      <ControlTheme x:Key=""{x:Type TabControl}"" TargetType=""TabControl"">
+        <Setter Property=""Background"" Value=""Transparent""/>
+        <Setter Property=""Padding"" Value=""6""/>
+        <Setter Property=""ItemsPanel"">
+          <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+        </Setter>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Grid RowDefinitions=""Auto,*"">
+              <Panel Grid.Row=""1"">
+                <n:ThemePart Kind=""TabPane""/>
+                <ContentPresenter Name=""PART_SelectedContentHost""
+                                  Margin=""{TemplateBinding Padding}""
+                                  Content=""{TemplateBinding SelectedContent}""
+                                  ContentTemplate=""{TemplateBinding SelectedContentTemplate}""/>
+              </Panel>
+              <ItemsPresenter Name=""PART_ItemsPresenter"" Grid.Row=""0"" Margin=""0,0,0,-2""
+                              ItemsPanel=""{TemplateBinding ItemsPanel}""/>
+            </Grid>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+
+      <ControlTheme x:Key=""{x:Type TabItem}"" TargetType=""TabItem"">
+        <Setter Property=""Foreground"" Value=""" + (btnText) + @"""/>
+        <Setter Property=""Padding"" Value=""6,0""/>
+        <Setter Property=""MinHeight"" Value=""19""/>
+        <Setter Property=""Margin"" Value=""0,2,0,0""/>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Panel>
+              <n:ThemePart Kind=""TabItem""/>
+              <ContentPresenter Name=""PART_ContentPresenter""
+                                Content=""{TemplateBinding Header}""
+                                ContentTemplate=""{TemplateBinding HeaderTemplate}""
+                                Foreground=""{TemplateBinding Foreground}""
+                                Padding=""{TemplateBinding Padding}""
+                                HorizontalAlignment=""Center"" VerticalAlignment=""Center""
+                                RecognizesAccessKey=""True""/>
+            </Panel>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector=""^:selected"">
+          <Setter Property=""Margin"" Value=""0""/>
+          <Setter Property=""MinHeight"" Value=""21""/>
+        </Style>
+        <Style Selector=""^:disabled"">
+          <Setter Property=""Foreground"" Value=""" + (gray) + @"""/>
+        </Style>
+      </ControlTheme>
+
+      <!-- ===================== Slider ===================== -->
+      <ControlTheme x:Key=""{x:Type Slider}"" TargetType=""Slider"">
+        <Setter Property=""Background"" Value=""Transparent""/>
+        <Style Selector=""^:horizontal"">
+          <Setter Property=""MinHeight"" Value=""" + (N((int)Math.Round(sliderThumbH.Height))) + @"""/>
+          <Setter Property=""Template"">
+            <ControlTemplate>
+              <Panel Background=""Transparent"">
+                <n:ThemePart Kind=""SliderTrackH"" Height=""4"" VerticalAlignment=""Center""/>
+                <Track Name=""PART_Track"" Orientation=""Horizontal""
+                       IsDirectionReversed=""{TemplateBinding IsDirectionReversed}""
+                       Minimum=""{TemplateBinding Minimum}"" Maximum=""{TemplateBinding Maximum}""
+                       Value=""{TemplateBinding Value, Mode=TwoWay}"">
+                  <Track.DecreaseButton>
+                    <RepeatButton Name=""PART_DecreaseButton"" Focusable=""False"">
+                      <RepeatButton.Template><ControlTemplate><Border Background=""Transparent""/></ControlTemplate></RepeatButton.Template>
+                    </RepeatButton>
+                  </Track.DecreaseButton>
+                  <Track.IncreaseButton>
+                    <RepeatButton Name=""PART_IncreaseButton"" Focusable=""False"">
+                      <RepeatButton.Template><ControlTemplate><Border Background=""Transparent""/></ControlTemplate></RepeatButton.Template>
+                    </RepeatButton>
+                  </Track.IncreaseButton>
+                  <Thumb Name=""thumb"" Width=""" + (N((int)Math.Round(sliderThumbH.Width))) + @""" Height=""" + (N((int)Math.Round(sliderThumbH.Height))) + @""">
+                    <Thumb.Template>
+                      <ControlTemplate><n:ThemePart Kind=""SliderThumbH""/></ControlTemplate>
+                    </Thumb.Template>
+                  </Thumb>
+                </Track>
+              </Panel>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+        <Style Selector=""^:vertical"">
+          <Setter Property=""MinWidth"" Value=""" + (N((int)Math.Round(sliderThumbV.Width))) + @"""/>
+          <Setter Property=""Template"">
+            <ControlTemplate>
+              <Panel Background=""Transparent"">
+                <n:ThemePart Kind=""SliderTrackV"" Width=""4"" HorizontalAlignment=""Center""/>
+                <Track Name=""PART_Track"" Orientation=""Vertical""
+                       IsDirectionReversed=""{TemplateBinding IsDirectionReversed}""
+                       Minimum=""{TemplateBinding Minimum}"" Maximum=""{TemplateBinding Maximum}""
+                       Value=""{TemplateBinding Value, Mode=TwoWay}"">
+                  <Track.DecreaseButton>
+                    <RepeatButton Name=""PART_DecreaseButton"" Focusable=""False"">
+                      <RepeatButton.Template><ControlTemplate><Border Background=""Transparent""/></ControlTemplate></RepeatButton.Template>
+                    </RepeatButton>
+                  </Track.DecreaseButton>
+                  <Track.IncreaseButton>
+                    <RepeatButton Name=""PART_IncreaseButton"" Focusable=""False"">
+                      <RepeatButton.Template><ControlTemplate><Border Background=""Transparent""/></ControlTemplate></RepeatButton.Template>
+                    </RepeatButton>
+                  </Track.IncreaseButton>
+                  <Thumb Name=""thumb"" Width=""" + (N((int)Math.Round(sliderThumbV.Width))) + @""" Height=""" + (N((int)Math.Round(sliderThumbV.Height))) + @""">
+                    <Thumb.Template>
+                      <ControlTemplate><n:ThemePart Kind=""SliderThumbV""/></ControlTemplate>
+                    </Thumb.Template>
+                  </Thumb>
+                </Track>
+              </Panel>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+      </ControlTheme>
+
     </ResourceDictionary>
   </Styles.Resources>
 </Styles>";
@@ -435,7 +640,26 @@ namespace Skymu.AvaloniaNativeTheme
 
                 case NativePartKind.ProgressTrack:
                 case NativePartKind.ProgressFill:
+                case NativePartKind.TabPane:
+                case NativePartKind.SliderTrackH:
+                case NativePartKind.SliderTrackV:
                     return 1;
+
+                case NativePartKind.ComboReadOnly:
+                    return dis ? 4 : Has(":dropdownopen") ? 3 : hot ? 2 : 1;
+
+                case NativePartKind.ComboBorder:
+                    return dis ? 4 : Has(":focus") || Has(":dropdownopen") ? 3 : hot ? 2 : 1;
+
+                case NativePartKind.ComboDropButton:
+                    return dis ? 4 : Has(":dropdownopen") || pressed ? 3 : hot ? 2 : 1;
+
+                case NativePartKind.TabItem:
+                    return dis ? 4 : Has(":selected") ? 3 : hot ? 2 : 1;
+
+                case NativePartKind.SliderThumbH:
+                case NativePartKind.SliderThumbV:
+                    return dis ? 5 : s; // TUS_DISABLED is 5 (4 is FOCUSED)
 
                 default:
                     return s; // thumbs and tracks use NORMAL/HOT/PRESSED/DISABLED directly
@@ -465,7 +689,7 @@ namespace Skymu.AvaloniaNativeTheme
                 return;
 
             var dest = new Rect(0, 0, pw / scale, ph / scale);
-            context.DrawRectangle(Brushes.Transparent, null, dest); 
+            context.DrawRectangle(Brushes.Transparent, null, dest);
 
             var bmp = NativeRenderer.Get(Kind, Vertical, State(), pw, ph, Dpi);
             if (bmp != null)
@@ -513,6 +737,15 @@ namespace Skymu.AvaloniaNativeTheme
             NativePartKind.ScrollTrackUpperH => ("SCROLLBAR", new[] { 5 }, 0),
             NativePartKind.ScrollTrackLowerV => ("SCROLLBAR", new[] { 6 }, 0),
             NativePartKind.ScrollTrackUpperV => ("SCROLLBAR", new[] { 7 }, 0),
+            NativePartKind.ComboReadOnly => ("COMBOBOX", new[] { 5 }, 0),        // CP_READONLY (glossy, non-editable)
+            NativePartKind.ComboBorder => ("COMBOBOX", new[] { 4 }, 0),          // CP_BORDER
+            NativePartKind.ComboDropButton => ("COMBOBOX", new[] { 6, 1 }, 0),   // CP_DROPDOWNBUTTONRIGHT, CP_DROPDOWNBUTTON
+            NativePartKind.TabItem => ("TAB", new[] { 1 }, 0),                   // TABP_TABITEM
+            NativePartKind.TabPane => ("TAB", new[] { 9, 10 }, 0),               // TABP_PANE, TABP_BODY
+            NativePartKind.SliderTrackH => ("TRACKBAR", new[] { 1 }, 0),         // TKP_TRACK
+            NativePartKind.SliderTrackV => ("TRACKBAR", new[] { 2 }, 0),         // TKP_TRACKVERT
+            NativePartKind.SliderThumbH => ("TRACKBAR", new[] { 3 }, 0),         // TKP_THUMB
+            NativePartKind.SliderThumbV => ("TRACKBAR", new[] { 6 }, 0),         // TKP_THUMBVERT
             _ => ("BUTTON", new[] { 1 }, 0),
         };
 
