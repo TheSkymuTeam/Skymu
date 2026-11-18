@@ -1,4 +1,17 @@
-﻿using Avalonia.Media.TextFormatting;
+﻿/*==========================================================*/
+// Copyright © The Skymu Team and other contributors.
+// For any inquiries or concerns, email contact@skymu.app.
+/*==========================================================*/
+// Modification or redistribution of this code is governed
+// by the terms set out in the project license agreement.
+// If you do not comply with those terms, you may not
+// modify or distribute any original code from the project.
+/*==========================================================*/
+// License: https://skymu.app/legal/license
+// SPDX-License-Identifier: AGPL-3.0-or-later
+/*==========================================================*/
+
+using Avalonia.Media.TextFormatting;
 using HarmonyLib;
 using System;
 using System.Diagnostics;
@@ -6,7 +19,7 @@ using System.Runtime.InteropServices;
 
 namespace Skymu
 {
-    static class DWriteGdiClassicHook
+    static class DWriteGdiClassicHook // Hook into Direct Write la, tell it to render using GDI metrics la, and also adjust the kerning .
     {
         const int RM_GDI_CLASSIC = 2, RM_NATURAL = 4, RM_NATURAL_SYMMETRIC = 5;
         const int MM_NATURAL = 0, MM_GDI_CLASSIC = 1;

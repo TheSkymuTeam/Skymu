@@ -36,9 +36,6 @@ namespace Skymu.Forms.OptionPages.General
             UseSystemCert.IsChecked = Settings.CertificateStore == CertStore.System;
             UseCustomCert.IsChecked = Settings.CertificateStore == CertStore.Custom;
 
-            UseDefaultFontRenderingRadio.IsChecked = !Settings.UseClearType;
-            UseClearTypeRadio.IsChecked = Settings.UseClearType;
-
             StaticSidebarTabsRadio.IsChecked = !Settings.DynamicSidebarTabs;
             DynamicSidebarTabsRadio.IsChecked = Settings.DynamicSidebarTabs;
         }

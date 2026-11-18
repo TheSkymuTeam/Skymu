@@ -658,7 +658,7 @@ namespace Skymu
         private void ApplyAvaloniaTheme(string themeName)
         {
             if (string.IsNullOrEmpty(themeName))
-                themeName = "AeroAvalonia";
+                themeName = "Native";
 
             IStyle theme;
             ThemeVariant variant = ThemeVariant.Default;
@@ -682,7 +682,10 @@ namespace Skymu
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
             else if (themeName.Contains("Aero")) theme = new AeroTheme();
+            else if (themeName.Contains("Native")) theme = Skymu.AvaloniaNativeTheme.NativeTheme.Generate();
             else theme = new SimpleTheme();
+
+            
 
             try
             {

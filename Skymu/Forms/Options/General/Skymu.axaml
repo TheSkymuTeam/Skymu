@@ -218,6 +218,10 @@
     Width="250"
     SelectedValue="{Binding Path=[AvaloniaTheme], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}"
     SelectedValueBinding="{Binding Tag}">
+                <ComboBoxItem
+        Padding="6,0"
+        Content="Draw native-styled controls from .msstyles"
+        Tag="Native" />
             <ComboBoxItem
         Padding="6,0"
         Content="AeroAvalonia"
