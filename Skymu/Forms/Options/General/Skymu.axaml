@@ -230,10 +230,6 @@
         Padding="6,0"
         Content="Avalonia Simple"
         Tag="Avalonia.Simple" />
-            <ComboBoxItem
-        Padding="6,0"
-        Content="AeroAvalonia"
-        Tag="AeroAvalonia" />
     <ComboBoxItem
         Padding="6,0"
         Content="Classic.Avalonia"

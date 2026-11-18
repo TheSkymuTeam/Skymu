@@ -25,7 +25,6 @@ using Classic.Avalonia.Theme;
 using OmegaAOL.Bifrost.Http;
 using Skymu.AvaloniaHelpers;
 using Skymu.Forms;
-using AeroAvalonia;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
 using Skymu.Native.Windows;
@@ -681,7 +680,6 @@ namespace Skymu
                 }
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
-            else if (themeName.Contains("Aero")) theme = new AeroTheme();
             else if (themeName.Contains("Native")) theme = Skymu.AvaloniaNativeTheme.NativeTheme.Generate(); // TODO gate this to Windows only! Or port NativeTheme to MacOS and GTK...
             else theme = new SimpleTheme();
 

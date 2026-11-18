@@ -83,7 +83,6 @@
 
 	<!-- Packages -->
 	<ItemGroup>
-		<PackageReference Include="AeroAvalonia" Version="1.0.0" />
 		<PackageReference Include="Avalonia" Version="11.3.23" />
 		<PackageReference Include="Avalonia.Controls.WebView" Version="11.4.1" />
 		<PackageReference Include="Avalonia.Desktop" Version="11.3.23" />
