@@ -68,6 +68,7 @@ namespace Skymu.Theming
 
             StartSpinnerAnimation();
             SoundManager.Init();
+            Tray.Init();
             Tray.SetStatus(PresenceStatus.Offline);
         }
 
