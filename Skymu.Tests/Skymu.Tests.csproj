@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<UseWPF>true</UseWPF>
+		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
