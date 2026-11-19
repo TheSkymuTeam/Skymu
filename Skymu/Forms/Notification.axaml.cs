@@ -34,7 +34,7 @@ using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 using Skymu.AvaloniaTools;
-using Skymu.Classes.Avalonia;
+using Skymu.Crossplatform;
 
 namespace Skymu.Forms
 {

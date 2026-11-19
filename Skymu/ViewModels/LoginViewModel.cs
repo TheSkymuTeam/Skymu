@@ -21,7 +21,6 @@ using Skymu.Preferences;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System.Threading;
-using Skymu.Native.Windows;
 using Skymu.Sounds;
 using Avalonia.Media.Imaging;
 using Avalonia.Controls;
@@ -34,7 +33,7 @@ using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using System.IO;
 using Avalonia.Threading;
-using Skymu.PlatformInformation;
+using Skymu.Crossplatform;
 
 namespace Skymu.ViewModels
 {

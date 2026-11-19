@@ -28,7 +28,6 @@ using Skymu.AvaloniaTools;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
-using Skymu.Native.Windows;
 using Skymu.Plugins;
 using Skymu.Preferences;
 using Skymu.Sounds;
@@ -51,8 +50,7 @@ using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
-using Skymu.Classes.Avalonia;
-using Skymu.Classes.Crossplatform;
+using Skymu.Crossplatform;
 
 namespace Skymu
 {
