@@ -681,7 +681,7 @@ namespace Skymu
                 }
             }
             else if (themeName.Contains("Classic")) theme = new ClassicTheme();
-            else if (themeName.Contains("Native")) theme = NativeTheme.Generate(); // TODO gate this to Windows only! Or port NativeTheme to MacOS and GTK...
+            else if (themeName.Contains("Native") && Platform.OS == OS.Windows) theme = NativeTheme.Generate(); // TODO crossplatform Native theme?
             else theme = new SimpleTheme();
 
             

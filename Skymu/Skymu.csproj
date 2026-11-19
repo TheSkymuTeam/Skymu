@@ -3,7 +3,7 @@
 	<!-- Main thingy -->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
