@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
@@ -133,6 +134,10 @@ namespace Skymu.AvaloniaNativeTheme
             var sliderThumbH = NativeRenderer.PartSize("TRACKBAR", 3, 1, 96); // TKP_THUMB
             var sliderThumbV = NativeRenderer.PartSize("TRACKBAR", 6, 1, 96); // TKP_THUMBVERT
             string menuText = Hex(7);       // COLOR_MENUTEXT
+            var mf = Win32.MenuFont();
+            string menuFont = SecurityElement.Escape(mf.Family);
+            string menuFontSize = N(mf.Size);
+            string menuFontWeight = mf.Bold ? "Bold" : "Normal";
             int menuBarH = Win32.Metric(15); // SM_CYMENU
             int gutterW = 26;               // icon/check column width in popup menus
 
@@ -570,6 +575,9 @@ namespace Skymu.AvaloniaNativeTheme
       <!-- ===================== Menu (bar) ===================== -->
       <ControlTheme x:Key=""{x:Type Menu}"" TargetType=""Menu"">
         <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""FontFamily"" Value=""" + (menuFont) + @"""/>
+        <Setter Property=""FontSize"" Value=""" + (menuFontSize) + @"""/>
+        <Setter Property=""FontWeight"" Value=""" + (menuFontWeight) + @"""/>
         <Setter Property=""MinHeight"" Value=""" + (N(menuBarH)) + @"""/>
         <Setter Property=""ItemsPanel"">
           <ItemsPanelTemplate><StackPanel Orientation=""Horizontal""/></ItemsPanelTemplate>
@@ -588,6 +596,9 @@ namespace Skymu.AvaloniaNativeTheme
       <!-- ===================== MenuItem (bar items and submenu items) ===================== -->
       <ControlTheme x:Key=""{x:Type MenuItem}"" TargetType=""MenuItem"">
         <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""FontFamily"" Value=""" + (menuFont) + @"""/>
+        <Setter Property=""FontSize"" Value=""" + (menuFontSize) + @"""/>
+        <Setter Property=""FontWeight"" Value=""" + (menuFontWeight) + @"""/>
         <Setter Property=""Background"" Value=""Transparent""/>
         <Setter Property=""Padding"" Value=""6,2,6,2""/>
         <Setter Property=""MinHeight"" Value=""20""/>
@@ -682,6 +693,9 @@ namespace Skymu.AvaloniaNativeTheme
       <!-- ===================== ContextMenu ===================== -->
       <ControlTheme x:Key=""{x:Type ContextMenu}"" TargetType=""ContextMenu"">
         <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""FontFamily"" Value=""" + (menuFont) + @"""/>
+        <Setter Property=""FontSize"" Value=""" + (menuFontSize) + @"""/>
+        <Setter Property=""FontWeight"" Value=""" + (menuFontWeight) + @"""/>
         <Setter Property=""ItemsPanel"">
           <ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate>
         </Setter>
@@ -1164,6 +1178,54 @@ namespace Skymu.AvaloniaNativeTheme
         {
             try { return GetSystemMetricsForDpi(index, 96); }
             catch (EntryPointNotFoundException) { return GetSystemMetrics(index); }
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct LOGFONT
+        {
+            public int lfHeight, lfWidth, lfEscapement, lfOrientation, lfWeight;
+            public byte lfItalic, lfUnderline, lfStrikeOut, lfCharSet,
+                        lfOutPrecision, lfClipPrecision, lfQuality, lfPitchAndFamily;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string lfFaceName;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct NONCLIENTMETRICS
+        {
+            public uint cbSize;
+            public int iBorderWidth, iScrollWidth, iScrollHeight, iCaptionWidth, iCaptionHeight;
+            public LOGFONT lfCaptionFont;
+            public int iSmCaptionWidth, iSmCaptionHeight;
+            public LOGFONT lfSmCaptionFont;
+            public int iMenuWidth, iMenuHeight;
+            public LOGFONT lfMenuFont;
+            public LOGFONT lfStatusFont;
+            public LOGFONT lfMessageFont;
+            public int iPaddedBorderWidth;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, EntryPoint = "SystemParametersInfoW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SystemParametersInfo(uint action, uint param, ref NONCLIENTMETRICS ncm, uint winIni);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SystemParametersInfoForDpi(uint action, uint param, ref NONCLIENTMETRICS ncm, uint winIni, uint dpi);
+
+        public static (string Family, int Size, bool Bold) MenuFont()
+        {
+            const uint SPI_GETNONCLIENTMETRICS = 0x0029;
+            var ncm = new NONCLIENTMETRICS { cbSize = (uint)Marshal.SizeOf<NONCLIENTMETRICS>() };
+            bool ok;
+            try { ok = SystemParametersInfoForDpi(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0, 96); }
+            catch (EntryPointNotFoundException) { ok = SystemParametersInfo(SPI_GETNONCLIENTMETRICS, ncm.cbSize, ref ncm, 0); }
+
+            var f = ncm.lfMenuFont;
+            if (!ok || string.IsNullOrWhiteSpace(f.lfFaceName) || f.lfHeight == 0)
+                return ("Segoe UI", 12, false);
+
+            return (f.lfFaceName, Math.Abs(f.lfHeight), f.lfWeight >= 700);
         }
     }
 }

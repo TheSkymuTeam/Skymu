@@ -142,7 +142,6 @@ namespace Skymu.Theming
         protected WindowType current_window = WindowType.Chat;
         private string PlaceholderTextMTB = string.Empty;
         public event EventHandler Ready;
-        private MenuBarController _mmbController;
 
         protected enum WindowType
         {
@@ -575,40 +574,7 @@ namespace Skymu.Theming
 
         protected virtual void InitializeMenuBar()
         {
-            MenuBarArea.IsVisible = true;
-            //if (MenuBarArea != null) MenuBarArea.IsVisible = _currentFrame != Enumerations.WindowChrome.Native;
-            //if (_currentFrame == Enumerations.WindowChrome.Native) BuildMenuBarController();
-        }
-
-        protected void BuildMenuBarController()
-        {
-            _mmbController = new MenuBarController(this);
-            _mmbController.ActionRequested += (s2, action) =>
-            {
-                switch (action)
-                {
-                    case MenuBarController.Action.Home: SetWindow(WindowType.Home); break;
-                    case MenuBarController.Action.Contacts: _ = SelectTab(btnContacts); break;
-                    case MenuBarController.Action.Servers: _ = SelectTab(btnServers); break;
-                    case MenuBarController.Action.Recents: _ = SelectTab(btnRecents); break;
-                    case MenuBarController.Action.Call: CallButtonClick(null, null); break;
-                    case MenuBarController.Action.AddContact: AddContact_Click(null, null); break;
-                }
-            };
-            _mmbController.Build();
-            if (!(Universal.Plugin is IExtras ep) || ep.ExtraConfigurations.Count == 0)
-                _mmbController.DisableExtras();
-            else
-            {
-                var mitems = new (string, EventHandler)[ep.ExtraConfigurations.Count];
-                int i = 0;
-                foreach (var extra in ep.ExtraConfigurations)
-                {
-                    mitems[i] = (extra.title, (ss, ee) => extra.onRun());
-                    i++;
-                }
-                _mmbController.RedoExtras(mitems);
-            }
+            if (_currentFrame == Enumerations.WindowChrome.Native) MainMenuBarDivider.IsVisible = false;
         }
 
         protected void InitializeMainWindow()

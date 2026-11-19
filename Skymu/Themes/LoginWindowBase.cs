@@ -165,7 +165,6 @@ namespace Skymu.Theming
                 WindowState = WindowState.Minimized;
 
             MenuBarRow.Height = new GridLength(0);
-            new MenuBarController(this, true).Build();
             ProtocolComboBox.ItemTemplate = new FuncDataTemplate<LoginViewModel.PluginListing>((item, _) =>
                 new TextBlock { Text = item?.DisplayName });
             _viewModel.LoadPlugins();
