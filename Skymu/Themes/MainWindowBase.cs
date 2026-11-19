@@ -472,7 +472,7 @@ namespace Skymu.Theming
         {
             ContentBgTop.Fill = GetBrush("Background");
             ContentBgBottom.Fill = GetBrush("Background");
-            MainMenuBar.Background = GetBrush("Background");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Background");
             MainMenuBarDivider.Fill = GetBrush("Card.Border");
             MenuBarArea.Background = GetBrush("Background");
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
@@ -503,8 +503,8 @@ namespace Skymu.Theming
 
             ContentBgTop.Fill = GetBrush("Active.Window");
             ContentBgBottom.Fill = GetBrush("Active.Background");
-            MainMenuBar.Background = GetBrush("Active.Menubar");
-            MainMenuBarDivider.Fill = GetBrush("Active.Background");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Active.Menubar");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBarDivider.Fill = GetBrush("Active.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
@@ -534,8 +534,8 @@ namespace Skymu.Theming
 
             ContentBgTop.Fill = GetBrush("Inactive.Window");
             ContentBgBottom.Fill = GetBrush("Inactive.Background");
-            MainMenuBar.Background = GetBrush("Inactive.Menubar");
-            MainMenuBarDivider.Fill = GetBrush("Inactive.Background");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Inactive.Menubar");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBarDivider.Fill = GetBrush("Inactive.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
@@ -575,11 +575,9 @@ namespace Skymu.Theming
 
         protected virtual void InitializeMenuBar()
         {
-            if (MenuBarArea != null)
-                MenuBarArea.IsVisible = _currentFrame != Enumerations.WindowChrome.Native;
-
-            if (_currentFrame == Enumerations.WindowChrome.Native)
-                BuildMenuBarController();
+            MenuBarArea.IsVisible = true;
+            //if (MenuBarArea != null) MenuBarArea.IsVisible = _currentFrame != Enumerations.WindowChrome.Native;
+            //if (_currentFrame == Enumerations.WindowChrome.Native) BuildMenuBarController();
         }
 
         protected void BuildMenuBarController()
@@ -617,7 +615,7 @@ namespace Skymu.Theming
         {
             noCloseEvent = false;
 
-            if (Settings.Theme == "Skype7")
+            if (Settings.Theme == "Skype7" || Settings.Theme == "Skype6")
                 _currentFrame = Enumerations.WindowChrome.Native;
 
             AvaloniaHelpers.AHelpers.SetMainWindow(this);

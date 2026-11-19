@@ -250,6 +250,7 @@ namespace Skymu.Skype6
 
         public Main()
         {
+
             InitializeComponent();
             InitializeMainWindow();
 

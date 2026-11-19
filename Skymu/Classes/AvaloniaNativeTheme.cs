@@ -11,7 +11,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-// SO FAR COVERED : Button, CheckBox, RadioButton, TextBox, ProgressBar, ScrollBar, ComboBox (+ComboBoxItem), TabControl (top placement only), Slider
+// SO FAR COVERED : Button, CheckBox, RadioButton, TextBox, ProgressBar, ScrollBar, ComboBox (+ComboBoxItem), TabControl (top placement only), Slider, Menu, MenuItem, ContextMenu, Separator
 // Everything else falls through to SimpleTheme, not PIK la ...
 // TODO(omega, patrick, hubaxe): Finish all the controls .
 
@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data.Converters;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -61,6 +62,15 @@ namespace Skymu.AvaloniaNativeTheme
         SliderTrackV,
         SliderThumbH,
         SliderThumbV,
+        MenuBarBackground,
+        MenuBarItem,
+        MenuPopupBackground,
+        MenuPopupBorders,
+        MenuPopupGutter,
+        MenuPopupItem,
+        MenuPopupSeparator,
+        MenuSubmenuArrow,
+        MenuCheck,
     }
 
     public static class NativeTheme
@@ -122,6 +132,9 @@ namespace Skymu.AvaloniaNativeTheme
             int comboBtnW = vW;             // dropdown button is as wide as a scrollbar
             var sliderThumbH = NativeRenderer.PartSize("TRACKBAR", 3, 1, 96); // TKP_THUMB
             var sliderThumbV = NativeRenderer.PartSize("TRACKBAR", 6, 1, 96); // TKP_THUMBVERT
+            string menuText = Hex(7);       // COLOR_MENUTEXT
+            int menuBarH = Win32.Metric(15); // SM_CYMENU
+            int gutterW = 26;               // icon/check column width in popup menus
 
             return @"<Styles xmlns=""https://github.com/avaloniaui""
         xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
@@ -554,10 +567,166 @@ namespace Skymu.AvaloniaNativeTheme
         </Style>
       </ControlTheme>
 
+      <!-- ===================== Menu (bar) ===================== -->
+      <ControlTheme x:Key=""{x:Type Menu}"" TargetType=""Menu"">
+        <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""MinHeight"" Value=""" + (N(menuBarH)) + @"""/>
+        <Setter Property=""ItemsPanel"">
+          <ItemsPanelTemplate><StackPanel Orientation=""Horizontal""/></ItemsPanelTemplate>
+        </Setter>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Panel>
+              <n:ThemePart Kind=""MenuBarBackground""/>
+              <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
+                              KeyboardNavigation.TabNavigation=""Continue""/>
+            </Panel>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+
+      <!-- ===================== MenuItem (bar items and submenu items) ===================== -->
+      <ControlTheme x:Key=""{x:Type MenuItem}"" TargetType=""MenuItem"">
+        <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""Background"" Value=""Transparent""/>
+        <Setter Property=""Padding"" Value=""6,2,6,2""/>
+        <Setter Property=""MinHeight"" Value=""20""/>
+        <Setter Property=""ItemsPanel"">
+          <ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate>
+        </Setter>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Panel Name=""PART_LayoutRoot"" Background=""Transparent"">
+              <Panel Name=""PART_Bg"">
+                <n:ThemePart Kind=""MenuBarItem""
+                             IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsTopLevel}}""/>
+                <n:ThemePart Kind=""MenuPopupItem""
+                             IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}""/>
+              </Panel>
+              <Border Name=""PART_SeparatorHost"" IsVisible=""False"">
+                <n:ThemePart Kind=""MenuPopupSeparator"" Height=""6"" VerticalAlignment=""Center"" Margin=""" + (N(gutterW + 2)) + @",0,0,0""/>
+              </Border>
+              <Grid Name=""PART_Content"">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width=""Auto""/>
+                  <ColumnDefinition Width=""*""/>
+                  <ColumnDefinition Width=""Auto"" SharedSizeGroup=""NativeMenuGesture""/>
+                  <ColumnDefinition Width=""Auto"" SharedSizeGroup=""NativeMenuArrow""/>
+                </Grid.ColumnDefinitions>
+                <Panel Grid.Column=""0"" Width=""" + (N(gutterW)) + @"""
+                       IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}"">
+                  <Border Name=""PART_CheckHost"" Width=""22"" Height=""22"" IsVisible=""False"">
+                    <n:ThemePart Kind=""MenuCheck""/>
+                  </Border>
+                  <ContentControl Name=""PART_IconPresenter"" Content=""{TemplateBinding Icon}""
+                                  Width=""16"" Height=""16"" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+                </Panel>
+                <ContentPresenter Name=""PART_HeaderPresenter"" Grid.Column=""1""
+                                  Content=""{TemplateBinding Header}""
+                                  ContentTemplate=""{TemplateBinding HeaderTemplate}""
+                                  Foreground=""{TemplateBinding Foreground}""
+                                  Margin=""{TemplateBinding Padding}""
+                                  RecognizesAccessKey=""True""
+                                  HorizontalAlignment=""Left"" VerticalAlignment=""Center""/>
+                <TextBlock Name=""PART_InputGestureText"" Grid.Column=""2""
+                           Text=""{Binding InputGesture, RelativeSource={RelativeSource TemplatedParent}}""
+                           Foreground=""{TemplateBinding Foreground}""
+                           Margin=""24,0,8,0"" VerticalAlignment=""Center""
+                           IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}""/>
+                <Panel Grid.Column=""3"" Width=""16""
+                       IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.HasSubItems}}"">
+                  <n:ThemePart Kind=""MenuSubmenuArrow"" Width=""16"" Height=""16"" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+                </Panel>
+              </Grid>
+              <Popup Name=""PART_Popup""
+                     IsLightDismissEnabled=""True""
+                     IsOpen=""{TemplateBinding IsSubMenuOpen, Mode=TwoWay}""
+                     Placement=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.Placement}}""
+                     OverlayInputPassThroughElement=""{Binding $parent[Menu]}"">
+                <Panel MinWidth=""80"">
+                  <n:ThemePart Kind=""MenuPopupBackground""/>
+                  <n:ThemePart Kind=""MenuPopupGutter"" Width=""2"" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+                  <n:ThemePart Kind=""MenuPopupBorders""/>
+                  <ScrollViewer Margin=""2"">
+                    <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
+                                    Grid.IsSharedSizeScope=""True""/>
+                  </ScrollViewer>
+                </Panel>
+              </Popup>
+            </Panel>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector=""^:checked /template/ Border#PART_CheckHost"">
+          <Setter Property=""IsVisible"" Value=""True""/>
+        </Style>
+        <Style Selector=""^:separator"">
+          <Setter Property=""MinHeight"" Value=""0""/>
+          <Setter Property=""Height"" Value=""6""/>
+          <Setter Property=""Focusable"" Value=""False""/>
+          <Setter Property=""IsHitTestVisible"" Value=""False""/>
+        </Style>
+        <Style Selector=""^:separator /template/ Panel#PART_Bg"">
+          <Setter Property=""IsVisible"" Value=""False""/>
+        </Style>
+        <Style Selector=""^:separator /template/ Grid#PART_Content"">
+          <Setter Property=""IsVisible"" Value=""False""/>
+        </Style>
+        <Style Selector=""^:separator /template/ Border#PART_SeparatorHost"">
+          <Setter Property=""IsVisible"" Value=""True""/>
+        </Style>
+        <Style Selector=""^:disabled"">
+          <Setter Property=""Foreground"" Value=""" + (gray) + @"""/>
+        </Style>
+      </ControlTheme>
+
+      <!-- ===================== ContextMenu ===================== -->
+      <ControlTheme x:Key=""{x:Type ContextMenu}"" TargetType=""ContextMenu"">
+        <Setter Property=""Foreground"" Value=""" + (menuText) + @"""/>
+        <Setter Property=""ItemsPanel"">
+          <ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate>
+        </Setter>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <Panel MinWidth=""80"">
+              <n:ThemePart Kind=""MenuPopupBackground""/>
+              <n:ThemePart Kind=""MenuPopupGutter"" Width=""2"" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+              <n:ThemePart Kind=""MenuPopupBorders""/>
+              <ScrollViewer Margin=""2"">
+                <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
+                                Grid.IsSharedSizeScope=""True"" KeyboardNavigation.TabNavigation=""Continue""/>
+              </ScrollViewer>
+            </Panel>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+
+      <!-- ===================== Separator (menu look, used between menu items) ===================== -->
+      <ControlTheme x:Key=""{x:Type Separator}"" TargetType=""Separator"">
+        <Setter Property=""Height"" Value=""6""/>
+        <Setter Property=""Focusable"" Value=""False""/>
+        <Setter Property=""Template"">
+          <ControlTemplate>
+            <n:ThemePart Kind=""MenuPopupSeparator"" Margin=""" + (N(gutterW + 2)) + @",0,0,0""/>
+          </ControlTemplate>
+        </Setter>
+      </ControlTheme>
+
     </ResourceDictionary>
   </Styles.Resources>
 </Styles>";
         }
+    }
+
+    /// <summary>Converters used by the generated menu templates (bound to the templated MenuItem).</summary>
+    public static class NativeMenuConverters
+    {
+        static bool Top(object? v) => v is MenuItem m && m.Parent is Menu;
+
+        public static readonly IValueConverter IsTopLevel = new FuncValueConverter<object?, bool>(v => Top(v));
+        public static readonly IValueConverter IsSubItem = new FuncValueConverter<object?, bool>(v => v is MenuItem && !Top(v));
+        public static readonly IValueConverter HasSubItems = new FuncValueConverter<object?, bool>(v => v is MenuItem m && !Top(v) && m.ItemCount > 0);
+        public static readonly IValueConverter Placement = new FuncValueConverter<object?, PlacementMode>(v =>
+            Top(v) ? PlacementMode.BottomEdgeAlignedLeft : PlacementMode.RightEdgeAlignedTop);
     }
 
     /// <summary>Paints one UxTheme part AND state follows the templated parent's pseudo-classes , very pik for code reusing .</summary>
@@ -644,6 +813,27 @@ namespace Skymu.AvaloniaNativeTheme
                 case NativePartKind.SliderTrackH:
                 case NativePartKind.SliderTrackV:
                     return 1;
+
+                case NativePartKind.MenuBarBackground:
+                case NativePartKind.MenuPopupBackground:
+                case NativePartKind.MenuPopupBorders:
+                case NativePartKind.MenuPopupGutter:
+                case NativePartKind.MenuPopupSeparator:
+                    return 1;
+
+                case NativePartKind.MenuBarItem:
+                    {
+                        bool open = Has(":open"), sel = Has(":selected");
+                        return dis ? (open ? 6 : sel ? 5 : 4) : open ? 3 : sel ? 2 : 1; // MBI_*
+                    }
+                case NativePartKind.MenuPopupItem:
+                    return dis ? (Has(":selected") ? 4 : 3) : Has(":selected") ? 2 : 1; // MPI_*
+
+                case NativePartKind.MenuSubmenuArrow:
+                    return dis ? 2 : 1; // MSM_NORMAL / MSM_DISABLED
+
+                case NativePartKind.MenuCheck:
+                    return 2; // MCB_NORMAL (background); the checkmark itself is drawn as the "gripper" part
 
                 case NativePartKind.ComboReadOnly:
                     return dis ? 4 : Has(":dropdownopen") ? 3 : hot ? 2 : 1;
@@ -746,6 +936,15 @@ namespace Skymu.AvaloniaNativeTheme
             NativePartKind.SliderTrackV => ("TRACKBAR", new[] { 2 }, 0),         // TKP_TRACKVERT
             NativePartKind.SliderThumbH => ("TRACKBAR", new[] { 3 }, 0),         // TKP_THUMB
             NativePartKind.SliderThumbV => ("TRACKBAR", new[] { 6 }, 0),         // TKP_THUMBVERT
+            NativePartKind.MenuBarBackground => ("MENU", new[] { 7 }, 0),        // MENU_BARBACKGROUND
+            NativePartKind.MenuBarItem => ("MENU", new[] { 8 }, 0),              // MENU_BARITEM
+            NativePartKind.MenuPopupBackground => ("MENU", new[] { 9 }, 0),      // MENU_POPUPBACKGROUND
+            NativePartKind.MenuPopupBorders => ("MENU", new[] { 10 }, 0),        // MENU_POPUPBORDERS
+            NativePartKind.MenuPopupGutter => ("MENU", new[] { 13 }, 0),         // MENU_POPUPGUTTER
+            NativePartKind.MenuPopupItem => ("MENU", new[] { 14 }, 0),           // MENU_POPUPITEM
+            NativePartKind.MenuPopupSeparator => ("MENU", new[] { 15 }, 0),      // MENU_POPUPSEPARATOR
+            NativePartKind.MenuSubmenuArrow => ("MENU", new[] { 16 }, 0),        // MENU_POPUPSUBMENU
+            NativePartKind.MenuCheck => ("MENU", new[] { 12 }, 11),              // POPUPCHECKBACKGROUND + POPUPCHECK
             _ => ("BUTTON", new[] { 1 }, 0),
         };
 

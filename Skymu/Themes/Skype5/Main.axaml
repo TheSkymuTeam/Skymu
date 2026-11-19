@@ -954,11 +954,7 @@ mc:Ignorable="d">
 			Grid.Row="0"
 			Orientation="Vertical">
 				<Menu
-				x:Name="MainMenuBar"
-				Height="20"
-				Background="{DynamicResource Active.Menubar}"
-				
-				>
+				x:Name="MainMenuBar">
 					<MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
 						<MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
 							<MenuItem Click="OnStatus" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}">
