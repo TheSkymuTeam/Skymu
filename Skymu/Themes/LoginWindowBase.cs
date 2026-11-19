@@ -22,7 +22,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Skymu.AvaloniaHelpers;
+using Skymu.AvaloniaTools;
 using Skymu.Credentials;
 using Skymu.Forms;
 using Skymu.Forms.Pages;

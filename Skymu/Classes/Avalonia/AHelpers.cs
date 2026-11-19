@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using static QRCoder.PayloadGenerator.SwissQrCode;
 
-namespace Skymu.AvaloniaHelpers
+namespace Skymu.AvaloniaTools
 {
     internal static class AHelpers
     {

@@ -17,7 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Skymu
+namespace Skymu.AvaloniaTools
 {
     static class DWriteGdiClassicHook // Hook into Direct Write la, tell it to render using GDI metrics la, and also adjust the kerning .
     {

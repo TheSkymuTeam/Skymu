@@ -20,7 +20,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Skymu.AvaloniaHelpers;
 using Skymu.Converters;
 using Skymu.Formatting;
 using Skymu.Helpers;
@@ -35,6 +34,7 @@ using System.Linq;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+using Skymu.AvaloniaTools;
 
 namespace Skymu.Forms
 {

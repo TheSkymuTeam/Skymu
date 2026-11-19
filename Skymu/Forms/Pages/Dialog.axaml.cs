@@ -15,11 +15,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using System.Linq;
-using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Skymu.AvaloniaTools;
 
 namespace Skymu.Forms.Pages
 {

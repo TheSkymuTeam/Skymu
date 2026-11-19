@@ -18,7 +18,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Skymu.AvaloniaHelpers;
+using Skymu.AvaloniaTools;
 using Skymu.Credentials;
 using Skymu.Forms;
 using Skymu.Helpers;

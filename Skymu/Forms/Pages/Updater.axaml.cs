@@ -12,7 +12,6 @@
 /*==========================================================*/
 
 using Avalonia.Controls;
-using Skymu.AvaloniaHelpers;
 using Skymu.Preferences;
 using Skymu.Versioning;
 using System;
@@ -24,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using static System.String;
+using Skymu.AvaloniaTools;
 
 namespace Skymu.Forms.Pages
 {

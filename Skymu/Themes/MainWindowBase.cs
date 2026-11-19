@@ -24,6 +24,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Skymu.AvaloniaTools;
 using Skymu.Converters;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
@@ -584,7 +585,7 @@ namespace Skymu.Theming
             if (Settings.Theme == "Skype7" || Settings.Theme == "Skype6")
                 _currentFrame = Enumerations.WindowChrome.Native;
 
-            AvaloniaHelpers.AHelpers.SetMainWindow(this);
+            AHelpers.SetMainWindow(this);
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;

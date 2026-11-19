@@ -34,7 +34,7 @@ using Avalonia.Styling;
 using Avalonia.Themes.Simple;
 using Avalonia.VisualTree;
 
-namespace Skymu.AvaloniaNativeTheme
+namespace Skymu.AvaloniaTools
 {
     public enum NativePartKind
     {
@@ -143,7 +143,7 @@ namespace Skymu.AvaloniaNativeTheme
 
             return @"<Styles xmlns=""https://github.com/avaloniaui""
         xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
-        xmlns:n=""clr-namespace:Skymu.AvaloniaNativeTheme;assembly=" + (asm) + @""">
+        xmlns:n=""clr-namespace:Skymu.AvaloniaTools;assembly=" + (asm) + @""">
   <Styles.Resources>
     <ResourceDictionary>
 

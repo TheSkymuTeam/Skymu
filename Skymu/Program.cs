@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using HarmonyLib;
+using Skymu.AvaloniaTools;
 using System;
 
 namespace Skymu
