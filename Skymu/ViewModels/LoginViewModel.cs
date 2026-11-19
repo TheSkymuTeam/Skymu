@@ -26,7 +26,6 @@ using Skymu.Sounds;
 using Avalonia.Media.Imaging;
 using Avalonia.Controls;
 using System;
-using Skymu.Forms.Pages;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -35,6 +34,7 @@ using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
 using System.IO;
 using Avalonia.Threading;
+using Skymu.PlatformInformation;
 
 namespace Skymu.ViewModels
 {
@@ -272,38 +272,18 @@ namespace Skymu.ViewModels
             SoundManager.Play("LOGIN");
             new Updater();
 
-            // warn the user once if they're running an old OS like XP / old Wine version
-            if (!Settings.OldPlatformWarningShown)
+            // warn the user once if they're running an old version of Windows (TODO WARNINGS FOR MAC/LINUX)
+            if (!Settings.OldPlatformWarningShown && Universal.Platform.OS == OS.Windows)
             {
                 string message = null;
 
-                if (Universal.Platform == PlatformType.Unknown)
-                    message = Settings.BrandingName + " could not determine your operating system. If you are using an unsupported platform, you may encounter bugs.";
-
-                else if (Universal.Platform < PlatformType.Windows2000)
+                if (Universal.Platform.NTVersion < 6.1)
                 {
-                    if (Universal.Platform == PlatformType.WineLegacy)
-                        message = Settings.BrandingName + " does not support Wine versions older than 10. You may encounter significant bugs.";
-                    else if (Universal.Platform == PlatformType.Wine10)
-                        message = Settings.BrandingName + " has limited support for Wine 10. Some features may not work as expected.";
-                    else if (Universal.Platform == PlatformType.Wine11)
-                        message = Settings.BrandingName + " does not have complete support for Wine 11. Some features may not work as expected.";
-                }
-
-                else if (Universal.Platform < PlatformType.WindowsVista)
-                {
-                    if (Universal.Platform == PlatformType.WindowsXP)
-                        message = Settings.BrandingName + " does not officially support Windows XP or the One Core API, and you may encounter " +
-                            "significant bugs. However, if you are using Projek01, you should not expect any problems, and" +
-                            " if you are using EAZY BLACK's official Skymu XP wrapper you should be (mostly) fine.";
-                    else if (Universal.Platform == PlatformType.Windows2000)
-                        message = Settings.BrandingName + " does not officially support Windows 2000 or any extended kernels, and you may encounter significant bugs.";
-                    else if (Universal.Platform == PlatformType.WindowsNT4)
-                        message = "How did you even get this running on NT4?";
+                    message = Settings.BrandingName + " does not officially support Windows Vista or below. You may encounter bugs.";
                 }
 
                 // Windows is well known for its backwards compatibility, this should never be an issue.
-                // else if (platform > PlatformType.Windows11) message = brand + " has not yet been tested on your version of Windows. You may encounter bugs.";
+                // else if (Universal.Platform.NTVersion > 10) message = brand + " has not yet been tested on your version of Windows. You may encounter bugs.";
 
                 if (message != null)
                     Universal.ShowMessage(message, "Compatibility warning");
@@ -312,13 +292,13 @@ namespace Skymu.ViewModels
             if (!Settings.ShowOldDotNetWarnings)
             {
                 string newNetLink = string.Empty;
-                int netVersion = Runtime.DetectNetVersion();
+                int netVersion = Universal.Platform.NetVersion;
                 if (netVersion < 5) return; // framework (to be ignored for now) or early core (this is impossible afaik)
                 else if (netVersion < 10)
                 {
                     newNetLink = Universal.NET_DOWNLOAD_LINK;
                     // 6 is the last version to reliably support Windows 8.1 and below, so it's the best recommendation
-                    if (Universal.Platform < PlatformType.Windows10) newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
+                    if (Universal.Platform.NTVersion < 10.0) newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
 
                 }
                 if (!String.IsNullOrEmpty(newNetLink))

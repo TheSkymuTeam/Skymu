@@ -17,7 +17,7 @@ namespace Skymu.Forms.Pages
 
         public async void CopyToClipboard()
         {
-            await AHelpers.SetClipboardText(DetailsBox.Text);
+            await AvaloniaHelpers.SetClipboardText(DetailsBox.Text);
         }
     }
 }

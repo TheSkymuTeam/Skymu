@@ -16,7 +16,7 @@ using static QRCoder.PayloadGenerator.SwissQrCode;
 
 namespace Skymu.AvaloniaTools
 {
-    internal static class AHelpers
+    internal static class AvaloniaHelpers
     {
 
         public static async Task SetClipboardText(string text)

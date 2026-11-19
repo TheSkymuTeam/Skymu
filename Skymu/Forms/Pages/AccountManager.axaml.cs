@@ -48,7 +48,7 @@ namespace Skymu.Forms.Pages
             mgr.win.ButtonRight.IsVisible = false;
 
             mgr.win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            mgr.win.ShowDialog(AHelpers.GetMainWindow());
+            mgr.win.ShowDialog(AvaloniaHelpers.GetMainWindow());
         }
 
         private sealed class AccountEntry

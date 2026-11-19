@@ -171,13 +171,13 @@ namespace Skymu.Forms.Pages
         /// <summary>Non-blocking show (restart prompts, OK dialogs). Do not sync-block on ShowDialog — that freezes Avalonia input.</summary>
         public bool? Show()
         {
-            AHelpers.PresentSkinnedWindow(window);
+            AvaloniaHelpers.PresentSkinnedWindow(window);
             return null;
         }
 
         public async Task<bool?> ShowAsync()
         {
-            var owner = AHelpers.GetMainWindow();
+            var owner = AvaloniaHelpers.GetMainWindow();
             if (owner == null
                 && Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
@@ -187,7 +187,7 @@ namespace Skymu.Forms.Pages
             if (owner != null && owner.IsEnabled && !ReferenceEquals(owner, window))
                 return await window.ShowDialog<bool?>(owner);
 
-            AHelpers.PresentSkinnedWindow(window);
+            AvaloniaHelpers.PresentSkinnedWindow(window);
             return null;
         }
 

@@ -299,7 +299,7 @@ namespace Skymu.Theming
         {
             if (_currentFrame != Enumerations.WindowChrome.Native) // using Skype's custom border
             {
-                if (!Skymu.Native.Windows.DwmHelper.IsDwmEnabled() && _currentFrame == Enumerations.WindowChrome.SkypeAero) _currentFrame = Enumerations.WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
+                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 //chrome.UseAeroCaptionButtons = false;
                 ExtendClientAreaToDecorationsHint = true;
@@ -585,7 +585,7 @@ namespace Skymu.Theming
             if (Settings.Theme == "Skype7" || Settings.Theme == "Skype6")
                 _currentFrame = Enumerations.WindowChrome.Native;
 
-            AHelpers.SetMainWindow(this);
+            AvaloniaHelpers.SetMainWindow(this);
 
             vmodel = new MainViewModel();
             this.DataContext = vmodel;

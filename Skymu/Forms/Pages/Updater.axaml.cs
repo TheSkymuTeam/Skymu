@@ -107,7 +107,7 @@ namespace Skymu.Forms.Pages
                     }
                 }
 
-                window.ShowDialog(AHelpers.GetMainWindow()); // show window as dialog
+                window.ShowDialog(AvaloniaHelpers.GetMainWindow()); // show window as dialog
             } // not up to date, must show window
             else // up to date, show dialog
             {

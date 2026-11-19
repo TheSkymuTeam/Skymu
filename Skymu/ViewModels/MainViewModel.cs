@@ -277,7 +277,7 @@ namespace Skymu.ViewModels
 
         public async void CopyMessage(Message message)
         {
-            if (!string.IsNullOrEmpty(message?.Text)) await AHelpers.SetClipboardText(message.Text);
+            if (!string.IsNullOrEmpty(message?.Text)) await AvaloniaHelpers.SetClipboardText(message.Text);
         }
 
         public async Task ReplyToMessage(Message message)
@@ -970,7 +970,7 @@ namespace Skymu.ViewModels
 
         public async Task SendFile()
         {
-            var window = AHelpers.GetMainWindow();
+            var window = AvaloniaHelpers.GetMainWindow();
             if (window == null) return;
 
             var files = await window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions

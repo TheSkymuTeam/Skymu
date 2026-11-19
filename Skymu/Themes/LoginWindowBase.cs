@@ -55,7 +55,7 @@ namespace Skymu.Theming
 
         protected void InitializeLoginWindow(LoginViewModel viewModel)
         {
-            AHelpers.SetMainWindow(this);
+            AvaloniaHelpers.SetMainWindow(this);
             UsernameBox.KeyUp += BoxKeyUp;
             PasswordTokenBox.KeyUp += BoxKeyUp;
             LoginButton.PointerReleased += buttonLaunch;

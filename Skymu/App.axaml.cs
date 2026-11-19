@@ -25,6 +25,7 @@ using Avalonia.Threading;
 using Classic.Avalonia.Theme;
 using OmegaAOL.Bifrost.Http;
 using Skymu.AvaloniaTools;
+using Skymu.PlatformInformation;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
@@ -105,8 +106,8 @@ namespace Skymu
         public static ICore[] PluginList;
         public static bool SignedIn = false;
         public static readonly string Theme = Settings.Theme;
-        public static PlatformType Platform = Runtime.DetectOS();
-        public static string PlatformStr = Runtime.DetectOS().ToString();
+        public static Platform Platform = Runtime.GetPlatformInfo();
+        public static string PlatformStr = Runtime.GetPlatformInfo().OSDisplayName;
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
         public static Bitmap AnonymousAvatar;
@@ -153,7 +154,7 @@ namespace Skymu
                     blText: "Copy to clipboard",
                     blAction: async () =>
                     {
-                        await AHelpers.SetClipboardText(e.CopyToClipboardText);
+                        await AvaloniaHelpers.SetClipboardText(e.CopyToClipboardText);
                         ShowMessage("Copied to clipboard.");
                     }
                 ).Show();
@@ -254,7 +255,7 @@ namespace Skymu
                     {
                         try
                         {
-                            AHelpers.ShutdownApp();
+                            AvaloniaHelpers.ShutdownApp();
                         }
                         catch
                         {
@@ -395,10 +396,10 @@ namespace Skymu
                     if (msg == "WINDOW_ACTIVATE")
                         Dispatcher.UIThread.Invoke(() =>
                         {
-                            if (AHelpers.GetMainWindow()?.WindowState == WindowState.Minimized)
-                                AHelpers.GetMainWindow().WindowState = WindowState.Normal;
-                            AHelpers.GetMainWindow()?.Show();
-                            AHelpers.GetMainWindow()?.Activate();
+                            if (AvaloniaHelpers.GetMainWindow()?.WindowState == WindowState.Minimized)
+                                AvaloniaHelpers.GetMainWindow().WindowState = WindowState.Normal;
+                            AvaloniaHelpers.GetMainWindow()?.Show();
+                            AvaloniaHelpers.GetMainWindow()?.Activate();
                         });
                     else if (msg.StartsWith("URI:"))
                     {
@@ -579,7 +580,7 @@ namespace Skymu
             catch { } // in case app is already too dead to clear icon by the time this is called
             finally
             {
-                AHelpers.ShutdownApp();
+                AvaloniaHelpers.ShutdownApp();
             }
         }
 
@@ -604,7 +605,7 @@ namespace Skymu
             }
             frame.ButtonLeftAction = () => page.CopyToClipboard();
             frame.ButtonLeftText = "Copy to clipboard";
-            AHelpers.PresentSkinnedWindow(frame);
+            AvaloniaHelpers.PresentSkinnedWindow(frame);
         }
 
         public static void ShowMessage(

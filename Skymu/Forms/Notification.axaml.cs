@@ -147,7 +147,7 @@ namespace Skymu.Forms
                 };
 
                 _activeNotification.Show();
-                Taskbar.Flash(AHelpers.GetMainWindow());
+                Taskbar.Flash(AvaloniaHelpers.GetMainWindow());
             }
 
             _activeNotification.AddMessage((Message)e.Item, e);
