@@ -23,7 +23,6 @@ using Avalonia.Threading;
 using Skymu.Converters;
 using Skymu.Formatting;
 using Skymu.Helpers;
-using Skymu.Native.Windows;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using Avalonia.Layout;
@@ -35,6 +34,7 @@ using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
 using Skymu.AvaloniaTools;
+using Skymu.Classes.Avalonia;
 
 namespace Skymu.Forms
 {

@@ -25,7 +25,6 @@ using Avalonia.Threading;
 using Classic.Avalonia.Theme;
 using OmegaAOL.Bifrost.Http;
 using Skymu.AvaloniaTools;
-using Skymu.PlatformInformation;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Migration;
@@ -52,6 +51,8 @@ using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+using Skymu.Classes.Avalonia;
+using Skymu.Classes.Crossplatform;
 
 namespace Skymu
 {

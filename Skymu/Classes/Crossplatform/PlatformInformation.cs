@@ -18,7 +18,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace Skymu.PlatformInformation
+namespace Skymu.Crossplatform
 {
     public enum OS
     {

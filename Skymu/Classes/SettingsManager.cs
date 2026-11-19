@@ -479,8 +479,8 @@ namespace Skymu.Preferences
         /// </summary>
         public static bool AutoLaunch
         {
-            get => Native.Windows.AutoLaunch.Get();
-            set => Native.Windows.AutoLaunch.Set(value);
+            get => Classes.Crossplatform.AutoLaunch.Get();
+            set => Classes.Crossplatform.AutoLaunch.Set(value);
         }
 
         #endregion
