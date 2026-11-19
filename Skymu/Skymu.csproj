@@ -2,17 +2,19 @@
 
 	<!-- Main thingy -->
 	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
+		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationManifest Condition="$([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
+		<ApplicationIcon Condition="$([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
-		<ApplicationIcon>Icons\skype.ico</ApplicationIcon>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<SelfContained>true</SelfContained>
+		<PublishSingleFile>true</PublishSingleFile>
 	</PropertyGroup>
 
 	<!-- Assembly information -->
@@ -52,21 +54,11 @@
 
 		<!-- Emoji -->
 		<None Remove="Emoji\**\*" />
-		<None Remove="Properties\**" />
-		<Page Remove="Emoji\**\*" />
-		<EmbeddedResource Remove="Emoji\Resources\**\*" />
-		<Compile Remove="Emoji\**\*" />
-		<Resource Include="Emoji\**\*" />
+		<AvaloniaResource Include="Emoji\**\*" />
 
 		<!-- Sounds -->
 		<None Remove="Sounds*\**\*" />
-		<Page Remove="Properties\**" />
-		<Page Remove="Sounds*\**\*" />
-		<EmbeddedResource Remove="Properties\**" />
-		<EmbeddedResource Remove="Sounds*\**\*" />
-		<Compile Remove="Properties\**" />
-		<Compile Remove="Sounds*\**\*" />
-		<Resource Include="Sounds*\**\*" />
+		<AvaloniaResource Include="Sounds*\**\*" />
 
 		<!-- Languages as Content -->
 		<None Remove="Languages\**\*" />
@@ -93,6 +85,7 @@
 		<PackageReference Include="Avalonia.Themes.Simple" Version="11.3.23" />
 		<PackageReference Include="Classic.Avalonia.Theme" Version="11.3.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageReference Include="Devlooped.CredentialManager" Version="2.7.0" />
 		<PackageReference Include="Lib.Harmony" Version="2.4.3" />
 		<PackageReference Include="Markdig" Version="1.3.2" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
@@ -116,14 +109,8 @@
 	<ItemGroup>
 		<None Remove="Shaders\Darken.ps" />
 		<None Remove="Shaders\DarkenLighten.ps" />
-		<Resource Include="Shaders\Darken.ps" />
-		<Resource Include="Shaders\DarkenLighten.ps" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Forms\Home.axaml.cs">
-	    <DependentUpon>Home.axaml</DependentUpon>
-	  </Compile>
+		<AvaloniaResource Include="Shaders\Darken.ps" />
+		<AvaloniaResource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
 </Project>
