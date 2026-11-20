@@ -60,7 +60,8 @@
 						Background="{DynamicResource Card.Background}"
 						
 						Focusable="false">
-							<ItemsPresenter />
+							<ItemsPresenter Name="PART_ItemsPresenter"
+                ItemsPanel="{TemplateBinding ItemsPanel}" />
 						</ScrollViewer>
 					</ControlTemplate>
 				</Setter.Value>
@@ -1182,12 +1183,16 @@
                                                     <Setter Property="IsEnabled" Value="True" />
                                                     <Setter Property="Template">
                                                         <Setter.Value>
-                                                            <ControlTemplate TargetType="ListBoxItem">
+                                                           <ControlTemplate TargetType="ListBoxItem">
     <Border x:Name="ItemBorder"
-        Background="{Binding IsSelected,
-            RelativeSource={RelativeSource TemplatedParent},
-            Converter={StaticResource SelectedToSelectionBrush}}">
-        <ContentPresenter />
+            Background="{Binding IsSelected,
+                RelativeSource={RelativeSource TemplatedParent},
+                Converter={StaticResource SelectedToSelectionBrush}}">
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
     </Border>
 </ControlTemplate>
                                                         </Setter.Value>
@@ -1211,17 +1216,19 @@
                                                     
                                                     <Setter Property="Template">
                                                         <Setter.Value>
-                                                            <ControlTemplate TargetType="TreeViewItem">
+                                                         <ControlTemplate TargetType="TreeViewItem">
     <StackPanel>
         <Border x:Name="ItemBorder"
-            Background="{Binding IsSelected,
-                RelativeSource={RelativeSource TemplatedParent},
-                Converter={StaticResource SelectedToSelectionBrush}}">
-            <ContentPresenter x:Name="PART_Header" Content="{Binding $self.Header}" />
+                Background="{Binding IsSelected,
+                    RelativeSource={RelativeSource TemplatedParent},
+                    Converter={StaticResource SelectedToSelectionBrush}}">
+            <ContentPresenter Name="PART_HeaderPresenter"
+                              Content="{TemplateBinding Header}"
+                              ContentTemplate="{TemplateBinding HeaderTemplate}" />
         </Border>
-        <ItemsPresenter x:Name="ItemsHost"
-            IsVisible="{Binding IsExpanded,
-                RelativeSource={RelativeSource TemplatedParent}}" />
+        <ItemsPresenter Name="PART_ItemsPresenter"
+                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                        IsVisible="{TemplateBinding IsExpanded}" />
     </StackPanel>
 </ControlTemplate>
                                                         </Setter.Value>
@@ -1283,10 +1290,14 @@
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="ListBoxItem">
     <Border x:Name="ItemBorder"
-        Background="{Binding IsSelected,
-            RelativeSource={RelativeSource TemplatedParent},
-            Converter={StaticResource SelectedToSelectionBrush}}">
-        <ContentPresenter />
+            Background="{Binding IsSelected,
+                RelativeSource={RelativeSource TemplatedParent},
+                Converter={StaticResource SelectedToSelectionBrush}}">
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
     </Border>
 </ControlTemplate>
                                                             </Setter.Value>

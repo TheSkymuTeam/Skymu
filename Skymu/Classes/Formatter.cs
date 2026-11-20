@@ -122,15 +122,15 @@ namespace Skymu.Formatting
                 TextWrapping = TextWrapping.Wrap, // otherwise text wouldn't go to a newline unless explicitly told to
             };
 
+            if (theme != null)
+            {
+                textBlock.Theme = theme;
+            }
+
             if (doNotFormat) // Just return a plain unformatted TextBlock
             {
                 textBlock.Text = input;
                 return textBlock;
-            }
-
-            if (theme != null) {
-                textBlock.Styles.Clear();
-                textBlock.Styles.Add(theme);
             }
 
             // parse the input into a Markdig AST and walk it to produce Avalonia inlines

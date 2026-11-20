@@ -77,7 +77,8 @@ mc:Ignorable="d">
 						Background="{DynamicResource Card.Background}"
 						
 						Focusable="false">
-							<ItemsPresenter />
+							<ItemsPresenter Name="PART_ItemsPresenter"
+                ItemsPanel="{TemplateBinding ItemsPanel}" />
 						</ScrollViewer>
 					</ControlTemplate>
 				</Setter.Value>
@@ -1326,10 +1327,14 @@ mc:Ignorable="d">
 														<Setter.Value>
 															<ControlTemplate TargetType="ListBoxItem">
     <Border x:Name="ItemBorder"
-        Background="{Binding IsSelected,
-            RelativeSource={RelativeSource TemplatedParent},
-            Converter={StaticResource SelectedToSelectionBrush}}">
-        <ContentPresenter />
+            Background="{Binding IsSelected,
+                RelativeSource={RelativeSource TemplatedParent},
+                Converter={StaticResource SelectedToSelectionBrush}}">
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
     </Border>
 </ControlTemplate>
 														</Setter.Value>
@@ -1356,14 +1361,16 @@ mc:Ignorable="d">
 															<ControlTemplate TargetType="TreeViewItem">
     <StackPanel>
         <Border x:Name="ItemBorder"
-            Background="{Binding IsSelected,
-                RelativeSource={RelativeSource TemplatedParent},
-                Converter={StaticResource SelectedToSelectionBrush}}">
-            <ContentPresenter x:Name="PART_Header" />
+                Background="{Binding IsSelected,
+                    RelativeSource={RelativeSource TemplatedParent},
+                    Converter={StaticResource SelectedToSelectionBrush}}">
+            <ContentPresenter Name="PART_HeaderPresenter"
+                              Content="{TemplateBinding Header}"
+                              ContentTemplate="{TemplateBinding HeaderTemplate}" />
         </Border>
-        <ItemsPresenter x:Name="ItemsHost"
-            IsVisible="{Binding IsExpanded,
-                RelativeSource={RelativeSource TemplatedParent}}" />
+        <ItemsPresenter Name="PART_ItemsPresenter"
+                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                        IsVisible="{TemplateBinding IsExpanded}" />
     </StackPanel>
 </ControlTemplate>
 														</Setter.Value>
@@ -2069,11 +2076,18 @@ mc:Ignorable="d">
 													<Setter Property="Padding" Value="0" />
 													<Setter Property="Template">
 														<Setter.Value>
-															<ControlTemplate TargetType="ListBoxItem">
-																<Border x:Name="ItemBorder" Background="Transparent">
-																	<ContentPresenter />
-																</Border>
-															</ControlTemplate>
+<ControlTemplate TargetType="ListBoxItem">
+    <Border x:Name="ItemBorder"
+            Background="{Binding IsSelected,
+                RelativeSource={RelativeSource TemplatedParent},
+                Converter={StaticResource SelectedToSelectionBrush}}">
+        <ContentPresenter Name="PART_ContentPresenter"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+    </Border>
+</ControlTemplate>
 														</Setter.Value>
 													</Setter>
 												</Style>

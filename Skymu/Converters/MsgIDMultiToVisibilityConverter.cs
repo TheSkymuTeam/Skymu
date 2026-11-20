@@ -32,12 +32,13 @@ namespace Skymu.Converters
                 return false;
 
             // if PreviousMessageIsAction is true, the visibility is always Visible
-            if (values[2] != null && (bool)values[2])
+            if (values[2] is bool previousIsAction && previousIsAction)
                 return true;
-            
-            return values[0] as string == values[1] as string
-                ? false
-                : true;
+
+            string? previousId = values[0] as string;
+            string? currentId = values[1] as string;
+
+            return currentId == null || previousId != currentId;
         }
 
         public object[] ConvertBack(
