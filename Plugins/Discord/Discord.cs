@@ -29,8 +29,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Bottles;
-using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
+using Yggdrasil.Models;
+using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord
 {
@@ -1022,11 +1023,20 @@ namespace Discord
 
         public async Task<bool> SetMood(string custStatus)
         {
-            if (String.IsNullOrEmpty(custStatus)) return false;
+            if (proto == null || string.IsNullOrEmpty(custStatus)) return false;
 
-            proto._proto = await proto.FetchProtoSettings();
-            proto._proto.Status.CustomStatus.Text = custStatus;
-            return await proto.UpdateProtoSettings(proto._proto);
+            var settings = await proto.FetchProtoSettings();
+            if (settings == null) return false;
+
+            if (settings.Status == null)
+                settings.Status = new StatusSettings();
+            if (settings.Status.CustomStatus == null)
+                settings.Status.CustomStatus = new CustomStatus();
+
+            settings.Status.CustomStatus.Text = custStatus;
+
+            proto._proto = settings;
+            return await proto.UpdateProtoSettings(settings);
         }
 
         #endregion

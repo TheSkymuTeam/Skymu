@@ -93,7 +93,7 @@ namespace Skymu.Forms
         #endregion
         #region UI handlers
 
-        private async Task MoodBox_KeyDown(object sender, KeyEventArgs e)
+        private async void MoodBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             e.Handled = true;
