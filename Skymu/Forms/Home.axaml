@@ -98,8 +98,7 @@
                                 Classes="pill"
                                 Click="SettingsButton_Click"
                                 CornerRadius="8"
-                                Content="Configure"
-                                FontSize="10" />
+                                Content="Configure" />
                         </StackPanel>
                     </Grid>
 
