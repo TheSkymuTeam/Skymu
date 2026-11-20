@@ -32,14 +32,14 @@ namespace Skymu.AvaloniaTools
 
         public static Window GetMainWindow()
         {
-            return ((IClassicDesktopStyleApplicationLifetime)
-                Application.Current.ApplicationLifetime).MainWindow;
+            return (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+                ?.MainWindow;
         }
 
         public static void SetMainWindow(Window window)
         {
-            ((IClassicDesktopStyleApplicationLifetime)
-                Application.Current.ApplicationLifetime).MainWindow = window;
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                desktop.MainWindow = window;
         }
 
         public static void PresentSkinnedWindow(Window dialog)

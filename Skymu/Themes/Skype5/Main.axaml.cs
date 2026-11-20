@@ -144,7 +144,7 @@ namespace Skymu.Skype5
 
         protected override async Task GenerateHome()
         {
-            HomeFrame.Content = new Home();
+            HomeFrame.Content = new Home(Universal.CurrentUser, vmodel.ContactList.Reverse().ToList());
         }
 
         protected override void OnUserCountUpdated(string text)

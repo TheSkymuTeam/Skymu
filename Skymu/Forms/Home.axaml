@@ -13,102 +13,232 @@
     ============================================================
 -->
 
-<!--
-    TODO convert this to native Skype Home recreation. We don't need to keep an unavailable page
-    as it's always going to be available, it's part of the app.
--->
-
 <UserControl
     x:Class="Skymu.Forms.Home"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:Skymu.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:forms="clr-namespace:Skymu.Forms"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="504.143"
-    d:DesignWidth="692.735"
+    d:DesignHeight="504"
+    d:DesignWidth="1116"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <converters:AssetLoader x:Key="AssetLoader" />
-    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="Button.pill">
+            <Setter Property="FontFamily" Value="Helvetica, Arial" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="#333" />
+            <Setter Property="Padding" Value="8,1" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#8A8A8A" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                    <GradientStop Offset="0" Color="#FFFFFF" />
+                    <GradientStop Offset="1" Color="#D9D9D9" />
+                </LinearGradientBrush>
+            </Setter>
+        </Style>
+        <Style Selector="Button.pill:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                    <GradientStop Offset="0" Color="#FFFFFF" />
+                    <GradientStop Offset="1" Color="#E6E6E6" />
+                </LinearGradientBrush>
+            </Setter>
+            <Setter Property="BorderBrush" Value="#6E6E6E" />
+        </Style>
+        <Style Selector="Button.pill:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#CFCFCF" />
+        </Style>
+    </UserControl.Styles>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <StackPanel
-            Grid.Row="0"
-            Margin="24,46,0,0"
-            Orientation="Horizontal">
-            <Image
-                Width="48"
-                Height="48"
-                HorizontalAlignment="Left"
+    <Grid Background="#F8F8F8" ColumnDefinitions="649,*">
+
+        <Grid Grid.Column="0" Background="White" RowDefinitions="47,Auto,*">
+
+            <Border Grid.Row="0" BorderBrush="#E6E4C4" BorderThickness="0,0,0,1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Offset="0" Color="#FFFFFF" />
+                        <GradientStop Offset="1" Color="#FFFFDC" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid Margin="16,0,16,0">
+                    <TextBlock
+                        x:Name="LearnHeader"
+                        VerticalAlignment="Center"
+                        FontFamily="Helvetica, Arial"
+                        FontSize="18"
+                        Foreground="#333"
+                        Text="Learn how to use Skype" />
+                    <Button
+                        x:Name="HelpVideosButton"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Classes="pill"
+                        Click="HelpVideosButton_Click"
+                        Content="View help videos" />
+                </Grid>
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                BorderBrush="#C3D3DE"
+                BorderThickness="0,0,0,1">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
+                        <GradientStop Offset="0" Color="#E4EEF5" />
+                        <GradientStop Offset="0.15" Color="#D8E5EE" />
+                        <GradientStop Offset="1" Color="#D8E5EE" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <StackPanel Margin="16,16,16,0">
+
+                    <Grid>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Helvetica, Arial"
+                            FontSize="18"
+                            Foreground="#333"
+                            Text="News and alerts" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                x:Name="ToggleContactsButton"
+                                Classes="pill"
+                                Click="ToggleContactsButton_Click"
+                                Content="Show top contacts" />
+                            <Button
+                                x:Name="SettingsButton"
+                                Width="16"
+                                Height="16"
+                                Padding="0"
+                                Classes="pill"
+                                Click="SettingsButton_Click"
+                                CornerRadius="8"
+                                Content="⚙"
+                                FontSize="10" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,12,0,0" ColumnDefinitions="Auto,*">
+                        <Border
+                            Grid.Column="0"
+                            Width="48"
+                            Height="48"
+                            VerticalAlignment="Top"
+                            Background="#999"
+                            BorderBrush="#9AA9B5"
+                            BorderThickness="1">
+                            <Image x:Name="MyAvatar" Stretch="UniformToFill" />
+                        </Border>
+                        <TextBox
+                            x:Name="MoodBox"
+                            Grid.Column="1"
+                            Height="50"
+                            Margin="10,0,0,0"
+                            Padding="8,6"
+                            VerticalContentAlignment="Top"
+                            AcceptsReturn="False"
+                            Background="White"
+                            BorderBrush="#9DB7C9"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            FontFamily="Helvetica, Arial"
+                            FontSize="12"
+                            Foreground="#333"
+                            KeyDown="MoodBox_KeyDown"
+                            MaxLength="1000"
+                            TextWrapping="Wrap"
+                            Watermark="Update your mood message" />
+                    </Grid>
+
+                    <StackPanel x:Name="TopContactsPanel" Margin="0,22,0,0">
+                        <TextBlock
+                            FontFamily="Helvetica, Arial"
+                            FontSize="12"
+                            FontWeight="Bold"
+                            Foreground="#333"
+                            Text="Top contacts" />
+
+                        <ItemsControl
+                            x:Name="TopContactsList"
+                            Width="650"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Left">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="5" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="forms:TopContactItem">
+                                    <Border
+                                        Height="135"
+                                        Background="Transparent"
+                                        Cursor="Hand"
+                                        Tapped="Contact_Tapped">
+                                        <StackPanel HorizontalAlignment="Left">
+                                            <Border
+                                                Width="96"
+                                                Height="96"
+                                                Background="#BBB"
+                                                BorderBrush="#C4CDD4"
+                                                BorderThickness="1"
+                                                BoxShadow="0 1 2 0 #40000000">
+                                                <Image Source="{Binding Avatar}" Stretch="UniformToFill" />
+                                            </Border>
+                                            <TextBlock
+                                                Width="96"
+                                                Margin="0,6,0,0"
+                                                FontFamily="Helvetica, Arial"
+                                                FontSize="12"
+                                                Foreground="#333"
+                                                Text="{Binding Name}"
+                                                TextAlignment="Center"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <Border Height="2" />
+                </StackPanel>
+            </Border>
+
+            <Border
+                Grid.Row="2"
                 VerticalAlignment="Top"
-                Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Home/warning.png'}" />
-            <StackPanel Margin="16,0,0,0" Orientation="Vertical">
+                BorderBrush="#DDDDDD"
+                BorderThickness="0,0,0,1">
                 <TextBlock
-                    x:Name="NoHomeHead"
-                    Margin="0,6,0,0"
-                    FontFamily="Helvetica"
-                    FontSize="17"
+                    x:Name="NoNewsText"
+                    Margin="16,24,16,22"
+                    FontFamily="Helvetica, Arial"
+                    FontSize="13"
                     FontWeight="Bold"
-                    Foreground="#333"
-                    Text="Skype Home unavailable" />
-                <TextBlock
-                    x:Name="NoHomeBody"
-                    Margin="0,12,0,0"
-                    FontFamily="Helvetica"
-                    FontSize="13"
-                    Foreground="#333"
-                    Text="Skype Home is unavailable at the moment. Check back later to see your news and alerts." />
-                <TextBlock
-                    x:Name="NoHomeListHead"
-                    Margin="0,32,0,0"
-                    FontFamily="Helvetica"
-                    FontSize="13"
-                    Foreground="#333"
-                    Text="It's easy to start a conversation on Skype:" />
-                <BulletDecorator Margin="0,12,0,0">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="6"
-                            Height="6"
-                            Fill="#333" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock
-                        x:Name="NoHomeList1"
-                        Margin="14,0,0,0"
-                        FontFamily="Helvetica"
-                        FontSize="13"
-                        Foreground="#333"
-                        Text="Choose a contact and start talking" />
-                </BulletDecorator>
-                <BulletDecorator Margin="0,12,0,0">
-                    <BulletDecorator.Bullet>
-                        <Ellipse
-                            Width="6"
-                            Height="6"
-                            Fill="#333" />
-                    </BulletDecorator.Bullet>
-                    <TextBlock
-                        x:Name="NoHomeList2"
-                        Margin="14,0,0,0"
-                        FontFamily="Helvetica"
-                        FontSize="13"
-                        Foreground="#333"
-                        Text="Call a phone or mobile from the dial pad, or send an SMS." />
-                </BulletDecorator>
-            </StackPanel>
-        </StackPanel>
-        <Image
-            Grid.Row="1"
-            Width="650"
-            Height="190"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom"
-            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Home/footer.png'}" />
+                    Foreground="#A0A0A0"
+                    Text="No news or alerts yet." />
+            </Border>
+        </Grid>
+
+        <!-- ================= Right gutter TODO add advertisements! ================= -->
+        <Border
+            Grid.Column="1"
+            BorderBrush="#D0D0D0"
+            BorderThickness="1,0,0,0" />
     </Grid>
 </UserControl>
