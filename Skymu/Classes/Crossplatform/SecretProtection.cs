@@ -221,7 +221,7 @@ namespace Skymu.Crossplatform
         }
         private static class OsKeyStore
         {
-            private const string Service = "encryption-key";
+            private const string Service = "https://www.skymu.app/gcm-key";
             private const string Account = "credentials";
 
             private static GcmStore store;
@@ -265,9 +265,10 @@ namespace Skymu.Crossplatform
 
                     key = bytes;
                     return KeystoreState.Found;
-                }
-                catch
+                }   
+                catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[SKYMU-SecretProtection] KeyStore.TryGet failed: {ex}");
                     return KeystoreState.Unavailable;
                 }
             }
@@ -279,8 +280,9 @@ namespace Skymu.Crossplatform
                     Store.AddOrUpdate(Service, Account, Convert.ToBase64String(key));
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[SKYMU-SecretProtection] KeyStore.TrySet failed: {ex}");
                     return false;
                 }
             }

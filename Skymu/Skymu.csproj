@@ -2,7 +2,7 @@
 
 	<!-- Main thingy -->
 	<PropertyGroup>
-		<OutputType>Exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<ApplicationManifest Condition="$([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
 		<ApplicationIcon Condition="$([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
@@ -20,7 +20,7 @@
 	<!-- Assembly information -->
 	<PropertyGroup>
 		<AssemblyTitle>Skymu</AssemblyTitle>
-		<Description>Skymu Avalonia desktop client</Description>
+		<Description>Skymu desktop client</Description>
 		<FileDescription>Skymu</FileDescription>
 		<Company>The Skymu Team</Company>
 		<Product>Skymu</Product>

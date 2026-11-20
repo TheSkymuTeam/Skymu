@@ -19,6 +19,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
+using Skymu.Preferences;
 
 namespace Skymu.Credentials
 {
@@ -28,7 +29,7 @@ namespace Skymu.Credentials
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             Universal.NAME,
 #if DEBUG
-            Settings.SeparateCredentialsForDebug ? "credentialsDebug.xml" : "credentials.xml"
+            Settings.SeparateCredentialsForDebug ? "credentials_debug.xml" : "credentials.xml"
 #else
             "credentials.xml"
 #endif
