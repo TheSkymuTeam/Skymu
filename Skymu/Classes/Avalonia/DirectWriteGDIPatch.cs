@@ -98,7 +98,7 @@ namespace Skymu.AvaloniaTools
 
             int off = IntPtr.Size;
             float size = BitConverter.Int32BitsToSingle(Marshal.ReadInt32(run, off));
-            Marshal.WriteInt32(run, off, BitConverter.SingleToInt32Bits(MathF.Round(size)));
+            Marshal.WriteInt32(run, off, BitConverter.SingleToInt32Bits((float)GdiAdvancePatch.GdiEm(size)));
         }
 
         static void ZeroSubpixel(IntPtr xform)
@@ -173,13 +173,61 @@ namespace Skymu.AvaloniaTools
             }
         }
 
-        static void Postfix(ShapedBuffer __result)
+
+        public static bool KeepKerning = false;
+
+        
+        internal static double GdiEm(double em) => Math.Max(1, Math.Round(em, MidpointRounding.AwayFromZero));
+
+        static double R(double v) => Math.Round(v, MidpointRounding.AwayFromZero);
+
+        static void Postfix(ShapedBuffer __result, TextShaperOptions options)
         {
-            for (int i = 0; i < __result.Length; i++)
+            try
             {
-                var g = __result[i];
-                __result[i] = new GlyphInfo(g.GlyphIndex, g.GlyphCluster,
-                                            Math.Round(g.GlyphAdvance), g.GlyphOffset);
+                var typeface = __result.GlyphTypeface;
+                int upem = typeface.Metrics.DesignEmHeight;
+                double em = __result.FontRenderingEmSize;
+                if (upem <= 0 || em <= 0)
+                {
+                    for (int i = 0; i < __result.Length; i++)
+                    {
+                        var g = __result[i];
+                        __result[i] = new GlyphInfo(g.GlyphIndex, g.GlyphCluster, R(g.GlyphAdvance), g.GlyphOffset);
+                    }
+                    return;
+                }
+
+                double gdiEm = GdiEm(em);
+                double origScale = em / upem, gdiScale = gdiEm / upem;
+                double ls = options.LetterSpacing;   
+                ushort space = typeface.GetGlyph(' ');
+
+                for (int i = 0; i < __result.Length; i++)
+                {
+                    var g = __result[i];
+                    double hb = g.GlyphAdvance - ls;    
+                    int design = typeface.GetGlyphAdvance(g.GlyphIndex);
+                    double unkerned = design * origScale;
+                    double adv;
+
+                    if (Math.Abs(hb) < 1e-6)
+                        adv = 0;                        
+                    else if (g.GlyphIndex == space && Math.Abs(hb - unkerned) > em * 0.5)
+                        adv = R(hb);                    
+                    else
+                    {
+                        adv = R(design * gdiScale);
+                        if (KeepKerning)
+                            adv += R((hb - unkerned) * gdiEm / em);
+                    }
+
+                    __result[i] = new GlyphInfo(g.GlyphIndex, g.GlyphCluster, adv + ls, g.GlyphOffset);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("GdiAdvancePatch.Postfix failed: " + ex.Message);
             }
         }
     }
