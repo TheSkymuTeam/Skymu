@@ -571,12 +571,48 @@ namespace Skymu.Theming
 
         #endregion
 
+        #region Skype Home
+
+        private Home _home;
+
+
+        protected void AttachHome(Home home)
+        {
+            DetachHome();
+            _home = home;
+
+            home.ContactClicked += Home_ContactClicked;
+
+            HomeFrame.Content = home;
+        }
+
+        private void DetachHome()
+        {
+            if (_home == null) return;
+
+            _home.ContactClicked -= Home_ContactClicked;
+            _home = null;
+        }
+
+        private void Home_ContactClicked(object sender, DirectMessage dm)
+        {
+            SelectedContact = dm;
+            ConversationList.SelectedItem = ConversationList.Items
+                .OfType<DirectMessage>()
+                .FirstOrDefault(c => c.Identifier == dm.Identifier);   
+            HandleConversationSelection(dm);                         
+        }
+
+        #endregion
+
         #region Initialization and closing
 
         protected virtual void InitializeMenuBar()
         {
             if (_currentFrame == Enumerations.WindowChrome.Native) MenuBarDivider.IsVisible = false;
         }
+
+
 
         protected void InitializeMainWindow()
         {

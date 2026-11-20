@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Yggdrasil.Models;
 
 namespace Skymu.Forms
@@ -36,17 +37,10 @@ namespace Skymu.Forms
 
         // EVENTS TO HOOK INTO TODO(omega): Hook into these in MainWindow base class
 
-        /// <summary>Raised when the user presses Enter in the mood box. Argument is the new mood text.</summary>
-        public event EventHandler<string> MoodSubmitted;
 
         /// <summary>Raised when a top contact is clicked, so the host can open that conversation.</summary>
         public event EventHandler<DirectMessage> ContactClicked;
 
-        /// <summary>Raised when "View help videos" is clicked.</summary>
-        public event EventHandler HelpVideosClicked;
-
-        /// <summary>Raised when the gear button next to "Show top contacts" is clicked.</summary>
-        public event EventHandler SettingsClicked;
 
         /// <summary>Avalonia previewer constructor.</summary>
         public Home() : this(null, null) { }
@@ -99,11 +93,11 @@ namespace Skymu.Forms
         #endregion
         #region UI handlers
 
-        private void MoodBox_KeyDown(object sender, KeyEventArgs e)
+        private async Task MoodBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter) return;
             e.Handled = true;
-            MoodSubmitted?.Invoke(this, MoodBox.Text ?? string.Empty);
+            await Universal.Plugin.SetMood(MoodBox.Text ?? string.Empty);
         }
 
         private void Contact_Tapped(object sender, TappedEventArgs e)
@@ -112,11 +106,9 @@ namespace Skymu.Forms
                 ContactClicked?.Invoke(this, item.Source);
         }
 
-        private void HelpVideosButton_Click(object sender, RoutedEventArgs e) =>
-            HelpVideosClicked?.Invoke(this, EventArgs.Empty);
+        private void HelpVideosButton_Click(object sender, RoutedEventArgs e) { }
 
-        private void SettingsButton_Click(object sender, RoutedEventArgs e) =>
-            SettingsClicked?.Invoke(this, EventArgs.Empty);
+        private void SettingsButton_Click(object sender, RoutedEventArgs e) { }
 
         private void ToggleContactsButton_Click(object sender, RoutedEventArgs e)
         {

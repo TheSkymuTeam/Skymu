@@ -228,9 +228,10 @@ namespace Skymu.Skype6
             StatusBox.Text = name;
         }
 
-        protected override async Task GenerateHome()
+        protected override Task GenerateHome()
         {
-            HomeFrame.Content = new Home(Universal.CurrentUser, vmodel.ContactList.Reverse().ToList());
+            AttachHome(new Home(Universal.CurrentUser, vmodel.ContactList.Reverse().ToList()));
+            return Task.CompletedTask;
         }
 
         protected override void OnUserCountUpdated(string text)
