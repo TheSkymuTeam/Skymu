@@ -2,19 +2,25 @@
 
 	<!-- Main thingy -->
 	<PropertyGroup>
+		<Configurations>Debug;Release;Publish</Configurations>
+		<RuntimeIdentifiers>osx-arm64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
+		<SelfContained>false</SelfContained>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
-		<ApplicationManifest Condition="$([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
-		<ApplicationIcon Condition="$([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
+		<ApplicationManifest Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
+		<ApplicationIcon Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<ApplicationVersion>1.0.0.*</ApplicationVersion>
 		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<SelfContained>true</SelfContained>
-		<PublishSingleFile>true</PublishSingleFile>
+
+		<!-- Output locations (order matters: later lines override earlier ones) -->
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+		<OutputPath Condition="'$(Configuration)' == 'Publish'">bin\_publishtmp\outer\</OutputPath>
+		<OutputPath Condition="'$(InnerFolder)' != ''">bin\_publishtmp\$(InnerFolder)\</OutputPath>
+		<IntermediateOutputPath Condition="'$(InnerFolder)' != ''">obj\$(Configuration)\$(InnerFolder)\</IntermediateOutputPath>
 	</PropertyGroup>
 
 	<!-- Assembly information -->
@@ -27,7 +33,7 @@
 	</PropertyGroup>
 
 	<!-- Build configurations -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'Publish'">
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
@@ -42,6 +48,39 @@
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
 		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+
+	<!-- Publish -->
+	<Target Name="PublishAllPlatforms" AfterTargets="Build" Condition="'$(Configuration)' == 'Publish' And '$(InnerPublish)' != 'true'">
+
+		<!-- Windows -->
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="InnerPublish=true;&#xD;&#xA;		                     InnerFolder=windows;&#xD;&#xA;		                     SelfContained=false;&#xD;&#xA;		                     PublishDir=$(MSBuildProjectDirectory)\bin\$(Configuration)\windows\" />
+
+		<!-- macOS + Linux -->
+		<ItemGroup>
+			<UnixTarget Include="osx-arm64">
+				<Folder>macos-arm64</Folder>
+			</UnixTarget>
+			<UnixTarget Include="osx-x64">
+				<Folder>macos-x64</Folder>
+			</UnixTarget>
+			<UnixTarget Include="linux-x64">
+				<Folder>linux-x64</Folder>
+			</UnixTarget>
+			<UnixTarget Include="linux-arm64">
+				<Folder>linux-arm64</Folder>
+			</UnixTarget>
+		</ItemGroup>
+
+		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="InnerPublish=true;&#xD;&#xA;		                     InnerFolder=%(UnixTarget.Folder);&#xD;&#xA;		                     RuntimeIdentifier=%(UnixTarget.Identity);&#xD;&#xA;		                     SelfContained=true;&#xD;&#xA;		                     PublishSingleFile=true;&#xD;&#xA;		                     PublishDir=$(MSBuildProjectDirectory)\bin\$(Configuration)\%(UnixTarget.Folder)\" />
+	</Target>
+
+	<!-- Copy plugins into each published folder -->
+	<Target Name="CopyPluginsToPublish" AfterTargets="Publish" Condition="'$(InnerPublish)' == 'true'">
+		<ItemGroup>
+			<PublishPluginFiles Include="..\Plugins\bin\**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PublishPluginFiles)" DestinationFiles="@(PublishPluginFiles->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->
@@ -111,6 +150,15 @@
 		<None Remove="Shaders\DarkenLighten.ps" />
 		<AvaloniaResource Include="Shaders\Darken.ps" />
 		<AvaloniaResource Include="Shaders\DarkenLighten.ps" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="UserControls\MainMenuBar.axaml.cs">
+	    <DependentUpon>MainMenuBar.axaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="UserControls\LoginMenuBar.axaml.cs">
+	    <DependentUpon>LoginMenuBar.axaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

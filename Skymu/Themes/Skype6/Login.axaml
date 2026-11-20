@@ -22,7 +22,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:theming="clr-namespace:Skymu.Theming"
-    
+    xmlns:controls="clr-namespace:Skymu.Controls"
     Title="{Binding [sMAINMENU_SKYPE]}"
     Width="526"
     Height="429"
@@ -54,8 +54,7 @@
             HorizontalAlignment="Center"
             Fill="{DynamicResource Card.Background}"
             Stretch="Fill" />
-        <Rectangle Grid.Row="0" Fill="{DynamicResource Metro.Border}" />
-        <!--  placeholder for menu bar so designer donesnt mess up  -->
+         <controls:LoginMenuBar Grid.Row="0" x:Name="MenuBar"/>
         <Grid Grid.Row="1">
             <Image
                 Width="510"

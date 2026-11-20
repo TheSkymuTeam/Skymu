@@ -59,7 +59,7 @@ namespace Skymu.Versioning
                 }
                 // b1.2.3
                 else BetaNumber = 0;
-            }
+            }   
             // v1.2.3 or 1.2.3
             else IsBeta = false;
 

@@ -165,7 +165,6 @@ namespace Skymu.Theming
             if (Settings.StartMinimized)
                 WindowState = WindowState.Minimized;
 
-            MenuBarRow.Height = new GridLength(0);
             ProtocolComboBox.ItemTemplate = new FuncDataTemplate<LoginViewModel.PluginListing>((item, _) =>
                 new TextBlock { Text = item?.DisplayName });
             _viewModel.LoadPlugins();
@@ -292,7 +291,6 @@ namespace Skymu.Theming
 
         protected global::Avalonia.Controls.TextBlock header => Part<global::Avalonia.Controls.TextBlock>(nameof(header));
         protected global::Avalonia.Controls.Grid LoginControls => Part<global::Avalonia.Controls.Grid>(nameof(LoginControls));
-        private RowDefinition MenuBarRow => ((Grid)Content).RowDefinitions[0];
         protected global::Avalonia.Controls.TextBlock PasswordLabel => Part<global::Avalonia.Controls.TextBlock>(nameof(PasswordLabel));
         protected global::Avalonia.Controls.TextBox PasswordTokenBox => Part<global::Avalonia.Controls.TextBox>(nameof(PasswordTokenBox));
         protected global::Avalonia.Controls.ComboBox ProtocolComboBox => Part<global::Avalonia.Controls.ComboBox>(nameof(ProtocolComboBox));

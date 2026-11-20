@@ -9,6 +9,7 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>..\bin\stub.smp</OutputPath>
 		<LangVersion>7.3</LangVersion>
+		<Configurations>Debug;Release;Publish</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="NLayer.NAudioSupport" Version="1.4.0" />
@@ -18,6 +19,9 @@
 	</ItemGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Publish'">
+	  <DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Yggdrasil\Yggdrasil.csproj" />

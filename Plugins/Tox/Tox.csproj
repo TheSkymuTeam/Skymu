@@ -12,9 +12,13 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Prefer32Bit>false</Prefer32Bit>
 		<OutputPath>..\bin\tox.smp</OutputPath>
+		<Configurations>Debug;Release;Publish</Configurations>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Publish'">
+	  <DebugType>none</DebugType>
 	</PropertyGroup>
 	<ItemGroup>
 	  <PackageReference Include="NAudio.Core" Version="2.3.0" />

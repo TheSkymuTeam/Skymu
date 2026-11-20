@@ -83,7 +83,7 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.Shapes.Rectangle ChatTopBarSplitter => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ChatTopBarSplitter));
         protected global::Avalonia.Controls.Shapes.Rectangle ContentBgTop => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ContentBgTop));
         protected global::Avalonia.Controls.Shapes.Rectangle ContentBgBottom => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(ContentBgBottom));
-        protected global::Avalonia.Controls.Shapes.Rectangle MainMenuBarDivider => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(MainMenuBarDivider));
+        protected global::Avalonia.Controls.Shapes.Rectangle MenuBarDivider => Part<global::Avalonia.Controls.Shapes.Rectangle>(nameof(MenuBarDivider));
         protected global::Avalonia.Controls.ListBox ConversationItemsList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationItemsList));
         protected global::Avalonia.Controls.ListBox ConversationList => Part<global::Avalonia.Controls.ListBox>(nameof(ConversationList));
         protected global::Avalonia.Controls.TreeView ServersList => Part<global::Avalonia.Controls.TreeView>(nameof(ServersList));
@@ -92,7 +92,7 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.StackPanel MenuBarArea => Part<global::Avalonia.Controls.StackPanel>(nameof(MenuBarArea));
         protected global::Avalonia.Controls.StackPanel StatusArea => Part<global::Avalonia.Controls.StackPanel>(nameof(StatusArea));
         protected global::Avalonia.Controls.StackPanel TypingIndicator => Part<global::Avalonia.Controls.StackPanel>(nameof(TypingIndicator));
-        protected global::Avalonia.Controls.Menu MainMenuBar => Part<global::Avalonia.Controls.Menu>(nameof(MainMenuBar));
+        protected global::Skymu.Controls.MainMenuBar MenuBar => Part<global::Skymu.Controls.MainMenuBar>(nameof(MenuBar));
         protected global::Avalonia.Controls.MenuItem MenubarStatusHolder => Part<global::Avalonia.Controls.MenuItem>(nameof(MenubarStatusHolder));
         protected global::Avalonia.Controls.MenuItem ExtrasMenu => Part<global::Avalonia.Controls.MenuItem>(nameof(ExtrasMenu));
         protected global::Avalonia.Controls.MenuItem GetExtrasMenuItem => Part<global::Avalonia.Controls.MenuItem>(nameof(GetExtrasMenuItem));
@@ -472,8 +472,8 @@ namespace Skymu.Theming
         {
             ContentBgTop.Fill = GetBrush("Background");
             ContentBgBottom.Fill = GetBrush("Background");
-            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Background");
-            MainMenuBarDivider.Fill = GetBrush("Card.Border");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MenuBar.Background = GetBrush("Background");
+            MenuBarDivider.Fill = GetBrush("Card.Border");
             MenuBarArea.Background = GetBrush("Background");
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
@@ -503,8 +503,8 @@ namespace Skymu.Theming
 
             ContentBgTop.Fill = GetBrush("Active.Window");
             ContentBgBottom.Fill = GetBrush("Active.Background");
-            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Active.Menubar");
-            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBarDivider.Fill = GetBrush("Active.Background");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MenuBar.Background = GetBrush("Active.Menubar");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MenuBarDivider.Fill = GetBrush("Active.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
@@ -534,8 +534,8 @@ namespace Skymu.Theming
 
             ContentBgTop.Fill = GetBrush("Inactive.Window");
             ContentBgBottom.Fill = GetBrush("Inactive.Background");
-            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBar.Background = GetBrush("Inactive.Menubar");
-            if (_currentFrame != Enumerations.WindowChrome.Native) MainMenuBarDivider.Fill = GetBrush("Inactive.Background");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MenuBar.Background = GetBrush("Inactive.Menubar");
+            if (_currentFrame != Enumerations.WindowChrome.Native) MenuBarDivider.Fill = GetBrush("Inactive.Background");
 
             if (_currentFrame == Enumerations.WindowChrome.SkypeXP)
             {
@@ -575,7 +575,7 @@ namespace Skymu.Theming
 
         protected virtual void InitializeMenuBar()
         {
-            if (_currentFrame == Enumerations.WindowChrome.Native) MainMenuBarDivider.IsVisible = false;
+            if (_currentFrame == Enumerations.WindowChrome.Native) MenuBarDivider.IsVisible = false;
         }
 
         protected void InitializeMainWindow()
