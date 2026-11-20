@@ -49,6 +49,7 @@ namespace Skymu.Helpers
 
         public static Bitmap GenerateFromArray(byte[] data)
         {
+            if (data.Length == 0) return null;
             using (var stream = new MemoryStream(data))
             {
                 return new Bitmap(stream);

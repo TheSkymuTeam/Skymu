@@ -1329,18 +1329,40 @@ mc:Ignorable="d">
 											StackDirection="Vertical"
 											Themeable="True"
 											TopHeight="5" />
-											<TextBox
-											x:Name="SearchBox"
-											Padding="10,0,0,0"
-											HorizontalAlignment="Stretch"
-											VerticalContentAlignment="Center"
-											Background="Transparent"
-											BorderThickness="0"
-											Cursor="IBeam"
-											
-											
-											GotFocus="SearchBox_Focused"
-											LostFocus="SearchBox_Unfocused" />
+<TextBox
+    x:Name="SearchBox"
+    Grid.Row="0"
+    Padding="29,0,0,0"
+    HorizontalAlignment="Stretch"
+    VerticalContentAlignment="Center"
+    Background="Transparent"
+    BorderThickness="0"
+    Cursor="IBeam"
+    GotFocus="SearchBox_Focused"
+    LostFocus="SearchBox_Unfocused">
+    <TextBox.Template>
+        <ControlTemplate TargetType="TextBox">
+            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
+                    <TextPresenter
+                        Name="PART_TextPresenter"
+                        VerticalAlignment="Center"
+                        Text="{TemplateBinding Text, Mode=TwoWay}"
+                        CaretIndex="{TemplateBinding CaretIndex}"
+                        SelectionStart="{TemplateBinding SelectionStart}"
+                        SelectionEnd="{TemplateBinding SelectionEnd}"
+                        CaretBrush="{TemplateBinding CaretBrush}"
+                        SelectionBrush="{TemplateBinding SelectionBrush}"
+                        SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                        TextAlignment="{TemplateBinding TextAlignment}"
+                        TextWrapping="NoWrap" />
+                </ScrollViewer>
+            </Border>
+        </ControlTemplate>
+    </TextBox.Template>
+</TextBox>
 										</Grid>
 									</Grid>
 									<Grid x:Name="SidebarTabs" Margin="0,4,0,0">

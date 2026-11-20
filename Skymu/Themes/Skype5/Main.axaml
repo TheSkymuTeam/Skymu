@@ -1287,19 +1287,40 @@ mc:Ignorable="d">
 										Source="Assets/Themeable/Main/search-box.png"
 										StackDirection="Vertical"
 										Themeable="True" />
-										<TextBox
-										x:Name="SearchBox"
-										Grid.Row="0"
-										Padding="33,0,0,0"
-										HorizontalAlignment="Stretch"
-										VerticalContentAlignment="Center"
-										Background="Transparent"
-										BorderThickness="0"
-										Cursor="IBeam"
-										
-										
-										GotFocus="SearchBox_Focused"
-										LostFocus="SearchBox_Unfocused" />
+<TextBox
+    x:Name="SearchBox"
+    Grid.Row="0"
+    Padding="29,0,0,0"
+    HorizontalAlignment="Stretch"
+    VerticalContentAlignment="Center"
+    Background="Transparent"
+    BorderThickness="0"
+    Cursor="IBeam"
+    GotFocus="SearchBox_Focused"
+    LostFocus="SearchBox_Unfocused">
+    <TextBox.Template>
+        <ControlTemplate TargetType="TextBox">
+            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                <ScrollViewer
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Disabled">
+                    <TextPresenter
+                        Name="PART_TextPresenter"
+                        VerticalAlignment="Center"
+                        Text="{TemplateBinding Text, Mode=TwoWay}"
+                        CaretIndex="{TemplateBinding CaretIndex}"
+                        SelectionStart="{TemplateBinding SelectionStart}"
+                        SelectionEnd="{TemplateBinding SelectionEnd}"
+                        CaretBrush="{TemplateBinding CaretBrush}"
+                        SelectionBrush="{TemplateBinding SelectionBrush}"
+                        SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                        TextAlignment="{TemplateBinding TextAlignment}"
+                        TextWrapping="NoWrap" />
+                </ScrollViewer>
+            </Border>
+        </ControlTemplate>
+    </TextBox.Template>
+</TextBox>
 										<Rectangle
 										Grid.Row="1"
 										Height="1"

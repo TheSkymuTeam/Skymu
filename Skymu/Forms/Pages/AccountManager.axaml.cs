@@ -110,7 +110,16 @@ namespace Skymu.Forms.Pages
                 var entries = new List<AccountEntry>();
                 int rank = 0;
                 foreach (SavedCredential c in CredentialManager.GetAll())
-                    entries.Add(new AccountEntry(c, c.AutoLogin ? ++rank : 0));
+                {
+                    try
+                    {
+                        entries.Add(new AccountEntry(c, c.AutoLogin ? ++rank : 0));
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[AccountManager] Skipping bad entry: {ex}");
+                    }
+                }
 
                 AccountList.ItemsSource = entries;
 
