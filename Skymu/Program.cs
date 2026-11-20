@@ -17,6 +17,10 @@ namespace Skymu
         public static AppBuilder BuildAvaloniaApp() =>
             AppBuilder.Configure<Universal>()
                 .UsePlatformDetect()
+                .With(new SkiaOptions
+                {
+                    MaxGpuResourceSizeBytes = 128L * 1024 * 1024 * 2
+                })
                 .AfterSetup(_ => GdiAdvancePatch.Install(new Harmony("skymu.gdi.advances")))
                 .LogToTrace();
     }
