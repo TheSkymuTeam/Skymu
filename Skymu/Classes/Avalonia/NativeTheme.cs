@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Diagnostics;
+using Avalonia.Threading;
 using System.Runtime.InteropServices;
 using System.Security;
 using Avalonia;
@@ -763,6 +765,13 @@ namespace Skymu.AvaloniaTools
 
         Control? _owner;
 
+        int _target = -1;        
+        int _from = -1;          
+        bool _animating;
+        long _animStart;         
+        double _animMs;
+        DispatcherTimer? _timer;
+
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
@@ -779,12 +788,16 @@ namespace Skymu.AvaloniaTools
                 _owner.Classes.CollectionChanged -= OnOwnerClasses;
             _owner = null;
             NativeTheme.Changed -= OnThemeChanged;
+            StopAnimation();
+            _target = -1;
         }
 
         void OnOwnerClasses(object? sender, NotifyCollectionChangedEventArgs e) => InvalidateVisual();
 
         void OnThemeChanged()
         {
+            StopAnimation();
+            _target = -1;
             InvalidateMeasure();
             InvalidateVisual();
         }
@@ -893,11 +906,85 @@ namespace Skymu.AvaloniaTools
                 return;
 
             var dest = new Rect(0, 0, pw / scale, ph / scale);
+            var src = new Rect(0, 0, pw, ph);
             context.DrawRectangle(Brushes.Transparent, null, dest);
 
-            var bmp = NativeRenderer.Get(Kind, Vertical, State(), pw, ph, Dpi);
-            if (bmp != null)
-                context.DrawImage(bmp, new Rect(0, 0, pw, ph), dest);
+            int cur = State();
+            if (_target < 0) _target = cur;
+            else if (cur != _target) StartTransition(cur);
+
+            double t = Progress();
+            if (_animating && t >= 1)
+                StopAnimation();
+
+            if (_animating)
+            {
+                var from = NativeRenderer.Get(Kind, Vertical, _from, pw, ph, Dpi);
+                var to = NativeRenderer.Get(Kind, Vertical, _target, pw, ph, Dpi);
+
+                if (from != null) context.DrawImage(from, src, dest);
+                if (to != null)
+                {
+                    using (context.PushOpacity(t))
+                        context.DrawImage(to, src, dest);
+                }
+                EnsureTimer();
+            }
+            else
+            {
+                var bmp = NativeRenderer.Get(Kind, Vertical, _target, pw, ph, Dpi);
+                if (bmp != null)
+                    context.DrawImage(bmp, src, dest);
+            }
+        }
+
+        void StartTransition(int to)
+        {
+            double ms = NativeRenderer.TransitionMs(Kind, Vertical, _target, to, Dpi);
+            if (ms <= 0)
+            {
+                StopAnimation();
+                _target = to;             
+                return;
+            }
+
+            double t = Progress();
+            if (_animating && to == _from)
+            {
+       
+                (_from, _target) = (_target, to);
+                _animStart = Stopwatch.GetTimestamp() - (long)((1 - t) * ms * Stopwatch.Frequency / 1000.0);
+            }
+            else
+            {
+               
+                _from = _target;
+                _target = to;
+                _animStart = Stopwatch.GetTimestamp();
+            }
+            _animMs = ms;
+            _animating = true;
+        }
+
+        double Progress()
+        {
+            if (!_animating) return 1;
+            double elapsed = (Stopwatch.GetTimestamp() - _animStart) * 1000.0 / Stopwatch.Frequency;
+            return Math.Clamp(elapsed / _animMs, 0, 1);
+        }
+
+        void EnsureTimer()
+        {
+            _timer ??= new DispatcherTimer(TimeSpan.FromMilliseconds(16), DispatcherPriority.Render,
+                                           (_, _) => InvalidateVisual());
+            if (!_timer.IsEnabled)
+                _timer.Start();
+        }
+
+        void StopAnimation()
+        {
+            _animating = false;
+            _timer?.Stop();
         }
     }
 
@@ -910,6 +997,7 @@ namespace Skymu.AvaloniaTools
         static readonly Dictionary<Key, WriteableBitmap?> _bitmaps = new();
         static readonly Dictionary<(string, uint), IntPtr> _themes = new();
         static readonly Dictionary<(string, int, int, uint), Size> _sizes = new();
+        static readonly Dictionary<(NativePartKind, bool, int, int, uint), double> _durations = new();
         static readonly object _lock = new();
 
         public static void Clear()
@@ -918,6 +1006,7 @@ namespace Skymu.AvaloniaTools
             {
                 _bitmaps.Clear();
                 _sizes.Clear();
+                _durations.Clear();
                 foreach (var h in _themes.Values)
                     if (h != IntPtr.Zero) Win32.CloseThemeData(h);
                 _themes.Clear();
@@ -969,6 +1058,36 @@ namespace Skymu.AvaloniaTools
             catch (EntryPointNotFoundException) { h = Win32.OpenThemeData(IntPtr.Zero, cls); }
             _themes[(cls, dpi)] = h;
             return h;
+        }
+
+        public static double TransitionMs(NativePartKind kind, bool vertical, int from, int to, uint dpi)
+        {
+            if (!Win32.ClientAreaAnimation())
+                return 0;
+
+            lock (_lock)
+            {
+                var key = (kind, vertical, from, to, dpi);
+                if (_durations.TryGetValue(key, out var cached)) return cached;
+
+                double ms = 0;
+                var (cls, parts, _) = Describe(kind, vertical);
+                var theme = Theme(cls, dpi);
+                if (theme != IntPtr.Zero)
+                {
+                    foreach (int part in parts)
+                    {
+                        // TMT_TRANSITIONDURATIONS = 6000
+                        if (Win32.GetThemeTransitionDuration(theme, part, from, to, 6000, out uint d) == 0 && d > 0)
+                        {
+                            ms = d;
+                            break;
+                        }
+                    }
+                }
+                _durations[key] = ms;
+                return ms;
+            }
         }
 
         public static Size PartSize(string cls, int part, int state, uint dpi)
@@ -1146,6 +1265,20 @@ namespace Skymu.AvaloniaTools
         public static extern int GetThemePartSize(IntPtr hTheme, IntPtr hdc, int part, int state,
                                                   IntPtr rect, int themeSize, out SIZE size);
 
+        [DllImport("uxtheme.dll")]
+        public static extern int GetThemeTransitionDuration(IntPtr hTheme, int partId, int stateFrom,
+          int stateTo, int propId, out uint duration);
+
+        [DllImport("user32.dll", EntryPoint = "SystemParametersInfoW")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SystemParametersInfoInt(uint action, uint param, ref int value, uint winIni);
+
+        public static bool ClientAreaAnimation()
+        {
+            int v = 1;
+            return !SystemParametersInfoInt(0x1042, 0, ref v, 0) || v != 0;
+        }
+
         [DllImport("gdi32.dll")]
         public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
@@ -1212,6 +1345,7 @@ namespace Skymu.AvaloniaTools
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool SystemParametersInfoForDpi(uint action, uint param, ref NONCLIENTMETRICS ncm, uint winIni, uint dpi);
+
 
         public static (string Family, int Size, bool Bold) MenuFont()
         {

@@ -26,36 +26,7 @@
 
     <UserControl.Styles>
         <Style Selector="Button.pill">
-            <Setter Property="FontFamily" Value="Helvetica, Arial" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="Foreground" Value="#333" />
-            <Setter Property="Padding" Value="8,1" />
-            <Setter Property="MinHeight" Value="0" />
-            <Setter Property="MinWidth" Value="0" />
-            <Setter Property="CornerRadius" Value="9" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#8A8A8A" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Background">
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                    <GradientStop Offset="0" Color="#FFFFFF" />
-                    <GradientStop Offset="1" Color="#D9D9D9" />
-                </LinearGradientBrush>
-            </Setter>
-        </Style>
-        <Style Selector="Button.pill:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background">
-                <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                    <GradientStop Offset="0" Color="#FFFFFF" />
-                    <GradientStop Offset="1" Color="#E6E6E6" />
-                </LinearGradientBrush>
-            </Setter>
-            <Setter Property="BorderBrush" Value="#6E6E6E" />
-        </Style>
-        <Style Selector="Button.pill:pressed /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#CFCFCF" />
+
         </Style>
     </UserControl.Styles>
 
@@ -127,7 +98,7 @@
                                 Classes="pill"
                                 Click="SettingsButton_Click"
                                 CornerRadius="8"
-                                Content="⚙"
+                                Content="Configure"
                                 FontSize="10" />
                         </StackPanel>
                     </Grid>
