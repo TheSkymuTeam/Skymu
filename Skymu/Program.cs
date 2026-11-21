@@ -19,7 +19,7 @@ namespace Skymu
                 .UsePlatformDetect()
                 .With(new SkiaOptions
                 {
-                    MaxGpuResourceSizeBytes = 128L * 1024 * 1024 * 2
+                    MaxGpuResourceSizeBytes = 128L * 1024 * 1024 * 4
                 })
                 //.With(new Win32PlatformOptions
                 //{

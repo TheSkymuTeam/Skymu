@@ -74,6 +74,19 @@
     <SolidColorBrush x:Key="Message.Author.Forward" Color="#7dbe85" />
     <SolidColorBrush x:Key="Message.Border" Color="#ebe5eb" />
 
+        <LinearGradientBrush x:Key="Home.Banner.Background" StartPoint="0%,0%" EndPoint="0%,100%">
+        <GradientStop Offset="0" Color="#FFFFFF" />
+        <GradientStop Offset="1" Color="#FFFFDC" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="Home.ContactsArea.Background" StartPoint="0,0" EndPoint="0,37">
+        <GradientStop Offset="0" Color="#FFFFFF" />
+        <GradientStop Offset="1" Color="#D9E8F0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="Home.AlertsContainer.Border" Color="#DADDDE" />
+    <SolidColorBrush x:Key="Home.Column.Background" Color="#F8F8F8" />
+    <SolidColorBrush x:Key="Home.MoodBox.Border" Color="#B6C2D0" />
+    <SolidColorBrush x:Key="Home.MoodBox.Text" Color="#AAAAAA" />
+
     <SolidColorBrush x:Key="Chatbar.Divider" Color="#e2dbe5" />
     <SolidColorBrush x:Key="Sidebar.Header" Color="#E5E5E5" />
     <SolidColorBrush x:Key="Sidebar.Divider.Opaque" Color="#e2dbe3" />

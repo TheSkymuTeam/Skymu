@@ -299,12 +299,12 @@ namespace Skymu.Theming
 
         public void InitializeWindowFrame()
         {
-            Debug.WriteLine($"[Skymu WindowChrome] chrome={_currentFrame} theme={Settings.Theme} dwm={Universal.Platform.DwmIsCompositionEnabled}");
+            Debug.WriteLine($"[Skymu WindowChrome] chrome={_currentFrame} theme={Universal.Theme} dwm={Universal.Platform.DwmIsCompositionEnabled}");
+            if (_currentFrame == Enumerations.WindowChrome.SkypeAero) _currentFrame = Enumerations.WindowChrome.Native; // Skype Aero doesn't work
             if (_currentFrame != Enumerations.WindowChrome.Native) // using Skymu's custom border
             {
-                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.Acrylic; // if no DWM, don't use broken Aero frame
+                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.Native; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
-                //chrome.UseAeroCaptionButtons = false;
                 ExtendClientAreaToDecorationsHint = true;
                 ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
                 ExtendClientAreaTitleBarHeightHint = -1; // WindowChrome configuration ensures that system frame is not drawn
@@ -622,7 +622,7 @@ namespace Skymu.Theming
         {
             noCloseEvent = false;
 
-            if (Settings.Theme == "Skype7" || Settings.Theme == "Skype6")
+            if (Universal.Theme == "Skype7" || Universal.Theme == "Skype6")
                 _currentFrame = Enumerations.WindowChrome.Native;
 
             AvaloniaHelpers.SetMainWindow(this);

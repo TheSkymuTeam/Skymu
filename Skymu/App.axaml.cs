@@ -104,7 +104,7 @@ namespace Skymu
         public static ICall CallPlugin;
         public static ICore[] PluginList;
         public static bool SignedIn = false;
-        public static readonly string Theme = Settings.Theme;
+        public static string Theme = Settings.Theme;
         public static Platform Platform = Runtime.GetPlatformInfo();
         public static string PlatformStr = Runtime.GetPlatformInfo().OSDisplayName;
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
@@ -348,6 +348,7 @@ namespace Skymu
             switch (Theme)
             {
                 case "Skype7":
+                    Universal.Theme = "Skype6";
                     Application.Current.Resources["Settings.ActiveTab"] = new SolidColorBrush(Color.Parse("#0095cc"));
                     Application.Current.Resources["Settings.ActiveTabText"] = new SolidColorBrush(Colors.White);
                     new Skype6.Login().Show();

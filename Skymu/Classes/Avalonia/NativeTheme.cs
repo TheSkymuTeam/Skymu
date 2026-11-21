@@ -822,7 +822,6 @@ namespace Skymu.AvaloniaTools
             if (okSep && sep.cy > 0)
                 SeparatorHeight = sep.cy + (okSepM ? sepM.top + sepM.bottom : 0);
             r.Append(" sep=" + (okSep ? sep.cy.ToString() : "n/a") + " sepM=" + (okSepM ? Fmt(sepM) : "n/a"));
-
             if (NativeRenderer.TryMargins("MENU", BARITEM, TMT_CONTENTMARGINS, dpi, out var bar)
                 && bar.left + bar.right + bar.top + bar.bottom > 0)
             {

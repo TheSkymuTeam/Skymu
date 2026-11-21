@@ -214,7 +214,7 @@ namespace Skymu.Crossplatform
 
         private static string SheetPath()
         {
-            return $"avares://Skymu/Themes/{Settings.Theme}/Assets/Universal/Icon/skype-status.png";
+            return $"avares://Skymu/Themes/{Universal.Theme}/Assets/Universal/Icon/skype-status.png";
         }
 
         private static Bitmap GetStatusSprite(PresenceStatus status)
