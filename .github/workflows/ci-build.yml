@@ -32,10 +32,10 @@ jobs:
     - name: 3. Build Skymu
       run: dotnet build Skymu/Skymu.csproj --configuration Release
 
-    - name: 4. Build NSIS installer
+    - name: 4. Build Windows NSIS installer
       run: makensis NSIS/SkymuBetaSetup-Release.nsi
 
-    - name: 5. Export zipped Windows installer 
+    - name: 5. Export Windows NSIS installer 
       uses: actions/upload-artifact@v7
       with:
         name: Skymu-Windows-Installer
@@ -117,7 +117,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: Skymu-MacOS-Intel-DMG
-        path: dist/*.dmg
+        path: dist/Skymu-macOS-Intel.dmg
         retention-days: 7
         archive: true
         
@@ -125,7 +125,7 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: Skymu-MacOS-AppleSilicon-DMG
-        path: dist/*.dmg
+        path: dist/Skymu-macOS-AppleSilicon.dmg
         retention-days: 7
         archive: true
 

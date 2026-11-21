@@ -2,7 +2,7 @@
 
 	<!-- Main thingy -->
 	<PropertyGroup>
-		<Configurations>Debug;Release;Publish</Configurations>
+		<Configurations>Debug;Release</Configurations>
 		<RuntimeIdentifiers>osx-arm64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
 		<SelfContained>false</SelfContained>
 		<OutputType>WinExe</OutputType>
@@ -18,8 +18,6 @@
 
 		<!-- Output locations (order matters: later lines override earlier ones) -->
 		<OutputPath>bin\$(Configuration)\</OutputPath>
-		<OutputPath Condition="'$(Configuration)' == 'Publish'">bin\_publishtmp\outer\</OutputPath>
-		<OutputPath Condition="'$(InnerFolder)' != ''">bin\_publishtmp\$(InnerFolder)\</OutputPath>
 		<IntermediateOutputPath Condition="'$(InnerFolder)' != ''">obj\$(Configuration)\$(InnerFolder)\</IntermediateOutputPath>
 	</PropertyGroup>
 
@@ -33,7 +31,7 @@
 	</PropertyGroup>
 
 	<!-- Build configurations -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'Publish'">
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<DebugType>none</DebugType>
 		<Optimize>true</Optimize>
 	</PropertyGroup>
@@ -47,40 +45,14 @@
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
-	</Target>
 
-	<!-- Publish -->
-	<Target Name="PublishAllPlatforms" AfterTargets="Build" Condition="'$(Configuration)' == 'Publish' And '$(InnerPublish)' != 'true'">
+		<Copy SourceFiles="@(PluginFiles)"
+			  DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')"
+			  Condition="'$(IsPublishing)' != 'true'" />
 
-		<!-- Windows -->
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="InnerPublish=true;&#xD;&#xA;		                     InnerFolder=windows;&#xD;&#xA;		                     SelfContained=false;&#xD;&#xA;		                     PublishDir=$(MSBuildProjectDirectory)\bin\$(Configuration)\windows\" />
-
-		<!-- macOS + Linux -->
-		<ItemGroup>
-			<UnixTarget Include="osx-arm64">
-				<Folder>macos-arm64</Folder>
-			</UnixTarget>
-			<UnixTarget Include="osx-x64">
-				<Folder>macos-x64</Folder>
-			</UnixTarget>
-			<UnixTarget Include="linux-x64">
-				<Folder>linux-x64</Folder>
-			</UnixTarget>
-			<UnixTarget Include="linux-arm64">
-				<Folder>linux-arm64</Folder>
-			</UnixTarget>
-		</ItemGroup>
-
-		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" Properties="InnerPublish=true;&#xD;&#xA;		                     InnerFolder=%(UnixTarget.Folder);&#xD;&#xA;		                     RuntimeIdentifier=%(UnixTarget.Identity);&#xD;&#xA;		                     SelfContained=true;&#xD;&#xA;		                     PublishSingleFile=true;&#xD;&#xA;		                     PublishDir=$(MSBuildProjectDirectory)\bin\$(Configuration)\%(UnixTarget.Folder)\" />
-	</Target>
-
-	<!-- Copy plugins into each published folder -->
-	<Target Name="CopyPluginsToPublish" AfterTargets="Publish" Condition="'$(InnerPublish)' == 'true'">
-		<ItemGroup>
-			<PublishPluginFiles Include="..\Plugins\bin\**\*.*" />
-		</ItemGroup>
-		<Copy SourceFiles="@(PublishPluginFiles)" DestinationFiles="@(PublishPluginFiles->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(PluginFiles)"
+			  DestinationFiles="@(PluginFiles->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')"
+			  Condition="'$(IsPublishing)' == 'true'" />
 	</Target>
 
 	<!-- Resource Handling -->
