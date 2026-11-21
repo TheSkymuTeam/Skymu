@@ -6,44 +6,151 @@ on:
     branches: [ "**" ]
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-2022
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
 
-    - name: Setup .NET Core SDK
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: '5.0.x'
+        dotnet-version: '6.0.x'
+
+    - name: Install NSIS
+      run: choco install nsis --yes --no-progress
 
     - name: 1. Build Yggdrasil
       run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
 
-    - name: 2. Build the plugins
+    - name: 2. Build Plugins
+      shell: pwsh
       run: |
         Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
           dotnet build $_.FullName --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         }
+
     - name: 3. Build Skymu
       run: dotnet build Skymu/Skymu.csproj --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
-    - name: 4. Build the Windows installer
-      run: makensis NSIS/SkymuBetaSetup-Publish.nsi
+    - name: 4. Build NSIS installer
+      run: makensis NSIS/SkymuBetaSetup.nsi
 
-    - name: 5. Upload zipped Windows installer as artifact
+    - name: 5. Export Windows installer
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-Windows-Installer
+        path: 'NSIS/Skymu Installer (BETA).exe'
+        retention-days: 7
+        archive: false
+
+    - name: 6. Export zipped Windows installer (nightly.link support)
       uses: actions/upload-artifact@v7
       with:
         name: based
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
         archive: true
-     
-    - name: 5. Upload zipped macOS binary (x64) as artifact
+
+  build-unix:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: 1. Build Yggdrasil
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
+
+    - name: 2. Build Plugins
+      shell: bash
+      run: |
+        set -euo pipefail
+        while IFS= read -r -d '' project; do
+          dotnet build "$project" --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+        done < <(find Plugins -name '*.csproj' -print0)
+
+    - name: 3. Publish macOS and Linux builds
+      shell: bash
+      run: |
+        set -euo pipefail
+        dotnet build Skymu/Skymu.csproj --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+
+    - name: 4. Package macOS Intel app
+      shell: bash
+      run: |
+        set -euo pipefail
+        SOURCE="Skymu/bin/Publish/macos-x64"
+        APP="dist/Skymu-Intel.app"
+        test -f "$SOURCE/Skymu"
+        mkdir -p "$APP/Contents/MacOS"
+        cp -R "$SOURCE/." "$APP/Contents/MacOS/"
+        chmod +x "$APP/Contents/MacOS/Skymu"
+        cat > "$APP/Contents/Info.plist" <<'PLIST'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>CFBundleName</key><string>Skymu</string>
+          <key>CFBundleDisplayName</key><string>Skymu</string>
+          <key>CFBundleIdentifier</key><string>app.skymu.client</string>
+          <key>CFBundleExecutable</key><string>Skymu</string>
+          <key>CFBundlePackageType</key><string>APPL</string>
+          <key>CFBundleVersion</key><string>1</string>
+          <key>LSMinimumSystemVersion</key><string>10.15</string>
+        </dict>
+        </plist>
+        PLIST
+        hdiutil create -volname "Skymu Intel" -srcfolder "$APP" -ov -format UDZO "dist/Skymu-macOS-Intel.dmg"
+
+    - name: 5. Package macOS Apple Silicon app
+      shell: bash
+      run: |
+        set -euo pipefail
+        SOURCE="Skymu/bin/Publish/macos-arm64"
+        APP="dist/Skymu-AppleSilicon.app"
+        test -f "$SOURCE/Skymu"
+        mkdir -p "$APP/Contents/MacOS"
+        cp -R "$SOURCE/." "$APP/Contents/MacOS/"
+        chmod +x "$APP/Contents/MacOS/Skymu"
+        cat > "$APP/Contents/Info.plist" <<'PLIST'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>CFBundleName</key><string>Skymu</string>
+          <key>CFBundleDisplayName</key><string>Skymu</string>
+          <key>CFBundleIdentifier</key><string>app.skymu.client</string>
+          <key>CFBundleExecutable</key><string>Skymu</string>
+          <key>CFBundlePackageType</key><string>APPL</string>
+          <key>CFBundleVersion</key><string>1</string>
+          <key>LSMinimumSystemVersion</key><string>10.15</string>
+        </dict>
+        </plist>
+        PLIST
+        hdiutil create -volname "Skymu Apple Silicon" -srcfolder "$APP" -ov -format UDZO "dist/Skymu-macOS-AppleSilicon.dmg"
+
+    - name: 6. Export macOS DMGs
       uses: actions/upload-artifact@v7
       with:
-        name: nightly-mac-x64
-        path: 'Skymu/bin/Publish/macos-x64'
+        name: Skymu-macOS-DMGs
+        path: dist/*.dmg
+        retention-days: 7
+        archive: true
+
+    - name: 7. Export Linux builds
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-Linux
+        path: |
+          Skymu/bin/Publish/linux-x64/
+          Skymu/bin/Publish/linux-arm64/
         retention-days: 7
         archive: true
