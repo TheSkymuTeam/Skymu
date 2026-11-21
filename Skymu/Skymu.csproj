@@ -45,14 +45,8 @@
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-
 		<Copy SourceFiles="@(PluginFiles)"
-			  DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')"
-			  Condition="'$(IsPublishing)' != 'true'" />
-
-		<Copy SourceFiles="@(PluginFiles)"
-			  DestinationFiles="@(PluginFiles->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')"
-			  Condition="'$(IsPublishing)' == 'true'" />
+			  DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->
