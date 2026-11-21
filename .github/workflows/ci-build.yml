@@ -119,17 +119,15 @@ jobs:
           cp -R "out/$RID/." "$APP/Contents/MacOS/"
           chmod +x "$APP/Contents/MacOS/Skymu"
           cp Info.plist "$APP/Contents/Info.plist"
-
-          # sign EXECS ONLY
+   
+          # sign execs ONLY
           while IFS= read -r -d '' f; do
             if file "$f" | grep -q 'Mach-O'; then
-              codesign --force --sign - "$f"
+              codesign --force --sign - --timestamp=none "$f"
             fi
           done < <(find "$APP/Contents/MacOS" -type f -print0)
 
-          codesign --force --sign - --timestamp=none "$APP"
-
-          codesign --verify --strict --verbose=2 "$APP"
+          codesign --verify --strict --verbose=2 "$APP/Contents/MacOS/Skymu"
 
           hdiutil create \
             -volname "$VOL" \
