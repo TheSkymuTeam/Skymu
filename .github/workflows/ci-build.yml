@@ -22,21 +22,21 @@ jobs:
       run: choco install nsis --yes --no-progress
 
     - name: 1. Build Yggdrasil
-      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Publish --self-contained false
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release
 
-    - name: 2. Build Plugins
+    - name: 2. Build the plugins
       shell: pwsh
       run: |
         Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
-          dotnet build $_.FullName --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+          dotnet build $_.FullName --configuration Release
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         }
 
     - name: 3. Build Skymu
-      run: dotnet build Skymu/Skymu.csproj --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+      run: dotnet build Skymu/Skymu.csproj --configuration Release
 
     - name: 4. Build NSIS installer
-      run: makensis NSIS/SkymuBetaSetup-Publish.nsi
+      run: makensis NSIS/SkymuBetaSetup-Release.nsi
 
     - name: 5. Export Windows installer
       uses: actions/upload-artifact@v7
@@ -54,7 +54,7 @@ jobs:
         retention-days: 7
         archive: true
 
-  build-unix:
+  build-macos:
     runs-on: macos-latest
 
     steps:
@@ -67,33 +67,32 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: 1. Build Yggdrasil
-      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release
 
     - name: 2. Build Plugins
       shell: bash
       run: |
         set -euo pipefail
         while IFS= read -r -d '' project; do
-          dotnet build "$project" --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+          dotnet build "$project" --configuration Release
         done < <(find Plugins -name '*.csproj' -print0)
 
-    - name: 3. Publish macOS and Linux builds
+    - name: 3. Publish Skymu for macOS Intel and Apple Silicon
       shell: bash
       run: |
         set -euo pipefail
-        dotnet build Skymu/Skymu.csproj --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+        for RID in osx-x64 osx-arm64; do
+          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime "$RID" --self-contained true -o "out/$RID"
+          if [ -d Skymu/bin/Release/Plugins ]; then
+            cp -R Skymu/bin/Release/Plugins "out/$RID/Plugins"
+          fi
+          test -f "out/$RID/Skymu"
+        done
 
-    - name: 4. Package macOS Intel app
+    - name: 4. Write Info.plist
       shell: bash
       run: |
-        set -euo pipefail
-        SOURCE="Skymu/bin/Publish/macos-x64"
-        APP="dist/Skymu-Intel.app"
-        test -f "$SOURCE/Skymu"
-        mkdir -p "$APP/Contents/MacOS"
-        cp -R "$SOURCE/." "$APP/Contents/MacOS/"
-        chmod +x "$APP/Contents/MacOS/Skymu"
-        cat > "$APP/Contents/Info.plist" <<'PLIST'
+        cat > Info.plist <<'PLIST'
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -108,34 +107,22 @@ jobs:
         </dict>
         </plist>
         PLIST
-        hdiutil create -volname "Skymu Intel" -srcfolder "$APP" -ov -format UDZO "dist/Skymu-macOS-Intel.dmg"
 
-    - name: 5. Package macOS Apple Silicon app
+    - name: 5. Package, sign and create DMGs
       shell: bash
       run: |
         set -euo pipefail
-        SOURCE="Skymu/bin/Publish/macos-arm64"
-        APP="dist/Skymu-AppleSilicon.app"
-        test -f "$SOURCE/Skymu"
-        mkdir -p "$APP/Contents/MacOS"
-        cp -R "$SOURCE/." "$APP/Contents/MacOS/"
-        chmod +x "$APP/Contents/MacOS/Skymu"
-        cat > "$APP/Contents/Info.plist" <<'PLIST'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-          <key>CFBundleName</key><string>Skymu</string>
-          <key>CFBundleDisplayName</key><string>Skymu</string>
-          <key>CFBundleIdentifier</key><string>app.skymu.client</string>
-          <key>CFBundleExecutable</key><string>Skymu</string>
-          <key>CFBundlePackageType</key><string>APPL</string>
-          <key>CFBundleVersion</key><string>1</string>
-          <key>LSMinimumSystemVersion</key><string>10.15</string>
-        </dict>
-        </plist>
-        PLIST
-        hdiutil create -volname "Skymu Apple Silicon" -srcfolder "$APP" -ov -format UDZO "dist/Skymu-macOS-AppleSilicon.dmg"
+        package() {
+          RID="$1"; APP="dist/$2.app"; VOL="$3"; DMG="dist/$4.dmg"
+          mkdir -p "$APP/Contents/MacOS"
+          cp -R "out/$RID/." "$APP/Contents/MacOS/"
+          chmod +x "$APP/Contents/MacOS/Skymu"
+          cp Info.plist "$APP/Contents/Info.plist"
+          codesign --force --deep --sign - "$APP"
+          hdiutil create -volname "$VOL" -srcfolder "$APP" -ov -format UDZO "$DMG"
+        }
+        package osx-x64 Skymu-Intel "Skymu Intel" Skymu-macOS-Intel
+        package osx-arm64 Skymu-AppleSilicon "Skymu Apple Silicon" Skymu-macOS-AppleSilicon
 
     - name: 6. Export macOS DMGs
       uses: actions/upload-artifact@v7
@@ -145,12 +132,92 @@ jobs:
         retention-days: 7
         archive: true
 
-    - name: 7. Export Linux builds
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: 1. Build Yggdrasil
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release
+
+    - name: 2. Build Plugins
+      shell: bash
+      run: |
+        set -euo pipefail
+        while IFS= read -r -d '' project; do
+          dotnet build "$project" --configuration Release
+        done < <(find Plugins -name '*.csproj' -print0)
+
+    - name: 3. Publish Skymu for Linux x64 and arm64
+      shell: bash
+      run: |
+        set -euo pipefail
+        for RID in linux-x64 linux-arm64; do
+          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime "$RID" --self-contained true -o "out/$RID"
+          if [ -d Skymu/bin/Release/Plugins ]; then
+            cp -R Skymu/bin/Release/Plugins "out/$RID/Plugins"
+          fi
+          test -f "out/$RID/Skymu"
+        done
+
+    - name: 4. Download appimagetool
+      shell: bash
+      run: |
+        set -euo pipefail
+        curl -fsSL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool
+
+    - name: 5. Package AppImages
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p dist
+        printf '%s' 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' | base64 -d > skymu.png
+        package() {
+          RID="$1"; ARCH="$2"
+          APPDIR="AppDir-$ARCH"
+          mkdir -p "$APPDIR/usr/bin"
+          cp -R "out/$RID/." "$APPDIR/usr/bin/"
+          chmod +x "$APPDIR/usr/bin/Skymu"
+          cp skymu.png "$APPDIR/skymu.png"
+          cat > "$APPDIR/skymu.desktop" <<'DESKTOP'
+        [Desktop Entry]
+        Type=Application
+        Name=Skymu
+        Exec=Skymu
+        Icon=skymu
+        Categories=Network;InstantMessaging;
+        DESKTOP
+          cat > "$APPDIR/AppRun" <<'APPRUN'
+        #!/bin/sh
+        HERE="$(dirname "$(readlink -f "$0")")"
+        exec "$HERE/usr/bin/Skymu" "$@"
+        APPRUN
+          chmod +x "$APPDIR/AppRun"
+          ARCH="$ARCH" ./appimagetool --appimage-extract-and-run "$APPDIR" "dist/Skymu-$ARCH.AppImage"
+        }
+        package linux-x64 x86_64
+        package linux-arm64 aarch64
+
+    - name: 6. Export Linux x86_64 AppImage
       uses: actions/upload-artifact@v7
       with:
-        name: Skymu-Linux
-        path: |
-          Skymu/bin/Publish/linux-x64/
-          Skymu/bin/Publish/linux-arm64/
+        name: Skymu-Linux-x86_64-AppImage
+        path: dist/Skymu-x86_64.AppImage
         retention-days: 7
-        archive: true
+        archive: false
+
+    - name: 7. Export Linux aarch64 AppImage
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-Linux-aarch64-AppImage
+        path: dist/Skymu-aarch64.AppImage
+        retention-days: 7
+        archive: false
