@@ -35,18 +35,10 @@ jobs:
     - name: 4. Build NSIS installer
       run: makensis NSIS/SkymuBetaSetup-Release.nsi
 
-    - name: 5. Export Windows installer
+    - name: 5. Export zipped Windows installer 
       uses: actions/upload-artifact@v7
       with:
         name: Skymu-Windows-Installer
-        path: 'NSIS/Skymu Installer (BETA).exe'
-        retention-days: 7
-        archive: false
-
-    - name: 6. Export zipped Windows installer (nightly.link support)
-      uses: actions/upload-artifact@v7
-      with:
-        name: based
         path: 'NSIS/Skymu Installer (BETA).exe'
         retention-days: 7
         archive: true
@@ -121,10 +113,18 @@ jobs:
         package osx-x64 Skymu-Intel "Skymu Intel" Skymu-macOS-Intel
         package osx-arm64 Skymu-AppleSilicon "Skymu Apple Silicon" Skymu-macOS-AppleSilicon
 
-    - name: 6. Export macOS DMGs
+    - name: 6. Export macOS Intel DMG
       uses: actions/upload-artifact@v7
       with:
-        name: Skymu-macOS-DMGs
+        name: Skymu-MacOS-Intel-DMG
+        path: dist/*.dmg
+        retention-days: 7
+        archive: true
+        
+    - name: 6. Export macOS Apple Silicon DMG
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-MacOS-AppleSilicon-DMG
         path: dist/*.dmg
         retention-days: 7
         archive: true
@@ -206,15 +206,15 @@ jobs:
     - name: 6. Export Linux x86_64 AppImage
       uses: actions/upload-artifact@v7
       with:
-        name: Skymu-Linux-x86_64-AppImage
+        name: Skymu-Linux-AMD64-AppImage
         path: dist/Skymu-x86_64.AppImage
         retention-days: 7
-        archive: false
+        archive: true
 
     - name: 7. Export Linux aarch64 AppImage
       uses: actions/upload-artifact@v7
       with:
-        name: Skymu-Linux-aarch64-AppImage
+        name: Skymu-Linux-ARM64-AppImage
         path: dist/Skymu-aarch64.AppImage
         retention-days: 7
-        archive: false
+        archive: true
