@@ -299,9 +299,10 @@ namespace Skymu.Theming
 
         public void InitializeWindowFrame()
         {
+            Debug.WriteLine($"[Skymu WindowChrome] chrome={_currentFrame} theme={Settings.Theme} dwm={Universal.Platform.DwmIsCompositionEnabled}");
             if (_currentFrame != Enumerations.WindowChrome.Native) // using Skymu's custom border
             {
-                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAeroUseNativeTitlebar) _currentFrame = WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
+                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.Acrylic; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 //chrome.UseAeroCaptionButtons = false;
                 ExtendClientAreaToDecorationsHint = true;
@@ -311,8 +312,8 @@ namespace Skymu.Theming
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.IsVisible = true;
                 if (
-                    _currentFrame == Enumerations.WindowChrome.SkypeAeroUseNativeTitlebar
-                    || _currentFrame == Enumerations.WindowChrome.SkypeAero
+                    _currentFrame == Enumerations.WindowChrome.SkypeAero
+                    || _currentFrame == Enumerations.WindowChrome.Acrylic
                 ) // switch configuration from Skype Basic to Aero
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
@@ -320,18 +321,23 @@ namespace Skymu.Theming
                     // Set up the window background and margin
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
-                    if (_currentFrame == Enumerations.WindowChrome.SkypeAeroUseNativeTitlebar)
+                    if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
                     {
                         this.Background = Brushes.Transparent;
                     }
-                    else if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
+                    else if (_currentFrame == Enumerations.WindowChrome.Acrylic)
                     {
-                        _aeroFrame = AeroCustomFrame.Attach(this, "Universal/Window Frame/Aero/atlas.png");
-                        _aeroFrame.TintActive = Color.FromArgb(0xFF, 0x74, 0xA3, 0xD2);
-                        _aeroFrame.FogTop = 0x90;
-                        _aeroFrame.Apply();
-                    }
+                        // Ask for acrylic, falling back to plain blur, then plain transparency.
+                        TransparencyLevelHint = new[]
+                        {
+        WindowTransparencyLevel.AcrylicBlur,
+        WindowTransparencyLevel.Blur,
+        WindowTransparencyLevel.Transparent
+    };
 
+                        // Tint painted over the acrylic. The alpha (0x00-0xFF) controls how much blur shows through.
+                        this.Background = new SolidColorBrush(Color.FromArgb(0x60, 0x74, 0xA3, 0xD2));
+                    }
                     // Titlebar font styling
                     TitleMain.FontFamily = new FontFamily(AeroTitleFont);
                     TitleMain.FontWeight = FontWeight.Normal;
@@ -373,8 +379,6 @@ namespace Skymu.Theming
                 WindowArea.Margin = new Thickness(0);
             }
         }
-
-        private AeroCustomFrame _aeroFrame;
 
 
         private DropShadowEffect CreateDropShadow(string color)
@@ -1250,7 +1254,7 @@ namespace Skymu.Theming
         protected override void OnClosed(EventArgs e)
         {
             SavePositioning(this, SidebarColumn);
-            _aeroFrame?.Dispose();
+  
         }
 
         protected void OnClose(object sender, RoutedEventArgs e)

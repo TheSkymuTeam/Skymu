@@ -142,6 +142,11 @@
         Content="Skype XP"
         Tag="{x:Static enums:WindowChrome.SkypeXP}" />
 
+        <ComboBoxItem
+        Padding="6,0"
+        Content="Skype Aero with acrylic blur"
+        Tag="{x:Static enums:WindowChrome.Acrylic}" />
+
     <ComboBoxItem
         Padding="6,0"
         Content="Use the system window chrome"
