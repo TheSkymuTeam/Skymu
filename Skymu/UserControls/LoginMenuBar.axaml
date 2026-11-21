@@ -1,32 +1,43 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Skymu.Controls.LoginMenuBar">
-    <Menu>
+    <UserControl.Resources>
+        <NativeMenu x:Key="HostMenu">
 
-        <!-- ================= Skype ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
-            <MenuItem Click="OnAccountManager" Header="Account manager" />
-            <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
-        </MenuItem>
+            <!-- ================= Skype ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Click="OnAccountManager" Header="Account manager" />
+                    <NativeMenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
+                </NativeMenu>
+            </NativeMenuItem>
 
-        <!-- ================= Tools ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
-            <MenuItem Header="{Binding [sLOGIN_CHANGE_LANGUAGE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnOptions" Header="{Binding [sLOGIN_CONNECTION_OPTIONS], Source={StaticResource Lang}}" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY], Source={StaticResource Lang}}" IsEnabled="False" />
-        </MenuItem>
+            <!-- ================= Tools ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding [sLOGIN_CHANGE_LANGUAGE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnOptions" Header="{Binding [sLOGIN_CONNECTION_OPTIONS], Source={StaticResource Lang}}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY], Source={StaticResource Lang}}" IsEnabled="False" />
+                </NativeMenu>
+            </NativeMenuItem>
 
-        <!-- ================= Help ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
-            <MenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnCheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES], Source={StaticResource Lang}}" />
-            <Separator />
-            <MenuItem Click="OnAbout" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
-            <MenuItem Click="OnPrivacyPolicy" Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
-        </MenuItem>
+            <!-- ================= Help ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnCheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES], Source={StaticResource Lang}}" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnAbout" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnPrivacyPolicy" Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
+                </NativeMenu>
+            </NativeMenuItem>
 
-    </Menu>
+        </NativeMenu>
+    </UserControl.Resources>
+
+     <!-- collapses when the menu is exported (macOS / Linux global menu) and renders in-window otherwise -->
+    <NativeMenuBar />
 </UserControl>

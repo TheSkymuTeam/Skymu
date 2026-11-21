@@ -21,7 +21,7 @@ jobs:
     - name: 1. Build Yggdrasil
       run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
 
-    - name: 2. Build Plugins
+    - name: 2. Build the plugins
       run: |
         Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
           dotnet build $_.FullName --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
@@ -29,20 +29,21 @@ jobs:
     - name: 3. Build Skymu
       run: dotnet build Skymu/Skymu.csproj --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
-    - name: 4. Build NSIS
-      run: makensis NSIS/SkymuBetaSetup.nsi
+    - name: 4. Build the Windows installer
+      run: makensis NSIS/SkymuBetaSetup-Publish.nsi
 
-    - name: 5. Export Installer to Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        path: 'NSIS/Skymu Installer (BETA).exe'
-        retention-days: 7
-        archive: false
-
-    - name: 6. Export zipped Installer to Artifacts (nightly.link support)
+    - name: 5. Upload zipped Windows installer as artifact
       uses: actions/upload-artifact@v7
       with:
         name: based
         path: 'NSIS/Skymu Installer (BETA).exe'
+        retention-days: 7
+        archive: true
+     
+    - name: 5. Upload zipped macOS binary (x64) as artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: nightly-mac-x64
+        path: 'Skymu/bin/Publish/macos-x64'
         retention-days: 7
         archive: true

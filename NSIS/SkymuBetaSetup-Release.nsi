@@ -1,5 +1,5 @@
-!define SOURCE_DIR_CORE "..\Skymu\bin\Release"
-!define PRODUCT_NAME "Skymu"
+!define SOURCE_DIR_CORE "..\Skymu\bin\Debug"
+!define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://www.skymu.app"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\Skymu.exe"
@@ -12,12 +12,12 @@ RequestExecutionLevel admin
 !include "nsDialogs.nsh"
 
 !define MUI_ABORTWARNING
-!define MUI_ICON "installer.ico"
-!define MUI_UNICON "installer.ico"
+!define MUI_ICON "installer-beta.ico"
+!define MUI_UNICON "installer-beta.ico"
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "header.bmp"
+!define MUI_HEADERIMAGE_BITMAP "header-beta.bmp"
 !define MUI_HEADERIMAGE_BITMAP_STRETCH "AspectFitHeight"
-!define MUI_WELCOMEFINISHPAGE_BITMAP "column.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "column-beta.bmp"
 
 Function HideHeaderText
     GetDlgItem $0 $HWNDPARENT 1037
@@ -53,7 +53,7 @@ Function .onInit
 FunctionEnd
 
 Name "${PRODUCT_NAME}"
-OutFile ".\Skymu Installer.exe"
+OutFile ".\Skymu Installer (BETA).exe"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show

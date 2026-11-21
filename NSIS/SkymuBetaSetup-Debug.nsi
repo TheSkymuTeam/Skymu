@@ -1,4 +1,4 @@
-!define SOURCE_DIR_CORE "..\Skymu\bin\Release"
+!define SOURCE_DIR_CORE "..\Skymu\bin\Debug"
 !define PRODUCT_NAME "Skymu (BETA)"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://www.skymu.app"

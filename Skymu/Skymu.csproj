@@ -152,13 +152,4 @@
 		<AvaloniaResource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="UserControls\MainMenuBar.axaml.cs">
-	    <DependentUpon>MainMenuBar.axaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="UserControls\LoginMenuBar.axaml.cs">
-	    <DependentUpon>LoginMenuBar.axaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
 </Project>

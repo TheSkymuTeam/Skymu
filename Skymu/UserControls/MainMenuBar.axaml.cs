@@ -11,11 +11,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
+using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using System;
+using System.Collections.Generic;
 using Yggdrasil.Enumerations;
 
 namespace Skymu.Controls
@@ -28,36 +31,131 @@ namespace Skymu.Controls
         public event EventHandler<Action> ActionRequested;
         private void Raise(Action action) => ActionRequested?.Invoke(this, action);
 
+        private readonly NativeMenu? _menu;
+        private NativeMenuItem? ExtrasMenu;
+        private NativeMenuItem? GetExtrasMenuItem;
+
+        // CommandParameter marker -> frame index in the 22-frame status sprite sheet
+        private static readonly Dictionary<string, int> StatusIconFrames = new()
+        {
+            ["Online"] = 2,
+            ["Away"] = 3,
+            ["DoNotDisturb"] = 5,
+            ["Invisible"] = 14,
+            ["Offline"] = 14,
+            ["StatusOptions"] = 12,
+        };
+
         #endregion
 
         public MainMenuBar()
         {
             InitializeComponent();
+            _menu = Resources["HostMenu"] as NativeMenu;
+
+            if (_menu != null)
+            {
+                foreach (var item in Walk(_menu))
+                {
+                    switch (item.CommandParameter as string)
+                    {
+                        case "ExtrasMenu": ExtrasMenu = item; break;
+                        case "GetExtras": GetExtrasMenuItem = item; break;
+                    }
+                }
+                ApplyStatusIcons(_menu);
+            }
         }
+
+        #region Hosting
+
+        // Hand the menu to the hosting window; only the window-level menu is exported to the macOS menu bar.
+        // Parent's OnAttachedToVisualTree runs before the child NativeMenuBar's, so the bar sees the menu.
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            if (TopLevel.GetTopLevel(this) is { } tl && _menu != null)
+                NativeMenu.SetMenu(tl, _menu);
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            if (TopLevel.GetTopLevel(this) is { } tl && ReferenceEquals(NativeMenu.GetMenu(tl), _menu))
+                NativeMenu.SetMenu(tl, null);
+            base.OnDetachedFromVisualTree(e);
+        }
+
+        private static IEnumerable<NativeMenuItem> Walk(NativeMenu menu)
+        {
+            foreach (var i in menu.Items)
+            {
+                if (i is not NativeMenuItem ni) continue;
+                yield return ni;
+                if (ni.Menu != null)
+                    foreach (var child in Walk(ni.Menu))
+                        yield return child;
+            }
+        }
+
+        #endregion
+
+        #region Icons
+
+        // NativeMenuItem.Icon takes a Bitmap, so each frame is rendered into its own RenderTargetBitmap.
+        private static void ApplyStatusIcons(NativeMenu menu)
+        {
+            try
+            {
+                // Adjust the avares:// assembly name/path if your assets live elsewhere.
+                using var stream = AssetLoader.Open(new Uri("avares://Skymu/Assets/Universal/Icon/skype-status-small.png"));
+                using var sheet = new Bitmap(stream);
+
+                int frames = 22;
+                int w = sheet.PixelSize.Width / frames;
+                int h = sheet.PixelSize.Height;
+
+                foreach (var item in Walk(menu))
+                {
+                    if (item.CommandParameter is string key && StatusIconFrames.TryGetValue(key, out int frame))
+                    {
+                        var rtb = new RenderTargetBitmap(new PixelSize(w, h), new Vector(96, 96));
+                        using (var ctx = rtb.CreateDrawingContext())
+                            ctx.DrawImage(sheet, new Rect(frame * w, 0, w, h), new Rect(0, 0, w, h));
+                        item.Icon = rtb;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("[MainMenuBar] Status icons failed: " + ex.Message);
+            }
+        }
+
+        #endregion
 
         #region Event handlers
 
-        private async void OnStatus(object sender, RoutedEventArgs e)
+        private async void OnStatus(object? sender, EventArgs e)
         {
-            if (sender is MenuItem mi && mi.Tag is string tag
+            if (sender is NativeMenuItem mi && mi.CommandParameter is string tag
                 && Enum.TryParse(tag, out PresenceStatus status))
                 await Universal.Plugin.SetConnectionStatus(status);
         }
 
-        private void OnAccountManager(object sender, RoutedEventArgs e) => Forms.Pages.AccountManager.Open();
-        private void OnSignOut(object sender, RoutedEventArgs e) => Universal.ActiveViewModel.InitiateSignOut(false);
-        private void OnSwitchUser(object sender, RoutedEventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
-        private void OnClose(object sender, RoutedEventArgs e) => Universal.Close();
-        private void OnAbout(object sender, RoutedEventArgs e) => new About().Show();
-        private void OnPrivacyPolicy(object sender, RoutedEventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
-        private void OnOptions(object sender, RoutedEventArgs e) => new Options().Show();
-        private void OnCheckUpdates(object sender, RoutedEventArgs e) => new Updater(true);
-        private void OnHome(object sender, RoutedEventArgs e) => Raise(Action.Home);
-        private void OnContacts(object sender, RoutedEventArgs e) => Raise(Action.Contacts);
-        private void OnServers(object sender, RoutedEventArgs e) => Raise(Action.Servers);
-        private void OnRecent(object sender, RoutedEventArgs e) => Raise(Action.Recents);
-        private void OnCall(object sender, RoutedEventArgs e) => Raise(Action.Call);
-        private void OnAddContact(object sender, RoutedEventArgs e) => Raise(Action.AddContact);
+        private void OnAccountManager(object? sender, EventArgs e) => Forms.Pages.AccountManager.Open();
+        private void OnSignOut(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(false);
+        private void OnSwitchUser(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
+        private void OnClose(object? sender, EventArgs e) => Universal.Close();
+        private void OnAbout(object? sender, EventArgs e) => new About().Show();
+        private void OnPrivacyPolicy(object? sender, EventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
+        private void OnOptions(object? sender, EventArgs e) => new Options().Show();
+        private void OnCheckUpdates(object? sender, EventArgs e) => new Updater(true);
+        private void OnHome(object? sender, EventArgs e) => Raise(Action.Home);
+        private void OnContacts(object? sender, EventArgs e) => Raise(Action.Contacts);
+        private void OnServers(object? sender, EventArgs e) => Raise(Action.Servers);
+        private void OnRecent(object? sender, EventArgs e) => Raise(Action.Recents);
+        private void OnCall(object? sender, EventArgs e) => Raise(Action.Call);
+        private void OnAddContact(object? sender, EventArgs e) => Raise(Action.AddContact);
 
         #endregion
 
@@ -65,21 +163,23 @@ namespace Skymu.Controls
 
         public void DisableExtras()
         {
-            ExtrasMenu.Items.Clear();
-            ExtrasMenu.Items.Add(GetExtrasMenuItem);
+            if (ExtrasMenu?.Menu == null || GetExtrasMenuItem == null) return;
+            ExtrasMenu.Menu.Items.Clear();
+            ExtrasMenu.Menu.Items.Add(GetExtrasMenuItem);
         }
 
         public void RedoExtras((string, EventHandler)[] items)
         {
-            ExtrasMenu.Items.Clear();
+            if (ExtrasMenu?.Menu == null || GetExtrasMenuItem == null) return;
+            ExtrasMenu.Menu.Items.Clear();
             foreach (var (title, handler) in items)
             {
-                var mi = new MenuItem { Header = title };
-                if (handler != null) mi.Click += (s, e) => handler(s, e);
-                ExtrasMenu.Items.Add(mi);
+                var mi = new NativeMenuItem { Header = title };
+                if (handler != null) mi.Click += handler;
+                ExtrasMenu.Menu.Items.Add(mi);
             }
-            ExtrasMenu.Items.Add(new Separator());
-            ExtrasMenu.Items.Add(GetExtrasMenuItem);
+            ExtrasMenu.Menu.Items.Add(new NativeMenuItemSeparator());
+            ExtrasMenu.Menu.Items.Add(GetExtrasMenuItem);
         }
 
         #endregion

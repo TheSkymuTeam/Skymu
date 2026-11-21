@@ -1,173 +1,161 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:global="using:Skymu"
-                 xmlns:converters="clr-namespace:Skymu.Converters"
              x:Class="Skymu.Controls.MainMenuBar">
     <UserControl.Resources>
-        <converters:AssetLoader x:Key="AssetLoader" />
+        <NativeMenu x:Key="HostMenu">
+
+            <!-- ================= Skype ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
+                        <NativeMenu>
+                            <NativeMenuItem Click="OnStatus" CommandParameter="Online" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}" />
+                            <NativeMenuItem Click="OnStatus" CommandParameter="Away" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}" />
+                            <NativeMenuItem Click="OnStatus" CommandParameter="DoNotDisturb" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}" />
+                            <NativeMenuItem Click="OnStatus" CommandParameter="Invisible" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}" />
+                            <NativeMenuItem CommandParameter="Offline" Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False" />
+                            <NativeMenuItemSeparator />
+                            <NativeMenuItem CommandParameter="StatusOptions" Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False" />
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnAccountManager" Header="Account manager" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= Contacts ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Click="OnAddContact" Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sBUDDYMENU_REMOVE], Source={StaticResource Lang}}" IsEnabled="False" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= Conversation ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_PROFILE_PANEL], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_TO_CONTACTS], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_PEOPLE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_RENAME], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_LEAVE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_BLOCK], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_UNBLOCK], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sCONVERSATION_MENU_NOTIFICATIONS], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_OLD_MESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sCONVERSATION_MARK_UNREAD], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sCONVERSATION_MARK_READ], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE], Source={StaticResource Lang}}" IsEnabled="False" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= Call ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Click="OnCall" Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_ANSWER], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_IGNORE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_MUTE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_UNMUTE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_HOLD], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_RESUME], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_TRANSFER], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_HANG_UP], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_CALL_A_PHONE_NUMBER], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_AUDIO], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SETTINGS], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SNAPSHOT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_CALL_QUALITY], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sCALL_TOOLBAR_TECHNICAL_INFO], Source={StaticResource Lang}}" IsEnabled="False" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= View ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_VIEW], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Click="OnContacts" Header="{Binding [sMAINMENU_VIEW_CONTACTS], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnServers" Header="Servers" />
+                    <NativeMenuItem Click="OnRecent" Header="{Binding [sMAINMENU_VIEW_CONVERSATIONS], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_VOICEMAILS], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_FILESSENT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_SMSMESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_INSTANT_MESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnHome" Header="{Binding [sMAINMENU_VIEW_HOME], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_PROFILE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_CALL_PHONES], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_SNAPSHOTS_GALLERY], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_SINGLE_WINDOW_MODE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_MULTI_WINDOW_MODE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_VIEW_FULLSCREEN], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_SHOW_HIDDEN_CONV], Source={StaticResource Lang}}" IsEnabled="False" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= Tools ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem CommandParameter="ExtrasMenu" Header="{Binding [sMAINMENU_TOOLS_EXTRAS], Source={StaticResource Lang}}">
+                        <NativeMenu>
+                            <NativeMenuItem CommandParameter="GetExtras"
+                                            Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}"
+                                            IsEnabled="False" />
+                        </NativeMenu>
+                    </NativeMenuItem>
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnOptions" Header="{Binding [sMAINMENU_TOOLS_OPTIONS], Source={StaticResource Lang}}" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+            <!-- ================= Help ================= -->
+            <NativeMenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
+                <NativeMenu>
+                    <NativeMenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="{Binding [sMAINMENU_HELP_QUALITY], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItem Click="OnCheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Header="{Binding [sZAPBUTTON_FEEDBACK], Source={StaticResource Lang}}" IsEnabled="False" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Click="OnAbout" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnPrivacyPolicy" Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
+                </NativeMenu>
+            </NativeMenuItem>
+
+        </NativeMenu>
     </UserControl.Resources>
-    <Menu>
 
-        <!-- ================= Skype ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_SKYPE], Source={StaticResource Lang}}">
-            <MenuItem x:Name="MenubarStatusHolder" Header="{Binding [sMAINMENU_SKYPE_ONLINESTATUS], Source={StaticResource Lang}}">
-                <MenuItem Click="OnStatus" Tag="Online" Header="{Binding [sTRAYHINT_USER_ONLINE], Source={StaticResource Lang}}">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="2" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Click="OnStatus" Tag="Away" Header="{Binding [sTRAYHINT_USER_AWAY], Source={StaticResource Lang}}">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="3" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Click="OnStatus" Tag="DoNotDisturb" Header="{Binding [sTRAYHINT_USER_DND], Source={StaticResource Lang}}">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="5" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Click="OnStatus" Tag="Invisible" Header="{Binding [sTRAYHINT_USER_INVISIBLE], Source={StaticResource Lang}}">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="14" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="{Binding [sTRAYHINT_USER_OFFLINE], Source={StaticResource Lang}}" IsEnabled="False">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="14" DisabledIndex="-1" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                             Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}" IsEnabled="False">
-                    <MenuItem.Icon>
-                        <global:SliceControl Width="14" DefaultIndex="12" DisabledIndex="-1" ElementCount="22" HoverIndex="-1" PressedIndex="-1" SliceMode="0"
-                                            Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Icon/skype-status-small.png'}" StackDirection="Horizontal" />
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_SKYPE_PRIVACY], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_SKYPE_ACCOUNT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_SKYPE_BUYCREDIT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnAccountManager" Header="Account manager" />
-            <MenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
-            <MenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
-            <MenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
-        </MenuItem>
-
-        <!-- ================= Contacts ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_CONTACTS], Source={StaticResource Lang}}">
-            <MenuItem Click="OnAddContact" Header="{Binding [sMAINMENU_CONTACTS_ADD_CONTACT], Source={StaticResource Lang}}" />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_CONTACT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_IMPORT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_NEW_GROUP], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_GROUPS], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONTACTS_SHOW_OUTLOOK], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sBUDDYMENU_REMOVE], Source={StaticResource Lang}}" IsEnabled="False" />
-        </MenuItem>
-
-        <!-- ================= Conversation ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_CONVERSATION], Source={StaticResource Lang}}">
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_PROFILE_PANEL], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_TO_CONTACTS], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_ADD_PEOPLE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_RENAME], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_LEAVE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_BLOCK], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_UNBLOCK], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sCONVERSATION_MENU_NOTIFICATIONS], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_SEARCH], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_OLD_MESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sCONVERSATION_MARK_UNREAD], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sCONVERSATION_MARK_READ], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CONVERSATION_HIDE], Source={StaticResource Lang}}" IsEnabled="False" />
-        </MenuItem>
-
-        <!-- ================= Call ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}">
-            <MenuItem Click="OnCall" Header="{Binding [sMAINMENU_CALL], Source={StaticResource Lang}}" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_START_VIDEO], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_ANSWER], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_IGNORE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_MUTE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_UNMUTE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_HOLD], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_RESUME], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_TRANSFER], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_HANG_UP], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_CALL_A_PHONE_NUMBER], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_AUDIO], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SETTINGS], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_VIDEO_SNAPSHOT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_CALL_QUALITY], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sCALL_TOOLBAR_TECHNICAL_INFO], Source={StaticResource Lang}}" IsEnabled="False" />
-        </MenuItem>
-
-        <!-- ================= View ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_VIEW], Source={StaticResource Lang}}">
-            <MenuItem Click="OnContacts" Header="{Binding [sMAINMENU_VIEW_CONTACTS], Source={StaticResource Lang}}" />
-            <MenuItem Click="OnServers" Header="Servers" />
-            <MenuItem Click="OnRecent" Header="{Binding [sMAINMENU_VIEW_CONVERSATIONS], Source={StaticResource Lang}}" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_VOICEMAILS], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_FILESSENT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_SMSMESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_INSTANT_MESSAGES], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnHome" Header="{Binding [sMAINMENU_VIEW_HOME], Source={StaticResource Lang}}" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_PROFILE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_CALL_PHONES], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_SNAPSHOTS_GALLERY], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_SINGLE_WINDOW_MODE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_MULTI_WINDOW_MODE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_VIEW_FULLSCREEN], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_SHOW_HIDDEN_CONV], Source={StaticResource Lang}}" IsEnabled="False" />
-        </MenuItem>
-
-        <!-- ================= Tools ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_TOOLS], Source={StaticResource Lang}}">
-            <MenuItem x:Name="ExtrasMenu" Header="{Binding [sMAINMENU_TOOLS_EXTRAS], Source={StaticResource Lang}}">
-                <MenuItem x:Name="GetExtrasMenuItem"
-                          Header="{Binding [sMENU_EXTRAS_GET_APPS_CAPTION], Source={StaticResource Lang}}"
-                          IsEnabled="False" />
-            </MenuItem>
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_TOOLS_LANGUAGE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_TOOLS_ACCESSIBILITY], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_TOOLS_SHARE], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnOptions" Header="{Binding [sMAINMENU_TOOLS_OPTIONS], Source={StaticResource Lang}}" />
-        </MenuItem>
-
-        <!-- ================= Help ================= -->
-        <MenuItem Header="{Binding [sMAINMENU_HELP], Source={StaticResource Lang}}">
-            <MenuItem Header="{Binding [sMAINMENU_HELP_HELP], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Header="{Binding [sMAINMENU_HELP_HEARTBEAT], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Header="{Binding [sMAINMENU_HELP_QUALITY], Source={StaticResource Lang}}" IsEnabled="False" />
-            <MenuItem Click="OnCheckUpdates" Header="{Binding [sMAINMENU_HELP_UPDATES], Source={StaticResource Lang}}" />
-            <MenuItem Header="{Binding [sZAPBUTTON_FEEDBACK], Source={StaticResource Lang}}" IsEnabled="False" />
-            <Separator />
-            <MenuItem Click="OnAbout" Header="{Binding [sMAINMENU_HELP_ABOUT], Source={StaticResource Lang}}" />
-            <MenuItem Click="OnPrivacyPolicy" Header="{Binding [sMAINMENU_HELP_PRIVACY], Source={StaticResource Lang}}" />
-        </MenuItem>
-
-    </Menu>
+    <!-- collapses when the menu is exported (macOS / Linux global menu) and renders in-window otherwise -->
+    <NativeMenuBar />
 </UserControl>

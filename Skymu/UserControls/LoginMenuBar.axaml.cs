@@ -12,24 +12,43 @@
 /*==========================================================*/
 
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using System;
 
 namespace Skymu.Controls
 {
     public partial class LoginMenuBar : UserControl
     {
+        private NativeMenu? _menu;
+
         public LoginMenuBar()
         {
             InitializeComponent();
+            _menu = Resources["HostMenu"] as NativeMenu;
         }
 
-        private void OnAccountManager(object sender, RoutedEventArgs e) => Forms.Pages.AccountManager.Open();
-        private void OnClose(object sender, RoutedEventArgs e) => Universal.Close();
-        private void OnOptions(object sender, RoutedEventArgs e) => new Options().Show();
-        private void OnCheckUpdates(object sender, RoutedEventArgs e) => new Updater(true);
-        private void OnAbout(object sender, RoutedEventArgs e) => new About().Show();
-        private void OnPrivacyPolicy(object sender, RoutedEventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
+        // Hand the menu to the hosting window; only the window-level menu is exported to the macOS menu bar.
+        // Parent's OnAttachedToVisualTree runs before the child NativeMenuBar's, so the bar sees the menu.
+        protected override void OnAttachedToVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            if (TopLevel.GetTopLevel(this) is { } tl && _menu != null)
+                NativeMenu.SetMenu(tl, _menu);
+        }
+
+        protected override void OnDetachedFromVisualTree(Avalonia.VisualTreeAttachmentEventArgs e)
+        {
+            if (TopLevel.GetTopLevel(this) is { } tl && ReferenceEquals(NativeMenu.GetMenu(tl), _menu))
+                NativeMenu.SetMenu(tl, null);
+            base.OnDetachedFromVisualTree(e);
+        }
+
+        private void OnAccountManager(object? sender, EventArgs e) => Forms.Pages.AccountManager.Open();
+        private void OnClose(object? sender, EventArgs e) => Universal.Close();
+        private void OnOptions(object? sender, EventArgs e) => new Options().Show();
+        private void OnCheckUpdates(object? sender, EventArgs e) => new Updater(true);
+        private void OnAbout(object? sender, EventArgs e) => new About().Show();
+        private void OnPrivacyPolicy(object? sender, EventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
     }
 }
