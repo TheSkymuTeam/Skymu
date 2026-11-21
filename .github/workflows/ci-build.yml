@@ -22,21 +22,21 @@ jobs:
       run: choco install nsis --yes --no-progress
 
     - name: 1. Build Yggdrasil
-      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release --self-contained false
+      run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Publish --self-contained false
 
     - name: 2. Build Plugins
       shell: pwsh
       run: |
         Get-ChildItem -Path "Plugins" -Filter "*.csproj" -Recurse | ForEach-Object {
-          dotnet build $_.FullName --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+          dotnet build $_.FullName --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         }
 
     - name: 3. Build Skymu
-      run: dotnet build Skymu/Skymu.csproj --configuration Release -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
+      run: dotnet build Skymu/Skymu.csproj --configuration Publish -p:AppendRuntimeIdentifierToOutputPath=false --self-contained false
 
     - name: 4. Build NSIS installer
-      run: makensis NSIS/SkymuBetaSetup.nsi
+      run: makensis NSIS/SkymuBetaSetup-Publish.nsi
 
     - name: 5. Export Windows installer
       uses: actions/upload-artifact@v7
