@@ -57,25 +57,39 @@ jobs:
 
     - name: 1. Build Yggdrasil
       run: dotnet build Yggdrasil/Yggdrasil.csproj --configuration Release
-
+      
     - name: 2. Build Plugins
       shell: bash
       run: |
         set -euo pipefail
+        mkdir -p Skymu/bin/Release/Plugins
+
         while IFS= read -r -d '' project; do
-          dotnet build "$project" --configuration Release
+          NAME="$(basename "$(dirname "$project")")"
+
+          dotnet publish "$project" \
+            --configuration Release \
+            --no-self-contained \
+            -o "Skymu/bin/Release/Plugins/$NAME"
         done < <(find Plugins -name '*.csproj' -print0)
 
     - name: 3. Publish Skymu for macOS Intel and Apple Silicon
       shell: bash
       run: |
         set -euo pipefail
+
         for RID in osx-x64 osx-arm64; do
-          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime "$RID" --self-contained true -o "out/$RID"
-          if [ -d Skymu/bin/Release/Plugins ]; then
-            cp -R Skymu/bin/Release/Plugins "out/$RID/Plugins"
-          fi
+          dotnet publish Skymu/Skymu.csproj \
+            --configuration Release \
+            --runtime "$RID" \
+            --self-contained true \
+            -o "out/$RID"
+
+          mkdir -p "out/$RID/Plugins"
+          cp -R Skymu/bin/Release/Plugins/. "out/$RID/Plugins/"
+
           test -f "out/$RID/Skymu"
+          test -n "$(find "out/$RID/Plugins" -name '*.dll' -print -quit)"
         done
 
     - name: 4. Write Info.plist
