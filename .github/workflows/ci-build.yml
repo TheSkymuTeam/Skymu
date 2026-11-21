@@ -127,7 +127,7 @@ jobs:
             fi
           done < <(find "$APP/Contents/MacOS" -type f -print0)
 
-          codesign --force --sign - --preserve-metadata=identifier "$APP"
+          codesign --force --sign - --timestamp=none "$APP"
 
           codesign --verify --strict --verbose=2 "$APP"
 
