@@ -80,7 +80,6 @@ jobs:
 
           mkdir -p "out/$RID/Plugins"
           cp -R Plugins/bin/. "out/$RID/Plugins/"
-          for d in "out/$RID/Plugins"/*.smp; do mv "$d" "${d%.smp}"; done
 
           test -f "out/$RID/Skymu"
           test -n "$(find "out/$RID/Plugins" -name 'smp.*.dll' -print -quit)"
@@ -115,9 +114,13 @@ jobs:
           cp -R "out/$RID/." "$APP/Contents/MacOS/"
           chmod +x "$APP/Contents/MacOS/Skymu"
           cp Info.plist "$APP/Contents/Info.plist"
-          find "$APP" -type f \( -name '*.dylib' -o -name '*.so' \) -exec codesign --force --sign - {} \;
-          codesign --force --sign - "$APP/Contents/MacOS/Skymu"
-          codesign --force --sign - "$APP"
+
+          while IFS= read -r -d '' f; do
+            if file "$f" | grep -q 'Mach-O'; then
+              codesign --force --sign - "$f"
+            fi
+          done < <(find "$APP" -type f -print0)
+
           hdiutil create -volname "$VOL" -srcfolder "$APP" -ov -format UDZO "$DMG"
         }
         package osx-x64 Skymu-Intel "Skymu Intel" Skymu-macOS-Intel
