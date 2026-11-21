@@ -140,6 +140,7 @@ namespace Skymu.AvaloniaTools
             int comboBtnW = vW;             // dropdown button is as wide as a scrollbar
             var sliderThumbH = NativeRenderer.PartSize("TRACKBAR", 3, 1, 96); // TKP_THUMB
             var sliderThumbV = NativeRenderer.PartSize("TRACKBAR", 6, 1, 96); // TKP_THUMBVERT
+            string highlight3d = Hex(20);      // COLOR_3DHILIGHT
             string menuText = Hex(7);       // COLOR_MENUTEXT
             var mf = Win32.MenuFont();
             string menuFont = SecurityElement.Escape(mf.Family);
@@ -596,8 +597,10 @@ namespace Skymu.AvaloniaTools
         <Setter Property=""Template"">
           <ControlTemplate>
             <Panel>
-              <n:ThemePart Kind=""MenuBarBackground""/>
+              <n:ThemePart Kind=""MenuBarBackground"" Margin=""0,0,0,1""/>
+              <Border VerticalAlignment=""Bottom"" Height=""1"" Background=""" + (highlight3d) + @"""/>
               <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
+                              Margin=""0,0,0,1""
                               KeyboardNavigation.TabNavigation=""Continue""/>
             </Panel>
           </ControlTemplate>
@@ -669,12 +672,13 @@ namespace Skymu.AvaloniaTools
                      OverlayInputPassThroughElement=""{Binding $parent[Menu]}"">
                 <Panel MinWidth=""80"">
                   <n:ThemePart Kind=""MenuPopupBackground""/>
-                  <n:ThemePart Kind=""MenuPopupGutter"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+                  
                   <n:ThemePart Kind=""MenuPopupBorders""/>
                   <ScrollViewer Margin=""" + (popupPad) + @""">
                     <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
                                     Grid.IsSharedSizeScope=""True""/>
                   </ScrollViewer>
+                                   <n:ThemePart Kind=""MenuPopupGutter"" IsHitTestVisible=""False"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW + mm.PopupPadding.Left)) + @",2,0,2""/>
                 </Panel>
               </Popup>
             </Panel>
@@ -719,12 +723,13 @@ namespace Skymu.AvaloniaTools
           <ControlTemplate>
             <Panel MinWidth=""80"">
               <n:ThemePart Kind=""MenuPopupBackground""/>
-              <n:ThemePart Kind=""MenuPopupGutter"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+              
               <n:ThemePart Kind=""MenuPopupBorders""/>
               <ScrollViewer Margin=""" + (popupPad) + @""">
                 <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
                                 Grid.IsSharedSizeScope=""True"" KeyboardNavigation.TabNavigation=""Continue""/>
               </ScrollViewer>
+                                <n:ThemePart Kind=""MenuPopupGutter"" IsHitTestVisible=""False"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW + mm.PopupPadding.Left)) + @",2,0,2""/>
             </Panel>
           </ControlTemplate>
         </Setter>
@@ -803,8 +808,10 @@ namespace Skymu.AvaloniaTools
                 TextBorder = tb;
             r.Append(" textBorder=" + TextBorder);
 
-            if (NativeRenderer.TryTrueSize("MENU", POPUPGUTTER, dpi, out var gut) && gut.cx > 0)
-                GutterLineWidth = gut.cx;
+            GutterLineWidth = (NativeRenderer.TryTrueSize("MENU", POPUPGUTTER, dpi, out var gut) && gut.cx > 0)
+    ? gut.cx
+    : 2;   // include 3d border in gutter width if no theme info
+            r.Append(" gutterLine=" + GutterLineWidth);
 
             bool okArrow = NativeRenderer.TryTrueSize("MENU", POPUPSUBMENU, dpi, out var arrow);
             bool okArrowM = NativeRenderer.TryMargins("MENU", POPUPSUBMENU, TMT_CONTENTMARGINS, dpi, out var arrowM);
@@ -848,11 +855,11 @@ namespace Skymu.AvaloniaTools
 
         public static readonly IValueConverter HeaderMargin = new FuncValueConverter<object?, Thickness>(v =>
             Top(v)
-                ? new Thickness(Current.BarItemPadding.Left, 0, Current.BarItemPadding.Right, 0)
+                ? new Thickness(Current.BarItemPadding.Left, 0, Current.BarItemPadding.Right, 1)
                 : new Thickness(Current.TextBorder, 0, 0, 0));
 
         public static readonly IValueConverter ItemMinHeight = new FuncValueConverter<object?, double>(v =>
-            Top(v) ? Current.BarHeight : Current.ItemMinHeight);
+            Top(v) ? Current.BarHeight - 1 : Current.ItemMinHeight);
 
         // Israel text mode
         public static readonly IValueConverter Placement = new FuncValueConverter<object?, PlacementMode>(v =>
