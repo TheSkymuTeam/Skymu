@@ -108,23 +108,34 @@ jobs:
       shell: bash
       run: |
         set -euo pipefail
+
         package() {
-          RID="$1"; APP="dist/$2.app"; VOL="$3"; DMG="dist/$4.dmg"
+          RID="$1"
+          APP="dist/$2.app"
+          VOL="$3"
+          DMG="dist/$4.dmg"
+
           mkdir -p "$APP/Contents/MacOS"
           cp -R "out/$RID/." "$APP/Contents/MacOS/"
           chmod +x "$APP/Contents/MacOS/Skymu"
           cp Info.plist "$APP/Contents/Info.plist"
 
-          while IFS= read -r -d '' f; do
-            if file "$f" | grep -q 'Mach-O'; then
-              codesign --force --sign - "$f"
-            fi
-          done < <(find "$APP" -type f -print0)
+          codesign --force --deep --sign - "$APP"
 
-          hdiutil create -volname "$VOL" -srcfolder "$APP" -ov -format UDZO "$DMG"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+
+          hdiutil create \
+            -volname "$VOL" \
+            -srcfolder "$APP" \
+            -ov \
+            -format UDZO \
+            "$DMG"
         }
-        package osx-x64 Skymu-Intel "Skymu Intel" Skymu-macOS-Intel
-        package osx-arm64 Skymu-AppleSilicon "Skymu Apple Silicon" Skymu-macOS-AppleSilicon
+
+        mkdir -p dist
+
+        package osx-x64 Skymu-Intel "Skymu (intel)" Skymu-macOS-Intel
+        package osx-arm64 Skymu-AppleSilicon "Skymu (arm)" Skymu-macOS-AppleSilicon
 
     - name: 6. Export macOS Intel DMG
       uses: actions/upload-artifact@v7
