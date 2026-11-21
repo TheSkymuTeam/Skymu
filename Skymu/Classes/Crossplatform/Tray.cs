@@ -1,4 +1,4 @@
-﻿/*==========================================================*/
+/*==========================================================*/
 // Copyright © The Skymu Team and other contributors.
 // For any inquiries or concerns, email contact@skymu.app.
 /*==========================================================*/
@@ -37,6 +37,8 @@ namespace Skymu.Crossplatform
         };
 
         private static TrayIcon _tray;
+        private static NativeMenu _menu;
+        private static bool? _menuSignedInState;
 
         private static PresenceStatus _status = PresenceStatus.Offline;
         private static string _statusText = Universal.Lang["sTRAYHINT_PROFILE_NOT_LOGGED_IN"];
@@ -84,6 +86,8 @@ namespace Skymu.Crossplatform
             _tray.IsVisible = false;
             _tray.Dispose();
             _tray = null;
+            _menu = null;
+            _menuSignedInState = null;
         }
 
         public static void SetStatus(PresenceStatus status)
@@ -116,7 +120,6 @@ namespace Skymu.Crossplatform
             Apply();
         }
 
-
         private static void Apply()
         {
             if (_tray == null)
@@ -124,9 +127,18 @@ namespace Skymu.Crossplatform
 
             _tray.Icon = new WindowIcon(GetStatusSprite(_status));
             _tray.ToolTipText = $"{Settings.BrandingName} ({_statusText})";
-            _tray.Menu = BuildMenu();
-        }
 
+            if (_menu == null)
+            {
+                _menu = new NativeMenu();
+                UpdateMenu();
+                _tray.Menu = _menu;
+            }
+            else if (_menuSignedInState != _isSignedIn)
+            {
+                UpdateMenu();
+            }
+        }
 
         private static NativeMenuItem Item(string langKey, Action onClick, Bitmap icon = null)
         {
@@ -140,11 +152,11 @@ namespace Skymu.Crossplatform
             return Item(langKey, () => SetPresence(status), GetStatusSprite(status));
         }
 
-        private static NativeMenu BuildMenu()
+        private static void UpdateMenu()
         {
-            var menu = new NativeMenu();
+            _menu.Items.Clear();
 
-            if (_isSignedIn) // menu to show when logged in
+            if (_isSignedIn)
             {
                 var statusMenu = new NativeMenu();
                 statusMenu.Add(StatusItem(PresenceStatus.Online, "sTRAYHINT_USER_ONLINE"));
@@ -157,23 +169,22 @@ namespace Skymu.Crossplatform
                     "sSTATUSMENU_CAPTION_CF_OPTIONS2",
                     () => Universal.NotImplemented("Call forwarding")));
 
-                menu.Add(new NativeMenuItem(Universal.Lang["sTRAYMENU_CHANGESTATUS"]) { Menu = statusMenu });
-                menu.Add(Item("sTRAYMENU_SHOWFRIENDS", ShowFriends));
-                // TODO: Hang up menu with list of contacts with active calls (and "hang up all"? I'm not sure about that)
+                _menu.Add(new NativeMenuItem(Universal.Lang["sTRAYMENU_CHANGESTATUS"]) { Menu = statusMenu });
+                _menu.Add(Item("sTRAYMENU_SHOWFRIENDS", ShowFriends));
             }
-            else // menu to show when logged out
+            else
             {
-                menu.Add(Item("sTRAYMENU_SHOWFRIENDS", ShowFriends));
-                menu.Add(Item("sTRAYMENU_LOGIN", () =>
+                _menu.Add(Item("sTRAYMENU_SHOWFRIENDS", ShowFriends));
+                _menu.Add(Item("sTRAYMENU_LOGIN", () =>
                 {
                     // TODO
                 }));
             }
 
-            menu.Add(new NativeMenuItemSeparator());
-            menu.Add(Item("sTRAYMENU_QUIT", () => Universal.Close()));
+            _menu.Add(new NativeMenuItemSeparator());
+            _menu.Add(Item("sTRAYMENU_QUIT", () => Universal.Close()));
 
-            return menu;
+            _menuSignedInState = _isSignedIn;
         }
 
         private static void ShowFriends()
