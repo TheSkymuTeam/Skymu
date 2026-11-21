@@ -120,9 +120,16 @@ jobs:
           chmod +x "$APP/Contents/MacOS/Skymu"
           cp Info.plist "$APP/Contents/Info.plist"
 
-          codesign --force --deep --sign - "$APP"
+          # sign EXECS ONLY
+          while IFS= read -r -d '' f; do
+            if file "$f" | grep -q 'Mach-O'; then
+              codesign --force --sign - "$f"
+            fi
+          done < <(find "$APP/Contents/MacOS" -type f -print0)
 
-          codesign --verify --deep --strict --verbose=2 "$APP"
+          codesign --force --sign - --preserve-metadata=identifier "$APP"
+
+          codesign --verify --strict --verbose=2 "$APP"
 
           hdiutil create \
             -volname "$VOL" \
