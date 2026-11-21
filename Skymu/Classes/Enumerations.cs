@@ -15,10 +15,10 @@ namespace Skymu.Enumerations
 {
     public enum WindowChrome
     {
-        SkypeAero,
+        SkypeAeroUseNativeTitlebar,
         SkypeXP,
         Native,
-        SkypeAeroCustom,
+        SkypeAero,
     };
 
     public enum Soundpack

@@ -21,12 +21,13 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Skymu.AvaloniaTools;
-using Skymu.Crossplatform;
 using Skymu.Converters;
+using Skymu.Crossplatform;
 using Skymu.Emoticons;
 using Skymu.Enumerations;
 using Skymu.Formatting;
@@ -43,6 +44,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -297,9 +299,9 @@ namespace Skymu.Theming
 
         public void InitializeWindowFrame()
         {
-            if (_currentFrame != Enumerations.WindowChrome.Native) // using Skype's custom border
+            if (_currentFrame != Enumerations.WindowChrome.Native) // using Skymu's custom border
             {
-                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
+                if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAeroUseNativeTitlebar) _currentFrame = WindowChrome.SkypeXP; // if no DWM, don't use broken Aero frame
                 OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
                 //chrome.UseAeroCaptionButtons = false;
                 ExtendClientAreaToDecorationsHint = true;
@@ -309,8 +311,8 @@ namespace Skymu.Theming
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.IsVisible = true;
                 if (
-                    _currentFrame == Enumerations.WindowChrome.SkypeAero
-                    || _currentFrame == Enumerations.WindowChrome.SkypeAeroCustom
+                    _currentFrame == Enumerations.WindowChrome.SkypeAeroUseNativeTitlebar
+                    || _currentFrame == Enumerations.WindowChrome.SkypeAero
                 ) // switch configuration from Skype Basic to Aero
                 {
                     Thickness AeroThickness = new Thickness(8, 30, 8, 8);
@@ -318,22 +320,16 @@ namespace Skymu.Theming
                     // Set up the window background and margin
                     WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
-                    if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
+                    if (_currentFrame == Enumerations.WindowChrome.SkypeAeroUseNativeTitlebar)
                     {
                         this.Background = Brushes.Transparent;
                     }
-                    else if (_currentFrame == Enumerations.WindowChrome.SkypeAeroCustom) // TODO: finish this
+                    else if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
                     {
-                        var img = ImageHelper.Load(
-                            "Universal/Window Frame/Aero/aero-background.png"
-                        );
-                        this.Background = new ImageBrush
-                        {
-                            Source = img,
-                            Stretch = Stretch.None,
-                            TileMode = TileMode.None,
-                            DestinationRect = new RelativeRect(0, 0, img.Size.Width, img.Size.Height, RelativeUnit.Absolute),
-                        };
+                        _aeroFrame = AeroCustomFrame.Attach(this, "Universal/Window Frame/Aero/atlas.png");
+                        _aeroFrame.TintActive = Color.FromArgb(0xFF, 0x74, 0xA3, 0xD2);
+                        _aeroFrame.FogTop = 0x90;
+                        _aeroFrame.Apply();
                     }
 
                     // Titlebar font styling
@@ -377,6 +373,9 @@ namespace Skymu.Theming
                 WindowArea.Margin = new Thickness(0);
             }
         }
+
+        private AeroCustomFrame _aeroFrame;
+
 
         private DropShadowEffect CreateDropShadow(string color)
         {
@@ -518,6 +517,7 @@ namespace Skymu.Theming
             if (vmodel != null)
                 vmodel.IsWindowActive = false;
 
+
             if (!IsSkinned)
                 return;
 
@@ -571,7 +571,7 @@ namespace Skymu.Theming
 
         #endregion
 
-        #region Skype Home
+        #region Skymu Home
 
         private Home _home;
 
@@ -1250,13 +1250,14 @@ namespace Skymu.Theming
         protected override void OnClosed(EventArgs e)
         {
             SavePositioning(this, SidebarColumn);
+            _aeroFrame?.Dispose();
         }
 
         protected void OnClose(object sender, RoutedEventArgs e)
         {
             Universal.Close();
         }
-
+        
         protected void OnContacts(object sender, RoutedEventArgs e)
         {
             _ = SelectTab(btnContacts);

@@ -61,7 +61,7 @@ namespace Skymu.Forms.OptionPages.General
 
         private void RadioSkype_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.WindowChrome = WindowChrome.SkypeAero;
+            Settings.WindowChrome = WindowChrome.SkypeAeroUseNativeTitlebar;
             Settings.FallbackFillColors = false;
         }
 

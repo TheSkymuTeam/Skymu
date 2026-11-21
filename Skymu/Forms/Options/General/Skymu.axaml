@@ -495,13 +495,7 @@
             <CheckBox
                 Margin="0,5"
                 Padding="6,0"
-                Content="Enable the 'Skype Home' feature (experimental, may use 20-60 MB of additional RAM)"
-                Foreground="{DynamicResource Text.VeryHighContrast}"
-                IsChecked="{Binding Path=[EnableSkypeHome], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
-            <CheckBox
-                Margin="0,5"
-                Padding="6,0"
-                Content="Do not display community ads while using Skype Home"
+                Content="Do not display community ads while using Skymu Home"
                 Foreground="{DynamicResource Text.VeryHighContrast}"
                 IsChecked="{Binding Path=[EnableAdBlock], Mode=TwoWay, Source={x:Static preferences:Settings.Default}}" />
 
