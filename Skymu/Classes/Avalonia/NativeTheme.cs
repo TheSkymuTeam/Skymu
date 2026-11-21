@@ -17,6 +17,8 @@
 
 // To add a control, you must add a NativePartKind, map it in Describe()/State(), and then finally add a ControlTheme in BuildXaml() .
 
+// TODO(omega): After this is done, make it a library instead of bundling the code with Skymu, it's more sensible ...
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -25,6 +27,7 @@ using System.Diagnostics;
 using Avalonia.Threading;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
@@ -104,7 +107,7 @@ namespace Skymu.AvaloniaTools
             return styles;
         }
 
-        // ---------------------------------------------------------------- AXAML
+        #region AXAML
 
         static string Hex(int colorIndex)
         {
@@ -113,6 +116,8 @@ namespace Skymu.AvaloniaTools
         }
 
         static string N(int v) => v.ToString(CultureInfo.InvariantCulture);
+        static string N(double v) => v.ToString("0.##", CultureInfo.InvariantCulture);
+        static string Th(Thickness t) => N(t.Left) + "," + N(t.Top) + "," + N(t.Right) + "," + N(t.Bottom);
 
         static string Part(string name, string kind, string attrs = "") =>
             "<RepeatButton Name=\"" + name + "\" Focusable=\"False\" MinWidth=\"0\" MinHeight=\"0\" Padding=\"0\" " + attrs + ">" +
@@ -140,8 +145,12 @@ namespace Skymu.AvaloniaTools
             string menuFont = SecurityElement.Escape(mf.Family);
             string menuFontSize = N(mf.Size);
             string menuFontWeight = mf.Bold ? "Bold" : "Normal";
-            int menuBarH = Win32.Metric(15); // SM_CYMENU
-            int gutterW = 26;               // icon/check column width in popup menus
+            MenuMetrics mm = new MenuMetrics();
+            NativeMenuConverters.Current = mm;
+            System.Diagnostics.Debug.WriteLine(mm.Report);
+            double menuBarH = mm.BarHeight;
+            double gutterW = mm.GutterWidth;   // icon/check column width in popup menus
+            string popupPad = Th(mm.PopupPadding);
 
             return @"<Styles xmlns=""https://github.com/avaloniaui""
         xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""
@@ -603,13 +612,14 @@ namespace Skymu.AvaloniaTools
         <Setter Property=""FontWeight"" Value=""" + (menuFontWeight) + @"""/>
         <Setter Property=""Background"" Value=""Transparent""/>
         <Setter Property=""Padding"" Value=""6,2,6,2""/>
-        <Setter Property=""MinHeight"" Value=""20""/>
+        <Setter Property=""MinHeight"" Value=""0""/>
         <Setter Property=""ItemsPanel"">
           <ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate>
         </Setter>
         <Setter Property=""Template"">
           <ControlTemplate>
-            <Panel Name=""PART_LayoutRoot"" Background=""Transparent"">
+            <Panel Name=""PART_LayoutRoot"" Background=""Transparent""
+                   MinHeight=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.ItemMinHeight}}"">
               <Panel Name=""PART_Bg"">
                 <n:ThemePart Kind=""MenuBarItem""
                              IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsTopLevel}}""/>
@@ -617,7 +627,7 @@ namespace Skymu.AvaloniaTools
                              IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}""/>
               </Panel>
               <Border Name=""PART_SeparatorHost"" IsVisible=""False"">
-                <n:ThemePart Kind=""MenuPopupSeparator"" Height=""6"" VerticalAlignment=""Center"" Margin=""" + (N(gutterW + 2)) + @",0,0,0""/>
+                <n:ThemePart Kind=""MenuPopupSeparator"" Height=""" + (N(mm.SeparatorHeight)) + @""" VerticalAlignment=""Center"" Margin=""" + (N(gutterW + mm.GutterLineWidth)) + @",0,0,0""/>
               </Border>
               <Grid Name=""PART_Content"">
                 <Grid.ColumnDefinitions>
@@ -628,27 +638,28 @@ namespace Skymu.AvaloniaTools
                 </Grid.ColumnDefinitions>
                 <Panel Grid.Column=""0"" Width=""" + (N(gutterW)) + @"""
                        IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}"">
-                  <Border Name=""PART_CheckHost"" Width=""22"" Height=""22"" IsVisible=""False"">
+                  <Border Name=""PART_CheckHost"" Width=""" + (N(mm.CheckBoxW)) + @""" Height=""" + (N(mm.CheckBoxH)) + @""" IsVisible=""False"">
                     <n:ThemePart Kind=""MenuCheck""/>
                   </Border>
                   <ContentControl Name=""PART_IconPresenter"" Content=""{TemplateBinding Icon}""
-                                  Width=""16"" Height=""16"" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+                                  Width=""" + (N(mm.IconSize)) + @""" Height=""" + (N(mm.IconSize)) + @""" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
                 </Panel>
                 <ContentPresenter Name=""PART_HeaderPresenter"" Grid.Column=""1""
                                   Content=""{TemplateBinding Header}""
                                   ContentTemplate=""{TemplateBinding HeaderTemplate}""
                                   Foreground=""{TemplateBinding Foreground}""
-                                  Margin=""{TemplateBinding Padding}""
+                                  Margin=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.HeaderMargin}}""
                                   RecognizesAccessKey=""True""
                                   HorizontalAlignment=""Left"" VerticalAlignment=""Center""/>
                 <TextBlock Name=""PART_InputGestureText"" Grid.Column=""2""
                            Text=""{Binding InputGesture, RelativeSource={RelativeSource TemplatedParent}}""
                            Foreground=""{TemplateBinding Foreground}""
-                           Margin=""24,0,8,0"" VerticalAlignment=""Center""
-                           IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}""/>
-                <Panel Grid.Column=""3"" Width=""16""
-                       IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.HasSubItems}}"">
-                  <n:ThemePart Kind=""MenuSubmenuArrow"" Width=""16"" Height=""16"" HorizontalAlignment=""Center"" VerticalAlignment=""Center""/>
+                           Margin=""" + (N(mm.AccelGap)) + @",0,0,0"" VerticalAlignment=""Center""
+                           IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.HasGesture}}""/>
+                <Panel Grid.Column=""3"" Width=""" + (N(mm.ArrowColumn)) + @"""
+                       IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.IsSubItem}}"">
+                  <n:ThemePart Kind=""MenuSubmenuArrow"" Width=""" + (N(mm.ArrowW)) + @""" Height=""" + (N(mm.ArrowH)) + @""" HorizontalAlignment=""Center"" VerticalAlignment=""Center""
+                               IsVisible=""{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static n:NativeMenuConverters.HasSubItems}}""/>
                 </Panel>
               </Grid>
               <Popup Name=""PART_Popup""
@@ -658,9 +669,9 @@ namespace Skymu.AvaloniaTools
                      OverlayInputPassThroughElement=""{Binding $parent[Menu]}"">
                 <Panel MinWidth=""80"">
                   <n:ThemePart Kind=""MenuPopupBackground""/>
-                  <n:ThemePart Kind=""MenuPopupGutter"" Width=""2"" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+                  <n:ThemePart Kind=""MenuPopupGutter"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
                   <n:ThemePart Kind=""MenuPopupBorders""/>
-                  <ScrollViewer Margin=""2"">
+                  <ScrollViewer Margin=""" + (popupPad) + @""">
                     <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
                                     Grid.IsSharedSizeScope=""True""/>
                   </ScrollViewer>
@@ -674,9 +685,12 @@ namespace Skymu.AvaloniaTools
         </Style>
         <Style Selector=""^:separator"">
           <Setter Property=""MinHeight"" Value=""0""/>
-          <Setter Property=""Height"" Value=""6""/>
+          <Setter Property=""Height"" Value=""" + (N(mm.SeparatorHeight)) + @"""/>
           <Setter Property=""Focusable"" Value=""False""/>
           <Setter Property=""IsHitTestVisible"" Value=""False""/>
+        </Style>
+        <Style Selector=""^:separator /template/ Panel#PART_LayoutRoot"">
+          <Setter Property=""MinHeight"" Value=""0""/>
         </Style>
         <Style Selector=""^:separator /template/ Panel#PART_Bg"">
           <Setter Property=""IsVisible"" Value=""False""/>
@@ -705,9 +719,9 @@ namespace Skymu.AvaloniaTools
           <ControlTemplate>
             <Panel MinWidth=""80"">
               <n:ThemePart Kind=""MenuPopupBackground""/>
-              <n:ThemePart Kind=""MenuPopupGutter"" Width=""2"" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
+              <n:ThemePart Kind=""MenuPopupGutter"" Width=""" + (N(mm.GutterLineWidth)) + @""" HorizontalAlignment=""Left"" Margin=""" + (N(gutterW)) + @",2,0,2""/>
               <n:ThemePart Kind=""MenuPopupBorders""/>
-              <ScrollViewer Margin=""2"">
+              <ScrollViewer Margin=""" + (popupPad) + @""">
                 <ItemsPresenter Name=""PART_ItemsPresenter"" ItemsPanel=""{TemplateBinding ItemsPanel}""
                                 Grid.IsSharedSizeScope=""True"" KeyboardNavigation.TabNavigation=""Continue""/>
               </ScrollViewer>
@@ -718,11 +732,11 @@ namespace Skymu.AvaloniaTools
 
       <!-- ===================== Separator (menu look, used between menu items) ===================== -->
       <ControlTheme x:Key=""{x:Type Separator}"" TargetType=""Separator"">
-        <Setter Property=""Height"" Value=""6""/>
+        <Setter Property=""Height"" Value=""" + (N(mm.SeparatorHeight)) + @"""/>
         <Setter Property=""Focusable"" Value=""False""/>
         <Setter Property=""Template"">
           <ControlTemplate>
-            <n:ThemePart Kind=""MenuPopupSeparator"" Margin=""" + (N(gutterW + 2)) + @",0,0,0""/>
+            <n:ThemePart Kind=""MenuPopupSeparator"" Margin=""" + (N(gutterW + mm.GutterLineWidth)) + @",0,0,0""/>
           </ControlTemplate>
         </Setter>
       </ControlTheme>
@@ -733,7 +747,95 @@ namespace Skymu.AvaloniaTools
         }
     }
 
-    /// <summary>Converters used by the generated menu templates (bound to the templated MenuItem).</summary>
+    #endregion
+
+    #region Menu metrics
+
+    public class MenuMetrics
+    {
+        // holders for the actual metrics
+        public double GutterWidth, GutterLineWidth, TextBorder, ItemMinHeight;
+        public double CheckBoxW, CheckBoxH, IconSize;
+        public double ArrowW, ArrowH, ArrowColumn, SeparatorHeight;
+        public double AccelGap = 20, BarHeight;
+        public Thickness PopupPadding = new Thickness(2);
+        public Thickness BarItemPadding = new Thickness(6, 0, 6, 0);
+        public bool DropRight;
+        public string Report = "";
+        // UxTheme MENU class part ids
+        const int POPUPBACKGROUND = 9, POPUPCHECK = 11, POPUPCHECKBACKGROUND = 12, POPUPGUTTER = 13,
+                  POPUPITEM = 14, POPUPSEPARATOR = 15, POPUPSUBMENU = 16, BARITEM = 8;
+        // property ids
+        const int TMT_BORDERSIZE = 2403, TMT_SIZINGMARGINS = 3601, TMT_CONTENTMARGINS = 3602;
+
+        static string Fmt(Win32.MARGINS g) => g.left + "," + g.top + "," + g.right + "," + g.bottom;
+
+        public MenuMetrics(uint dpi = 96)
+        {
+            var r = new StringBuilder("NativeMenuMetrics @" + dpi + "dpi:");
+
+            int cyMenu = Win32.Metric(15); // SM_CYMENU
+            if (cyMenu > 0) { BarHeight = cyMenu; r.Append(" barH=" + cyMenu); }
+            int icon = Win32.Metric(49);   // SM_CXSMICON
+            if (icon > 0) { IconSize = icon; r.Append(" icon=" + icon); }
+            DropRight = Win32.Metric(40) != 0; // SM_MENUDROPALIGNMENT
+            r.Append(" dropRight=" + DropRight);
+
+            bool okItem = NativeRenderer.TryMargins("MENU", POPUPITEM, TMT_CONTENTMARGINS, dpi, out var item);
+            bool okCheck = NativeRenderer.TryTrueSize("MENU", POPUPCHECK, dpi, out var check);
+            bool okCheckM = NativeRenderer.TryMargins("MENU", POPUPCHECK, TMT_CONTENTMARGINS, dpi, out var checkM);
+            bool okCbM = NativeRenderer.TryMargins("MENU", POPUPCHECKBACKGROUND, TMT_CONTENTMARGINS, dpi, out var cbM);
+            r.Append(" | itemM=" + (okItem ? Fmt(item) : "n/a"));
+            r.Append(" check=" + (okCheck ? check.cx + "x" + check.cy : "n/a"));
+            r.Append(" checkM=" + (okCheckM ? Fmt(checkM) : "n/a"));
+            r.Append(" checkBgM=" + (okCbM ? Fmt(cbM) : "n/a"));
+
+            if (okCheck && check.cx > 0 && check.cy > 0)
+            {
+                int cmx = okCheckM ? checkM.left + checkM.right : 0, cmy = okCheckM ? checkM.top + checkM.bottom : 0;
+                CheckBoxW = check.cx + cmx;
+                CheckBoxH = check.cy + cmy;
+                ItemMinHeight = CheckBoxH; // a themed row is never shorter than its check box
+                GutterWidth = (okItem ? item.left : 0) + (okCbM ? cbM.left + cbM.right : 0) + cmx + Math.Max(IconSize, check.cx);
+            }
+
+            if (NativeRenderer.TryInt("MENU", POPUPBACKGROUND, TMT_BORDERSIZE, dpi, out int tb) && tb > 0)
+                TextBorder = tb;
+            r.Append(" textBorder=" + TextBorder);
+
+            if (NativeRenderer.TryTrueSize("MENU", POPUPGUTTER, dpi, out var gut) && gut.cx > 0)
+                GutterLineWidth = gut.cx;
+
+            bool okArrow = NativeRenderer.TryTrueSize("MENU", POPUPSUBMENU, dpi, out var arrow);
+            bool okArrowM = NativeRenderer.TryMargins("MENU", POPUPSUBMENU, TMT_CONTENTMARGINS, dpi, out var arrowM);
+            if (okArrow && arrow.cx > 0 && arrow.cy > 0)
+            {
+                ArrowW = arrow.cx; ArrowH = arrow.cy;
+                ArrowColumn = arrow.cx + (okArrowM ? arrowM.left + arrowM.right : 0);
+            }
+            r.Append(" arrow=" + (okArrow ? arrow.cx + "x" + arrow.cy : "n/a") + " arrowCol=" + ArrowColumn);
+
+            bool okSep = NativeRenderer.TryTrueSize("MENU", POPUPSEPARATOR, dpi, out var sep);
+            bool okSepM = NativeRenderer.TryMargins("MENU", POPUPSEPARATOR, TMT_CONTENTMARGINS, dpi, out var sepM);
+            if (okSepM && sepM.top + sepM.bottom == 0)
+                okSepM = NativeRenderer.TryMargins("MENU", POPUPSEPARATOR, TMT_SIZINGMARGINS, dpi, out sepM);
+            if (okSep && sep.cy > 0)
+                SeparatorHeight = sep.cy + (okSepM ? sepM.top + sepM.bottom : 0);
+            r.Append(" sep=" + (okSep ? sep.cy.ToString() : "n/a") + " sepM=" + (okSepM ? Fmt(sepM) : "n/a"));
+
+            if (NativeRenderer.TryMargins("MENU", BARITEM, TMT_CONTENTMARGINS, dpi, out var bar)
+                && bar.left + bar.right + bar.top + bar.bottom > 0)
+            {
+                BarItemPadding = new Thickness(bar.left, bar.top, bar.right, bar.bottom);
+                r.Append(" barItemM=" + Fmt(bar));
+            }
+            else r.Append(" barItemM=n/a(fallback 6,0,6,0)");
+
+            r.Append(" => gutter=" + GutterWidth + " rowMin=" + ItemMinHeight + " sepH=" + SeparatorHeight);
+            Report = r.ToString();
+        }
+    }
+
     public static class NativeMenuConverters
     {
         static bool Top(object? v) => v is MenuItem m && m.Parent is Menu;
@@ -741,9 +843,27 @@ namespace Skymu.AvaloniaTools
         public static readonly IValueConverter IsTopLevel = new FuncValueConverter<object?, bool>(v => Top(v));
         public static readonly IValueConverter IsSubItem = new FuncValueConverter<object?, bool>(v => v is MenuItem && !Top(v));
         public static readonly IValueConverter HasSubItems = new FuncValueConverter<object?, bool>(v => v is MenuItem m && !Top(v) && m.ItemCount > 0);
+        public static readonly IValueConverter HasGesture = new FuncValueConverter<object?, bool>(v => v is MenuItem m && !Top(v) && m.InputGesture != null);
+
+        public static MenuMetrics Current = null;
+
+        public static readonly IValueConverter HeaderMargin = new FuncValueConverter<object?, Thickness>(v =>
+            Top(v)
+                ? new Thickness(Current.BarItemPadding.Left, 0, Current.BarItemPadding.Right, 0)
+                : new Thickness(Current.TextBorder, 0, 0, 0));
+
+        public static readonly IValueConverter ItemMinHeight = new FuncValueConverter<object?, double>(v =>
+            Top(v) ? Current.BarHeight : Current.ItemMinHeight);
+
+        // Israel text mode
         public static readonly IValueConverter Placement = new FuncValueConverter<object?, PlacementMode>(v =>
-            Top(v) ? PlacementMode.BottomEdgeAlignedLeft : PlacementMode.RightEdgeAlignedTop);
+            Top(v) ? (Current.DropRight ? PlacementMode.BottomEdgeAlignedRight : PlacementMode.BottomEdgeAlignedLeft)
+                   : PlacementMode.RightEdgeAlignedTop);
     }
+
+    #endregion
+
+    #region Rendering
 
     /// <summary>Paints one UxTheme part AND state follows the templated parent's pseudo-classes , very pik for code reusing .</summary>
     public class ThemePart : Control
@@ -860,7 +980,7 @@ namespace Skymu.AvaloniaTools
                     return dis ? 2 : 1; // MSM_NORMAL / MSM_DISABLED
 
                 case NativePartKind.MenuCheck:
-                    return 2; // MCB_NORMAL (background); the checkmark itself is drawn as the "gripper" part
+                    return 2; // MCB_NORMAL (background) . and the checkmark itself is drawn as the "gripper" part
 
                 case NativePartKind.ComboReadOnly:
                     return dis ? 4 : Has(":dropdownopen") ? 3 : hot ? 2 : 1;
@@ -988,8 +1108,6 @@ namespace Skymu.AvaloniaTools
         }
     }
 
-    // ------------------------------------------------------------------ rendering
-
     static class NativeRenderer
     {
         record struct Key(NativePartKind Kind, bool Vertical, int State, int W, int H, uint Dpi);
@@ -1087,6 +1205,41 @@ namespace Skymu.AvaloniaTools
                 }
                 _durations[key] = ms;
                 return ms;
+            }
+        }
+
+        // ---- raw UxTheme queries for layout metrics (state 0 = part-level values, as native menu code uses)
+        public static bool TryTrueSize(string cls, int part, uint dpi, out Win32.SIZE size)
+        {
+            lock (_lock)
+            {
+                size = default;
+                var theme = Theme(cls, dpi);
+                if (theme == IntPtr.Zero) return false;
+                IntPtr hdc = Win32.CreateCompatibleDC(IntPtr.Zero);
+                try { return Win32.GetThemePartSize(theme, hdc, part, 0, IntPtr.Zero, 1 /*TS_TRUE*/, out size) == 0; }
+                finally { Win32.DeleteDC(hdc); }
+            }
+        }
+
+        public static bool TryMargins(string cls, int part, int prop, uint dpi, out Win32.MARGINS margins)
+        {
+            lock (_lock)
+            {
+                margins = default;
+                var theme = Theme(cls, dpi);
+                return theme != IntPtr.Zero
+                    && Win32.GetThemeMargins(theme, IntPtr.Zero, part, 0, prop, IntPtr.Zero, out margins) == 0;
+            }
+        }
+
+        public static bool TryInt(string cls, int part, int prop, uint dpi, out int value)
+        {
+            lock (_lock)
+            {
+                value = 0;
+                var theme = Theme(cls, dpi);
+                return theme != IntPtr.Zero && Win32.GetThemeInt(theme, part, 0, prop, out value) == 0;
             }
         }
 
@@ -1223,7 +1376,9 @@ namespace Skymu.AvaloniaTools
         }
     }
 
-    // ------------------------------------------------------------------ P/Invoke
+    #endregion
+
+    #region P/Invoke
 
     static class Win32
     {
@@ -1232,6 +1387,15 @@ namespace Skymu.AvaloniaTools
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SIZE { public int cx, cy; }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MARGINS { public int left, right, top, bottom; } // cxLeftWidth, cxRightWidth, cyTopHeight, cyBottomHeight
+
+        [DllImport("uxtheme.dll")]
+        public static extern int GetThemeMargins(IntPtr hTheme, IntPtr hdc, int part, int state, int prop, IntPtr rect, out MARGINS margins);
+
+        [DllImport("uxtheme.dll")]
+        public static extern int GetThemeInt(IntPtr hTheme, int part, int state, int prop, out int value);
 
         [StructLayout(LayoutKind.Sequential)]
         public struct BITMAPINFOHEADER
@@ -1362,4 +1526,6 @@ namespace Skymu.AvaloniaTools
             return (f.lfFaceName, Math.Abs(f.lfHeight), f.lfWeight >= 700);
         }
     }
+
+    #endregion
 }
