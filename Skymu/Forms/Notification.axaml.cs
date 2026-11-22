@@ -24,6 +24,7 @@ using Skymu.Converters;
 using Skymu.Formatting;
 using Skymu.Helpers;
 using Skymu.Preferences;
+using Skymu.Controls;
 using Skymu.Sounds;
 using Avalonia.Layout;
 using Skymu.ViewModels;

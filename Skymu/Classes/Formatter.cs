@@ -25,6 +25,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Layout;
 using System.Xml.Linq;
+using Skymu.Controls;
 using Markdig;
 using Markdig.Extensions.Mathematics;
 using Markdig.Syntax;

@@ -25,6 +25,7 @@ using Avalonia.Threading;
 using Skymu.AvaloniaTools;
 using Skymu.Crossplatform;
 using Skymu.Credentials;
+
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
@@ -297,7 +298,7 @@ namespace Skymu.Theming
         protected global::Avalonia.Controls.TextBlock SkypeName => Part<global::Avalonia.Controls.TextBlock>(nameof(SkypeName));
         protected global::Avalonia.Controls.Image Spinner => Part<global::Avalonia.Controls.Image>(nameof(Spinner));
         protected global::Avalonia.Controls.TextBox UsernameBox => Part<global::Avalonia.Controls.TextBox>(nameof(UsernameBox));
-        protected global::Skymu.SliceControl LoginButton => Part<global::Skymu.SliceControl>(nameof(LoginButton));
+        protected global::Skymu.Controls.SliceControl LoginButton => Part<global::Skymu.Controls.SliceControl>(nameof(LoginButton));
 
         #endregion
     }

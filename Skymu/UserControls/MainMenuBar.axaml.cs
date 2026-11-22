@@ -17,6 +17,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using Skymu.Helpers;
 using System;
 using System.Collections.Generic;
 using Yggdrasil.Enumerations;
@@ -69,8 +70,6 @@ namespace Skymu.Controls
 
         #region Hosting
 
-        // Hand the menu to the hosting window; only the window-level menu is exported to the macOS menu bar.
-        // Parent's OnAttachedToVisualTree runs before the child NativeMenuBar's, so the bar sees the menu.
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
@@ -101,14 +100,11 @@ namespace Skymu.Controls
 
         #region Icons
 
-        // NativeMenuItem.Icon takes a Bitmap, so each frame is rendered into its own RenderTargetBitmap.
         private static void ApplyStatusIcons(NativeMenu menu)
         {
             try
             {
-                // Adjust the avares:// assembly name/path if your assets live elsewhere.
-                using var stream = AssetLoader.Open(new Uri("avares://Skymu/Assets/Universal/Icon/skype-status-small.png"));
-                using var sheet = new Bitmap(stream);
+                using var sheet = ImageHelper.Load("Universal/Icon/skype-status-small.png");
 
                 int frames = 22;
                 int w = sheet.PixelSize.Width / frames;

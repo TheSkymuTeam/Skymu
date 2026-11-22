@@ -17,6 +17,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:Skymu.Converters"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     xmlns:global="clr-namespace:Skymu"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Title="Incoming Call"
@@ -39,7 +40,7 @@
         <converters:AssetLoader x:Key="AssetLoader" />
     </Window.Resources>
     <Grid>
-        <global:SliceControl
+        <controls:SliceControl
             HorizontalAlignment="Stretch"
             BottomHeight="18"
             DefaultIndex="0"
@@ -71,7 +72,7 @@
                     Grid.Row="0"
                     Margin="0,0,5,0"
                     HorizontalAlignment="Right">
-                    <global:SliceControl
+                    <controls:SliceControl
                         DefaultIndex="0"
                         ElementCount="5"
                         HoverIndex="1"
@@ -114,7 +115,7 @@
                         Foreground="White"
                         Text="Saul Goodman calling" />
                     <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Answer"
                             Width="NaN"
                             Margin="0,0,5,0"
@@ -135,7 +136,7 @@
                             TextRightMargin="10"
                             TextSize="13"
                             TextWeight="Bold" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Decline"
                             Width="NaN"
                             DefaultIndex="0"

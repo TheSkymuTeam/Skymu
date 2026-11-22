@@ -18,6 +18,7 @@ using System.Linq;
 using Skymu.Preferences;
 using System;
 using System.ComponentModel;
+using Skymu.Controls;
 using System.Threading.Tasks;
 using Skymu.AvaloniaTools;
 

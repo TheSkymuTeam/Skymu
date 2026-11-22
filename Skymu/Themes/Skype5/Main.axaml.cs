@@ -23,6 +23,7 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Layout;
+using Skymu.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Controls;
 

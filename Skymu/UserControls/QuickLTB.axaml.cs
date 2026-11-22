@@ -18,7 +18,7 @@ using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Metadata;
 
-namespace Skymu.UserControls
+namespace Skymu.Controls
 {
     public partial class QuickLTB : UserControl
     {

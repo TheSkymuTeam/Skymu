@@ -23,6 +23,7 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     d:DesignHeight="720"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     d:DesignWidth="1280"
     Background="#000"
     FontFamily="Arial"
@@ -33,7 +34,7 @@
     <UserControl.Resources>
 
         <converters:AssetLoader x:Key="AssetLoader" />
-        <ControlTheme x:Key="ActionButtonStyle" TargetType="global:SliceControl">
+        <ControlTheme x:Key="ActionButtonStyle" TargetType="controls:SliceControl">
             <Setter Property="StackDirection" Value="Vertical" />
             <Setter Property="ElementCount" Value="5" />
             <Setter Property="SliceMode" Value="0" />
@@ -119,7 +120,7 @@
                     Foreground="White"
                     Text="calling"
                     TextAlignment="Center" />
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="ConnectionAnimation"
                     Margin="0,50"
                     VerticalAlignment="Bottom"
@@ -156,7 +157,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="164" />
             </Grid.ColumnDefinitions>
-            <global:SliceControl
+            <controls:SliceControl
                 x:Name="ActionBarContainer"
                 Grid.ColumnSpan="3"
                 BottomHeight="33"
@@ -169,12 +170,12 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="SidebarButton"
                     PointerReleased="OnSidebarToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_sidebar_expand.png'}"
                     Theme="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="ChatButton"
                     Margin="8,0,0,0"
                     PointerReleased="OnChatToggled"
@@ -186,21 +187,21 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="MuteButton"
                     Margin="4,0"
                     PointerReleased="OnMuteToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_mic_off.png'}"
                     Theme="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl
+                <controls:SliceControl
                     Margin="4,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_dialpad.png'}"
                     Theme="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl
+                <controls:SliceControl
                     Margin="4,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_add.png'}"
                     Theme="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl
+                <controls:SliceControl
                     Margin="4,0"
                     PointerReleased="OnHangUp"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_hangup.png'}"
@@ -212,11 +213,11 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <global:SliceControl
+                <controls:SliceControl
                     Margin="0,0,8,0"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_connection_4.png'}"
                     Theme="{StaticResource ActionButtonStyle}" />
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="FullscreenButton"
                     PointerReleased="OnFullscreenToggled"
                     Source="{Binding Converter={StaticResource AssetLoader}, Source='Assets/Universal/Call Screen/btn_screen_expand.png'}"

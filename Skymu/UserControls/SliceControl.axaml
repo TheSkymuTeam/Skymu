@@ -13,10 +13,11 @@
     ============================================================
 -->
 <UserControl
-    x:Class="Skymu.SliceControl"
+    x:Class="Skymu.Controls.SliceControl"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:global="clr-namespace:Skymu"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     x:Name="Root"
     Background="Transparent"
     UseLayoutRounding="True">
@@ -105,12 +106,12 @@
             Grid.RowSpan="3"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            Width="{Binding IconWidth, RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
-            Height="{Binding IconHeight, RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
+            Width="{Binding IconWidth, RelativeSource={RelativeSource AncestorType=controls:SliceControl}}"
+            Height="{Binding IconHeight, RelativeSource={RelativeSource AncestorType=controls:SliceControl}}"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             IsHitTestVisible="False"
-            Source="{Binding IconSource, RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
+            Source="{Binding IconSource, RelativeSource={RelativeSource AncestorType=controls:SliceControl}}"
             UseLayoutRounding="True" />
 
         <TextBlock

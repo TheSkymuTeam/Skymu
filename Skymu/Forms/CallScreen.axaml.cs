@@ -24,6 +24,7 @@ using Skymu.Helpers;
 using Skymu.Preferences;
 using Skymu.Sounds;
 using System;
+using Skymu.Controls;
 using System.Threading;
 using System.Threading.Tasks;
 using Yggdrasil.Bottles;

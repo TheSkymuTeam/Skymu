@@ -43,7 +43,7 @@ WindowStartupLocation="CenterScreen"
 SystemDecorations="None"
 mc:Ignorable="d">
 	<Window.Styles>
-		<Style Selector="global|SliceControl.windowButton">
+		<Style Selector="controls|SliceControl.windowButton">
 			<Setter Property="HorizontalAlignment" Value="Right" />
 			<Setter Property="VerticalAlignment" Value="Top" />
 			<Setter Property="Height" Value="18" />
@@ -55,10 +55,10 @@ mc:Ignorable="d">
 			<Setter Property="HoverIndex" Value="1" />
 			<Setter Property="PressedIndex" Value="2" />
 		</Style>
-<Style Selector="global|SliceControl.addButtonHover">
+<Style Selector="controls|SliceControl.addButtonHover">
     <Setter Property="TextColor" Value="{DynamicResource Text.HighContrast}" />
 </Style>
-<Style Selector="global|SliceControl.addButtonHover:pointerover">
+<Style Selector="controls|SliceControl.addButtonHover:pointerover">
     <Setter Property="TextColor" Value="#0099ff" />
 </Style>
 	</Window.Styles>
@@ -190,7 +190,7 @@ mc:Ignorable="d">
 					<ColumnDefinition Width="18" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<global:SliceControl
+				<controls:SliceControl
 				Grid.Column="0"
 				Width="14"
 				Height="14"
@@ -221,7 +221,7 @@ mc:Ignorable="d">
 					<ColumnDefinition Width="18" />
 					<ColumnDefinition Width="*" />
 				</Grid.ColumnDefinitions>
-				<global:SliceControl
+				<controls:SliceControl
 				Grid.Column="0"
 				Width="14"
 				Height="14"
@@ -292,7 +292,7 @@ mc:Ignorable="d">
 						</Grid>
 					</Border>
 				</Grid>
-				<global:SliceControl
+				<controls:SliceControl
 				Grid.Row="1"
 				Grid.Column="1"
 				Width="14"
@@ -366,7 +366,7 @@ mc:Ignorable="d">
 						</Grid>
 					</Border>
 				</Grid>
-				<global:SliceControl
+				<controls:SliceControl
 				Grid.Row="1"
 				Grid.Column="1"
 				Width="14"
@@ -420,7 +420,7 @@ mc:Ignorable="d">
 										<ColumnDefinition Width="24" />
 										<ColumnDefinition Width="*" />
 									</Grid.ColumnDefinitions>
-									<global:SliceControl
+									<controls:SliceControl
 									Grid.Column="0"
 									Width="14"
 									Margin="10,0,0,0"
@@ -619,7 +619,7 @@ mc:Ignorable="d">
 				Foreground="{DynamicResource Text.LowContrast}"
 				Text="{Binding Time, StringFormat=h:mm tt}"
 				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-				<global:SliceControl
+				<controls:SliceControl
 				Width="10"
 				Height="10"
 				AnimationFps="60"
@@ -749,7 +749,7 @@ mc:Ignorable="d">
 				Foreground="{DynamicResource Text.LowContrast}"
 				Text="{Binding Time, StringFormat=h:mm tt}"
 				IsVisible="{Binding Identifier, Converter={StaticResource PreviewVisibilityConverter}, ConverterParameter=invert}" />
-				<global:SliceControl
+				<controls:SliceControl
 				Width="10"
 				Height="10"
 				AnimationFps="60"
@@ -829,7 +829,7 @@ mc:Ignorable="d">
 			Grid.Column="1"
 			Margin="0,0,5,0"
 			Orientation="Horizontal">
-				<global:SliceControl
+				<controls:SliceControl
 				x:Name="split"
 				Width="26"
 				PointerEntered="TitleButton_PointerEntered"
@@ -837,7 +837,7 @@ mc:Ignorable="d">
 				PointerReleased="TitleButton_Click"
 				Source="Assets/Universal/Window Frame/Basic/split/combined.png"
 				Classes="windowButton" />
-				<global:SliceControl
+				<controls:SliceControl
 				x:Name="minimize"
 				Width="24"
 				PointerEntered="TitleButton_PointerEntered"
@@ -845,7 +845,7 @@ mc:Ignorable="d">
 				PointerReleased="TitleButton_Click"
 				Source="Assets/Universal/Window Frame/Basic/minimize/combined.png"
 				Classes="windowButton" />
-				<global:SliceControl
+				<controls:SliceControl
 				x:Name="maximize"
 				Width="24"
 				PointerEntered="TitleButton_PointerEntered"
@@ -853,7 +853,7 @@ mc:Ignorable="d">
 				PointerReleased="TitleButton_Click"
 				Source="Assets/Universal/Window Frame/Basic/maximize/combined.png"
 				Classes="windowButton" />
-				<global:SliceControl
+				<controls:SliceControl
 				x:Name="close"
 				Width="42"
 				PointerEntered="TitleButton_PointerEntered"
@@ -964,7 +964,7 @@ mc:Ignorable="d">
 											<RowDefinition Height="1" />
 											<RowDefinition Height="24" />
 										</Grid.RowDefinitions>
-										<global:SliceControl
+										<controls:SliceControl
 										x:Name="StatusHeader"
 										Grid.Row="0"
 										HorizontalAlignment="Stretch"
@@ -991,108 +991,9 @@ mc:Ignorable="d">
 										PointerReleased="StatusArea_Click"
 										Orientation="Horizontal">
 											<StackPanel.Resources>
-												<ContextMenu x:Key="StatusMenu">
-													<MenuItem
-													x:Name="sm_online"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_ONLINE], Source={StaticResource Lang}}">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="2"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-													<MenuItem
-													x:Name="sm_away"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_AWAY], Source={StaticResource Lang}}">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="3"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-													<MenuItem
-													x:Name="sm_dnd"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_DND], Source={StaticResource Lang}}">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="5"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-													<MenuItem
-													x:Name="sm_invisible"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_INVISIBLE], Source={StaticResource Lang}}">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="14"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-													<MenuItem
-													x:Name="sm_offline"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_OFFLINE], Source={StaticResource Lang}}"
-													IsEnabled="False">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="14"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-													<Separator />
-													<MenuItem
-													x:Name="sm_call_forwarding"
-													Click="StatusMenuItemClick"
-													Header="{Binding [sSTATUSMENU_CAPTION_CF_OPTIONS2], Source={StaticResource Lang}}">
-														<MenuItem.Icon>
-															<global:SliceControl
-															Width="14"
-															DefaultIndex="13"
-															ElementCount="22"
-															HoverIndex="-1"
-															PressedIndex="-1"
-															SliceMode="0"
-															Source="Assets/Universal/Icon/skype-status-small.png"
-															StackDirection="Horizontal" />
-														</MenuItem.Icon>
-													</MenuItem>
-												</ContextMenu>
+												<controls:StatusMenu x:Key="StatusMenu"/>
 											</StackPanel.Resources>
-											<global:SliceControl
+											<controls:SliceControl
 											x:Name="StatusIcon"
 											Grid.Row="0"
 											Width="16"
@@ -1161,7 +1062,7 @@ mc:Ignorable="d">
 													</Border>
 												</Grid>
 												<!--  Bubble column  -->
-												<global:SliceControl
+												<controls:SliceControl
 												Grid.Column="1"
 												Width="8"
 												Height="8"
@@ -1175,7 +1076,7 @@ mc:Ignorable="d">
 												Themeable="True" />
 												<!--  TODO: lang  -->
 												<Grid Grid.Column="2">
-													<global:SliceControl
+													<controls:SliceControl
 													x:Name="PseudoStatusBox"
 													HorizontalAlignment="Stretch"
 													BottomHeight="6"
@@ -1214,7 +1115,7 @@ mc:Ignorable="d">
 												Grid.Column="2"
 												HorizontalAlignment="Right"
 												VerticalAlignment="Center">
-													<global:SliceControl
+													<controls:SliceControl
 													Grid.Row="1"
 													Grid.Column="1"
 													Margin="0,5"
@@ -1288,7 +1189,7 @@ mc:Ignorable="d">
 													Header="Import Contacts..." />
 												</ContextMenu>
 											</StackPanel.Resources>
-											<global:SliceControl
+											<controls:SliceControl
 											Grid.Row="0"
 											DefaultIndex="0"
 											ElementCount="5"
@@ -1311,7 +1212,7 @@ mc:Ignorable="d">
 										</StackPanel>
 										<Grid Grid.Column="1" Margin="5,0,0,0">
 											<!--  TODO accurate asset  -->
-											<global:SliceControl
+											<controls:SliceControl
 											x:Name="PseudoSearchBox"
 											Grid.Row="0"
 											HorizontalAlignment="Stretch"
@@ -1371,7 +1272,7 @@ mc:Ignorable="d">
 											<ColumnDefinition  Width="Auto" />
 											<ColumnDefinition  Width="*" />
 										</Grid.ColumnDefinitions>
-										<global:SliceControl
+										<controls:SliceControl
 										x:Name="btnContacts"
 										Grid.Column="0"
 										HorizontalAlignment="Stretch"
@@ -1393,7 +1294,7 @@ mc:Ignorable="d">
 										TextSize="13"
 										TextWeight="Bold"
 										Themeable="True" />
-										<global:SliceControl
+										<controls:SliceControl
 										x:Name="btnServers"
 										Grid.Column="1"
 										HorizontalAlignment="Stretch"
@@ -1415,7 +1316,7 @@ mc:Ignorable="d">
 										TextSize="13"
 										TextWeight="Bold"
 										Themeable="True" />
-										<global:SliceControl
+										<controls:SliceControl
 										x:Name="btnRecents"
 										Grid.Column="2"
 										HorizontalAlignment="Stretch"
@@ -1566,7 +1467,7 @@ mc:Ignorable="d">
 														<Grid.ColumnDefinitions>
 															<ColumnDefinition Width="Auto" />
 														</Grid.ColumnDefinitions>
-														<global:SliceControl
+														<controls:SliceControl
 														DefaultIndex="0"
 														ElementCount="5"
 														
@@ -1589,7 +1490,7 @@ mc:Ignorable="d">
 													</Grid>
 												</StackPanel>
 											</Border>
-											<global:SliceControl
+											<controls:SliceControl
 											Width="14"
 											Margin="10"
 											HorizontalAlignment="Right"
@@ -1611,7 +1512,7 @@ mc:Ignorable="d">
 								Orientation="Vertical">
 
 									<Grid Margin="0,4,0,0">
-										<global:SliceControl
+										<controls:SliceControl
 										HorizontalAlignment="Stretch"
 										DefaultIndex="0"
 										ElementCount="5"
@@ -1637,7 +1538,7 @@ mc:Ignorable="d">
 									</Grid>
 
 									<Grid Margin="0,4,0,0">
-										<global:SliceControl
+										<controls:SliceControl
 										HorizontalAlignment="Stretch"
 										DefaultIndex="0"
 										ElementCount="5"
@@ -1697,7 +1598,7 @@ mc:Ignorable="d">
 								Source="Assets/Universal/Home/footer.png" />
 								<!--  TODO: Localize. Requires Skype 4 lang files.  -->
 								<StackPanel Margin="30,175,0,0" Orientation="Vertical">
-									<global:SliceControl
+									<controls:SliceControl
 									x:Name="SplashHeader"
 									Source="Assets/Universal/Home/leftarrow.png"
 									TextColor="{DynamicResource Text.HighContrast}"
@@ -1717,7 +1618,7 @@ mc:Ignorable="d">
 								Margin="30,0,0,0"
 								VerticalAlignment="Bottom"
 								Orientation="Vertical">
-									<global:SliceControl
+									<controls:SliceControl
 									Source="Assets/Universal/Home/leftarrow.png"
 									Text="Phones and SMS"
 									TextColor="{DynamicResource Text.HighContrast}"
@@ -1752,7 +1653,7 @@ mc:Ignorable="d">
 								</Grid.RowDefinitions>
 								<Grid x:Name="ChatTopbar" Grid.Row="0">
 
-									<global:SliceControl
+									<controls:SliceControl
 									x:Name="chatHeader"
 									HorizontalAlignment="Stretch"
 									DefaultIndex="0"
@@ -1777,7 +1678,7 @@ mc:Ignorable="d">
 									IsHitTestVisible="False">
 										<ContentControl.DataTemplates>
 											<DataTemplate DataType="{x:Type yggdrasil:DirectMessage}">
-												<global:SliceControl
+												<controls:SliceControl
 												Width="16"
 												Height="16"
 												DefaultIndex="{Binding Partner.ConnectionStatus, Converter={StaticResource ConnectionStatusConverter}}"
@@ -1790,7 +1691,7 @@ mc:Ignorable="d">
 												StackDirection="Horizontal" />
 											</DataTemplate>
 											<DataTemplate DataType="{x:Type yggdrasil:Group}">
-												<global:SliceControl
+												<controls:SliceControl
 												Width="16"
 												Height="16"
 												DefaultIndex="21"
@@ -1803,7 +1704,7 @@ mc:Ignorable="d">
 												StackDirection="Horizontal" />
 											</DataTemplate>
 											<DataTemplate DataType="{x:Type yggdrasil:Server}">
-												<global:SliceControl
+												<controls:SliceControl
 												Width="16"
 												Height="16"
 												DefaultIndex="3"
@@ -1816,7 +1717,7 @@ mc:Ignorable="d">
 												StackDirection="Horizontal" />
 											</DataTemplate>
 											<DataTemplate DataType="{x:Type yggdrasil:ServerChannel}">
-												<global:SliceControl
+												<controls:SliceControl
 												Width="16"
 												Height="16"
 												DefaultIndex="{Binding ChannelType, Converter={StaticResource ChannelTypeConverter}}"
@@ -1946,7 +1847,7 @@ mc:Ignorable="d">
 																	Margin="0,0,0,2"
 																	HorizontalAlignment="Center"
 																	Orientation="Horizontal">
-																		<global:SliceControl
+																		<controls:SliceControl
 																		Width="16"
 																		Height="16"
 																		VerticalAlignment="Center"
@@ -2116,7 +2017,7 @@ mc:Ignorable="d">
 										<Grid Grid.Row="0" Margin="7,1,0,0">
 											<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 												<!--  TODO change event to something like Command="{Binding DataContext.CallCommand, RelativeSource={RelativeSource AncestorType=Window}}"  -->
-												<global:SliceControl
+												<controls:SliceControl
 												x:Name="CallButton"
 												Width="NaN"
 												DefaultIndex="0"
@@ -2134,7 +2035,7 @@ mc:Ignorable="d">
 												TextLeftMargin="26"
 												TextSize="13"
 												TextWeight="Bold" />
-												<global:SliceControl
+												<controls:SliceControl
 												x:Name="VideoCallButton"
 												Width="NaN"
 												Margin="5,0,0,0"
@@ -2156,7 +2057,7 @@ mc:Ignorable="d">
 												TextSize="13"
 												TextWeight="Bold" />
 											</StackPanel>
-											<global:SliceControl
+											<controls:SliceControl
 											x:Name="WifiButton"
 											Margin="10,0"
 											HorizontalAlignment="Right"
@@ -2238,7 +2139,7 @@ mc:Ignorable="d">
 												<ColumnDefinition Width="Auto" />
 												<ColumnDefinition Width="*" />
 											</Grid.ColumnDefinitions>
-											<global:SliceControl
+											<controls:SliceControl
 											Grid.Column="1"
 											BottomHeight="4"
 											DefaultIndex="0"
@@ -2260,7 +2161,7 @@ mc:Ignorable="d">
 													Margin="5,0,0,0"
 													VerticalAlignment="Center"
 													Orientation="Horizontal">
-														<global:SliceControl
+														<controls:SliceControl
 														x:Name="EmojiButton"
 														Width="18"
 														Height="18"
@@ -2309,7 +2210,7 @@ mc:Ignorable="d">
 													HorizontalAlignment="Right"
 													Orientation="Horizontal"
 													IsVisible="False">
-														<global:SliceControl
+														<controls:SliceControl
 														x:Name="TypingIndicatorIcon"
 														Width="23"
 														AnimationFps="30"
@@ -2346,7 +2247,7 @@ mc:Ignorable="d">
     ScrollViewer.VerticalScrollBarVisibility="Auto"
     TextWrapping="Wrap" />
 											</StackPanel>
-											<global:SliceControl
+											<controls:SliceControl
 											x:Name="SendMsgButton"
 											Grid.Column="2"
 											Width="NaN"

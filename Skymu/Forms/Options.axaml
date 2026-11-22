@@ -22,6 +22,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     xmlns:theming="clr-namespace:Skymu.Theming"
+    xmlns:controls="clr-namespace:Skymu.Controls"
     Width="716"
     Height="612"
     HorizontalAlignment="Left"
@@ -47,7 +48,7 @@
     </Window.Resources>
 
     <Window.Styles>
-		<Style Selector="global|SliceControl.sidebarHeader">
+		<Style Selector="controls|SliceControl.sidebarHeader">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="ElementCount" Value="5" />
             <Setter Property="DefaultIndex" Value="0" />
@@ -65,11 +66,11 @@
             <Setter Property="TextLeftMargin" Value="39" />
             <Setter Property="TextSize" Value="11" />
         </Style>
-        <Style Selector="global|SliceControl.sidebarItemContainer">
+        <Style Selector="controls|SliceControl.sidebarItemContainer">
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="global:SliceControl">
-                        <global:SliceControl
+                    <ControlTemplate TargetType="controls:SliceControl">
+                        <controls:SliceControl
                             VerticalAlignment="Stretch"
                             BottomHeight="2"
                             DefaultIndex="4"
@@ -87,14 +88,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style Selector="global|SliceControl.sidebarButton">
+        <Style Selector="controls|SliceControl.sidebarButton">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="IsRadioButton" Value="True" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="global:SliceControl">
+                    <ControlTemplate TargetType="controls:SliceControl">
                         <Grid Height="40">
-                            <global:SliceControl
+                            <controls:SliceControl
                                 x:Name="InnerSlice"
                                 Margin="4,-1,4,2"
                                 Background="#ffffff"
@@ -102,7 +103,7 @@
                                 IsRadioButton="True"
                                 PointerPressed="TabSelect"
                                 PressedOffsetY="0"
-                                Tag="{Binding RelativeSource={RelativeSource AncestorType=global:SliceControl}}"
+                                Tag="{Binding RelativeSource={RelativeSource AncestorType=controls:SliceControl}}"
                                 Text="{TemplateBinding Text}"
                                 TextColor="{DynamicResource Text.MediumContrast}"
                                 TextColorPressed="{DynamicResource Settings.ActiveTabText}"
@@ -132,7 +133,7 @@
 
             <StackPanel Grid.Column="0" Margin="0,0,3,0">
                 <!--  TODO: only use SidebarItmeContainer or SidebarHeader  -->
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HGeneral"
                     ButtonStateOnInit="Pressed"
                     DefaultIndex="3"
@@ -144,44 +145,44 @@
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
                 <Grid x:Name="GGeneral">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel
                         Grid.Row="1"
                         Margin="0,0,0,1"
                         Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Main"
                             ButtonStateOnInit="Pressed"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/skype.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_GENERAL]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Devices"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/audio.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_DEVICES]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Sounds"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sounds.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Video"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/video.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Access"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/access.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_SKYACCESS]}" />
                         <!--  Skymu original  -->
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="General_Skymu"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/skymu.png}"
@@ -189,7 +190,7 @@
                             Text="Skymu" />
                     </StackPanel>
                 </Grid>
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HPrivacy"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/privacy.png}"
@@ -197,15 +198,15 @@
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_PRIVACY]}" />
                 <Grid x:Name="GPrivacy" IsVisible="False">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Privacy_Main"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/privacy_settings.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PRIVACY_SETTINGS]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Privacy_Blocked"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/blocked.png}"
@@ -213,7 +214,7 @@
                             Text="{Binding [sF_OPTIONS_BLOCKED_USERS]}" />
                     </StackPanel>
                 </Grid>
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HNotifications"
                     IconHeight="24"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/notifications.png}"
@@ -221,21 +222,21 @@
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_NOTIFICATIONS]}" />
                 <Grid x:Name="GNotifications" IsVisible="False">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Notifications_Main"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/notifications.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_NOTIFICATIONS]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Notifications_Alerts"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/alerts.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_MESSAGES]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Notifications_Sounds"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sounds.png}"
@@ -243,34 +244,34 @@
                             Text="{Binding [sF_OPTIONS_PAGE_SOUNDS2]}" />
                     </StackPanel>
                 </Grid>
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HCalls"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/calls.png}"
                     PointerReleased="CatSelect"
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_CALLS]}" />
                 <Grid x:Name="GCalls" IsVisible="False">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Calls_Main"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/calls.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LB_CALL]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Calls_Forwarding"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/forwarding.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_FORWARDINGANDVOICEMAIL]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Calls_Voicemail"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/voicemail.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LBC_VOICEMAIL]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Calls_Video"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/video.png}"
@@ -278,28 +279,28 @@
                             Text="{Binding [sF_OPTIONS_PAGE_VIDEO]}" />
                     </StackPanel>
                 </Grid>
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HChatsSMS"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/im_and_sms.png}"
                     PointerReleased="CatSelect"
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_CHATS_SMS]}" />
                 <Grid x:Name="GChatsSMS" IsVisible="False">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Chats_Main"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/im.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_LB_CHAT_SETTINGS]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Chats_Appearance"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/appearance.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_CHAT_APPEARANCE]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Chats_SMS"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/sms.png}"
@@ -307,42 +308,42 @@
                             Text="{Binding [sF_OPTIONS_PAGE_SMS]}" />
                     </StackPanel>
                 </Grid>
-                <global:SliceControl
+                <controls:SliceControl
                     x:Name="HAdvanced"
                     IconSource="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
                     PointerReleased="CatSelect"
                     Classes="sidebarHeader"
                     Text="{Binding [sF_OPTIONS_PAGE_DEBUG]}" />
                 <Grid x:Name="GAdvanced" IsVisible="False">
-                    <global:SliceControl Classes="sidebarItemContainer" />
+                    <controls:SliceControl Classes="sidebarItemContainer" />
                     <StackPanel Grid.Row="1" Orientation="Vertical">
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Advanced_Main"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}" />
                         <!--  holy fuck why Skype  -->
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Advanced_Updates"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/updates.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_UPGRATES]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Advanced_Connection"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/connection.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_CONNECTION]}" />
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Advanced_Hotkeys"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/hotkeys.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_KEYBOARD]}" />
                         <!--  Skymu original  -->
-                        <global:SliceControl
+                        <controls:SliceControl
                             x:Name="Advanced_Debug"
                             PointerPressed="TabSelect"
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
@@ -360,7 +361,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <global:SliceControl
+                    <controls:SliceControl
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         BottomHeight="3"

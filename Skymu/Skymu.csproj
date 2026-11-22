@@ -45,8 +45,7 @@
 		<ItemGroup>
 			<PluginFiles Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PluginFiles)"
-			  DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->
@@ -116,6 +115,12 @@
 		<None Remove="Shaders\DarkenLighten.ps" />
 		<AvaloniaResource Include="Shaders\Darken.ps" />
 		<AvaloniaResource Include="Shaders\DarkenLighten.ps" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="UserControls\StatusMenu.axaml.cs">
+	    <DependentUpon>StatusMenu.axaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

@@ -146,7 +146,7 @@
 
 
                     </StackPanel>
-                    <global:SliceControl
+                    <controls:SliceControl
                         x:Name="LoginButton"
                         Grid.Row="1"
                         Width="240"

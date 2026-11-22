@@ -29,7 +29,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
 
-namespace Skymu
+namespace Skymu.Controls
 {
 	public enum SpriteStackDirection
 	{

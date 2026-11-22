@@ -24,6 +24,7 @@ using Avalonia.Layout;
 using Avalonia.Interactivity;
 using Avalonia;
 using Avalonia.Controls;
+using Skymu.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Yggdrasil;

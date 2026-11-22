@@ -23,7 +23,7 @@ using Skymu.Preferences;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using Skymu.Controls;
 
 namespace Skymu.Forms
 {
