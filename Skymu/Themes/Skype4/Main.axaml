@@ -102,7 +102,7 @@ mc:Ignorable="d">
 			<Setter Property="FontFamily" Value="Arial" />
 			<Setter Property="FontSize" Value="13" />
 			<Setter Property="FontWeight" Value="Bold" />
-			<Setter Property="Text" Value="{Binding WindowTitle, RelativeSource={RelativeSource AncestorType=Window}}" />
+			<Setter Property="Text" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}" />
 		</ControlTheme>
 		<ControlTheme
 		x:Key="TitlebarTextStyleAero"

@@ -389,7 +389,7 @@ namespace Skymu.Forms
 
         #endregion
 
-        private void Resized(object sender, RoutedEventArgs e)
+        private void Resized(object sender, SizeChangedEventArgs e)
         {
             bool newPillMode = this.Bounds.Width >= 1025.0;
             if (newPillMode != isPillMode)
