@@ -10,6 +10,7 @@
 		<OutputPath>..\bin\stub.smp</OutputPath>
 		<LangVersion>7.3</LangVersion>
 		<Configurations>Debug;Release;Publish</Configurations>
+		<PublishDir>$(OutputPath)</PublishDir>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="NLayer.NAudioSupport" Version="1.4.0" />

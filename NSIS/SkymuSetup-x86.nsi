@@ -1,4 +1,4 @@
-!define SOURCE_DIR_CORE "..\Skymu\bin\Release"
+!define SOURCE_DIR "..\Skymu\bin\Release\win-x86\publish"
 !define PRODUCT_NAME "Skymu"
 !define PRODUCT_PUBLISHER "The Skymu Team"
 !define PRODUCT_WEB_SITE "https://www.skymu.app"
@@ -53,7 +53,7 @@ Function .onInit
 FunctionEnd
 
 Name "${PRODUCT_NAME}"
-OutFile ".\Skymu Installer.exe"
+OutFile ".\Skymu.Installer.x86.exe"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
@@ -63,7 +63,7 @@ Section "Install"
 	RMDir /r "$INSTDIR"
     SetOutPath "$INSTDIR"
     SetOverwrite on
-    File /r "${SOURCE_DIR_CORE}\*"
+    File /r "${SOURCE_DIR}\*"
 
     WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Skymu.exe"
     WriteIniStr "$INSTDIR\desktop.ini" ".ShellClassInfo" "IconIndex" "-911"

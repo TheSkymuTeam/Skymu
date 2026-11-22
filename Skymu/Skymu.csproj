@@ -6,7 +6,7 @@
 		<RuntimeIdentifiers>osx-arm64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
 		<SelfContained>false</SelfContained>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ApplicationManifest Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
 		<ApplicationIcon Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -15,7 +15,8 @@
 		<NoWarn>$(NoWarn);NETSDK1138;MVVMTKCFG0001</NoWarn>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
+		<TieredPGO>true</TieredPGO>
+		<PublishReadyToRun>true</PublishReadyToRun>
 		<!-- Output locations (order matters: later lines override earlier ones) -->
 		<OutputPath>bin\$(Configuration)\</OutputPath>
 		<IntermediateOutputPath Condition="'$(InnerFolder)' != ''">obj\$(Configuration)\$(InnerFolder)\</IntermediateOutputPath>
@@ -48,6 +49,14 @@
 		<Copy SourceFiles="@(PluginFiles)" DestinationFiles="@(PluginFiles->'$(OutDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
+	<Target Name="CopyPluginsToPublish" AfterTargets="Publish">
+		<ItemGroup>
+			<PluginFilesPub Include="..\Plugins\bin\**\*.*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(PluginFilesPub)"
+			  DestinationFiles="@(PluginFilesPub->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+
 	<!-- Resource Handling -->
 	<ItemGroup>
 		<!-- Theme assets (embedded for avares:// URIs in XAML) -->
@@ -72,10 +81,6 @@
 		<Content Include="Languages\**\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-
-	</ItemGroup>
-	<ItemGroup>
-		<Resource Remove="Properties\**" />
 	</ItemGroup>
 
 	<!-- Packages -->
@@ -90,7 +95,6 @@
 		<PackageReference Include="Classic.Avalonia.Theme" Version="11.3.0.3" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Devlooped.CredentialManager" Version="2.7.0" />
-		<PackageReference Include="Lib.Harmony" Version="2.4.3" />
 		<PackageReference Include="Markdig" Version="1.3.2" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
 		<PackageReference Include="NAudio.Core" Version="2.3.0" />

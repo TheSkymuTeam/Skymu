@@ -6,7 +6,6 @@ using Avalonia.Platform;
 using Avalonia.Skia;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;

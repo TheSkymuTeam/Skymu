@@ -30,17 +30,46 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         }
 
-    - name: Build Skymu
-      run: dotnet build Skymu/Skymu.csproj --configuration Release
+    - name: Publish Skymu for Windows x86, x64 and ARM64
+      shell: pwsh
+      run: |
+        foreach ($RID in "win-x86", "win-x64", "win-arm64") {
+          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime $RID -o "out/$RID"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    - name: Build NSIS installer
-      run: makensis NSIS/SkymuBetaSetup-Release.nsi
+          New-Item -ItemType Directory -Force -Path "out/$RID/Plugins" | Out-Null
+          Copy-Item -Path "Plugins/bin/*" -Destination "out/$RID/Plugins" -Recurse -Force
+        }
 
-    - name: Export Windows installer
+    - name: Build NSIS installers
+      shell: pwsh
+      run: |
+        foreach ($A in "x86", "x64", "ARM64") {
+          makensis "NSIS/SkymuBetaSetup-$A.nsi"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        }
+
+    - name: Export Windows x86 installer
       uses: actions/upload-artifact@v7
       with:
-        name: Skymu-Windows-Installer
-        path: 'NSIS/Skymu Installer (BETA).exe'
+        name: Skymu-Windows-x86-Installer
+        path: 'NSIS/Skymu.Beta.Installer.x86.exe'
+        retention-days: 7
+        archive: true
+
+    - name: Export Windows x64 installer
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-Windows-x64-Installer
+        path: 'NSIS/Skymu.Beta.Installer.x64.exe'
+        retention-days: 7
+        archive: true
+
+    - name: Export Windows ARM64 installer
+      uses: actions/upload-artifact@v7
+      with:
+        name: Skymu-Windows-ARM64-Installer
+        path: 'NSIS/Skymu.Beta.Installer.ARM64.exe'
         retention-days: 7
         archive: true
 

@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using HarmonyLib;
 using Skymu.AvaloniaTools;
 using System;
 
@@ -25,7 +24,7 @@ namespace Skymu
                 //{
                 //    CompositionMode = new[] { Win32CompositionMode.RedirectionSurface }
                 //})
-                .AfterSetup(_ => GdiAdvancePatch.Install(new Harmony("skymu.gdi.advances")))
+                //.AfterSetup(_ => GdiAdvancePatch.Install(new Harmony("skymu.gdi.advances")))
                 .LogToTrace();
     }
 }

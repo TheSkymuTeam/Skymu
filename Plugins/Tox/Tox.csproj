@@ -11,6 +11,7 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Prefer32Bit>false</Prefer32Bit>
+		<PublishDir>$(OutputPath)</PublishDir>
 		<OutputPath>..\bin\tox.smp</OutputPath>
 		<Configurations>Debug;Release;Publish</Configurations>
 	</PropertyGroup>

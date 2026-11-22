@@ -6,6 +6,7 @@
 		<AssemblyName>smp.matrix</AssemblyName>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>..\bin\matrix.smp</OutputPath>
+		<PublishDir>$(OutputPath)</PublishDir>
 		<LangVersion>7.3</LangVersion>
 		<Configurations>Debug;Release;Publish</Configurations>
 	</PropertyGroup>

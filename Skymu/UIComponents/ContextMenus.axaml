@@ -22,14 +22,16 @@
     <converters:AssetLoader x:Key="AssetLoader" />
     <ContextMenu x:Key="MessageMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
         <!--  Copy selected  -->
-        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sF_CHAT_FORM_IMGRID_PMENUITEM_COPY], RelativeSource={RelativeSource AncestorType=ContextMenu}}" IsEnabled="False" />
+        <MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_COPY], Source={StaticResource Lang}}"
+         IsEnabled="False" />
         <!--  Copy message  -->
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=CopyMessageCommand}"
             CommandParameter="{Binding}"
-            Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_COPY_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            Header="{Binding [sCHAT_MENU_COPY_MESSAGE], Source={StaticResource Lang}}"/>
         <!--  Select all  -->
-        <MenuItem Header="{Binding Path=PlacementTarget.Tag[sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], RelativeSource={RelativeSource AncestorType=ContextMenu}}" IsEnabled="False" />
+        <MenuItem Header="{Binding [sF_CHAT_FORM_IMGRID_PMENUITEM_SELALL], Source={StaticResource Lang}}"
+         />
         <Separator />
         <!--  Reply  -->
         <MenuItem
@@ -40,19 +42,22 @@
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=EditMessageCommand}"
             CommandParameter="{Binding}"
-            Header="{Binding Path=PlacementTarget.Tag[sCHAT_EDIT_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            Header="{Binding [sCHAT_EDIT_MESSAGE], Source={StaticResource Lang}}"
+            
             IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
         <!--  Delete  -->
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=DeleteMessageCommand}"
             CommandParameter="{Binding}"
-            Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_REMOVE_MESSAGE], RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            Header="{Binding [sCHAT_MENU_REMOVE_MESSAGE], Source={StaticResource Lang}}"
+           
             IsVisible="{Binding Author.Identifier, Converter={StaticResource IsCurrentUserToVisibilityConverter}}" />
         <!--  Move bookmark  -->
         <MenuItem
             Command="{Binding Source={x:Static global:Universal.ActiveViewModel}, Path=MoveBookmarkCommand}"
             CommandParameter="{Binding}"
-            Header="{Binding Path=PlacementTarget.Tag[sCHAT_MENU_MOVE_BOOKMARK], RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            Header="{Binding [sCHAT_MENU_MOVE_BOOKMARK], Source={StaticResource Lang}}"
+            />
     </ContextMenu>
     <ContextMenu x:Key="StatusMenu">
                                                     <MenuItem

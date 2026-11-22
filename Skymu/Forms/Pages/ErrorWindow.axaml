@@ -18,17 +18,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:preferences="clr-namespace:Skymu.Preferences"
     Width="400"
-    Height="400"
-    
-    
-    Foreground="{DynamicResource Text.VeryHighContrast}"
-    >
+    Height="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" TextWrapping="Wrap">
+        <TextBlock Foreground="{DynamicResource Text.HighContrast}" Grid.Row="0" TextWrapping="Wrap">
             <TextBlock.Text>
                 <Binding
                     Path="[BrandingName]"

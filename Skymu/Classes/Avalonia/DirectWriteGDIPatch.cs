@@ -12,7 +12,6 @@
 /*==========================================================*/
 
 using Avalonia.Media.TextFormatting;
-using HarmonyLib;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -154,7 +153,7 @@ namespace Skymu.AvaloniaTools
 
     static class GdiAdvancePatch
     {
-        public static bool Install(Harmony harmony)
+        /*public static bool Install(Harmony harmony)
         {
             try
             {
@@ -171,7 +170,7 @@ namespace Skymu.AvaloniaTools
                 Debug.WriteLine("GdiAdvancePatch not installed: " + ex.Message);
                 return false;
             }
-        }
+        }*/
 
 
         public static bool KeepKerning = false;

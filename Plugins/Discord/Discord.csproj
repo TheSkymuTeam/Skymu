@@ -11,6 +11,7 @@
 		<AssemblyName>smp.discord</AssemblyName>
 		<AssemblyTitle>Discord</AssemblyTitle>
 		<OutputPath>..\bin\discord.smp</OutputPath>
+		<PublishDir>$(OutputPath)</PublishDir>
 		<Configurations>Debug;Release;Publish</Configurations>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
