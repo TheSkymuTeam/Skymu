@@ -34,7 +34,7 @@ jobs:
       shell: pwsh
       run: |
         foreach ($RID in "win-x86", "win-x64", "win-arm64") {
-          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime $RID -o "out/$RID"
+          dotnet publish Skymu/Skymu.csproj --configuration Release --runtime $RID
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           New-Item -ItemType Directory -Force -Path "out/$RID/Plugins" | Out-Null

@@ -45,11 +45,7 @@ FunctionEnd
 
 Function .onInit
     System::Call "kernel32::GetSystemWow64Directory(t .r0, i ${NSIS_MAX_STRLEN})"
-    ${If} $0 != ""
-        StrCpy $INSTDIR "$PROGRAMFILES64\Skymu"
-    ${Else}
-        StrCpy $INSTDIR "$PROGRAMFILES\Skymu"
-    ${EndIf}
+    StrCpy $INSTDIR "$PROGRAMFILES\Skymu"
 FunctionEnd
 
 Name "${PRODUCT_NAME}"
