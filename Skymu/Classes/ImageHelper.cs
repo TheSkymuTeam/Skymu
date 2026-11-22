@@ -34,15 +34,20 @@ namespace Skymu.Helpers
         public static Bitmap LoadFromPackUri(string uri)
         {
             if (_cache.TryGetValue(uri, out var cached))
-                return cached;
-
-            Bitmap img;
-
-            using (var stream = AssetLoader.Open(new Uri(uri)))
             {
-                img = new Bitmap(stream);
+                try { _ = cached.PixelSize; return cached; }
+                catch (NullReferenceException)
+                {
+                    System.Diagnostics.Debug.WriteLine("[ImageHelper] dead cache entry removed: " + uri);
+                    _cache.Remove(uri);
+                }
             }
 
+            Bitmap img;
+            using (var stream = AssetLoader.Open(new Uri(uri)))
+                img = new Bitmap(stream);
+
+            _ = img.PixelSize;   
             _cache[uri] = img;
             return img;
         }

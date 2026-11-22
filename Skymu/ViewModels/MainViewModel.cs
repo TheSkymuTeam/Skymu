@@ -150,6 +150,9 @@ namespace Skymu.ViewModels
 
         #region Commands
 
+        // Status context menu stuff
+        public IAsyncRelayCommand<string> SetStatusCommand { get; }
+
         // Message context menu stuff
         public IAsyncRelayCommand<Message> DeleteMessageCommand { get; }
         public IAsyncRelayCommand<Message> EditMessageCommand { get; }
@@ -254,7 +257,19 @@ namespace Skymu.ViewModels
 
         #endregion
 
-        #region Message context menu functions
+        #region RDict context menu functions
+
+
+        private async Task SetStatusAsync(string name)
+        {
+            if (name == "dnd")
+                InformDND();
+
+            PresenceStatus status = GetConnectionStatusFromName(name);
+            if (status == PresenceStatus.Unknown) return;
+
+            await Universal.Plugin.SetConnectionStatus(status);
+        }
 
         public async Task DeleteMessage(Message message)
         {
@@ -336,6 +351,7 @@ namespace Skymu.ViewModels
             ReplyToMessageCommand = new AsyncRelayCommand<Message>(ReplyToMessage);
             MoveBookmarkCommand = new RelayCommand<Message>(MoveBookmark);
             CopyMessageCommand = new RelayCommand<Message>(CopyMessage);
+            SetStatusCommand = new AsyncRelayCommand<string>(SetStatusAsync);
             // end stuff
 
             SendMessageCommand = new AsyncRelayCommand<string>(SendMessage);
@@ -343,6 +359,8 @@ namespace Skymu.ViewModels
             VideoCallCommand = new RelayCommand(HandleVideoCall);
             /* CallCommand = new AsyncRelayCommand(HandleCall); */
         }
+
+
 
         public async Task InitSidebar()
         {

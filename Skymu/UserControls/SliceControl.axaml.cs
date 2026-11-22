@@ -1062,6 +1062,7 @@ namespace Skymu.Controls
 			}
 		}
 
+
 		private double GetElementHeight()
 		{
 			var bmp = Source as Bitmap;

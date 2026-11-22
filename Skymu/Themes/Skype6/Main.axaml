@@ -854,9 +854,6 @@
                                             IsHitTestVisible="True"
                                             PointerReleased="StatusArea_Click"
                                             Orientation="Horizontal">
-                                            <StackPanel.Resources>
-                                                <controls:StatusMenu x:Key="StatusMenu"/>
-                                            </StackPanel.Resources>
                                             <controls:SliceControl
                                                 x:Name="StatusIcon"
                                                 Grid.Row="0"

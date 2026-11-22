@@ -117,10 +117,4 @@
 		<AvaloniaResource Include="Shaders\DarkenLighten.ps" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="UserControls\StatusMenu.axaml.cs">
-	    <DependentUpon>StatusMenu.axaml</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
 </Project>

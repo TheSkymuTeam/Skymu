@@ -1190,9 +1190,12 @@ namespace Skymu.Theming
 
         protected void StatusArea_Click(object sender, PointerReleasedEventArgs e)
         {
-            if (e.InitialPressMouseButton != MouseButton.Left)
-                return;
-            OpenStatusMenu(StatusArea);
+            if (sender is not Control c) return;
+            if (!c.TryFindResource("StatusMenu", ActualThemeVariant, out var res) || res is not ContextMenu menu) return;
+
+            menu.DataContext = vmodel;
+            menu.Placement = PlacementMode.BottomEdgeAlignedLeft;
+            menu.Open(c);
         }
 
         protected async void SidebarTab_BtnDown(object sender, PointerReleasedEventArgs e)
@@ -1497,13 +1500,6 @@ namespace Skymu.Theming
                 statusIcon.DefaultIndex = MainViewModel.GetIntFromStatus(currentStatus);
                 Tray.SetStatus(currentStatus);
             }
-        }
-
-        private void OpenStatusMenu(StackPanel statusArea)
-        {
-            var menu = (ContextMenu)statusArea.Resources["StatusMenu"];
-            menu.Placement = PlacementMode.Bottom;
-            menu.Open(statusArea);
         }
 
         private void ClearTreeSelection(TreeView tree)
