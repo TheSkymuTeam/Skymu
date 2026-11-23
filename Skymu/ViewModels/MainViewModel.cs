@@ -181,6 +181,7 @@ namespace Skymu.ViewModels
                     File.ReadAllBytes(tempPath),
                     attachments[0].Name
                 ); // TODO spin off to helper method
+                if (ext == attachments[0].Name) return; // if the extension was not a recognised image, we quit before malicious files can execute 
                 string finalPath = tempPath + ext;
                 if (File.Exists(finalPath))
                     File.Delete(finalPath);
