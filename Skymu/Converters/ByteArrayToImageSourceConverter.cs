@@ -11,7 +11,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using Org.BouncyCastle.Bcpg.Sig;
 using Skymu.Helpers;
 using System;
 using System.Globalization;

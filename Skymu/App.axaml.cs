@@ -23,7 +23,6 @@ using Avalonia.Themes.Fluent;
 using Avalonia.Themes.Simple;
 using Avalonia.Threading;
 using Classic.Avalonia.Theme;
-using OmegaAOL.Bifrost.Http;
 using Skymu.AvaloniaTools;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
@@ -479,7 +478,7 @@ namespace Skymu
             Universal.Terminate();
         }
 
-        internal static readonly HttpClient SkymuHttpClient = new HttpClient(new BifrostEngine())
+        internal static readonly HttpClient SkymuHttpClient = new HttpClient()
         {
             Timeout = TimeSpan.FromSeconds(10),
         };

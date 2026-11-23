@@ -20,8 +20,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using OmegaAOL.Bifrost.Http;
-using OmegaAOL.Bifrost.WebSockets;
 
 namespace Skymu.WebServices
 {
@@ -29,7 +27,7 @@ namespace Skymu.WebServices
 
     {
         // REST API variables
-        private static readonly HttpClient client = new HttpClient(new BifrostEngine())
+        private static readonly HttpClient client = new HttpClient()
         {
             BaseAddress = new Uri(Universal.SKYMU_WEBSERVICES_USERSERVER),
         };

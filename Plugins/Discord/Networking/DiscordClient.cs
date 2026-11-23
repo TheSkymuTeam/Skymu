@@ -23,7 +23,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using OmegaAOL.Bifrost.Http;
 
 namespace Discord.Networking
 {
@@ -40,7 +39,7 @@ namespace Discord.Networking
 
         internal DiscordClient()
         {
-            var handler = new BifrostEngine()
+            var handler = new HttpClientHandler()
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
             };

@@ -20,7 +20,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using OmegaAOL.Bifrost.Http;
 
 namespace ChatCompletions
 {
@@ -46,7 +45,7 @@ namespace ChatCompletions
 
             _baseUrl = baseUrl.TrimEnd('/');
 
-            _http = new HttpClient(new BifrostEngine())
+            _http = new HttpClient()
             {
                 Timeout = Timeout.InfiniteTimeSpan
             };

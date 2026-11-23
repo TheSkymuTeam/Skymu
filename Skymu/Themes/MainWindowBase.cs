@@ -298,17 +298,16 @@ namespace Skymu.Theming
                 Window_StateChanged(this, EventArgs.Empty);
         }
 
+
         public void InitializeWindowFrame()
         {
-            Debug.WriteLine($"[Skymu WindowChrome] chrome={_currentFrame} theme={Universal.Theme} dwm={Universal.Platform.DwmIsCompositionEnabled}");
-            if (_currentFrame == Enumerations.WindowChrome.SkypeAero) _currentFrame = Enumerations.WindowChrome.Native; // Skype Aero doesn't work
             if (_currentFrame != Enumerations.WindowChrome.Native) // using Skymu's custom border
             {
                 if (!Universal.Platform.DwmIsCompositionEnabled && _currentFrame == WindowChrome.SkypeAero) _currentFrame = WindowChrome.Native; // if no DWM, don't use broken Aero frame
-                OriginalWindowAreaMargin = WindowArea.Margin; // for maximization stuff
+
+                // avalonia extend the window frame into the client area
                 ExtendClientAreaToDecorationsHint = true;
-                ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
-                ExtendClientAreaTitleBarHeightHint = -1; // WindowChrome configuration ensures that system frame is not drawn
+
                 TitleBar.PointerPressed += TitleBar_PointerPressed;
                 SetClickable(TitleBarIcon, close, minimize, maximize, split);
                 TitleMain.IsVisible = true;
@@ -317,25 +316,21 @@ namespace Skymu.Theming
                     || _currentFrame == Enumerations.WindowChrome.Acrylic
                 ) // switch configuration from Skype Basic to Aero
                 {
-                    Thickness AeroThickness = new Thickness(8, 30, 8, 8);
-                    OriginalWindowAreaMargin = AeroThickness;
-                    // Set up the window background and margin
-                    WindowArea.Margin = AeroThickness;
                     TitleBar.Background = Brushes.Transparent;
                     if (_currentFrame == Enumerations.WindowChrome.SkypeAero)
                     {
+                        SystemDecorations = SystemDecorations.Full;   // real WS_CAPTION / WS_THICKFRAME, like the sample
+                        ExtendClientAreaToDecorationsHint = true;     // Avalonia handles WM_NCCALCSIZE + DwmExtendFrameIntoClientArea
+                        ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome; // DWM draws min/max/close
+                        ExtendClientAreaTitleBarHeightHint = -1;
+                        Part<StackPanel>("CaptionButtons").IsVisible = false; // hide your image buttons; DWM draws them now
+                        this.BorderThickness = new Thickness(0, 30, 0, 0);
                         this.Background = Brushes.Transparent;
                     }
                     else if (_currentFrame == Enumerations.WindowChrome.Acrylic)
                     {
                         // Ask for acrylic, falling back to plain blur, then plain transparency.
-                        TransparencyLevelHint = new[]
-                        {
-        WindowTransparencyLevel.AcrylicBlur,
-        WindowTransparencyLevel.Blur,
-        WindowTransparencyLevel.Transparent
-    };
-
+                        TransparencyLevelHint = new[] { WindowTransparencyLevel.AcrylicBlur };
                         // Tint painted over the acrylic. The alpha (0x00-0xFF) controls how much blur shows through.
                         this.Background = new SolidColorBrush(Color.FromArgb(0x60, 0x74, 0xA3, 0xD2));
                     }
@@ -1967,7 +1962,7 @@ namespace Skymu.Theming
                 return;
             var border = sender as Border;
             if (!(border?.Child is SliceControl sliceControlInside)) return;
-
+            
             EmojiFlyout.IsOpen = false;
             RemovePlaceholder(MessageTextBox);
 

@@ -6,7 +6,8 @@
 		<RuntimeIdentifiers>osx-arm64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
 		<SelfContained>false</SelfContained>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net10.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
+		<RollForward>LatestMajor</RollForward>
 		<ApplicationManifest Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
 		<ApplicationIcon Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

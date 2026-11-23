@@ -24,7 +24,6 @@ using System.Threading.Tasks;
 using Yggdrasil;
 using Yggdrasil.Models;
 using Yggdrasil.Enumerations;
-using OmegaAOL.Bifrost.Http;
 
 namespace Matrix
 {
@@ -51,7 +50,7 @@ namespace Matrix
         private User _user;
         private string _homeserver = "https://matrix.org";
         private string _nextBatch;
-        private static readonly HttpClient _httpClient = new HttpClient(new BifrostEngine());
+        private static readonly HttpClient _httpClient = new HttpClient();
         private CancellationTokenSource _syncCancellationTokenSource;
         private SynchronizationContext _uiContext;
 

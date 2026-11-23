@@ -15,7 +15,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using OmegaAOL.Bifrost.Tls;
 using Skymu.Enumerations;
 using Skymu.Preferences;
 
@@ -31,23 +30,11 @@ namespace Skymu.Forms.OptionPages.General
 
         private void LoadVisualSettings()
         {
-            // radio button logic (moving to code behind instead of XAML/converters to iron out bugs)
-            UseEmbeddedCert.IsChecked = Settings.CertificateStore == CertStore.Embedded;
-            UseSystemCert.IsChecked = Settings.CertificateStore == CertStore.System;
-            UseCustomCert.IsChecked = Settings.CertificateStore == CertStore.Custom;
-
             StaticSidebarTabsRadio.IsChecked = !Settings.DynamicSidebarTabs;
             DynamicSidebarTabsRadio.IsChecked = Settings.DynamicSidebarTabs;
         }
 
 #region Radio button stuff
-
-        private void UseEmbeddedCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.Embedded;
-        private void UseSystemCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.System;
-        private void UseCustomCert_Checked(object sender, RoutedEventArgs e) =>
-            Settings.CertificateStore = CertStore.Custom;
 
         private void UseDefaultFontRenderingRadio_Checked(object sender, RoutedEventArgs e) =>
             Settings.UseClearType = false;
@@ -72,33 +59,5 @@ namespace Skymu.Forms.OptionPages.General
         }
 
         #endregion
-
-        private async void CertBrowseButtonClick(object sender, RoutedEventArgs e)
-        {
-            var top = TopLevel.GetTopLevel(this);
-            if (top == null)
-                return;
-
-            var files = await top.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-            {
-                Title = "Select cacert.pem",
-                AllowMultiple = false,
-                FileTypeFilter = new[]
-                {
-            new FilePickerFileType("PEM certificates") { Patterns = new[] { "*.pem" } },
-            FilePickerFileTypes.All
-        }
-            });
-
-            if (files.Count == 0)
-                return;
-
-            string path = files[0].TryGetLocalPath();
-            if (path == null)
-                return;
-
-            Settings.CertPath = path;
-            SC_CertPathBox.Text = path;
-        }
     }
 }

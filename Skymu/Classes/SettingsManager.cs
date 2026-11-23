@@ -11,7 +11,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /*==========================================================*/
 
-using OmegaAOL.Bifrost.Tls;
 using Skymu.Enumerations;
 using System;
 using System.Collections.Generic;
@@ -180,7 +179,7 @@ namespace Skymu.Preferences
 
         public static WindowChrome WindowChrome
         {
-            get => SELECT("WindowChrome", WindowChrome.Acrylic, "Skymu/Appearance"); 
+            get => SELECT("WindowChrome", WindowChrome.Native, "Skymu/Appearance"); 
             set 
             {
                 // I tried
@@ -481,22 +480,6 @@ namespace Skymu.Preferences
         {
             get => Crossplatform.AutoLaunch.Get();
             set => Crossplatform.AutoLaunch.Set(value);
-        }
-
-        #endregion
-
-        #region Yggdrasil (Ratatoskr)
-
-        public static CertStore CertificateStore
-        {
-            get => Y_SELECT("CertificateStore", CertStore.Embedded);
-            set => Y_WRITE("CertificateStore", value, nameof(CertificateStore));
-        }
-
-        public static string CertPath
-        {
-            get => Y_SELECT("CertPath", string.Empty);
-            set => Y_WRITE("CertPath", value, nameof(CertPath));
         }
 
         #endregion
