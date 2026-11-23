@@ -165,23 +165,9 @@ namespace Skymu.Forms
         public TopContactItem(DirectMessage dm)
         {
             Source = dm;
-            Avatar = ToBitmap(dm.Partner.Avatar);
+            Avatar = Helpers.ImageHelper.GenerateAvatarImageFromArray(dm.Partner.Avatar);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private static Bitmap ToBitmap(byte[] data)
-        {
-            if (data == null || data.Length == 0) return null;
-            try
-            {
-                using (var ms = new MemoryStream(data))
-                    return new Bitmap(ms);
-            }
-            catch
-            {
-                return null;
-            }
-        }
     }
 }

@@ -87,7 +87,7 @@ namespace Skymu.Forms.Pages
                 if (IsCurrent) parts.Add("Signed in");
                 Details = string.Join("  •  ", parts);
 
-                Avatar = ImageHelper.GenerateFromArray(user?.Avatar);
+                Avatar = ImageHelper.GenerateAvatarImageFromArray(user?.Avatar);
             }
         }
 
@@ -105,20 +105,14 @@ namespace Skymu.Forms.Pages
         {
             AccountEntry previous = AccountList.SelectedItem as AccountEntry;
 
-            try
-            {
+            
                 var entries = new List<AccountEntry>();
                 int rank = 0;
                 foreach (SavedCredential c in CredentialManager.GetAll())
                 {
-                    try
-                    {
+
                         entries.Add(new AccountEntry(c, c.AutoLogin ? ++rank : 0));
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[AccountManager] Skipping bad entry: {ex}");
-                    }
+
                 }
 
                 AccountList.ItemsSource = entries;
@@ -127,12 +121,7 @@ namespace Skymu.Forms.Pages
                     AccountList.SelectedItem = entries.FirstOrDefault(a =>
                         a.Credential.Plugin == previous.Credential.Plugin
                         && a.Credential.User?.Identifier == previous.Credential.User?.Identifier);
-            }
-            catch (Exception ex)
-            {
-                AccountList.ItemsSource = null;
-                ShowMessage("Could not load saved accounts.\n\n" + ex.Message, SkinnedWindow.IconType.Error);
-            }
+
 
             bool empty = AccountList.Items.Count == 0;
             EmptyText.IsVisible = empty ? true : false;

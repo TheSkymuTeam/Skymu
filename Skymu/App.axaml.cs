@@ -24,8 +24,10 @@ using Avalonia.Themes.Simple;
 using Avalonia.Threading;
 using Classic.Avalonia.Theme;
 using Skymu.AvaloniaTools;
+using Skymu.Crossplatform;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
+using Skymu.Helpers;
 using Skymu.Migration;
 using Skymu.Plugins;
 using Skymu.Preferences;
@@ -49,7 +51,6 @@ using Yggdrasil;
 using Yggdrasil.Bottles;
 using Yggdrasil.Enumerations;
 using Yggdrasil.Models;
-using Skymu.Crossplatform;
 
 namespace Skymu
 {
@@ -108,9 +109,7 @@ namespace Skymu
         public static string PlatformStr = Runtime.GetPlatformInfo().OSDisplayName;
         public static string NetVersion = RuntimeInformation.FrameworkDescription;
         public static User CurrentUser;
-        public static Bitmap AnonymousAvatar;
-        public static Bitmap GroupAvatar;
-        public static Bitmap UnknownAvatar;
+        public static Bitmap AnonymousAvatar, GroupAvatar, UnknownAvatar, PlaceholderImage;
         public static ViewModels.MainViewModel ActiveViewModel;
         /// <summary>Registered by the login window so startup failures can return to the login form.</summary>
         public static Action RequestLoginSpinnerOff;
@@ -270,8 +269,17 @@ namespace Skymu
 
         public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
+        private Bitmap GenerateAvatarImage(string avatar)
+        {
+            return ImageHelper.Load("Themeable/Profile Pictures/" + avatar + ".png");
+        }
+
         public override void OnFrameworkInitializationCompleted()
         {
+            GroupAvatar = GenerateAvatarImage("group");
+            AnonymousAvatar = GenerateAvatarImage("anonymous");
+            UnknownAvatar = GenerateAvatarImage("unknown");
+
             ApplyAvaloniaTheme(Settings.AvaloniaTheme);
             var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             if (desktop != null)

@@ -140,6 +140,12 @@ namespace Skymu.Forms
             set => ButtonEdgeLeft.IsVisible = value;
         }
 
+        public bool ButtonLeftEnabled
+        {
+            get => ButtonLeft.IsVisible ? true : false;
+            set => ButtonLeft.IsVisible = value;
+        }
+
         public bool ButtonMiddleEnabled
         {
             get => ButtonMiddle.IsVisible ? true : false;

@@ -94,13 +94,13 @@ namespace Skymu.Forms
             }
 
             if (Universal.CurrentUser.Avatar != null)
-                MyAvatar.Source = ImageHelper.GenerateFromArray(
+                MyAvatar.Source = ImageHelper.GenerateAvatarImageFromArray(
                     Universal.CurrentUser.Avatar
                 );
             else
                 MyAvatar.Source = Universal.AnonymousAvatar;
             if (partner_avatar != null)
-                PartnerAvatar.Source = ImageHelper.GenerateFromArray(partner_avatar);
+                PartnerAvatar.Source = ImageHelper.GenerateAvatarImageFromArray(partner_avatar);
             else
             {
                 if (_conversation is ServerChannel channel)

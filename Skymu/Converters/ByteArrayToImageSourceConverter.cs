@@ -34,7 +34,7 @@ namespace Skymu.Converters
 
             if (bytes != null && bytes.Length > 0)
             {
-                return ImageHelper.GenerateFromArray(bytes);
+                return ImageHelper.GenerateAvatarImageFromArray(bytes);
             }
 
             if (type == "group")

@@ -24,17 +24,8 @@ namespace Skymu.Infrastructure
 {
     public static class SharedServices
     {
-        private static Bitmap GenerateAvatarImage(string avatar)
-        {
-            return ImageHelper.Load("Themeable/Profile Pictures/" + avatar + ".png");
-        }
 
-        public static void GenerateGlobalAvatars()
-        {
-            Universal.GroupAvatar = GenerateAvatarImage("group");
-            Universal.AnonymousAvatar = GenerateAvatarImage("anonymous");
-            Universal.UnknownAvatar = GenerateAvatarImage("unknown");
-        }
+
 
         public static string ConvertHexKeyToUnicode(string hexKey)
         {

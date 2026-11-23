@@ -6,7 +6,7 @@
 		<RuntimeIdentifiers>osx-arm64;osx-x64;linux-x64;linux-arm64</RuntimeIdentifiers>
 		<SelfContained>false</SelfContained>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<RollForward>LatestMajor</RollForward>
 		<ApplicationManifest Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">app.manifest</ApplicationManifest>
 		<ApplicationIcon Condition="'$(RuntimeIdentifier)' == '' And $([MSBuild]::IsOSPlatform('Windows'))">Icons\skype.ico</ApplicationIcon>
@@ -54,8 +54,7 @@
 		<ItemGroup>
 			<PluginFilesPub Include="..\Plugins\bin\**\*.*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(PluginFilesPub)"
-			  DestinationFiles="@(PluginFilesPub->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(PluginFilesPub)" DestinationFiles="@(PluginFilesPub->'$(PublishDir)Plugins\%(RecursiveDir)%(Filename)%(Extension)')" />
 	</Target>
 
 	<!-- Resource Handling -->
@@ -87,7 +86,7 @@
 	<!-- Packages -->
 	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="11.3.23" />
-		<PackageReference Include="Avalonia.Controls.WebView" Version="11.4.1" />
+		<PackageReference Include="Avalonia.Controls.WebView" Version="11.4.0" />
 		<PackageReference Include="Avalonia.Desktop" Version="11.3.23" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="11.3.23" />
 		<PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.3.23" />

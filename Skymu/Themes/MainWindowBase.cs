@@ -759,8 +759,6 @@ namespace Skymu.Theming
             if (IsSkinned)
                 InitializeWindowFrame();
 
-            SharedServices.GenerateGlobalAvatars();
-
             EmojiFlyout.Opened += (s, e) => SetEmojiPickerAnimation(true);
             EmojiFlyout.Closed += (s, e) => SetEmojiPickerAnimation(false);
 
@@ -822,6 +820,8 @@ namespace Skymu.Theming
                 OnSidebarResized();
             };
         }
+
+
 
         private void StartSpinnerAnimation()
         {

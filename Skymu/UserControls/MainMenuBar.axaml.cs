@@ -15,6 +15,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Skymu.Captcha;
 using Skymu.Forms;
 using Skymu.Forms.Pages;
 using Skymu.Helpers;
@@ -142,7 +143,12 @@ namespace Skymu.Controls
         private void OnSignOut(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(false);
         private void OnSwitchUser(object? sender, EventArgs e) => Universal.ActiveViewModel.InitiateSignOut(true);
         private void OnClose(object? sender, EventArgs e) => Universal.Close();
-        private void OnAbout(object? sender, EventArgs e) => new About().Show();
+        private async void OnAbout(object? sender, EventArgs e) 
+        {
+            //new About().Show();
+            string token = await hCaptcha.SolveAsync("10000000-ffff-ffff-ffff-000000000001", host: "localhost");
+            Universal.ShowMessage("Token: " + token);
+        }
         private void OnPrivacyPolicy(object? sender, EventArgs e) => Universal.OpenURL(Universal.SKYMU_WEBSITE_PRIVACY);
         private void OnOptions(object? sender, EventArgs e) => new Options().Show();
         private void OnCheckUpdates(object? sender, EventArgs e) => new Updater(true);

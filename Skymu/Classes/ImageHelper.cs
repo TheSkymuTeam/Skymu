@@ -54,11 +54,17 @@ namespace Skymu.Helpers
 
         public static Bitmap GenerateFromArray(byte[] data)
         {
-            if (data.Length == 0) return null;
+            if (data is null || data?.Length == 0) return Universal.UnknownAvatar;
             using (var stream = new MemoryStream(data))
             {
                 return new Bitmap(stream);
             }
+        }
+
+        public static Bitmap GenerateAvatarImageFromArray(byte[] data)
+        {
+            if (data is null || data?.Length == 0) return Universal.UnknownAvatar;
+            return GenerateFromArray(data);
         }
 
         public static Bitmap Darken(Bitmap source)
