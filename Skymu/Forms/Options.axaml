@@ -323,7 +323,6 @@
                             Source="{Binding Converter={StaticResource AssetLoader}, Source=Assets/Universal/Options/advanced.png}"
                             Classes="sidebarButton"
                             Text="{Binding [sF_OPTIONS_PAGE_UPDATES]}" />
-                        <!--  holy fuck why Skype  -->
                         <controls:SliceControl
                             x:Name="Advanced_Updates"
                             PointerPressed="TabSelect"

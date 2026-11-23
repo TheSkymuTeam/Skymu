@@ -106,10 +106,10 @@ namespace Skymu.Crossplatform
                 return DetectWindows();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                return new Platform(OS.Linux, GetLinuxDisplayName(), 0.0, DetectDisplayServer(), GetFrameworkVersionNumber());
+                return new Platform(OS.Linux, GetLinuxDisplayName(), 0.0, DetectDisplayServer(), GetDotNetVersionNumber());
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                return new Platform(OS.MacOS, GetMacDisplayName(), 0.0, DisplayServer.Unspecified, GetFrameworkVersionNumber());
+                return new Platform(OS.MacOS, GetMacDisplayName(), 0.0, DisplayServer.Unspecified, GetDotNetVersionNumber());
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("FREEBSD")))
                 return new Platform(
@@ -117,7 +117,7 @@ namespace Skymu.Crossplatform
                     RuntimeInformation.OSDescription,
                     0.0,
                     DetectDisplayServer(),
-                    GetFrameworkVersionNumber()
+                    GetDotNetVersionNumber()
                 );
 
             return new Platform(
@@ -125,7 +125,7 @@ namespace Skymu.Crossplatform
                 RuntimeInformation.OSDescription,
                 0.0,
                 DisplayServer.Unspecified,
-                GetFrameworkVersionNumber()
+                GetDotNetVersionNumber()
             );
         }
 
@@ -147,7 +147,7 @@ namespace Skymu.Crossplatform
                 GetWindowsDisplayName(info.dwBuildNumber),
                 ntVersion,
                 DisplayServer.Unspecified,
-                GetFrameworkVersionNumber(),
+                GetDotNetVersionNumber(),
                 ntVersion >= 6.0 && IsDwmCompositionEnabled()
             );
         }
@@ -185,7 +185,7 @@ namespace Skymu.Crossplatform
                 return RuntimeInformation.OSDescription;
 
             // Windows 11 still reports "Windows 10 ..." as its ProductName in the registry.
-            // Genuinely fuck yourself Microsoft, and third party developers who checked version based on this string, both of you.
+            // Genuinely fuck yourself third party developers who checked version based on this string.
             if (build >= 22000 && name.StartsWith("Windows 10", StringComparison.Ordinal))
                 name = "Windows 11" + name.Substring("Windows 10".Length);
 
@@ -270,11 +270,11 @@ namespace Skymu.Crossplatform
             return DisplayServer.Unspecified;
         }
 
-        private static int GetFrameworkVersionNumber()
+        private static int GetDotNetVersionNumber()
         {
             string description = RuntimeInformation.FrameworkDescription;
 
-            if (description.StartsWith(".NET Framework"))
+            if (description.StartsWith(".NET Framework")) // TODO(LEGACY): remove? This shouldn't apply anymore
             {
                 string versionPart = description.Substring(15).Split('.')[0];
                 if (int.TryParse(versionPart, out int major))

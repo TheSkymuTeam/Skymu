@@ -318,13 +318,15 @@ namespace Skymu.ViewModels
             {
                 string newNetLink = string.Empty;
                 int netVersion = Universal.Platform.NetVersion;
-                if (netVersion < 5) return; // framework (to be ignored for now) or early core (this is impossible afaik)
-                else if (netVersion < 10)
+                if (netVersion < 5) return; // NET Framework: we ignore this case. TODO(LEGACY) remove?
+                else if (Universal.Platform.NTVersion < 10 && netVersion < 6) // Windows 7 / Windows 8 / Windows 8.1 
+                {
+                    // 6 is the last version to reliably support Windows 8.1 and below, so it's the best recommendation
+                    newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
+                }
+                else if (Universal.Platform.NTVersion >= 10 && netVersion < 10) // Windows 10 and greater
                 {
                     newNetLink = Universal.NET_DOWNLOAD_LINK;
-                    // 6 is the last version to reliably support Windows 8.1 and below, so it's the best recommendation
-                    if (Universal.Platform.NTVersion < 10.0) newNetLink = Universal.NET_SIX_DOWNLOAD_LINK;
-
                 }
                 if (!String.IsNullOrEmpty(newNetLink))
                 {
@@ -375,13 +377,13 @@ namespace Skymu.ViewModels
 
             if (discordListings.Count > 0)
             {
-                var discordPassword = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.Password);
-                if (discordPassword != null)
-                    return discordPassword;
-
                 var discordQr = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.QRCode);
                 if (discordQr != null)
                     return discordQr;
+
+                var discordPassword = discordListings.FirstOrDefault(p => p.AuthenticationType == AuthenticationMethod.Password);
+                if (discordPassword != null)
+                    return discordPassword;
 
                 return discordListings[0];
             }
