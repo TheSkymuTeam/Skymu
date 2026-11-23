@@ -26,7 +26,7 @@
                     <NativeMenuItem Click="OnAccountManager" Header="Account manager" />
                     <NativeMenuItem Header="{Binding [sMAINMENU_SKYPE_CHANGEPASSWORD], Source={StaticResource Lang}}" IsEnabled="False" />
                     <NativeMenuItem Click="OnSignOut" Header="{Binding [sMAINMENU_SKYPE_SIGN_OUT], Source={StaticResource Lang}}" />
-                    <NativeMenuItem Click="OnSwitchUser" Header="{Binding [sMAINMENU_SKYPE_SWITCH_USER], Source={StaticResource Lang}}" />
+                    <NativeMenuItem Click="OnSwitchUser" Header="Add account..." />
                     <NativeMenuItem Click="OnClose" Header="{Binding [sMAINMENU_SKYPE_CLOSE], Source={StaticResource Lang}}" />
                 </NativeMenu>
             </NativeMenuItem>

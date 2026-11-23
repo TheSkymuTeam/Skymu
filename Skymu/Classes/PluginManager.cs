@@ -56,6 +56,9 @@ namespace Skymu.Plugins
                             ICore instance = (ICore)Activator.CreateInstance(t);
                             instance.DialogTube += Universal.PluginDialogHandler;
                             instance.MessageTube += Universal.PluginNotificationHandler;
+                            if (instance is ICaptcha captcha)
+                                captcha.CaptchaSolver = r =>
+                                    Skymu.Captcha.hCaptcha.SolveAsync(r.SiteKey, r.RqData, r.Host);
                             PluginList.Add(instance);
                             pluginCount++;
                         }

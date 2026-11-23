@@ -68,6 +68,8 @@ namespace Skymu.ViewModels
         public PluginListing PendingAutoLoginListing { get; private set; }
         public SavedCredential[] SavedCredentials { get; private set; }
 
+        public static bool ForceLoginPromptThisTime { get; set; } = false;
+
         bool allowAutoLogin = true;
 
         internal static SavedCredential ForcedLogin { get; set; }
@@ -156,10 +158,15 @@ namespace Skymu.ViewModels
             SavedCredential autoTarget = ForcedLogin;
             ForcedLogin = null;
             _forcedLoginPending = autoTarget != null;
-            if (autoTarget == null && Settings.AutoLogin && allowAutoLogin)
+            if (autoTarget == null && Settings.AutoLogin && allowAutoLogin && !ForceLoginPromptThisTime)
             {
                 autoTarget = savedCredentials.FirstOrDefault(c =>
                     c.AutoLogin && Universal.PluginList.Any(p => p.InternalName == c.Plugin));
+            }
+
+            if (ForceLoginPromptThisTime)
+            {
+                ForceLoginPromptThisTime = false; // we already blocked the auto login, so reset the flag for next time
             }
 
             foreach (var plugin in Universal.PluginList)

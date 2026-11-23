@@ -293,7 +293,6 @@ namespace Skymu.Forms.Pages
         private void AddAccountButton_Click(object sender, RoutedEventArgs e)
         {
             win.Close();
-
             if (Universal.SignedIn)
                 Dispatcher.UIThread.Post(() =>
                     Universal.ActiveViewModel.InitiateSignOut(purge: false));

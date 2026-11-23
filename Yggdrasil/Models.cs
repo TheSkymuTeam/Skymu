@@ -543,6 +543,15 @@ namespace Yggdrasil.Models
         }
     }
 
+    public class CaptchaRequest
+    {
+        public string SiteKey { get; set; }
+        public string RqData { get; set; }
+        public string RqToken { get; set; }
+        public string Service { get; set; }
+        public string Host { get; set; }
+    }
+
     public class ActiveCall
     {
         public string CallId { get; }

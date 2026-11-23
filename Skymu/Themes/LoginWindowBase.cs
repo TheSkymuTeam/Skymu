@@ -196,7 +196,6 @@ namespace Skymu.Theming
             if (Spinner == null) return;
             var transform = new RotateTransform();
             Spinner.RenderTransform = transform;
-            Spinner.RenderTransformOrigin = RelativePoint.Center;
             var animation = new Animation
             {
                 Duration = TimeSpan.FromSeconds(2.133333),

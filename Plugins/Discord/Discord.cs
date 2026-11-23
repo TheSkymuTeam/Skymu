@@ -35,10 +35,10 @@ using static DiscordProtos.DiscordUsers.V1.PreloadedUserSettings.Types;
 
 namespace Discord
 {
-    public class Core : ICore, ICall
+    public class Core : ICore, ICall, ICaptcha
     {
         #region Variables and plugin metadata
-
+        public Func<CaptchaRequest, Task<string>> CaptchaSolver { get; set; }
         public event EventHandler<CallBottle> IncomingCallTube;
         public event EventHandler<CallBottle> CallStateChangedTube;
         private CallSocket _callSocket = null;
@@ -123,6 +123,11 @@ namespace Discord
 
         #region Authentication and basic plugin init
 
+        public Core()
+        {
+            authSocket.CaptchaHandler = r => CaptchaSolver?.Invoke(r) ?? Task.FromResult<string>(null);
+        }
+
         // SHared auth Yggdrasil functions
 
         public async Task<LoginResult> Authenticate(SavedCredential credential)
@@ -170,9 +175,14 @@ namespace Discord
             {
                 authSocket.TokenRecieved -= completedHandler;
 
+                if (message == null)
+                {
+                    tcs.SetResult(LoginResult.Failure);
+                    return;
+                }
+
                 DiscordToken = message;
-                var loginResult = await StartClient();
-                tcs.SetResult(loginResult);
+                tcs.SetResult(await StartClient());
             }
 
             authSocket.TokenRecieved += completedHandler;
@@ -189,7 +199,7 @@ namespace Discord
             _pendingInstanceId = null;
         }
 
-        //STEP ONE, POST /auth/fingerprint
+        // POST /auth/fingerprint
         private async Task<string> FetchFingerprint()
         {
             string resp = await Client.Send("auth/fingerprint", HttpMethod.Post, null, new { }).ConfigureAwait(false);
@@ -211,7 +221,7 @@ namespace Discord
             }
         }
 
-        //STEP TWO, POST /auth/login
+        // POST /auth/login
         private async Task<LoginResult> PasswordLogin(string email, string password)
         {
             ClearPending2FA();
@@ -235,10 +245,39 @@ namespace Discord
             string resp = await Client.Send("auth/login", HttpMethod.Post, null, body, null, null,
                 new Dictionary<string, string> { { "X-Fingerprint", fingerprint } }).ConfigureAwait(false);
 
+            JsonNode node = null;
+            try { node = JsonNode.Parse(resp); } catch { }
+
+            if (node?["captcha_key"] != null && CaptchaSolver != null)
+            {
+                string solved = await (CaptchaSolver?.Invoke(new CaptchaRequest
+                {
+                    SiteKey = node["captcha_sitekey"]?.GetValue<string>(),
+                    RqData = node["captcha_rqdata"]?.GetValue<string>(),
+                    RqToken = node["captcha_rqtoken"]?.GetValue<string>(),
+                    Service = node["captcha_service"]?.GetValue<string>(),
+                    Host = "discord.com"
+                }) ?? Task.FromResult<string>(null));
+
+                if (solved == null)
+                {
+                    ClearPending2FA();
+                    return LoginResult.Failure; // cancelled
+                }
+
+                resp = await Client.Send("auth/login", HttpMethod.Post, null, body, null, null,
+                    new Dictionary<string, string>
+                    {
+            { "X-Fingerprint", fingerprint },
+            { "X-Captcha-Key", solved },
+            { "X-Captcha-Rqtoken", node["captcha_rqtoken"]?.GetValue<string>() ?? "" }
+                    }).ConfigureAwait(false);
+            }
+
             return await HandleAuthResponse(resp, fingerprint, "Invalid email or password.").ConfigureAwait(false);
         }
 
-        //STEP THREE, POST /auth/mfa/totp
+        // POST /auth/mfa/totp (for 2fa)
         private async Task<LoginResult> PasswordTwoFA(string code)
         {
             code = (code ?? string.Empty).Replace(" ", string.Empty).Trim();

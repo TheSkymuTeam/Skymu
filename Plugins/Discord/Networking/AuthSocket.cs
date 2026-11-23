@@ -12,6 +12,7 @@
 /*==========================================================*/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -20,17 +21,21 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Yggdrasil.Models;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Discord.Networking
 {
+
+
     internal class AuthSocket : IDisposable
     {
         private ClientWebSocket WSClient = null;
         internal event EventHandler<string> QRCodeGenerated;
         internal event EventHandler PendingMobileVerification;
         internal event EventHandler<string> TokenRecieved;
+        internal Func<CaptchaRequest, Task<string>> CaptchaHandler { get; set; }
         private const string gatewayUrl = "wss://remote-auth-gateway.discord.gg/?v=2";
         private const string authUrl = "https://discord.com/ra/";
 
@@ -356,26 +361,62 @@ namespace Discord.Networking
 
         private async void HandleQRLogin(string data)
         {
-            var json = JsonObject.Parse(data);
-            string discordTkt = json["ticket"]?.GetValue<string>();
-            var ticketPayload = new { ticket = discordTkt };
+            try
+            {
+                var json = JsonNode.Parse(data);
+                string ticket = json["ticket"]?.GetValue<string>();
+                var ticketPayload = new { ticket };
 
-            string encToken = await Core.Client.Send(
-                "users/@me/remote-auth/login",
-                HttpMethod.Post,
-                null,
-                ticketPayload,
-                null,
-                null
-            );
+                Dictionary<string, string> headers = null;
 
-            Debug.WriteLine(encToken);
+                for (int attempt = 0; attempt < 3; attempt++)
+                {
+                    string response = await Core.Client.Send(
+                        "users/@me/remote-auth/login",
+                        HttpMethod.Post,
+                        data: ticketPayload,
+                        headers: headers
+                    );
 
-            var encJson = JsonObject.Parse(encToken);
-            string discordEncTkn = encJson["encrypted_token"]?.GetValue<string>();
-            string discordToken = DecryptRSA(discordEncTkn);
+                    JsonNode node = JsonNode.Parse(response);
 
-            TokenRecieved?.Invoke(this, discordToken);
+                    string captcha = node?["captcha_key"]?[0]?.GetValue<string>();
+                    if (captcha == "captcha-required" || captcha == "invalid-response")
+                    {
+                        if (CaptchaHandler == null) { TokenRecieved?.Invoke(this, null); return; }
+                        ;
+
+                        string token = await CaptchaHandler(new CaptchaRequest
+                        {
+                            SiteKey = node["captcha_sitekey"]?.GetValue<string>(),
+                            RqData = node["captcha_rqdata"]?.GetValue<string>(),
+                            RqToken = node["captcha_rqtoken"]?.GetValue<string>(),
+                            Service = node["captcha_service"]?.GetValue<string>(),
+                            Host = "discord.com"
+                        });
+
+                        if (token == null) { TokenRecieved?.Invoke(this, null); return; }
+                        ; // user cancelled
+
+                        headers = new Dictionary<string, string>
+                        {
+                            ["X-Captcha-Key"] = token,
+                            ["X-Captcha-Rqtoken"] = node["captcha_rqtoken"]?.GetValue<string>() ?? ""
+                        };
+                        continue; // retry with the solved captcha
+                    }
+
+                    string encToken = node?["encrypted_token"]?.GetValue<string>();
+                    if (encToken == null) { return; }
+
+                    TokenRecieved?.Invoke(this, DecryptRSA(encToken));
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("QR login failed: " + ex);
+            }
         }
 
         private void HandleMessage(string data)

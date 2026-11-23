@@ -183,6 +183,18 @@ namespace Yggdrasil
         Task<bool> SetVideoEnabled(ActiveCall call, bool enabled);
     }
 
+
+    /// <summary>
+    ///  Methods related to CAPTCHA solving. 
+    /// </summary>
+    public interface ICaptcha
+    {
+        /// <summary>
+        ///  Returns the solved token, or null if the user cancelled.
+        /// </summary>
+        Func<CaptchaRequest, Task<string>> CaptchaSolver { get; set; }
+    }
+
     /// <summary>
     ///  Methods related to contacts, conversations and servers
     /// </summary>

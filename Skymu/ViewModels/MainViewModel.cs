@@ -887,7 +887,8 @@ namespace Skymu.ViewModels
 
         public void InitiateSignOut(bool purge = false)
         {
-            if (purge) // we want to delete the credentials
+            LoginViewModel.ForceLoginPromptThisTime = true; // we don't want to sign out only for it to throw us back into the account, creating a loop
+            if (purge) // if we want to delete the credentials
                 CredentialManager.Purge(Universal.CurrentUser, Universal.Plugin.InternalName);
             SoundManager.Play("LOGOUT");
             Universal.SignedIn = false;
