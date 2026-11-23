@@ -44,7 +44,7 @@ namespace Skymu.Captcha
             width: 100vw;
             height: 100vh;
             text-align: center;
-            background: #F3F3F3;
+            background: #FFFFFF;
         }
 
         #captcha {
@@ -183,8 +183,8 @@ namespace Skymu.Captcha
 
             _webView = new NativeWebView
             {
-                Width = 420,
-                Height = 600,
+                Width = 320,
+                Height = 400,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
