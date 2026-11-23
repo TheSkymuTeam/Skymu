@@ -397,6 +397,15 @@ namespace Skymu.Preferences
             get => SELECT("SWSOptOutShown", false, "Skymu/WebServices");
             set => WRITE("SWSOptOutShown", value, nameof(SWSOptOutShown), "Skymu/WebServices");
         }
+        /// <summary>
+        /// If FALSE a dialog will be shown 
+        /// If TRUE no dialog will be shown. Automatically set to TRUE after dialog is shown once.
+        /// </summary>
+        public static bool UserDataPublishOptInShown
+        {
+            get => SELECT("UserDataPublishOptInShown", false, "Skymu/WebServices");
+            set => WRITE("UserDataPublishOptInShown", value, nameof(UserDataPublishOptInShown), "Skymu/WebServices");
+        }
         public static bool EnableAdBlock
         {
             get => SELECT("EnableAdBlock", false, "Skymu/WebServices");

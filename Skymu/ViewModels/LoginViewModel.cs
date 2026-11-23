@@ -85,54 +85,73 @@ namespace Skymu.ViewModels
                 HeaderTextRequested?.Invoke(Universal.Lang["sF_LOGIN_WELCOME"]);
             };
             if (!Settings.SWSOptOutShown)
-            {
-                Dialog dlg = null;
-                dlg = new Dialog(
-                    SkinnedWindow.IconType.Question,
-                    "Don't want to read this? Almost all users will want to choose either of the Yes options. Clicking No leads to loss of client functionality. If you're interested in knowing what information is sent, read on. Once upon a time...\n\n" +
-                    Universal.NAME + " can optionally send information such as your display name and username to its user count server. This is done to populate the user "
-                        + "count at the bottom of the sidebar, and also to form a searchable list of online users. Your personal data is not saved, stored, sold, or otherwise used by us in any way. If you are fine with this, click 'Yes, and publish info', otherwise click 'Yes'."
-                        + "\n\nSkymu also has the ability to show an interactive Web page with your profile, status, and recent contacts, along with community-submitted material. This page is retrieved from our servers at launch."
-                        + "\n\nBy clicking either of the 'Yes' options you consent to us storing a minimal amount of client connection information to prevent DDoS attacks and vandalism, such as your IP and connection time. Every Web site you visit also stores this information and this is not out of the ordinary."
-                        + " The client information we store is detailed at " + Universal.SKYMU_WEBSITE_PRIVACY + ". It's a very short privacy policy because we don't collect your personal data (that could lead to a lot of legal liabilities for us!), we're only interested in keeping our infrastructure secure and " +
-                        "running. Knowing all this, do you still want to connect to Skymu web services?",
-                    "Connect to Skymu Web Services?",
-                    $"{Universal.NAME} web service manager",
-                    new Action(() => // no
-                    {
-                        Settings.SWSOptOutShown = true;
-                        Settings.Anonymize = true;
-                        Settings.DisableSWS = true;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
-                    true,
-                    new Action(() => // yes 
-                    {
-                        Settings.SWSOptOutShown = true;
-                        Settings.Anonymize = true;
-                        Settings.DisableSWS = false;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    Universal.Lang["sSKYACCESS_DLG_BTN_YES"],
-                    false,
-                    null,
-                    null,
-                    true,
-                    new Action(() => // yes and don't anonymize
-                    {
-                        Settings.SWSOptOutShown = true;
-                        Settings.Anonymize = false;
-                        Settings.DisableSWS = false;
-                        Settings.Save();
-                        dlg.Close();
-                    }),
-                    "Yes, and publish info"
-                );
-                dlg.Show();
-            }
+                ShowSwsConnectDialog();
+        }
+        private static void ShowSwsConnectDialog()
+        {
+            Dialog dlg = null;
+            dlg = new Dialog(
+                type: SkinnedWindow.IconType.Question,
+                content:
+                    Universal.NAME + " can connect to its web services to show the user count at the bottom of the sidebar, to make the updater function, and to optionally display community content in the main window. "
+                    + "Choosing No leads to loss of client functionality."
+                    + "\n\nWe do store minimal connection information, such as your IP and connection time, "
+                    + "to prevent DDoS attacks and vandalism.",
+                header: "Connect to Skymu Web Services?",
+                title: $"{Universal.NAME} web service manager",
+                brAction: () => // no
+                {
+                    Settings.SWSOptOutShown = true;
+                    Settings.Anonymize = true;
+                    Settings.DisableSWS = true;
+                    Settings.Save();
+                    dlg.Close();
+                },
+                brText: Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
+                blEnabled: true,
+                blAction: () => // yes
+                {
+                    Settings.SWSOptOutShown = true;
+                    Settings.DisableSWS = false;
+                    Settings.Anonymize = true; // safe default until they answer the next dialog
+                    Settings.Save();
+                    dlg.Close();
+                    ShowPublishDataDialog();
+                },
+                blText: Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+            );
+            dlg.Show();
+        }
+
+        private static void ShowPublishDataDialog()
+        {
+            Dialog dlg = null;
+            dlg = new Dialog(
+                type: SkinnedWindow.IconType.Question,
+                content:
+                    "Optionally, " + Universal.NAME + " can send your display name and username to appear in a searchable list of online users. "
+                    + "Choosing No keeps your info anonymous.",
+                header: "Publish your info?",
+                title: $"{Universal.NAME} web service manager",
+                brAction: () => // no
+                {
+                    Settings.UserDataPublishOptInShown = true;
+                    Settings.Anonymize = true;
+                    Settings.Save();
+                    dlg.Close();
+                },
+                brText: Universal.Lang["sSKYACCESS_DLG_BTN_NO"],
+                blEnabled: true,
+                blAction: () => // yes
+                {
+                    Settings.UserDataPublishOptInShown = true;
+                    Settings.Anonymize = false;
+                    Settings.Save();
+                    dlg.Close();
+                },
+                blText: Universal.Lang["sSKYACCESS_DLG_BTN_YES"]
+            );
+            dlg.Show();
         }
         public void LoadPlugins()
         {
@@ -295,7 +314,7 @@ namespace Skymu.ViewModels
                     Universal.ShowMessage(message, "Compatibility warning");
             }
 
-            if (!Settings.ShowOldDotNetWarnings)
+            if (!Settings.ShowOldDotNetWarnings && Universal.Platform.OS == OS.Windows) // other platforms bundle the .NET runtime
             {
                 string newNetLink = string.Empty;
                 int netVersion = Universal.Platform.NetVersion;
